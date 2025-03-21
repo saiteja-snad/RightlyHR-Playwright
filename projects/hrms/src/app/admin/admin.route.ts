@@ -7,9 +7,10 @@ import { ProspectiveEmployeesComponent } from "./prospective-employees/prospecti
 import { ProbationEmployeesComponent } from "./probation-employees/probation-employees.component";
 import { ActiveInternsComponent } from "./active-interns/active-interns.component";
 import { InactiveInternsComponent } from "./inactive-interns/inactive-interns.component";
+import { LettersLayoutComponent } from "../letters/letters-layout/letters-layout.component";
 
 export default [
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+    { path: '', redirectTo: '/admin/dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'prospective-employees', component: ProspectiveEmployeesComponent },
     { path: 'active-employees', component: ActiveEmployeesComponent },
@@ -18,4 +19,5 @@ export default [
     { path: 'active-interns', component: ActiveInternsComponent },
     { path: 'inactive-interns', component: InactiveInternsComponent },
     { path: 'probation-employees', component: ProbationEmployeesComponent },
+    { path: 'letters', component: LettersLayoutComponent,loadChildren: () => import('./../letters/letters.route') },
 ] as Route[];

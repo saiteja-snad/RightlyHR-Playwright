@@ -1,0 +1,11 @@
+.letter-fields-content {
+    width: 100%;
+    height: calc(100dvh - 18rem);
+    overflow-y: auto;
+
+    .letter-fields-sub-content {
+        width: 100%;
+        height: calc(100dvh - 24rem);
+        overflow-y: auto;
+    }
+}

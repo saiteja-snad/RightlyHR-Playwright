@@ -158,7 +158,7 @@ a {
 
 .custom-input {
     border: 1px solid #DEE8F3;
-    padding: 0.8rem 1.6rem;
+    padding: 0.8rem 1.2rem;
     border-radius: 0.8rem;
     font-weight: 400;
     font-size: var(--fontsize14);
@@ -240,5 +240,40 @@ a {
     .close-icon {
         width: 3rem;
         height: 3rem;
+    }
+}
+
+// p select stylings
+.custom-p-select-content {
+    .p-select {
+        border: 1px solid #DEE8F3 !important;
+        background-color: #F8FBFF !important;
+        border-radius: 0.8rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+
+    .p-select-option.p-select-option-selected {
+        background-color: #e8f0fb !important;
+        color: #222222 !important;
+    }
+
+    .p-select:hover {
+        border: 1px solid #DEE8F3 !important;
+    }
+
+    .p-select-label.p-placeholder {
+        color: #A1A1A1 !important;
+    }
+
+    .p-iconfield{
+       margin: 0.8rem 0rem !important;
+    }
+
+    .p-inputtext:focus{
+        border: 1px solid #DEE8F3 !important;
+        font-weight: 400;
+    font-size: var(--fontsize14);
+    vertical-align: middle;
+    color: #222222;
     }
 }

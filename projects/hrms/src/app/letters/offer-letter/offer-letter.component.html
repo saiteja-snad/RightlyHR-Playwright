@@ -1,0 +1,245 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+        </div>
+    </div>
+    <!--tabs content-->
+    <div class="my-4">
+        <app-letters-tab />
+    </div>
+    <!--letter content-->
+    <div class="main-letter-content row">
+        <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
+            <div class="card letter-fields-content">
+                <div class="letter-fields-sub-content p-4">
+                <form action="">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search
+                                Employee<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100">
+                                    <!-- Template for selected item -->
+                                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name
+                                        }}</ng-template>
+                                    <!-- Template for dropdown items -->
+                                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                                </p-select>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Personal Email ID
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter personal email Id">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salutation
+                                <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select salutation" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">First Name<span
+                                    class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter first name">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Middle Name
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter middle name">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Last Name
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter last name">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Gender<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select employment type" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-xl-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select
+                                Address<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select address" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line
+                                1<span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter address">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line 2
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter address">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">City<span
+                                    class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter city">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">State
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter state">
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country<span
+                                    class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter Country">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Pincode
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter pincode">
+                        </div>
+
+                        <div class="col-xl-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Mobile number
+                                with country code
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter mobile number">
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Designation
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter designation">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Esic<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select esic" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">PF<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select PF"
+                                    class="form-select custom-select" />
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salary
+                                <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                    placeholder="Please enter salary">
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">variable
+                                Pay<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select variable pay" class="form-select custom-select" />
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">variable Amount
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter variable amount">
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Work
+                                Location<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="location" optionLabel="name"
+                                    placeholder="Please select work location" class="form-select custom-select" />
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Sub Location<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name"
+                                    placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">offer Issued Date
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter salary">
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Expected Start
+                                Date
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter salary">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Document
+                                Type<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name"
+                                    placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">offer Expiry Date
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter salary">
+                        </div>
+                        <div class="col-xl-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note
+                                <span class="text-danger">*</span></label>
+                            <textarea class="form-control custom-input" placeholder="Leave a comment here"></textarea>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority Name<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-9 cols-lg-8 col-xl-8 col-xxl-7">
+            <div class="card letter-data-content">
+
+            </div>
+        </div>
+
+    </div>
+</div>

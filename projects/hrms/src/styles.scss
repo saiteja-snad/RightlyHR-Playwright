@@ -147,45 +147,35 @@ a {
     border-radius: 10px;
 }
 
-//custom input
+
+//custom input stylings
+.custom-label {
+    color: #303030;
+    font-weight: 400;
+    font-size: var(--fontsize14);
+    vertical-align: middle;
+}
+
 .custom-input {
-    padding: 14px;
-    font-size: var(--text6);
-    font-family: var(--font-regular);
-    color: var(--input-color);
-    border: solid 1px #b0b0b0;
+    border: 1px solid #DEE8F3;
+    padding: 0.8rem 1.6rem;
+    border-radius: 0.8rem;
+    font-weight: 400;
+    font-size: var(--fontsize14);
+    vertical-align: middle;
+    color: #222222;
+    background-color: #F8FBFF;
 }
 
-.custom-input::placeholder {
-    color: var(--input-placeholder-color);
-    font-size: var(--text6);
-    font-family: var(--font-regular);
+.custom-input::placeholder{
+  color: #A1A1A1;
 }
 
-// search stylings
-.input-group {
-    border: 1px solid #e2e3e3;
-    border-radius: 8px;
-
-    .input-group-text {
-        background-color: #fff;
-        border: none;
-        border-radius: 14px;
-        color: #8A9099;
-    }
-
-    .custom-search-input {
-        border: none;
-        border-radius: 8px;
-        color: var(--input-color);
-        padding-left: 0px;
-        font-family: var(--font-regular);
-    }
-
-    .custom-search-input::placeholder {
-        color: #8A9099;
-        font-family: var(--font-regular);
-    }
+.custom-select{
+    font-weight: 400;
+    font-size: var(--fontsize14);
+    vertical-align: middle;
+    color: #222222;
 }
 
 // table stylings
@@ -203,8 +193,7 @@ a {
         z-index: 1;
     }
 
-    th,
-    td {
+    th,td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -230,5 +219,26 @@ a {
     tr:nth-child(even) {
         background-color: var(--table-data-bg-even-color);
         /* Light grey background */
+    }
+}
+
+// popup stylings
+.custom-main-popup-container {
+    .popup-header-border {
+        border-bottom: 3px solid transparent;
+        border-image-source: linear-gradient(90deg, #FFFFFF -6.98%, #858585 50.67%, #FFFFFF 108.91%);
+        border-image-slice: 1;
+        vertical-align: middle;
+    }
+
+    .popup-heading {
+        font-weight: 700;
+        font-size: var(--fontsize16);
+        vertical-align: middle;
+    }
+
+    .close-icon {
+        width: 3rem;
+        height: 3rem;
     }
 }

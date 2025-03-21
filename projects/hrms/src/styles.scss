@@ -70,7 +70,7 @@
     --error-msg-color: #ea362c;
 }
 
-*{
+* {
     font-family: var(--font-family);
 }
 
@@ -193,6 +193,9 @@ a {
     width: 100%;
     height: 60dvh;
     overflow: auto;
+    background-color: #FFFFFF;
+    border: 1px solid #E7E7ED;
+    border-radius: 1.2rem;
 
     thead {
         top: 0%;
@@ -200,7 +203,8 @@ a {
         z-index: 1;
     }
 
-    th,td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -209,11 +213,22 @@ a {
         padding: 1.6rem;
     }
 
-    th{
-        background-color:var(--table-header-bg-color);
+    th {
+        background-color: var(--table-header-bg-color);
         color: var(--table-header-color);
         text-wrap: nowrap;
     }
 
-    th:first
+    th:first-child {
+        border-top-left-radius: 1.2rem;
+    }
+
+    th:last-child {
+        border-top-right-radius: 1.2rem;
+    }
+
+    tr:nth-child(even) {
+        background-color: var(--table-data-bg-even-color);
+        /* Light grey background */
+    }
 }

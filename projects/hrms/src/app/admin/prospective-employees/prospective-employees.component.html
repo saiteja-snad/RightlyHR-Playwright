@@ -5,15 +5,15 @@
                     class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" class="custom-btn btn-primary"><i class="bi bi-plus me-2"></i>Add Prospective
+            <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i class="bi bi-plus me-2"></i>Add Prospective
                 Employee</button>
         </div>
     </div>
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-3">
+        <div class="input-group custom-search mb-4">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control custom-search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search" class="form-control custom-search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
         <div class="custom-table-content">
@@ -31,6 +31,16 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>10410</td>
+                        <td>Jhon Doe</td>
+                        <td>Jhon&#64;gmail.com</td>
+                        <td>+91 9087654321</td>
+                        <td>Bengaluru</td>
+                        <td>Mysore IT park</td>
+                        <td>HR Administrator</td>
+                        <td>Employee Created</td>
+                    </tr>
                     <tr>
                         <td>10410</td>
                         <td>Jhon Doe</td>

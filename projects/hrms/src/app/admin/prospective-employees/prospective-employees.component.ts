@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AddProspectiveEmployeeComponent } from './add-prospective-employee/add-prospective-employee.component';
 @Component({
   selector: 'app-prospective-employees',
   imports: [CommonModule],
@@ -9,11 +11,20 @@ import { Router } from '@angular/router';
 })
 
 export class ProspectiveEmployeesComponent implements OnInit {
+
+  @ViewChild('success') success: any;
+  @ViewChild('confirmation') confirmation: any;
+  @ViewChild('verificationbyPartnerHead ') verificationbyPartnerHead: any;
+  @ViewChild('verificationbySalesManager') verificationbySalesManager: any;
   
-  constructor(private router: Router) { }
+  constructor(private router: Router,private modalService: NgbModal, ) { }
 
   ngOnInit(): void {
 
+  }
+
+  openAddProspective(){
+    this.modalService.open(AddProspectiveEmployeeComponent,{centered:true,backdrop:'static'});
   }
 
   navigateDashboard(){

@@ -1,1 +1,29 @@
-<p>time-off-tabs works!</p>
+<div class="tabs-container">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/leaves']" [class.active-tab]="isActive('/time-off/leaves')" aria-current="page">Time-Off</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/wfh']" [class.active-tab]="isActive('/time-off/wfh')">WFH</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/user/permissions']" [class.active-tab]="isActive('/user/permissions')">Comp-Off</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/user/assignee']" [class.active-tab]="isActive('/user/assignee')">Permissions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/user/assignee']" [class.active-tab]="isActive('/user/assignee')">Pending Approvals</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/user/assignee']" [class.active-tab]="isActive('/user/assignee')">Attendance</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/user/assignee']" [class.active-tab]="isActive('/user/assignee')">On Behalf Of</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/user/assignee']" [class.active-tab]="isActive('/user/assignee')">On Behalf Of Approvals</a>
+      </li>
+    </ul>
+
+  </div>

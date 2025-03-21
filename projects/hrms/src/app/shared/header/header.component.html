@@ -1,5 +1,9 @@
 <div class="header-main-container">
-    <div class="d-flex justify-content-end gap-5">
+<div class="d-flex justify-content-between align-items-center w-100  ">
+    <div *ngIf="isActive('time-off')">
+        <app-time-off-tabs></app-time-off-tabs>
+    </div>
+    <div class="d-flex align-items-center gap-5">
         <div class="dropdown cursor">
             <a class="custom-notification-btn position-relative" data-bs-toggle="dropdown">
                 <i class="bi bi-bell header-icon"></i>
@@ -42,4 +46,5 @@
            <img src="images\profile-img.png" alt="Profile Image" class="profile-img cursor">
         </div>
     </div>
+</div>
 </div>

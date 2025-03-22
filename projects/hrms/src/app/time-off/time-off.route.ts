@@ -19,6 +19,7 @@ import { OnBeHalfOfWaitingForApprovalComponent } from "./on-be-half-of-waiting-f
 import { OnBeHalfOfApprovalComponent } from "./on-be-half-of-approval/on-be-half-of-approval.component";
 import { OnBeHalfOfProcessComponent } from "./on-be-half-of-process/on-be-half-of-process.component";
 import { OnBeHalfOfRejectComponent } from "./on-be-half-of-reject/on-be-half-of-reject.component";
+import { AttendanceComponent } from "./attendance/attendance.component";
 
 
 export default [
@@ -73,4 +74,5 @@ export default [
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
+  { path: 'attendance', component: AttendanceComponent,}
 ] as Route[];

@@ -14,6 +14,11 @@ import { PremissionsComponent } from "./premissions/premissions.component";
 import { PremissionsWaitingForApprovalComponent } from "./premissions/premissions-waiting-for-approval/premissions-waiting-for-approval.component";
 import { PremissionsApprovedComponent } from "./premissions/premissions-approved/premissions-approved.component";
 import { PremissionsRejectedComponent } from "./premissions/premissions-rejected/premissions-rejected.component";
+import { OnBeHalfOfComponent } from "./on-be-half-of/on-be-half-of.component";
+import { OnBeHalfOfWaitingForApprovalComponent } from "./on-be-half-of-waiting-for-approval/on-be-half-of-waiting-for-approval.component";
+import { OnBeHalfOfApprovalComponent } from "./on-be-half-of-approval/on-be-half-of-approval.component";
+import { OnBeHalfOfProcessComponent } from "./on-be-half-of-process/on-be-half-of-process.component";
+import { OnBeHalfOfRejectComponent } from "./on-be-half-of-reject/on-be-half-of-reject.component";
 
 
 export default [
@@ -53,6 +58,18 @@ export default [
       { path: 'waiting-for-approval', component: PremissionsWaitingForApprovalComponent },
       { path: 'approved', component: PremissionsApprovedComponent },
       { path: 'rejected', component: PremissionsRejectedComponent },
+      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    ],
+  },
+  {
+    path: 'on-behalf-of',
+    component: OnBeHalfOfComponent,
+    children: [
+      { path: 'waiting-for-approval', component: OnBeHalfOfWaitingForApprovalComponent },
+      { path: 'approved', component: OnBeHalfOfApprovalComponent },
+      { path: 'processed', component: OnBeHalfOfProcessComponent },
+      { path: 'rejected', component: OnBeHalfOfRejectComponent },
+
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },

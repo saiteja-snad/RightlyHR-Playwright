@@ -1,0 +1,26 @@
+<div class="custom-main-component-container mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0">Comp-Off</p>
+        </div>
+        <div class="d-flex gap-3">
+            <label class=" employee-lable" for="">Select Employee</label>
+            <div> <select class="form-select custom-select" aria-label="Default select example">
+                    <option selected>Select Employee</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select></div>
+            <button type="button" class="custom-btn btn-primary"><i class="bi bi-plus me-2"></i>Apply Leave on Behalf
+                Of</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <app-on-be-half-of-approval-tabs></app-on-be-half-of-approval-tabs>
+        </div>
+        <div class=" col-8">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

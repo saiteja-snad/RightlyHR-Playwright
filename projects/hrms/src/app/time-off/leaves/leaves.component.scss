@@ -39,6 +39,7 @@
     border: 1px solid #E7E7ED;
     border-radius: 1.2rem;
 }
+
 .tabs-container {
     width: 100%;
     padding: 1rem;
@@ -59,7 +60,8 @@
 
 }
 
- .nav-link.active, .nav-tabs .nav-item.show .nav-link  {
+.nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
     border-bottom: 2px solid rgba(6, 39, 79, 1);
     color: rgba(6, 39, 79, 1);
     font-weight: 700;
@@ -69,4 +71,9 @@
     vertical-align: middle;
 
 
+}
+
+.info-icon {
+    width: 2rem;
+    height: 2rem;
 }

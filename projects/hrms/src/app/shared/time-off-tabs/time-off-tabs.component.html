@@ -1,16 +1,16 @@
-<div class="tabs-container">
+<div class="tabs-header">
     <ul class="nav">
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/time-off/leaves']" [class.active-tab]="isActive('/time-off/leaves')" aria-current="page">Time-Off</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/wfh']" [class.active-tab]="isActive('/time-off/wfh')">WFH</a>
+        <a class="nav-link" [routerLink]="['/time-off/wfh/waiting-for-approval']" [class.active-tab]="isActive('/time-off/wfh/waiting-for-approval')|| isActive('/time-off/wfh/approved') ">WFH</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/user/permissions']" [class.active-tab]="isActive('/user/permissions')">Comp-Off</a>
+        <a class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']" [class.active-tab]="isActive('/time-off/comp-off/waiting-for-approval')">Comp-Off</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/user/assignee']" [class.active-tab]="isActive('/user/assignee')">Permissions</a>
+        <a class="nav-link" [routerLink]="['/time-off/premissions/waiting-for-approval']" [class.active-tab]="isActive('/time-off/premissions/waiting-for-approval')">Permissions</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/user/assignee']" [class.active-tab]="isActive('/user/assignee')">Pending Approvals</a>

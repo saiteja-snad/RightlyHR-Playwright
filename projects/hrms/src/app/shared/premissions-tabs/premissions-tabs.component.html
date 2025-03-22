@@ -1,0 +1,18 @@
+
+
+<div class="card tabs-container">
+    <ul class="nav flex-column gap-2" >
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['waiting-for-approval']" [class.active-tab]="isActive('/time-off/premissions/waiting-for-approval')" aria-current="page">Waiting For Approval (12)</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['approved']" [class.active-tab]="isActive('time-off/premissions/approved')">Approved (12)</a>
+      </li>
+     
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['rejected']" [class.active-tab]="isActive('time-off/premissions/rejected')">Rejected (12)</a>
+      </li>
+      
+    </ul>
+
+  </div>

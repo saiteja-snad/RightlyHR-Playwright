@@ -8,6 +8,8 @@ import { ProbationEmployeesComponent } from "./probation-employees/probation-emp
 import { ActiveInternsComponent } from "./active-interns/active-interns.component";
 import { InactiveInternsComponent } from "./inactive-interns/inactive-interns.component";
 import { LettersLayoutComponent } from "../letters/letters-layout/letters-layout.component";
+import { ActiveNewUserInvitationComponent } from "./invite-new-user/active-new-user-invitation/active-new-user-invitation.component";
+import { ProspectiveNewUserInvitationComponent } from "./invite-new-user/prospective-new-user-invitation/prospective-new-user-invitation.component";
 
 export default [
     { path: '', redirectTo: '/admin/dashboard', pathMatch: 'full' },
@@ -20,4 +22,6 @@ export default [
     { path: 'inactive-interns', component: InactiveInternsComponent },
     { path: 'probation-employees', component: ProbationEmployeesComponent },
     { path: 'letters', component: LettersLayoutComponent,loadChildren: () => import('./../letters/letters.route') },
+    { path: 'active-new-user', component: ActiveNewUserInvitationComponent },
+    { path: 'prospective-new-user', component: ProspectiveNewUserInvitationComponent },
 ] as Route[];

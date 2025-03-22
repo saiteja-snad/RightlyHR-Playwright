@@ -1,6 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
+@font-face {
+    font-family: "autographsignatureFont";
+    src: url("/fonts/Autography-DOLnW.otf");
+}
+
 /* You can add global styles to this file, and also import other style files */
 :root {
     --login-logo-color: #d8ecff;
@@ -167,11 +172,11 @@ a {
     background-color: #F8FBFF;
 }
 
-.custom-input::placeholder{
-  color: #A1A1A1;
+.custom-input::placeholder {
+    color: #A1A1A1;
 }
 
-.custom-select{
+.custom-select {
     font-weight: 400;
     font-size: var(--fontsize14);
     vertical-align: middle;
@@ -265,15 +270,158 @@ a {
         color: #A1A1A1 !important;
     }
 
-    .p-iconfield{
-       margin: 0.8rem 0rem !important;
+    .p-iconfield {
+        margin: 0.8rem 0rem !important;
     }
 
-    .p-inputtext:focus{
+    .p-inputtext:focus {
         border: 1px solid #DEE8F3 !important;
         font-weight: 400;
-    font-size: var(--fontsize14);
+        font-size: var(--fontsize14);
+        vertical-align: middle;
+        color: #222222;
+    }
+}
+
+// letter main content
+.main-letter-content {
+    .letter-fields-content {
+        width: 100%;
+        height: calc(100dvh - 18rem);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .letter-data-content {
+        width: 100%;
+        height: calc(100dvh - 18rem);
+        overflow: auto;
+
+        .letter-page-content {
+            height: 380mm;
+            width: 270mm;
+            position: relative;
+            // background-image: url(src/assets/images/water-mark.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            overflow: hidden;
+        
+            .letter-page-sub-content {
+                padding: 2rem 8rem;
+                font-size: var(--fontsize14);
+                color: #000000;
+            }
+
+            .letter-header {
+                font-weight: 500;
+                font-size: var(--fontsize18);
+            }
+        
+            .letter-footer {
+                width: 270mm;
+                background-color: #06274F;
+                color: #fff;
+                position: absolute;
+                bottom: 0px;
+                padding: 1.5rem 1rem;
+                
+                .company-name {
+                    font-size: var(--fontsize14);
+                    font-weight: 600;
+                }
+        
+                .company-address{
+                    font-size: var(--fontsize12);
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}
+
+// custom search field
+.custom-search {
+    border: 1px solid #CCDAEC;
+    border-radius: 0.8rem;
+    overflow: hidden;
+    
+    .custom-input-group-search {
+        border: none;
+        padding: 1rem 1.5rem;
+        font-size: var(--fontsize14);
+    }
+
+    .custom-search-input {
+        border: none;
+        padding: 1rem 1rem 1rem 0rem;
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        vertical-align: middle;
+    }
+
+    input:focus{
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+// custom -select dropdown
+.custom-dropdown-menu {
+    border: 1px solid #305889;
+    background-color: #F0F4F8;
+    padding: 0rem 1rem;
+
+    .dropdown-item {
+        padding: 1rem;
+        font-weight: 600;
+        font-size: var(--fontsize12);
+        color: #305889;
+        border-bottom: 1px solid #C8D5E4;
+    }
+
+    .dropdown-item:hover {
+        background-color: #F0F4F8;
+    }
+}
+
+// note text stylings
+.note-text {
+    font-size: var(--fontsize12) !important;
+    font-weight: 400;
     vertical-align: middle;
-    color: #222222;
+
+    .note {
+        font-size: var(--fontsize14) !important;
+        font-weight: 700;
+    }
+}
+
+.authority-signature{
+    font-size: 3.2rem;
+    font-family: "autographsignatureFont";
+}
+
+//custom component naviagtion nav tabs
+.custom-nav-tab-card {
+    border-radius: 0.8rem;
+    border: none !important;
+
+    .nav-tabs-main-content {
+        display: flex;
+        gap: 1rem;
+        list-style: none;
+    }
+
+    .nav-item {
+        cursor: pointer;
+        padding: 1rem 1.6rem 0.8rem;
+        font-weight: 700;
+        font-size: var(--fontsize14);
+        vertical-align: middle;
+    }
+
+    .nav-tab-active {
+        border-bottom: 3px solid var(--navtab-item-color);
     }
 }

@@ -2,22 +2,110 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+                <i class="bi bi-arrow-90deg-left me-2"></i>Dashboard
+            </p>
         </div>
     </div>
     <!--tabs content-->
     <div class="my-4">
-        <app-letters-tab/>
+        <app-letters-tab />
     </div>
     <!--letter content-->
-    <div class="main-letter-content d-flex">
-       <div class="card letter-fields-content">
-          <form action="">
-              
-          </form>
-       </div>
-       <div class="card letter-data-content">
+    <div class="main-letter-content row">
+        <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
+            <div class="card letter-fields-content p-4">
+                <form action="">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
+                                Search Employee<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100">
+                                    <!-- Template for selected item -->
+                                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name
+                                        }}</ng-template>
+                                    <!-- Template for dropdown items -->
+                                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                                </p-select>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
+                                Appointment Sent Date<span class="text-danger">*</span></label>
+                            <input type="date" class="form-control custom-input" id="appintment start date">
+                        </div>
+                        <div class="col-xl-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
+                                Select Address<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select address" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Joining Date
+                                <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter salary">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Department
+                                <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter department">
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Branch
+                                Location/Code
+                                <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select salutation" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Document
+                                Type<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name"
+                                    placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-xl-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note
+                                <span class="text-danger">*</span></label>
+                            <textarea class="form-control custom-input" placeholder="Leave a comment here"></textarea>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
+                                Authority Name<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name"
+                                    placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div>
+                            <p class="note-text"><span class="note me-2">Note:</span>Please update the Employee Name,
+                                Address, Mobile Number, Email ID, Designation, PT, PF, ESIC, Place(work location),
+                                Salary in Personal and Job Tabs Before Generating the Document.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-3 pt-4">
+                            <button type="button" class="custom-btn btn-primary">Generate Document</button>
+                            <!-- <button type="button" class="custom-btn btn-primary">Request For Approval</button> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-       </div>
+        <div class="col-sm-12 col-md-9 cols-lg-8 col-xl-8 col-xxl-7">
+            <div class="card letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>

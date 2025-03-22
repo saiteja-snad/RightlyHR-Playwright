@@ -57,6 +57,6 @@ export class OfferLetterComponent {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/dashboard'])
+    this.router.navigate(['/admin/dashboard'])
   }
 }

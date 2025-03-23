@@ -1,3 +1,143 @@
-<div>
-    kkk
+<div class="custom-main-component-container mt-3">
+    <div>
+        <!--Input search-->
+        <div class="input-group custom-search mb-4">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                    class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search here"
+                aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Employee ID </th>
+                        <th>Employee Name</th>
+                        <th>Leave Type </th>
+                        <th>Duration</th>
+                        <th>Availed</th>
+                        <th>Applied Date</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Reason</th>
+                        <th>Comments</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>10410</td>
+                        <td>Jhon Doe</td>
+                        <td>Levae</td>
+                        <td>1</td>
+                        <td>Full Day</td>
+                        <td>20/3/2027</td>
+                        <td>20/3/2027</td>
+                        <td>20/3/2027</td>
+                        <td>
+                            <div>
+                                <span>
+                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                    <ng-template #reason>
+                                        <div>
+                                            <p class="mb-0">Feaver </p>
+                                        </div>
+                                    </ng-template>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <span>
+                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                    <ng-template #reason>
+                                        <div>
+                                            <p class="mb-0">Feaver </p>
+                                        </div>
+                                    </ng-template>
+                                </span>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu py-0">
+                                    <li (click)="openModal(approval)"><a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a></li>
+                                    <li><a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-content pt-2 w-100">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                <!-- Dropdown for Rows per Page -->
+                <div class="d-flex align-items-center gap-3 p-2">
+                    <!-- Bootstrap Select -->
+                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onRowsChange()">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+                </div>
+
+                <!-- Pagination -->
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+<ng-template #approval let-modal>
+    <div class="custom-main-popup-container">
+
+        <div class="custom-main-popup-content p-5">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="images\succes.png" alt="succues" class="succes-icon">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <h4 class="text-center">Are you sure you want to approve this request?</h4>
+            </div>
+            <form action="">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="col-md-12 mb-3">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reason<span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control custom-input" id="exampleFormControlInput1"
+                                placeholder="Please enter reason"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2"> Approval
+                            Comments<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter reason"></textarea>
+                    </div>
+
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+                    <button type="submit" class="custom-btn btn-primary">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-leaves',
-  imports: [ CommonModule,NgbNavModule,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule],
+  imports: [ CommonModule,NgbNavModule,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,Select],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss'
 })
@@ -23,6 +24,18 @@ export class LeavesComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+
+  leaveType: { id: number; name: string }[] = [
+    { id: 1, name: 'Leaves' },
+    { id: 2, name: 'Sick' },
+    { id: 3, name: 'Casual' },
+    { id: 4, name: 'Earned'  }
+  ];
+  constructor(private modalService: NgbModal) {}
+
+  openModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
 
   onRowsChange() {
     this.first = 0;

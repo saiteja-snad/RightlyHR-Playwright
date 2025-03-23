@@ -25,6 +25,17 @@ import { PendingApprovalsComponent } from "./pending-approvals/pending-approvals
 import { WfhForYouRequsetComponent } from "./pending-approvals/wfh-for-you-requset/wfh-for-you-requset.component";
 import { WfhForYourRoleRequsetComponent } from "./pending-approvals/wfh-for-your-role-requset/wfh-for-your-role-requset.component";
 import { WfhRequestComponent } from "./pending-approvals/wfh-request/wfh-request.component";
+import { CompOffRequestComponent } from "./pending-approvals/comp-off-request/comp-off-request.component";
+import { CompoffForYouRequestComponent } from "./pending-approvals/comp-off-request/compoff-for-you-request/compoff-for-you-request.component";
+import { CompoffForYourRoleRequestComponent } from "./pending-approvals/comp-off-request/compoff-for-your-role-request/compoff-for-your-role-request.component";
+import { PremissionRequestComponent } from "./pending-approvals/premission-request/premission-request.component";
+import { PremissionForYouRequestComponent } from "./pending-approvals/premission-for-you-request/premission-for-you-request.component";
+import { PremissionForYourRoleRequestComponent } from "./pending-approvals/premission-for-your-role-request/premission-for-your-role-request.component";
+import { TimeOffRequestComponent } from "./pending-approvals/time-off-request/time-off-request.component";
+import { TimeOffForYouRequestComponent } from "./pending-approvals/time-off-request/time-off-for-you-request/time-off-for-you-request.component";
+import { TimeOffForYourRoleRequestComponent } from "./pending-approvals/time-off-request/time-off-for-your-role-request/time-off-for-your-role-request.component";
+import { AttendanceRegularizationRequestComponent } from "./pending-approvals/attendance-regularization-request/attendance-regularization-request.component";
+import { AttendanceRegularizationForYouRequestComponent } from "./pending-approvals/attendance-regularization-request/attendance-regularization-for-you-request/attendance-regularization-for-you-request.component";
 
 
 export default [
@@ -79,21 +90,58 @@ export default [
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
-  { path: 'attendance', component: AttendanceComponent,},
+  { path: 'attendance', component: AttendanceComponent, },
   {
     path: 'pending-approvals',
     component: PendingApprovalsComponent,
-    children: [
-      {
-        path: 'wfh',
-        component:WfhRequestComponent,
-        children: [
-          { path: 'for-you', component: WfhForYouRequsetComponent },
-          { path: 'for-your-role', component: WfhForYourRoleRequsetComponent },
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
-        ],
-      },
-      { path: '', redirectTo: 'wfh', pathMatch: 'full' }, // Default section
+    children: [{
+      path: 'time-off-request',
+      component: TimeOffRequestComponent,
+      children: [
+        { path: 'for-you', component: TimeOffForYouRequestComponent },
+        { path: 'for-your-role', component: TimeOffForYourRoleRequestComponent },
+        { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+      ],
+    },
+    {
+      path: 'wfh',
+      component: WfhRequestComponent,
+      children: [
+        { path: 'for-you', component: WfhForYouRequsetComponent },
+        { path: 'for-your-role', component: WfhForYourRoleRequsetComponent },
+        { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+      ],
+    },
+    {
+      path: 'comp-off',
+      component: CompOffRequestComponent,
+      children: [
+        { path: 'for-you', component: CompoffForYouRequestComponent },
+        { path: 'for-your-role', component: CompoffForYourRoleRequestComponent },
+        { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+      ],
+    },
+    {
+      path: 'permissions',
+      component: PremissionRequestComponent,
+      children: [
+        { path: 'for-you', component: PremissionForYouRequestComponent },
+        { path: 'for-your-role', component: PremissionForYourRoleRequestComponent },
+        { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+      ],
+    },
+
+    {
+      path: 'attendance-request',
+      component: AttendanceRegularizationRequestComponent,
+      children: [
+        { path: 'for-you', component: AttendanceRegularizationForYouRequestComponent },
+        { path: 'for-your-role', component: AttendanceRegularizationForYouRequestComponent },
+        { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+      ],
+    },
+
+    { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section
     ]
   }
 

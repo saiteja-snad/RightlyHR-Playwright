@@ -4,7 +4,7 @@
             <p class="main-content-heading cursor mb-0">Comp-Off</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" class="custom-btn btn-primary"><i class="bi bi-plus me-2"></i>Request Comp-Off</button>
+            <button type="button" (click)="openModal(addcompoff)"  class="custom-btn btn-primary"><i class="bi bi-plus me-2"></i>Request Comp-Off</button>
         </div>
     </div>
     <div class="row">
@@ -16,3 +16,62 @@
         </div>
     </div>
 </div>
+
+
+<ng-template #addcompoff let-modal>
+    <div class="custom-main-popup-container">
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Request Comp-Off</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form action="">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Worked Date<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-3">Availing<span class="text-danger">*</span></label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="halfDay" name="availing"
+                                    value="Half Day">
+                                <label class="form-check-label" for="halfDay">Half Day</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="fullDay" name="availing"
+                                    value="Full Day">
+                                <label class="form-check-label" for="fullDay">Full Day</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reason<span
+                                class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Type here"></textarea>
+                    </div>
+
+                </div>
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary">Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

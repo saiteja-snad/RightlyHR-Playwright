@@ -249,9 +249,10 @@ a {
 }
 //time-offtabs
 .tabs-container {
-    background-color: #f8f9fa;
+    background-color: #FFFFFF;
     height: 60dvh;
-    border-radius: 10px;
+    border: 1px solid #E7E7ED;
+    border-radius: 1.2rem;
   
     .nav {
       display: flex;
@@ -269,10 +270,11 @@ a {
         line-height: 100%;
         letter-spacing: 0%;
         width: 100%;
-        padding: 10px;
+        padding: 2rem;
         border-bottom: 1px solid #efefef;
-  
+        
         &.active-tab {
+           padding: 2rem;
           background-color: #f2f8ff;
           color: rgba(6, 39, 79, 1);
           border-right: 3px solid #1a1d1f;

@@ -15,11 +15,16 @@ import { PremissionsWaitingForApprovalComponent } from "./premissions/premission
 import { PremissionsApprovedComponent } from "./premissions/premissions-approved/premissions-approved.component";
 import { PremissionsRejectedComponent } from "./premissions/premissions-rejected/premissions-rejected.component";
 import { OnBeHalfOfComponent } from "./on-be-half-of/on-be-half-of.component";
-import { OnBeHalfOfWaitingForApprovalComponent } from "./on-be-half-of-waiting-for-approval/on-be-half-of-waiting-for-approval.component";
-import { OnBeHalfOfApprovalComponent } from "./on-be-half-of-approval/on-be-half-of-approval.component";
-import { OnBeHalfOfProcessComponent } from "./on-be-half-of-process/on-be-half-of-process.component";
-import { OnBeHalfOfRejectComponent } from "./on-be-half-of-reject/on-be-half-of-reject.component";
+
 import { AttendanceComponent } from "./attendance/attendance.component";
+import { OnBeHalfOfWaitingForApprovalComponent } from "./on-be-half-of/on-be-half-of-waiting-for-approval/on-be-half-of-waiting-for-approval.component";
+import { OnBeHalfOfApprovalComponent } from "./on-be-half-of/on-be-half-of-approval/on-be-half-of-approval.component";
+import { OnBeHalfOfProcessComponent } from "./on-be-half-of/on-be-half-of-process/on-be-half-of-process.component";
+import { OnBeHalfOfRejectComponent } from "./on-be-half-of/on-be-half-of-reject/on-be-half-of-reject.component";
+import { PendingApprovalsComponent } from "./pending-approvals/pending-approvals.component";
+import { WfhForYouRequsetComponent } from "./pending-approvals/wfh-for-you-requset/wfh-for-you-requset.component";
+import { WfhForYourRoleRequsetComponent } from "./pending-approvals/wfh-for-your-role-requset/wfh-for-your-role-requset.component";
+import { WfhRequestComponent } from "./pending-approvals/wfh-request/wfh-request.component";
 
 
 export default [
@@ -74,5 +79,22 @@ export default [
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
-  { path: 'attendance', component: AttendanceComponent,}
+  { path: 'attendance', component: AttendanceComponent,},
+  {
+    path: 'pending-approvals',
+    component: PendingApprovalsComponent,
+    children: [
+      {
+        path: 'wfh',
+        component:WfhRequestComponent,
+        children: [
+          { path: 'for-you', component: WfhForYouRequsetComponent },
+          { path: 'for-your-role', component: WfhForYourRoleRequsetComponent },
+          { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+        ],
+      },
+      { path: '', redirectTo: 'wfh', pathMatch: 'full' }, // Default section
+    ]
+  }
+
 ] as Route[];

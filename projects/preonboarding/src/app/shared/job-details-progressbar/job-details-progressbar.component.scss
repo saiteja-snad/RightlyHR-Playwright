@@ -1,0 +1,35 @@
+.progress-bar-container{
+    position: relative;
+    width: 100%;
+    height: 4rem;
+}
+
+.progress-details-content{
+    width: 100%;
+    position: absolute;
+    top: -14px;
+}
+
+.progress-content {
+    padding: 0rem 5rem;
+}
+
+.progress {
+    width: 100%;
+    height: 0.5rem;
+    color: #305889 !important;
+}
+
+.progress-icon {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.progress-text {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: middle;
+}

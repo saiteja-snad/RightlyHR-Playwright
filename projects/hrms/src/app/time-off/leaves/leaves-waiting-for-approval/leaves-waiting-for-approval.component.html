@@ -14,12 +14,14 @@
         </thead>
         <tbody>
             <tr>
-                <td>10410</td>
-                <td>Jhon Doe</td>
-                <td>Jhon&#64;gmail.com</td>
-                <td>+91 9087654321</td>
-                <td>Bengaluru</td>
-                <td>Mysore IT park</td>
+                <td>20/3/2027</td>
+                <td>Sick Leaves </td>
+
+                <td>1</td>
+                <td>Full Day</td>
+                <td>20/3/2027</td>
+                <td>20/3/2027</td>
+
                 <td>
                     <div>
                         <span>
@@ -34,18 +36,12 @@
                         </span>
                     </div>
                 </td>
-                <td>Employee Created</td>
+
+                <td>waiting-for-approval</td>
+
+
             </tr>
-            <tr>
-                <td>10410</td>
-                <td>Jhon Doe</td>
-                <td>Jhon&#64;gmail.com</td>
-                <td>+91 9087654321</td>
-                <td>Bengaluru</td>
-                <td>Mysore IT park</td>
-                <td>HR Administrator</td>
-                <td>Employee Created</td>
-            </tr>
+
         </tbody>
     </table>
 </div>
@@ -54,8 +50,7 @@
         <!-- Dropdown for Rows per Page -->
         <div class="d-flex align-items-center gap-3 p-2">
             <!-- Bootstrap Select -->
-            <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                (ngModelChange)="onRowsChange()">
+            <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
                 <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
                 </option>
             </select>

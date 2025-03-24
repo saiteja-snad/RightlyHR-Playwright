@@ -1,0 +1,62 @@
+import { Route, Routes } from '@angular/router';
+import { BasicInfoComponent } from './personal/basic-info/basic-info.component';
+
+export default [
+    { path: '', redirectTo: '/myinfo/personal/basic-info', pathMatch: 'full' },
+    {
+        path: 'personal', children: [
+            { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
+            { path: 'basic-info',component:BasicInfoComponent },
+            // { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then((m) => m.AddressInfoComponent) },
+            // { path: 'emergency-contact-details', loadComponent: () => import('./personal/contact-details-info/contact-details-info.component').then((m) => m.ContactDetailsInfoComponent) },
+            // { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then((m) => m.FamilyDetailsComponent) },
+            // { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then((m) => m.IdentityDetailsComponent) },
+            // { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then((m) => m.EducationDetailsComponent) },
+            // { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then((m) => m.BankDetailsComponent) },
+            // { path: 'seperation-request', loadComponent: () => import('./personal/seperation-request/seperation-request.component').then((m) => m.SeperationRequestComponent) },
+        ]
+    },
+] as Route[];
+
+// export const myInfoRoutes: Routes = [
+
+//     {
+//         path: '', redirectTo: '/myinfo/personal/basic-info', pathMatch: 'full'
+//     },
+//     {
+//         path: 'personal', children: [
+//             { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
+//             { path: 'basic-info',component:BasicInfoComponent },
+//             // { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then((m) => m.AddressInfoComponent) },
+//             // { path: 'emergency-contact-details', loadComponent: () => import('./personal/contact-details-info/contact-details-info.component').then((m) => m.ContactDetailsInfoComponent) },
+//             // { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then((m) => m.FamilyDetailsComponent) },
+//             // { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then((m) => m.IdentityDetailsComponent) },
+//             // { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then((m) => m.EducationDetailsComponent) },
+//             // { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then((m) => m.BankDetailsComponent) },
+//             // { path: 'seperation-request', loadComponent: () => import('./personal/seperation-request/seperation-request.component').then((m) => m.SeperationRequestComponent) },
+//         ]
+//     },
+//     // {
+//     //     path: 'job', children: [
+//     //         { path: '', redirectTo: 'pre-onboarding-details', pathMatch: 'full' },
+//     //         { path: 'pre-onboarding-details', loadComponent: () => import('./job/pre-onboarding-details/pre-onboarding-details.component').then((m) => m.PreOnboardingDetailsComponent) },
+//     //         { path: 'onboarding-details', loadComponent: () => import('./job/onboarding-details/onboarding-details.component').then((m) => m.OnboardingDetailsComponent) },
+//     //         { path: 'employmentType', loadComponent: () => import('./job/employment-type/employment-type.component').then((m) => m.EmploymentTypeComponent) },
+//     //         { path: 'job-details', loadComponent: () => import('./job/job-details/job-details.component').then((m) => m.JobDetailsComponent) },
+//     //         { path: 'assets', loadComponent: () => import('./job/assets/assets.component').then((m) => m.AssetsComponent) },
+//     //         { path: 'past-experiences', loadComponent: () => import('./job/past-experience/past-experience.component').then((m) => m.PastExperienceComponent) },
+//     //         { path: 'certifications', loadComponent: () => import('./job/certifications/certifications.component').then((m) => m.CertificationsComponent) },
+//     //     ]
+//     // },
+
+//     // {
+//     //     path: 'documents', children: [
+//     //         { path: '', redirectTo: 'employee-documents', pathMatch: 'full' },
+//     //         { path: 'employee-documents', loadComponent: () => import('./documents/employee-documents/employee-documents.component').then((m) => m.EmployeeDocumentsComponent) },
+//     //         { path: 'organization-policy', loadComponent: () => import('./documents/organization-policy/organization-policy.component').then((m) => m.OrganizationPolicyComponent) },
+//     //     ]
+//     // }
+
+
+
+// ];

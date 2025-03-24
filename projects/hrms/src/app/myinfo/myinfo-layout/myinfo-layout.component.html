@@ -1,0 +1,24 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading mb-0">My Info</p>
+        </div>
+    </div>
+
+    <!--nav tabs content-->
+    <div>
+
+    </div>
+
+    <div class="myinfo-main-container d-flex gap-4">
+        <!--User profile content-->
+        <div class="card user-profile-content p-4">
+            <app-profile-info-details />
+        </div>
+
+        <!--main content-->
+        <div class="card myinfo-main-content p-4">
+            <router-outlet />
+        </div>
+    </div>
+</div>

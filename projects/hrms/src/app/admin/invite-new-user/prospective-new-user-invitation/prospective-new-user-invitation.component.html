@@ -1,0 +1,29 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+        </div>
+    </div>
+
+    <!--tabs content-->
+    <div class="my-4">
+        <app-new-user-invitation-tabs />
+    </div>
+
+    <!--content-->
+    <div class="card custom-content-data p-5">
+        <div class="input-content mb-4">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-3">Search Employee<span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name"
+                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100">
+                    <!-- Template for selected item -->
+                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+                    <!-- Template for dropdown items -->
+                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                </p-select>
+            </div>
+        </div>
+    </div>
+</div>

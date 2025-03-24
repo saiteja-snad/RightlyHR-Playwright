@@ -23,6 +23,6 @@ export class ProspectiveEmployeesComponent implements OnInit {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/dashboard'])
+    this.router.navigate(['/admin/dashboard'])
   }
 }

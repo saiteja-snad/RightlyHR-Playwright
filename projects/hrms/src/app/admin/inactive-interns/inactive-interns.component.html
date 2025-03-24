@@ -1,1 +1,54 @@
-<p>inactive-interns works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+        </div>
+    </div>
+    <div>
+        <!--Input search-->
+        <div class="input-group custom-search mb-4">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee Name</th>
+                        <th>Personal Email</th>
+                        <th>Phone Number</th>
+                        <th>Location</th>
+                        <th>Sub Location</th>
+                        <th>Designation</th>
+                        <th>Sub Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>10410</td>
+                        <td>Jhon Doe</td>
+                        <td>Jhon&#64;gmail.com</td>
+                        <td>+91 9087654321</td>
+                        <td>Bengaluru</td>
+                        <td>Mysore IT park</td>
+                        <td>HR Administrator</td>
+                        <td>Employee Created</td>
+                    </tr>
+                    <tr>
+                        <td>10410</td>
+                        <td>Jhon Doe</td>
+                        <td>Jhon&#64;gmail.com</td>
+                        <td>+91 9087654321</td>
+                        <td>Bengaluru</td>
+                        <td>Mysore IT park</td>
+                        <td>HR Administrator</td>
+                        <td>Employee Created</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

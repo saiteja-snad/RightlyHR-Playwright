@@ -36,12 +36,24 @@ import { TimeOffForYouRequestComponent } from "./pending-approvals/time-off-requ
 import { TimeOffForYourRoleRequestComponent } from "./pending-approvals/time-off-request/time-off-for-your-role-request/time-off-for-your-role-request.component";
 import { AttendanceRegularizationRequestComponent } from "./pending-approvals/attendance-regularization-request/attendance-regularization-request.component";
 import { AttendanceRegularizationForYouRequestComponent } from "./pending-approvals/attendance-regularization-request/attendance-regularization-for-you-request/attendance-regularization-for-you-request.component";
+import { LeavesWaitingForApprovalComponent } from "./leaves/leaves-waiting-for-approval/leaves-waiting-for-approval.component";
+import { LeavesApprovalComponent } from "./leaves/leaves-approval/leaves-approval.component";
+import { LeavesProcessedComponent } from "./leaves/leaves-processed/leaves-processed.component";
+import { LeavesRejectedComponent } from "./leaves/leaves-rejected/leaves-rejected.component";
 
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
   {
     path: 'leaves', component: LeavesComponent,
+    children: [
+      { path: 'waiting-for-approval', component: LeavesWaitingForApprovalComponent },
+      { path: 'approved', component: LeavesApprovalComponent },
+      { path: 'processed', component: LeavesProcessedComponent },
+      { path: 'rejected', component: LeavesRejectedComponent },
+
+      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    ]
 
   },
   {

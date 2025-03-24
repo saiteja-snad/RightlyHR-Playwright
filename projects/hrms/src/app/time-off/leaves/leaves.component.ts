@@ -5,10 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
+import { LeavesApprovaltabsComponent } from "../../shared/leaves-approvaltabs/leaves-approvaltabs.component";
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-leaves',
-  imports: [ CommonModule,NgbNavModule,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,Select],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, LeavesApprovaltabsComponent,RouterModule],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss'
 })

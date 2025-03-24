@@ -11,7 +11,7 @@ export const environment = {
 
   clientId: 'cfadeab2-82eb-4bc5-ac8b-68f70bc419dc',
   authority: 'https://login.microsoftonline.com/ed42f5a7-c4f8-48ca-bc5e-a682d0e3ad89/',
-  redirectUrl: '/uservalidation',
+  redirectUrl: '/user-validation',
   baseUrl: "https://localhost:44371/",
   scopeUri: ["api://2a499506-f882-450b-a190-a0044bcc311d/api-access"],
 

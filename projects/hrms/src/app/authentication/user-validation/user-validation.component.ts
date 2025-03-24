@@ -44,7 +44,7 @@ export class UserValidationComponent {
   
           setTimeout(() => {
             if (response.roles.length <= 0) {
-              this.router.navigate(['/unAuth']);
+              this.router.navigate(['/unauthorized']);
             } else if (response.roles.includes('ADMIN') || response.roles.includes('HR MANAGER')) {
               this.router.navigate(['/admin']);
             } else {
@@ -53,12 +53,12 @@ export class UserValidationComponent {
           }, 2000);
   
         } else {
-          this.router.navigate(['/unAuth']);
+          this.router.navigate(['/unauthorized']);
         }
       },
       error: (err) => {
         console.log(err);
-        this.router.navigate(['/unAuth']);
+        this.router.navigate(['/unauthorized']);
       },
     });
   }

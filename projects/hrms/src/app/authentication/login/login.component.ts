@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MsalService } from '@azure/msal-angular';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class LoginComponent {
     private http:AuthService,
     private router:Router,
     private activatedRoute:ActivatedRoute,
-    config: NgbModalConfig, private modalService: NgbModal,
+    config: NgbModalConfig, private modalService: NgbModal,private msalService: MsalService
     ){
       config.backdrop = 'static';
     config.keyboard = false;

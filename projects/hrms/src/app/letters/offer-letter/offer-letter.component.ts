@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
 import { Select } from 'primeng/select';
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, LettersTabComponent, Select],
+  imports: [CommonModule, LettersTabComponent, Select, DateformatPipe],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss'
 })
@@ -48,6 +49,9 @@ export class OfferLetterComponent {
   ];
 
   selectedEmployee: any;
+  prospectiveEmpData = {} as any;
+  jobDesignation!: string | null;
+  authorityDesignation!: string | null;
   @ViewChild('success') success: any;
 
   constructor(private router: Router, private modalService: NgbModal) { }

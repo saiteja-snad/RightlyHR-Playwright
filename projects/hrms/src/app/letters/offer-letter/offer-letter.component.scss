@@ -4,3 +4,318 @@ input:focus{
     border: 1px solid #DEE8F3 !important;
     background-color: #F8FBFF !important;
 }
+
+
+*{
+    letter-spacing: normal;
+    text-align: left;
+    font-stretch: normal;
+    font-style: normal;
+    font-family: Verdana, Tahoma, sans-serif;
+  }
+  
+  .anchor-div{
+    text-decoration: none;
+    color:#222b45 ;
+  }
+  .input-content {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .offer-container{
+    background-color:#f9fbff;
+    padding: 10px 20px;
+  }
+  .save{
+    background-color: #304ff4;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    width: 8vw;
+    border-radius: 14px;
+  }
+  .no{
+    background-color: #979797;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    width: 8vw;
+    border-radius: 14px;
+  }
+  .offer-letter-card{
+    padding:20px;
+    border-radius: 10px;
+  }
+  
+  .main-heading-div{
+    padding:10px 20px
+  }
+  
+  .Add-User{
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+    text-align: left;
+    color: #222b45;
+  }
+  .dropdown-menu {
+    overflow-y: auto;
+  
+    max-height: 180px;
+    /* max-width: 400px; */
+    max-width: 400px;
+    width: 100%;
+  }
+  .border-right{
+    border-right: 2px solid rgb(231, 229, 229);
+  }
+  
+  .label-text{
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.14;
+    color: #222b45;
+    margin-bottom: 4%;
+  }
+  
+  .bottom-content{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 30px;
+  }
+  
+  .save-btn{
+    background-color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 5px 0px 0px 0px;
+    line-height: 1.14;
+    color: #303851;
+    border: none;
+    text-align: left;
+  }
+  
+  .generate-btn{
+    border-radius: 10px;
+    background-color: #2e427d;
+    color: #ffff;
+  }
+  
+  .input-content{
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 400px;
+    border: 4px solid #eff4fa;
+  }
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  
+  ul,ol{
+    list-style: none;
+  }
+  
+  
+  
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  @media screen and (max-width: 1000px) {
+    
+  .border-right{
+    border-right: none;
+    border-bottom: 2px solid rgb(219, 217, 217);
+  }
+  
+  .btn-div{
+   text-align: center;
+   justify-content: center;
+  }
+  
+  }
+  
+  .input-content-div{
+    padding: 0px 20px;
+    height: 69vh;
+    overflow-y: hidden;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }
+  
+  
+  .se{
+    line-height: 0.5;
+   margin-left: 25px;
+  }
+  
+  
+  .page-div{
+    padding: 20px 80px;
+    box-shadow: 0 4px 8px 0 rgba(0.2, 0.2, 0.2, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.20);
+    height: 380mm;
+      width: 270mm;
+    //   background-image: url(src/assets/images/watermark.png);
+      background-repeat: no-repeat;
+      background-position: center;
+      overflow: hidden;
+  }
+  
+  table {
+    height: 40%;
+  }
+  
+  table,th,td{
+    border: 1px solid #474747;
+    border-collapse: collapse;
+  }
+  
+  th,td {
+    padding: 6px 20px;
+    font-size: 16px;
+  }
+  th{
+    color: #000;
+    font-weight: bold;
+  }
+  td{
+    color: #000;
+    font-size: 16px;
+  }
+  
+  .mytable tr:nth-child(4),
+  .mytable tr:nth-child(10) {
+      
+      background: rgba(255, 255, 204, 255);
+  }
+  
+  .mytable tr:nth-child(9) {
+      background: #fff2cc;
+  }
+  
+  .bullet{
+    list-style: disc;
+  }
+  
+  .stamp{
+    height: 5rem;
+  }
+  
+  .box{
+    display: inline-block;
+    width: 24px;
+    height: 20px;
+    border: 1px solid black;
+    margin-right: 8px;
+  }
+  
+  .t-details{
+    border: 1px solid black;
+    display: flex;
+    /* padding: 5px 0; */
+    margin-bottom: 10px;
+  }
+  
+  .note{
+    font-style: italic;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: justify !important;
+    margin-top: -12px;
+  }
+  
+  .listtext{
+    font-size: 15px;
+    text-align: justify !important;
+    font-family: Verdana, Tahoma, sans-serif;
+  }
+  
+  .bold{
+    font-weight: 600;
+  
+  }
+  
+  .t-bold{
+    font-weight: 700;
+    font-size: 17px;
+  }
+  
+  .boldnone{
+    font-weight: 400;
+  }
+  
+  .liststylenumber{
+    list-style: decimal;
+  }
+  
+  .boldsize{
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  
+  .boldsize1{
+    font-size: 19px;
+    font-weight: 600;
+  }
+  
+  .name{
+    font-size: 18px;
+   padding: 5px;
+  }
+  
+  .boderend{
+    border-right: 1px solid black;
+  }
+  
+  .fcn{
+    font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+   font-weight: 600;
+   font-size: 1.2rem;
+  }
+  
+  .footer{
+    width: 110%;
+     background-color: red;
+     position:absolute;
+     bottom: 0px;
+     margin-left: -170px;
+  }
+  .fcnd{
+    font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+    
+  }
+  
+  .paragraph{
+    font-size: 16px;
+  }
+  
+    .ce{
+      display: flex;
+      align-items: center;
+      
+      
+    }
+  
+  .error-msg{
+    color: red;
+  }
+
+  .ACCEPTANCE{
+    font-size: 18PX;
+    font-weight: 700;
+  }
+  
+  .Signature{
+    font-size: 18PX;
+  }
+  
+  .family2 {
+    font-family: autographsignatureFont;
+    font-size: xx-large;
+  }

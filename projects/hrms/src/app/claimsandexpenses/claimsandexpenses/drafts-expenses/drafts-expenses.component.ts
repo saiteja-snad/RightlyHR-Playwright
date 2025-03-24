@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-drafts-expenses',
@@ -7,5 +8,8 @@ import { Component } from '@angular/core';
   styleUrl: './drafts-expenses.component.scss'
 })
 export class DraftsExpensesComponent {
-
+  constructor(private modalService: NgbModal) { }
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, size:'xl' ,backdrop: 'static' });
+  }
 }

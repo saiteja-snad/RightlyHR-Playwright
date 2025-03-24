@@ -23,15 +23,64 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu py-0">
-                                <li><a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>View Details</a>
+                                <li (click)="openModal(viewDetailsModal)"><a class="dropdown-item"><i class="bi bi-paperclip me-2"></i>View Details</a>
                                 </li>
 
                             </ul>
                         </div>
                     </td>
                 </tr>
-
             </tbody>
         </table>
     </div>
 </div>
+
+<ng-template #viewDetailsModal let-modal>
+    <div class="custom-main-popup-container">
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Expenses Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <div class="custom-table-content">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Expense Title</th>
+                            <th>Expense Date</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
+        
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Food</td>
+                            <td>33/09/2025</td>
+                            <td>888</td>
+                            <td>Rejected</td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu py-0">
+                                        <li><a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>View Details</a>
+                                        </li>
+        
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-template>

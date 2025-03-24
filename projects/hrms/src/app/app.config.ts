@@ -4,7 +4,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
-import { provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+import { MSALGuardConfigFactory, MSALInstanceFactory, MSALInterceptorConfigFactory } from './azure/msal-config';
+import { MSAL_GUARD_CONFIG,MSAL_INSTANCE,MSAL_INTERCEPTOR_CONFIG,MsalBroadcastService,MsalGuard,MsalInterceptor,MsalService, } from '@azure/msal-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,6 +19,26 @@ export const appConfig: ApplicationConfig = {
         preset: Aura,
       },
     }),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MsalInterceptor,
+      multi: true,
+    },
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory,
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: MSALGuardConfigFactory,
+    },
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useFactory: MSALInterceptorConfigFactory,
+    },
+    MsalGuard,
+    MsalService,
+    MsalBroadcastService,
   ],
   
 };

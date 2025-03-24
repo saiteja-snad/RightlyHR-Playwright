@@ -1,1 +1,94 @@
-<p>login works!</p>
+<div class="container-fluid ">
+
+    <!-- login page card starts -->
+    <div class="card shadow">
+
+        <!-- Login form starts -->
+        <form name="Login" #Login="ngForm" (ngSubmit)="Login.valid && login(Login)">
+
+            <!--logo-->
+            <div class="logo-div">
+                <img src="assets/images/fusion-new-logo.jpg" alt="Fusion-Plus-Logo" class="logo">
+            </div>
+            <!--logo ends-->
+
+            <!--Login to your account heading-->
+            <div class="login-heading-div">
+                <span class="Login-To-Your-Account">
+                    Login To Your Account
+                </span>
+            </div>
+            <!--heading ends-->
+            <div class="form-body mb-4">
+                <div class="form-body">
+                    <!-- <div class="error" *ngIf="errormsg">{{errormsg}} </div> -->
+                    <div class="mb-4">
+                        <label for="exampleInputEmail1" class="form-label login-input-head">Email</label>
+                        <div class="input-group mb-3 log">
+                            <input type="email" class="form-control login-input" aria-describedby="emailHelp"
+                                id="userName" name="userName" #userName="ngModel" [(ngModel)]="signIn.userName"
+                                placeholder="Enter Email Id" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                                required />
+
+                        </div>
+                        <small class="text-danger"
+                            *ngIf="(userName.touched && userName.invalid) || (userName.pristine && Login.submitted) || userName.errors?.['pattern']">
+                            Email Id is required</small>
+                    </div>
+                    <div class="mb-4">
+
+                        <label for="exampleInputPassword1" class="form-label login-input-head">Password</label>
+                        <div class="input-group log">
+                            <input [type]="changetype?'password':'text'" class="form-control login-input"
+                                placeholder="Enter Password" id="Password" name="Password" #Password="ngModel"
+                                [(ngModel)]="signIn.Password" required>
+                            <span class="input-group-text eye-icon-div" id="basic-addon1" (click)="viewpassword()">
+                                <i [ngClass]="visible?'bi bi-eye':'bi bi-eye-slash'"></i></span>
+                        </div>
+                        <small class="text-danger"
+                            *ngIf="(Password.touched && Password.invalid) || (Password.invalid && Login.submitted)">Password
+                            is required</small>
+                    </div>
+
+                    <div class="row mb-4 mt-4">
+                        <!-- <div class="col-md-6">
+                <div class="mb-3 form-check">
+                    <input class="form-check-input" type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="flexCheckDefault">Remember me</label>
+                  </div>
+               </div>
+               <div class="col-md-6">
+                <div class="forgot-div">
+                    <span class="Forgot-Password">
+                        Forgot Password?
+                      </span>
+                  </div>
+               </div> -->
+                    </div>
+
+                </div>
+                <div class="mb-4 mt-4 login-button-div">
+                    <button type="submit" class="login-button">Log In</button>
+                </div>
+            </div>
+        </form>
+        <!--Form ends-->
+
+    </div>
+    <!--card ends-->
+
+</div>
+
+<ng-template #successhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+      <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
+    </div>
+  </ng-template>
+  
+  <ng-template #errorhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+      <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
+    </div>
+  </ng-template>

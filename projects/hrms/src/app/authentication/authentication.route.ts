@@ -5,7 +5,7 @@ import { UnauthorizedLoginComponent } from "./unauthorized-login/unauthorized-lo
 
 
 export default [
-    { path: '', redirectTo: '/login', pathMatch: 'full' },
+    // { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'user-validation', component: UserValidationComponent },
     { path: 'unauthorized', component: UnauthorizedLoginComponent },

@@ -10,6 +10,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class DraftsExpensesComponent {
   constructor(private modalService: NgbModal) { }
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size:'xl' ,backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size:'lg' ,backdrop: 'static' });
   }
 }

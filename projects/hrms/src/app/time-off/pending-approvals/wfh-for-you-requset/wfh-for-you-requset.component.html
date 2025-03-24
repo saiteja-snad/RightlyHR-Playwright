@@ -71,8 +71,8 @@
                                 <ul class="dropdown-menu py-0">
                                     <li (click)="openModal(approval)"><a class="dropdown-item"><i
                                                 class="bi bi-check-circle me-2"></i>Approve</a></li>
-                                    <li><a class="dropdown-item"><i class="bi bi-x-circle me-2"
-                                                (click)="openModal(reject)"></i>Reject</a></li>
+                                    <li   (click)="openModal(rejectmodal)"><a class="dropdown-item"><i class="bi bi-x-circle me-2"
+                                              ></i>Reject</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -145,7 +145,7 @@
 
 
 
-<ng-template #reject let-modal>
+<ng-template #rejectmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
 
         <div class="custom-main-popup-content p-5">

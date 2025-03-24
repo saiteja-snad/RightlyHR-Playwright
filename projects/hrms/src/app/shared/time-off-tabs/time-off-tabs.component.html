@@ -1,29 +1,28 @@
 <div class="tabs-header">
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/leaves/waiting-for-approval']" [class.active-tab]="isActive('/time-off/leaves/waiting-for-approval')" aria-current="page">Time-Off</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/wfh/waiting-for-approval']" [class.active-tab]="isActive('/time-off/wfh/waiting-for-approval')|| isActive('/time-off/wfh/approved') ">WFH</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']" [class.active-tab]="isActive('/time-off/comp-off/waiting-for-approval')">Comp-Off</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/premissions/waiting-for-approval']" [class.active-tab]="isActive('/time-off/premissions/waiting-for-approval')">Permissions</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/pending-approvals/time-off-request/for-you']" [class.active-tab]="isActive('/time-off/pending-approvals/time-off-request/for-you')">Pending Approvals</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/attendance']" [class.active-tab]="isActive('time-off/attendance')">Attendance</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/on-behalf-of/waiting-for-approval']" [class.active-tab]="isActive('/time-off/on-behalf-of/waiting-for-approval')">On Behalf Of</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/user/assignee']" [class.active-tab]="isActive('/user/assignee')">On Behalf Of Approvals</a>
-      </li>
-    </ul>
-
-  </div>
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/leaves/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }" aria-current="page">Time-Off</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/wfh/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">WFH</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Comp-Off</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/premissions/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Permissions</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/time-off-request/for-you']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Pending Approvals</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/attendance']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Attendance</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/on-behalf-of/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">On Behalf Of</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/user/assignee']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">On Behalf Of Approvals</a>
+    </li>
+  </ul>
+</div>

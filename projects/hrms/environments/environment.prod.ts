@@ -1,0 +1,30 @@
+export const environment = {
+  production: true,
+  webSocketUrl: 'ws://api.fusion.snadhr.com',
+  ApiUrl: 'https://fusionplusapi.rightlyhr.com/api/',
+  viewUrl: 'https://fusionplus.blob.core.windows.net/fusiondocuments/',
+
+  modules: [
+    { id: 18, moduleName: 'Probation ' },
+    { id: 23, moduleName: 'PMS' }  
+  ],
+
+  clientId: 'cfadeab2-82eb-4bc5-ac8b-68f70bc419dc',
+  authority: 'https://login.microsoftonline.com/ed42f5a7-c4f8-48ca-bc5e-a682d0e3ad89/',
+  redirectUrl: '/uservalidation',
+  baseUrl: "https://localhost:44371/",
+  scopeUri: ["api://2a499506-f882-450b-a190-a0044bcc311d/api-access"],
+
+  dateformat: 'dd-MMM-yyyy',
+  paidLeaveCategoryId: 109,
+  mandatoryLeaveCategoryId: 110,
+
+  SeparationrequestmoduleId: 13,
+  RecallrequestmoduleId: 14,
+  ProbationrequestmoduleId: 18,
+  ProbationExtensionId: 2,
+  ProbationNoticePeriodId: 0,
+  ProbationbuttonbeforeId: 1,
+  ProbationExtendPeriodTimes: 3,
+  PMSrequestmoduleId: 23,
+};

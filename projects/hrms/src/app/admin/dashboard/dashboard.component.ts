@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from "../document-history/document-history-layout/document-history-layout.component";
+import { Subscription } from 'rxjs';
+import { HttpService } from '../../services/http.service';
 @Component({
   selector: 'app-dashboard',
   imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent],
@@ -10,6 +12,11 @@ import { DocumentHistoryLayoutComponent } from "../document-history/document-his
 })
 
 export class DashboardComponent {
+  subscription!: Subscription;
+  
+  ngOnInit(): void {
+    this.activeEmpData();
+  }
   cardItems = [
     {
       label: 'Prospective Employees',
@@ -69,11 +76,23 @@ export class DashboardComponent {
     },
   ];
 
-  constructor(private router:Router){
+  constructor(private router:Router,private http: HttpService,){
 
   }
-
+  activeEmpData() {
+    this.subscription = this.http
+      .getData(`Employeedata/ActiveEmployees`)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          
+          }
+      });
+  }
   generateDocument(){
     this.router.navigate(['/admin/letters/offer-letter'])
   }
+
+
+  
 }

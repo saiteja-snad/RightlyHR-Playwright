@@ -1,17 +1,71 @@
 <div class="custom-main-component-container">
     <div class="card myinfo-content-card p-4">
-        <div class="d-flex justify-content-between mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
                 <span class="myinfo-sub-header">Basic Details</span>
             </div>
-            <div>
-                <a><i class="bi bi-pencil-square"></i></a>
+            <div *ngIf="!buttons">
+                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
             </div>
         </div>
 
         <!--input content-->
         <div class="myinfo-input-content">
-
+            <form action="">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Employee ID<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter Employee Id">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salutation<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="designation" optionValue="id" optionLabel="name" placeholder="Please select salutation" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">First Name<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter first name">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Middle Name<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter middle name">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Last Name<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter last name">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Gender<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select gender" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Date Of Birth<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Blood Group<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="location" optionLabel="name" placeholder="Please select blood group" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Martial Status<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="sublocation" optionLabel="name" placeholder="Please select martial Status" class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

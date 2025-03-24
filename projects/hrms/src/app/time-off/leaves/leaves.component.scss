@@ -1,0 +1,33 @@
+.employee-details-card {
+    border: 0.5px solid rgba(218, 218, 218, 1);
+    border-radius: 1rem;
+
+    box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.05);
+
+    .profile-card {
+        width: max-content;
+        padding: 0.4rem 1.5rem;
+        font-size: 2.4rem;
+        border-radius: 1rem;
+        border: none;
+    }
+
+
+    .dashed-line {
+
+        border: 0.5px solid rgba(218, 218, 218, 1)
+    }
+
+    .label {
+        font-weight: 500;
+        font-size: var(--fontsize16);
+        color: var(--ash-color);
+    }
+
+    .labelcount {
+        font-weight: 400;
+        font-size: var(--fontsize20);
+        color: var(--primary-color);
+    }
+}
+

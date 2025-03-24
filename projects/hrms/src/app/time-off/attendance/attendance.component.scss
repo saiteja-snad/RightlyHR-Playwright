@@ -1,0 +1,41 @@
+.employee-lable {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: #06274F;
+    
+}
+.status-present {
+    color: green;
+    font-weight: 7-0;
+  }
+  
+  .status-absent {
+    color:  #D8332A;
+    
+    font-weight: 700;
+  }
+  
+  .status-leave {
+    color: #3449BF;
+    font-weight: 700;
+  }
+  
+  .status-wfh {
+    color: #BF8534;
+    font-weight: 700;
+  }
+  
+  .status-weekend {
+    color: #D31973;
+    font-weight:700;
+  }
+  .status-norecords{
+    color: #7C7C7C;
+    font-weight:700;
+  }

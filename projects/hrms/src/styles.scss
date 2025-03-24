@@ -198,7 +198,8 @@ a {
         z-index: 1;
     }
 
-    th,td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -224,6 +225,15 @@ a {
     tr:nth-child(even) {
         background-color: var(--table-data-bg-even-color);
         /* Light grey background */
+    }
+
+    .dropdown-item {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: #141414;
+        padding: 0.75rem;
     }
 }
 
@@ -306,7 +316,7 @@ a {
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
             overflow: hidden;
-        
+
             .letter-page-sub-content {
                 padding: 2rem 8rem;
                 font-size: var(--fontsize14);
@@ -317,7 +327,7 @@ a {
                 font-weight: 500;
                 font-size: var(--fontsize18);
             }
-        
+
             .letter-footer {
                 width: 270mm;
                 background-color: #06274F;
@@ -325,13 +335,13 @@ a {
                 position: absolute;
                 bottom: 0px;
                 padding: 1.5rem 1rem;
-                
+
                 .company-name {
                     font-size: var(--fontsize14);
                     font-weight: 600;
                 }
-        
-                .company-address{
+
+                .company-address {
                     font-size: var(--fontsize12);
                     font-weight: 500;
                 }
@@ -345,7 +355,7 @@ a {
     border: 1px solid #CCDAEC;
     border-radius: 0.8rem;
     overflow: hidden;
-    
+
     .custom-input-group-search {
         border: none;
         padding: 1rem 1.5rem;
@@ -360,7 +370,7 @@ a {
         vertical-align: middle;
     }
 
-    input:focus{
+    input:focus {
         outline: none;
         box-shadow: none;
     }
@@ -397,7 +407,7 @@ a {
     }
 }
 
-.authority-signature{
+.authority-signature {
     font-size: 3.2rem;
     font-family: "autographsignatureFont";
 }
@@ -489,3 +499,134 @@ input[type="file"] {
         background-color: #305889 !important;
     }
 }
+
+//info icon
+.info-icon {
+    width: 2rem;
+    height: 2rem;
+}
+
+//time-offtabs
+.tabs-container {
+    background-color: #FFFFFF;
+    height: 60dvh;
+    border: 1px solid #E7E7ED;
+    border-radius: 1.2rem;
+
+    .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+
+        .nav-link {
+            color: rgba(6, 39, 79, 1);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            width: 100%;
+            padding: 2rem;
+            border-bottom: 1px solid #efefef;
+
+            &.active-tab {
+                padding: 2rem;
+                background-color: #f2f8ff;
+                color: rgba(6, 39, 79, 1);
+                border-right: 3px solid #1a1d1f;
+                font-weight: 700;
+            }
+        }
+    }
+}
+
+//pending-approvals-tabs
+.pending-approvals-tabs {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--header-background-color);
+
+    .nav-link {
+        display: flex;
+        gap: 9px;
+        color: rgba(6, 39, 79, 1);
+        text-decoration: none;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+    }
+
+    .active-tab {
+        border-bottom: 2px solid rgba(6, 39, 79, 1);
+        color: rgba(6, 39, 79, 1);
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+
+    }
+}
+
+
+
+//pagenation stylings
+.pagination-content {
+    .custom-pagination-select:focus {
+        outline: none;
+        box-shadow: none;
+        border: 1px solid #C0C0C0;
+    }
+
+    .p-paginator {
+        .p-paginator-pages {
+            .p-paginator-page {
+                border-radius: 50%;
+                width: 1.875rem;
+                height: 1.875rem;
+                margin: 0 0.2rem;
+                color: #333;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .p-paginator-page:hover {
+                color: #FFFFFF;
+                background-color: #305889 !important;
+            }
+
+            .p-paginator-page-selected {
+                color: #FFFFFF;
+                background-color: #305889 !important;
+            }
+        }
+
+        .p-paginator-first,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-last {
+            border-radius: 50%;
+            width: 1.875rem;
+            height: 1.875rem;
+            margin: 0 0.3rem;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .p-paginator-first.p-disabled,
+        .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,
+        .p-paginator-last.p-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+}
+
+//pagenation stylings

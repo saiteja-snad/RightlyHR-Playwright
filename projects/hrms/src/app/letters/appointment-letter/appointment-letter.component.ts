@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 @Component({
   selector: 'app-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, Select],
+  imports: [CommonModule, LettersTabComponent, Select, DateformatPipe],
   templateUrl: './appointment-letter.component.html',
   styleUrl: './appointment-letter.component.scss'
 })
@@ -48,6 +49,9 @@ export class AppointmentLetterComponent {
   ];
 
   selectedEmployee: any;
+  appointmentletter = {} as any;
+  authorityDesignation!:string|null;
+  panDetails :any
   @ViewChild('success') success: any;
 
   constructor(private router: Router, private modalService: NgbModal) { }

@@ -425,3 +425,67 @@ a {
         border-bottom: 3px solid var(--navtab-item-color);
     }
 }
+
+// events component stylings
+.event-card {
+    border: none;
+    border-left: 5px solid #06274F;
+    box-shadow: 0px 0px 6px 1px #2222221A;
+    border-radius: 1.2rem;
+    padding: 1.6rem;
+    width: 40rem;
+    border-radius: 1.2rem;
+    vertical-align: middle;
+
+    .event-icon-card {
+        padding: 0.8rem;
+        border: none;
+        background-color: #D7E7FA;
+
+        .event-icon {
+            width: 2.4rem;
+            height: 2.4rem;
+        }
+    }
+
+    .event-name {
+        font-weight: 500;
+        font-size: var(--fontsize14);
+    }
+
+    .date {
+        font-weight: 500;
+        font-size: 12px;
+        color: #65778D;
+    }
+
+    .bi-three-dots-vertical {
+        font-size: var(--fontsize16);
+    }
+
+    .event-content-text {
+        font-weight: 400;
+        font-size: var(font-size);
+        color: #808E9D;
+    }
+
+    .vr-line {
+        opacity: 1;
+        border: 1px solid #DEE8F3;
+    }
+
+    .event-image {
+        height: 12.5rem;
+        border-radius: 1.2rem;
+    }
+}
+
+// file styling
+input[type="file"] {
+    &::-webkit-file-upload-button {
+        border-radius: 0.5rem;
+        color: #FFFFFF !important;
+        margin-left: 0rem !important;
+        background-color: #305889 !important;
+    }
+}

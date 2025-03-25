@@ -4,6 +4,9 @@
             <div *ngIf="isActive('time-off')">
                 <app-time-off-tabs></app-time-off-tabs>
             </div>
+            <div *ngIf="isActive('claimsandexpenses/expenses')">
+                <app-my-expenses-tab></app-my-expenses-tab>
+            </div>
         </div>
         <div class="d-flex gap-5">
             <div class="dropdown cursor">

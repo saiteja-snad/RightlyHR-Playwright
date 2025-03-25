@@ -1,0 +1,14 @@
+<div class="main-layout-container w-100">
+    <div class="">
+        <app-header />
+    </div>
+    <div class="display-area">
+        <div class="card custom-main-display-card" *ngIf="router.url === '/job-details'">
+            <router-outlet/>
+        </div>
+
+        <div class="card custom-main-display-card all-main-details-content">
+            <router-outlet/>
+        </div>
+    </div>
+</div>

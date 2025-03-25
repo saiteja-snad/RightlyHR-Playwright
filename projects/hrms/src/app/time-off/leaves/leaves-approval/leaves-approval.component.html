@@ -49,8 +49,7 @@
         <!-- Dropdown for Rows per Page -->
         <div class="d-flex align-items-center gap-3 p-2">
             <!-- Bootstrap Select -->
-            <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                (ngModelChange)="onRowsChange()">
+            <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
                 <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
                 </option>
             </select>

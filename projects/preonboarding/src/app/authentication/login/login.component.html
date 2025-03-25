@@ -1,0 +1,51 @@
+<div class="login-main-container">
+    <div class="card login-card">
+        <div class="text-center">
+            <img src='/logos/rightlyhr-full-logo.png' alt="RightlyHr Logo" class="logo-image">
+            <p class="main-content-heading my-5">Login to your account</p>
+        </div>
+        <div class="px-3">
+            <form [formGroup]="loginfrom">
+                <div class="mb-3">
+                    <label for="name" class="form-label custom-label mb-2">User Name<span class="required">*</span></label>
+                    <div class="input-group custom-input-group"
+                        [ngClass]="{'error-border': loginfrom.get('username')?.touched && loginfrom.get('username')?.invalid}">
+                        <span class="input-group-text custom-input-group-text" id="basic-addon1">
+                            <img src="/icons/mail.png" alt="profile icon" class="form-icon">
+                        </span>
+                        <input type="text" formControlName="username" class="form-control custom-input"
+                            placeholder="Please enter user name" id="name" aria-describedby="Name">
+                    </div>
+                    <div class="d-flex justify-content-end error-msg mb-2">
+                        <small *ngIf="loginfrom.get('username')?.touched && loginfrom.get('username')?.invalid">
+                            <small *ngIf="loginfrom.get('username')?.errors?.['required']">Username is required.</small>
+                        </small>
+                    </div>
+                </div>
+                <div class="mb-5">
+                    <label for="password" class="form-label custom-label mb-2">Password<span
+                            class="required">*</span></label>
+                    <div class="input-group custom-input-group"
+                        [ngClass]="{'error-border': loginfrom.get('password')?.touched && loginfrom.get('password')?.invalid }">
+                        <span class="input-group-text custom-input-group-text" id="basic-addon1">
+                            <img src="/icons/lock.png" alt="profile icon" class="form-icon"></span>
+                        <input [type]="changetype?'password':'text'" formControlName="password"
+                            class="form-control custom-input" placeholder="Please enter password" id="password"
+                            aria-describedby="password">
+                        <span class="input-group-text custom-input-group-text" id="basic-addon1"
+                            (click)="viewpassword()">
+                            <i [ngClass]="visible?'bi bi-eye':'bi bi-eye-slash'" class="custom-eye-icon"></i></span>
+                    </div>
+                    <div class="d-flex justify-content-end error-msg mb-2">
+                        <small *ngIf="loginfrom.get('password')?.touched && loginfrom.get('password')?.invalid">
+                            <small *ngIf="loginfrom.get('password')?.errors?.['required']">Password is required.</small>
+                        </small>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <button class="custom-btn btn-primary w-100 py-3" [disabled]="loginfrom.invalid">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

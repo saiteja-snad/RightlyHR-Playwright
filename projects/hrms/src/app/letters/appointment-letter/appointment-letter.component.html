@@ -102,1530 +102,642 @@
         <div class="col-sm-12 col-md-9 cols-lg-8 col-xl-8 col-xxl-7">
             <div class="card letter-data-content p-4">
                 <div class="d-flex justify-content-center">
-                    <!-- page 1 -->
-                    <div class="page-div" id="pdfContent1">
-                        <br />
-                        <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                            <!-- <app-letterhead></app-letterhead> -->
-                        </div>
-                        <ng-template #doc>
-                            <div style="margin-bottom: 3rem;"></div>
-                        </ng-template>
-
-                        <!-- <div class="row d-flex">
-      <div class="col-lg-8 col-md-8">
-        <p class="letter-heading">
-          Ref: Fusion /{{ appointmentletter.branchCode }}/Employee ID
-          {{ appointmentletter.fusionEmpId }}
-        </p>
-      </div>
-      <div class="col-lg-4 col-md-4">
-        <p class="letter-heading">
-          Date: {{ appointmentletter.appointmentdate | dateformat }}
-        </p>
-      </div>
-    </div> -->
-
-                        <!-- <div class="row">
-      <div class="col d-flex justify-content-between">
-        <p class="letter-headingd-no-bottom">
-          Ref: Fusion/{{ appointmentletter.branchCode }}/Employee ID:
-          {{ appointmentletter.fusionEmpId }}
-        </p>
-        <p class="letter-headingd-no-bottom">
-          Date:
-          {{ appointmentletter.appointmentdate | dateformat }}
-        </p>
-      </div>
-    </div> -->
-
-                        <div class="mb-3 d-flex justify-content-center">
-                            <p class="letter-heading1">APPOINTMENT LETTER</p>
-                        </div>
-                        <div class="mb-3">
-                            <p class="text-end paragraph">Date:{{ appointmentletter.appointmentdate | dateformat }}</p>
-                        </div>
-
-                        <!-- <div> -->
-                        <!-- <p class="letter-headingd-no-bottom">
-        <strong>
-          {{ appointmentletter.firstName }} {{appointmentletter.middleName}} {{ appointmentletter.lastName }}</strong>
-      </p> -->
-                        <!-- <P class="letter-headingd-no-bottom">
-      <strong>
-        <span *ngIf="appointmentletter.addressLine1">
-          {{ appointmentletter.addressLine1 }},<br /> <span>{{ appointmentletter.addressLine2 }},</span><br />
-          <span>{{ appointmentletter.city }}, {{ appointmentletter.state }},</span><br />
-          <span>{{ appointmentletter.country }} - {{ appointmentletter.zipCode }}.</span>
-        </span>
-      </strong>
-    </P> -->
-                        <!-- <p class="letter-headingd-no-bottom">Email: {{ appointmentletter.emailaddress }}</p>
-    <p class="letter-headingd-no-bottom">Ph: + 91 {{ appointmentletter.contactnumber }}</p> -->
-                        <!-- </div> -->
-
-                        <div class="pt-4">
-                            <p class="mt-1">
-                                <span class="letter-heading"><strong>Dear
-                                        {{ appointmentletter.firstName }} {{appointmentletter.middleName}}
-                                        {{ appointmentletter.lastName }},</strong></span>
-                            </p>
-                            <p class="mb-2 paragraph">
-                                Current Address:
-                            </p>
-                            <p class="paragraph mb-4" *ngIf="appointmentletter.addressLine1"> {{
-                                appointmentletter.addressLine1 }}, {{
-                                appointmentletter.addressLine2 }}, {{ appointmentletter.city }},{{
-                                appointmentletter.state }}, {{
-                                appointmentletter.zipCode }}.
-                            </p>
-                            <p class="letter-heading unerlineo mb-4">
-                                Welcome to RightlyHR!
-                            </p>
-                            <p class="paragraph mb-3">
-                                Pursuant to your application for employment with us, and the subsequent selection
-                                process, it gives us
-                                great pleasure to appoint you as <strong>{{appointmentletter.jobRole}}</strong> with
-                                RightlyHR at the location that will be informed to you separately.
-                            </p>
-                            <p class="paragraph mb-3">We hope your association with us will be challenging and rewarding
-                                to your
-                                career. Your employment with the Company shall be subject to the following terms and
-                                conditions: </p>
-                        </div>
-                        <div class="mb-3">
-                            <p class="letter-heading mb-3">1. Compensation:</p>
-                            <p class="paragraph mb-3"><span class="letter-heading">a)</span> Your total annual cost to
-                                the Company (CTC) will be as detailed in your Offer Letter. Your CTC shall
-                                be due for revision as per the Company policy. Your compensation and benefits may be
-                                amended at the
-                                sole discretion of the Company. </p>
-                            <p class="paragraph mb-2"><span class="letter-heading">b)</span> Your salary is personal and
-                                confidential information and should not be discussed
-                                with anyone nor divulged to anyone in any manner whatsoever. </p>
-                            <p class="paragraph mb-2"><span class="letter-heading">c)</span> In case of any change in
-                                the
-                                existing statute or introduction of a new statute,
-                                the Company reserves a right to adjust the salary components within the then existing
-                                CTC to ensure
-                                that the payments are made in compliance with such statutes. </p>
-                            <p class="paragraph mb-2"><span class="letter-heading">d)</span> Company may from time to
-                                time, deduct any statutory deduction or withhold tax as may be required by applicable
-                                laws. </p>
-                        </div>
-
-                        <div>
-                            <p class="letter-heading mb-3">2. Working Hours and Leave: </p>
-                            <!-- 1 -->
-                            <p class="paragraph mb-2">
-                                <span class="letter-heading">a)</span> The normal working days will be five (5) days a
-                                week
-                                for nine (9) hours per day from 10:00 hrs to
-                                19:00 hrs as per project Requirement. The Company provide flexible working hours,
-                                however, you are
-                                required to abide by the timings of your Work Location / Business Unit as and when
-                                required by the
-                                Company. Further, depending on project/ work contingencies, workload and business
-                                requirements, at
-                                any given time you may be required to work outside these stated hours, including
-                                weekends. You may
-                                also be required to work in shifts, which will be informed to you in advance.
-                            </p>
-                            <!-- 2 -->
-                            <p class="paragraph mb-3"><span class="letter-heading">b)</span> You are expected to work
-                                from
-                                home as and when required by the Company. Please note that you
-                                should have proper infrastructure for working from home, e.g. suitable internet
-                                connection, quiet
-                                workspace, etc. The Company shall pay each employee with the basic setup of the work
-                                from home
-                                infrastructure. You understand that the Company shall not provide any additional
-                                reimbursement for
-                                any expenses incurred by you to set up work from home infrastructure, e.g. electricity
-                                bills,
-                                internet charges, etc. </p>
-
-                            <p class="paragraph mb-3"><span class="letter-heading">c)</span> You may also be expected to
-                                travel to other locations and at times outside of your official working hours. You may
-                                at any time be
-                                called upon to perform other than your normal duties which in the opinion of the Company
-                                are within
-                                your competency to discharge and you will forthwith undertake these duties with due care
-                                and
-                                diligence. In this case, you are required to abide by the timings of your work
-                                location/business unit.
-                            </p>
-
-                            <p class="paragraph mb-3"><span class="letter-heading">d)</span>. You will be entitled to a
-                                certain amount of paid leave which is governed by the Leave Policy of the Company, as
-                                applicable from
-                                time to time. </p>
-
-                            <p class="letter-heading mb-3">3. Right to Transfer/Depute:</p>
-                            <p class="paragraph">
-                                As part of your duties’, you may be required to travel outside of the Company's
-                                premises. Pursuant to any
-                                business requirement, the Company may also transfer or depute you to any other office or
-                                location of the
-                                Company or any of its subsidiaries or affiliates or group companies or to the worksite
-                                or office of the
-                                Company’s customer within or outside of India or as part a business arrangement or, sale
-                                of assets,
-                                merger, takeover, acquisition, or hive-off, the transfer you onto the rolls of another
-                                entity and you
-                                shall accept such transfer or deputation without demur.
-                            </p>
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032</p>
-                        </div>
-                    </div>
-                    <!-- page 1 ends-->
-
-                    <!--page 2-->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent2">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
+                    <div>
+                        <!--page-1-->
+                        <div class="letter-page-content" id="pdfContent1">
+                            <div class="letter-page-sub-content">
+                                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
+                                    <!-- <app-letterhead></app-letterhead> -->
+                                  </div>
+                                  <ng-template #doc>
+                                    <div style="margin-bottom: 3rem;"></div>
+                                  </ng-template>
+                                  <div class="mb-3 d-flex justify-content-center">
+                                    <p class="letter-heading1">APPOINTMENT LETTER</p>
+                                  </div>
+                                  <div class="mb-3">
+                                    <p class="text-end paragraph">Date:{{ appointmentletter.appointmentdate | dateformat }}</p>
+                                  </div>
+                                  <div class="pt-4">
+                                    <p class="mt-1">
+                                      <span class="letter-heading"><strong>Dear
+                                          {{ appointmentletter.firstName }} {{appointmentletter.middleName}}
+                                          {{ appointmentletter.lastName }},</strong></span>
+                                    </p>
+                                    <p class="mb-2 paragraph">
+                                      Current Address:
+                                    </p>
+                                    <p class="paragraph mb-4" *ngIf="appointmentletter.addressLine1"> {{ appointmentletter.addressLine1 }}, {{
+                                      appointmentletter.addressLine2 }}, {{ appointmentletter.city }},{{ appointmentletter.state }}, {{
+                                      appointmentletter.zipCode }}.
+                                    </p>
+                                    <p class="letter-heading unerlineo mb-4">
+                                      Welcome to RightlyHR!
+                                    </p>
+                                    <p class="paragraph mb-3">
+                                      Pursuant to your application for employment with us, and the subsequent selection process, it gives us
+                                      great pleasure to appoint you as <strong>{{appointmentletter.jobRole}}</strong> with RightlyHR  at the location that will be informed to you separately.
+                                    </p>
+                                    <p class="paragraph mb-3">We hope your association with us will be challenging and rewarding to your
+                                      career. Your employment with the Company shall be subject to the following terms and conditions: </p>
+                                  </div>
+                                  <div class="mb-3">
+                                    <p class="letter-heading mb-3">1. Compensation:</p>
+                                    <p class="paragraph mb-3"><span class="letter-heading">a)</span> Your total annual cost to
+                                      the Company (CTC) will be as detailed in your Offer Letter. Your CTC shall
+                                      be due for revision as per the Company policy. Your compensation and benefits may be amended at the
+                                      sole discretion of the Company. </p>
+                                    <p class="paragraph mb-2"><span class="letter-heading">b)</span> Your salary is personal and
+                                      confidential information and should not be discussed
+                                      with anyone nor divulged to anyone in any manner whatsoever. </p>
+                                    <p class="paragraph mb-2"><span class="letter-heading">c)</span> In case of any change in the
+                                      existing statute or introduction of a new statute,
+                                      the Company reserves a right to adjust the salary components within the then existing CTC to ensure
+                                      that the payments are made in compliance with such statutes. </p>
+                                    <p class="paragraph mb-2"><span class="letter-heading">d)</span> Company may from time to
+                                      time, deduct any statutory deduction or withhold tax as may be required by applicable laws. </p>
+                                  </div>
+                    
+                                  <div>
+                                    <p class="letter-heading mb-3">2. Working Hours and Leave: </p>
+                                    <!-- 1 -->
+                                    <p class="paragraph mb-2">
+                                      <span class="letter-heading">a)</span> The normal working days will be five (5) days a week
+                                      for nine (9) hours per day from 10:00 hrs to
+                                      19:00 hrs as per project Requirement. The Company provide flexible working hours, however, you are
+                                      required to abide by the timings of your Work Location / Business Unit as and when required by the
+                                      Company. Further, depending on project/ work contingencies, workload and business requirements, at
+                                      any given time you may be required to work outside these stated hours, including weekends. You may
+                                      also be required to work in shifts, which will be informed to you in advance.
+                                    </p>
+                                    <!-- 2 -->
+                                    <p class="paragraph mb-3"><span class="letter-heading">b)</span> You are expected to work from
+                                      home as and when required by the Company. Please note that you
+                                      should have proper infrastructure for working from home, e.g. suitable internet connection, quiet
+                                      workspace, etc. The Company shall pay each employee with the basic setup of the work from home
+                                      infrastructure. You understand that the Company shall not provide any additional reimbursement for
+                                      any expenses incurred by you to set up work from home infrastructure, e.g. electricity bills,
+                                      internet charges, etc. </p>
+                    
+                                    <p class="paragraph mb-3"><span class="letter-heading">c)</span> You may also be expected to
+                                      travel to other locations and at times outside of your official working hours. You may at any time be
+                                      called upon to perform other than your normal duties which in the opinion of the Company are within
+                                      your competency to discharge and you will forthwith undertake these duties with due care and
+                                      diligence. In this case, you are required to abide by the timings of your work location/business unit.
+                                    </p>
+                                    
+                                    <p class="paragraph mb-3"><span class="letter-heading">d)</span>. You will be entitled to a
+                                      certain amount of paid leave which is governed by the Leave Policy of the Company, as applicable from
+                                      time to time. </p>
+                    
+                                    <p class="letter-heading mb-3">3. Right to Transfer/Depute:</p>
+                                    <p class="paragraph">
+                                      As part of your duties’, you may be required to travel outside of the Company's premises. Pursuant to any
+                                      business requirement, the Company may also transfer or depute you to any other office or location of the
+                                      Company or any of its subsidiaries or affiliates or group companies or to the worksite or office of the
+                                      Company’s customer within or outside of India or as part a business arrangement or, sale of assets,
+                                      merger, takeover, acquisition, or hive-off, the transfer you onto the rolls of another entity and you
+                                      shall accept such transfer or deputation without demur.
+                                    </p>
+                                  </div>
                             </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-                            <p class="letter-heading mb-3">4. Probation:</p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">a)</span> Your probation period will start from the date of
-                                joining
-                                and will continue up to three months from DOJ. At the discretion of the Company, your
-                                probation period may
-                                be extended if it is found that the services provided by you are interrupted or not
-                                satisfactory.
-                            </p>
-                            <p class="paragraph ">
-                                <span class="letter-heading">b)</span> On successful completion of the probation period,
-                                if in
-                                the opinion of the Company, you are found suitable for the appointed post, your
-                                appointment will be
-                                confirmed and communicated to you in writing by the Company.
-                            </p>
-                            <div>
-                                <p class="letter-heading">5. Background Verification:</p>
-                                <p class="paragraph">All documents submitted by you to the Company with reference to the
-                                    above are
-                                    subject to verification
-                                    by the Company at any time during your employment with the Company. You hereby
-                                    specifically authorize
-                                    the Company, or any external agency appointed by the Company to verify your
-                                    educational and employment
-                                    antecedents, your conduct and any other background checks prior to your joining the
-                                    Company or
-                                    thereafter. You are expected to extend your full cooperation during such
-                                    verification. </p>
-                                <p class="paragraph mb-3">This Appointment Letter is subject to you clearing the
-                                    Background Check as
-                                    conducted by the Company In
-                                    the event you fail to cooperate or clear the background check, your employment may
-                                    be terminated by the
-                                    Company forthwith and without providing any prior notice or salary in lieu thereof.
-                                </p>
-                            </div>
-
-                            <div>
-                                <p class="letter-heading">6. Medical Examination:</p>
-                                <p class="paragraph mb-3">You agree to submit yourself for medical examination as
-                                    requested by the Company
-                                    for the purpose of examining your physical/psychological suitability for the
-                                    selected post. </p>
-                            </div>
-
-                            <div>
-                                <p class="letter-heading mt-2">7. Expenses:</p>
-                                <p class="paragraph mb-3">You shall be reimbursed, in accordance with the Company’s
-                                    policies as amended
-                                    from time, for eligible expenses incurred in the course your employment land for
-                                    which you have received
-                                    prior written authorization from the Company. For all such expenses, you shall
-                                    furnish to the Company
-                                    original receipts, statements and vouchers. </p>
-                            </div>
-
-                            <div>
-                                <p class="letter-heading mt-2">
-                                    8. Increments and Promotion:
-                                </p>
-                                <p class="paragraph mb-3">Your growth in the Company and increments in the salary will
-                                    depend solely on
-                                    your performance and contribution to the Company. The appraisal cycle for the
-                                    company is April to
-                                    March.
-                                    You will be eligible for appraisal on pro rata basis. Anyone who joins the Company
-                                    on or after
-                                    November
-                                    1st, he/she will not be eligible for the appraisal cycle for that year. </p>
-                            </div>
-
-                            <div>
-                                <p class="letter-heading mt-2">
-                                    9. Information and security:
-                                </p>
-                                <p class="paragraph mb-3">The role assigned during your employment with the Company
-                                    includes the
-                                    Information Security responsibilities as required by organization and customer. This
-                                    includes
-                                    adhering,
-                                    maintaining information security artefact as required by policy of the organization
-                                    and customer.
-                                    During
-                                    your employment with the Company, you shall not disclose any information to anyone
-                                    including but not
-                                    limited to Company’s customers, prospective customers, people or entities outside
-                                    the Company or to
-                                    any
-                                    Company’s employee which is confidential or trade secret under your previous
-                                    employment contract or
-                                    disclosure of which is in violation of any law or third-party intellectual property
-                                    rights. If you
-                                    disclose any such information, you shall be solely liable at your own cost and you
-                                    agree to hold
-                                    harmless the Company from and against any claims, actions, suits, demands, damages,
-                                    claims for fees,
-                                    costs, charges and expenses. </p>
-                            </div>
-                            <p class="letter-heading mt-2 ">
-                                10. No Conflict:
-                            </p>
-                            <p class="paragraph">
-                                You represent and warrant that if you accept this Appointment Letter with the Company,
-                                it shall not be
-                                in conflict with any other agreement that you may have entered into or any obligation
-                                that you may be
-                                bound to.
-                            </p>
-
-
-                            <p class="letter-heading mt-3">
-                                11. Accountability:
-                            </p>
-                            <p class="paragraph">
-                                You shall perform any such duties diligently and faithfully as are incidental or implied
-                                and consistent with your
-                                relevant experience, training and qualifications or maybe reasonably
-                                delegated as being in the best intrest of the company.
-                            </p>
-                            <p class="paragraph mb-2">
-                                <span class="letter-heading">a)</span> You agree that the Company may assign you
-                                additional
-                                tasks or to a new manager; modify or remove your assigned duties; or change the place of
-                                your
-                                employment. Compensation change in such situations, if any, will be at the discretion of
-                                the Company.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">b)</span> You agree to use all tools provided by the
-                                Company for
-                                professional purposes only. Internet and email access are provided to you as business
-                                communication
-                                tools for appropriate internal and external business uses. Generation, transmission, or
-                                storage of
-                                potentially offensive information is not allowed. You also agree to always act in the
-                                interest of the
-                                Company.
-                            </p>
-
-                            <p class="letter-heading ">
-                                12. No Dual Employment:
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                You shall devote your full time and attention to the performance of your duties
-                                incidental to your
-                                position with the Company. During your employment with the Company, you are refrained
-                                from taking up any
-                                other employment, consultancy, or any other job (with or without remuneration), without
-                                the prior
-                                written consent of the Company.
-                            </p>
-
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 2 ends-->
-
-                    <!--page 3-->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent3">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-                            <p class="letter-heading mb-3">13. Prior Service:</p>
-                            <p class="paragraph mb-3">Your start date of employment will be used for the purpose of
-                                calculating your
-                                years of service and vacation entitlement. Any prior service with any previous employer
-                                will not be recognized.
-                            </p>
-                            <p class="letter-heading mb-3">14. Non- Solicitation and Non-Competition:</p>
-                            <p class="paragraph mb-3">
-                                You agree that in consideration of your engagement with the Company, and other good and
-                                valuable
-                                consideration, the receipt of which is hereby acknowledged, during the term of the
-                                employment with the
-                                Company and for a period of twelve (12) months following the termination, you shall not,
-                                directly or
-                                indirectly, either as an individual on your own account or as a partner, employee,
-                                consultant, advisor,
-                                agent, contractor, director, trustee, committee member, office bearer, or shareholder
-                                (or in a similar
-                                capacity or function);
-                            </p>
-                            <p class="paragraph mb-3"><span class="letter-heading">a)</span> Own or operate a business
-                                in competition with the
-                                business of the Company.
-                            </p>
-                            <p class="paragraph mb-2"><span class="letter-heading">b)</span> Solicit employment with a
-                                competitor or with any
-                                existing/prospective client (in any manner whatsoever);
-                            </p>
-                            <p class="paragraph mb-2"><span class="letter-heading">c)</span> Solicit employment of or
-                                advise any other employee of
-                                the Company to terminate his contract or relationship with the Company or accept any
-                                contract (directly
-                                or indirectly) or other arrangements for providing services to any other person or
-                                organization; or,
-                            </p>
-                            <p class="paragraph mb-3"><span class="letter-heading">d)</span> Contact any of the existing
-                                or prospective clients of
-                                the Company, to entice such clients away from the Company or to damage in any way their
-                                business
-                                relationship with Company.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                You agree that the restrictions set forth in this clause are reasonable and necessary to
-                                protect the
-                                proprietary and business interests of the Company and constitute a material inducement
-                                to the Company to
-                                employ you. You further agree that the Company would not employ you in the absence of
-                                such inducement.
-                            </p>
-
-                            <p class="letter-heading mb-3">15. Consent Regarding Personal Data:</p>
-
-                            <p class="paragraph mb-3">This clause relates to the Personal Data that you may be requested
-                                to provide in
-                                connection with your employment. Personal Data includes any information related to a
-                                natural person that is, in combination
-                                of other information or otherwise, is capable of identifying such person notably
-                                including financial
-                                information such as Bank account or credit card or debit card or other payment
-                                instrument details,
-                                physical, physiological and mental health condition, sexual orientation, medical records
-                                and history,
-                                biometric information, any information or detail relating to previous employment
-                                details, educational
-                                qualifications and criminal record.</p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">a)</span> You hereby understand and consent to Company,
-                                without
-                                any reservations, to (i) collect any of your Personal Data or other data from your last
-                                employer or
-                                through any internal or external agencies appointed for this purpose, (ii) use or
-                                process such data in
-                                connection with your employment with the Company or any matters arising from such
-                                employment, and (iii)
-                                sharing such data with any outside agencies or third parties including Company’s client
-                                for verification
-                                and validation of this information, processing in relation to employment or matters
-                                arising from such
-                                employment, or in compliance with the Company’s contractual or statutory obligations.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">b)</span> You understand that you may withdraw the consent
-                                by
-                                informing in writing to Company’s designated representative for this purpose. You also
-                                consent and
-                                accept that if such withdrawal of consent affects the purpose for which your Personal
-                                Data was sought,
-                                Company reserves the right to take steps as it deems appropriate. You understand that
-                                this consent is
-                                obtained by the Company to ensure compliance of The Information Technology (Reasonable
-                                Security
-                                Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 and any
-                                successor laws
-                                regarding the subject.
-                            </p>
-
-                            <p class="letter-heading mb-3">16. Changes in Personal Details:</p>
-
-                            <p class="paragraph mb-3">Any change in your residential address, telephone numbers, marital
-                                status, and
-                                academic qualifications should be notified in writing to the Company with three (3) days
-                                of such change.
-                            </p>
-                            <p class="paragraph mb-3">communication will be addressed to you on the last address
-                                notified by you and
-                                it will be presumed that you have received such communication addressed to you. </p>
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 3 ends-->
-
-                    <!--page 4-->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent4">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-                            <div>
-                                <p class="letter-heading mb-3">
-                                    17. Retirement:
-                                </p>
-                                <p class="paragraph mb-3">The age of retirement from the Company shall be on attainment
-                                    of fifty-eight
-                                    (58) years of age.
-                                    For this purpose, the date of birth considered will be as per the certificate of
-                                    proof of age
-                                    submitted
-                                    by you at the date of joining the Company. In case the last day of your employment
-                                    falls on a
-                                    non-working day, your last day of employment shall be the immediately the preceding
-                                    working day. </p>
-                            </div>
-                            <div class="letter-heading mb-3">
-                                18. Notice Period: :
-                            </div>
-                            <p class="letter-heading mb-3">
-                                a) Resignation by the Employee:
-                            </p>
-                            <p class="paragraph mb-3">During the probation period, you may resign from your services by
-                                providing a
-                                prior written notice of Thirty (30) days or payment of gross salary in lieu thereof.
-                                After completion of your probation
-                                period, if you voluntarily resign from the services of the Company, you will be required
-                                to give ninety (90)
-                                days of written notice or gross salary in lieu of the notice period Three Months (90
-                                days), subject to
-                                the Company’s discretion. Any shortfall in the Notice Period shall be recovered from
-                                your full and
-                                final settlement. In case of resignation, the Company reserves the right to:</p>
-
-                            <ol style="list-style: upper-roman;" class="ol">
-                                <li><span class="paragraph">Relieve you earlier than the Notice Period</span> </li>
-                                <li><span class="paragraph">Extend your Notice Period for a satisfactory handover of
-                                        charge and completing the
-                                        pending assignments</span></li>
-                                <li> <span class="paragraph">Decide whether the Notice Period shall run concurrently
-                                        with the period of any leave
-                                        which may be granted to you;</span> </li>
-                                <li> <span class="paragraph ">Direct you not to perform any of your duties and to remain
-                                        away from the Company
-                                        premises and/or not to contact clients or other employees of the Company for all
-                                        or part of the Notice Period.</span></li>
-                            </ol>
-
-                            <p class="letter-heading mb-3">
-                                b) Termination by Company:
-                            </p>
-                            <p class="paragraph mb-3">During the probation period, the Company may terminate your
-                                employment for
-                                convenience by giving you fifteen (15) days prior written notice or payment of gross
-                                salary in lieu
-                                thereof 15 days. After completion of your probation period, the Company may terminate
-                                your employment
-                                by giving you 15 days’ notice or payment of gross salary in lieu thereof 15 days. Such
-                                termination does
-                                not amount to ‘Retrenchment’ under any law and does not entitle you to any severance
-                                pay.</p>
-                            <div>
-                                <p class="letter-heading mb-3">
-                                    c) Termination for Cause:
-                                </p>
-                                <p class="paragraph mb-3">Notwithstanding anything contained above, the Company can
-                                    terminate your service
-                                    without any notice period or without any salary in lieu thereof, if you: </p>
-                                <ol style="list-style: upper-roman;" class=" ol">
-                                    <li> <span class="paragraph">Breach any confidentiality or IP related
-                                            obligations:</span> </li>
-                                    <li><span class="paragraph">Commit any serious or persistent breach of any of the
-                                            terms and conditions of this
-                                            Appointment
-                                            Letter or any of the provisions of the employee handbook or other documents
-                                            incorporated by
-                                            reference
-                                            in this document;</span> </li>
-                                    <li><span class="paragraph">Do or cause to be done any act, deed, matter or thing
-                                            adverse to the Company’s
-                                            interests;</span> </li>
-                                    <li> <span class="paragraph">Are guilty of any misconduct or neglect in the
-                                            discharge of your duties or exercise
-                                            of
-                                            your
-                                            powers hereunder or otherwise vested in you from time to time;</span> </li>
-                                    <li> <span class="paragraph">Fail to or neglect in observing and complying fully
-                                            with all resolutions,
-                                            regulations,
-                                            instructions
-                                            and directions from time to time made or given to you by the Company</span>
-                                    </li>
-                                    <li><span class="paragraph">If any information furnished by you or representation
-                                            made by you is found to be
-                                            incorrect
-                                            or if any material information is detected by the Company to have been
-                                            suppressed by you or any
-                                            action
-                                            on your part is found to be in contravention to the terms and conditions
-                                            herein:</span> </li>
-                                    <li><span class="paragraph">Become of unsound mind;</span> </li>
-                                    <li><span class="paragraph">Are accused or convicted of any criminal offense:</span>
-                                    </li>
-                                </ol>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
                             </div>
                         </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 4 ends-->
-
-                    <!--page 5-->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent5">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-                            <ol style="list-style: upper-roman;" class="ol mb-3" start="9">
-                                <li><span class="paragraph">Are reported to be on an unauthorized absence for more than
-                                        ten (10) days.</span></li>
-                                <li><span class="paragraph">In case the last day of your employment falls on a
-                                        non-working day, your last day of
-                                        employment shall be the immediate previous working day.</span></li>
-                            </ol>
-                            <div>
-                                <p class="letter-heading mb-3">
-                                    19. Subsistence Allowance:
-                                </p>
-                                <p class="paragraph mb-3">If your services are suspended by the Company during the
-                                    pendency of any
-                                    inquiry proceeding or as a result of any disciplinary action taken against you, your
-                                    regular salary
-                                    shall be suspended and for such suspension period and you will be eligible to
-                                    receive only a
-                                    subsistence allowance which will be calculated in accordance with the existing
-                                    statutory requirements
-                                    of the government of Telangana or the relevant policies of the Company" </p>
-                            </div>
-                            <p class="letter-heading mb-3">
-                                20. Effect of Termination:
-                            </p>
-                            <p class="paragraph">Upon termination of your employment: </p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">a)</span> Return of Property: You shall deliver to the
-                                Company,
-                                any and all work product, confidential
-                                information, records, manuals, training materials, keys, equipment (including, without
-                                limitation, any
-                                laptop computer, mobile phone or other wireless telecommunication device) and other
-                                property belonging
-                                to the Company or its client, which is your possession or control, without retaining any
-                                copies thereof.
-                            </p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">b)</span> You must not make any statements (whether oral or
-                                written) or do anything which might damage the reputation of the Company or interfere
-                                with the Company’s
-                                relationship with its clients and customers.
-                            </p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">c)</span> Without prejudice to Company’s other rights and
-                                remedies, the Company shall be entitled to deduct from your emoluments, the amount of
-                                any claims which
-                                the Company may have against you either under the terms of your employment or otherwise.
-                            </p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">d)</span> You understand that the Service and Experience
-                                Certificate will be issued only if you have served the entire Notice Period or have paid
-                                compensation to
-                                the Company in lieu of the Notice Period.
-                            </p>
-                            <p class="letter-heading mb-3">
-                                21. Company Policies:
-                            </p>
-                            <p class="paragraph mb-3">
-                                In addition to the terms and conditions of this Agreement, your employment
-                                with the Company shall be subject to the policies and procedures set forth in the
-                                Company and/or the
-                                client's Policy (the "Policies"), the current version of which will be electronically
-                                accessible by you at all
-                                times during your employment.You agree that the Policies may be modified by the Company
-                                at any time,
-                                and that any such modifications shall apply to all the employees, including yourself.
-                                Violation of the
-                                Policies could lead to disciplinary actions up to and including termination of your
-                                employment.
-                                Additionally, while performing onsite work duties for any client of the Company, you are
-                                expected to
-                                adhere to the specific workplace policies of those clients and to familiarize yourself
-                                with those
-                                policies.
-                            </p>
-                            <div>
-                                <p class="letter-heading mb-3">
-                                    22. Indemnification:
-                                </p>
-                                <p class="paragraph mb-3">
-                                    You shall, at all times, indemnify and keep indemnified the Company against all sums
-                                    whether by way of
-                                    claims, demands, damages, costs, charges or expenses paid or incurred by the Company
-                                    in or in connection
-                                    with any action, claim proceedings or demand instituted or made against the Company
-                                    caused or occasioned
-                                    by your breach, failure, default or neglect.
-                                </p>
-                            </div>
-                            <div>
-                                <p class="letter-heading mb-3">
-                                    23. Governing Laws and Arbitration:
-                                </p>
-                                <p class="paragraph mb-3">
-                                    This Appointment Letter shall be governed under the laws of India and subject to the
-                                    exclusive
-                                    jurisdiction of courts in Hyderabad, India. Any dispute between you and the Company
-                                    shall be settled by
-                                    a sole arbitrator to be appointed by the Company, the place of arbitration shall be
-                                    Hyderabad and the
-                                    language of the arbitration shall be English. The arbitration shall be conducted in
-                                    accordance with the
-                                    Arbitration and Conciliation Act, 1996".
-                                </p>
-                            </div>
-                            <div>
-                                <p class="letter-heading mb-3">
-                                    24. Invention Assignment and Confidentiality Agreement:
-                                </p>
-                                <p class="paragraph mb-3">
-                                    You shall also be required to execute the Invention Assignment and Confidentiality
-                                    Agreement (NDA) with
-                                    the Company in Annexure A. The terms and conditions of this NDA shall survive
-                                    perpetually even after the
-                                    termination of your employment.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 5 ends-->
-
-                    <!--page 6-->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent6">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-                            <div>
-                                <p class="letter-heading mb-3">
-                                    25. Other terms and conditions:
-                                </p>
-                                <p class="paragraph mb-3">
-                                    <span class="letter-heading">a) Serviceability:</span> You shall, at all times,
-                                    indemnify and
-                                    keep indemnified the Company against all sums whether by way of
-                                    claims, demands, damages, costs, charges or expenses paid or incurred by the Company
-                                    in or in connection
-                                    with any action, claim proceedings or demand instituted or made against the Company
-                                    caused or occasioned
-                                    by your breach, failure, default or neglect.
-                                </p>
-                                <p class="paragraph mb-3">
-                                    <span class="letter-heading">b) Successors and Assigns:</span> The Company will have
-                                    the right
-                                    to transfer and assign this Appointment Letter and all covenants and agreements
-                                    herein will inure to the
-                                    benefit of and be enforceable by such successors and assigns. This Appointment
-                                    Letter is personal to you
-                                    and you will not be entitled to transfer or assign it in whole or in part.
-                                </p>
-
-                                <p class="paragraph mb-3">
-                                    <span class="letter-heading">c) Independent Legal Advice:</span> By signing this
-                                    Appointment
-                                    Letter you agree that you have: (a) been given two (2) days time to review this
-                                    Appointment Letter; (b)
-                                    read and understands the terms of this Appointment Letter; (c) has been advised of
-                                    the right, and has
-                                    been provided with a reasonable opportunity, to obtain independent legal advice in
-                                    connection with the
-                                    execution of this Appointment Letter prior to his/her execution hereof; and (d)
-                                    obtained or freely
-                                    chosen not to obtain such independent legal advice.
-                                </p>
-
-                                <p class="paragraph mb-3">
-                                    <span class="letter-heading">d) Equitable Remedies:</span> You acknowledge and agree
-                                    that a
-                                    breach by you of any of the provisions of Sections 14 (Non-Solicitation), 14
-                                    (Non-Competition) hereof or
-                                    terms of NDA would cause substantial and irreparable harm to the Company, which
-                                    could not be adequately
-                                    compensated for by damages, and in the event of such a breach ( or the reasonable
-                                    apprehension of such a
-                                    breach) by the Company of any such provisions, you agree that the Company shall be
-                                    entitled to temporary
-                                    and permanent injunctive relief against any breach or further breach of the said
-                                    provisions, without
-                                    bond or security, and without a requirement that the Company prove actual damages or
-                                    establish the adequacy
-                                    of any of the remedies available to it. The provisions of this section shall be in
-                                    addition to and not
-                                    substitution for any other remedy which the Company may have in respect of any such
-                                    breach.
-                                </p>
-
-                                <p class="paragraph mb-3">
-                                    <span class="letter-heading">e) Headings:</span> Headings are for ease of reference
-                                    only and do
-                                    not affect the meaning of the agreement set out in this Appointment Letter. Unless
-                                    expressly indicated
-                                    otherwise, references to monetary amounts are references to an amount expressed in
-                                    the currency of India.
-                                </p>
-
-                                <p class="paragraph mb-3">
-                                    <span class="letter-heading">f) Amendment & Waiver:</span> The terms of this
-                                    Appointment Letter
-                                    may not be amended or revised except by an instrument in writing signed by both
-                                    parties. No waiver of any
-                                    provision of this Agreement shall be binding unless in writing and signed by the
-                                    party entitled to grant
-                                    the waiver. No failure to exercise or delay in exercising any right or remedy under
-                                    this Agreement will be
-                                    deemed to be a waiver of that right or remedy. No waiver of any breach of any
-                                    provision of this
-                                    Agreement will be deemed to be a waiver of any subsequent breach of that provision.
-                                    This Appointment Letter contains the entire understanding between you and the
-                                    Company concerning the
-                                    subject matter and includes the Annexure(s) referred to herein and attached hereto,
-                                    and supersedes any and
-                                    all prior and contemporaneous negotiations, correspondence, understandings and
-                                    agreements, whether oral or
-                                    written, respecting that subject matter.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 6 ends-->
-
-                    <!-- page 7 -->
-                    <div class="mt-4 mb-3 page-div" id="pdfContent7">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-                            <p class="paragraph mb-3">
-                                Please return a signed copy of this Appointment Letter as a token of your acceptance of
-                                the terms and
-                                conditions mentioned above on the DOJ.
-                            </p>
-                            <p class="paragraph mb-3">
-                                All of us are excited about working with you and look forward to a mutually rewarding
-                                relationship.
-                            </p>
-                            <p class="paragraph">
-                                Yours Sincerely,
-                            </p>
-                            <p class="letter-heading">
-                                For RightlyHR
-                            </p>
-                            <div class="mb-5 mt-5 pt-2">
-                            </div>
-                            <p class="family2">
-                                {{appointmentletter.authorityName}}
-                            </p>
-                            <p class="letter-heading d-black">Authorized Signatory</p>
-                            <p class="letter-heading unerlineo d-black">{{appointmentletter.authorityName}}</p>
-                            <p class="letter-heading unerlineo">{{authorityDesignation}}</p>
-                            <p class="letter-headingd-no-bottom text-end mt-3 mb-2">Date of Joining:
-                                {{ appointmentletter.dateOfJoining | dateformat }}
-                            </p>
-                            <div class="pt-2">
-                                <div class="mb-3 d-flex justify-content-center ">
-                                    <p class="letter-heading">ACCEPTANCE </p>
-                                </div>
-                                <p class="paragraph mb-3">
-                                    I have read and understood all the terms and conditions contained in this
-                                    Appointment Letter. It
-                                    accurately reflects my understanding of the terms and conditions of my employment
-                                    with the Company.
-                                </p>
-                                <p class="paragraph mb-3">
-                                    I understand and agree that any changes in the terms of employment described in this
-                                    Appointment Letter
-                                    must be set forth in a written document signed by a duly authorized officer of the
+                        <!--page-2-->
+                        <div class="letter-page-content" id="pdfContent2">
+                            <div class="letter-page-sub-content">
+                                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
+                                    <!-- <app-letterhead></app-letterhead> -->
+                                  </div>
+                                  <ng-template #doc>
+                                    <div style="margin-bottom: 3rem;"></div>
+                                  </ng-template>
+                                  <p class="letter-heading mb-3">4. Probation:</p>
+                                  <p class="paragraph mb-3">
+                                    <span class="letter-heading">a)</span> Your probation period will start from the date of joining
+                                    and will continue up to three months from DOJ. At the discretion of the Company, your probation period may
+                                    be extended if it is found that the services provided by you are interrupted or not satisfactory.
+                                  </p>
+                                  <p class="paragraph ">
+                                    <span class="letter-heading">b)</span> On successful completion of the probation period, if in
+                                    the opinion of the Company, you are found suitable for the appointed post, your appointment will be
+                                    confirmed and communicated to you in writing by the Company.
+                                  </p>
+                                  <div>
+                                    <p class="letter-heading">5. Background Verification:</p>
+                                    <p class="paragraph">All documents submitted by you to the Company with reference to the above are
+                                      subject to verification
+                                      by the Company at any time during your employment with the Company. You hereby specifically authorize
+                                      the Company, or any external agency appointed by the Company to verify your educational and employment
+                                      antecedents, your conduct and any other background checks prior to your joining the Company or
+                                      thereafter. You are expected to extend your full cooperation during such verification. </p>
+                                    <p class="paragraph mb-3">This Appointment Letter is subject to you clearing the Background Check as
+                                      conducted by the Company In
+                                      the event you fail to cooperate or clear the background check, your employment may be terminated by the
+                                      Company forthwith and without providing any prior notice or salary in lieu thereof. </p>
+                                  </div>
+                                
+                                  <div>
+                                    <p class="letter-heading">6. Medical Examination:</p>
+                                    <p class="paragraph mb-3">You agree to submit yourself for medical examination as requested by the Company
+                                      for the purpose of examining your physical/psychological suitability for the selected post. </p>
+                                  </div>
+                                
+                                  <div>
+                                    <p class="letter-heading mt-2">7. Expenses:</p>
+                                    <p class="paragraph mb-3">You shall be reimbursed, in accordance with the Company’s policies as amended
+                                      from time, for eligible expenses incurred in the course your employment land for which you have received
+                                      prior written authorization from the Company. For all such expenses, you shall furnish to the Company
+                                      original receipts, statements and vouchers. </p>
+                                  </div>
+                                
+                                  <div>
+                                    <p class="letter-heading mt-2">
+                                      8. Increments and Promotion:
+                                    </p>
+                                    <p class="paragraph mb-3">Your growth in the Company and increments in the salary will depend solely on
+                                      your performance and contribution to the Company. The appraisal cycle for the company is April to
+                                      March.
+                                      You will be eligible for appraisal on pro rata basis. Anyone who joins the Company on or after
+                                      November
+                                      1st, he/she will not be eligible for the appraisal cycle for that year. </p>
+                                  </div>
+                                
+                                  <div>
+                                    <p class="letter-heading mt-2">
+                                      9. Information and security:
+                                    </p>
+                                    <p class="paragraph mb-3">The role assigned during your employment with the Company includes the
+                                      Information Security responsibilities as required by organization and customer. This includes
+                                      adhering,
+                                      maintaining information security artefact as required by policy of the organization and customer.
+                                      During
+                                      your employment with the Company, you shall not disclose any information to anyone including but not
+                                      limited to Company’s customers, prospective customers, people or entities outside the Company or to
+                                      any
+                                      Company’s employee which is confidential or trade secret under your previous employment contract or
+                                      disclosure of which is in violation of any law or third-party intellectual property rights. If you
+                                      disclose any such information, you shall be solely liable at your own cost and you agree to hold
+                                      harmless the Company from and against any claims, actions, suits, demands, damages, claims for fees,
+                                      costs, charges and expenses. </p>
+                                  </div>
+                                  <p class="letter-heading mt-2 ">
+                                    10. No Conflict:
+                                  </p>
+                                  <p class="paragraph">
+                                    You represent and warrant that if you accept this Appointment Letter with the Company, it shall not be
+                                    in conflict with any other agreement that you may have entered into or any obligation that you may be
+                                    bound to.
+                                  </p>
+                                
+                                
+                                  <p class="letter-heading mt-3">
+                                    11. Accountability:
+                                  </p>
+                                  <p class="paragraph">
+                                    You shall perform any such duties diligently and faithfully as are incidental or implied and consistent with your
+                                    relevant experience, training and qualifications or maybe reasonably
+                                    delegated as being in the best intrest of the company.
+                                  </p>
+                                  <p class="paragraph mb-2">
+                                    <span class="letter-heading">a)</span> You agree that the Company may assign you additional
+                                    tasks or to a new manager; modify or remove your assigned duties; or change the place of your
+                                    employment. Compensation change in such situations, if any, will be at the discretion of the Company.
+                                  </p>
+                                
+                                  <p class="paragraph mb-3">
+                                    <span class="letter-heading">b)</span> You agree to use all tools provided by the Company for
+                                    professional purposes only. Internet and email access are provided to you as business communication
+                                    tools for appropriate internal and external business uses. Generation, transmission, or storage of
+                                    potentially offensive information is not allowed. You also agree to always act in the interest of the
                                     Company.
-                                </p>
-                                <div>
-                                    <p class="paragraph mt-3 bold">
-                                        Name:
-                                    </p>
-                                    <p class="paragraph mt-3 bold">
-                                        Signature:
-                                    </p>
-                                    <p class="paragraph mt-2 bold">
-                                        Place:
-                                    </p>
-                                    <p class="paragraph mt-2 bold">
-                                        Date:
-                                    </p>
+                                  </p>
+                                
+                                  <p class="letter-heading ">
+                                    12. No Dual Employment:
+                                  </p>
+                                
+                                  <p class="paragraph mb-3">
+                                    You shall devote your full time and attention to the performance of your duties incidental to your
+                                    position with the Company. During your employment with the Company, you are refrained from taking up any
+                                    other employment, consultancy, or any other job (with or without remuneration), without the prior
+                                    written consent of the Company.
+                                  </p>
+                              
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
+                        </div>
+                         <!--page-3-->
+                         <div class="letter-page-content" id="pdfContent3">
+                            <div class="letter-page-sub-content">
+                                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
+                                    <!-- <app-letterhead></app-letterhead> -->
+                                  </div>
+                                  <ng-template #doc>
+                                    <div style="margin-bottom: 3rem;"></div>
+                                  </ng-template>
+                                  <p class="letter-heading mb-3">13. Prior Service:</p>
+                                  <p class="paragraph mb-3">Your start date of employment will be used for the purpose of calculating your
+                                    years of service and vacation entitlement. Any prior service with any previous employer will not be recognized.
+                                  </p>
+                                  <p class="letter-heading mb-3">14. Non- Solicitation and Non-Competition:</p>
+                                  <p class="paragraph mb-3">
+                                    You agree that in consideration of your engagement with the Company, and other good and valuable
+                                    consideration, the receipt of which is hereby acknowledged, during the term of the employment with the
+                                    Company and for a period of twelve (12) months following the termination, you shall not, directly or
+                                    indirectly, either as an individual on your own account or as a partner, employee, consultant, advisor,
+                                    agent, contractor, director, trustee, committee member, office bearer, or shareholder (or in a similar
+                                    capacity or function);
+                                  </p>
+                                  <p class="paragraph mb-3"><span class="letter-heading">a)</span> Own or operate a business in competition with the
+                                    business of the Company.
+                                  </p>
+                                  <p class="paragraph mb-2"><span class="letter-heading">b)</span> Solicit employment with a competitor or with any
+                                    existing/prospective client (in any manner whatsoever);
+                                  </p>
+                                  <p class="paragraph mb-2"><span class="letter-heading">c)</span> Solicit employment of or advise any other employee of
+                                    the Company to terminate his contract or relationship with the Company or accept any contract (directly
+                                    or indirectly) or other arrangements for providing services to any other person or organization; or,
+                                  </p>
+                                  <p class="paragraph mb-3"><span class="letter-heading">d)</span> Contact any of the existing or prospective clients of
+                                    the Company, to entice such clients away from the Company or to damage in any way their business
+                                    relationship with Company.
+                                  </p>
+                              
+                                  <p class="paragraph mb-3">
+                                    You agree that the restrictions set forth in this clause are reasonable and necessary to protect the
+                                    proprietary and business interests of the Company and constitute a material inducement to the Company to
+                                    employ you. You further agree that the Company would not employ you in the absence of such inducement.
+                                  </p>
+                              
+                                  <p class="letter-heading mb-3">15. Consent Regarding Personal Data:</p>
+                              
+                                  <p class="paragraph mb-3">This clause relates to the Personal Data that you may be requested to provide in
+                                    connection with your employment. Personal Data includes any information related to a natural person that is, in combination
+                                    of other information or otherwise, is capable of identifying such person notably including financial
+                                    information such as Bank account or credit card or debit card or other payment instrument details,
+                                    physical, physiological and mental health condition, sexual orientation, medical records and history,
+                                    biometric information, any information or detail relating to previous employment details, educational
+                                    qualifications and criminal record.</p>
+                              
+                                  <p class="paragraph mb-3">
+                                    <span class="letter-heading">a)</span> You hereby understand and consent to Company, without
+                                    any reservations, to (i) collect any of your Personal Data or other data from your last employer or
+                                    through any internal or external agencies appointed for this purpose, (ii) use or process such data in
+                                    connection with your employment with the Company or any matters arising from such employment, and (iii)
+                                    sharing such data with any outside agencies or third parties including Company’s client for verification
+                                    and validation of this information, processing in relation to employment or matters arising from such
+                                    employment, or in compliance with the Company’s contractual or statutory obligations.
+                                  </p>
+                    
+                                  <p class="paragraph mb-3">
+                                    <span class="letter-heading">b)</span> You understand that you may withdraw the consent by
+                                    informing in writing to Company’s designated representative for this purpose. You also consent and
+                                    accept that if such withdrawal of consent affects the purpose for which your Personal Data was sought,
+                                    Company reserves the right to take steps as it deems appropriate. You understand that this consent is
+                                    obtained by the Company to ensure compliance of The Information Technology (Reasonable Security
+                                    Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 and any successor laws
+                                    regarding the subject.
+                                  </p>
+                    
+                                  <p class="letter-heading mb-3">16. Changes in Personal Details:</p>
+                              
+                                  <p class="paragraph mb-3">Any change in your residential address, telephone numbers, marital status, and
+                                    academic qualifications should be notified in writing to the Company with three (3) days of such change.
+                                  </p>
+                                  <p class="paragraph mb-3">communication will be addressed to you on the last address notified by you and
+                                    it will be presumed that you have received such communication addressed to you. </p>
                                 </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
                             </div>
                         </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
+                         <!--page-4-->
+                         <div class="letter-page-content" id="pdfContent4">
+                            <div class="letter-page-sub-content">
+                                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
+                                    <!-- <app-letterhead></app-letterhead> -->
+                                  </div>
+                                  <ng-template #doc>
+                                    <div style="margin-bottom: 3rem;"></div>
+                                  </ng-template>
+                                  <div>
+                                    <p class="letter-heading mb-3">
+                                      17. Retirement:
+                                    </p>
+                                    <p class="paragraph mb-3">The age of retirement from the Company shall be on attainment of fifty-eight
+                                      (58) years of age.
+                                      For this purpose, the date of birth considered will be as per the certificate of proof of age
+                                      submitted
+                                      by you at the date of joining the Company. In case the last day of your employment falls on a
+                                      non-working day, your last day of employment shall be the immediately the preceding working day. </p>
+                                  </div>
+                                  <div class="letter-heading mb-3">
+                                    18. Notice Period: :
+                                  </div>
+                                  <p class="letter-heading mb-3">
+                                    a) Resignation by the Employee:
+                                  </p>
+                                  <p class="paragraph mb-3">During the probation period, you may resign from your services by providing a
+                                    prior written notice of Thirty (30) days or payment of gross salary in lieu thereof. After completion of your probation
+                                    period, if you voluntarily resign from the services of the Company, you will be required to give ninety (90)
+                                    days of written notice or gross salary in lieu of the notice period Three Months (90 days), subject to
+                                    the Company’s discretion. Any shortfall in the Notice Period shall be recovered from your full and
+                                    final settlement. In case of resignation, the Company reserves the right to:</p>
+                    
+                                  <ol style="list-style: upper-roman;" class="ol">
+                                    <li><span class="paragraph">Relieve you earlier than the Notice Period</span> </li>
+                                    <li><span class="paragraph">Extend your Notice Period for a satisfactory handover of charge and completing the
+                                        pending assignments</span></li>
+                                    <li> <span class="paragraph">Decide whether the Notice Period shall run concurrently with the period of any leave
+                                        which may be granted to you;</span> </li>
+                                    <li> <span class="paragraph ">Direct you not to perform any of your duties and to remain away from the Company
+                                        premises and/or not to contact clients or other employees of the Company for all or part of the Notice Period.</span></li>
+                                  </ol>
+                              
+                                  <p class="letter-heading mb-3">
+                                    b) Termination by Company:
+                                  </p>
+                                  <p class="paragraph mb-3">During the probation period, the Company may terminate your employment for
+                                    convenience by giving you fifteen (15) days prior written notice or payment of gross salary in lieu
+                                    thereof 15 days. After completion of your probation period, the Company may terminate your employment
+                                    by giving you 15 days’ notice or payment of gross salary in lieu thereof 15 days. Such termination does
+                                    not amount to ‘Retrenchment’ under any law and does not entitle you to any severance pay.</p>
+                                  <div>
+                                    <p class="letter-heading mb-3">
+                                      c) Termination for Cause:
+                                    </p>
+                                    <p class="paragraph mb-3">Notwithstanding anything contained above, the Company can terminate your service
+                                      without any notice period or without any salary in lieu thereof, if you: </p>
+                                    <ol style="list-style: upper-roman;" class=" ol">
+                                      <li> <span class="paragraph">Breach any confidentiality or IP related obligations:</span> </li>
+                                      <li><span class="paragraph">Commit any serious or persistent breach of any of the terms and conditions of this
+                                          Appointment
+                                          Letter or any of the provisions of the employee handbook or other documents incorporated by
+                                          reference
+                                          in this document;</span> </li>
+                                      <li><span class="paragraph">Do or cause to be done any act, deed, matter or thing adverse to the Company’s
+                                          interests;</span> </li>
+                                      <li> <span class="paragraph">Are guilty of any misconduct or neglect in the discharge of your duties or exercise
+                                          of
+                                          your
+                                          powers hereunder or otherwise vested in you from time to time;</span> </li>
+                                      <li> <span class="paragraph">Fail to or neglect in observing and complying fully with all resolutions,
+                                          regulations,
+                                          instructions
+                                          and directions from time to time made or given to you by the Company</span> </li>
+                                      <li><span class="paragraph">If any information furnished by you or representation made by you is found to be
+                                          incorrect
+                                          or if any material information is detected by the Company to have been suppressed by you or any
+                                          action
+                                          on your part is found to be in contravention to the terms and conditions herein:</span> </li>
+                                      <li><span class="paragraph">Become of unsound mind;</span> </li>
+                                      <li><span class="paragraph">Are accused or convicted of any criminal offense:</span> </li>
+                                    </ol>
+                                  </div>
+                                </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
+                        </div>
+                        <!--page-5-->
+                        <div class="letter-page-content" id="pdfContent5">
+                            <div class="letter-page-sub-content">
+                                <!--page-4-->
+                                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
+                                    <!-- <app-letterhead></app-letterhead> -->
+                                  </div>
+                                  <ng-template #doc>
+                                    <div style="margin-bottom: 3rem;"></div>
+                                  </ng-template>
+                                  <div>
+                                    <p class="letter-heading mb-3">
+                                      17. Retirement:
+                                    </p>
+                                    <p class="paragraph mb-3">The age of retirement from the Company shall be on attainment of fifty-eight
+                                      (58) years of age.
+                                      For this purpose, the date of birth considered will be as per the certificate of proof of age
+                                      submitted
+                                      by you at the date of joining the Company. In case the last day of your employment falls on a
+                                      non-working day, your last day of employment shall be the immediately the preceding working day. </p>
+                                  </div>
+                                  <div class="letter-heading mb-3">
+                                    18. Notice Period: :
+                                  </div>
+                                  <p class="letter-heading mb-3">
+                                    a) Resignation by the Employee:
+                                  </p>
+                                  <p class="paragraph mb-3">During the probation period, you may resign from your services by providing a
+                                    prior written notice of Thirty (30) days or payment of gross salary in lieu thereof. After completion of your probation
+                                    period, if you voluntarily resign from the services of the Company, you will be required to give ninety (90)
+                                    days of written notice or gross salary in lieu of the notice period Three Months (90 days), subject to
+                                    the Company’s discretion. Any shortfall in the Notice Period shall be recovered from your full and
+                                    final settlement. In case of resignation, the Company reserves the right to:</p>
+                    
+                                  <ol style="list-style: upper-roman;" class="ol">
+                                    <li><span class="paragraph">Relieve you earlier than the Notice Period</span> </li>
+                                    <li><span class="paragraph">Extend your Notice Period for a satisfactory handover of charge and completing the
+                                        pending assignments</span></li>
+                                    <li> <span class="paragraph">Decide whether the Notice Period shall run concurrently with the period of any leave
+                                        which may be granted to you;</span> </li>
+                                    <li> <span class="paragraph ">Direct you not to perform any of your duties and to remain away from the Company
+                                        premises and/or not to contact clients or other employees of the Company for all or part of the Notice Period.</span></li>
+                                  </ol>
+                              
+                                  <p class="letter-heading mb-3">
+                                    b) Termination by Company:
+                                  </p>
+                                  <p class="paragraph mb-3">During the probation period, the Company may terminate your employment for
+                                    convenience by giving you fifteen (15) days prior written notice or payment of gross salary in lieu
+                                    thereof 15 days. After completion of your probation period, the Company may terminate your employment
+                                    by giving you 15 days’ notice or payment of gross salary in lieu thereof 15 days. Such termination does
+                                    not amount to ‘Retrenchment’ under any law and does not entitle you to any severance pay.</p>
+                                  <div>
+                                    <p class="letter-heading mb-3">
+                                      c) Termination for Cause:
+                                    </p>
+                                    <p class="paragraph mb-3">Notwithstanding anything contained above, the Company can terminate your service
+                                      without any notice period or without any salary in lieu thereof, if you: </p>
+                                    <ol style="list-style: upper-roman;" class=" ol">
+                                      <li> <span class="paragraph">Breach any confidentiality or IP related obligations:</span> </li>
+                                      <li><span class="paragraph">Commit any serious or persistent breach of any of the terms and conditions of this
+                                          Appointment
+                                          Letter or any of the provisions of the employee handbook or other documents incorporated by
+                                          reference
+                                          in this document;</span> </li>
+                                      <li><span class="paragraph">Do or cause to be done any act, deed, matter or thing adverse to the Company’s
+                                          interests;</span> </li>
+                                      <li> <span class="paragraph">Are guilty of any misconduct or neglect in the discharge of your duties or exercise
+                                          of
+                                          your
+                                          powers hereunder or otherwise vested in you from time to time;</span> </li>
+                                      <li> <span class="paragraph">Fail to or neglect in observing and complying fully with all resolutions,
+                                          regulations,
+                                          instructions
+                                          and directions from time to time made or given to you by the Company</span> </li>
+                                      <li><span class="paragraph">If any information furnished by you or representation made by you is found to be
+                                          incorrect
+                                          or if any material information is detected by the Company to have been suppressed by you or any
+                                          action
+                                          on your part is found to be in contravention to the terms and conditions herein:</span> </li>
+                                      <li><span class="paragraph">Become of unsound mind;</span> </li>
+                                      <li><span class="paragraph">Are accused or convicted of any criminal offense:</span> </li>
+                                    </ol>
+                                  </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
+                        </div>
+                        <!--page-6-->
+                        <div class="letter-page-content" id="pdfContent6">
+                            <div class="letter-page-sub-content">
+                                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
+                                    <!-- <app-letterhead></app-letterhead> -->
+                                  </div>
+                                  <ng-template #doc>
+                                    <div style="margin-bottom: 3rem;"></div>
+                                  </ng-template>
+                                  <div>
+                                    <p class="letter-heading mb-3">
+                                      25. Other terms and conditions:
+                                    </p>
+                                    <p class="paragraph mb-3">
+                                      <span class="letter-heading">a) Serviceability:</span> You shall, at all times, indemnify and
+                                      keep indemnified the Company against all sums whether by way of
+                                      claims, demands, damages, costs, charges or expenses paid or incurred by the Company in or in connection
+                                      with any action, claim proceedings or demand instituted or made against the Company caused or occasioned
+                                      by your breach, failure, default or neglect.
+                                    </p>
+                                    <p class="paragraph mb-3">
+                                      <span class="letter-heading">b) Successors and Assigns:</span> The Company will have the right
+                                      to transfer and assign this Appointment Letter and all covenants and agreements herein will inure to the
+                                      benefit of and be enforceable by such successors and assigns. This Appointment Letter is personal to you
+                                      and you will not be entitled to transfer or assign it in whole or in part.
+                                    </p>
+                              
+                                    <p class="paragraph mb-3">
+                                      <span class="letter-heading">c) Independent Legal Advice:</span> By signing this Appointment
+                                      Letter you agree that you have: (a) been given two (2) days time to review this Appointment Letter; (b)
+                                      read and understands the terms of this Appointment Letter; (c) has been advised of the right, and has
+                                      been provided with a reasonable opportunity, to obtain independent legal advice in connection with the
+                                      execution of this Appointment Letter prior to his/her execution hereof; and (d) obtained or freely
+                                      chosen not to obtain such independent legal advice.
+                                    </p>
+                              
+                                    <p class="paragraph mb-3">
+                                      <span class="letter-heading">d) Equitable Remedies:</span> You acknowledge and agree that a
+                                      breach by you of any of the provisions of Sections 14 (Non-Solicitation), 14 (Non-Competition) hereof or
+                                      terms of NDA would cause substantial and irreparable harm to the Company, which could not be adequately
+                                      compensated for by damages, and in the event of such a breach ( or the reasonable apprehension of such a
+                                      breach) by the Company of any such provisions, you agree that the Company shall be entitled to temporary
+                                      and permanent injunctive relief against any breach or further breach of the said provisions, without
+                                      bond or security, and without a requirement that the Company prove actual damages or establish the adequacy
+                                      of any of the remedies available to it. The provisions of this section shall be in addition to and not
+                                      substitution for any other remedy which the Company may have in respect of any such breach.
+                                    </p>
+                              
+                                    <p class="paragraph mb-3">
+                                      <span class="letter-heading">e) Headings:</span> Headings are for ease of reference only and do
+                                      not affect the meaning of the agreement set out in this Appointment Letter. Unless expressly indicated
+                                      otherwise, references to monetary amounts are references to an amount expressed in the currency of India.
+                                    </p>
+                              
+                                    <p class="paragraph mb-3">
+                                      <span class="letter-heading">f) Amendment & Waiver:</span> The terms of this Appointment Letter
+                                      may not be amended or revised except by an instrument in writing signed by both parties. No waiver of any
+                                      provision of this Agreement shall be binding unless in writing and signed by the party entitled to grant
+                                      the waiver. No failure to exercise or delay in exercising any right or remedy under this Agreement will be
+                                      deemed to be a waiver of that right or remedy. No waiver of any breach of any provision of this
+                                      Agreement will be deemed to be a waiver of any subsequent breach of that provision.
+                                      This Appointment Letter contains the entire understanding between you and the Company concerning the
+                                      subject matter and includes the Annexure(s) referred to herein and attached hereto, and supersedes any and
+                                      all prior and contemporaneous negotiations, correspondence, understandings and agreements, whether oral or
+                                      written, respecting that subject matter.
+                                    </p>
+                                  </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
+                        </div>
+                        <!--page-7-->
+                        <div class="letter-page-content" id="pdfContent7">
+                            <div class="letter-page-sub-content">
+                                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
+                                    <!-- <app-letterhead></app-letterhead> -->
+                                  </div>
+                                  <ng-template #doc>
+                                    <div style="margin-bottom: 3rem;"></div>
+                                  </ng-template>
+                                  <p class="paragraph mb-3">
+                                    Please return a signed copy of this Appointment Letter as a token of your acceptance of the terms and
+                                    conditions mentioned above on the DOJ.
+                                  </p>
+                                  <p class="paragraph mb-3">
+                                    All of us are excited about working with you and look forward to a mutually rewarding relationship.
+                                  </p>
+                                  <p class="paragraph">
+                                    Yours Sincerely,
+                                  </p>
+                                  <p class="letter-heading">
+                                    For RightlyHR
+                                  </p>
+                                  <div class="mb-5 mt-5 pt-2">
+                                  </div>
+                                  <p class="family2">
+                                    {{appointmentletter.authorityName}}
+                                  </p>
+                                  <p class="letter-heading d-black">Authorized Signatory</p>
+                                  <p class="letter-heading unerlineo d-black">{{appointmentletter.authorityName}}</p>
+                                  <p class="letter-heading unerlineo">{{authorityDesignation}}</p>
+                                  <p class="letter-headingd-no-bottom text-end mt-3 mb-2">Date of Joining:
+                                    {{ appointmentletter.dateOfJoining | dateformat }}
+                                  </p>
+                                  <div class="pt-2">
+                                    <div class="mb-3 d-flex justify-content-center ">
+                                      <p class="letter-heading">ACCEPTANCE </p>
+                                    </div>
+                                    <p class="paragraph mb-3">
+                                      I have read and understood all the terms and conditions contained in this Appointment Letter. It
+                                      accurately reflects my understanding of the terms and conditions of my employment with the Company.
+                                    </p>
+                                    <p class="paragraph mb-3">
+                                      I understand and agree that any changes in the terms of employment described in this Appointment Letter
+                                      must be set forth in a written document signed by a duly authorized officer of the Company.
+                                    </p>
+                                    <div>
+                                      <p class="paragraph mt-3 bold">
+                                        Name:
+                                      </p>
+                                      <p class="paragraph mt-3 bold">
+                                        Signature:
+                                      </p>
+                                      <p class="paragraph mt-2 bold">
+                                        Place:
+                                      </p>
+                                      <p class="paragraph mt-2 bold">
+                                        Date:
+                                      </p>
+                                    </div>
+                                  </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
                         </div>
                     </div>
-                    <!--page 7 ends-->
-
-                    <!-- page 8 -->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent8">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-                            <div class="d-flex justify-content-center mb-3">
-                                <h1 class="letter-heading">Annexure A </h1>
-                            </div>
-                            <div class="d-flex justify-content-center mb-3">
-                                <h1 class="letter-heading unerlineo">Non-Disclosure Agreement and Invention Assignment
-                                    Agreement </h1>
-                            </div>
-                            <p class="paragraph mb-3">
-                                This Non-Disclosure Agreement and Invention Assignment Agreement (hereinafter
-                                “Agreement”) is effective
-                                as of by and between
-                            </p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading unerlineo"> RightlyHR</span>, with its office
-                                at Vijay Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032
-                                (hereinafter r
-                                referred to as the “Company”)
-                            </p>
-                            <p class="paragraph mb-3">And</p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading unerlineo"> {{ appointmentletter.firstName }}
-                                    {{appointmentletter.middleName}}
-                                    {{ appointmentletter.lastName }}, PAN No: <span
-                                        *ngFor="let p of panDetails">{{p.identityNumber }}</span>
-                                </span> ,<span *ngIf="appointmentletter.addressLine1">
-                                    {{ appointmentletter.addressLine1 }},
-                                    <span>{{ appointmentletter.addressLine2 }},</span>
-                                    <span>{{ appointmentletter.city }},
-                                        {{ appointmentletter.state }},</span>
-                                    <span>{{ appointmentletter.country }} -
-                                        {{ appointmentletter.zipCode }}.</span>
-                                </span>
-                            </p>
-                            <p class="paragraph mb-3">
-                                The Company and the Receiving Party shall collectively be referred to as “Parties” and
-                                individually as a “Party”.
-                            </p>
-                            <p class="letter-heading mb-3">
-                                RECITALS:
-                            </p>
-
-                            <p class="paragraph mb-2">
-                                <span class="letter-heading unerlineo">a)</span> As per the Appointment Letter dated
-                                <strong>{{
-                                    appointmentletter.appointmentdate | dateformat }}</strong>, the
-                                Receiving Party is working with the Company as [RightlyHR] (“Engagement”). During
-                                the course of Engagement, the Receiving Party may be exposed to the Confidential
-                                Information (as defined
-                                below) of the Company and/or the Company’s affiliates, clients, customers, consultants,
-                                vendors,
-                                partners, agents or suppliers etc. The Receiving Party may also generate, create or
-                                receive, possess,
-                                oversee information that is confidential in nature.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading unerlineo">b)</span>Whereas the Receiving Party undertakes
-                                to protect all
-                                such information from any unauthorized use or disclosure and undertakes to handover all
-                                intellectual
-                                property rights in the Developments (as defined below), on the terms agreed between the
-                                Parties.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                The Parties agree as follows:
-                            </p>
-
-                            <p class="letter-heading mb-3">
-                                1.Confidential Information and Exclusion:
-                            </p>
-                            <p class="paragraph mb-3">
-                                Confidential information, includes but is not limited to, any and all technical and non-
-                                technical
-                                information including patent, copyright, trade secret, and proprietary information,
-                                technique, sketches,
-                                drawings, models, inventions, Innovations, know-how, processes, apparatus, equipment,
-                                algorithms,
-                                software programs, software source documents, and formulae related to the current,
-                                future and proposed
-                                services and products of the Company or its clients, details of the Company and its
-                                clients suppliers
-                                and customers, and includes, without limitation, the Company or its clients Innovations,
-                                property and
-                                information concerning research, experimental work, development, design details and
-                                specifications,
-                                engineering, financial information, procurement requirements, purchasing, manufacturing,
-                                business
-                                forecasts, sales and merchandising and marketing plans and information which according
-                                to the Company or
-                                its clients are necessarily confidential and form valuable property of the Company or
-                                its clients. If
-                                any information is disclosed orally, it shall at the time of disclosure be identified as
-                                confidential or
-                                shall be summarized and designated in writing by the Company and delivered within 30
-                                days of disclosure
-                                to the Receiving Party to qualify it as Confidential Information. Confidential
-                                Information shall however
-                                exclude any information which (a) is in the public domain; (b) was known to the
-                                Receiving Party of such
-                                disclosure or becomes known to the Receiving Party without breach of any confidentiality
-                                agreement.
-                            </p>
-
-                            <p class="letter-heading mb-3">
-                                2.Definition of Developments:
-                            </p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">“Development(s)”</span>
-                                shall mean and include all inventions, improvements, discoveries, methods,
-                                developments, software, and works of authorship, whether palatable or not, any new or
-                                useful research,
-                                experiment, new contribution, finding, creativity (including without limitation any
-                                designs, drawings,
-                                plans, technology, computer programs, software, test, concept, idea, mechanism,
-                                equipment, machinery,
-                                process, formula, or technique, algorithm), whether or not granted protection under
-                                intellectual
-                                property laws, which are created, made, conceived or reduced to practice by the
-                                Receiving Party or under
-                                the Receiving Party’s direction or jointly with others during the Engagement, whether or
-                                not during
-                                normal working hours or on the premises of the Company.
-                            </p>
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 8 ends-->
-
-                    <!--page 9-->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent9">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-                            <p class="letter-heading mb-3">
-                                3. Non-disclosure and Non-Use of Confidential Information:
-                            </p>
-                            <p class="paragraph mb-3"><span class="letter-heading">a)</span>
-                                The Receiving Party acknowledges that the Confidential Information is the exclusive
-                                property of the
-                                Company or its client and the Receiving Party shall make use of the Confidential
-                                Information only for
-                                the purpose of carrying out obligations of the Engagement and for no other
-                                purpose.During the
-                                Engagement and thereafter, the Receiving Party unconditionally and unequivocally agrees
-                                and undertakes
-                                for self to take onerous responsibility not to disclose any of the Confidential
-                                Information or any
-                                related information obtained from discussions or meetings or tale-conf or
-                                video-conference or any other
-                                source to any third parties and shall restrict disclosure of Confidential Information
-                                only to the
-                                Company’s concerned officers, employees, attorneys, subcontractors or professional
-                                advisors who need to
-                                have access to the Confidential Information and each of whom shall be informed by
-                                Receiving Party of the
-                                confidential nature of Confidential Information and agree to observe the same terms and
-                                conditions set
-                                forth herein as if specifically named a party hereto.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">b)</span>
-                                The Receiving Party shall not make copies of Confidential Information unless the same
-                                are reasonably
-                                necessary.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">c)</span>
-                                The Receiving Party shall immediately notify the Company in the event of any
-                                unauthorized use or
-                                disclosure of the Confidential Information and reasonably support the Company in taking
-                                necessary
-                                remedial action.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">d)</span>
-                                The Receiving Party shall protect the Confidential Information by using the same degree
-                                of care to
-                                prevent unauthorized use, dissemination, or publication of the Confidential Information
-                                as the Receiving
-                                Party would use to protect his/her own confidential information of a like nature, but no
-                                less than a
-                                reasonable degree of care.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">e)</span>
-                                The Receiving Party shall not use, modify, reverse engineer, decompile, create other
-                                works from or
-                                disassemble anything in the Company’s Confidential Information unless permitted in
-                                writing by the
-                                Company.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">f)</span>
-                                The Receiving Party agrees and undertakes to not make copies or duplicates of the
-                                Confidential
-                                Information, without prior written consent for the same from the Company.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">g)</span>
-                                The Receiving Party further agrees to notify the Company in writing of any actual or
-                                suspected
-                                misuse, misappropriation or unauthorized disclosure of the Company’s Confidential
-                                Information, which may
-                                come to the Receiving Party’s attention.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">h)</span>
-                                The Receiving Party shall not interact with the press or any third party with respect to
-                                the Company’s
-                                business, customers, competitors or anything related to the Company without the
-                                Company’s prior written
-                                approval. The Receiving Party shall not publicize or disclose the presence of this
-                                Agreement nor use in
-                                any manner the name or logos of the Company without the prior written permission of the
-                                Company.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">i)</span>
-                                During the tenure of the Engagement, the Receiving Party shall not bring any media
-                                storage devices such
-                                as external hard drives, USB drives, external hard discs, or any other devices that can
-                                store data, to
-                                the Company office premises without prior written permission of the Company.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">j)</span>
-                                The Receiving Party shall not, during his/her Engagement with the Company or otherwise,
-                                use or disclose
-                                to the Company any confidential, trade secret, or other proprietary information or
-                                material of any
-                                previous employer or other person and will not bring into the Company's premises any
-                                unpublished
-                                document or any other property belonging to any former employer without the written
-                                consent of that
-                                former employer.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">k)</span>
-                                The Receiving Party hereby undertakes not to, under any circumstances disclose, destroy,
-                                delete, alter,
-                                steal, or cause to disclose, destroy, delete, alter, steal the Confidential Information.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">l)</span>
-                                The Company’s Property: All works, programs, papers, records, data, notes, drawings,
-                                files, documents,
-                                samples, devices, opinions, research material, checklists, dockets, processes and other
-                                materials,
-                                including copies in whatever form and translations into any other language and
-                                intellectual property,
-                                relating to the business of the Company that the Receiving Party possesses or creates
-                                during the term of
-                                the engagement with the Company, whether or not confidential, are and shall remain the
-                                sole and
-                                exclusive property of the Company.
-                            </p>
-
-                            <p class="letter-heading mb-3">4. Disclosure and Assignment of Developments: </p>
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">a)</span>
-                                The Receiving Party agrees to promptly disclose to the Company in writing, all the
-                                Developments which
-                                are conceived, made, discovered, written or created whether alone or jointly with
-                                someone else during
-                                the Engagement.
-                            </p>
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 9 end -->
-
-                    <!--page 10-->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent10">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">b)</span>
-                                The Receiving Party understands and acknowledges that no license is granted to the
-                                Receiving Party in
-                                and to the Confidential Information and/or the Developments, nor is any intellectual
-                                property right
-                                implied to be granted by this Agreement. The Receiving Party understands and
-                                acknowledges that the
-                                Company shall be the exclusive owner of all rights pertaining to the Developments
-                                created or developed
-                                by him/her. The Receiving Party agrees to assign and does hereby assign to the Company
-                                all his/her
-                                right, title and interest in and to all Developments and all related patents, patent
-                                applications,
-                                copyrights and copyright applications. The Receiving Party understands and acknowledges
-                                that all
-                                Developments shall be the property of the Company and, to the greatest extent permitted
-                                by law, shall be
-                                ‘works made for hire.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">c)</span>
-                                The Receiving Party shall give the Company all assistance it reasonably requires to
-                                perfect, protect,
-                                and use its rights to the Developments. In particular, the Receiving Party shall sign
-                                all documents, do
-                                all things, and supply all information that the Company considers necessary or desirable
-                                to transfer or
-                                record the transfer of entire rights, title and interest in the Developments; and to
-                                enable the Company
-                                to obtain patent, copyright, or other legal protection to the Developments.
-                            </p>
-
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading">d)</span>
-                                Receiving Party acknowledges and agrees that the assignment set forth herein is
-                                worldwide and perpetual,
-                                and that he/she will have no rights to reversion of the Developments, even if the
-                                Company does not
-                                exploit them.
-                            </p>
-
-                            <p class="paragraph mb-3"><span class="letter-heading">e)</span>
-                                Receiving Party hereby permanently waives all paternity, integrity, special, moral or
-                                similar rights, if
-                                any, that vest or may vest in Receiving Party as of the date in any Developments.
-                                Receiving Party
-                                further acknowledges and agrees that through the complete and permanent waiver contained
-                                herein neither
-                                do Receiving Party's legal heirs retain any paternity, integrity, moral, special or
-                                similar rights in
-                                and to any Developments. Receiving Party hereby agrees, at the request and expense of
-                                the Company, to
-                                provide any assistance as may be necessary to confirm Receiving Party's waiver of any
-                                paternity,
-                                integrity, special, moral or similar rights associated with the Developments that may
-                                vest in the
-                                Receiving Party.</p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading unerlineo">f)</span>
-                                Inventions, if any, patented or unpatented, made by the Receiving Party prior to the
-                                commencement of
-                                his/her Engagement with the Company are excluded from the scope of this Agreement. To
-                                preclude any
-                                possible uncertainty, the Receiving Party sets forth on Exhibit A (Previous Inventions)
-                                attached hereto
-                                a complete list of all inventions that the Receiving Party has, alone or jointly with
-                                others, conceived,
-                                developed or reduced to practice or caused to be conceived, developed or reduced to
-                                practice prior to
-                                the commencement of his/her Engagement, that the Receiving Party considers to be his/her
-                                property or the
-                                property of third parties and that the Receiving Party wishes to have excluded from the
-                                scope of this
-                                Agreement (collectively referred to as "Prior Inventions"). If, the Receiving Party
-                                incorporates a Prior
-                                Invention into the Company product, process or machine, the Company is hereby granted
-                                and shall have a
-                                nonexclusive, royalty-free, irrevocable, perpetual, worldwide license (with rights to
-                                sub license
-                                through multiple tiers of sub licensees) to make, have made, modify, use and sell such
-                                Prior Invention.
-                                Notwithstanding the foregoing, the Receiving Party agrees that the Receiving Party will
-                                not incorporate,
-                                or permit to be incorporated, Prior Inventions in any the Company’s products without the
-                                Company's prior
-                                written consent.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading unerlineo">g)</span>
-                                In the event the Company is unable for any reason, after reasonable effort, to secure
-                                the Receiving
-                                Party’s signature on any document needed in connection with the actions specified in the
-                                preceding
-                                paragraphs, the Receiving Party hereby irrevocably designate and appoint the Company and
-                                its duly
-                                authorized officers and agents as the Receiving Party’s agent and attorney in fact,
-                                which appointment is
-                                coupled with an interest, to act for and in the Receiving Party’s behalf to execute,
-                                verify and file any
-                                such documents and to do all other lawfully permitted acts to further the purposes of
-                                the preceding
-                                paragraphs with the same legal force and effect as if executed by the Receiving Party.
-                            </p>
-
-                            <p class="paragraph mb-3">
-                                <span class="letter-heading unerlineo">h)</span>
-                                The Receiving Party further represents that he/she has no other employment(s),
-                                consultancies or
-                                undertakings which would restrict and impair his/her performance of this Agreement.
-                            </p>
-
-                            <p class="letter-heading mb-3">Return: </p>
-                            <p class="paragraph mb-3">
-                                In the event of termination of Engagement, or upon request by the Company, the Receiving
-                                Party agrees
-                                to promptly return or destroy, at the Company’s discretion, all Confidential Information
-                                provided by the
-                                Company, and any computer files and other materials incorporating any such Confidential
-                                Information and
-                                all copies thereof.
-                            </p>
-
-                            <p class="letter-heading mb-3">5.Indemnity: </p>
-                            <p class="paragraph mb-3">
-                                The Receiving Party agrees to indemnify and save harmless the Company and its employees,
-                                successors and
-                                assigns against all losses, damages (including reasonable attorney fees) incurred by the
-                                Company and its
-                                employees, successors and assigns due to any breach of the terms of this Agreement.
-                            </p>
-
-                            <p class="letter-heading mb-3">6. Survival: </p>
-                            <p class="paragraph mb-3">
-                                This Agreement shall survive any termination of the Engagement or this Agreement and all
-                                other
-                                obligations which are meant to survive shall survive by its nature on termination of
-                                this Agreement.
-                            </p>
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 10 ends-->
-
-                    <!--page 11-->
-                    <div class="mt-4 mb-4 page-div" id="pdfContent11">
-                        <br />
-                        <div class="pt-2">
-                            <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
-                                <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
-
-                            <p class="letter-heading mb-3">7. Warranty: </p>
-                            <p class="paragraph mb-2">
-                                The Receiving Party understands and acknowledges that the Company is not obligated to
-                                supply any
-                                Confidential Information under this Agreement. Further, no representation or warranty is
-                                made or given
-                                about the accuracy or completeness of any Confidential Information or any other
-                                information supplied
-                                pursuant to this Agreement.
-                            </p>
-                            <p class="letter-heading mb-3">8. Remedies: </p>
-                            <p class="paragraph mb-2">
-                                The Receiving Party agrees that any violation of this Agreement will cause irreparable
-                                injury to the
-                                Company, the Company will be entitled to seek equitable relief in court, including but
-                                not limited to
-                                temporary restraining orders, preliminary injunctions and permanent injunctions without
-                                the necessity of
-                                posting a bond or other security and in addition to and without prejudice to any other
-                                right and
-                                remedies that the Company may have under the applicable law for a breach of this
-                                Agreement
-                            </p>
-
-                            <p class="letter-heading mb-3">9. Governing Law and Jurisdiction: </p>
-                            <p class="paragraph mb-1">
-                                "This Agreement shall be governed by and construed in accordance with the laws of India
-                                and shall be
-                                subject to jurisdiction of courts at Hyderabad, Telangana"
-                            </p>
-
-                            <p class="letter-heading mb-3">10. Miscellaneous: </p>
-                            <p class="paragraph mb-1">
-                                <span class="letter-heading mb-3">a)</span>
-                                Enforcement. If any provision of this Agreement shall be determined to be invalid or
-                                unenforceable for
-                                any reason, it shall be adjusted rather than voided, if possible, in order to achieve
-                                the intent of the
-                                parties to the extent possible. In any event, all other provisions of this Agreement
-                                shall be deemed
-                                valid and enforceable to the full extent possible.
-                            </p>
-
-                            <p class="paragraph mb-1">
-                                <span class="letter-heading mb-3">b)</span>
-                                Waiver. The waiver by the Company of a breach of any provision of this Agreement shall
-                                not operate or be
-                                construed as a waiver of any subsequent breach of the same or any other provision
-                                hereof.
-                            </p>
-
-                            <p class="paragraph mb-1">
-                                <span class="letter-heading mb-3">c)</span>
-                                Attorneys’ Fees. If either party seeks to enforce its rights under this Agreement by
-                                legal proceedings
-                                or otherwise, the non-prevailing party shall pay all costs and expenses of the
-                                prevailing Party.
-                            </p>
-
-                            <p class="paragraph mb-1">
-                                <span class="letter-heading mb-3">d)</span>
-                                Entire Agreement. This Agreement contains the entire understanding between the Company
-                                and the Receiving
-                                Party concerning the subject matter hereof and is in addition to any and all prior and
-                                contemporaneous
-                                negotiations, correspondence, understandings and agreements, whether oral or written,
-                                respecting that
-                                subject matter.
-                            </p>
-
-                            <p class="paragraph mb-3 mt-3">Thank You!!</p>
-
-                            <p class="paragraph mb-2">Yours Sincerely,</p>
-
-                            <p class="letter-heading unerlineo mb-5">FOR RightlyHR</p>
-
-                            <div class="img-space mb-3"></div>
-
-                            <p class="family2">{{appointmentletter.authorityName}}</p>
-
-                            <p class="letter-heading unerlineo d-black">Authorized Signatory</p>
-                            <p class="letter-heading unerlineo d-black">{{appointmentletter.authorityName}}</p>
-                            <p class="letter-heading unerlineo">{{authorityDesignation}}</p>
-
-                            <p class="letter-headingd-no-bottom text-end d-black mt-1 mb-1">
-                                Date of Joining: {{ appointmentletter.dateOfJoining | dateformat }}
-                            </p>
-
-                            <p class="letter-heading unerlineo mb-2 d-black">
-                                Employee Name :
-                            </p>
-
-                            <p class="letter-heading unerlineo mb-2 d-black">
-                                Sign :
-                            </p>
-
-                            <p class="letter-heading unerlineo">
-                                Date :
-                            </p>
-                        </div>
-                        <div class="footer">
-                            <p class="text-center m-0 pt-2 pb-2 fcn">RightlyHR</p>
-                            <p class="text-center m-0 pb-2 fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                Gachibowli, HYD - 500032
-                            </p>
-                        </div>
-                    </div>
-                    <!--page 11 ends-->
                 </div>
             </div>
         </div>

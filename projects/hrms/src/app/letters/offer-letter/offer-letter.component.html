@@ -1,1080 +1,263 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
-          class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
-    </div>
-  </div>
-
-  <!--tabs content-->
-  <div class="my-4">
-    <app-letters-tab />
-  </div>
-
-  <!--letter content-->
-  <div class="main-letter-content row">
-    <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
-      <div class="card letter-fields-content p-4">
-        <form action="">
-          <div class="row">
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search
-                Employee<span class="text-danger">*</span></label>
-              <div class="custom-p-select-content">
-                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true"
-                  placeholder="Please select employee" class="custom-select w-100">
-                  <!-- Template for selected item -->
-                  <ng-template #selectedItem let-selectedOption>{{ selectedOption.name
-                    }}</ng-template>
-                  <!-- Template for dropdown items -->
-                  <ng-template let-employee #item>{{ employee.name }}</ng-template>
-                </p-select>
-              </div>
-              <!-- <small class="error-msg"
-                        *ngIf="(employeeid.touched &&  employeeid.invalid) || (employeeid.invalid && GenerateOfferLetter.submitted)">Employee Id is required</small> -->
-            </div>
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Personal Email ID
-                <span class="text-danger">*</span></label>
-              <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                placeholder="Please enter personal email ID">
-              <!-- <small *ngIf=" mailid.invalid && (mailid.dirty || mailid.touched ||
-                                                        GenerateOfferLetter.submitted) ">
-                                    <span *ngIf="mailid.errors?.['required']" class="error-msg">
-                                      Personal Email is required
-                                    </span>
-                                    <span *ngIf="mailid.errors?.['pattern']" class="error-msg">
-                                      Invalid Email format
-                                    </span>
-                                  </small> -->
-            </div>
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salutation
-                <span class="text-danger">*</span></label>
-              <div class="custom-p-select-content">
-                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select salutation"
-                  class="form-select custom-select" />
-              </div>
-              <!-- <small class="error-msg" *ngIf="(title.touched && title.invalid) || (title.invalid && GenerateOfferLetter.submitted)">Salutation is required</small> -->
-            </div>
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">First Name<span
-                  class="text-danger">*</span></label>
-              <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                placeholder="Please enter first name">
-              <!-- <small *ngIf="firstName.invalid && (firstName.dirty ||firstName.touched || GenerateOfferLetter.submitted) ">
-                                    <span *ngIf="firstName.errors?.['required']" class="error-msg">
-                                      First Name is required
-                                    </span>
-                                    <span *ngIf="firstName.errors?.['minlength']" class="error-msg">
-                                      First Name with minimum 3 characters
-                                    </span>
-                                  </small> -->
-            </div>
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Middle Name
-                <span class="text-danger">*</span></label>
-              <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                placeholder="Please enter middle name">
-            </div>
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Last Name
-                <span class="text-danger">*</span></label>
-              <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                placeholder="Please enter last name">
-              <!-- <small *ngIf="
-                                                      lastName.invalid &&
-                                                      (lastName.dirty ||
-                                                        lastName.touched ||
-                                                        GenerateOfferLetter.submitted)
-                                                    ">
-                                    <span *ngIf="lastName.errors?.['required']" class="error-msg">
-                                      Last Name is required
-                                    </span>
-                                    <span *ngIf="lastName.errors?.['minlength']" class="error-msg">
-                                      Last Name with minimum 3 characters
-                                    </span>
-                                  </small> -->
-            </div>
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Gender<span
-                  class="text-danger">*</span></label>
-              <div class="custom-p-select-content">
-                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select employment type"
-                  class="form-select custom-select" />
-              </div>
-              <!-- <small class="error-msg" *ngIf="
-                                                  (gender.touched && gender.invalid) ||
-                                                  (gender.invalid && GenerateOfferLetter.submitted)
-                                                ">Gender is required</small> -->
-            </div>
-            <div class="col-xl-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select
-                Address<span class="text-danger">*</span></label>
-              <div class="custom-p-select-content">
-                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select address"
-                  class="form-select custom-select" />
-              </div>
-              <!-- <small class="error-msg" *ngIf="
-                                                  (Selectaddresses.touched && Selectaddresses.invalid) ||
-                                                  (Selectaddresses.invalid && GenerateOfferLetter.submitted)
-                                                ">Address is required</small> -->
-            </div>
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line
-                1<span class="text-danger">*</span></label>
-              <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                placeholder="Please enter address">
-              <!-- <small class="error-msg" *ngIf="
-                                                      (addressLine1.touched && addressLine1.invalid) ||
-                                                      (addressLine1.invalid && GenerateOfferLetter.submitted)
-                                                    ">Address Line 1 is required</small>      </div> -->
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line 2
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter address">
-                <!-- <small class="error-msg" *ngIf="
-                                                      (addressLine2.touched && addressLine2.invalid) ||
-                                                      (addressLine2.invalid && GenerateOfferLetter.submitted)
-                                                    ">Address Line 2 is required</small> -->
-              </div>
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">City<span
-                    class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter city">
-                <!-- <small class="error-msg" *ngIf="
-                                                      (city.touched && city.invalid) ||
-                                                      (city.invalid && GenerateOfferLetter.submitted)
-                                                    ">City is required</small> -->
-              </div>
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">State
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter state">
-                <!-- <small class="error-msg" *ngIf="
-                                                      (state.touched && state.invalid) ||
-                                                      (state.invalid && GenerateOfferLetter.submitted)
-                                                    ">State is required</small> -->
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country<span
-                    class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter Country">
-              </div>
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Pincode
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter pincode">
-                <!-- <small class="error-msg" *ngIf="
-                                                      (pincode.touched && pincode.invalid) ||
-                                                      (pincode.invalid && GenerateOfferLetter.submitted)
-                                                    ">Pincode is required</small> -->
-              </div>
-
-              <div class="col-xl-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Mobile Number
-                  With Country Code
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter mobile number">
-                <!-- <small *ngIf="
-                                                      mobile.invalid &&
-                                                      (mobile.dirty ||
-                                                        mobile.touched ||
-                                                        GenerateOfferLetter.submitted)
-                                                    ">
-                                    <span *ngIf="mobile.errors?.['required']" class="error-msg">
-                                      Mobile Number is required
-                                    </span>
-                                    <span *ngIf="mobile.errors?.['minlength']" class="error-msg">
-                                      Mobile Number Must be 10 digits
-                                    </span>
-                                  </small> -->
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Designation
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter designation">
-                <!-- <small class="error-msg" *ngIf="
-                                                          (designation.touched && designation.invalid) ||
-                                                          (designation.invalid && GenerateOfferLetter.submitted)
-                                                        ">
-                                    Designation is required</small>
-                                  <small *ngIf="!disablebuttonfordesignation" class="error-msg">
-                                    <p>No results found</p>
-                                  </small> -->
-              </div>
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Esic<span
-                    class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                  <p-select [options]="employeementType" optionLabel="name" placeholder="Please select esic"
-                    class="form-select custom-select" />
-                </div>
-                <!-- <small class="error-msg" *ngIf="
-                                                  (esic.touched && esic.invalid) ||
-                                                  (esic.invalid && GenerateOfferLetter.submitted)
-                                                ">Esic is required</small> -->
-              </div>
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">PF<span
-                    class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                  <p-select [options]="employeementType" optionLabel="name" placeholder="Please select PF"
-                    class="form-select custom-select" />
-                </div>
-                <!-- <small class="error-msg" *ngIf="
-                                                  (pf.touched && pf.invalid) ||
-                                                  (pf.invalid && GenerateOfferLetter.submitted)
-                                                ">PF is required</small> -->
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salary
-                  <span class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                  <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                    placeholder="Please enter salary">
-                </div>
-                <!-- <small class="error-msg" *ngIf="
-                                                  (salary.touched && salary.invalid) ||
-                                                  (salary.invalid && GenerateOfferLetter.submitted)
-                                                ">Salary is required</small> -->
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Variable
-                  Pay<span class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                  <p-select [options]="employeementType" optionLabel="name" placeholder="Please select variable pay"
-                    class="form-select custom-select" />
-                </div>
-                <!-- <small class="error-msg"
-                                *ngIf="(jobLocationName.touched && jobLocationName.invalid  ) || (jobLocationName.invalid && GenerateOfferLetter.submitted)">
-                                Work Location is required</small> -->
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Variable Amount
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter variable amount">
-                <!-- <small class="error-msg"
-                    *ngIf="(JobSubLocationName.touched &&  JobSubLocationName.invalid) || (JobSubLocationName.invalid && GenerateOfferLetter.submitted)">
-                    Sub Location is required</small> -->
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Work
-                  Location<span class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                  <p-select [options]="location" optionLabel="name" placeholder="Please select work location"
-                    class="form-select custom-select" />
-                </div>
-                <!-- <small class="error-msg"
-                    *ngIf="(offerIssueddate.touched &&  offerIssueddate.invalid) || (offerIssueddate.invalid && GenerateOfferLetter.submitted)">
-                    Offer Issued Date is required</small> -->
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Sub Location<span
-                    class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                  <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location"
-                    class="form-select custom-select" />
-                </div>
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">offer Issued Date
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter salary">
-              </div>
-
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Expected Start
-                  Date
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter salary">
-              </div>
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Document
-                  Type<span class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                  <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location"
-                    class="form-select custom-select" />
-                </div>
-              </div>
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">offer Expiry Date
-                  <span class="text-danger">*</span></label>
-                <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
-                  placeholder="Please enter salary">
-              </div>
-              <div class="col-xl-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note
-                  <span class="text-danger">*</span></label>
-                <textarea class="form-control custom-input" placeholder="Leave a comment here"></textarea>
-              </div>
-              <div class="col-xl-6 col-lg-12 mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                  Authority
-                  Name<span class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                  <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location"
-                    class="form-select custom-select" />
-                </div>
-              </div>
-            </div>
-            <div class="d-flex flex-wrap gap-3 pt-4">
-              <button type="button" class="custom-btn btn-primary">Generate Offer Letter</button>
-              <button type="button" class="custom-btn btn-primary">Request For Approval</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="col-sm-12 col-md-9 cols-lg-8 col-xl-8 col-xxl-7">
-      <div class="card letter-data-content p-4">
-         <div class="d-flex justify-content-center">
-          <div>
-            <div class="page-div" id="pdfContent1">
-              <br />
-              <div *ngIf="prospectiveEmpData.Copys; else doc">
-                <!-- <app-letterhead></app-letterhead> -->
-              </div>
-              <ng-template #doc>
-                <div style="margin-bottom: 7rem;"></div>
-              </ng-template>
-              <div class="letter-div ">
-                <div class="mb-3 d-flex justify-content-center">
-                  <p class="letter-heading fs-6">OFFER LETTER</p>
-                </div>
-                <div class="row">
-                  <div class="col-md-8 " style="margin-left: -34px;">
-                    <ul class="fw-bolder">
-                      <li class=""
-                        *ngIf="!prospectiveEmpData.firstName && !prospectiveEmpData.middleName && !prospectiveEmpData.lastName;else fullname">
-                        Name:</li>
-                      <ng-template #fullname>
-                        <li class="">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
-                          {{prospectiveEmpData.lastName}},
-                        </li>
-                      </ng-template>
-                      <li class="" *ngIf="!prospectiveEmpData.addressLine1;else address">Employee Location:
-                      </li>
-                      <ng-template #address>
-                        <li class="">{{prospectiveEmpData.addressLine1}},</li>
-                        <li class="">{{prospectiveEmpData.addressLine2}},</li>
-                        <li class="">{{prospectiveEmpData.city}},
-                          {{prospectiveEmpData.state}},</li>
-                        <li class="">
-                          {{prospectiveEmpData.country}} - {{prospectiveEmpData.pinCode}}.
-                        </li>
-                      </ng-template>
-                    </ul>
-                  </div>
-                  <div class="col-md-4 fw-bolder">
-                    <p class=" text-end p-0">{{prospectiveEmpData.offerIssuedDate | dateformat
-                      }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="letter-heading-div" style="margin-bottom: 10px;">
-                <p class=""><strong>Dear {{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
-                    {{prospectiveEmpData.lastName}}</strong>,</p>
-              </div>
-
-              <div class="watermark">
-                <p class="paragraph mb-4">
-                  Congratulations and Welcome to SNAD Developers Pvt. Ltd!!!
-                </p>
-                <p class="paragraph mb-4">
-                  Further to your application for employment with us, and the subsequent selection process, we are
-                  delighted to offer you the role of <strong>{{jobDesignation}}</strong> in our organization and your
-                  <strong>CTC</strong>
-                  will be <strong>INR {{(+prospectiveEmpData.amount || 0) + (+prospectiveEmpData.variablePayAmount ||
-                    0)}}</strong> per annum.
-                </p>
-
-                <p class="paragraph mb-4">SNAD DEVELOPERS is formed as an INDIAN Spin-off of AVERON SOLUTIONS INC., a
-                  US
-                  based organization for
-                  providing Software Development and Services to various IT Organizations across the globe. We are a
-                  core team of engineers with a mindset to excel as a family under the guidance of our superior
-                  leadership. </p>
-
-                <p class="paragraph mb-4">Your reporting location will be <strong> SNAD DEVELOPERS INDIA Pvt Ltd,
-                    Vijaya
-                    Krishna
-                    Towers, Floor#16,
-                    Madhava Reddy Colony, Gachibowli, Hyderabad, Telangana - 500032, India. Your date of joining would
-                    be
-                    {{prospectiveEmpData.dateOfJoining | dateformat}}.</strong> </p>
-
-                <p class="paragraph mb-4">
-                  Your respective <strong>Cost to Company</strong> as applicable has been detailed in Annexure 2 of
-                  this letter. On
-                  your
-                  joining, you are expected to enter into an agreement, which specifies the details of the scope,
-                  terms,
-                  and conditions of your employment.
-                </p>
-
-
-                <ol class="liststylenumber">
-                  <li class="paragraph mb-4">
-                    <strong>Offer Letter Valid Period:</strong> The currently issued offer letter will be valid up to
-                    <strong>
-                      {{prospectiveEmpData.offerExpiryDate | dateformat}}.</strong> The accepted offer letter along
-                    with the list of documents should be provided at least
-                    30
-                    days before the Joining Date for performing the necessary Background verification and initial
-                    setup.
-                  </li>
-                  <li class="paragraph mb-4"> <strong>Working Hours:</strong> Your normal hours of work are from 10:00
-                    AM hrs. to 07:00
-                    PM
-                    hrs. Monday to Friday.
-                    Staff of support departments may be required to work on Weekends. The normal working hours are
-                    forty-five hours/week, Monday to Friday. Depending on project contingencies, working hours for
-                    specific employees or groups of employees may be modified / altered from time to time.
-                    <br><br>
-                    The working hours applicable to you will be observed depending upon your workplace of posting and
-                    as
-                    amended from time to time. Further you should be prepared to work in any shift, as may be
-                    warranted
-                    by the Company’s / Client’s work requirement. The employee may also be required to attend duties
-                    on
-                    Public Holidays as per the exigencies of work.
-                  </li>
-                  <li class="paragraph mb-4"><strong>Annual Leave:</strong> You will be entitled to Paid Leave and
-                    Public Holidays
-                    yearly
-                    as per your
-                    eligibility and the Company policies. </li>
-                  <li class="paragraph mb-3">
-                    <strong>Notice Period:</strong> Your services can be terminated by you by giving a notice of 90
-                    days in writing or
-                    salary in lieu thereof, subject to the Company’s discretion. The Company may terminate your
-                    employment by giving you salary for 30 days in lieu of the notice. Any employee who breaches the
-                    Company’s terms and conditions under this offer would be terminated immediately without notice.
-                  </li>
-                </ol>
-              </div>
-
-              <div class=" text-light footer">
-                <p class="text-center m-0 pt-2 pb-2 fcn">SNAD DEVELOPERS INDIA Pvt Ltd</p>
-                <p class="text-center m-0 pb-2  fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Clolony,
-                  Gachibowli,
-                  HYD - 500032</p>
-              </div>
-            </div>
-
-
-          </div>
-
-          <div class="page-div mt-4 mb-4" id="pdfContent2">
-            <br />
-            <div class="pt-2">
-              <div>
-                <!-- <app-letterhead></app-letterhead> -->
-              </div>
-              <ol style="list-style: decimal;" type="1" start="5">
-                <li>
-                  <strong>Other Terms & Conditions of this Offer</strong>
-                  <ul class="bullet">
-                    <li class="paragraph ">During your service with the Company, you are expected to dedicate
-                      your
-                      whole time and
-                      attention to the Company's affairs and abstain from directly or indirectly engaging in any
-                      other
-                      business. </li>
-                    <li class="paragraph ">Information pertaining to SNAD operations and intellectual property
-                      is
-                      confidential and you
-                      will sign a non-disclosure agreement. If you are bound by a confidentiality agreement with a
-                      previous employer, you must notify the Company and indemnify the Company against any breach
-                      thereof. </li>
-                    <li class="paragraph ">You may be required to travel on Company work, and you will be
-                      reimbursed expenses as per
-                      Company policy. </li>
-                    <li class="paragraph ">Your Remuneration and the terms and conditions of this offer letter
-                      shall remain confidential
-                      and are not to be disclosed to any third party. </li>
-                    <li class="paragraph ">Upon acceptance of the offer letter, your official Employment ID will
-                      be created with us and
-                      you will entitled to the corporate benefits structure based on the category of work. Your
-                      employment with the company as a FTE will stand confirmed subjected to the terms and conditions
-                      as per rules, regulations, and policies of The Company. </li>
-                    <li class="paragraph ">On termination of employment, you will immediately give up to the
-                      Company all correspondence,
-                      specifications, formulae, books, documents, hardware, market data, cost data, literature,
-                      drawings, effects or records, backup copies of programs source / data, etc. belonging to the
-                      Company and any other Company property or relating to its business and shall not make or retain
-                      any copies of the items. </li>
-                    <li class="paragraph ">If you are absent from work without prior notification & approval as
-                      per Company policies, you
-                      will be liable for disciplinary action depending on the severity of the effects caused by the
-                      individual’s absence. </li>
-                    <li class="paragraph ">If you are absent for a continuous period of 7 days without leave or
-                      obtaining your manager’s
-                      approval, you will be deemed to have voluntarily terminated your service without notice. </li>
-                    <li class="paragraph ">All the terms and conditions of service may be modified or changed at
-                      the Company’s
-                      discretion. You will abide by all the rules and regulations of the Company which are in force
-                      from time to time. </li>
-                  </ul>
-                </li>
-              </ol>
-              <p class="paragraph mb-3">To confirm please send your <strong>acceptance</strong> of the offer via reply
-                to the same
-                <strong>email</strong> on or before <strong> {{prospectiveEmpData.offerExpiryDate |
-                  dateformat}}.</strong> We request
-                you to please carry a
-                signed copy of the
-                offer letter &
-                other required documents (<strong>Annexure 1</strong>) on the day of your joining.
-              </p>
-
-              <p class="paragraph mb-3">We wish you a long, rewarding and fulfilling career experience and look
-                forward to having you on board with us. Please visit our website <a href="">www.snaddevelopers.com</a>
-                for more
-                information about our Company. </p>
-
-              <p class="paragraph mb-3">All other detailed terms and conditions of your employment will be specified
-                in the appointment letter, invention assignment and confidentiality agreement and the Company policies
-                which will be provided to you separately. This Offer Letter along with the appointment letter,
-                invention assignment and confidentiality agreement and the Company policies collectively form a part
-                of your employment conditions. </p>
-
-              <p class="paragraph mb-3">This Offer Letter is conditional upon you executing the appointment letter
-                and/or any other agreement as may be requested by the Company at the time of joining. The Company may
-                revoke this offer of employment anytime before execution of the appointment letter. Similarly, after
-                accepting this offer, if you do not intend to join the Company, you shall have a right to inform your
-                intentions any-time before your joining date. </p>
-
-              <p class="paragraph mb-3">For any further information or clarification required, please feel free to
-                reach us on our email at <a href=""> hr&:64snaddevelopers.com</a> </p>
-
-
-            </div>
-            <div class=" text-light footer">
-              <p class="text-center m-0 pt-2 pb-2 fcn">SNAD DEVELOPERS INDIA Pvt Ltd</p>
-              <p class="text-center m-0 pb-2  fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Clolony,
-                Gachibowli,
-                HYD - 500032</p>
-            </div>
-
-          </div>
-
-          <div class="page-div mt-4 mb-4" id="pdfContent3">
-            <br />
-            <div class="pt-2">
-              <div>
-                <!-- <app-letterhead></app-letterhead> -->
-              </div>
-              <div>
-                <p class="paragraph mb-4">
-                  Yours Sincerely,
-                </p>
-                <p class="mb-5 boldsize1"> For SNAD DEVELOPERS INDIA PVT LTD </p>
-                <div class="stamp"></div>
-                <p class="m-0  family2">{{prospectiveEmpData.authorityName}} </p>
-                <p class="m-0 boldsize1"> Authorized Signatory, </p>
-                <p class="m-0 boldsize1">{{prospectiveEmpData.authorityName}} </p>
-                <p class="m-0 mb-5 boldsize1">{{authorityDesignation}} </p>
-                <p class="paragraph  mb-5">I accept this offer of employment. </p>
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <p class="paragraph">______________________________</p>
-                  </div>
-                  <div>
-                    <p class="paragraph me-5 pe-5">Date (DD/MM/YYYY)</p>
-                  </div>
-                </div>
-                <p class="ACCEPTANCE mb-3 mt-5">ACCEPTANCE</p>
-                <p class="paragraph mb-4">I accept this offer letter and will complete all the necessary documents as
-                  required.</p>
-
-                <p class="Signature mb-3 mt-4">Signature: _________________________</p>
-                <p class="Signature mb-3">Name: </p>
-                <p class="Signature mb-3">Date: </p>
-                <p class="Signature mb-4">Place: </p>
-
-                <p class="paragraph mb-5">My Date of joining will be ________________________(If different from the
-                  agreed joining Date above)</p>
-              </div>
-
-
-            </div>
-            <div class=" text-light footer">
-              <p class="text-center m-0 pt-2 pb-2 fcn">SNAD DEVELOPERS INDIA Pvt Ltd</p>
-              <p class="text-center m-0 pb-2  fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Clolony,
-                Gachibowli,
-                HYD - 500032</p>
-            </div>
-          </div>
-
-          <div class="page-div mt-4 mb-4" id="pdfContent4">
-            <br />
-            <div>
-              <!-- <app-letterhead></app-letterhead> -->
-            </div>
-            <div class="pt-2">
-              <h5 class="text-center mt-5 mb-2"> <strong>ANNEXURE - 1</strong> </h5>
-              <p class="boldsize">Documents / Infermation required to be submitted on the day of joining:</p>
-
-              <p class="paragraph mb-3">On the day joining, you are requested to bring to the following original
-                documents and certificates (For verification purpose), along with 1 copy of each</p>
-
-              <div class="paragraph mb-1">
-                <div class="box"></div> Acceptance copies of SNAD Developers Pvt. Ltd. duly signed offer Letter.
-              </div>
-              <div class="paragraph mb-1">
-                <div class="mb-3">
-                  <div class="box "></div> Certificates' supporting your educational qualifications along with marks
-                  sheet
-                </div>
-
-                <ul>
-                  <li class="paragraph mb-1">
-                    <div class="box"></div> Xth certificate & marks sheet
-                  </li>
-                  <li class="paragraph mb-1">
-                    <div class="box"></div> XII th certificate & marks sheet
-                  </li>
-                  <li class="paragraph mb-1">
-                    <div class="box"></div> Graduation Degree certificate & Semester/year-wise mark sheets
-                  </li>
-                  <li class="paragraph mb-1">
-                    <div class="box"></div> Master's Degree certificate & Semester/year-wise mark sheets (If
-                    Applicable)
-                  </li>
-                  <li class="paragraph mb-1">
-                    <div class="box"></div> Diploma/PG Diploma certificate & Transcripts (If Applicable)
-                  </li>
-                  <li class="paragraph ">
-                    <div class="box"></div> Any other Certificate with supporting documents
-                  </li>
-                </ul>
-              </div>
-
-              <div class="paragraph d-flex ">
-                <p> <span class="box"></span> PAN Card (Mandatory)</p>
-              </div>
-              <div class="paragraph d-flex ">
-                <p> <span class="box"></span> AADHAR Card (Mandatory)</p>
-              </div>
-              <div class="paragraph d-flex ">
-                <p> <span class="box"></span> Passport size photographs 3 colored photos.</p>
-              </div>
-              <div class="paragraph d-flex ">
-                <p> <span class="box"></span>
-                  Fitness/Medical report with proper blood group certified by medical
-                  practitioner.</p>
-              </div>
-              <div class="paragraph d-flex ">
-                <p><span class="box"></span>
-                  Offer Letter from your current employer and all previous employer’s (If
-                  Applicable).</p>
-              </div>
-              <div class="paragraph d-flex ">
-                <p> <span class="box"></span>
-                  Experience letter from your current employer and all previous employer’s
-                  (If
-                  Applicable).</p>
-              </div>
-              <div class="paragraph d-flex ">
-                <p><span class="box"></span>
-                  Relieving letter from your current employer (If Applicable).</p>
-              </div>
-              <div class="paragraph d-flex  ">
-                <p class="lh-base"><span class="box"></span>
-                  Valid Passport – Please submit a copy of the valid
-                  Passport (inclusive of
-                  all
-                  blank pages). In case you have applied for it, please submit the proof of Passport Office submission
-                  ticket. Upon receipt of Passport from Passport Office, please submit the documents to HCM Team. if
-                  you
-                  do not have a passport, please apply ASAP, and submit the acknowledgement.</p>
-              </div>
-              <div class="paragraph d-flex ">
-                <span class="box"></span>
-                <p>Three last drawn salary pay slips of your previous employer (If
-                  Applicable).</p>
-              </div>
-              <div class="paragraph d-flex  ">
-                <p><span class="box"></span>
-                  Form 16 of last year if paying tax previously (If Applicable).</p>
-              </div>
-
-            </div>
-            <div class=" text-light footer">
-              <p class="text-center m-0 pt-2 pb-3 fcn">SNAD DEVELOPERS INDIA Pvt Ltd</p>
-              <p class="text-center m-0 pb-2  fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Clolony,
-                Gachibowli,
-                HYD - 500032</p>
-            </div>
-          </div>
-
-          <div class="page-div mt-3 mb-4" id="pdfContent5">
-            <div>
-              <!-- <app-letterhead></app-letterhead> -->
-            </div>
-            <div>
-              <!-- <div class="mb-3 d-flex justify-content-center ">
-                                  <p class="letter-heading">ANNEXURE - 2</p>
-                                </div> -->
-              <h5 class="text-center mt-1"> <strong>ANNEXURE - 2</strong> </h5>
-
-              <h6 class="text-center mb-2 mt-2 t-bold">STRICTLY PRIVATE & CONFIDENTIAL </h6>
-
-              <div class="t-details row">
-                <div class=" name col-2 boderend ce">NAME</div>
-                <div class="boldsize col-4 boderend ce"> {{prospectiveEmpData.firstName}}
-                  {{prospectiveEmpData.middleName}}
-                  {{prospectiveEmpData.lastName}}</div>
-                <div class="ms-2 name col-2 boderend ce">Designation</div>
-                <div class="boldsize col-3 ce">{{jobDesignation}}</div>
-              </div>
-
-              <!-- <p> 
-                    <span class="letter-headingd-no-bottom">Name of the Employee: </span><span><span
-                        *ngIf="!prospectiveEmpData.firstName; else empname">
-                        _______________________</span>
-                      <ng-template #empname><b>
-                          {{ prospectiveEmpData.firstName }}
-                          {{ prospectiveEmpData.middleName }}
-                          {{ prospectiveEmpData.lastName }}
-                        </b></ng-template></span>
-                  </p> -->
-              <p class=" t-bold text-center mb-3 mt-2">Compensation Details <span class="boldnone">(All figures in
-                  Rs.)</span> </p>
-              <!-- table start -->
-              <div class="">
-                <table class="mytable mb-2 w-100">
-                  <thead>
-                    <tr>
-                      <th class="text-center p-0">Components In Salary</th>
-                      <th class="text-center p-0">Per Month</th>
-                      <th class="text-center p-0">Per Annum</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style="width:63%;" class="p-0 pt-1 pb-1 text-center">Basic Salary</td>
-                      <td class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.basicSalary; else basicpermonth"></span></td>
-                      <ng-template #basicpermonth>{{prospectiveEmpData.basicSalary}}</ng-template>
-                      <td class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.basicPerannum; else basicperannum"></span>
-                        <ng-template #basicperannum> {{prospectiveEmpData.basicPerannum }}</ng-template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center">HRA</td>
-                      <td class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.hraSalary; else hrapermonth">
-                        </span>
-                        <ng-template #hrapermonth>{{ prospectiveEmpData.hraSalary }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.hraPerAnnum; else hraperannum"> </span>
-                        <ng-template #hraperannum>{{ prospectiveEmpData.hraPerAnnum }}</ng-template>
-                      </td>
-                    </tr>
-                    <!-- <tr>
-                                                <td class="text-center p-0 pt-1 pb-1">Educational Allowances</td>
-                                                <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                                              !prospectiveEmpData.educationAllowances;
-                                                                                              else educ
-                                "> </span>
-                            <ng-template #educ>{{ prospectiveEmpData.educationAllowances }}</ng-template>
-                          </td>
-                          <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                !prospectiveEmpData.educationallowancesPerAnnum;
-                                                                else educper
-                                                              ">
-                            </span>
-                            <ng-template #educper>{{
-                              prospectiveEmpData.educationallowancesPerAnnum
-                              }}</ng-template>
-                          </td>
-                        </tr> -->
-                    <!-- <tr>
-                                                <td class="text-center p-0 pt-1 pb-1">Conveyance</td>
-                                                <td class="text-center p-0 pt-1 pb-1"><span *ngIf="!prospectiveEmpData.Conveyance; else conv">
-                            </span>
-                            <ng-template #conv>{{ prospectiveEmpData.Conveyance }}</ng-template>
-                          </td>
-                          <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                                              !prospectiveEmpData.conveyancePerAnnum;
-                                                                                              else convper
-                                "></span>
-                            <ng-template #convper>{{ prospectiveEmpData.conveyancePerAnnum }}</ng-template>
-                          </td>
-                        </tr> -->
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center">Other Allowances</td>
-                      <td class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.otherAllowances; else other">
-                        </span>
-                        <ng-template #other>{{ prospectiveEmpData.otherAllowances }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                                              !prospectiveEmpData.otherAllowancesPerAnnum;
-                                                                                              else otherper
-                                                                                            ">
-                        </span>
-                        <ng-template #otherper>{{ prospectiveEmpData.otherAllowancesPerAnnum }}</ng-template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 bold text-center"><b>Total Gross Salary</b></td>
-                      <td class="text-center p-0 pt-1 pb-1 bold"><span *ngIf="
-                                                                                              !prospectiveEmpData.totalGrossSalary;
-                                                                                              else totalgross
-                                "> </span>
-                        <ng-template #totalgross>{{ prospectiveEmpData.totalGrossSalary }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1 bold"><span *ngIf="
-                                                                                              !prospectiveEmpData.totalGrossPerAnnum;
-                                                                                              else totalgrossper
-                                                                                            ">
-                        </span>
-                        <ng-template #totalgrossper>{{ prospectiveEmpData.totalGrossPerAnnum }}</ng-template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center">PF Contribution by Employee</td>
-                      <td class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.pfContribution; else pfpermonth"> </span>
-                        <ng-template #pfpermonth>{{prospectiveEmpData.pfContribution}}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1"><span *ngIf="!prospectiveEmpData.pfPreAnuum; else pfempper">
-                        </span>
-                        <ng-template #pfempper>{{prospectiveEmpData.pfPreAnuum }}</ng-template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center">ESI Contribution by Employee</td>
-                      <td class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.employeeEsi; else empresipermonth"> </span>
-                        <ng-template #empresipermonth>{{prospectiveEmpData.employeeEsi }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1"> <span
-                          *ngIf="!prospectiveEmpData.esiPerAnnumemployee;
-                                                                                              else empresicperannum"></span>
-                        <ng-template #empresicperannum>{{prospectiveEmpData.esiPerAnnumemployee }}</ng-template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center">Professional Tax (PT)</td>
-                      <td class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.professionalTax; else pftax">
-                        </span>
-                        <ng-template #pftax>{{ prospectiveEmpData.professionalTax }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                                              !prospectiveEmpData.professionalPerAnnum;
-                                                                                              else pftaxper
-                                "> </span>
-                        <ng-template #pftaxper>{{ prospectiveEmpData.professionalPerAnnum }}</ng-template>
-                      </td>
-                    </tr>
-
-
-                    <!-- <tr>
-                          <td class="text-center p-0 pt-1 pb-1">Medical insurance</td>
-                          <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                                              !prospectiveEmpData.educationAllowances;
-                                                                                              else educ
-                                "> </span>
-                            <ng-template #educ>{{ prospectiveEmpData.educationAllowances }}</ng-template>
-                          </td>
-                          <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                !prospectiveEmpData.educationallowancesPerAnnum;
-                                                                else educper
-                                                              ">
-                            </span>
-                            <ng-template #educper>{{
-                              prospectiveEmpData.educationallowancesPerAnnum
-                              }}</ng-template>
-                          </td>
-                        </tr> -->
-
-
-
-                    <tr>
-                      <td class="p-0 pt-2 pb-2 text-center"><b>Total Deductions (PF+ESI)</b></td>
-                      <td class="text-center p-0 pt-1 pb-1 bold"><span
-                          *ngIf="!prospectiveEmpData.totalDeduction; else totdec"> </span>
-                        <ng-template #totdec>{{ prospectiveEmpData.totalDeduction }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1 bold"><span *ngIf="
-                                                                                              !prospectiveEmpData.totalDeductionsPerAnnum;
-                                                                                              else totdecper
-                                                                                            ">
-                        </span>
-                        <ng-template #totdecper>{{ prospectiveEmpData.totalDeductionsPerAnnum }}</ng-template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center"><b>Net Salary</b></td>
-                      <td class="text-center p-0 pt-1 pb-1 bold"><span *ngIf="!prospectiveEmpData.netSalary; else net">
-                        </span>
-                        <ng-template #net>{{ prospectiveEmpData.netSalary }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1 bold"><span *ngIf="
-                                                                                              !prospectiveEmpData.netSalaryPerAnnum;
-                                                                                              else netper
-                                "> </span>
-                        <ng-template #netper>{{ prospectiveEmpData.netSalaryPerAnnum }}</ng-template>
-                      </td>
-                    </tr>
-                  </tbody>
-
-                </table>
-              </div>
-
-              <!-- second table -->
-              <div class="mt-3">
-                <table class="secondtable w-100">
-                  <thead>
-                    <tr>
-                      <th style="text-align: center;" colspan="3">CTC Calculation</th>
-
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style="width:63%;" class="p-0 pt-1 pb-1 text-center">Employer PF Contribution</td>
-                      <td style="width:18%;" class="text-center p-0 pt-1 pb-1"><span
-                          *ngIf="!prospectiveEmpData.pfContribution; else pfempr">
-                        </span>
-                        <ng-template #pfempr>{{ prospectiveEmpData.pfContribution }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1"><span *ngIf="!prospectiveEmpData.pfPreAnuum; else pfempper">
-                        </span>
-                        <ng-template #pfempper>{{ prospectiveEmpData.pfPreAnuum }}</ng-template>
-                      </td>
-
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center">Employer ESI Contribution</td>
-                      <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                                              !prospectiveEmpData.esicContribution;
-                                  else esiempr
-                                "> </span>
-                        <ng-template #esiempr>{{ prospectiveEmpData.esicContribution }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1"><span *ngIf="
-                                                                                              !prospectiveEmpData.esiPerAnnum;
-                                  else esiempper
-                                "> </span>
-                        <ng-template #esiempper>{{ prospectiveEmpData.esiPerAnnum }}</ng-template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center"><b>Variable Amount</b></td>
-                      <td colspan="2" class="text-center p-0 pt-1 pb-1 bold"><span
-                          *ngIf="!prospectiveEmpData.variablePayAmount; else vamount"> </span>
-                        <ng-template #vamount>{{prospectiveEmpData.variablePayAmount }}</ng-template>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="p-0 pt-1 pb-1 text-center"><b>CTC=Gross Salary +(Employer PF+ESI+Variable Amount)</b>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1 bold"><span
-                          *ngIf="!prospectiveEmpData.grossSalary; else gross"> </span>
-                        <ng-template #gross>{{ prospectiveEmpData.grossSalary }}</ng-template>
-                      </td>
-                      <td class="text-center p-0 pt-1 pb-1 bold"><span
-                          *ngIf="!prospectiveEmpData.amount; else grossper">
-                        </span>
-                        <ng-template #grossper>{{(+prospectiveEmpData.amount || 0) +
-                          (+prospectiveEmpData.variablePayAmount || 0)}}</ng-template>
-                      </td>
-                    </tr>
-                    <!-- <tr> <td class="p-0 pt-1 pb-1 text-center"><b>Variable Amount</b></td>
-                          <td colspan="2" class="text-center p-0 pt-1 pb-1 bold"><span
-                              *ngIf="!prospectiveEmpData.variablePayAmount; else vamount"> </span>
-                            <ng-template #vamount>{{prospectiveEmpData.variablePayAmount }}</ng-template>
-                          </td></tr> -->
-                  </tbody>
-                  <tfoot>
-
-                  </tfoot>
-                </table>
-              </div>
-              <!-- table end -->
-
-              <p class="listtext mb-1 mt-2"><span class="fw-bold">Note:</span> {{prospectiveEmpData.note}}</p>
-              <p class="paragraph bold mb-2 mt-2">The Company presently has a Perfomance Award Program.Performance
-                Award
-                Program will be made available to you upon joining SNAD. Please note: SNAD reserves the right in its
-                sole discretion to amend, change, suspend, or terminate the Performance Award Program at any time.
-              </p>
-              <p class="paragraph bold mb-1">Additional Details Related to Salary Structure: </p>
-              <ol>
-
-                <li class="listtext"><span class="">a)</span>
-                  TDS will be deducted from the Gross Salary after statutory deductions.
-                </li>
-                <li class="listtext"><span class="">b)</span>
-                  Employees are responsible for their Tax Planning.
-                </li>
-                <li class="listtext"><span class="">c)</span> Employees may avail tax benefit by submitting bills
-                  against Leave Travel
-                  Allowance. </li>
-                <li class="listtext"><span class="">d)</span> All eligible employees as per the respective policies of
-                  the Company will
-                  be covered under the
-                  Group Medical Coverage Policy and Group Covid policy. </li>
-                <li class="listtext"><span class="">e)</span> All the above benefits are as per the Company’s
-                  policies, which are
-                  subjective to change from time
-                  to time. Further salary, allowances, any alteration in salary structure and other payments/benefits
-                  will be governed by The Company’s rules as well as statutory provisions in force from time to time
-                  and subject to deduction of appropriate taxes as applicable under government norms. </li>
-                <li class="listtext"><span class="">f)</span> While the other terms and conditions of your appointment
-                  remain unchanged,
-                  please do take note
-                  that as per the current Company’s Separation Policy, if you resign from the services of the company,
-                  you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice Period. </li>
-                <li class="listtext"><span class="">g)</span> Medical insurance amount will be calculated based on the
-                  number of
-                  dependents; the respective
-                  amount will be deducted from your monthly salary. </li>
-
-              </ol>
-
-              <p class="note"> <span>Note</span>: The above compensation package is strictly confidential between you
-                and the Company and should not be discussed with anyone nor divulged to anyone in any manner
-                whatsoever.</p>
-            </div>
-            <div class=" text-light footer ">
-              <p class="text-center m-0 pt-2 pb-2 fcn">SNAD DEVELOPERS INDIA Pvt Ltd</p>
-              <p class="text-center m-0 pb-2  fcnd">Vijaya Krishna Towers, Floor#16, Madhava Reddy Clolony,
-                Gachibowli,
-                HYD - 500032</p>
-            </div>
-          </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
         </div>
-      </div>
     </div>
-  </div>
+
+    <!--tabs content-->
+    <div class="my-4">
+        <app-letters-tab />
+    </div>
+
+    <!--letter content-->
+    <div class="main-letter-content row">
+        <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
+            <div class="card letter-fields-content p-4">
+                <form [formGroup]="employeeForm" (ngSubmit)="downLoadDocument()">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Search Employee<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select employee"
+                                    formControlName="searchEmployee" class="custom-select w-100">
+                                </p-select>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Personal Email ID<span
+                                    class="text-danger">*</span></label>
+                            <input type="email" class="form-control custom-input" formControlName="personalEmail"
+                                placeholder="Please enter personal email Id" />
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Salutation<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select salutation" formControlName="salutation"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">First Name<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input" formControlName="firstName"
+                                placeholder="Please enter first name" />
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Middle Name</label>
+                            <input type="text" class="form-control custom-input" formControlName="middleName"
+                                placeholder="Please enter middle name" />
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Last Name<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input" formControlName="lastName"
+                                placeholder="Please enter last name" />
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Gender<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select gender" formControlName="gender"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12 mb-4">
+                            <label class="form-label custom-label mb-2">Select Address<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select address" formControlName="selectAddress"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Address Line 1<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input" formControlName="addressLine1"
+                                placeholder="Please enter address" />
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">City<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input" formControlName="city"
+                                placeholder="Please enter city" />
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Country<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input" formControlName="country"
+                                placeholder="Please enter country" />
+                        </div>
+
+                        <div class="col-xl-12 mb-4">
+                            <label class="form-label custom-label mb-2">Mobile Number with Country Code<span
+                                    class="text-danger">*</span></label>
+                            <app-country-code-phone-number [selectedCountryConfig]="selectedCountryConfig"
+                                [countryListConfig]="countryListConfig" (onPhoneChange)="handlePhoneChange($event)">
+                            </app-country-code-phone-number>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Designation <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input" formControlName="designation"
+                                placeholder="Please enter designation" />
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">ESIC <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select ESIC" formControlName="esic"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">PF <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select PF" formControlName="pf"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12 mb-4">
+                            <label class="form-label custom-label mb-2">Note</label>
+                            <textarea class="form-control custom-input" formControlName="note"
+                                placeholder="Leave a comment here"></textarea>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-3 pt-4">
+                            <button type="submit" class="custom-btn btn-primary">Generate Offer Letter</button>
+                            <button type="button" class="custom-btn btn-primary" (click)="requestForApproval()">Request
+                                For Approval</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-9 cols-lg-8 col-xl-8 col-xxl-7">
+            <div class="card letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+                    <div>
+                        <!--page-1-->
+                        <div class="letter-page-content" id="pdfContent1">
+                            <div class="letter-page-sub-content">
+                                <div class="py-5">
+                                    <div class="letter-header text-center"><u>TO WHOMSOEVER IT MAY CONCERN</u></div>
+                                </div>
+                                <div class="mb-5">
+                                    <p>
+                                        <span class="letter-text">This letter is to confirm that
+                                            <!-- <span *ngIf="!addressLetterData.firstName;else name">_______________________</span>
+                                                            <ng-template #name><b>{{addressLetterData.firstName}} {{addressLetterData.middleName}}
+                                                            {{addressLetterData.lastName}}</b></ng-template>  -->
+                                            has been working in our Establishment "RightlyHR" as
+                                            <!-- <span *ngIf="!addressLetterData.jobRole;else role">_______________________</span>
+                                                             <ng-template #role><b>{{addressLetterData.jobRole}} </b></ng-template> since
+                                                             <span *ngIf="!addressLetterData.dateOfJoining;else joining"> _______________________.</span>
+                                                             <ng-template #joining><b>{{addressLetterData.dateOfJoining|dateformat}}.
+                                                             </b></ng-template> Currently, residential address is <span *ngIf="!addressFlag;else address">
+                                                             _______________________</span><ng-template #address><b>
+                                                            {{addressLetterData.addressLine1}}, {{addressLetterData.addressLine2}}, {{addressLetterData.city}}, 
+                                                            {{addressLetterData.state}}, {{addressLetterData.country}} - {{addressLetterData.zipCode}}.</b>
+                                                         </ng-template> -->
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="mb-4">
+                                    <p>If you have any further questions, you can call us at 8886651309.</p>
+                                </div>
+                                <div class="mb-5">
+                                    <p class="mb-0">Sincerely,</p>
+                                    <p><b>For RightlyHR</b></p>
+                                </div>
+                                <div>
+                                    <div class="authority-signature mb-3">Authority Signature</div>
+                                    <div>
+                                        <p>Authority Name</p>
+                                        <p>Designation</p>
+                                    </div>
+                                    <!-- <div class="stamp-img">
+                                                        <p class="stamp-text"><span> {{addressLetterData.authorityName}}</span></p>
+                                                        <p class="stamp-text1"><span>{{authorityDesignation}}</span></p><br>
+                                                    </div> -->
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
+                        </div>
+
+                        <!--page-2-->
+                        <div class="letter-page-content my-4" id="pdfContent2">
+                            <div class="letter-page-sub-content">
+                                <div class="py-5">
+                                    <div class="letter-header text-center"><u>TO WHOMSOEVER IT MAY CONCERN</u></div>
+                                </div>
+                                <div class="mb-5">
+                                    <p>
+                                        <span class="letter-text">This letter is to confirm that
+                                            <!-- <span *ngIf="!addressLetterData.firstName;else name">_______________________</span>
+                                                            <ng-template #name><b>{{addressLetterData.firstName}} {{addressLetterData.middleName}}
+                                                            {{addressLetterData.lastName}}</b></ng-template>  -->
+                                            has been working in our Establishment "RightlyHR" as
+                                            <!-- <span *ngIf="!addressLetterData.jobRole;else role">_______________________</span>
+                                                             <ng-template #role><b>{{addressLetterData.jobRole}} </b></ng-template> since
+                                                             <span *ngIf="!addressLetterData.dateOfJoining;else joining"> _______________________.</span>
+                                                             <ng-template #joining><b>{{addressLetterData.dateOfJoining|dateformat}}.
+                                                             </b></ng-template> Currently, residential address is <span *ngIf="!addressFlag;else address">
+                                                             _______________________</span><ng-template #address><b>
+                                                            {{addressLetterData.addressLine1}}, {{addressLetterData.addressLine2}}, {{addressLetterData.city}}, 
+                                                            {{addressLetterData.state}}, {{addressLetterData.country}} - {{addressLetterData.zipCode}}.</b>
+                                                         </ng-template> -->
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="mb-4">
+                                    <p>If you have any further questions, you can call us at 8886651309.</p>
+                                </div>
+                                <div class="mb-5">
+                                    <p class="mb-0">Sincerely,</p>
+                                    <p><b>For RightlyHR</b></p>
+                                </div>
+                                <div>
+                                    <div class="authority-signature mb-3">Authority Signature</div>
+                                    <div>
+                                        <p>Authority Name</p>
+                                        <p>Designation</p>
+                                    </div>
+                                    <!-- <div class="stamp-img">
+                                                        <p class="stamp-text"><span> {{addressLetterData.authorityName}}</span></p>
+                                                        <p class="stamp-text1"><span>{{authorityDesignation}}</span></p><br>
+                                                    </div> -->
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

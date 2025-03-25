@@ -1,0 +1,6 @@
+<div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+    <lib-country-list [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
+        class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list>
+    <input type="text" class="form-control custom-input" [placeholder]="placeholderPhoneNumber"
+        [formControl]="phoneNumberControl" autocomplete="off" required />
+</div>

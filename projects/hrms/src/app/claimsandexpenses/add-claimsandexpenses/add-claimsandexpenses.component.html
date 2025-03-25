@@ -1,0 +1,128 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0" (click)="navigateMyexpenses()"><i
+                    class="bi bi-arrow-90deg-left me-2"></i> Create Expenses</p>
+        </div>
+    </div>
+
+    <div>
+        <div class="card custom-nav-tab-card px-2 mb-2">
+            <ul class="nav-tabs-main-content ps-0 text-center mb-0">
+                <li class="nav-item" [routerLink]="['/claimsandexpenses/addexpense']" routerLinkActive="nav-tab-active">
+                    Create Expenses
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="card custom-card">
+        <div class="p-3">
+            <div>
+                <form [formGroup]="newExpenseForm">
+                    <div class="row g-2 mb-3">
+                        <!-- Expense Type  -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label custom-label mb-2">Expense Title<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="expenestype" optionValue="id" optionLabel="name"
+                                    placeholder="Please select expense title"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+
+                        <!-- Add New Expense Button -->
+                        <div class="col-md-4 mb-3 mt-5">
+                            <button type="button" class="custom-btn btn-primary" (click)="addExpenseItem()">
+                                <i class="bi bi-plus me-2"></i> Add New Expense
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Expense Items List -->
+                    <div formArrayName="expenseItems">
+                        <div *ngFor="let item of expenseItems.controls; let i = index" [formGroupName]="i"
+                            class="card p-3 mb-4 custom-expense-item-card">
+
+                            <div class="row mb-3">
+                                <!-- Expense Type -->
+                                <div class="col-md-3">
+                                    <label class="form-label custom-label">Expense Type<span
+                                            class="text-danger">*</span></label>
+                                    <div class="custom-p-select-content">
+                                        <p-select [options]="expenestype" optionValue="id" optionLabel="name"
+                                            placeholder="Please select expense type"
+                                            class="form-select custom-select"></p-select>
+                                    </div>
+                                </div>
+
+                                <!-- Expense Item -->
+                                <div class="col-md-2">
+                                    <label class="form-label custom-label">Expense Item<span
+                                            class="text-danger">*</span></label>
+                                    <div class="custom-p-select-content">
+                                        <p-select [options]="expenestype" optionValue="id" optionLabel="name"
+                                            placeholder="Please select expense item"
+                                            class="form-select custom-select"></p-select>
+                                    </div>
+                                </div>
+
+                                <!-- Expense Date -->
+                                <div class="col-md-2">
+                                    <label class="form-label custom-label">Expense Date<span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control custom-input"
+                                        formControlName="expense_Date" />
+                                </div>
+
+                                <!-- Amount -->
+                                <div class="col-md-2">
+                                    <label class="form-label custom-label">Amount<span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" class="form-control custom-input"
+                                        formControlName="expense_Amount" placeholder="Please enter amount" />
+                                </div>
+
+                                <!-- Receipt Number -->
+                                <div class="col-md-2">
+                                    <label class="form-label custom-label">Receipt Number<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control custom-input"
+                                        formControlName="receipt_Number" placeholder="Please enter receipt number" />
+                                </div>
+
+                                <!-- Delete Icon -->
+                                <div class="col-md-1 mt-4 d-flex align-items-center  justify-content-end">
+                                    <button type="button" class="custom-icon btn" (click)="expenseItems.removeAt(i)">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <!-- Description -->
+                                <div class="col-md-4">
+                                    <label class="form-label custom-label">Description</label>
+                                    <textarea class="form-control custom-input" formControlName="item_Description"
+                                        placeholder="Write description here..." rows="1"></textarea>
+                                </div>
+
+                                <!-- File Upload -->
+                                <div class="col-md-4">
+                                    <label class="form-label custom-label">Proof (Image and PDF only)<span
+                                            class="text-danger">*</span></label>
+                                    <input type="file" class="form-control custom-input" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+        <div class=" d-flex justify-content-end gap-3 p-3" *ngIf="expenseItems.length > 0">
+            <button class="custom-btn btn-secondary">Save as draft</button>
+            <button class="custom-btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>

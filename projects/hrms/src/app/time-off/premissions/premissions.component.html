@@ -4,7 +4,8 @@
             <p class="main-content-heading cursor mb-0">Permission</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addpremission)"><i class="bi bi-plus me-2"></i>Request
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addpremission)"><i
+                    class="bi bi-plus me-2"></i>Request
                 Permission</button>
         </div>
     </div>
@@ -19,7 +20,7 @@
 </div>
 
 <ng-template #addpremission let-modal>
-    <div class="custom-main-popup-container">
+    <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request Premission</p>
@@ -42,19 +43,23 @@
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Duration<span
                                 class="text-danger">*</span></label>
-                        <p-select [options]="duration" optionLabel="name" placeholder="Please select leave type"
+                        <div class="custom-p-select-content">
+                            <p-select [options]="duration" optionLabel="name" placeholder="Please select leave type"
                             class="form-select custom-select" />
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Premission Type<span
                                 class="text-danger">*</span></label>
-                        <p-select [options]="premissionType" optionLabel="name" placeholder="Please select leave type"
-                            class="form-select custom-select" />
+                        <div class="custom-p-select-content">
+                            <p-select [options]="premissionType" optionLabel="name"
+                                placeholder="Please select leave type" class="form-select custom-select" />
+                        </div>
                     </div>
 
                 </div>
 
-               
+
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reason <span

@@ -3,11 +3,13 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TimeOffTabsComponent } from '../time-off-tabs/time-off-tabs.component';
 import { MyExpensesTabComponent } from "../claimsandexpenses-tabs/my-expenses-tab/my-expenses-tab.component";
+import { MyinfoHeaderTabsComponent } from '../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component';
+
 
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -35,7 +37,8 @@ export class HeaderComponent {
         return 'other-event'; // Custom class for Other events
     }
   }
+  
   isActive(route: string): boolean {
-    return this.router.url.includes(route); // more flexible than strict match
+    return this.router.url.includes(route); //based on the route, header tab will be changes
   }
 }

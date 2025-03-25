@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MyinfoTabsComponent } from './myinfo-tabs.component';
+import { MyinfoJobTabsComponent } from './myinfo-job-tabs.component';
 
-describe('MyinfoTabsComponent', () => {
-  let component: MyinfoTabsComponent;
-  let fixture: ComponentFixture<MyinfoTabsComponent>;
+describe('MyinfoJobTabsComponent', () => {
+  let component: MyinfoJobTabsComponent;
+  let fixture: ComponentFixture<MyinfoJobTabsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MyinfoTabsComponent]
+      imports: [MyinfoJobTabsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MyinfoTabsComponent);
+    fixture = TestBed.createComponent(MyinfoJobTabsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

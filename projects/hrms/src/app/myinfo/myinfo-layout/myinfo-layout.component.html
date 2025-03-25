@@ -6,8 +6,13 @@
     </div>
 
     <!--nav tabs content-->
-    <div>
-
+    <div >
+        <div *ngIf="isActive('myinfo/personal')" class="mb-3">
+            <app-my-info-personal-tabs></app-my-info-personal-tabs>
+        </div>
+        <div *ngIf="isActive('myinfo/job')" class="mb-3">
+            <app-myinfo-job-tabs></app-myinfo-job-tabs>
+        </div>
     </div>
 
     <div class="myinfo-main-container d-flex gap-4">
@@ -21,4 +26,3 @@
             <router-outlet />
         </div>
     </div>
-</div>

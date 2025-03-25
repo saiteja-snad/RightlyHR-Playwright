@@ -1,0 +1,15 @@
+.myinfo-content-card {
+    background-color: #F0F4F8;
+    border: none;
+    border-radius: 0.8rem;
+
+    .myinfo-sub-header {
+        font-weight: 600;
+        font-size: var(--fontsize16);
+        line-height: 16px;
+    }
+
+    .bi-pencil-square{
+        font-size: var(--fontsize16);
+    }
+}

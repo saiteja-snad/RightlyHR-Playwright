@@ -1,1 +1,302 @@
-<p>job-details works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center">
+        <div> <span class="education-sub-header">Job Details</span></div>
+        <div class="plus-button">
+            <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
+                    (click)="openModal(addEducationmodal)" class="plus-text">Add
+                    New</span></span>
+        </div>
+    </div>
+    <div class="custom-table-content mt-2">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Education</th>
+                    <th>University</th>
+                    <th>Specialization</th>
+                    <th>GPA</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Document</th>
+                    <th class="text-center">Actions</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>b.tech</td>
+                    <td>sasi</td>
+                    <td>ff</td>
+                    <td>67.9</td>
+                    <td>33/09/2025</td>
+                    <td>33/09/2025</td>
+
+                    <td> <a type="button" class="me-2 dowload-text"><i class="bi bi-download  me-2"></i>Download</a>
+                    </td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li (click)="openModal(updateEducationmodal)"><a class="dropdown-item"><i
+                                            class="bi bi bi-pencil  me-2"></i>Update</a></li>
+                                <li><a class="dropdown-item"><i class="bi bi bi-trash3 me-2"></i>Delete</a></li>
+                                <li><a class="dropdown-item"><img src="icons\sepration.png" alt="sepration" class="sepration-icon" >Delete</a></li>
+
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<ng-template #addEducationmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Add Job Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form action="">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Effective Date<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Job Role<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select job role" class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Grade<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select grade"
+                                class="form-select custom-select" />
+                        </div>
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Department<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select department" class="form-select custom-select" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Team<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select team"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Team Manager<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select team manager" class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reporting
+                            Manager<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select reporting manager" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Location<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select label"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Sub Location<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select sub location" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Shift<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select shift"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Job Type<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select job type" class="form-select custom-select" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #updateEducationmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Add Job Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form action="">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Effective Date<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Job Role<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select job role" class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Grade<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select grade"
+                                class="form-select custom-select" />
+                        </div>
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Department<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select department" class="form-select custom-select" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Team<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select team"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Team Manager<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select team manager" class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reporting
+                            Manager<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select reporting manager" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Location<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select label"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Sub Location<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select sub location" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Shift<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select shift"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Job Type<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select job type" class="form-select custom-select" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

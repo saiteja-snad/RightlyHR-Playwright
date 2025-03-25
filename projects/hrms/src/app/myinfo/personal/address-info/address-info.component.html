@@ -1,1 +1,134 @@
-<p>address-info works!</p>
+<div class="custom-main-component-container">
+    <div class="card address-content-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <span class="address-sub-header">Current Address</span>
+            </div>
+            <div *ngIf="!buttons">
+                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
+            </div>
+        </div>
+
+        <!--input content-->
+        <div class="myinfo-input-content">
+            <form action="">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line 1<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter address line ">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line 2 <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter address line ">
+
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">City<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter city">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">State<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter state">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter country">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Zip Code/Post
+                            Code<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter zip code/post code">
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="card address-content-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <span class="address-sub-header">Permanent Address</span>
+                <span class="form-check mt-4">
+                    <input class="form-check-input custom-check" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label custom-check-label " for="flexCheckDefault">
+                        Same as Current Address
+                    </label>
+                </span>
+            </div>
+
+            <div *ngIf="!buttons">
+                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
+            </div>
+        </div>
+
+        <!--input content-->
+        <div class="myinfo-input-content">
+            <form action="">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line 1<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter address line ">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line 2 <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter address line ">
+
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">City<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter city">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">State<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter state">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter country">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Zip Code/Post
+                            Code<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter zip code/post code">
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

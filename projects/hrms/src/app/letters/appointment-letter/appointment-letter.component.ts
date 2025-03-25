@@ -10,6 +10,10 @@ import { IAddress, IDepartment, IemployeeDetails, IIssuelocation, IMake } from '
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { AuthService } from '../../services/auth.service';
+import moment from 'moment';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, LettersTabComponent, Select, DateformatPipe],
@@ -111,10 +115,9 @@ export class AppointmentLetterComponent {
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
-    private toaster: NgToastService,
     private router: Router,
     private authService: AuthService,
-    private _userAcessService: UserAccessService,
+    // private _userAcessService: UserAccessService,
     private elementRef: ElementRef,
     config: NgbModalConfig, private modalService: NgbModal
   ) {
@@ -123,7 +126,7 @@ export class AppointmentLetterComponent {
   }
 
   ngOnInit(): void {
-    this._userAcessService.checkRouteAccess('Dashboard.view')
+    // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.appointmentletter.branchCode = null
     this.appointmentletter.department = null
     this.fusionEmployeeId = null

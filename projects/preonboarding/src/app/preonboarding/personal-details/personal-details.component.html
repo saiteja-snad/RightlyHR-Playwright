@@ -1,1 +1,172 @@
-<p>personal-details works!</p>
+<div class="custom-main-component-container">
+    <div class="main-content-heading my-4">
+        <span>Personal Details</span>
+    </div>
+
+    <div>
+        <form action="">
+            <div class="row custom-main-sub-content">
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">First Name<span
+                            class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter first name">
+                </div>
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Middle Name<span
+                            class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter middle name">
+                </div>
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Last Name<span
+                            class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter last name">
+                </div>
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Gender<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="employeementType" optionLabel="name"
+                            placeholder="Please select employment type" class="form-select custom-select" />
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salutation
+                        <span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="employeementType" optionLabel="name" placeholder="Please select salutation"
+                            class="form-select custom-select" />
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Location<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="location" optionLabel="name" placeholder="Please select location"
+                            class="form-select custom-select" />
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Sub Location<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location"
+                            class="form-select custom-select" />
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Designation<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="designation" optionValue="id" optionLabel="name"
+                            placeholder="Please select designation" class="form-select custom-select" />
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Personal Email ID<span
+                            class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter personal email Id">
+                </div>
+
+                <!-- Current Address-->
+                <div class="main-content-heading my-4">
+                    <span>Current Address</span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line1<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter first name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line2<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter middle name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">City<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter last name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">State<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter first name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter middle name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Zip Code<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter last name">
+                </div>
+
+                <!-- Permanent Address-->
+                <div class="main-content-heading my-4">
+                    <span>Permanent Address</span>
+                </div>
+
+                <div class="form-check custom-label m-3">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Same as Current Address
+                    </label>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line1<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter first name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Address Line2<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter middle name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">City<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter last name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">State<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter first name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter middle name">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Zip Code<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        placeholder="Please enter last name">
+                </div>
+            </div>
+
+            <div class="footer-btn-content d-flex justify-content-end pt-5">
+                <button class="custom-btn btn-primary py-3 px-5" (click)="navigateDocumentUpload()">Next</button>
+            </div>
+        </form>
+    </div>
+</div>

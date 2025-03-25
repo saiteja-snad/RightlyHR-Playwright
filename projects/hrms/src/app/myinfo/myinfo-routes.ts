@@ -1,4 +1,4 @@
-import { Route, Routes } from '@angular/router';
+import { Route,  } from '@angular/router';
 import { BasicInfoComponent } from './personal/basic-info/basic-info.component';
 
 export default [
@@ -7,16 +7,16 @@ export default [
         path: 'personal', children: [
             { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
             { path: 'basic-info',component:BasicInfoComponent },
-            // { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then((m) => m.AddressInfoComponent) },
-            // { path: 'emergency-contact-details', loadComponent: () => import('./personal/contact-details-info/contact-details-info.component').then((m) => m.ContactDetailsInfoComponent) },
-            // { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then((m) => m.FamilyDetailsComponent) },
-            // { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then((m) => m.IdentityDetailsComponent) },
-            // { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then((m) => m.EducationDetailsComponent) },
-            // { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then((m) => m.BankDetailsComponent) },
-            // { path: 'seperation-request', loadComponent: () => import('./personal/seperation-request/seperation-request.component').then((m) => m.SeperationRequestComponent) },
+            { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent) },
+             { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then(m => m.FamilyDetailsComponent) },
+            { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then(m => m.IdentityDetailsComponent) },
+            { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then(m => m.EducationDetailsComponent) },
+            { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent) }
+           
         ]
     },
 ] as Route[];
+
 
 // export const myInfoRoutes: Routes = [
 

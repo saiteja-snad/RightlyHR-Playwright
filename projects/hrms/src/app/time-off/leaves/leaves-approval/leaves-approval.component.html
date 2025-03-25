@@ -56,3 +56,9 @@
             <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
                 totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
         </div>
+
+        <!-- Pagination -->
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+            (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+</div>

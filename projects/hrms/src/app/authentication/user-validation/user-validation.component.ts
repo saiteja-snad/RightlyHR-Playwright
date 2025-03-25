@@ -29,8 +29,10 @@ export class UserValidationComponent {
   //afterr login with azure AD
   postLogin() {
     const account = this._msalService.instance.getAllAccounts()[0];
-    this.name= account.name as string
-    this.getUserDetails(account.username);
+    this.name= account?.name as string
+    this.getUserDetails(account?.username);
+    console.log(account?.username);
+    
   }
 
   getUserDetails(email: string) {
@@ -46,7 +48,7 @@ export class UserValidationComponent {
             if (response.roles.length <= 0) {
               this.router.navigate(['/unauthorized']);
             } else if (response.roles.includes('ADMIN') || response.roles.includes('HR MANAGER')) {
-              this.router.navigate(['/admin']);
+              this.router.navigate(['/admin-dashboard']);
             } else {
               this.router.navigate(['/myinfo']);
             }

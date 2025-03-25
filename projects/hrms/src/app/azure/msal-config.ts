@@ -1,7 +1,8 @@
 import { MsalGuardConfiguration, MsalInterceptorConfiguration, MsalService, ProtectedResourceScopes } from "@azure/msal-angular";
-import { environment } from "../../../environments/environment";
+import { BrowserCacheLocation, IPublicClientApplication, InteractionType, LogLevel, PublicClientApplication } from "@azure/msal-browser";
+
 import { protectedResources } from "./auth-config";
-import { BrowserCacheLocation, InteractionType, IPublicClientApplication, LogLevel, PublicClientApplication } from '@azure/msal-browser';
+import { environment } from "../../../environments/environment.dev";
 
 
 export function loggerCallback(logLevel:LogLevel,message:string){

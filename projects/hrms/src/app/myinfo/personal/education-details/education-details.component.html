@@ -92,7 +92,7 @@
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
                             formControlName="specialization" placeholder="Please enter specialization">
-                        <div
+                        <div class="error-msg"
                             *ngIf="educationForm.get('specialization')?.invalid && educationForm.get('specialization')?.touched">
                             Specialization is required
                         </div>
@@ -102,7 +102,7 @@
                                 class="text-danger">*</span></label>
                         <input type="number" class="form-control custom-input" id="exampleFormControlInput1"
                             formControlName="gpa" placeholder="Please enter GPA">
-                        <div *ngIf="educationForm.get('gpa')?.invalid && educationForm.get('gpa')?.touched">
+                        <div  class="error-msg" *ngIf="educationForm.get('gpa')?.invalid && educationForm.get('gpa')?.touched">
                             GPA is required and should be between 1 and 10
                         </div>
 
@@ -116,7 +116,7 @@
                         <input type="date" formControlName="degreeStartDate" [max]="currentDate"
                             [ngClass]="{ 'is-invalid': !issStartDateValid }" class="form-control custom-input"
                             id="exampleFormControlInput1">
-                        <div *ngIf="!issStartDateValid">From Date is greater than Current Date</div>
+                        <div  class="error-msg" *ngIf="!issStartDateValid">From Date is greater than Current Date</div>
 
                     </div>
                     <div class="col-md-6 mb-3">
@@ -124,7 +124,7 @@
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" id="exampleFormControlInput1"
                             formControlName="degreeEndDate" [ngClass]="{ 'is-invalid': !issEndDateValid }">
-                        <div *ngIf="!issEndDateValid">To Date should be after From Date</div>
+                        <div class="error-msg" *ngIf="!issEndDateValid">To Date should be after From Date</div>
 
                     </div>
 
@@ -135,7 +135,7 @@
                                 class="text-danger">*</span></label>
                         <input type="file" formControlName="attachment" accept="image/*, application/pdf"
                             (change)="onChangeEducation($event)" class="form-control custom-input" />
-                        <div
+                        <div class="error-msg"
                             *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">
                             File is required
                         </div>

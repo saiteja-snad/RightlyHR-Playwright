@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-add-prospective-intern',
-  imports: [CommonModule,Select],
+  imports: [CommonModule,Select,TranslateModule],
   templateUrl: './add-prospective-intern.component.html',
   styleUrl: './add-prospective-intern.component.scss'
 })

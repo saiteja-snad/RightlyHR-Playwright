@@ -6,9 +6,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { AuthServiceService } from '../../../services/auth-service.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-add-prospective-employee',
-  imports: [CommonModule,ReactiveFormsModule,FormsModule,Select],
+  imports: [CommonModule,ReactiveFormsModule,FormsModule,Select,TranslateModule],
   templateUrl: './add-prospective-employee.component.html',
   styleUrl: './add-prospective-employee.component.scss',
   encapsulation:ViewEncapsulation.None

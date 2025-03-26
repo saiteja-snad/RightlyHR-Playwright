@@ -15,7 +15,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './leaves.component.scss'
 })
 export class LeavesComponent {
-  active=1
+
   totalRecords = 100
   first: any = 0;
   rows: any = 10;

@@ -577,8 +577,6 @@ input[type="file"] {
     }
 }
 
-
-
 //pagenation stylings
 .pagination-content {
     .custom-pagination-select:focus {
@@ -654,27 +652,81 @@ input[type="file"] {
         font-weight: 500;
     }
 }
-//ERROR MESSAGE
-.error-msg {
-    font-size: var(--fontsize12);
-    font-weight: 500;
-    color: var(--error-msg-color);
-    margin-top: 0.25rem;
-}
- 
-//popup stylings
-.result-popup-content {
-    padding: 5rem;
-    text-align: center;
 
-    .confirmation-icon {
-        width: 9rem;
+// custom phone number input with country code stylings
+.custom-phone-number-content {
+    border: 1px solid #DEE8F3;
+    border-radius: 0.8rem;
+
+    .custom-input {
+        font-size: 15px !important;
+        padding: 0.5rem 0.75rem 0.5rem 0.25rem;
+        border: none !important;
     }
 
-    .confirmation-text {
+    .ipv_selected-item {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        border-radius: 0.5rem;
+        border: none !important;
+        color: #222222;
+        background-color: #F8FBFF;
+    }
+
+    .ipv_arrow {
+        margin-left: 0.25rem !important;
+    }
+
+    .ipv_dropdown:hover .ipv_selected-item {
+        background-color: rgba(248, 251, 255, 0.05) !important;
+    }
+
+    input.ipv_search_box {
+        border: none !important;
+
+        &.filtered {
+            border: none !important;
+        }
+    }
+
+    .ipv_code-box {
+        border: 1px solid #DEE8F3 !important;
+    }
+
+    .ipv_country {
+        font-size: var(--fontsize14) !important;
+    }
+
+    .ipv_country-list {
+        width: 350px !important;
+        min-width: 350px !important;
+    }
+}
+
+    //ERROR MESSAGE
+    .error-msg {
+        font-size: var(--fontsize12);
         font-weight: 500;
-        font-size: var(--fontsize20);
-        line-height: 30px;
-        color: #06274F;
+        color: var(--error-msg-color);
+        margin-top: 0.25rem;
     }
-}
+
+    //popup stylings
+    .result-popup-content {
+        padding: 5rem;
+        text-align: center;
+
+        .confirmation-icon {
+            width: 9rem;
+        }
+
+        .confirmation-text {
+            font-weight: 500;
+            font-size: var(--fontsize20);
+            line-height: 30px;
+            color: #06274F;
+        }
+    }

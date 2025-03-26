@@ -25,7 +25,7 @@ export class EducationDetailsComponent {
   constructor(private modalService: NgbModal,private fb: FormBuilder,private conformationPopup:OpenModalService) {}
   ngOnInit(): void {
     this.initializeForm();
-    this.conformationPopup.openSuccessModal('Education Details Added Successfully');
+   
   }
 
   openModal(content: any) {

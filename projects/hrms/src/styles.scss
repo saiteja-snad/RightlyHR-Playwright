@@ -505,7 +505,15 @@ input[type="file"] {
     width: 2rem;
     height: 2rem;
 }
+//note-text
 
+.note-text{
+    font-size: var(--fontsize12) !important;
+    font-weight: 400;
+    vertical-align: middle;
+
+    
+}
 //time-offtabs
 .tabs-container {
     background-color: #FFFFFF;

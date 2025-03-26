@@ -4,6 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { Ieducation } from '../../../Interfaces/personal-modal';
+import { Subscription } from 'rxjs';
+import { HttpService } from '../../../services/http.service';
 
 @Component({
   selector: 'app-education-details',
@@ -13,6 +16,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
 })
 export class EducationDetailsComponent {
   educationForm!: FormGroup;
+  geteducationdata: Ieducation[] = [];
+  subscription!: Subscription;
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
   showError = false;
   showErrors = false;
@@ -22,10 +27,10 @@ export class EducationDetailsComponent {
   buttondisable = true;
   educationtypes=[
     {id:1,name:'SSC'},]
-  constructor(private modalService: NgbModal,private fb: FormBuilder,private conformationPopup:OpenModalService) {}
+  constructor(private modalService: NgbModal,private fb: FormBuilder,private conformationPopup:OpenModalService,private http: HttpService) {}
   ngOnInit(): void {
     this.initializeForm();
-   
+   this.getAllEducation();
   }
 
   openModal(content: any) {
@@ -79,7 +84,13 @@ export class EducationDetailsComponent {
     }
   }
 
-
+  getAllEducation() {
+    this.subscription = this.http.getData(`Education`).subscribe({
+      next: (data: any) => {
+        this.geteducationdata = data as Ieducation[];
+      },
+    });
+  }
   
 
 }

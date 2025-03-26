@@ -1,0 +1,42 @@
+<div class="custom-main-component-container">
+    <div class="card myinfo-content-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <span class="myinfo-sub-header">Offboarding Details
+                </span>
+            </div>
+            <div *ngIf="!buttons">
+                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
+            </div>
+        </div>
+
+        <!--input content-->
+        <div class="myinfo-input-content">
+            <form action="">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Exit Reason<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter exit reason">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Eligible For Rehire<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter eligible for rehire">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Relieving Type<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter relieving type">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Last Working Day<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter last working day">
+                    </div>
+                   
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

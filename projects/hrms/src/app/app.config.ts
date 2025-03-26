@@ -92,9 +92,9 @@ export function getAccessToken(): Promise<string> {
   return pca.acquireTokenSilent({
     scopes: environment.scopeUri,
     authority: environment.authority
-  }).then((response) => {
+  }).then((response:any) => {
     return response.accessToken;
-  }).catch((error) => {
+  }).catch((error:any) => {
     console.log(error);
     return '';
 

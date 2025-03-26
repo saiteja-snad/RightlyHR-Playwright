@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from 
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import moment from 'moment';
-import { IemployeeDetails, IJob } from '../offer-letter/offer-letter.model';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
@@ -15,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { LettersTabComponent } from '../../shared/letters-tab/letters-tab.component';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
+import { IemployeeDetails, IJob } from '../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-apprisal-letter',

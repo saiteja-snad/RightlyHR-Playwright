@@ -9,12 +9,13 @@ import html2canvas from 'html2canvas';
 import { CountryCodePhoneNumberComponent } from "../../shared/country-code-phone-number/country-code-phone-number.component";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from "../../pipes/dateformat.pipe";
-import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from './offer-letter.model';
+
 import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
+import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-offer-letter',

@@ -11,8 +11,9 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { IAddress, IaddressemployeeDetails } from '../offer-letter/offer-letter.model';
 import { Subscription } from 'rxjs';
+import { IAddress } from '../appointment-letter/appointment-letter-model';
+import { IaddressemployeeDetails } from '../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-address-proof-letter',

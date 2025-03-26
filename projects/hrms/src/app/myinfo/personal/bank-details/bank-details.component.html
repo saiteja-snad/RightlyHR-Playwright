@@ -17,7 +17,7 @@
                     <th>IFSC Code</th>
                     <th>Proof</th>
                     <th>Primary Bank</th>
-                    
+
                     <th class="text-center">Actions</th>
 
                 </tr>
@@ -28,7 +28,7 @@
                     <td>sasi</td>
                     <td>ff</td>
                     <td>67.9</td>
-                   
+
 
                     <td> <a type="button" class="me-2 dowload-text"><i class="bi bi-download  me-2"></i>Download</a>
                     </td>
@@ -64,61 +64,105 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form action="">
+            <form [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Bank Name<span
+                        <label for="bankName" class="form-label custom-label mb-2">Bank Name<span
                                 class="text-danger">*</span></label>
+
                         <div class="custom-p-select-content">
-                            <p-select [options]="educationtypes" optionLabel="name"
-                                placeholder="Please select bank name" class="form-select custom-select" />
+                            <p-select [options]="allBanks" optionLabel="name" formControlName="bankName"
+                                placeholder="Please select bank name" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('bankName')?.invalid && bankDetailsForm.get('bankName')?.touched">
+                            Bank Name is required
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Account Holder's
-                            Name<span class="text-danger">*</span></label>
-                        <input type="type" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="`Please enter account holder's name">
+                        <label for="accountName" class="form-label custom-label mb-2">Account Holder's Name<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="accountName"
+                            formControlName="accountName" placeholder="Please enter account holder's name">
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('accountName')?.invalid && bankDetailsForm.get('accountName')?.touched">
+                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['required']">Account Holder's Name
+                                is required</div>
+                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['pattern']">Name must contain only
+                                letters</div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Account Number<span
+                        <label for="accountNo" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
-                        <input type="number" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter account number">
-
+                        <input type="number" class="form-control custom-input" id="accountNo"
+                            formControlName="accountNo" placeholder="Please enter account number" minlength="12"
+                            maxlength="20">
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">Account Number is
+                                required</div>
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['minlength']">Account Number must be
+                                at least 12 digits</div>
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['maxlength']">Account Number must not
+                                exceed 20 digits</div>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">IFSC Code<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter IFSC code">
 
+                    <div class="col-md-6 mb-3">
+                        <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
+                                class="text-danger">*</span></label>
+                        <input type="number" class="form-control custom-input" id="ifscCode" formControlName="ifscCode"
+                            placeholder="Please enter IFSC code" maxlength="11">
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('ifscCode')?.invalid && bankDetailsForm.get('ifscCode')?.touched">
+                            <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['required']">IFSC Code is required
+                            </div>
+                            <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['pattern']">Enter a valid IFSC Code
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
-                                class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" />
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <div class=" d-flex align-items-center">
-                            <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
-                                    [checked]="true" />
-                            </div>
-                            <p for="flexSwitchCheckCheckedIsPrimary" class="form-label custom-label mt-3 ">Primary Bank
-                            </p>
+                        <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
+                            only)<span class="text-danger">*</span></label>
+                        <input type="file" class="form-control custom-input" formControlName="attachment"
+                            (change)="onBankProofSelected($event)">
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('attachment')?.invalid && bankDetailsForm.get('attachment')?.touched">
+                            Attachment is required
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+                                The file size should be less than 25MB.</p>
                         </div>
                     </div>
                 </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
+                                <input class="form-check-input" type="checkbox" id="isPrimary"
+                                    formControlName="isPrimary">
+                            </div>
+                            <label for="isPrimary" class="form-label custom-label mt-3">Primary Bank</label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="bankDetailsForm.invalid">Add</button>
                 </div>
             </form>
         </div>
@@ -130,71 +174,104 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Education Details</p>
+                <p class="popup-heading mb-0">Update Education Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form action="">
+            <form [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Education<span
+                        <label for="bankName" class="form-label custom-label mb-2">Bank Name<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="educationtypes" optionLabel="name"
-                                placeholder="Please select education*" class="form-select custom-select" />
+                            <p-select [options]="allBanks" optionLabel="name" formControlName="bankName"
+                                placeholder="Please select bank name" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('bankName')?.invalid && bankDetailsForm.get('bankName')?.touched">
+                            Bank Name is required
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">University<span
+                        <label for="accountName" class="form-label custom-label mb-2">Account Holder's Name<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter university">
+                        <input type="text" class="form-control custom-input" id="accountName"
+                            formControlName="accountName" placeholder="Please enter account holder's name">
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('accountName')?.invalid && bankDetailsForm.get('accountName')?.touched">
+                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['required']">Account Holder's Name
+                                is required</div>
+                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['pattern']">Name must contain only
+                                letters</div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Specialization<span
+                        <label for="accountNo" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter specialization">
-
+                        <input type="text" class="form-control custom-input" id="accountNo" formControlName="accountNo"
+                            placeholder="Please enter account number">
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">Account Number is
+                                required</div>
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['minlength']">Account Number must be
+                                at least 12 digits</div>
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['maxlength']">Account Number must not
+                                exceed 20 digits</div>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">GPA<span
-                                class="text-danger">*</span></label>
-                        <input type="number" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter GPA">
 
+                    <div class="col-md-6 mb-3">
+                        <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="ifscCode" formControlName="ifscCode"
+                            placeholder="Please enter IFSC code">
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('ifscCode')?.invalid && bankDetailsForm.get('ifscCode')?.touched">
+                            <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['required']">IFSC Code is required
+                            </div>
+                            <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['pattern']">Enter a valid IFSC Code
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
 
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">From Date<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">To Date<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
-                    </div>
-
-                </div>
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label">Attachment (Image and PDF only)<span
-                                class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" />
+                        <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
+                            only)<span class="text-danger">*</span></label>
+                        <input type="file" class="form-control custom-input" formControlName="attachment"
+                            (change)="onBankProofSelected($event)">
+                        <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('attachment')?.invalid && bankDetailsForm.get('attachment')?.touched">
+                            Attachment is required
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
+                                <input class="form-check-input" type="checkbox" id="isPrimary"
+                                    formControlName="isPrimary">
+                            </div>
+                            <label for="isPrimary" class="form-label custom-label mt-3">Primary Bank</label>
+                        </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary">Update</button>
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="bankDetailsForm.reset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary">Add</button>
                 </div>
             </form>
         </div>

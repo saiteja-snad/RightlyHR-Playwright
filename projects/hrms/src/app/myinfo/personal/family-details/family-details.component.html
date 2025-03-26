@@ -64,42 +64,61 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form action="">
+            <form [formGroup]="familyDetailsForm" (ngSubmit)="postFamilyDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Name<span
+                        <label for="memberName" class="form-label custom-label mb-2">Name<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter name">
+                        <input type="text" class="form-control custom-input" id="memberName"
+                            formControlName="memberName" placeholder="Please enter name">
+                        <div class="error-msg"
+                            *ngIf="familyDetailsForm.get('memberName')?.invalid && familyDetailsForm.get('memberName')?.touched">
+                            <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['required']">Name is required
+                            </div>
+                            <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['pattern']">Name must contain only
+                                letters</div>
+                        </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Date of Birth<span
+                        <label for="dateOfBirth" class="form-label custom-label mb-2">Date of Birth<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+                        <input type="date" class="form-control custom-input" id="dateOfBirth"
+                            formControlName="dateOfBirth">
+                        <div class="error-msg"
+                            *ngIf="familyDetailsForm.get('dateOfBirth')?.invalid && familyDetailsForm.get('dateOfBirth')?.touched">
+                            Date of Birth is required
+                        </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Relationship<span
+                        <label for="relationShipId" class="form-label custom-label mb-2">Relationship<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="educationtypes" optionLabel="name"
-                                placeholder="Please select relationship" class="form-select custom-select" />
+                            <p-select [options]="familyRelations" optionLabel="name" formControlName="relationShipId"
+                                placeholder="Please select relationship" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="familyDetailsForm.get('relationShipId')?.invalid && familyDetailsForm.get('relationShipId')?.touched">
+                            Relationship is required
                         </div>
                     </div>
                 </div>
+
                 <div class="row mb-3">
                     <div class="col-md-6">
-                      <div class=" d-flex align-items-center">
-                        <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
-                          <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
-                            [checked]="true"  />
+                        <div class="d-flex align-items-center">
+                            <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
+                                <input class="form-check-input" type="checkbox" id="isDependent"
+                                    formControlName="isDependent">
+                            </div>
+                            <label for="isDependent" class="form-label custom-label mt-3">Dependent</label>
                         </div>
-                        <p for="flexSwitchCheckCheckedIsPrimary"  class="form-label custom-label mt-3 ">Dependent</p>
-                      </div>
                     </div>
-    
-                  </div>
+                </div>
+
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary">Add</button>
@@ -168,13 +187,13 @@
                     </div>
 
                 </div>
-              <div class="row">
-                <div class="col-md-12 mb-3" >
-                    <label class="form-label custom-label">Attachment (Image and PDF only)<span
-                            class="text-danger">*</span></label>
-                    <input type="file" class="form-control custom-input" />
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label">Attachment (Image and PDF only)<span
+                                class="text-danger">*</span></label>
+                        <input type="file" class="form-control custom-input" />
+                    </div>
                 </div>
-              </div>
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>

@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-identity-details',
@@ -24,12 +25,13 @@ export class IdentityDetailsComponent implements OnInit {
   empinfo: any = {};
   IdentityAttachment: any;
   IdentityMaxNumber = 12;
-  IdentityMinNumber = 6;
+  IdentityMinNumber = 12;
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder) { }
+  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+    console.log('Employee info:', this.empinfo);
     this.getIdentityDropDown();
     this.initializeForm();
     this.getIdentityByEmpid();
@@ -50,8 +52,8 @@ export class IdentityDetailsComponent implements OnInit {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
- 
-  
+
+
   // Fetch identity details by employee ID
   getIdentityByEmpid(): void {
     const EmpId = parseInt(this.empinfo.employeeId);
@@ -59,18 +61,18 @@ export class IdentityDetailsComponent implements OnInit {
       console.error('Invalid Employee ID');
       return;
     }
-  
+
     this.subscription = this.http.getData(`IdentityTable/${EmpId}`).subscribe({
       next: (data: any) => {
         this.getIdentitydetails = data;
-       
+
       },
       error: (err: any) => {
         console.error('Error fetching identity details:', err);
       },
     });
   }
-  
+
   // Fetch identity dropdown options
   getIdentityDropDown(): void {
     this.subscription = this.http.getData(`OnboardingDocumentsList?identity=true`).subscribe({
@@ -84,9 +86,9 @@ export class IdentityDetailsComponent implements OnInit {
       },
     });
   }
-  
-  
-  
+
+
+
   onIdentityAttachmentSelected(event: any): void {
     const file = event.target.files[0];
     const timestamp = new Date().getTime();
@@ -143,10 +145,12 @@ export class IdentityDetailsComponent implements OnInit {
     this.subscription = this.http.postdata('IdentityTable', payload).subscribe({
       next: () => {
         this.identityForm.reset();
+        this.conformationPopup.openSuccessModal('Identity details added successfully');
         console.log('Data saved successfully');
       },
       error: () => {
         console.error('Error saving data');
+        this.conformationPopup.openSuccessModal('Identity details added failed');
       }
     });
   }

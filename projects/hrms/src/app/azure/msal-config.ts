@@ -1,8 +1,7 @@
 import { MsalGuardConfiguration, MsalInterceptorConfiguration, MsalService, ProtectedResourceScopes } from "@azure/msal-angular";
 import { BrowserCacheLocation, IPublicClientApplication, InteractionType, LogLevel, PublicClientApplication } from "@azure/msal-browser";
-
 import { protectedResources } from "./auth-config";
-import { environment } from "../../../environments/environment.dev";
+import { environment } from "../../environments/environment.dev";
 
 
 export function loggerCallback(logLevel:LogLevel,message:string){
@@ -25,7 +24,7 @@ export function MSALInstanceFactory():IPublicClientApplication{
         },
         cache:{
             cacheLocation:BrowserCacheLocation.LocalStorage,
-
+            
         },
         system:{
             allowRedirectInIframe:true,
@@ -38,7 +37,7 @@ export function MSALInstanceFactory():IPublicClientApplication{
     });
 }
 
-export function MSALInterceptorConfigFactory(url:string):MsalInterceptorConfiguration{
+export function MSALInterceptorConfigFactory():MsalInterceptorConfiguration{
     const protectedResourceMap= new Map<string, Array<string | ProtectedResourceScopes>|null>();
     protectedResourceMap.set('https://graph.microsoft.com/v1.0/me',['user.read']);
 

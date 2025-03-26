@@ -6,6 +6,6 @@ import { UnauthorizedLoginComponent } from "./unauthorized-login/unauthorized-lo
 
 export default [
     { path: 'login', component: LoginComponent },
-    { path: 'user-validation', component: UserValidationComponent },
+    { path: 'uservalidation', component: UserValidationComponent },
     { path: 'unauthorized', component: UnauthorizedLoginComponent },
 ] as Route[];

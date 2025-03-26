@@ -28,6 +28,9 @@ export class UserValidationComponent {
   }
   async postLogin() {
     await this._msalService.instance.initialize();
+    const loginResponse = await this._msalService.instance.loginPopup();
+    console.log(loginResponse.accessToken);
+    
     const account = this._msalService.instance.getAllAccounts()[0];
     if (account) {
       this._msalService.instance.setActiveAccount(account);
@@ -36,8 +39,12 @@ export class UserValidationComponent {
     }
     const response = await this._msalService.instance.acquireTokenSilent({
       account: account,
+      
       scopes: ['user.read'],
     });
+    const token = response.accessToken;
+    console.log(token);
+    
     this.name = account?.name as string;
     this.getUserDetails(account?.username);
   }

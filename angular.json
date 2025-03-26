@@ -32,7 +32,8 @@
               }
             ],
             "styles": [
-              "projects/preonboarding/src/styles.scss"
+              "projects/preonboarding/src/styles.scss",
+              "node_modules/ngx-countries-dropdown/assets/styles.css"
             ],
             "scripts": []
           },
@@ -91,7 +92,8 @@
               }
             ],
             "styles": [
-              "projects/preonboarding/src/styles.scss"
+              "projects/preonboarding/src/styles.scss",
+              "node_modules/ngx-countries-dropdown/assets/styles.css"
             ],
             "scripts": []
           }
@@ -127,6 +129,7 @@
               }
             ],
             "styles": [
+              "node_modules/ngx-countries-dropdown/assets/styles.css",
               "projects/hrms/src/styles.scss"
             ],
             "scripts": []
@@ -186,7 +189,8 @@
               }
             ],
             "styles": [
-              "projects/hrms/src/styles.scss"
+              "projects/hrms/src/styles.scss",
+              "node_modules/ngx-countries-dropdown/assets/styles.css"
             ],
             "scripts": []
           }

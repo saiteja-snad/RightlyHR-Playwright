@@ -15,6 +15,8 @@ import {MsalInterceptor,MSAL_INSTANCE,MsalInterceptorConfiguration,MsalGuardConf
         MsalService,MsalGuard,MsalBroadcastService,ProtectedResourceScopes,} from '@azure/msal-angular';
 import { protectedResources } from './azure/auth-config';
 import { environment } from '../environments/environment.dev';
+import { AuthGuard } from './guards/auth.guard';
+import { AuthService } from './services/auth.service';
 
 
 export function createTranslateLoader(http: HttpClient) {
@@ -92,9 +94,9 @@ export function getAccessToken(): Promise<string> {
   return pca.acquireTokenSilent({
     scopes: environment.scopeUri,
     authority: environment.authority
-  }).then((response) => {
+  }).then((response:any) => {
     return response.accessToken;
-  }).catch((error) => {
+  }).catch((error:any) => {
     console.log(error);
     return '';
 
@@ -146,5 +148,7 @@ export const appConfig: ApplicationConfig = {
     MsalService,
     MsalGuard,
     MsalBroadcastService,
+    AuthGuard,
+    AuthService,
   ],
 };

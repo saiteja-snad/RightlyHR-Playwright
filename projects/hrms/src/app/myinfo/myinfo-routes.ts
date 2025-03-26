@@ -1,8 +1,5 @@
 import { Route, } from '@angular/router';
 import { BasicInfoComponent } from './personal/basic-info/basic-info.component';
-import { PreviousExperinceComponent } from './job/previous-experince/previous-experince.component';
-import { ProbationDetailsComponent } from './job/probation-details/probation-details.component';
-import { SeparationDetailsComponent } from './job/separation-details/separation-details.component';
 import { TeamNumbersComponent } from './team-numbers/team-numbers.component';
 import { OnboardingRequestComponent } from './onboarding-request/onboarding-request.component';
 

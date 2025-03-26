@@ -1,1 +1,152 @@
-<p>bank-loan-letter works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+        </div>
+    </div>
+
+    <!--letter content-->
+    <div class="main-letter-content row">
+        <div class="col-sm-12 col-md-3">
+            <div class="card letter-fields-content p-4">
+                <form [formGroup]="employeeForm">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search
+                                Employee<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeeiddetails" optionLabel="name" [filter]="true"
+                                    filterBy="name" [showClear]="true" placeholder="Please select employee"
+                                    class="custom-select w-100">
+                                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name
+                                        }}</ng-template>
+                                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                                </p-select>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Date <span
+                                    class="error-msg">*</span></label>
+                            <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
+                                placeholder="Please enter offerIssuedDate" />
+                                <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
+                                    <div class="error-msg">Date is required</div>
+                                </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Document
+                                Type<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name"
+                                    placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
+                                Authority Name<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name"
+                                    placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div>
+                            <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
+                                Place, Joining Date,
+                                Designation, Last working date in Personal and Job Tabs Before Generating the Document.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 pt-4">
+                        <button type="button" class="custom-btn btn-primary">Generate Document</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-9">
+            <div class="card letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+                    <div class="letter-page-content" id="pdfContent">
+                        <div class="letter-page-sub-content">
+                            <div *ngIf="bankloanLetterData.Documenttype; else doc" class="mb-5">
+                                <!-- <app-letterhead></app-letterhead> -->
+                            </div>
+                            <ng-template #doc>
+                                <div style="margin-bottom: 3rem;"></div>
+                            </ng-template>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2"></div>
+                                <div class="col-lg-10 col-md-10">
+                                    <div class="date-div">
+                                        <div class="date-div"><span class="letter-text">Date: </span>
+                                            <span class="letter-text">{{bankloanLetterData.dateofbankloan|
+                                                dateformat}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="py-4">
+                                <div class="heading-div"><span class=" border-bottom1">TO WHOMSOEVER IT MAY
+                                        CONCERN</span></div>
+                            </div>
+                            <div class="text-content-div">
+                                <p>
+                                    <span class="letter-text">This letter is to confirm that
+                                        <span *ngIf="!bankloanLetterData.firstName;else name">
+                                            _______________________</span>
+                                        <ng-template #name><b>
+                                                {{bankloanLetterData.firstName}} {{bankloanLetterData.middleName}}
+                                                {{bankloanLetterData.lastName}}
+                                            </b></ng-template> has been working in our Establishment "RightlyHR"
+                                        currently designated as
+                                        <span *ngIf="!bankloanLetterData.jobRole;else role">
+                                            _______________________</span>
+                                        <ng-template #role><b> {{bankloanLetterData.jobRole}} </b></ng-template>
+                                        since <span
+                                            *ngIf="!bankloanLetterData.dateOfJoining;else joining">_______________________.</span>
+                                        <ng-template #joining><b>
+                                                {{bankloanLetterData.dateOfJoining|dateformat}}.</b></ng-template>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="text-content-div">
+                                <p>
+                                    <span class="letter-text">This letter is being issued on {{hisOrHerdata}} request to
+                                        enable {{herOrHimdata}} to
+                                        apply for a bank Loan.</span>
+                                </p>
+                            </div>
+                            <div class="text-content-div">
+                                <p><span class="letter-text">If you have any further questions, you can call us at
+                                        8886651309.</span></p>
+                            </div>
+                            <div class="text-content-div">
+                                <p>
+                                    <Span class="letter-text">Sincerely,</Span><br>
+                                    <span class="letter-headingreliving">for RightlyHR</span>
+                                </p>
+                            </div>
+                            <div>
+                                <!-- <img src=".\assets\images\signature.png" alt=""> -->
+                                <div style="font-family: autographsignatureFont; font-size: xx-large;" class="mt-4">
+                                    {{bankloanLetterData.authorityName}}</div>
+                                <div class="stamp-img">
+                                    <!-- <img src=".\assets\images\Fusion stamp.png" alt=""> -->
+                                    <p class="stamp-text letter-text"><span>{{bankloanLetterData.authorityName}}</span>
+                                    </p>
+                                    <p class="stamp-text1"><span class="letter-text">{{authorityDesignation}}</span></p>
+                                    <br>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD - 500032</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

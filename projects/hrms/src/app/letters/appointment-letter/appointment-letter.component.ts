@@ -5,7 +5,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { DateformatPipe } from "../../pipes/dateformat.pipe";
-import { NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { IAddress, IDepartment, IemployeeDetails, IIssuelocation, IMake } from './appointment-letter-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -112,13 +112,14 @@ export class AppointmentLetterComponent {
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   Status: any;
+  employeeForm!: FormGroup;
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
     private router: Router,
     private authService: AuthService,
     // private _userAcessService: UserAccessService,
-    private elementRef: ElementRef,
+    private elementRef: ElementRef,private fb: FormBuilder,
     config: NgbModalConfig, private modalService: NgbModal
   ) {
     config.backdrop = 'static';
@@ -141,7 +142,19 @@ export class AppointmentLetterComponent {
     this.getAssertType();
     this.getAuthorityDetails();
   }
-
+  initializeForm() {
+    this.employeeForm = this.fb.group({
+      searchEmployee: ['', Validators.required],
+      appointmentSentDate: ['', Validators.required],
+      address: ['', Validators.required],
+      joiningDate: ['', Validators.required],
+      department: ['', Validators.required],
+      branchLocation: ['', Validators.required],
+      documentType: ['', Validators.required],
+      note: ['', Validators.required],
+      signatureAuthority: ['', Validators.required]
+    });
+  }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }

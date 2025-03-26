@@ -3,10 +3,13 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
+import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { DateformatPipe } from '../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule,Select],
+  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })

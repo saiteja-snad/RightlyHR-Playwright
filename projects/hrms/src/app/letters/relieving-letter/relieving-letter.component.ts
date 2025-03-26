@@ -17,7 +17,7 @@ import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-relieving-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule,Select,ReactiveFormsModule,DateformatPipe],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss'
 })

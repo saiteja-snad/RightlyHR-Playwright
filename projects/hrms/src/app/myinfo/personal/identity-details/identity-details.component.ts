@@ -10,7 +10,7 @@ import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DropdownModule],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })
@@ -63,9 +63,7 @@ export class IdentityDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`IdentityTable/${EmpId}`).subscribe({
       next: (data: any) => {
         this.getIdentitydetails = data;
-        if (this.getIdentitydetails?.length) {
-          this.getUnmatchedidentity();
-        }
+       
       },
       error: (err: any) => {
         console.error('Error fetching identity details:', err);
@@ -78,9 +76,7 @@ export class IdentityDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`OnboardingDocumentsList?identity=true`).subscribe({
       next: (data: any) => {
         this.getidentitydropdetails = data;
-        if (this.getidentitydropdetails?.length) {
-          this.getUnmatchedidentity();
-        }
+      
       },
       error: (err: any) => {
         console.error('Error fetching identity dropdown:', err);
@@ -88,19 +84,7 @@ export class IdentityDetailsComponent implements OnInit {
     });
   }
   
-  // Filter unmatched identity details
-  getUnmatchedidentity(): void {
-    if (!this.getidentitydropdetails?.length || !this.getIdentitydetails?.length) {
-      this.unmatchedIdentityDetails = [];
-      return;
-    }
   
-    this.unmatchedIdentityDetails = this.getidentitydropdetails.filter((identityDetail) => {
-      return !this.getIdentitydetails.some(
-        (identity) => identity.identityType === identityDetail.documentName
-      );
-    });
-  }
   
   onIdentityAttachmentSelected(event: any): void {
     const file = event.target.files[0];
@@ -169,7 +153,7 @@ export class IdentityDetailsComponent implements OnInit {
   createPayload(attachmentPath: string = ''): any {
     return {
 
-      empId: parseInt(this.empinfo.employeeId),
+      empId: this.empinfo.employeeId,
       identityType: this.identityForm.get('identityType')?.value,
       identityNumber: this.identityForm.get('identityNumber')?.value,
       attachment: attachmentPath || '',

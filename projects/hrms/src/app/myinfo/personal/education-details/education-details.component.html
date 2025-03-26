@@ -80,7 +80,7 @@
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
                             formControlName="university" placeholder="Please enter university">
-                        <div class="error-message"
+                        <div class="error-msg"
                             *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">
                             University is required
                         </div>

@@ -130,14 +130,7 @@ a {
     border: none;
 }
 
-.error-msg {
-    color: var(--error-msg-color);
-    font-size: 12px;
-    font-family: var(--font-regular);
-    line-height: 1.33;
-    text-align: end;
-    margin-top: 4px;
-}
+
 
 /* width */
 ::-webkit-scrollbar {
@@ -506,15 +499,17 @@ input[type="file"] {
     width: 2rem;
     height: 2rem;
 }
+
 //note-text
 
-.note-text{
+.note-text {
     font-size: var(--fontsize12) !important;
     font-weight: 400;
     vertical-align: middle;
 
-    
+
 }
+
 //time-offtabs
 .tabs-container {
     background-color: #FFFFFF;
@@ -637,6 +632,7 @@ input[type="file"] {
     }
 
 }
+
 //pagenation stylings
 
 // login components stylings
@@ -658,16 +654,23 @@ input[type="file"] {
         font-weight: 500;
     }
 }
-
+//ERROR MESSAGE
+.error-msg {
+    font-size: var(--fontsize12);
+    font-weight: 500;
+    color: var(--error-msg-color);
+    margin-top: 0.25rem;
+}
+ 
 //popup stylings
 .result-popup-content {
     padding: 5rem;
     text-align: center;
- 
+
     .confirmation-icon {
         width: 9rem;
     }
- 
+
     .confirmation-text {
         font-weight: 500;
         font-size: var(--fontsize20);

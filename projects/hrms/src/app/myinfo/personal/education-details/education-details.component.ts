@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-education-details',
@@ -21,9 +22,10 @@ export class EducationDetailsComponent {
   buttondisable = true;
   educationtypes=[
     {id:1,name:'SSC'},]
-  constructor(private modalService: NgbModal,private fb: FormBuilder) {}
+  constructor(private modalService: NgbModal,private fb: FormBuilder,private conformationPopup:OpenModalService) {}
   ngOnInit(): void {
     this.initializeForm();
+    this.conformationPopup.openSuccessModal('Education Details Added Successfully');
   }
 
   openModal(content: any) {

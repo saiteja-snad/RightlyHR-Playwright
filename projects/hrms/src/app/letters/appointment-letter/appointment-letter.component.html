@@ -18,31 +18,31 @@
           <div class="row">
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Search Employee<span
-                      class="text-danger">*</span></label>
+                      class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                   <p-select [options]="employeeiddetails" optionLabel="name" [filter]="true" filterBy="name"
                       [showClear]="true" placeholder="Please select employee"
                       formControlName="searchEmployee" class="custom-select w-100">
                   </p-select>
               </div>
-              <small *ngIf="employeeForm.get('searchEmployee')?.invalid && employeeForm.get('searchEmployee')?.touched">
-                  <small class="text-danger">Search Employee is required</small>
-              </small>
+              <div *ngIf="employeeForm.get('searchEmployee')?.invalid && employeeForm.get('searchEmployee')?.touched">
+                  <div class="error-msg">Search Employee is required</div>
+              </div>
           </div>
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Appointment Sent Date<span
-                  class="text-danger">*</span></label>
+                  class="error-msg">*</span></label>
               <input type="date" class="form-control custom-input" formControlName="appointmentSentDate"
                 placeholder="Please enter appointment sent date" />
-              <small
+              <div
                 *ngIf="employeeForm.get('appointmentSentDate')?.invalid && employeeForm.get('appointmentSentDate')?.touched">
-                <small class="text-danger">Appointment Sent Date is required</small>
-              </small>
+                <div class="error-msg">Appointment Sent Date is required</div>
+              </div>
             </div>
 
             <div class="col-xl-12 mb-4">
               <label class="form-label custom-label mb-2">Select Address<span
-                      class="text-danger">*</span></label>
+                      class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                   <p-select [options]="SelectDropDown" optionLabel="name"
                       placeholder="Please select address" formControlName="selectAddress" (change)="onclickSelectAddress(SelectDropDown)"
@@ -51,45 +51,45 @@
                       <option value="c">Current Address</option>
                       <option value="p">Permanent Address</option></p-select>
               </div>
-              <small *ngIf="employeeForm.get('selectAddress')?.invalid && employeeForm.get('selectAddress')?.touched">
-                  <small class="text-danger">Address is required</small>
-              </small> 
+              <div *ngIf="employeeForm.get('selectAddress')?.invalid && employeeForm.get('selectAddress')?.touched">
+                  <div class="error-msg">Address is required</div>
+              </div> 
           </div>
 
             <div class="col-xl-6 col-lg-12 mb-4">
-              <label class="form-label custom-label mb-2">Joining Date<span class="text-danger">*</span></label>
+              <label class="form-label custom-label mb-2">Joining Date<span class="error-msg">*</span></label>
               <input type="date" class="form-control custom-input" formControlName="joiningDate"
                 placeholder="Please enter joining date" />
-              <small *ngIf="employeeForm.get('joiningDate')?.invalid && employeeForm.get('joiningDate')?.touched">
-                <small class="text-danger">Joining Date is required</small>
-              </small>
+              <div *ngIf="employeeForm.get('joiningDate')?.invalid && employeeForm.get('joiningDate')?.touched">
+                <div class="error-msg">Joining Date is required</div>
+              </div>
             </div>
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Department<span
-                      class="text-danger">*</span></label>
+                      class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                   <p-select [options]="departmentDetails" optionLabel="name"
                       placeholder="Please select department" formControlName="department"
                       class="form-select custom-select"></p-select>
               </div>
-              <small *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
-                  <small class="text-danger">Department is required</small>
-              </small>
+              <div *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
+                  <div class="error-msg">Department is required</div>
+              </div>
           </div>
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Branch Location/Code<span
-                      class="text-danger">*</span></label>
+                      class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                   <p-select [options]="issueLocationdata" optionLabel="name"
                       placeholder="Please select branch location" formControlName="branchLocation"
                       class="form-select custom-select"></p-select>
               </div>
-              <small *ngIf="employeeForm.get('branchLocation')?.invalid && employeeForm.get('branchLocation')?.touched">
-                  <small class="text-danger">Branch Location/Code is required</small>
-              </small>
+              <div *ngIf="employeeForm.get('branchLocation')?.invalid && employeeForm.get('branchLocation')?.touched">
+                  <div class="error-msg">Branch Location/Code is required</div>
+              </div>
           </div>
             <div class="col-xl-6 col-lg-12 mb-4">
-              <label class="form-label custom-label mb-2">Document Type <span class="text-danger">*</span></label>
+              <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                   <p-select [options]="employeementType" optionLabel="name"
                       placeholder="Please select document type" formControlName="documentType"
@@ -99,27 +99,26 @@
                       <option Value="false">No</option>
                   </p-select>
               </div>
-              <small *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                  <small class="text-danger">Document Type is required</small>
-              </small>
+              <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
+                  <div class="error-msg">Document Type is required</div>
+              </div>
           </div>
             <div class="col-xl-12 mb-4">
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note
-                <span class="text-danger">*</span></label>
+                <span class="error-msg">*</span></label>
               <textarea class="form-control custom-input" placeholder="Leave a comment here"></textarea>
             </div>
             <div class="col-xl-6 col-lg-12 mb-4">
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                Authority Name<span class="text-danger">*</span></label>
+                Authority Name<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                 <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location"
                   class="form-select custom-select" />
               </div>
             </div>
             <div>
-              <p class="note-text"><span class="note me-2">Note:</span>Please update the Employee Name,
-                Address, Mobile Number, Email ID, Designation, PT, PF, ESIC, Place(work location),
-                Salary in Personal and Job Tabs Before Generating the Document.</p>
+              <p class="note-text"><span class="note me-2">Note:</span>Please Update Updated Salary, Compensation Effective Date in
+                Job Tab Before Generating the Document.</p>
             </div>
             <div class="d-flex flex-wrap gap-3 pt-4">
               <button type="button" class="custom-btn btn-primary">Generate Document</button>

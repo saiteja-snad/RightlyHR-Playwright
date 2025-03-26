@@ -3,7 +3,6 @@ import { LoginComponent } from "./login/login.component";
 import { UserValidationComponent } from "./user-validation/user-validation.component";
 import { UnauthorizedLoginComponent } from "./unauthorized-login/unauthorized-login.component";
 
-
 export default [
     { path: 'login', component: LoginComponent },
     { path: 'uservalidation', component: UserValidationComponent },

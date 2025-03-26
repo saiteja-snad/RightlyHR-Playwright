@@ -4,9 +4,10 @@ import { Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from "../document-history/document-history-layout/document-history-layout.component";
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent],
+  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent,TranslateModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })

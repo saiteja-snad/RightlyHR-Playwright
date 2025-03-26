@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TimeOffTabsComponent } from '../time-off-tabs/time-off-tabs.component';
+import { MyExpensesTabComponent } from "../claimsandexpenses-tabs/my-expenses-tab/my-expenses-tab.component";
 
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule,RouterModule,TimeOffTabsComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

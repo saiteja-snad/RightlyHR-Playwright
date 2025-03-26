@@ -76,7 +76,8 @@ export class IdentityDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`OnboardingDocumentsList?identity=true`).subscribe({
       next: (data: any) => {
         this.getidentitydropdetails = data;
-      
+        console.log('Identity dropdown:', this.getidentitydropdetails);
+
       },
       error: (err: any) => {
         console.error('Error fetching identity dropdown:', err);
@@ -153,7 +154,7 @@ export class IdentityDetailsComponent implements OnInit {
   createPayload(attachmentPath: string = ''): any {
     return {
 
-      empId: this.empinfo.employeeId,
+      empId: parseInt(this.empinfo.employeeId),
       identityType: this.identityForm.get('identityType')?.value,
       identityNumber: this.identityForm.get('identityNumber')?.value,
       attachment: attachmentPath || '',

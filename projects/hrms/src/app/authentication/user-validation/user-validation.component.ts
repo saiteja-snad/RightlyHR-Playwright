@@ -6,9 +6,10 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { MsalService } from '@azure/msal-angular';
 
+
 @Component({
   selector: 'app-user-validation',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './user-validation.component.html',
   styleUrl: './user-validation.component.scss'
 })
@@ -23,18 +24,23 @@ export class UserValidationComponent {
   ) {}
 
   ngOnInit(): void {
-    this.postLogin()
+    this.postLogin();
   }
-
-  //afterr login with azure AD
-  postLogin() {
+  async postLogin() {
+    await this._msalService.instance.initialize();
     const account = this._msalService.instance.getAllAccounts()[0];
-    this.name= account?.name as string
+    if (account) {
+      this._msalService.instance.setActiveAccount(account);
+    } else {
+      return;
+    }
+    const response = await this._msalService.instance.acquireTokenSilent({
+      account: account,
+      scopes: ['user.read'],
+    });
+    this.name = account?.name as string;
     this.getUserDetails(account?.username);
-    console.log(account?.username);
-    
   }
-
   getUserDetails(email: string) {
     this.subscription = this.http.getUserDetails(email).subscribe({
       next: (response: any) => {

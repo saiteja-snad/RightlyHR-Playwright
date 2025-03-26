@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mb-4">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
+        <input type="search" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
             aria-describedby="basic-addon1">
     </div>
     <div class="custom-table-content">
@@ -14,7 +14,7 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <th>Designation</th>
-                    <th class="text-center">Actions</th>
+                    <th class="text-center">Action</th>
 
                 </tr>
             </thead>
@@ -79,18 +79,34 @@
                                     Reporting
                                     Manager<span class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
-                                    <p-select [options]="rmData" optionLabel="name"
-                                        placeholder=" Select Reporting Manager" class="form-select custom-select" />
-                                </div>
+                                    <p-select optionLabel="name" [options]="filterEmployees()"
+                                        placeholder=" Select Reporting Manager" class="form-select custom-select" id="mReportingto" 
+                                        name="mReportingto" id="mReportingto" name="mReportingto"
+                                        [(ngModel)]="searchText" 
+                                        (click)="toggleDropdown('reporting')" 
+                                        (ngModelChange)="onSearchTextChange($event)" required/>
+
+                                        <div class="dropdown-menu scroll-menu custom-dropdown-width"
+                                                [class.show]="isDropdownOpen">
+                                                <a class="dropdown-item" *ngFor="let item of filterEmployees()"
+                                                    (click)="onClickValidation(item)">
+                                                    {{ item.fusionEmpId }}-{{ item.firstName }} {{ item.middleName }} {{
+                                                    item.lastName }}
+                                                </a>
+                                            </div>
+                                
+                                    </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end gap-3 mt-4">
                             <button type="reset" class="custom-btn btn-secondary"
-                                (click)="modal.dismiss()">Close</button>
-                            <button type="submit" class="custom-btn btn-primary">Sumbit</button>
+                            (click)="modal.dismiss()" (click)="updateRM()">Close</button>
+                            <button type="submit" class="custom-btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </div>
             </div>
         </ng-template>
+
+        <!-- (click)="modal.dismiss()" -->

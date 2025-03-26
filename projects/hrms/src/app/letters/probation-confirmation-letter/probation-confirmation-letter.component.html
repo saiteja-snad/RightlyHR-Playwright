@@ -1,1 +1,150 @@
-<p>probation-confirmation-letter works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+        </div>
+    </div>
+
+    <!--letter content-->
+    <div class="main-letter-content row">
+        <div class="col-sm-12 col-md-3">
+            <div class="card letter-fields-content p-4">
+                <form action="">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search Employee<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100">
+                                    <!-- Template for selected item -->
+                                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+                                    <!-- Template for dropdown items -->
+                                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                                </p-select>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select Address<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select address" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Document Type<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
+                                Authority Name<span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="sublocation" optionLabel="name"
+                                    placeholder="Please select sub location" class="form-select custom-select" />
+                            </div>
+                        </div>
+                        <div>
+                            <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name, Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
+                        </div>
+                      </div>
+                    <div class="d-flex flex-wrap gap-3 pt-4">
+                        <button type="button" class="custom-btn btn-primary">Generate Document</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-9">
+            <div class="card letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+                    <div class="letter-page-content" id="pdfContent">
+                        <div class="letter-page-sub-content">
+                            <div *ngIf="probationLetterData.Copys; else doc" class="mb-5">
+                                <!-- <app-letterhead></app-letterhead> -->
+                             </div>
+                             <ng-template #doc>
+                                <div style="margin-bottom: 6.5rem;"></div>
+                             </ng-template>
+                            <div class="letter-div ">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <ul style="padding-left: 0px;">
+                                            <li class="letter-text">To</li>
+                                            <li class="letter-text"
+                                                *ngIf="!probationLetterData.firstName && !probationLetterData.middleName && !probationLetterData.lastName;else fullname">
+                                                Name:</li>
+                                            <ng-template #fullname>
+                                                <li class="letter-text">{{probationLetterData.firstName}}
+                                                    {{probationLetterData.middleName}}
+                                                    {{probationLetterData.lastName}},
+                                                </li>
+                                            </ng-template>
+                                            <li class="letter-text">{{probationLetterData.fusionEmpId}}</li>
+                                            <li class="letter-text">{{probationLetterData.jobRole}}</li>
+                                            <li class="letter-text">{{probationLetterData.department}}</li>
+                                            <li class="letter-text">{{probationLetterData.workLocation}}</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <p class="letter-text text-end p-0">Issued Date: {{probationLetterData.issuedDate | dateformat }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="letter-heading-div" style="margin-bottom: 5px;">
+                                <p class="letter-text"><strong>Dear </strong> <strong> {{probationLetterData.firstName}}
+                                        {{probationLetterData.middleName}}
+                                        {{probationLetterData.lastName}}</strong>,</p>
+                            </div>
+                        
+                            <div class="mb-2 mt-2 letter-heading-div">
+                                <p class="letter-text">We are pleased to inform you that, following a comprehensive
+                                    assessment of your
+                                    performance during the probationary period, you have successfully completed your
+                                    probationary period with RightlyHR. </p>
+                        
+                                <p class="letter-text">
+                                    Effective {{probationLetterData.effectiveDate|dateformat}}, your position as
+                                    <b>{{probationLetterData.jobRole}}</b> within our organization is officially confirmed, 
+                                    and your terms and conditions of employment will remain unchanged.
+                                </p>
+                        
+                                <p class="letter-text">
+                                    We believe that your continued presence at RightlyHR will
+                                    further contribute to our success, and we look forward to seeing your continued
+                                    growth and contributions to the organization.
+                                </p>
+                        
+                                <p class="letter-text">
+                                    Congratulations on this milestone in your career, and we look forward to a
+                                    successful and rewarding journey together.
+                                </p>
+                        
+                                <p class="letter-text"> Sincerely,</p>
+                                <p class="letter-headings"> <strong>for RightlyHR</strong></p>
+                                <div style="font-family: autographsignatureFont; font-size: xx-large;">
+                                    {{probationLetterData.authorityName}}</div>
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <div>
+                                            <div class="stamp-img">
+                                                <p class="stamp-text"><span>
+                                                        <b>{{probationLetterData.authorityName}}</b></span></p>
+                                                <p class="stamp-text1"><span class="letter-text"><b>{{authorityDesignation}}</b></span></p>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="letter-footer text-center">
+                            <p class="company-name">RightlyHR</p>
+                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

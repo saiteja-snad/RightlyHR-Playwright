@@ -1,13 +1,13 @@
-export interface Ipersonal{
+export interface Ipersonal {
     firstName: string,
     lastName: string,
-    middleName:string,
+    middleName: string,
     maritalStatus: string,
     empstatus: string,
     emailaddress: string,
-    experienceType:string
+    experienceType: string
     supervisor: any,
-    substatus:string,
+    substatus: string,
     gender: string,
     dob: any,
     createdby: string,
@@ -54,7 +54,7 @@ export interface Ipersonal{
     termtypeoffboard: string,
     termreasonoffboard: string,
     eligibleforrehire: string,
-    lastworkingday:any,
+    lastworkingday: any,
     img: string,
     reportsto: string,
     isManager: true,
@@ -65,101 +65,101 @@ export interface Ipersonal{
     offerIssueddate: any,
     offerstatus: string,
     documentUrl: string,
-    emergencycode:string,
+    emergencycode: string,
     employeeId: any,
     fusionEmpId: string;
     isNotVisible: boolean;
-    emergencyName1:string
-    emergencyEmail1:string
-    emergencycode1:number
-    emergencyNumber1:number
-    relationship1:string
-    branchCode:string
-    bloodGroup:string
-    empType:string;
-    employeeAddresses?:IAddress[]
-    trainingEndDate:any;
-  }
-  export interface IStatus{
-  
-      sno: number,
-      statusname: String,
-      isdeleted: String
-    }
-  
-  
-    export interface IAddress{
-      id?: number;
-      empId?:number;
-      type:string;
-      addressLine1:string;
-      addressLine2:string;
-      city:string;
-      state:string;
-      zipCode:string;
-      country:string;
-      emp?:any;
-    }
-  
-    export interface IGender{
-  
-      sno: number,
-      genderName: String,
-      isdeleted: String
-    }
-  
-    export interface ITitle {
-      sno: number,
-      titlename: string;
-      isdeleted:string;
-    }
-    export interface IMarital {
-      sno: number,
-      maritalstatus1: string;
-      isdeleted:string;
-    }
-    export interface IRelation{
-      sno: number,
-      relationship1: string,
-      isdeleted: string
-      isDependent?:boolean
-    }
-    export interface Ieducation{
-      id:number
-      employeeId: any,
-      degree:string ,
-      university: string,
-      specialization: string,
-      gpa: number,
-      degreeStartDate:any ,
-      degreeEndDate: any
-      status:string
-      attachment:string
-    }
-  
-    export interface Ivisaupdate {
-      id: any;
-      employeeId: number,
-      visatype: string,
-      issuedcountry: string,
-      issueddate: any,
-      expirydate: any,
-      vstatus: string,
-      notes: string,
-      visatype1: string,
-      status?: string
-    }
-    export interface ICountry{
-      countryName  : string,
-    }
-  
-    export interface Ibank{
-      sno: number,
-      bankName1: string,
-      isdeleted: string
-    }
-  
-    export interface Ibankdetails{
+    emergencyName1: string
+    emergencyEmail1: string
+    emergencycode1: number
+    emergencyNumber1: number
+    relationship1: string
+    branchCode: string
+    bloodGroup: string
+    empType: string;
+    employeeAddresses?: IAddress[]
+    trainingEndDate: any;
+}
+export interface IStatus {
+
+    sno: number,
+    statusname: String,
+    isdeleted: String
+}
+
+
+export interface IAddress {
+    id?: number;
+    empId?: number;
+    type: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+    emp?: any;
+}
+
+export interface IGender {
+
+    sno: number,
+    genderName: String,
+    isdeleted: String
+}
+
+export interface ITitle {
+    sno: number,
+    titlename: string;
+    isdeleted: string;
+}
+export interface IMarital {
+    sno: number,
+    maritalstatus1: string;
+    isdeleted: string;
+}
+export interface IRelation {
+    sno: number,
+    relationship1: string,
+    isdeleted: string
+    isDependent?: boolean
+}
+export interface Ieducation {
+    id: number
+    employeeId: any,
+    degree: string,
+    university: string,
+    specialization: string,
+    gpa: number,
+    degreeStartDate: any,
+    degreeEndDate: any
+    status: string
+    attachment: string
+}
+
+export interface Ivisaupdate {
+    id: any;
+    employeeId: number,
+    visatype: string,
+    issuedcountry: string,
+    issueddate: any,
+    expirydate: any,
+    vstatus: string,
+    notes: string,
+    visatype1: string,
+    status?: string
+}
+export interface ICountry {
+    countryName: string,
+}
+
+export interface Ibank {
+    sno: number,
+    bankName1: string,
+    isdeleted: string
+}
+
+export interface Ibankdetails {
     bankId: number,
     empId: number,
     accountNo: number,
@@ -168,38 +168,37 @@ export interface Ipersonal{
     docUrl: string,
     isDeleted: boolean,
     bankName: string,
-    isPrimary:boolean
-    }
-    export interface Iidentity{
-      identityId: number,
-      empId: number,
-      identityType: string,
-  
-      identityNumber: string,
-      attachment: string,
-      isDeleted: boolean
-    }
-    export interface Iidentitydrop{
-      sno: number,
-      identityType1: string,
-      documentName:string
-      isDeleted: boolean
-    }
-  
-    export interface IBranchLocation{
-      sno: number,
-      branchCode:string,
-      branchLocation1:string,
-      isDeleted:boolean
-    }
-    export interface Idocsdetail {
-      
-      id: number,
-      empId: number,
-      documentType: string,
-      documentUrl: string,
-      status: string,
-      rejectedBy: number,
-      reason: string,
-      comments: string
-  }
+    isPrimary: boolean
+}
+export interface Iidentity {
+    identityId: number,
+    empId: number,
+    identityType: string,
+    identityNumber: string,
+    attachment: string,
+    isDeleted: boolean
+}
+export interface Iidentitydrop {
+    sno: number,
+    identityType1: string,
+    documentName: string
+    isDeleted: boolean
+}
+
+export interface IBranchLocation {
+    sno: number,
+    branchCode: string,
+    branchLocation1: string,
+    isDeleted: boolean
+}
+export interface Idocsdetail {
+
+    id: number,
+    empId: number,
+    documentType: string,
+    documentUrl: string,
+    status: string,
+    rejectedBy: number,
+    reason: string,
+    comments: string
+}

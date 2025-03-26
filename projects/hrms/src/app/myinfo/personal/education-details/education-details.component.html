@@ -30,16 +30,17 @@
                     <td>67.9</td>
                     <td>33/09/2025</td>
                     <td>33/09/2025</td>
-                 
-                    <td> <a type="button" class="me-2 dowload-text"><i
-                        class="bi bi-download  me-2"></i>Download</a></td>
+
+                    <td> <a type="button" class="me-2 dowload-text"><i class="bi bi-download  me-2"></i>Download</a>
+                    </td>
                     <td class="text-center">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </span>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                <li (click)="openModal(updateEducationmodal)"><a class="dropdown-item"><i class="bi bi bi-pencil  me-2"></i>Update</a></li>
+                                <li (click)="openModal(updateEducationmodal)"><a class="dropdown-item"><i
+                                            class="bi bi bi-pencil  me-2"></i>Update</a></li>
                                 <li><a class="dropdown-item"><i class="bi bi bi-trash3 me-2"></i>Delete</a></li>
 
                             </ul>
@@ -63,7 +64,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form action="">
+            <form [formGroup]="educationForm">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Education<span
@@ -72,12 +73,17 @@
                             <p-select [options]="educationtypes" optionLabel="name"
                                 placeholder="Please select education*" class="form-select custom-select" />
                         </div>
+
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">University<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter university">
+                            formControlName="university" placeholder="Please enter university">
+                        <div class="error-message"
+                            *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">
+                            University is required
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -85,14 +91,20 @@
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Specialization<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter specialization">
-
+                            formControlName="specialization" placeholder="Please enter specialization">
+                        <div
+                            *ngIf="educationForm.get('specialization')?.invalid && educationForm.get('specialization')?.touched">
+                            Specialization is required
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">GPA<span
                                 class="text-danger">*</span></label>
                         <input type="number" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter GPA">
+                            formControlName="gpa" placeholder="Please enter GPA">
+                        <div *ngIf="educationForm.get('gpa')?.invalid && educationForm.get('gpa')?.touched">
+                            GPA is required and should be between 1 and 10
+                        </div>
 
                     </div>
                 </div>
@@ -101,12 +113,19 @@
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">From Date<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+                        <input type="date" formControlName="degreeStartDate" [max]="currentDate"
+                            [ngClass]="{ 'is-invalid': !issStartDateValid }" class="form-control custom-input"
+                            id="exampleFormControlInput1">
+                        <div *ngIf="!issStartDateValid">From Date is greater than Current Date</div>
+
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">To Date<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1"
+                            formControlName="degreeEndDate" [ngClass]="{ 'is-invalid': !issEndDateValid }">
+                        <div *ngIf="!issEndDateValid">To Date should be after From Date</div>
+
                     </div>
 
                 </div>
@@ -114,7 +133,12 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" />
+                        <input type="file" formControlName="attachment" accept="image/*, application/pdf"
+                            (change)="onChangeEducation($event)" class="form-control custom-input" />
+                        <div
+                            *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">
+                            File is required
+                        </div>
                     </div>
                 </div>
 

@@ -8,16 +8,26 @@
             <img src="images\profile-img.png" alt="Profile Image" class="profile-img cursor">
         </div>
         <div>
-            <p class="name mb-0">John Doe</p>
-            <p class="email mb-0">name&#64;gmail.com</p>
+            <p class="name mb-0">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}} {{prospectiveEmpData.lastName}}</p>
+            <p class="email mb-0">{{prospectiveEmpData.emailaddress}}</p>
         </div>
         <div class="dropdown">
             <a type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="/icons/logout-icon.png" alt="Logout Icon" class="logout-icon cursor">
             </a>
             <ul class="dropdown-menu custom-dropdown-menu">
-                <li><a class="dropdown-item">Logout</a></li>
+                <li><a class="dropdown-item" (click)="openlogoutModal()">Logout</a></li>
             </ul>
         </div>
     </div>    
 </div>
+
+<ng-template #logoutpopup let-modal>
+    <div class="result-popup-content text-center">
+        <p class="confirmation-text mb-5">Are you sure want to logout?</p>
+        <div class="d-flex justify-content-center w-100 gap-5">
+            <button class="custom-btn btn-secondary w-50 py-3 px-5" (click)="close()">Close</button>
+            <button class="custom-btn btn-primary w-50 py-3 px-5" (click)="logOut()">Logout</button>
+        </div>
+    </div>
+</ng-template>

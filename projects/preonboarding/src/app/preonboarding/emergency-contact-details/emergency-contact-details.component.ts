@@ -3,16 +3,16 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProgressService } from '../../common-services/progress.service';
 import { CommonModule } from '@angular/common';
-import { Select } from 'primeng/select';
-
 @Component({
   selector: 'app-emergency-contact-details',
-  imports: [CommonModule,Select],
+  imports: [CommonModule],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss'
 })
+
 export class EmergencyContactDetailsComponent {
   currentStep: string = '';
+
   // Dummy data for dropdowns
   employeementType: { id: number; name: string }[] = [
     { id: 1, name: 'Full-Time' },

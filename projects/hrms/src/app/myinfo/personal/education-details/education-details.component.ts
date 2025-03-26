@@ -79,4 +79,7 @@ export class EducationDetailsComponent {
     }
   }
 
+
+  
+
 }

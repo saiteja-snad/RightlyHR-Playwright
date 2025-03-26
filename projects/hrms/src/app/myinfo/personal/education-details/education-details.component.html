@@ -140,6 +140,11 @@
                             *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">
                             File is required
                         </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are
+                                allowed.
+                                The file size should be less than 25MB.</p>
+                        </div>
                     </div>
                 </div>
 

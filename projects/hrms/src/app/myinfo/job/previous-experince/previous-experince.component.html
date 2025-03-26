@@ -87,10 +87,10 @@
                             </label>
                             <input type="text" class="form-control custom-input" id="CompanyName"
                                 formControlName="companyName" placeholder="Please enter company name" />
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('companyName')?.invalid && employeeExperienceForm.get('companyName')?.touched">
                                 Company Name is required
-                            </small>
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -101,10 +101,10 @@
                                 <p-select [options]="employeementType" optionLabel="name"
                                     placeholder="Please select job role" class="form-select custom-select" />
                             </div>
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('employmentType')?.invalid && employeeExperienceForm.get('employmentType')?.touched">
                                 Employment Type is required
-                            </small>
+                            </div>
                         </div>
                     </div>
 
@@ -114,13 +114,13 @@
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"
                                 formControlName="fromDate" [min]="'1940-01-01'" (change)="currentDateValidation()" />
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched">
                                 From Date is required
-                            </small>
-                            <small *ngIf="isCurrentdateDisable" class="error-msg">
+                            </div>
+                            <div *ngIf="isCurrentdateDisable" class="error-msg">
                                 From date cannot be set in the future, and it should be on or before the current date.
-                            </small>
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -128,13 +128,13 @@
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
                                 (change)="toDateValidation()" />
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched">
                                 To Date is required
-                            </small>
-                            <small *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From
-                                Date</small>
-                            <small *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</small>
+                            </div>
+                            <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From
+                                Date</div>
+                            <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>
                         </div>
                     </div>
 
@@ -144,10 +144,10 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="jobRole" formControlName="jobTitle"
                                 placeholder="Job Role" />
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('jobTitle')?.invalid && employeeExperienceForm.get('jobTitle')?.touched">
                                 Job Role is required
-                            </small>
+                            </div>
                         </div>
                     </div>
 
@@ -160,20 +160,20 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
                                 placeholder="Please enter contact name" />
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('previousContactNumber')?.invalid && employeeExperienceForm.get('previousContactNumber')?.touched">
                                 Contact Number is required and must be 10 digits
-                            </small>
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="jobRole" class="form-label custom-label mb-2"> Contact Number <span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
                                 placeholder="Contact number" />
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('previousContactNumber')?.invalid && employeeExperienceForm.get('previousContactNumber')?.touched">
                                 Contact Number is required and must be 10 digits
-                            </small>
+                            </div>
                         </div>
                     </div>
 
@@ -183,10 +183,10 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="previousContactEmail"
                                 placeholder="Contact Email" />
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('previousContactEmail')?.invalid && employeeExperienceForm.get('previousContactEmail')?.touched">
                                 Invalid Email Format
-                            </small>
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -198,12 +198,12 @@
                             <input class="form-control custom-input mb-3" type="file" id="attachment"
                                 formControlName="attachment" (change)="onChangeExperience($event)"
                                 accept=".pdf,image/*,.png" />
-                            <small
+                            <div
                                 *ngIf="employeeExperienceForm.get('attachment')?.invalid && employeeExperienceForm.get('attachment')?.touched">
                                 Please Upload a file
-                            </small>
-                            <small *ngIf="showError" class="errors">Only Pdf and image files are allowed.</small>
-                            <small *ngIf="showErrorr" class="errors">The file size should be less than 25MB.</small>
+                            </div>
+                            <div *ngIf="showError" class="errors">Only Pdf and image files are allowed.</div>
+                            <div *ngIf="showErrorr" class="errors">The file size should be less than 25MB.</div>
 
                             <div class="d-flex justify-content-between align-items-center mt-2">
                                 <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are

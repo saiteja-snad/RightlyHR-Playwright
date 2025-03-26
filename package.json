@@ -23,6 +23,7 @@
     "@ngx-translate/http-loader": "^16.0.1",
     "@popperjs/core": "^2.11.8",
     "@primeng/themes": "^19.0.10",
+    "bn-ng-idle": "^2.0.5",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "force": "^0.0.3",

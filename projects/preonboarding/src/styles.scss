@@ -122,21 +122,14 @@ a {
 }
 
 // disable-btn
-.custom-btn-primary:disabled {
-    background-color: var(--btn-secondary-color);
-    color: var(--btn-color-ts);
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: none;
+.btn-primary:disabled {
+    opacity: 0.5;
 }
 
 .error-msg {
+    font-size: var(--fontsize12);
+    font-weight: 500;
     color: var(--error-msg-color);
-    font-size: 12px;
-    font-family: var(--font-regular);
-    line-height: 1.33;
-    text-align: end;
-    margin-top: 4px;
 }
 
 /* width */
@@ -197,7 +190,8 @@ a {
         z-index: 1;
     }
 
-    th,td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -348,32 +342,6 @@ a {
     }
 }
 
-// custom search field
-.custom-search {
-    border: 1px solid #CCDAEC;
-    border-radius: 0.8rem;
-    overflow: hidden;
-
-    .custom-input-group-search {
-        border: none;
-        padding: 1rem 1.5rem;
-        font-size: var(--fontsize14);
-    }
-
-    .custom-search-input {
-        border: none;
-        padding: 1rem 1rem 1rem 0rem;
-        font-weight: 400;
-        font-size: var(--fontsize14);
-        vertical-align: middle;
-    }
-
-    input:focus {
-        outline: none;
-        box-shadow: none;
-    }
-}
-
 // custom -select dropdown
 .custom-dropdown-menu {
     border: 1px solid #305889;
@@ -410,84 +378,6 @@ a {
     font-family: "autographsignatureFont";
 }
 
-//custom component naviagtion nav tabs
-.custom-nav-tab-card {
-    border-radius: 0.8rem;
-    border: none !important;
-
-    .nav-tabs-main-content {
-        display: flex;
-        gap: 1rem;
-        list-style: none;
-    }
-
-    .nav-item {
-        cursor: pointer;
-        padding: 1rem 1.6rem 0.8rem;
-        font-weight: 700;
-        font-size: var(--fontsize14);
-        vertical-align: middle;
-    }
-
-    .nav-tab-active {
-        border-bottom: 3px solid var(--navtab-item-color);
-    }
-}
-
-// events component stylings
-.event-card {
-    border: none;
-    border-left: 5px solid #06274F;
-    box-shadow: 0px 0px 6px 1px #2222221A;
-    border-radius: 1.2rem;
-    padding: 1.6rem;
-    width: 40rem;
-    border-radius: 1.2rem;
-    vertical-align: middle;
-
-    .event-icon-card {
-        padding: 0.8rem;
-        border: none;
-        background-color: #D7E7FA;
-
-        .event-icon {
-            width: 2.4rem;
-            height: 2.4rem;
-        }
-    }
-
-    .event-name {
-        font-weight: 500;
-        font-size: var(--fontsize14);
-    }
-
-    .date {
-        font-weight: 500;
-        font-size: 12px;
-        color: #65778D;
-    }
-
-    .bi-three-dots-vertical {
-        font-size: var(--fontsize16);
-    }
-
-    .event-content-text {
-        font-weight: 400;
-        font-size: var(font-size);
-        color: #808E9D;
-    }
-
-    .vr-line {
-        opacity: 1;
-        border: 1px solid #DEE8F3;
-    }
-
-    .event-image {
-        height: 12.5rem;
-        border-radius: 1.2rem;
-    }
-}
-
 // file styling
 input[type="file"] {
     &::-webkit-file-upload-button {
@@ -503,130 +393,6 @@ input[type="file"] {
     width: 2rem;
     height: 2rem;
 }
-
-//time-offtabs
-.tabs-container {
-    background-color: #FFFFFF;
-    height: 60dvh;
-    border: 1px solid #E7E7ED;
-    border-radius: 1.2rem;
-
-    .nav {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        list-style: none;
-        padding-left: 0;
-        margin: 0;
-
-        .nav-link {
-            color: rgba(6, 39, 79, 1);
-            text-decoration: none;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 100%;
-            letter-spacing: 0%;
-            width: 100%;
-            padding: 2rem;
-            border-bottom: 1px solid #efefef;
-
-            &.active-tab {
-                padding: 2rem;
-                background-color: #f2f8ff;
-                color: rgba(6, 39, 79, 1);
-                border-right: 3px solid #1a1d1f;
-                font-weight: 700;
-            }
-        }
-    }
-}
-
-//pending-approvals-tabs
-.pending-approvals-tabs {
-    width: 100%;
-    padding: 1rem;
-    background-color: var(--header-background-color);
-
-    .nav-link {
-        display: flex;
-        gap: 9px;
-        color: rgba(6, 39, 79, 1);
-        text-decoration: none;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 100%;
-        letter-spacing: 0%;
-        vertical-align: middle;
-    }
-
-    .active-tab {
-        border-bottom: 2px solid rgba(6, 39, 79, 1);
-        color: rgba(6, 39, 79, 1);
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 100%;
-        letter-spacing: 0%;
-        vertical-align: middle;
-
-    }
-}
-
-
-
-//pagenation stylings
-.pagination-content {
-    .custom-pagination-select:focus {
-        outline: none;
-        box-shadow: none;
-        border: 1px solid #C0C0C0;
-    }
-
-    .p-paginator {
-        .p-paginator-pages {
-            .p-paginator-page {
-                border-radius: 50%;
-                width: 1.875rem;
-                height: 1.875rem;
-                margin: 0 0.2rem;
-                color: #333;
-                font-weight: 500;
-                transition: all 0.3s ease;
-            }
-
-            .p-paginator-page:hover {
-                color: #FFFFFF;
-                background-color: #305889 !important;
-            }
-
-            .p-paginator-page-selected {
-                color: #FFFFFF;
-                background-color: #305889 !important;
-            }
-        }
-
-        .p-paginator-first,
-        .p-paginator-prev,
-        .p-paginator-next,
-        .p-paginator-last {
-            border-radius: 50%;
-            width: 1.875rem;
-            height: 1.875rem;
-            margin: 0 0.3rem;
-            background-color: #f8f8f8;
-            color: #333;
-        }
-
-        .p-paginator-first.p-disabled,
-        .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,
-        .p-paginator-last.p-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    }
-
-}
-//pagenation stylings
 
 // login components stylings
 .login-main-container {
@@ -645,5 +411,21 @@ input[type="file"] {
     .content-text {
         font-size: 24px;
         font-weight: 500;
+    }
+}
+
+.result-popup-content {
+    padding: 5rem;
+    text-align: center;
+
+    .confirmation-icon {
+        width: 9rem;
+    }
+
+    .confirmation-text {
+        font-weight: 500;
+        font-size: var(--fontsize20);
+        line-height: 30px;
+        color: #06274F;
     }
 }

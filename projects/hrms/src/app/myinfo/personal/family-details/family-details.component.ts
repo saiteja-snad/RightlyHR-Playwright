@@ -19,7 +19,7 @@ export class FamilyDetailsComponent implements OnInit {
   familyRelations: IRelation[] = [];
   empinfo: any = {};
   familyDetailsForm!: FormGroup;
-  familyDetailsdisplay = new BehaviorSubject<string[]>([]);
+  familyDetailsdisplay = new BehaviorSubject<any[]>([]);
   educationtypes = [
     { label: 'Select', value: null },]
 
@@ -51,7 +51,7 @@ export class FamilyDetailsComponent implements OnInit {
       const payload = {
         memberName: this.familyDetailsForm.get('memberName')?.value,
         dateOfBirth: this.familyDetailsForm.get('dateOfBirth')?.value,
-        relationShipId: this.familyDetailsForm.get('relationShipId')?.value,
+        relationShipId: this.familyDetailsForm.get('relationShipId')?.value?.sno,
         isDependent: this.familyDetailsForm.get('isDependent')?.value ?? false,
         isDeleted: false,
         employeeId: parseInt(this.empinfo.employeeId),
@@ -98,5 +98,30 @@ export class FamilyDetailsComponent implements OnInit {
           console.error('Error fetching family details:', err);
         },
       });
+  }
+
+  openModalupdate(content: any, familyDetail: any): void {
+    this.familyDetailsForm.patchValue({
+      memberName: familyDetail.memberName,
+      dateOfBirth: familyDetail.dateOfBirth,
+      relationShipId: familyDetail.relationShipId,
+      isDependent: familyDetail.isDependent
+    });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
+
+  deleteFamilyDetail(id: number): void {
+    if (confirm('Are you sure you want to delete this family detail?')) {
+      this.subscription = this.http.deleteData(`FamilyMembers/${id}`).subscribe({
+        next: () => {
+          this.getfamilyDetailsByEmployeid(); // Refresh the table after deletion
+          console.log('Family detail deleted successfully');
+        },
+        error: (err: any) => {
+          console.error('Error deleting family detail:', err);
+        }
+      });
+    }
   }
 }

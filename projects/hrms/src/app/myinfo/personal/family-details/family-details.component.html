@@ -23,32 +23,43 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>b.tech</td>
-                    <td>sasi</td>
-                    <td>ff</td>
-                    <td>67.9</td>
-                    <td>33/09/2025</td>
-                    <td>33/09/2025</td>
-
-                    <td> <a type="button" class="me-2 dowload-text"><i class="bi bi-download  me-2"></i>Download</a>
-                    </td>
-                    <td class="text-center">
-                        <div class="dropdown">
-                            <span type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </span>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                <li (click)="openModal(updateEducationmodal)"><a class="dropdown-item"><i
-                                            class="bi bi bi-pencil  me-2"></i>Update</a></li>
-                                <li><a class="dropdown-item"><i class="bi bi bi-trash3 me-2"></i>Delete</a></li>
-
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+                <!-- Check if familyDetailsdisplay has data -->
+                <ng-container *ngIf="((familyDetailsdisplay | async) ?? []).length > 0; else noDataTemplate">
+                    <tr *ngFor="let familyDetail of familyDetailsdisplay | async">
+                        <td>{{ familyDetail.memberName }}</td>
+                        <td>{{ familyDetail.dateOfBirth | date: 'dd/MM/yyyy' }}</td>
+                        <td>{{ familyDetail.relationShipId?.relationship1 }}</td>
+                        <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li (click)="openModalupdate(updateFamilyModal, familyDetail)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>
+                                    <li (click)="deleteFamilyDetail(familyDetail.id)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
             </tbody>
+            <!-- No Data Found Template -->
+            <ng-template #noDataTemplate>
+                <tr>
+                    <td colspan="9" class="text-center">No data found</td>
+                </tr>
+            </ng-template>
         </table>
+
     </div>
 
 </div>
@@ -97,8 +108,9 @@
                         <label for="relationShipId" class="form-label custom-label mb-2">Relationship<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="familyRelations" optionLabel="name" formControlName="relationShipId"
-                                placeholder="Please select relationship" class="form-select custom-select"></p-select>
+                            <p-select [options]="familyRelations" optionLabel="relationship1"
+                                formControlName="relationShipId" placeholder="Please select relationship"
+                                class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="familyDetailsForm.get('relationShipId')?.invalid && familyDetailsForm.get('relationShipId')?.touched">
@@ -129,7 +141,7 @@
 </ng-template>
 
 
-<ng-template #updateEducationmodal let-modal>
+<ng-template #updateFamilyModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
@@ -146,7 +158,7 @@
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Education<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="educationtypes" optionLabel="name"
+                            <p-select [options]="educationtypes" optionLabel="relationship1"
                                 placeholder="Please select education*" class="form-select custom-select" />
                         </div>
                     </div>

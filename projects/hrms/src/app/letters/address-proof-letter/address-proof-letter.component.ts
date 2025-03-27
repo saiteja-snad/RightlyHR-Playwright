@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule,Select,ReactiveFormsModule],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })

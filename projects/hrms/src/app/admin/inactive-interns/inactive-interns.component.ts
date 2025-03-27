@@ -7,10 +7,11 @@ import { Subscription } from 'rxjs';
 import { Iinactivetrainee } from './inactive-trainee-mod';
 import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-inactive-interns',
-  imports: [CommonModule, ActiveEmployeePipe,TranslateModule],
+  imports: [CommonModule, ActiveEmployeePipe,TranslateModule,FormsModule],
   templateUrl: './inactive-interns.component.html',
   styleUrl: './inactive-interns.component.scss'
 })

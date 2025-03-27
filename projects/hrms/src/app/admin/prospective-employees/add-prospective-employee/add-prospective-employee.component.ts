@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgForm, ReactiveFormsModule,FormsModule } from '@angular/forms';
+import { NgForm, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -9,10 +9,10 @@ import { AuthServiceService } from '../../../services/auth-service.service';
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-add-prospective-employee',
-  imports: [CommonModule,ReactiveFormsModule,FormsModule,Select,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, Select, TranslateModule],
   templateUrl: './add-prospective-employee.component.html',
   styleUrl: './add-prospective-employee.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class AddProspectiveEmployeeComponent {
@@ -26,22 +26,23 @@ export class AddProspectiveEmployeeComponent {
   subLocationsDropdown = {} as any;
   buttondisable: boolean = false;
   disablebutton: boolean = false;
-  JobroleDetails = [] as any;
+  // JobroleDetails = [] as any;
   gradeIdValue: any;
   emp = {} as any;
   selectedValueJobRoledrop: string = ''; //to post the data
   AllJobRoles: any;
   patern: any;
   emailErroremail = false;
+  JobroleDetails: any[] = [];
   emailErrorweb = false; //array to store all the jobroles
-    //function to get the job rol details
-    initialLocationId: any;
-    ngOnInit(): void {
-      this.getJobrole();
-      this.jobLocationList();
+  //function to get the job rol details
+  initialLocationId: any;
+  ngOnInit(): void {
+    this.getJobrole();
+    this.jobLocationList();
 
-    }
-     //function to check the email pattren
+  }
+  //function to check the email pattren
   changepaternemail() {
     this.patern = '[A-Za-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$';
     this.emailErroremail = true;
@@ -50,79 +51,96 @@ export class AddProspectiveEmployeeComponent {
     console.log(this.postProspectiveEmpDetails.personalEmail);
   }
 
-     //function to get the job rol details
+  //function to get the job rol details
+  // getJobrole() {
+  //   this.subscription = this.http.getData('DesignationGradeMapper').subscribe({
+  //     next: (data: any) => {
+  //       console.log(data);
+  //       this.JobroleDetails = data;
+  //       this.AllJobRoles = this.JobroleDetails.map(
+  //         (item: { designationName: any }) => item.designationName
+  //       );
+  //     },
+  //   });
+  // }
+
   getJobrole() {
     this.subscription = this.http.getData('DesignationGradeMapper').subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.JobroleDetails = data;
-        this.AllJobRoles = this.JobroleDetails.map(
-          (item: { designationName: any }) => item.designationName
-        );
+        console.log('API Response:', data);
+
+        this.JobroleDetails = data.map((item: { id: number; designationName: string }) => ({
+          id: item.id,
+          designationName: item.designationName,
+        }));
+
+        console.log('Dropdown Options:', this.JobroleDetails);
+      },
+      error: (error) => console.error('Error fetching job roles:', error),
+    });
+  }
+  //function to get joblocations in to a dropdown
+  jobLocationList() {
+    this.subscription = this.http.getData('JobLocation/getAllLocations').subscribe({
+      next: (data: any) => {
+        console.log('API Response:', data);
+        this.jobLocationDropDownData = data.map((item: { id: number; jobLocationName: string }) => ({
+          id: item.id,
+          jobLocationName: item.jobLocationName,
+        }));
+        console.log('Dropdown Options:', this.jobLocationDropDownData);
+      },
+      error: (error) => {
+        console.error('Error fetching locations:', error);
       },
     });
   }
-     //function to get joblocations in to a dropdown
-  jobLocationList() {
+
+
+  OnClickLocation(event: any) {
+    console.log("Selected Location ID:", event.value); // PrimeNG sends event.value instead of ngModel directly
+
+    // Assign selected value properly
+    this.postProspectiveEmpDetails.locationid = event.value;
+
+    // Find selected location details
+    let selectedLocation = this.jobLocationDropDownData.find(
+      (c: any) => c.id == event.value
+    );
+
+    console.log("Selected Job Location Details:", selectedLocation);
+
+    if (selectedLocation) {
+      this.getSubLocationByid(selectedLocation);
+    } else {
+      console.warn("No matching job location found!");
+    }
+  }
+
+
+  onClickValue() {
+    this.disablebutton = false;
+  }
+  //function to get sublocation by id
+  getSubLocationByid(ValuesForSublocation: any) {
     this.subscription = this.http
-      .getData(`JobLocation/getAllLocations`)
+      .getData(
+        `JobLocation/sub-location-by-joblocation/${ValuesForSublocation.id} `
+      )
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.jobLocationDropDownData = data;
+
+          this.subLocationsDropdown = data.jobSubLocations;
+          // console.log(this.subLocationsDropdown);
+          console.log('sub-Dropdown Options:', this.subLocationsDropdown);
         },
       });
   }
-    OnClickLocation() {
-      console.log(this.postProspectiveEmpDetails.locationid);
-      console.log(this.postProspectiveEmpDetails.sublocationid);
-  
-      if (this.postProspectiveEmpDetails.locationid) {
-        console.log(this.postProspectiveEmpDetails.locationid);
-        if (
-          this.initialLocationId !== this.postProspectiveEmpDetails.locationid
-        ) {
-          this.disablebutton = true;
-        } else {
-          this.disablebutton = false;
-        }
-  
-        this.initialLocationId = this.postProspectiveEmpDetails.locationid;
-        let locationName = this.postProspectiveEmpDetails.locationid;
-  
-        console.log(locationName);
-        let joblocationdetails = this.jobLocationDropDownData.find(
-          (c: any) => c.id == locationName
-        );
-  
-        console.log(this.jobLocationDropDownData);
-        console.log(joblocationdetails);
-        this.getSubLocationByid(joblocationdetails);
-      }
-      
-    }
-    onClickValue() {
-      this.disablebutton = false;
-    }
-    //function to get sublocation by id
-    getSubLocationByid(ValuesForSublocation: any) {
-      this.subscription = this.http
-        .getData(
-          `JobLocation/sub-location-by-joblocation/${ValuesForSublocation.id} `
-        )
-        .subscribe({
-          next: (data: any) => {
-            console.log(data);
-  
-            this.subLocationsDropdown = data.jobSubLocations;
-            console.log(this.subLocationsDropdown);
-          },
-        });
-    }
-   
+
   isItemIntheList(isitem: boolean) {
     console.log(isitem);
-    this.islistedItem = isitem; 
+    this.islistedItem = isitem;
   }
 
   letters(event: KeyboardEvent): boolean {
@@ -137,81 +155,28 @@ export class AddProspectiveEmployeeComponent {
     return true;
   }
   // Dummy data for dropdowns
-employeementType: { id: number; name: string }[] = [
-  { id: 1, name: 'Fresher' },
-  { id: 2, name: 'Experienced' }
-];
-
-designation: { id: number; name: string }[] = [
-  { id: 1, name: 'Software Engineer' },
-  { id: 2, name: 'Project Manager' },
-  { id: 3, name: 'HR Executive' },
-  { id: 4, name: 'Data Analyst' }
-];
-
-location: { id: number; name: string }[] = [
-  { id: 1, name: 'New York' },
-  { id: 2, name: 'Los Angeles' },
-  { id: 3, name: 'Chicago' },
-  { id: 4, name: 'Houston' }
-];
-
-sublocation: { id: number; name: string; locationId: number }[] = [
-  { id: 1, name: 'Brooklyn', locationId: 1 },
-  { id: 2, name: 'Downtown', locationId: 1 },
-  { id: 3, name: 'Hollywood', locationId: 2 },
-  { id: 4, name: 'South Side', locationId: 3 }
-];
+  employeementType: { id: number; name: string }[] = [
+    { id: 1, name: 'Fresher' },
+    { id: 2, name: 'Experienced' }
+  ];
 
   @ViewChild('success') success: any;
 
   constructor(private router: Router,
     private http: HttpService,
     private authService: AuthServiceService,
-    private modalService: NgbModal ) { }
-close(){
-  this.modalService.dismissAll();
-}
-    onclose(f: NgForm){
-    //  this.modalService.dismissAll();
-    this.JobroleDetails = []
-    const modalElement = document.getElementById('requestdoc');
-    if (modalElement) {
-      modalElement.classList.remove('show');
-      modalElement.style.display = 'none';
-    }
+    private modalService: NgbModal) { }
+  close() {
+    this.modalService.dismissAll();
   }
-  
-   //function to refresh the form
-   onclosepopup(){
+  onclose() {
+    this.modalService.dismissAll();
+  }
+
+  //function to refresh the form
+  onclosepopup() {
     location.reload();
   }
-  // postEmpData(f: NgForm) {
-  //   // let loggedInUser = this.authService.getToken();
-  //   const data = this.postProspectiveEmpDetails;
-  //   let postdata = {
-  //     firstName: data.firstName,
-  //     lastName: data.lastName,
-  //     employeeStatus: 'Prospective',
-  //     emailaddress: data.personalEmail,
-  //     // createdBy: loggedInUser.employeeId,
-  //     middleName: data.middleName,
-  //     experienceType: data.experienceType,
-  //   };
-  //   this.subscription = this.http
-  //     .postdata('Employeedata/createEmployee', postdata)
-  //     .subscribe({
-  //       next: (res: any) => {
-  //         console.log(res);
-  //         alert('employee created')
-         
-  //       },
-  //       error: (err: any) => {
-  //         console.log(err);
-  //         f.resetForm();
-  //       },
-  //     });
-  // }
   postEmpData(f: NgForm) {
     let loggedInUser = this.authService.getToken();
     const data = this.postProspectiveEmpDetails;
@@ -222,7 +187,7 @@ close(){
       emailaddress: data.personalEmail,
       createdBy: loggedInUser.employeeId,
       middleName: data.middleName,
-      experienceType: data.experienceType,
+      experienceType: data.experienceType.name,
     };
     this.subscription = this.http
       .postdata('Employeedata/createEmployee', postdata)
@@ -243,7 +208,7 @@ close(){
             //     location.reload();
             //     // f.resetForm();
             //   }, 9000);
-    
+
             // }
             // this.toaster.success({
             //   detail: 'SUCCESS',
@@ -252,6 +217,10 @@ close(){
             // });
             // this.emailForRequestDoc(this.result);
             console.log(this.result);
+            this.modalService.dismissAll();
+            setTimeout(() => {
+              this.router.navigate(['/ProspectiveEmployee']); // Navigate after UI update
+            }, 500);
             if (this.result.employeeId != null) {
               const jobdata = {
                 employeeId: this.result.employeeId,
@@ -284,16 +253,16 @@ close(){
               setTimeout(() => {
                 modalElement.classList.remove('show');
                 modalElement.style.display = 'none';
-              },2000)
+              }, 2000)
             }
-           
+
             setTimeout(() => {
               const modalElement = document.getElementById('errorpopup');
-          if (modalElement) {
-            modalElement.classList.remove('show');
-            modalElement.style.display = 'none';
-          } 
-            },3000)
+              if (modalElement) {
+                modalElement.classList.remove('show');
+                modalElement.style.display = 'none';
+              }
+            }, 3000)
             //f.resetForm();
             this.selectedValueJobRoledrop = '';
           } else {
@@ -304,8 +273,8 @@ close(){
               modalElement.style.display = 'block';
             }
             setTimeout(() => {
-              location.reload();  
-            },3000)
+              location.reload();
+            }, 3000)
           }
         },
         error: (err: any) => {

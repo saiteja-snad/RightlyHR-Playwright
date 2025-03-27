@@ -9,22 +9,28 @@
     </div>
     <div class="custom-main-popup-content p-4">
         <!-- <form name="ngForm" (ngSubmit) = postEmpData(Prospectiveemp)> -->
-            <form name="Prospective" #Prospectiveemp="ngForm" (ngSubmit)="Prospectiveemp.valid && postEmpData(Prospectiveemp)">
+        <form name="Prospective" #Prospectiveemp="ngForm" (ngSubmit)="postEmpData(Prospectiveemp)">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'First Name'|translate}}<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" name="First Name"  (keypress)="letters($event)" placeholder="Please enter first name"  id="exampleFormControlInput1"  #firstname="ngModel" appNameConversion 
-                     [(ngModel)]="postProspectiveEmpDetails.firstName" required>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'FirstName'|translate}}
+                        <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" name="First Name" (keypress)="letters($event)"
+                        placeholder="Please enter first name" id="exampleFormControlInput1" #firstname="ngModel"
+                        appNameConversion [(ngModel)]="postProspectiveEmpDetails.firstName" required>
                     <small class="error-msg"
-                      *ngIf="(firstname.touched &&  firstname.invalid) || (firstname.invalid && Prospectiveemp.submitted)">{{'First Name is required'| translate}} </small>
+                        *ngIf="(firstname.touched &&  firstname.invalid) || (firstname.invalid && Prospectiveemp.submitted)">{{'First  Name is required'| translate}} </small>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Middle Name'| translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Middle Name'|
+                        translate}}
                         <!-- <span class="text-danger">*</span> -->
                     </label>
-                    <input type="email" class="form-control custom-input" name="middle Name" id="exampleFormControlInput1" placeholder="Please enter middle name" appNameConversion #middlename="ngModel" (keypress)="letters($event)" [(ngModel)]="postProspectiveEmpDetails.middleName">
+                    <input type="text" class="form-control custom-input" name="middle Name"
+                        id="exampleFormControlInput1" placeholder="Please enter middle name" appNameConversion
+                        #middlename="ngModel" (keypress)="letters($event)"
+                        [(ngModel)]="postProspectiveEmpDetails.middleName">
                     <small class="error-msg"
-                    *ngIf="(middlename.touched &&  middlename.invalid) || (middlename.invalid && Prospectiveemp.submitted)">{{'Middle Name is required'|translate}} </small>
+                        *ngIf="(middlename.touched &&  middlename.invalid) || (middlename.invalid && Prospectiveemp.submitted)">{{'Middle Name is required'|translate}} </small>
                 </div>
                 <!-- <div class="col-md-6 mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Last Name<span
@@ -39,35 +45,40 @@
                 </div> -->
                 <div class="col-md-6 mb-3">
                     <div class="mb-3">
-                      <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Last Name'|translate}}<span class="text-danger">*</span></label>
-                      <input type="text" class="form-control custom-input" name="Last Name" placeholder="Last Name"
-                        id="exampleFormControlInput1" #lastname="ngModel" (keypress)="letters($event)" [(ngModel)]="postProspectiveEmpDetails.lastName"
-                        required appNameConversion>
-                      <small class="error-msg"
-                        *ngIf="(lastname.touched &&  lastname.invalid) || (lastname.invalid && Prospectiveemp.submitted)">{{'Last Name is required'|translate}}</small>
-      
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Last Name'|translate}}<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" name="Last Name" placeholder="Last Name"
+                            id="exampleFormControlInput1" #lastname="ngModel" (keypress)="letters($event)"
+                            [(ngModel)]="postProspectiveEmpDetails.lastName" required appNameConversion>
+                        <small class="error-msg"
+                            *ngIf="(lastname.touched &&  lastname.invalid) || (lastname.invalid && Prospectiveemp.submitted)">{{'Last  Name is required'|translate}}</small>
+
                     </div>
-                  </div>
-                <div class="col-md-6 mb-3">
-                    <label for="email" class="form-label custom-label mb-2">{{'Personal Email ID'|translate}}<span class="text-danger">*</span></label>
-                    <input type="email" #mailid="ngModel" class="form-control custom-input" name="mailid"  [(ngModel)]="postProspectiveEmpDetails.personalEmail" id="exampleFormControlInput1"  pattern="[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" placeholder="Please enter personal email Id" required>
-                    <small class="error-msg"
-                    *ngIf="mailid.invalid && (mailid.dirty || (mailid.touched) || (Prospectiveemp.submitted||!mailid.invalid))">
-                    <span *ngIf="mailid.errors?.['required']" class="error-msg">
-                     {{'Person Email is required'|translate}}
-                    </span>
-                    <span class="error-msg" *ngIf="mailid.errors?.['pattern']" class="error-msg">
-                     {{'Invalid Email format'|translate}}
-                    </span>
-                  </small>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Designation'|translate}}<span class="text-danger">*</span></label>
-                    
+                    <label for="email" class="form-label custom-label mb-2">{{'Personal Email ID'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <input type="email" #mailid="ngModel" class="form-control custom-input" name="mailid"
+                        [(ngModel)]="postProspectiveEmpDetails.personalEmail" id="exampleFormControlInput1"
+                        pattern="[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                        placeholder="Please enter personal email Id" required>
+                    <small class="error-msg"
+                        *ngIf="mailid.invalid && (mailid.dirty || (mailid.touched) || (Prospectiveemp.submitted||!mailid.invalid))">
+                        <span *ngIf="mailid.errors?.['required']" class="error-msg">
+                            {{'Person Email is required'|translate}}
+                        </span>
+                        <span class="error-msg" *ngIf="mailid.errors?.['pattern']" class="error-msg">
+                            {{'Invalid Email format'|translate}}
+                        </span>
+                    </small>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1"
+                        class="form-label custom-label mb-2">{{'Designation'|translate}}<span
+                            class="text-danger">*</span></label>
+
                     <div class="custom-p-select-content">
-                        
-                        <p-select [options]="designation" optionValue="id" optionLabel="name" placeholder="Please select designation" class="form-select custom-select" />
-                    
+                        <p-select [options]="JobroleDetails" optionValue="id" optionLabel="designationName"
+                            placeholder="Please select designation" class="form-select custom-select" />
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -75,24 +86,18 @@
                     <div class="custom-p-select-content">
                         <!-- <p-select [options]="employeementType" optionLabel="name" placeholder="Please select employment type" class="form-select custom-select" /> -->
                         <p-select [options]="employeementType" optionLabel="name" class="form-select custom-select"
-                        placeholder="Employment Type" id="employeetype" name="employeetype"
-                        #employeetype="ngModel" 
-                        [(ngModel)]="postProspectiveEmpDetails.experienceType" required>
-                        <!-- <option [ngValue]="undefined" >Select 
-                        </option> -->
-                        
-                        <!-- <option value="Fresher">Fresher</option>
-                        <option value="Experienced">Experienced</option> -->
-                    </p-select>
-                    <small class="error-msg"
-                        *ngIf="(employeetype.touched && employeetype.invalid)|| (employeetype.invalid && Prospectiveemp.submitted)">
-                        {{'Employment Type is required'|translate}} </small>
+                            placeholder="Employment Type" id="employeetype" name="employeetype" #employeetype="ngModel"
+                            [(ngModel)]="postProspectiveEmpDetails.experienceType" required>
+                        </p-select>
+                        <small class="error-msg"
+                            *ngIf="(employeetype.touched && employeetype.invalid)|| (employeetype.invalid && Prospectiveemp.submitted)">
+                            {{'Employment Type is required'|translate}} </small>
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
+                <!-- <div class="col-md-6 mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Location'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <!-- <p-select [options]="location" optionLabel="name" placeholder="Please select location" class="form-select custom-select" /> -->
+                        <p-select [options]="location" optionLabel="name" placeholder="Please select location" class="form-select custom-select" />
                         <select type="text" class="form-select custom-select"  aria-label="Default select example"
                         placeholder="Please select location" id="location" name="location"
                         #location="ngModel" 
@@ -106,31 +111,51 @@
                     <small class="error-msg"
                         *ngIf="(location.touched && location.invalid)|| (location.invalid && Prospectiveemp.submitted)">{{'Location is required'|translate}} </small>
                     </div>
+                </div> -->
+                <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
+                        {{ 'Location' | translate }} <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="custom-p-select-content">
+                        <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
+                            placeholder="Select Location" class="form-select custom-select" id="location"
+                            name="location" #location="ngModel" [(ngModel)]="postProspectiveEmpDetails.locationid"
+                            (onChange)="OnClickLocation($event)" required></p-select>
+
+                        <!-- Error message for validation -->
+                        <small class="error-msg"
+                            *ngIf="(location.touched && location.invalid) || (location.invalid && Prospectiveemp.submitted)">
+                            {{ 'Location is required' | translate }}
+                        </small>
+                    </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span class="text-danger">*</span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Sub  Location'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <!-- <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location" class="form-select custom-select" /> -->
-                        <select type="text" class="form-select custom-select"
-                        placeholder="Sub Location" id="sublocation" name="sublocation"
-                        #sublocation="ngModel"  (change)="onClickValue()"
-                        [(ngModel)]="postProspectiveEmpDetails.sublocationid" required>
-                        <option [ngValue]="undefined" >{{'Select Sub Location'|translate}}
-                        </option>
 
-                        <option *ngFor="let item of subLocationsDropdown" [value]="item.id">
-                            {{item.jobSubLocationName}}</option>
-                    </select>
-                    <small class="error-msg"
-                        *ngIf="(sublocation.touched && sublocation.invalid)|| (sublocation.invalid && Prospectiveemp.submitted)">{{'Sub Location is required'|translate}}</small>
+                        <select type="text" class="form-select custom-select" placeholder="Sub Location"
+                            id="sublocation" name="sublocation" #sublocation="ngModel" (change)="onClickValue()"
+                            [(ngModel)]="postProspectiveEmpDetails.sublocationid" required>
+                            <option [ngValue]="undefined">{{'Select Sub Location'|translate}}
+                            </option>
+
+                            <option *ngFor="let item of subLocationsDropdown" [value]="item.id">
+                                {{item.jobSubLocationName}}</option>
+                        </select>
+                        <small class="error-msg"
+                            *ngIf="(sublocation.touched && sublocation.invalid)|| (sublocation.invalid && Prospectiveemp.submitted)">{{'Sub Location is required'|translate}}</small>
                     </div>
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4">
-                <button type="button" input type="reset"  class="custom-btn btn-secondary" data-bs-dismiss="modal" (click)="onclose(Prospectiveemp)">{{'Close'|translate}}</button>
-                <button type="submit" data-bs-dismiss="modal" class="custom-btn btn-primary"  [disabled]="Prospectiveemp.invalid||!islistedItem ||!buttondisable||disablebutton">{{'Add'|translate}}</button>
+                <button type="button" input type="reset" class="custom-btn btn-secondary" data-bs-dismiss="modal"
+                    (click)="onclose()">{{'Close'|translate}}</button>
+                <button type="submit" data-bs-dismiss="modal"
+                    class="custom-btn btn-primary">{{'Add'|translate}}</button>
                 <!-- <button type="submit" data-bs-dismiss="modal" class="custom-btn btn-primary">Add</button> -->
-            
+
             </div>
         </form>
     </div>

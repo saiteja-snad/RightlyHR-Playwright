@@ -8,10 +8,11 @@ import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { ITrainee } from './Prospective-interns-modules';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-prospective-interns',
-  imports: [CommonModule, TranslateModule, ActiveEmployeePipe],
+  imports: [CommonModule, TranslateModule, ActiveEmployeePipe,FormsModule],
   templateUrl: './prospective-interns.component.html',
   styleUrl: './prospective-interns.component.scss'
 })

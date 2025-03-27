@@ -16,7 +16,7 @@ import { DateformatPipe } from '../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-welcome-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule],
   templateUrl: './welcome-letter.component.html',
   styleUrl: './welcome-letter.component.scss',
   encapsulation:ViewEncapsulation.None

@@ -7,9 +7,10 @@ import { HttpService } from '../../services/http.service';
 import { Iactive } from './active-model';
 import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-active-employees',
-  imports: [CommonModule, RouterModule, ActiveEmployeePipe,TranslateModule],
+  imports: [CommonModule, RouterModule, ActiveEmployeePipe,TranslateModule,FormsModule],
   templateUrl: './active-employees.component.html',
   styleUrl: './active-employees.component.scss'
 })

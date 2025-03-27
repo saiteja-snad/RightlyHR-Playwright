@@ -8,10 +8,11 @@ import { HttpService } from '../../services/http.service';
 import { IProbationEmployees } from './probation-emp-module';
 import { ProbationEmpPipe } from "../../Pipes/probation-emp.pipe";
 import { DataformatPipe } from "../../Pipes/dataformat.pipe";
+import { FormsModule } from '@angular/forms';
 // import * as moment from 'moment';
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, ProbationEmpPipe, DataformatPipe],
+  imports: [CommonModule, RouterModule, TranslateModule, ProbationEmpPipe, DataformatPipe,FormsModule],
   templateUrl: './probation-employees.component.html',
   styleUrl: './probation-employees.component.scss'
 })

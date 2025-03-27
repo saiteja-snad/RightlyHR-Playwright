@@ -7,9 +7,10 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { ITrainee } from './active-interns-modules';
 import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-active-interns',
-  imports: [CommonModule, TranslateModule, ActiveEmployeePipe],
+  imports: [CommonModule, TranslateModule, ActiveEmployeePipe,FormsModule],
   templateUrl: './active-interns.component.html',
   styleUrl: './active-interns.component.scss'
 })

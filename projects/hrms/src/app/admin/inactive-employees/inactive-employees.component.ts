@@ -7,9 +7,10 @@ import { HttpService } from '../../services/http.service';
 import { Iinactive } from './inactive-model';
 import { InactiveEmployeePipe } from "../../Pipes/inactive-employee.pipe";
 import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-inactive-employees',
-  imports: [CommonModule, RouterModule, InactiveEmployeePipe,TranslateModule],
+  imports: [CommonModule, RouterModule, InactiveEmployeePipe,TranslateModule,FormsModule],
   templateUrl: './inactive-employees.component.html',
   styleUrl: './inactive-employees.component.scss'
 })

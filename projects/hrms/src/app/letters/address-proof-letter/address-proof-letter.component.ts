@@ -12,8 +12,8 @@ import { AuthService } from '../../services/auth.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
-import { IAddress } from '../appointment-letter/appointment-letter-model';
-import { IaddressemployeeDetails } from '../../Interfaces/letters-model';
+import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
+import { IaddressemployeeDetails, IAuthority } from '../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-address-proof-letter',
@@ -22,13 +22,14 @@ import { IaddressemployeeDetails } from '../../Interfaces/letters-model';
   styleUrl: './address-proof-letter.component.scss'
 })
 export class AddressProofLetterComponent {
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Full-Time' },
-    { id: 2, name: 'Part-Time' },
-    { id: 3, name: 'Contract' },
-    { id: 4, name: 'Internship' }
+  addressdata: { name: string, value: string }[] = [
+    { name: 'Current Address', value: 'C' },
+    { name: 'Permanent Address', value: 'P' },
   ];
-
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
+  ];
   designation: { id: number; name: string }[] = [
     { id: 1, name: 'Software Engineer' },
     { id: 2, name: 'Project Manager' },
@@ -104,6 +105,14 @@ export class AddressProofLetterComponent {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
+      ...emp,
+      fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
+    }));
+    this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
+        }));
     this.initializeForm();
     this.getEmployeeId();
     this.getAddressTemplate();
@@ -116,11 +125,22 @@ export class AddressProofLetterComponent {
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
-      searchEmployee: ['', Validators.required],
-      documentType: ['', Validators.required],
-      dateofbankloan: ['', Validators.required],
-      signatureAuthority: ['', Validators.required]
-     });
+      fusionEmpId: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+      SelectDropDown: ['', Validators.required],
+      authorityid: ['', Validators.required],
+      firstName: [''],
+      middleName: [''],
+      lastName: [''],
+      jobRole: [''],
+      dateOfJoining: [null],
+      addressLine1: [''],
+      addressLine2: [''],
+      city: [''],
+      state: [''],
+      country: [''],
+      zipCode: ['']
+    });
   }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
@@ -164,20 +184,38 @@ export class AddressProofLetterComponent {
       }
      
     }
-  Onclick(fusionemployeeId: any) {
+    Onclick(fusionemployeeId: any) {
+      this.fusionEmpId = fusionemployeeId;
+      console.log(fusionemployeeId);
     
-    this.fusionEmpId = fusionemployeeId;
-    console.log(fusionemployeeId);
-    this.addressLetterData = {}
-    this.addressLetterData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
-    );
-    this.disablebuttonforemployeeid=true
-    // this.getCompensationById(this.BankLoanLetterData)
-    this.getJobdetails(this.addressLetterData);
-    this.getEmployeeAddress(this.addressLetterData)
-    console.log(this.addressLetterData);
-  }
+      // Reset the addressLetterData to empty or default values
+      this.addressLetterData = {};
+      
+      // Find the selected employee from the employeeiddetails array
+      this.addressLetterData = this.employeeiddetails.find(
+        (c: any) => c.fusionEmpId == fusionemployeeId
+      );
+      
+      // Ensure the form is updated with the employee data
+      this.employeeForm.patchValue({
+        fusionEmpId: this.addressLetterData.fusionEmpId,
+        firstName: this.addressLetterData.firstName,
+        middleName: this.addressLetterData.middleName,
+        lastName: this.addressLetterData.lastName,
+        jobRole: this.addressLetterData.jobRole,
+        dateOfJoining: this.addressLetterData.dateOfJoining,
+        authorityDesignation:this.addressLetterData.authorityDesignation,
+        authorityName:this.addressLetterData.authorityName,
+      });
+    
+      // Fetch additional details like job and address if necessary
+      this.getJobdetails(this.addressLetterData);
+      this.getEmployeeAddress(this.addressLetterData);
+    
+      this.disablebuttonforemployeeid = true;
+      console.log(this.addressLetterData);
+    }
+    
    //function to get the address 
    getEmployeeAddress(Value:any) {
     let EmployeeId = Value.employeeId
@@ -284,15 +322,32 @@ onclickDesignation(){
   }
 }
 //get offer letter Authority list 
-getAuthorityDetails(){
-  let offertype='Address Proof Letter'
-  this.subscription=this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
-    next:(data:any)=>{
+// getAuthorityDetails(){
+//   let offertype='Address Proof Letter'
+//   this.subscription=this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+//     next:(data:any)=>{
+//       console.log(data);
+//       this.authorityDetails=data
+//     }
+//   })
+// }
+getAuthorityDetails() {
+  let offertype = 'Address Proof Letter';
+  this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+    next: (data: any) => {
       console.log(data);
-      this.authorityDetails=data
+      this.authorityDetails = data.map((authority: any) => ({
+        ...authority,
+        fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+      }));
+      console.log(this.authorityDetails); 
+    },
+    error: (error: any) => {
+      console.error(error);
     }
-  })
+  });
 }
+
 //hostlister to close the dropdown when we Click out side the box
 @HostListener('document:click', ['$event.target'])
 onClickOutside(target: any) {
@@ -312,12 +367,19 @@ getEmployeeId() {
     .subscribe({
       next: (data: any) => {
         console.log(data);
-        this.employeeiddetails = data as IaddressemployeeDetails[];
-       
-        console.log(this.employeeiddetails);
+        //this.employeeiddetails = data as IemployeeDetails[];
+        this.employeeiddetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${
+              employee.employeeId ? employee.employeeId + ' - ' : ''
+            }${employee.firstName} ${
+              employee.middleName ? employee.middleName + ' ' : ''
+            }${employee.lastName}`,
+          };
+        });
       },
       error: (reason: any) => {
-
         console.log(reason);
       },
     });
@@ -350,7 +412,7 @@ getEmployeeId() {
       .toPromise();
   }
 
-  async postAddressLetterFormSubmit(f: NgForm) {
+  async postAddressLetterFormSubmit(f: FormGroup) {
     const data = await this.addressLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);

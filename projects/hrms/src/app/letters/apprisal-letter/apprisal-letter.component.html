@@ -8,45 +8,39 @@
 
   <!--letter content-->
   <div class="main-letter-content row">
-    <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
+    <div class="col-sm-12 col-md-3">
       <div class="card letter-fields-content p-4">
-        <form [formGroup]="employeeForm">
-          <!-- (ngSubmit)="onSubmit()" -->
+        <form [formGroup]="employeeForm" (ngSubmit)="postAppraisalLetterFormSubmit(employeeForm)">
+
           <div class="row">
-            <div class="col-xl-6 col-lg-12 mb-4">
+            <div class="col-md-12 mb-4">
               <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="employeeiddetails" optionLabel="name" [filter]="true" filterBy="name"
-                  [showClear]="true" placeholder="Please select employee" formControlName="searchEmployee"
-                  class="custom-select w-100" [(ngModel)]="fusionEmpId">
-                </p-select>
+                  <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
+                      placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
+                      (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+                  </p-select>
               </div>
-              <div *ngIf="employeeForm.get('searchEmployee')?.invalid && employeeForm.get('searchEmployee')?.touched">
-                <div class="error-msg">Employee is required</div>
+              <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                  <div class="error-msg">Employee is required</div>
               </div>
-            </div>
+          </div>
   
-            <div class="dropdown mb-3">
-              <label for="Job Role" class="form-label label-text">Promotion Designation</label>
+            <div class="col-md-12 mb-4">
+              <label  class="form-label custom-label mb-2">Promotion Designation</label>
               <div>
-                <p-select [options]="employeeiddetails" optionLabel="name" [filter]="true" filterBy="name"
-                  [showClear]="true" placeholder="Please select promotion designation" formControlName="designation"
-                  class="custom-select w-100" [(ngModel)]="fusionEmpId">
+                <p-select [options]="AllDesignationwithGradeId" optionLabel="designationName" [filter]="true" filterBy="name"
+                  [showClear]="true" placeholder="Please select promotion designation" formControlName="JobRole"
+                  class="custom-select w-100" >
                 </p-select>
-                <!-- <app-searchfeature [options]="AllDesignationwithGradeId" style="width: 400px;"
-                  [isDisabled]="!isEditing && empdata.empstatus=='Prospective'"
-                  [valodationMessage]="'Promotion Designation'" (optionsFound)="updateOptionsFound($event)"
-                  (isListitem)="isItemIntheList($event)" (selectedOption)="onOptionSelected($event, 'JobRole')"
-                  [formSubmitted]="appraisalLetterForm.submitted">
-                </app-searchfeature> -->
               </div>
-              <div *ngIf="employeeForm.get('designation')?.invalid && employeeForm.get('designation')?.touched">
+              <div *ngIf="employeeForm.get('JobRole')?.invalid && employeeForm.get('JobRole')?.touched">
                 <div class="error-msg">Promotion Designation is required</div>
               </div>
             </div>
   
-            <div class="mb-4">
-              <label for="offerexpiryDate" class="form-label label-text"> Date<span class="text-danger">*</span></label>
+            <div class="col-md-12 mb-4">
+              <label  class="form-label custom-label mb-2"> Date<span class="text-danger">*</span></label>
               <input type="date" formControlName="dateofAppraisal" class="form-control input-field" id="appraisalDate"
                 required (change)="DateValidation()">
               <div>
@@ -56,8 +50,8 @@
               </div>
             </div>
   
-            <div class="mb-4">
-              <label for="reviewdate" class="form-label label-text">Next Compensation Review Date<span
+            <div class="col-md-12 mb-4">
+              <label  class="form-label custom-label mb-2">Next Compensation Review Date<span
                   class="text-danger">*</span></label>
               <input type="date" formControlName="reviewdate" class="form-control input-field" id="reviewdate" required
                 (change)="DateValidation2()" [ngClass]="{ 'is-invalid': !isNextApprisal}">
@@ -66,21 +60,24 @@
               </div>
             </div>
   
-            <div class="my-4">
-              <label for="offerissueddate" class="form-label label-text">Document Type <span
-                  class="text-danger">*</span></label>
-              <select formControlName="Documenttype" class="form-select input-field" id="issuedby" required>
-                <option style="color: rgb(189, 187, 184);" [ngValue]="undefined">Select Type</option>
-                <option [ngValue]="true">Soft Copy</option>
-                <option [ngValue]="false">Hard Copy</option>
-              </select>
-              <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
-                <div class="error-msg">Document Type is required</div>
+            <div class="col-md-12 mb-4">
+              <label >Document Type <span class="error-msg">*</span></label>
+              <div class="custom-p-select-content">
+                  <p-select [options]="employeementType" optionLabel="name"
+                      placeholder="Please select document type" formControlName="Documenttype"
+                      class="form-select custom-select" >
+                      <option disabled [ngValue]="undefined">Select</option>
+                      <option Value="true">Yes</option>
+                      <option Value="false">No</option>
+                  </p-select>
               </div>
-            </div>
+              <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+                  <div class="error-msg">Document Type is required</div>
+              </div>
+          </div>
   
-            <div class="my-4">
-              <label for="bonus" class="form-label">Enter Performance Variable Bonus</label>
+            <div class="col-md-12 mb-4">
+              <label class="form-label">Enter Performance Variable Bonus</label>
               <input type="number" class="form-control input-field" placeholder="Enter Bonus" formControlName="bonus"
                 (input)="sanitizeInput($event)" />
               <div *ngIf="employeeForm.get('bonus')?.invalid && employeeForm.get('bonus')?.touched">
@@ -88,8 +85,8 @@
               </div>
             </div>
   
-            <div class="my-4">
-              <label for="variable pay" class="form-label label-text">Variable Pay <span class="error-msg">*</span>
+            <div class="col-md-12 mb-4">
+              <label  class="form-label custom-label mb-2">Variable Pay <span class="error-msg">*</span>
               </label>
               <select formControlName="isVariablePay" class="form-select input-field" id="variable pay" required
                 (change)="onVariablePayChange(appraisalData.isVariablePay)">
@@ -102,8 +99,8 @@
               </div>
             </div>
   
-            <div class="my-4">
-              <label for="variableamount" class="form-label label-text">Variable Amount<span
+            <div class="col-md-12 mb-4">
+              <label  class="form-label custom-label mb-2">Variable Amount<span
                   class="error-msg">*</span></label>
               <input type="text" formControlName="variablePayAmount" class="form-control input-field" id="variableamount"
                 placeholder="Variable Amount" maxlength="10" [disabled]="!appraisalData.isVariablePay"
@@ -114,18 +111,17 @@
               </div>
             </div>
   
-            <div class="my-4">
-              <label for="authorityName" class="form-label label-text">Signature Authority Name<span
-                  class="text-danger">*</span></label>
-              <select formControlName="authorityid" class="form-select input-field" id="AuthorityName" required>
-                <option style="color: rgb(189, 187, 184);" [ngValue]="undefined">Signature Authority Name</option>
-                <option *ngFor="let item of authorityDetails" [value]="item.employeeId">{{item.firstName}}
-                  {{item.middleName}} {{item.lastName}}</option>
-              </select>
+            <div class="col-md-12 mb-4">
+              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
+                Authority Name<span class="error-msg">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                  class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" />
+              </div>
               <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                 <div class="error-msg">Signature Authority Name is required</div>
               </div>
-            </div>
+          </div>
   
             <div>
               <p class="note-text"><span class="note me-2">Note:</span>Please Update Updated Salary, Compensation Effective Date in Job Tab Before Generating the Document.</p>
@@ -449,12 +445,11 @@
                   </p>
                   <p class="letter-sub-header"><B>Date:<span class="employee-date ms-2"></span></B></p>
                 </div>
-                <div class="letter-footer text-center">
-                  <p class="company-name">RightlyHR</p>
-                  <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD
-                    -
-                    500032</p>
-                </div>
+              </div>
+              <div class="letter-footer text-center">
+                <p class="company-name">RightlyHR</p>
+                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD -
+                  500032</p>
               </div>
             </div>
           </div>

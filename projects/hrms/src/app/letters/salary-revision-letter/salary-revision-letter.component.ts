@@ -116,10 +116,10 @@ export class SalaryRevisionLetterComponent {
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
-      searchEmployee: ['', Validators.required],
-      documentType: ['', Validators.required],
-      dateofbankloan: ['', Validators.required],
-      signatureAuthority: ['', Validators.required]
+      fusionEmpId: ['', Validators.required],
+      dateofAppraisal: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+      authorityid: ['', Validators.required]
      });
   }
   //function for issed by
@@ -533,23 +533,29 @@ export class SalaryRevisionLetterComponent {
       });
   }
 
-  //get employee ids for dropdown
   getEmployeeId() {
     this.subscription = this.http
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.employeeiddetails = data as IemployeeDetails[];
-
-          console.log(this.employeeiddetails);
+          //this.employeeiddetails = data as IemployeeDetails[];
+          this.employeeiddetails = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
         },
         error: (reason: any) => {
           console.log(reason);
         },
       });
   }
-
   async postAppraisalLetterFormSubmit(f: NgForm) {
     const data = await this.appraisalData;
     data.dateofAppraisal = this.formatDate(data.dateofAppraisal);

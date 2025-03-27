@@ -50,13 +50,13 @@ export class BankLoanLetterComponent {
   disablebuttonforauthority: boolean = true; //variable to disable the fields
   @ViewChild('successhide') private readonly successhide!:NgbModal;
   @ViewChild('errorhide') private readonly errorhide!:NgbModal;
-  employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
-  ];
   employees = [{ name: 'John Doe', id: 1 }, { name: 'Jane Smith', id: 2 }];
   // employeementType = [{ name: 'Permanent' }, { name: 'Contract' }];
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
+  ];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
   constructor(
     private http: HttpService,
@@ -119,10 +119,10 @@ DateValidation() {
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
-      searchEmployee: ['', Validators.required],
-      documentType: ['', Validators.required],
+      fusionEmpId: ['', Validators.required],
+      Documenttype: ['', Validators.required],
       dateofbankloan: ['', Validators.required],
-      signatureAuthority: ['', Validators.required]
+      authorityid: ['', Validators.required]
      });
   }
   //function for issuedby
@@ -238,14 +238,21 @@ onclickauthority(ValueName:any){
     }
   }
 //get offer letter Authority list 
-getAuthorityDetails(){
-  let offertype='Bank Loan Letter'
-  this.subscription=this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
-    next:(data:any)=>{
+getAuthorityDetails() {
+  let offertype = 'Address Proof Letter';
+  this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+    next: (data: any) => {
       console.log(data);
-      this.authorityDetails=data
+      this.authorityDetails = data.map((authority: any) => ({
+        ...authority,
+        fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+      }));
+      console.log(this.authorityDetails); 
+    },
+    error: (error: any) => {
+      console.error(error);
     }
-  })
+  });
 }
 //hostlister to close the dropdown when we Click out side the box
 @HostListener('document:click', ['$event.target'])
@@ -266,12 +273,19 @@ onClickOutside(target: any) {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.employeeiddetails = data as IemployeeDetails[];
-
-          console.log(this.employeeiddetails);
+          //this.employeeiddetails = data as IemployeeDetails[];
+          this.employeeiddetails = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
         },
         error: (reason: any) => {
-
           console.log(reason);
         },
       });
@@ -304,7 +318,7 @@ onClickOutside(target: any) {
       .toPromise();
   }
   
-  async postBankLoanLetterFormSubmit(f: NgForm) {
+  async postBankLoanLetterFormSubmit(f: FormGroup) {
     const data = await this.bankloanLetterData;
     data.dateofbankloan = this.formatDate(data.dateofbankloan);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);

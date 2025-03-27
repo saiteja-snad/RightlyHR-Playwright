@@ -25,7 +25,7 @@
                         <td class="center">{{details.workEmail}}</td>
                         <td class="center">{{details.contactnumber}}</td>
                         <td class="center">{{details.jobRole}}</td>
-                        <td>
+                       
                     <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
@@ -72,40 +72,35 @@
                         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                     </div>
                 </div>
+                
+
+                
                 <div class="custom-main-popup-content p-4">
-                    <form action="">
+                    <form [formGroup]="rmForm" (ngSubmit)="updateRM()">
                         <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select
-                                    Reporting
-                                    Manager<span class="text-danger">*</span></label>
-                                <div class="custom-p-select-content">
-                                    <p-select optionLabel="name" [options]="filterEmployees()"
-                                        placeholder=" Select Reporting Manager" class="form-select custom-select" id="mReportingto" 
-                                        name="mReportingto" id="mReportingto" name="mReportingto"
-                                        [(ngModel)]="searchText" 
-                                        (click)="toggleDropdown('reporting')" 
-                                        (ngModelChange)="onSearchTextChange($event)" required/>
-
-                                        <div class="dropdown-menu scroll-menu custom-dropdown-width"
-                                                [class.show]="isDropdownOpen">
-                                                <a class="dropdown-item" *ngFor="let item of filterEmployees()"
-                                                    (click)="onClickValidation(item)">
-                                                    {{ item.fusionEmpId }}-{{ item.firstName }} {{ item.middleName }} {{
-                                                    item.lastName }}
-                                                </a>
-                                            </div>
-                                
-                                    </div>
+                          <div class="col-md-12 mb-3">
+                            <label class="form-label custom-label mb-2">
+                              Select Reporting Manager<span class="text-danger">*</span>
+                            </label>
+                            <div class="custom-p-select-content">
+                              <p-select optionLabel="name"
+                                        [options]="managers"
+                                        placeholder="Select Reporting Manager"
+                                        class="form-select custom-select"
+                                        id="mReportingto"
+                                        formControlName="mReportingto"
+                                        (onChange)="onSelectManager($event)">
+                              </p-select>
                             </div>
+                          </div>
                         </div>
-
+                      
                         <div class="d-flex justify-content-end gap-3 mt-4">
-                            <button type="reset" class="custom-btn btn-secondary"
-                            (click)="modal.dismiss()" (click)="updateRM()">Close</button>
-                            <button type="submit" class="custom-btn btn-primary">Submit</button>
+                          <button type="reset" class="custom-btn btn-secondary" (click)="rmForm.reset()">Close</button>
+                          <button type="submit" class="custom-btn btn-primary">Submit</button>
                         </div>
-                    </form>
+                      </form>
+                      
                 </div>
             </div>
         </ng-template>

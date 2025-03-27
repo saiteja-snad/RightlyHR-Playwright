@@ -5,7 +5,11 @@
         </div>
         <div>
             <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/job')">Inactive</button>
-            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button>
+            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">
+                Change RM
+            </button>
+            
+            <!-- <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button> -->
         </div>
     </div>
 
@@ -30,10 +34,6 @@
             <router-outlet />
         </div>
     </div>
-
-
-
-
     <ng-template #changermmodal let-modal>
         <div class="custom-main-popup-container">
             <div class="d-flex justify-content-between popup-header-border p-4">
@@ -45,32 +45,52 @@
                 </div>
             </div>
             <div class="custom-main-popup-content p-4">
-                <form action="">
+                <form [formGroup]="teamForm" (ngSubmit)="updateTeamRM()">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select Team Member(s)
-                                <span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select optionLabel="name" placeholder=" Select Team Member(s)"
-                                    class="form-select custom-select" (ngModelChange)="getSelectedTeamMembersLabel()" />
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select Reporting
-                                Manager<span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select optionLabel="name" placeholder=" Select Reporting Manager" 
-                                    class="form-select custom-select"                                                                                                                                                                                                                                                                                                                                          />
-                            </div>
-                        </div>
+                      
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">
+                          Select Team Member(s) <span class="text-danger">*</span>
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select formControlName="teamMembers"
+                            id="teamMembers"
+                            optionLabel="name"
+                            [options]="teamMembersdata"
+                            placeholder="Select Team Member(s)"
+                            class="form-select custom-select"
+                            multiple="true"
+                            (onChange)="onSelectManager($event, 'teamMembers')">
+                          </p-select>
+                          
 
+                        </div>
+                      </div>
+                  
+                     
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">
+                          Select Reporting Manager <span class="text-danger">*</span>
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select 
+                            formControlName="reportingManager" id="reportingManager"
+                            optionLabel="name" [options]="managers"
+                            placeholder="Select Reporting Manager" 
+                            class="form-select custom-select" 
+                            (onChange)="onSelectManager($event, 'reportingManager')">
+                          </p-select>
+                        </div>
+                      </div>
                     </div>
-    
+                  
+                    <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-3 mt-4">
-                        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                        <button type="submit" class="custom-btn btn-primary">Submit</button>
+                      <button type="reset" class="custom-btn btn-secondary">Close</button>
+                      <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid">Submit</button>
                     </div>
-                </form>
+                  </form>
+                  
             </div>
         </div>
     </ng-template>

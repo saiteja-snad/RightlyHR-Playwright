@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -10,16 +10,20 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Ipersonal, Iteammembers } from '../../Interface/members-model';
 import { SearchfilterPipe } from "../../pipes/searchfilter.pipe";
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { OpenModalService } from '../../services/open-modal.service';
 //import { Iteammembers } from '../../models/teammembers';
 
 
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, DropdownModule, SearchfilterPipe],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, DropdownModule, SearchfilterPipe,ReactiveFormsModule],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
-export class TeamNumbersComponent {
+export class TeamNumbersComponent implements OnInit{
+  rmForm!: FormGroup;
+  managers: any[] = [];
   subscription!: Subscription;
   TeamMemberArray: Iteammembers[] = [];
   // rmData=[
@@ -40,7 +44,7 @@ export class TeamNumbersComponent {
   constructor(
     private http: HttpService,
     private router: Router,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, private fb: FormBuilder,private conformationPopup: OpenModalService) { }
   onRowsChange() {
     this.first = 0;
 
@@ -48,11 +52,15 @@ export class TeamNumbersComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.empinfo);
-
     this.getAllTeammembersList();
     this.getEmployee();
+    this.formsubmit();
    }
- 
+   formsubmit(){
+    this.rmForm = this.fb.group({
+      mReportingto: [null, Validators.required] 
+    });
+  }
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -64,15 +72,43 @@ export class TeamNumbersComponent {
   openModal(content: any) {
     this.modalService.open(content, { centered: true,backdrop: 'static' });
   }
-  selectedData = {} as any
-  onclick(details: any) {
+  selectedData: any = {}; // Initialize properly
 
-    console.log(details);
-    this.selectedData = JSON.parse(JSON.stringify(details))
-    this.selectedData.employeeId = "";
-    this.selectedData.id
-    console.log(this.selectedData.id)
+  onclick(details: any) {
+    console.log("Original Details:", details); // Check if details contain data
+
+    if (!details || Object.keys(details).length === 0) {
+        console.error("Error: No details received.");
+        return;
+    }
+
+    this.selectedData = JSON.parse(JSON.stringify(details));
+
+    this.selectedData.jobId = details.jobId;  
+    this.selectedData.reportingToEmployeeId = details.reportingToEmployeeId;  
+
+    console.log("Selected Data after assignment:", this.selectedData); // Verify assigned data
+}
+
+selectedManager: any = null; // Store selected manager object
+
+onSelectManager(event: any) {
+  this.selectedManager = event.value; // Capture selected object
+  console.log("Selected Manager:", this.selectedManager);
+
+  if (!this.selectedManager) {
+      console.error("Error: No manager selected.");
+      alert("Please select a reporting manager.");
+      return;
   }
+
+  this.selectedData.employeeId = this.selectedManager.employeeId ?? "";
+  this.selectedData.id = this.selectedManager.jobId ?? ""; // Ensure jobId is correctly assigned
+
+  console.log("Updated selectedData:", this.selectedData);
+}
+
+
   selectedReportingManager: any = {};
   isDropdownOpen: boolean = false;
   reportingManager: any;
@@ -119,43 +155,44 @@ export class TeamNumbersComponent {
     }
   }
   filterEmployees(): any[] {
-    const searchTerms = this.searchText.toLowerCase().split(' ');
+    return this.employees
+        .filter(emp => emp && emp.fusionEmpId)
+        .map(emp => ({
+            ...emp,
+            name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+        }));
+}
+
+  // filterEmployees(): any[] {
+  //   const searchTerms = this.searchText.toLowerCase().split(' ');
   
-    return this.employees.filter((item) =>
-        this.searchEmployeeSinglerecord(item, searchTerms)
-    );
-  }
-  updateRM() {
-    let jobid = this.selectedData.id;
-    let ManagerEmployeeId = this.selectedData.employeeId;
+  //   return this.employees.filter((item) =>
+  //       this.searchEmployeeSinglerecord(item, searchTerms)
+  //   );
+  // }
 
-    this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
-      next: (data: any) => {
-        console.log('Next callback');
-        console.log(data);
 
-      },
-      error: (reason: any) => {
-        console.log('Error callback');
-        console.log(reason);
-       
-        if (reason) {
+updateRM() {
+  let jobid = this.selectedData.id;
+  let ManagerEmployeeId = this.selectedData.employeeId;
+  this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
+    next: (data: any) => {
+      console.log('Next callback');
+      this.conformationPopup.openSuccessModal('Updated Successfully');
+      console.log(data);
+    },
+    error: (reason: any) => {
+      console.log('Error callback');
+      console.log(reason);
+      this.conformationPopup.openErrorModal('Updated Successfully');
+      ;
+    }
+  });
+}
 
-          this.pouptext1 = 'Reporting Manager updated successfully';
-          const modalElement = document.getElementById('successhide');
-          if (modalElement) {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-          }
-          // f.resetForm();
-          setTimeout(function () {
-            location.reload();
-          }, 1500);
-        }
 
-      }
-    });
-  }
+
+
   getAllTeammembersList() {
     let EmployeeId = (this.empinfo.employeeId)
     this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
@@ -170,35 +207,49 @@ export class TeamNumbersComponent {
       }
     );
   }
-
   getEmployee() {
     this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
       next: (data: any) => {
-        this.employees = data;
-  
-        // Use a Set to keep track of unique employeeIds
-        const uniqueEmployeeIdsSet = new Set();
-  
-        // Filter out duplicate records and records without fusionEmpId
-        this.employees = this.employees.filter((employee: any) => {
-          if (employee.fusionEmpId !== null && employee.fusionEmpId !== undefined) {
-            // Check for duplicate employeeIds
-            if (!uniqueEmployeeIdsSet.has(employee.employeeId)) {
-              uniqueEmployeeIdsSet.add(employee.employeeId);
-              return true;
-            }
-          }
-          return false;
-        });
-  
-        // Logging the data after removing duplicates and records without fusionEmpId
-        console.log('Employees (Unique and with fusionEmpId):', this.employees);
+        this.managers = data
+          .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
+          .map((emp: { firstName: any; middleName?: string; lastName: any }) => ({
+            ...emp,
+            name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+          }));
+        
+        //console.log('Managers:', this.managers);
       },
-      error: (reason: any) => {
-        console.log(reason);
-      },
+      error: (err) => console.log(err),
     });
   }
+  
+  // getEmployee() {
+  //   this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
+  //     next: (data: any) => {
+  //       this.employees = data;
+  
+  //       const uniqueEmployeeIdsSet = new Set();
+  
+        
+  //       this.employees = this.employees.filter((employee: any) => {
+  //         if (employee.fusionEmpId !== null && employee.fusionEmpId !== undefined) {
+           
+  //           if (!uniqueEmployeeIdsSet.has(employee.employeeId)) {
+  //             uniqueEmployeeIdsSet.add(employee.employeeId);
+  //             return true;
+  //           }
+  //         }
+  //         return false;
+  //       });
+  
+        
+  //       console.log('Employees (Unique and with fusionEmpId):', this.employees);
+  //     },
+  //     error: (reason: any) => {
+  //       console.log(reason);
+  //     },
+  //   });
+  // }
   pouptext1: any
   selectedEmployees: Iteammembers[] = [];
   selectedEmployeeIds: string[] = [];
@@ -220,7 +271,9 @@ export class TeamNumbersComponent {
       };
     });
 
-  
+    
   
 }
 }
+
+

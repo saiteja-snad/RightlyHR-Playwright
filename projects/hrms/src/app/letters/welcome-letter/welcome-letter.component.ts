@@ -101,23 +101,22 @@ dataFailureMsg(msg:string){
     this.getAuthorityDetails();
   }
   //get Welcome letter Authority list
- getAuthorityDetails() {
-  const welcometype = 'Welcome Letter';
-  this.subscription = this.http
-  .getData(`SignaturesList?LetterType=${welcometype}`)
-    .subscribe({
+  getAuthorityDetails() {
+    let offertype = 'Address Proof Letter';
+    this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
-        this.authorityDetails = data.map((employee: any) => {
-          return {
-            ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            authorityName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-            // selectedAllGroup: 'Group 1'
-             // Concatenate first, middle (if present), and last name
-          };
-        });
+        console.log(data);
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+        console.log(this.authorityDetails); 
       },
+      error: (error: any) => {
+        console.error(error);
+      }
     });
-}
+  }
   //function for issuedby
   getIssuedEmployeebyId(){
     this.employeedata=this.Employeeinfo.firstName+" "+this.Employeeinfo.lastName
@@ -259,14 +258,12 @@ onClickOutside(target: any) {
           console.log(data);
           this.employeeiddetails = data.map((employee: any) => {
             return {
-              ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
+              ...employee, 
               fullName: `${
                 employee.employeeId ? employee.employeeId + ' - ' : ''
               }${employee.firstName} ${
                 employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
-              // selectedAllGroup: 'Group 1'
-              // Concatenate first, middle (if present), and last name
             };
           });
 
@@ -299,7 +296,7 @@ onClickOutside(target: any) {
   }
 
 
-  async postBankLoanLetterFormSubmit(f: NgForm) {
+  async postBankLoanLetterFormSubmit(f: FormGroup) {
     this.loading=true;
     const data = await this.bankloanLetterData;
     data.dateofbankloan = this.formatDate(data.dateofbankloan);

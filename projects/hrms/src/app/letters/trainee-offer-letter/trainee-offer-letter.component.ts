@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
-import { FormGroup, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
@@ -98,7 +98,7 @@ export class TraineeOfferLetterComponent {
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   constructor(
     private http: HttpService,
-    config: NgbModalConfig, private modalService: NgbModal,
+    config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,
     // private toaster: NgToastService,
     private router: Router,
     private authService: AuthService,
@@ -116,6 +116,7 @@ export class TraineeOfferLetterComponent {
     console.log(this.traineeEmpData.mobilePhoneCountryCode);
     this.traineeEmpData.title = null;
     console.log(this.Employeeinfo);
+    this.initializeForm();
     this.getservingperiod();
     this.getJobtype();
     this.getOfferTemplate();
@@ -138,6 +139,13 @@ export class TraineeOfferLetterComponent {
   Drop: IEmployee[] = [];
   employeeSelected: boolean = false;
   selectedEmployees: number[] = [];
+
+  initializeForm() {
+    this.employeeForm = this.fb.group({   
+
+
+     })
+    }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }

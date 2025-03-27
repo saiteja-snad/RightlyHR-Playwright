@@ -15,7 +15,7 @@ import moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
-import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
+import { IAddress, IAuthority, ICountry, IemployeeDetails, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-offer-letter',
@@ -125,6 +125,14 @@ export class OfferLetterComponent {
     this.prospectiveEmpData.title = null;
     // this.prospectiveEmpData.country = 'India';
     console.log(this.Employeeinfo);
+    this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
+      ...emp,
+      fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
+    }));
+    this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
+      ...authority,
+      fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
+    }));
     this.initializeForm();
     this.getJobtype();
     this.getOfferTemplate();
@@ -143,35 +151,35 @@ export class OfferLetterComponent {
 
   initializeForm() {
     this.employeeForm = this.fb.group({
-      searchEmployee: [null, Validators.required],
+      fusionEmpId: [null, Validators.required],
       personalEmail: ['', [Validators.required, Validators.email]],
-      salutation: [null, Validators.required],
+      title: [null, Validators.required],
       firstName: ['', Validators.required,Validators.minLength(3)],
       middleName: [''],
       lastName: ['', Validators.required,Validators.minLength(3)],
       gender: [null, Validators.required],
-      selectAddress: [null, Validators.required],
+      SelectDropDown: [null, Validators.required],
       addressLine1: ['', Validators.required],
       addressLine2: [''],
       city: ['', Validators.required],
       state: ['', Validators.required],
       country: ['', Validators.required],
-      pincode: ['', Validators.required],
+      pinCode: ['', Validators.required],
       phoneNumber: ['', Validators.required],
-      designation: ['', Validators.required],
+      jobRoleDetails: ['', Validators.required],
       esic: [null, Validators.required],
       pf: [null, Validators.required],
-      salary: ['', Validators.required],
-      variablePay: [null, Validators.required],
-      variableAmount: ['', Validators.required],
-      workLocation: [null, Validators.required],
-      subLocation: [null, Validators.required],
+      amount: ['', Validators.required],
+      isVariablePay: [null, Validators.required],
+      variablePayAmount: ['', Validators.required],
+      locationId: [null, Validators.required],
+      sublocationId: [null, Validators.required],
       offerIssuedDate: ['', Validators.required],
-      expectedStartDate: ['', Validators.required],
-      documentType: [null, Validators.required],
+      dateOfJoining: ['', Validators.required],
+      Copys: [null, Validators.required],
       offerExpiryDate: ['', Validators.required],
       note: [''],
-      signatureAuthority: [null, Validators.required]
+      authorityid: [null, Validators.required]
     });
   }
 
@@ -547,6 +555,7 @@ export class OfferLetterComponent {
   //get offer letter Authority list
   getAuthorityDetails() {
     let offertype = 'Offer Letter';
+    
     this.subscription = this.http
       .getData(`SignaturesList?LetterType=${offertype}`)
       .subscribe({
@@ -767,13 +776,13 @@ export class OfferLetterComponent {
     //  }
   }
   //Function to generate offer letter
-  onOfferLetterFormSubmitForGenerateDoc(f: NgForm) {
+  onOfferLetterFormSubmitForGenerateDoc(f: FormGroup) {
     console.log(f);
     //const data =  this.prospectiveEmpData;
     if (this.prospectiveEmpData.isEmployeevalid === true) {
-      this.updateOfferLetterFieldsDetails(f); //existing emp  offer lettr
+      this.updateOfferLetterFieldsDetails(f.value); //existing emp  offer lettr
     } else {
-      this.postOfferLetterFieldsDetails(f); //new offer lettr
+      this.postOfferLetterFieldsDetails(f.value); //new offer lettr
     }
   }
 
@@ -1076,8 +1085,8 @@ export class OfferLetterComponent {
   //download document
   
   //function to post the data of the offer letter to the respective feilds
-  postOfferLetterFieldsDetails(f: NgForm) {
-    const data = this.prospectiveEmpData;
+  postOfferLetterFieldsDetails(f: FormGroup) {
+    const data = f.value;
     this.loading = true;
     let sdata = {
       firstName: data.firstName,
@@ -1159,7 +1168,8 @@ export class OfferLetterComponent {
           }
         } else if (res.statusCode == 409) {
           this.dataFailureMsg(res.message);
-          f.resetForm();
+          // f.resetForm();
+          this.employeeForm.reset()
         } else {
           this.dataFailureMsg(res.message);
         }

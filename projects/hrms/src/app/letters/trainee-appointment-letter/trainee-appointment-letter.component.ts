@@ -107,6 +107,7 @@ export class TraineeAppointmentLetterComponent {
     this.traineeAppointmentletterData.make = null
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    this.initializeForm();
     this.getEmployeeId();
     this.getDepartment();
     this.getMakeDropDown();

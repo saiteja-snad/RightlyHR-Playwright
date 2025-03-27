@@ -20,100 +20,99 @@
               <label class="form-label custom-label mb-2">Search Employee<span
                       class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                  <p-select [options]="employeeiddetails" optionLabel="name" [filter]="true" filterBy="name"
+                  <p-select [options]="employeeiddetails" optionLabel="fullName"  [filter]="true" filterBy="name"
                       [showClear]="true" placeholder="Please select employee"
-                      formControlName="searchEmployee" class="custom-select w-100">
+                      formControlName="fusionEmployeeId" class="custom-select w-100" >
                   </p-select>
               </div>
-              <div *ngIf="employeeForm.get('searchEmployee')?.invalid && employeeForm.get('searchEmployee')?.touched">
-                  <div class="error-msg">Search Employee is required</div>
+              <div *ngIf="employeeForm.get('fusionEmployeeId')?.invalid && employeeForm.get('fusionEmployeeId')?.touched">
+                  <div class="error-msg">Employee is required</div>
               </div>
           </div>
             <div class="col-xl-6 col-lg-12 mb-4">
-              <label class="form-label custom-label mb-2">Appointment Sent Date<span
-                  class="error-msg">*</span></label>
+              <label class="form-label custom-label mb-2">Appointment Sent Date<span class="error-msg">*</span></label>
               <input type="date" class="form-control custom-input" formControlName="appointmentSentDate"
                 placeholder="Please enter appointment sent date" />
-              <div
-                *ngIf="employeeForm.get('appointmentSentDate')?.invalid && employeeForm.get('appointmentSentDate')?.touched">
+              <div *ngIf="employeeForm.get('appointmentSentDate')?.invalid && employeeForm.get('appointmentSentDate')?.touched">
                 <div class="error-msg">Appointment Sent Date is required</div>
               </div>
             </div>
 
             <div class="col-xl-12 mb-4">
-              <label class="form-label custom-label mb-2">Select Address<span
-                      class="error-msg">*</span></label>
+              <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                  <p-select [options]="SelectDropDown" optionLabel="name"
-                      placeholder="Please select address" formControlName="selectAddress" (change)="onclickSelectAddress(SelectDropDown)"
-                      class="form-select custom-select">
-                      <!-- <option di [ngValue]="undefined">Select Address</option> -->
-                      <option value="c">Current Address</option>
-                      <option value="p">Permanent Address</option></p-select>
+                <p-select [options]="SelectDropDown" optionLabel="name" placeholder="Please select address"
+                  formControlName="SelectDropDown" (change)="onclickSelectAddress(SelectDropDown)"
+                  class="form-select custom-select">
+                  <option di [ngValue]="undefined">Select Address</option>
+                  <option value="c">Current Address</option>
+                  <option value="p">Permanent Address</option>
+                </p-select>
               </div>
-              <div *ngIf="employeeForm.get('selectAddress')?.invalid && employeeForm.get('selectAddress')?.touched">
-                  <div class="error-msg">Address is required</div>
-              </div> 
-          </div>
+              <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
+                <div class="error-msg">Address is required</div>
+              </div>
+            </div>
 
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Joining Date<span class="error-msg">*</span></label>
-              <input type="date" class="form-control custom-input" formControlName="joiningDate"
+              <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
                 placeholder="Please enter joining date" />
-              <div *ngIf="employeeForm.get('joiningDate')?.invalid && employeeForm.get('joiningDate')?.touched">
+              <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                 <div class="error-msg">Joining Date is required</div>
               </div>
             </div>
             <div class="col-xl-6 col-lg-12 mb-4">
-              <label class="form-label custom-label mb-2">Department<span
-                      class="error-msg">*</span></label>
+              <label class="form-label custom-label mb-2">Department<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                  <p-select [options]="departmentDetails" optionLabel="name"
-                      placeholder="Please select department" formControlName="department"
-                      class="form-select custom-select"></p-select>
+                <p-select [options]="departmentDetails" optionLabel="departmentName" placeholder="Please select department"
+                  formControlName="department" class="form-select custom-select"></p-select>
               </div>
               <div *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
-                  <div class="error-msg">Department is required</div>
+                <div class="error-msg">Department is required</div>
               </div>
-          </div>
+            </div>
             <div class="col-xl-6 col-lg-12 mb-4">
-              <label class="form-label custom-label mb-2">Branch Location/Code<span
-                      class="error-msg">*</span></label>
+              <label class="form-label custom-label mb-2">Branch Location/Code<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                  <p-select [options]="issueLocationdata" optionLabel="name"
-                      placeholder="Please select branch location" formControlName="branchLocation"
-                      class="form-select custom-select"></p-select>
+                <p-select [options]="issueLocationdata" optionLabel="branchLocation1" placeholder="Please select branch location"
+                  formControlName="branchCode" class="form-select custom-select"></p-select>
               </div>
-              <div *ngIf="employeeForm.get('branchLocation')?.invalid && employeeForm.get('branchLocation')?.touched">
-                  <div class="error-msg">Branch Location/Code is required</div>
+              <div *ngIf="employeeForm.get('branchCode')?.invalid && employeeForm.get('branchCode')?.touched">
+                <div class="error-msg">Branch Location/Code is required</div>
               </div>
-          </div>
+            </div>
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                  <p-select [options]="employeementType" optionLabel="name"
-                      placeholder="Please select document type" formControlName="documentType"
-                      class="form-select custom-select" >
-                      <!-- <option disabled [ngValue]="undefined">Select</option> -->
-                      <option Value="true">Yes</option>
-                      <option Value="false">No</option>
-                  </p-select>
+                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
+                  formControlName="Copys" class="form-select custom-select">
+                  <option disabled [ngValue]="undefined">Select</option>
+                  <option Value="true">Yes</option>
+                  <option Value="false">No</option>
+                </p-select>
               </div>
-              <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                  <div class="error-msg">Document Type is required</div>
+              <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
+                <div class="error-msg">Document Type is required</div>
               </div>
-          </div>
+            </div>
             <div class="col-xl-12 mb-4">
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note
-                <span class="error-msg">*</span></label>
-              <textarea class="form-control custom-input" placeholder="Leave a comment here"></textarea>
+              </label>
+              <textarea class="form-control custom-input" placeholder="Leave a comment here" formControlName="notes"></textarea>
+              <div *ngIf="employeeForm.get('notes')?.invalid && employeeForm.get('notes')?.touched">
+                <div class="error-msg">Note is required</div>
+              </div>
             </div>
             <div class="col-xl-6 col-lg-12 mb-4">
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                 Authority Name<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                 <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location"
-                  class="form-select custom-select" />
+                  class="form-select custom-select" formControlName="authorityid" />
+              </div>
+              <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
+                <div class="error-msg">Signature Authority Name is required</div>
               </div>
             </div>
             <div>

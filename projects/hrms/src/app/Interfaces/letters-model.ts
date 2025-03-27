@@ -70,6 +70,7 @@ export interface IemployeeDetails {
     workPhoneCountryCode: number
     zipCode: number
     offerExpiryDate: Date
+    fullName?: string;
   }
   
   export interface IJob {
@@ -433,4 +434,11 @@ export interface IEmployee {
     subLocation:string,
     sublocationid:any,
     shiftName?:string;
+  }
+  export interface IAuthority{
+    employeeId: number,
+    firstName: string,
+    lastName: string,
+    middleName: string,
+    designation: any,
   }

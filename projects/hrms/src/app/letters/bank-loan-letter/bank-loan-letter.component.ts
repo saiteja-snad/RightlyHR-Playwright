@@ -107,6 +107,7 @@ DateValidation() {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    this.initializeForm();
     this.getEmployeeId();
     this.getBankLoanTemplate();
     this.getIssuedEmployeebyId();

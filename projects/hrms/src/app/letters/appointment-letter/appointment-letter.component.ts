@@ -14,6 +14,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
+import { IAuthority } from '../../Interfaces/letters-model';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, LettersTabComponent, Select, DateformatPipe,ReactiveFormsModule],
@@ -128,6 +129,15 @@ export class AppointmentLetterComponent {
     this.appointmentletter.make = null
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
+          ...emp,
+          fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
+        }));
+        this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
+        }));
+        this.initializeForm();
     this.getEmployeeId();
     this.getDepartment();
     this.getMakeDropDown();
@@ -138,15 +148,15 @@ export class AppointmentLetterComponent {
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
-      searchEmployee: ['', Validators.required],
-      appointmentSentDate: ['', Validators.required],
-      address: ['', Validators.required],
-      joiningDate: ['', Validators.required],
+      fusionEmployeeId: ['', Validators.required],
+      appointmentdate: ['', Validators.required],
+      SelectDropDown: ['', Validators.required],
+      dateOfJoining: ['', Validators.required],
       department: ['', Validators.required],
-      branchLocation: ['', Validators.required],
-      documentType: ['', Validators.required],
-      note: ['', Validators.required],
-      signatureAuthority: ['', Validators.required]
+      branchCode: ['', Validators.required],
+      Copys: ['', Validators.required],
+      notes: ['',],
+      authorityid: ['', Validators.required]
     });
   }
   openmodel(content: any) {
@@ -272,15 +282,7 @@ export class AppointmentLetterComponent {
 
 
   }
-  //toggledropdown to open and close the dropdown list
-  // toggleDropdown() {
-  //   this.isDropdownOpen = !this.isDropdownOpen;
-  //   if (this.isDropdownOpen) {
 
-  //   } else {
-  //     this.filteredOptions = [];
-  //   }
-  // }
   toggleDropdown(dropcategory: any) {
     if (dropcategory == 'authority') {
       this.isDropdownOpenauthority = !this.isDropdownOpenauthority;

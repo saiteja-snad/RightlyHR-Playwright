@@ -96,7 +96,7 @@ export class ProbationConfirmationLetterComponent {
     // private _userAcessService:UserAccessService,
     private elementRef: ElementRef,
     private httpclient: HttpClient,
-    config: NgbModalConfig, private modalService: NgbModal
+    config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -121,11 +121,19 @@ export class ProbationConfirmationLetterComponent {
     console.log(this.Employeeinfo);
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
+    this.initializeForm();
     this.getProbationEmployees();
     //this.getEmployeeId();
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
    }
+
+   initializeForm() {
+    this.employeeForm = this.fb.group({   
+
+
+     })
+    }
    openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }

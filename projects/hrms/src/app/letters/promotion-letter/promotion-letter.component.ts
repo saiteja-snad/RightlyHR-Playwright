@@ -92,10 +92,18 @@ export class PromotionLetterComponent {
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
     // this.getPromotionTemplate();
+    this.initializeForm();
     this.getEmployeeId();
     this.getAuthorityDetails();
     this.getIssuedEmployeebyId();
   }
+
+  initializeForm() {
+    this.employeeForm = this.fb.group({   
+
+
+     })
+    }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }

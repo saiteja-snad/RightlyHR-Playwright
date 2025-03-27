@@ -124,6 +124,11 @@ export interface IRelation {
     isdeleted: string
     isDependent?: boolean
 }
+export interface IDegre{
+    sno: number;
+    degreeName: string;
+    isdeleted: string;
+  }
 export interface Ieducation {
     id: number
     employeeId: any,

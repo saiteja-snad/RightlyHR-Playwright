@@ -11,43 +11,52 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Education</th>
-                    <th>University</th>
-                    <th>Specialization</th>
-                    <th>GPA</th>
-                    <th>From Date</th>
-                    <th>To Date</th>
-                    <th>Document</th>
+                    <th>Identity Type</th>
+                    <th>Identity Number</th>
+                    <th>Attachment</th>
                     <th class="text-center">Actions</th>
 
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>b.tech</td>
-                    <td>sasi</td>
-                    <td>ff</td>
-                    <td>67.9</td>
-                    <td>33/09/2025</td>
-                    <td>33/09/2025</td>
+                <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
+                    <tr *ngFor="let identityDetails of getIdentitydetails | async">
+                        <td>{{ identityDetails.identityType }}</td>
+                        <td><span *ngIf="identityDetails.attachment;else noData" class="dowload-text"
+                                (click)="onSelectIdentityAttachmentDownload(identityDetails)"
+                                style="cursor: pointer;"><i
+                                    class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
+                                #noData>-</ng-template></td>
+                        <td>{{ identityDetails.identityNumber }}</td>
 
-                    <td> <a type="button" class="me-2 dowload-text"><i class="bi bi-download  me-2"></i>Download</a>
-                    </td>
-                    <td class="text-center">
-                        <div class="dropdown">
-                            <span type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </span>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                <li (click)="openModal(updateEducationmodal)"><a class="dropdown-item"><i
-                                            class="bi bi bi-pencil  me-2"></i>Update</a></li>
-                                <li><a class="dropdown-item"><i class="bi bi bi-trash3 me-2"></i>Delete</a></li>
-
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li (click)="openModalupdate(updateidentityModal, identityDetails)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>
+                                    <li (click)="opendeletModal(deleteconformation,identityDetails)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
             </tbody>
+            <!-- No Data Found Template -->
+            <ng-template #noDataTemplate>
+                <tr>
+                    <td colspan="5" class="text-center">No data found</td>
+                </tr>
+            </ng-template>
         </table>
     </div>
 
@@ -122,7 +131,7 @@
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid">Add</button>
                 </div>
             </form>
         </div>
@@ -130,7 +139,7 @@
 </ng-template>
 
 
-<ng-template #updateEducationmodal let-modal>
+<ng-template #updateidentityModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
@@ -141,7 +150,83 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
+            <form [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="identityType" class="form-label custom-label mb-2">Identity Type<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-dropdown [options]="getidentitydropdetails" optionLabel="documentName"
+                                formControlName="identityupdateType" placeholder="Please select identity type"
+                                class="form-select custom-select"></p-dropdown>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="identityupdateForm.get('identityupdateType')?.invalid && identityupdateForm.get('identityupdateType')?.touched">
+                            Identity Type is required
+                        </div>
+                    </div>
 
+                    <div class="col-md-6 mb-3">
+                        <label for="identityNumber" class="form-label custom-label mb-2">Identity Number<span
+                                class="text-danger">*</span></label>
+                        <input type="text" formControlName="identityupdateNumber" [maxlength]="IdentityMaxNumber"
+                            [minlength]="IdentityMinNumber" class="form-control custom-input" id="identityNumber"
+                            placeholder="Please enter Identity Number">
+                        <div class="error-msg"
+                            *ngIf="identityupdateForm.get('identityupdateNumber')?.invalid && identityupdateForm.get('identityupdateNumber')?.touched">
+                            <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['required']">
+                                Identity Number is required
+                            </div>
+                            <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['minlength']">
+                                Identity Number must be at least {{ IdentityMinNumber }} digits
+                            </div>
+                            <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['maxlength']">
+                                Identity Number must not exceed {{ IdentityMaxNumber }} digits
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
+                                class="text-danger">*</span></label>
+                        <input type="file" class="form-control custom-input" formControlName="identityupdateAttachment"
+                            (change)="onIdentityAttachmentSelected($event)" accept="image/*, application/pdf" />
+                        <div class="error-msg"
+                            *ngIf="identityupdateForm.get('identityupdateAttachment')?.invalid && identityupdateForm.get('identityupdateAttachment')?.touched">
+                            Attachment is required
+                        </div>
+                        <div *ngIf="IdentityAttachment" class="mb-2 mt-2">
+                            <b>{{ IdentityAttachment?.name || IdentityAttachment }}</b>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+                                The file size should be less than 25MB.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid">Update</button>
+                </div>
+            </form>
         </div>
     </div>
+</ng-template>
+
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to delete the Identity Details?</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="identityDelete()">Yes</button>
+        </div>
+    </div>
+
 </ng-template>

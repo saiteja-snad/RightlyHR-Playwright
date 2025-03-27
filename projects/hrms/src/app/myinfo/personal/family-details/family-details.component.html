@@ -11,13 +11,10 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Education</th>
-                    <th>University</th>
-                    <th>Specialization</th>
-                    <th>GPA</th>
-                    <th>From Date</th>
-                    <th>To Date</th>
-                    <th>Document</th>
+                    <th>Name</th>
+                    <th>Relationship</th>
+                    <th>Date of Birth</th>
+                    <th>Dependent</th>
                     <th class="text-center">Actions</th>
 
                 </tr>
@@ -27,8 +24,9 @@
                 <ng-container *ngIf="((familyDetailsdisplay | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let familyDetail of familyDetailsdisplay | async">
                         <td>{{ familyDetail.memberName }}</td>
-                        <td>{{ familyDetail.dateOfBirth | date: 'dd/MM/yyyy' }}</td>
-                        <td>{{ familyDetail.relationShipId?.relationship1 }}</td>
+                        <td>{{ familyDetail.relationShipName }}</td>
+                        <td>{{ familyDetail.dateOfBirth | dateformat }}</td>
+
                         <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
                         <td class="text-center">
                             <div class="dropdown">
@@ -41,7 +39,7 @@
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
-                                    <li (click)="deleteFamilyDetail(familyDetail.id)">
+                                    <li (click)="opendeletModal(deleteconformation,familyDetail)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
@@ -55,7 +53,7 @@
             <!-- No Data Found Template -->
             <ng-template #noDataTemplate>
                 <tr>
-                    <td colspan="9" class="text-center">No data found</td>
+                    <td colspan="6" class="text-center">No data found</td>
                 </tr>
             </ng-template>
         </table>
@@ -75,7 +73,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="familyDetailsForm" (ngSubmit)="postFamilyDetails()">
+            <form [formGroup]="familyDetailsupdateForm" (ngSubmit)="postFamilyDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="memberName" class="form-label custom-label mb-2">Name<span
@@ -83,7 +81,7 @@
                         <input type="text" class="form-control custom-input" id="memberName"
                             formControlName="memberName" placeholder="Please enter name">
                         <div class="error-msg"
-                            *ngIf="familyDetailsForm.get('memberName')?.invalid && familyDetailsForm.get('memberName')?.touched">
+                            *ngIf="familyDetailsupdateForm.get('memberName')?.invalid && familyDetailsForm.get('memberName')?.touched">
                             <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['required']">Name is required
                             </div>
                             <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['pattern']">Name must contain only
@@ -145,73 +143,92 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Education Details</p>
+                <p class="popup-heading mb-0">Update Family Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form action="">
+            <form [formGroup]="familyDetailsupdateForm" (ngSubmit)="updatefamilyDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Education<span
+                        <label for="memberNameupdate" class="form-label custom-label mb-2">Name<span
                                 class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="educationtypes" optionLabel="relationship1"
-                                placeholder="Please select education*" class="form-select custom-select" />
+                        <input type="text" class="form-control custom-input" id="memberNameupdate"
+                            formControlName="memberNameupdate" placeholder="Please enter name">
+                        <div class="error-msg"
+                            *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.invalid && familyDetailsupdateForm.get('memberNameupdate')?.touched">
+                            <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['required']">Name is
+                                required</div>
+                            <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['pattern']">Name must
+                                contain only letters</div>
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">University<span
+                        <label for="dateOfBirthupdate" class="form-label custom-label mb-2">Date of Birth<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter university">
+                        <input type="date" class="form-control custom-input" id="dateOfBirthupdate"
+                            formControlName="dateOfBirthupdate">
+                        <div class="error-msg"
+                            *ngIf="familyDetailsupdateForm.get('dateOfBirthupdate')?.invalid && familyDetailsupdateForm.get('dateOfBirthupdate')?.touched">
+                            Date of Birth is required
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Specialization<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter specialization">
 
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">GPA<span
-                                class="text-danger">*</span></label>
-                        <input type="number" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter GPA">
-
-                    </div>
-                </div>
-                <div class="row">
-
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">From Date<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">To Date<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
-                    </div>
-
-                </div>
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label">Attachment (Image and PDF only)<span
+                        <label for="relationShipIdupdate" class="form-label custom-label mb-2">Relationship<span
                                 class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" />
+                        <div class="custom-p-select-content">
+                            <p-select [options]="familyRelations" optionLabel="relationship1"
+                                formControlName="relationShipIdupdate" placeholder="Please select relationship"
+                                class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="familyDetailsupdateForm.get('relationShipIdupdate')?.invalid && familyDetailsupdateForm.get('relationShipIdupdate')?.touched">
+                            Relationship is required
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
+                                <input class="form-check-input" type="checkbox" id="isDependentupdate"
+                                    formControlName="isDependentupdate">
+                            </div>
+                            <label for="isDependentupdate" class="form-label custom-label mt-3">Dependent</label>
+                        </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary">Update</button>
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="modal.dismiss();familyDetailsupdateForm.reset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="familyDetailsupdateForm.invalid">Update</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
+
+
+
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+        <p class="confirmation-text mb-4">Are you sure you want to delete the Family Details?</p>
+      </div>
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="familyDelete()">Yes</button>
+      </div>
+    </div>
+  
+  </ng-template>

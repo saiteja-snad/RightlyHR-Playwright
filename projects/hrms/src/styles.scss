@@ -122,14 +122,10 @@ a {
 }
 
 // disable-btn
-.custom-btn-primary:disabled {
-    background-color: var(--btn-secondary-color);
-    color: var(--btn-color-ts);
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: none;
+.btn-primary:disabled {
+    opacity: 0.5;
 }
-
+ 
 
 
 /* width */
@@ -722,7 +718,9 @@ input[type="file"] {
         .confirmation-icon {
             width: 9rem;
         }
-
+        .confirmation-delete-icon{
+            width: 5rem;
+        }
         .confirmation-text {
             font-weight: 500;
             font-size: var(--fontsize20);

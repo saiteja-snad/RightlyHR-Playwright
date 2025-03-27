@@ -7,26 +7,32 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-family-details',
-  imports: [CommonModule, Select, ReactiveFormsModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
   templateUrl: './family-details.component.html',
   styleUrl: './family-details.component.scss'
 })
 export class FamilyDetailsComponent implements OnInit {
   subscription!: Subscription;
   familyRelations: IRelation[] = [];
+  selectedFamilyMembername: any
   empinfo: any = {};
   familyDetailsForm!: FormGroup;
+  selectedFamilyMember: any
+  familyDetailsupdateForm!: FormGroup
+  selectedFamilyMemberid:any
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
   educationtypes = [
     { label: 'Select', value: null },]
 
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder) { }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeFamilyDetailsForm();
+    this.initializeFamilyDetailsupdateForm();
     this.getFamilyRelations();
     this.getfamilyDetailsByEmployeid();
   }
@@ -40,6 +46,14 @@ export class FamilyDetailsComponent implements OnInit {
     });
   }
 
+  initializeFamilyDetailsupdateForm(): void {
+    this.familyDetailsupdateForm = this.fb.group({
+      memberNameupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
+      dateOfBirthupdate: ['', Validators.required],
+      relationShipIdupdate: ['', Validators.required],
+      isDependentupdate: [null],
+    });
+  }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
@@ -71,9 +85,10 @@ export class FamilyDetailsComponent implements OnInit {
         },
       });
     } else {
-      this.familyDetailsForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
+      this.familyDetailsForm.markAllAsTouched();
     }
   }
+
   //get family relations dropdown
   getFamilyRelations() {
     this.subscription = this.http
@@ -101,27 +116,79 @@ export class FamilyDetailsComponent implements OnInit {
   }
 
   openModalupdate(content: any, familyDetail: any): void {
-    this.familyDetailsForm.patchValue({
-      memberName: familyDetail.memberName,
-      dateOfBirth: familyDetail.dateOfBirth,
-      relationShipId: familyDetail.relationShipId,
-      isDependent: familyDetail.isDependent
+    console.log(familyDetail)
+    this.selectedFamilyMembername = familyDetail.relationShipName
+    this.selectedFamilyMember = familyDetail.id;
+    const selectedRelationship = this.familyRelations.find(
+      (relation) => relation.sno === familyDetail.relationShipId
+    );
+    const formattedDateOfBirth = familyDetail.dateOfBirth
+      ? new Date(familyDetail.dateOfBirth).toISOString().split('T')[0]
+      : null;
+    this.familyDetailsupdateForm.patchValue({
+      memberNameupdate: familyDetail.memberName,
+      dateOfBirthupdate: formattedDateOfBirth,
+      relationShipIdupdate: selectedRelationship,
+      isDependentupdate: familyDetail.isDependent
     });
+
+    // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+  updatefamilyDetails(): void {
+    if (this.familyDetailsupdateForm.valid) {
+      const EmpId = parseInt(this.empinfo.employeeId);
+      const selectedRelationship = this.familyDetailsupdateForm.get('relationShipIdupdate')?.value;
+      console.log('Selected Relationship:', selectedRelationship);
+      const payload = {
+        id: this.selectedFamilyMember,
+        employeeId: EmpId,
+        memberName: this.familyDetailsupdateForm.get('memberNameupdate')?.value,
+        dateOfBirth: this.familyDetailsupdateForm.get('dateOfBirthupdate')?.value,
+        relationShipId: this.familyDetailsupdateForm.get('relationShipIdupdate')?.value?.sno,
+        relationShipName: this.selectedFamilyMembername,
+        employeeStatus: "Active",
+        isDependent: this.familyDetailsupdateForm.get('isDependentupdate')?.value ?? false,
+        isDeleted: false
+      };
 
+      this.subscription = this.http.postdata(`FamilyMembers/UPDATE`, payload).subscribe({
+        next: (data: any) => {
+          this.getfamilyDetailsByEmployeid();
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Family details updated successfully')
 
-  deleteFamilyDetail(id: number): void {
-    if (confirm('Are you sure you want to delete this family detail?')) {
-      this.subscription = this.http.deleteData(`FamilyMembers/${id}`).subscribe({
-        next: () => {
-          this.getfamilyDetailsByEmployeid(); // Refresh the table after deletion
-          console.log('Family detail deleted successfully');
         },
         error: (err: any) => {
-          console.error('Error deleting family detail:', err);
+          console.error('Error updating family details:', err);
+          this.conformationPopup.openErrorModal('Failed to update family details');
         }
       });
+    } else {
+      this.familyDetailsupdateForm.markAllAsTouched();
     }
   }
+
+  opendeletModal(content: any, educationDetails: any): void {
+   this.selectedFamilyMemberid=educationDetails
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+ 
+  familyDelete() {
+    this.subscription = this.http
+      .getData(`FamilyMembers/deleteById/${this.selectedFamilyMemberid.id}`)
+      .subscribe({
+        next: (data: any) => {
+          this.modalService.dismissAll()
+          this.getfamilyDetailsByEmployeid()
+          this.conformationPopup.openSuccessModal('Family details deleted successfully')
+        },
+        error: (err: any) => {
+          console.log(err);
+          this.conformationPopup.openErrorModal('Family details deleted failed')
+        },
+      });
+  }
+
 }

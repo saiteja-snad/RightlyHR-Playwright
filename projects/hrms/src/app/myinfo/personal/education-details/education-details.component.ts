@@ -4,21 +4,25 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { Ieducation } from '../../../Interfaces/personal-modal';
-import { Subscription } from 'rxjs';
+import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, Select, ReactiveFormsModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
 export class EducationDetailsComponent {
   educationForm!: FormGroup;
-  geteducationdata: Ieducation[] = [];
-  educationData: Ieducation[] = [];
+  educationupdateForm!: FormGroup;
+  selectedEducationId: any
+  educationData = new BehaviorSubject<Ieducation[]>([])
+  degreeDetails: IDegre[] = [];
   educationAttachment: any;
+  selectedEducationDetails: any
   subscription!: Subscription;
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
   showError = false;
@@ -28,13 +32,13 @@ export class EducationDetailsComponent {
   islistedItem = true;
   buttondisable = true;
   empinfo: any = {}
-  educationtypes = [
-    'scc']
+
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
-    this.getAllEducation();
+    this.initializeupdateForm()
+    this.getDegree()
     this.getEducationEmpid();
   }
 
@@ -50,9 +54,29 @@ export class EducationDetailsComponent {
       gpa: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
       degreeStartDate: ['', Validators.required],
       degreeEndDate: ['', Validators.required],
-      attachment: ['', Validators.required],
+      attachment: [null, Validators.required],
     });
+    this.validations()
 
+  }
+
+  initializeupdateForm(): void {
+    this.educationupdateForm = this.fb.group({
+      educationupdate: ['', Validators.required],
+      universityupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      specializationupdate: ['', [Validators.required, Validators.pattern('^[^\\s].*$')],],
+      gpaupdate: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
+      degreeStartDateupdate: ['', Validators.required],
+      degreeEndDateupdate: ['', Validators.required],
+      attachmentupdate: ['',],
+    });
+    this.validations()
+
+  }
+
+
+
+  validations() {
     // Add validation for start and end dates
     this.educationForm.get('degreeStartDate')?.valueChanges.subscribe((startDate) => {
       const endDate = this.educationForm.get('degreeEndDate')?.value;
@@ -67,15 +91,14 @@ export class EducationDetailsComponent {
       this.issEndDateValid = new Date(endDate) > new Date(startDate);
     });
   }
-
   postEducation(): void {
     if (this.educationForm.valid) {
-      const payload = this.createEducationPayload(); // Create the payload
+      const payload = this.createEducationPayload();
 
       if (this.educationAttachment) {
-        this.uploadEducationAttachment(payload); 
+        this.uploadEducationAttachment(payload);
       } else {
-        this.saveEducationData(payload); // Save the data directly if no attachment
+        this.saveEducationData(payload);
       }
     } else {
       this.educationForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
@@ -104,20 +127,21 @@ export class EducationDetailsComponent {
       next: () => {
         this.educationForm.reset();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Education details Added successfully');
+        this.conformationPopup.openSuccessModal('Education details added successfully');
         console.log('Education data saved successfully:', payload);
         this.getEducationEmpid();
       },
       error: (err: any) => {
         console.error('Error saving education data:', err);
-        this.conformationPopup.openErrorModal('Education details Added failed');
+        this.conformationPopup.openErrorModal(err.error.Message);
       }
     });
   }
+
   createEducationPayload(attachmentPath: string = ''): any {
     return {
       employeeId: parseInt(this.empinfo.employeeId),
-      degree: this.educationForm.get('education')?.value,
+      degree: this.educationForm.get('education')?.value?.degreeName,
       university: this.educationForm.get('university')?.value,
       specialization: this.educationForm.get('specialization')?.value,
       gpa: this.educationForm.get('gpa')?.value,
@@ -145,10 +169,32 @@ export class EducationDetailsComponent {
       lastModified: originalFile.lastModified
     });
   }
-  getAllEducation() {
-    this.subscription = this.http.getData(`Education`).subscribe({
+
+  onSelectIdentityAttachmentDownload(file: any) {
+    this.subscription = this.http
+      .DownloadDataWithQuery('FileSystem/Downloadfile', file.attachment)
+      .subscribe({
+        next: (res: any) => {
+          const fileName = res.headers
+            .get('content-disposition')
+            ?.split(':')[1]
+            .split('=')[1];
+          let blob: Blob = res.body as Blob;
+          let a = document.createElement('a');
+          a.href = window.URL.createObjectURL(blob);
+          let filename =
+            file.attachment.split('/')[file.attachment.split('/').length - 1];
+          a.download = filename;
+          a.click();
+        },
+        error: (reason) => console.log(reason),
+      });
+  }
+  getDegree() {
+    this.subscription = this.http.getData('Degree').subscribe({
       next: (data: any) => {
-        this.geteducationdata = data as Ieducation[];
+        this.degreeDetails = data as IDegre[];
+
       },
     });
   }
@@ -158,14 +204,145 @@ export class EducationDetailsComponent {
     this.subscription = this.http.getData(`Education/${employeeId}`).subscribe({
       next: (data: any) => {
         localStorage.setItem('educationinfodata', JSON.stringify(data));
-        this.educationData = data as Ieducation[];
-        // this.educationData.degreeStartDate = this.formatDate(
-        //   this.educationData.degreeStartDate
-        // );
-        // this.educationData.degreeEndDate = this.formatDate(
-        //   this.educationData.degreeEndDate
-        // );
+        this.educationData.next(data);
+
       },
+    });
+  }
+
+
+  //openupdate
+  openModalupdate(content: any, educationDetails: any): void {
+    this.selectedEducationId=educationDetails.id
+    const selectedEducationType = this.degreeDetails.find(
+      (item) => item.degreeName === educationDetails.degree
+    );
+    // Convert dates to 'YYYY-MM-DD' format
+    const degreeStartDate = educationDetails.degreeStartDate
+      ? new Date(educationDetails.degreeStartDate).toISOString().split('T')[0]
+      : null;
+
+    const degreeEndDate = educationDetails.degreeEndDate
+      ? new Date(educationDetails.degreeEndDate).toISOString().split('T')[0]
+      : null;
+    this.educationupdateForm.patchValue({
+      educationupdate: selectedEducationType,
+      universityupdate: educationDetails.university,
+      specializationupdate: educationDetails.specialization,
+      gpaupdate: educationDetails.gpa,
+      degreeStartDateupdate: degreeStartDate,
+      degreeEndDateupdate: degreeEndDate,
+
+    });
+
+    this.educationAttachment = educationDetails.attachment
+      ? educationDetails.attachment.split('/').pop()
+      : null;
+
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
+  updateEducation(): void {
+    if (this.educationupdateForm.valid) {
+      const formData = this.educationupdateForm.value;
+
+     
+      const payload = {
+        id: this.selectedEducationId,
+        degree: formData.educationupdate?.degreeName,
+        specialization: formData.specializationupdate,
+        gpa: formData.gpaupdate,
+        isDeleted: false,
+        degreeStartDate: formData.degreeStartDateupdate,
+        degreeEndDate: formData.degreeEndDateupdate,
+        attachment: this.educationAttachment || '', // Use the existing attachment or the new one
+        empId: this.empinfo.employeeId // Add employee ID if required
+      };
+
+      // Check if a new attachment is selected
+      if (this.educationAttachment instanceof File) {
+        this.uploadUpdatedEducationAttachment(payload);
+      } else {
+        this.saveUpdatedEducation(payload);
+      }
+    } else {
+      this.educationupdateForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
+    }
+  }
+  uploadUpdatedEducationAttachment(payload: any): void {
+    const filePath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
+    this.subscription = this.http
+      .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.educationAttachment)
+      .subscribe({
+        next: (data: any) => {
+          if (data) {
+            payload.attachment = data.path; // Update the payload with the uploaded file path
+            this.saveUpdatedEducation(payload);
+          }
+        },
+        error: () => {
+          console.error('File upload failed');
+
+        }
+      });
+  }
+
+  saveUpdatedEducation(payload: any): void {
+    this.subscription = this.http.postdata(`Education/UPDATER`, payload).subscribe({
+      next: (data: any) => {
+        console.log('Education updated successfully', data);
+        this.educationupdateForm.reset()
+        this.modalService.dismissAll()
+        this.conformationPopup.openSuccessModal('Education updated successfully')
+
+      },
+      error: (reason: any) => {
+        console.error('Error updating education:', reason);
+        if (reason.error.includes('is already')) {
+          this.conformationPopup.openErrorModal(reason.error);
+        } else {
+          this.conformationPopup.openErrorModal('Something went wrong. Please check all the fields.');
+        }
+      }
+    });
+  }
+
+  opendeletModal(content: any, educationDetails: any): void {
+    this.selectedEducationId = educationDetails.id;
+    this.selectedEducationDetails = educationDetails;
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  educationDelete() {
+    if (!this.selectedEducationId || !this.selectedEducationDetails) {
+      console.error('No education record selected for deletion');
+      return;
+    }
+
+    const payload = {
+      status: 'Void',
+      id: this.selectedEducationDetails.id,
+      employeeId: this.selectedEducationDetails.employeeId,
+      degree: this.selectedEducationDetails.degree,
+      university: this.selectedEducationDetails.university,
+      specialization: this.selectedEducationDetails.specialization,
+      gpa: this.selectedEducationDetails.gpa,
+      degreeStartDate: this.selectedEducationDetails.degreeStartDate,
+      degreeEndDate: this.selectedEducationDetails.degreeEndDate,
+    };
+
+    // Send the delete request
+    this.subscription = this.http.postdata('Education/UPDATER', payload).subscribe({
+      next: (data: any) => {
+        console.log('Education record deleted successfully:', data);
+        this.modalService.dismissAll()
+        this.getEducationEmpid();
+        this.conformationPopup.openSuccessModal('Education detalis deleted successfully');
+      },
+      error: (err: any) => {
+        console.error('Error deleting education record:', err);
+        this.conformationPopup.openErrorModal('Education detalis deleted failed');
+      }
     });
   }
 

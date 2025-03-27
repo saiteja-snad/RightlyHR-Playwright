@@ -23,30 +23,46 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>b.tech</td>
-          <td>sasi</td>
-          <td>ff</td>
-          <td>67.9</td>
-          <td>33/09/2025</td>
-          <td>33/09/2025</td>
+        <ng-container *ngIf="((educationData | async) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let edacationDetails of educationData | async">
+            <td>{{ edacationDetails.degree }}</td>
+            <td>{{edacationDetails.university}}</td>
+            <td>{{edacationDetails.specialization}}</td>
+            <td>{{edacationDetails.gpa}}</td>
+            <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
+            <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
+            <td><span *ngIf="edacationDetails.attachment;else noData" class="dowload-text"
+                (click)="onSelectIdentityAttachmentDownload(edacationDetails)" style="cursor: pointer;"><i
+                  class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template></td>
 
-          <td> <a type="button" class="me-2 dowload-text"><i class="bi bi-download  me-2"></i>Download</a>
-          </td>
-          <td class="text-center">
-            <div class="dropdown">
-              <span type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical"></i>
-              </span>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li (click)="openModal(updateEducationmodal)"><a class="dropdown-item"><i
-                      class="bi bi bi-pencil  me-2"></i>Update</a></li>
-                <li><a class="dropdown-item"><i class="bi bi bi-trash3 me-2"></i>Delete</a></li>
 
-              </ul>
-            </div>
-          </td>
-        </tr>
+            <td class="text-center">
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-pencil me-2"></i>Update
+                    </a>
+                  </li>
+                  <li (click)="opendeletModal(deleteconformation,edacationDetails)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-trash3 me-2"></i>Delete
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <!-- No Data Found Template -->
+        <ng-template #noDataTemplate>
+          <tr>
+            <td colspan="9" class="text-center">No data found</td>
+          </tr>
+        </ng-template>
       </tbody>
     </table>
   </div>
@@ -70,8 +86,9 @@
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="educationtypes" optionLabel="name" formControlName="education"
-                placeholder="Please select education*" class="form-select custom-select"></p-select>
+              <p-select [options]="degreeDetails" [filter]="true" filterBy="degreeName" optionLabel="degreeName"
+                formControlName="education" placeholder="Please select education"
+                class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
               *ngIf="educationForm.get('education')?.invalid && educationForm.get('education')?.touched">
@@ -154,7 +171,8 @@
         </div>
 
         <div class="d-flex justify-content-end gap-3 mt-4">
-          <button type="reset" class="custom-btn btn-secondary" (click)="educationForm.reset();modal.dismiss()">Close</button>
+          <button type="reset" class="custom-btn btn-secondary"
+            (click)="educationForm.reset();modal.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary">Add</button>
         </div>
       </form>
@@ -174,17 +192,18 @@
       </div>
     </div>
     <div class="custom-main-popup-content p-4">
-      <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
+      <form [formGroup]="educationupdateForm" (ngSubmit)="updateEducation()">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="educationtypes" optionLabel="name" formControlName="education"
-                placeholder="Please select education" class="form-select custom-select"></p-select>
+              <p-select [options]="degreeDetails" [filter]="true" filterBy="degreeName" optionLabel="degreeName"
+                formControlName="educationupdate" placeholder="Please select education"
+                class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
-              *ngIf="educationForm.get('education')?.invalid && educationForm.get('education')?.touched">
+              *ngIf="educationupdateForm.get('educationupdate')?.invalid && educationupdateForm.get('educationupdate')?.touched">
               Education is required
             </div>
           </div>
@@ -192,10 +211,10 @@
           <div class="col-md-6 mb-3">
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" id="university" formControlName="university"
+            <input type="text" class="form-control custom-input" id="university" formControlName="universityupdate"
               placeholder="Please enter university">
             <div class="error-msg"
-              *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">
+              *ngIf="educationupdateForm.get('universityupdate')?.invalid && educationupdateForm.get('universityupdate')?.touched">
               University is required
             </div>
           </div>
@@ -205,19 +224,20 @@
           <div class="col-md-6 mb-3">
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization"
-              placeholder="Please enter specialization">
+            <input type="text" class="form-control custom-input" id="specialization"
+              formControlName="specializationupdate" placeholder="Please enter specialization">
             <div class="error-msg"
-              *ngIf="educationForm.get('specialization')?.invalid && educationForm.get('specialization')?.touched">
+              *ngIf="educationupdateForm.get('specializationupdate')?.invalid && educationupdateForm.get('specializationupdate')?.touched">
               Specialization is required
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
             <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
-            <input type="number" class="form-control custom-input" id="gpa" formControlName="gpa"
+            <input type="number" class="form-control custom-input" id="gpa" formControlName="gpaupdate"
               placeholder="Please enter GPA">
-            <div class="error-msg" *ngIf="educationForm.get('gpa')?.invalid && educationForm.get('gpa')?.touched">
+            <div class="error-msg"
+              *ngIf="educationupdateForm.get('gpaupdate')?.invalid && educationupdateForm.get('gpaupdate')?.touched">
               GPA is required and should be between 1 and 10
             </div>
           </div>
@@ -227,10 +247,10 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeStartDate" [max]="currentDate" class="form-control custom-input"
-              id="degreeStartDate">
+            <input type="date" formControlName="degreeStartDateupdate" [max]="currentDate"
+              class="form-control custom-input" id="degreeStartDate">
             <div class="error-msg"
-              *ngIf="educationForm.get('degreeStartDate')?.invalid && educationForm.get('degreeStartDate')?.touched">
+              *ngIf="educationupdateForm.get('degreeStartDateupdate')?.invalid && educationupdateForm.get('degreeStartDateupdate')?.touched">
               From Date is required
             </div>
           </div>
@@ -238,9 +258,10 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDate" class="form-control custom-input" id="degreeEndDate">
+            <input type="date" formControlName="degreeEndDateupdate" class="form-control custom-input"
+              id="degreeEndDate">
             <div class="error-msg"
-              *ngIf="educationForm.get('degreeEndDate')?.invalid && educationForm.get('degreeEndDate')?.touched">
+              *ngIf="educationupdateForm.get('degreeEndDateupdate')?.invalid && educationupdateForm.get('degreeEndDateupdate')?.touched">
               To Date is required
             </div>
           </div>
@@ -250,11 +271,14 @@
           <div class="col-md-12 mb-3">
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
-            <input type="file" formControlName="attachment" accept="image/*, application/pdf"
+            <input type="file" formControlName="attachmentupdate" accept="image/*, application/pdf"
               (change)="onChangeEducation($event)" class="form-control custom-input" />
             <div class="error-msg"
-              *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">
+              *ngIf="educationupdateForm.get('attachmentupdate')?.invalid && educationupdateForm.get('attachmentupdate')?.touched">
               File is required
+            </div>
+            <div *ngIf="educationAttachment" class="mb-2 mt-2">
+              <b style="font-size: 14px;">{{ educationAttachment?.name || educationAttachment }}</b>
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
               <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
@@ -264,10 +288,26 @@
         </div>
 
         <div class="d-flex justify-content-end gap-3 mt-4">
-          <button type="reset" class="custom-btn btn-secondary" (click)="educationForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="educationForm.invalid">Add</button>
+          <button type="reset" class="custom-btn btn-secondary"
+            (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid">Update</button>
         </div>
       </form>
     </div>
   </div>
+</ng-template>
+
+
+<ng-template #deleteconformation let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+      <p class="confirmation-text mb-4">Are you sure you want to delete the Education Details?</p>
+    </div>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="educationDelete()">Yes</button>
+    </div>
+  </div>
+
 </ng-template>

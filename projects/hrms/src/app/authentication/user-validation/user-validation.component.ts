@@ -53,9 +53,9 @@ export class UserValidationComponent {
       next: (response: any) => {
         if (response.empdatum) {
           this.name = `${response.empdatum.firstName} ${response.empdatum.middleName??''} ${response.empdatum.lastName ?? ''}`;	
-          localStorage.setItem('fusionroleClaims', JSON.stringify(response.claims));
-          localStorage.setItem('fusionuser', JSON.stringify(response.empdatum));
-          localStorage.setItem('fusionuserRoles', JSON.stringify(response.roles));
+          localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
+          localStorage.setItem('rightlyHrUser', JSON.stringify(response.empdatum));
+          localStorage.setItem('rightlyHrUserRoles', JSON.stringify(response.roles));
   
           setTimeout(() => {
             if (response.roles.length <= 0) {

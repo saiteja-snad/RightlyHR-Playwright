@@ -7,6 +7,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
 import { LeavesApprovaltabsComponent } from "../../shared/leaves-approvaltabs/leaves-approvaltabs.component";
 import { RouterModule } from '@angular/router';
+import { ICategoryDetails } from '../../Interfaces/timoff-model';
+import { AuthService } from '../../services/auth.service';
+import { Subscription } from 'rxjs';
+import { HttpService } from '../../services/http.service';
 
 @Component({
   selector: 'app-leaves',
@@ -15,10 +19,13 @@ import { RouterModule } from '@angular/router';
   styleUrl: './leaves.component.scss'
 })
 export class LeavesComponent {
-
+  subscription!: Subscription;
+  categoryDetails = [] as ICategoryDetails[]
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
+  empdata = {} as any;
+  loggedinuser = {} as any;
 
   options = [
     { label: 10, value: 10 },
@@ -33,7 +40,12 @@ export class LeavesComponent {
     { id: 3, name: 'Casual' },
     { id: 4, name: 'Earned'  }
   ];
-  constructor(private modalService: NgbModal) {}
+  ngOnInit(): void {
+    this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('fusionuser') || '{}');
+    this.getCategoryDetails();
+  }
+  constructor(private http: HttpService,private modalService: NgbModal,private authService: AuthService) {}
 
   openModal(content: any) {
     this.modalService.open(content, {centered: true,backdrop: 'static'});
@@ -48,7 +60,22 @@ export class LeavesComponent {
     this.rows = event.rows;
 
   }
-  
+  getCategoryDetails() {
+    this.subscription = this.http.getData(`LeaveEntitlements/employee/${this.empdata.employeeId}`).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.categoryDetails = response.data as ICategoryDetails[]
+          console.log(this.categoryDetails);
+          // this.calculateProbationLeavs(this.categoryDetails);
+          // this.logOptionalLeaveDays(this.categoryDetails);
+        }
+      },
+      error: (reason: any) => {
+        //this.toaster.error(reason.error.message)
+      },
+      complete: () => { }
+    })
+  }
   cardItems = [
     {
       label: 'Sick leave',

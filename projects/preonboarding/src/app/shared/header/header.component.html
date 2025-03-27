@@ -1,4 +1,4 @@
-<div class="header-main-container d-flex justify-content-between ">
+<div class="header-main-container d-flex justify-content-between" ngbAutofocus>
     <div>
         <img src='/logos/rightlyhr-full-logo.png' alt="RightlyHr Logo" class="logo-image">
     </div>
@@ -23,7 +23,7 @@
 </div>
 
 <ng-template #logoutpopup let-modal>
-    <div class="result-popup-content text-center">
+    <div class="result-popup-content text-center" ngbAutofocus>
         <p class="confirmation-text mb-5">Are you sure want to logout?</p>
         <div class="d-flex justify-content-center w-100 gap-5">
             <button class="custom-btn btn-secondary w-50 py-3 px-5" (click)="close()">Close</button>

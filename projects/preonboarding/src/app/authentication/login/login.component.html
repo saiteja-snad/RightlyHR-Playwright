@@ -36,7 +36,14 @@
                 </div>
                 <div class="error-msg text-center my-1" *ngIf="wrongCredentials">{{ wrongCredentials }}</div>
                 <div class="pt-4">
-                    <button type="submit" class="custom-btn btn-primary w-100 py-4" [disabled]="loginform.invalid">Login</button>
+                    <button type="submit" class="custom-btn btn-primary w-100 py-4" [disabled]="loginform.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>Loading...</span>
+                        } @else {
+                        <span>Login</span>
+                        }
+                    </button>
                 </div>
             </form>
         </div>

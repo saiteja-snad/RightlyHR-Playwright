@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../http-services/http.service';
 import { Subscription } from 'rxjs';
+import { DateFormatPipe } from "../../pipes/date-format.pipe";
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, DateFormatPipe],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })
@@ -49,7 +50,7 @@ export class JobDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.empdata = data
+        this.empdata = data;
         this.substatus = this.empdata.substatus?.toLowerCase()
         console.log(this.substatus);
         const OfferLetter = ['offer letter generated', 'offer letter released', 'offer letter regenerated', 'offer letter accepted'];
@@ -88,7 +89,7 @@ export class JobDetailsComponent implements OnInit {
     let EmployeeId = this.prospectiveEmployeeData.employeeId;
     this.subscription = this.http.getData(`PreonboardingJobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        this.jobApplicationData = data;
+        this.jobApplicationData = data[0];
         console.log(this.jobApplicationData);
       },
       error: (err: any) => {

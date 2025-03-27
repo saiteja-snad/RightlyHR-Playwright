@@ -13,7 +13,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   providers: [MessageService],
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class LoginComponent {
@@ -21,6 +21,7 @@ export class LoginComponent {
   showPassword = false;
   subscription!: Subscription;
   wrongCredentials: any;
+  spinnerLoader = false;
 
   constructor(private readonly fb: FormBuilder, public router: Router, private http: AuthService, private bnIdle: BnNgIdleService, private messageService: MessageService) { }
 
@@ -40,7 +41,7 @@ export class LoginComponent {
       username: [null, Validators.required],
       password: [null, Validators.required]
     })
-    this.loginform.valueChanges.subscribe(()=>{
+    this.loginform.valueChanges.subscribe(() => {
       this.wrongCredentials = '';
     })
   }
@@ -58,6 +59,7 @@ export class LoginComponent {
   }
 
   login(form: FormGroup) {
+    this.spinnerLoader = true;
     if (form.invalid) {
       return;
     }
@@ -76,10 +78,12 @@ export class LoginComponent {
             this.router.navigate(['/job-details']);
           }
         }
+        this.spinnerLoader = false;
       },
       error: (err: any) => {
         console.log(err);
         this.wrongCredentials = err.error;
+        this.spinnerLoader = false;
       }
     })
   }

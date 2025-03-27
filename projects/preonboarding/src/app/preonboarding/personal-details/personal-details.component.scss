@@ -1,11 +1,17 @@
-.custom-main-sub-content{
+.custom-main-sub-content {
     width: 100%;
     height: calc(100dvh - 36rem);
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.form-check-input{
+.form-check-input {
     box-shadow: none !important;
     outline: none !important;
+}
+
+.custom-input:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    background-color: #F8FBFF !important;
 }

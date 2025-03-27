@@ -432,3 +432,76 @@ input[type="file"] {
 .progress-bar {
     background-color: #305889 !important;
 }
+
+// custom phone number input with country code stylings
+.custom-phone-number-content {
+    border: 1px solid #DEE8F3;
+    border-radius: 0.8rem;
+
+    .custom-input {
+        padding: 0.5rem 0.75rem;
+        border: none !important;
+        font-size: var(--fontsize14) !important;
+        vertical-align: middle;
+    }
+
+    .custom-input:focus {
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        background-color: #F8FBFF;
+    }
+
+    .ipv_selected-item {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        border-radius: 0.5rem;
+        border: none !important;
+        color: #222222;
+        background-color: #F8FBFF;
+    }
+
+    input.ipv_search_box.filtered {
+        font-size: var(--fontsize14) !important;
+    }
+
+    .ipv_arrow {
+        margin-left: 0.25rem !important;
+    }
+
+    .ipv_dropdown:hover .ipv_selected-item {
+        background-color: rgba(248, 251, 255, 0.05) !important;
+    }
+
+    .ipv_country:hover {
+        background-color: #F8FBFF !important;
+    }
+
+    .ipv_country.ipv_highlight {
+        background-color: #F8FBFF !important;
+    }
+
+    input.ipv_search_box {
+        border: none !important;
+
+        &.filtered {
+            border: none !important;
+        }
+    }
+
+    .ipv_code-box {
+        border: 1px solid #DEE8F3 !important;
+    }
+
+    .ipv_country {
+        font-size: var(--fontsize14) !important;
+    }
+
+    .ipv_country-list {
+        width: 350px !important;
+        min-width: 350px !important;
+    }
+}

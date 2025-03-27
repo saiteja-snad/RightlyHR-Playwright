@@ -279,7 +279,7 @@ export class ApprisalLetterComponent {
   }
   //get offer letter Authority list
   getAuthorityDetails() {
-    let offertype = 'Address Proof Letter';
+    let offertype = 'Appraisal Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);

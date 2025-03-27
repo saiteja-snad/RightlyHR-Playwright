@@ -101,10 +101,25 @@ export class OfferLetterComponent {
   // employeementType = [{ name: 'Permanent' }, { name: 'Contract' }];
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
-
+  addressdata: { name: string, value: string }[] = [
+    { name: 'Current Address', value: 'C' },
+    { name: 'Permanent Address', value: 'P' },
+  ];
   selectedEmployee: any;
   @ViewChild('success') success: any;
   employeementType: { name: string, value: boolean }[] = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+  ];
+  esic: { name: string, value: boolean }[] = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+  ];
+   pfdata: { name: string, value: boolean }[] = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+  ];
+  variabledata: { name: string, value: boolean }[] = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
@@ -553,19 +568,34 @@ export class OfferLetterComponent {
   }
 
   //get offer letter Authority list
+  // getAuthorityDetails() {
+  //   let offertype = 'Offer Letter';
+    
+  //   this.subscription = this.http
+  //     .getData(`SignaturesList?LetterType=${offertype}`)
+  //     .subscribe({
+  //       next: (data: any) => {
+  //         console.log(data);
+  //         this.authorityDetails = data;
+  //       },
+  //     });
+  // }
   getAuthorityDetails() {
     let offertype = 'Offer Letter';
-    
-    this.subscription = this.http
-      .getData(`SignaturesList?LetterType=${offertype}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.authorityDetails = data;
-        },
-      });
+    this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+        console.log(this.authorityDetails); 
+      },
+      error: (error: any) => {
+        console.error(error);
+      }
+    });
   }
-
   //function for get job roles
   getJobrole() {
     this.subscription = this.http.getData('JobRole').subscribe({

@@ -102,7 +102,7 @@ dataFailureMsg(msg:string){
   }
   //get Welcome letter Authority list
   getAuthorityDetails() {
-    let offertype = 'Address Proof Letter';
+    let offertype = 'Welcome Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);

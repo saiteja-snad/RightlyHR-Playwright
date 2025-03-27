@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
@@ -85,6 +85,10 @@ export class TraineeOfferLetterComponent {
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
+  addressdata: { name: string, value: string }[] = [
+    { name: 'Current Address', value: 'C' },
+    { name: 'Permanent Address', value: 'P' },
+  ];
   countryvalues = {} as any;
   selectedCountryConfig = {
     hideCode: true,
@@ -142,8 +146,34 @@ export class TraineeOfferLetterComponent {
 
   initializeForm() {
     this.employeeForm = this.fb.group({   
-
-
+      fusionEmpId: [null, Validators.required],
+      personalEmail: ['', [Validators.required, Validators.email]],
+      title: [null, Validators.required],
+      firstName: ['', Validators.required,Validators.minLength(3)],
+      middleName: [''],
+      lastName: ['', Validators.required,Validators.minLength(3)],
+      gender: [null, Validators.required],
+      SelectDropDown: [null, Validators.required],
+      addressLine1: ['', Validators.required],
+      addressLine2: [''],
+      city: ['', Validators.required],
+      state: ['', Validators.required],
+      country: ['', Validators.required],
+      pinCode: ['', Validators.required],
+      phoneNumber: ['', Validators.required],
+      jobRoleDetails: ['', Validators.required],
+      amount: ['', Validators.required],
+      isVariablePay: [null, Validators.required],
+      variablePayAmount: ['', Validators.required],
+      locationId: [null, Validators.required],
+      sublocationId: [null, Validators.required],
+      offerIssuedDate: ['', Validators.required],
+      dateOfJoining: ['', Validators.required],
+      Copys: [null, Validators.required],
+      offerExpiryDate: ['', Validators.required],
+      note: [''],
+      authorityid: [null, Validators.required],
+      reportingmanagerId: [null, Validators.required],
      })
     }
   openmodel(content: any) {
@@ -292,23 +322,21 @@ export class TraineeOfferLetterComponent {
       });
   }
   getAllEmployeeDetails() {
-    // let EmployeeId=this.employeeId;
     const satus = ['active'];
     this.subscription = this.http
       .getData(`Employeedata/Getallemployees?statuses=${satus}`)
       .subscribe({
         next: (response: any) => {
-          // console.log(response);
           if (response) {
             // this.getAllEmployeeInfo = response;
             this.getAllEmployeeInfo = response.map((employee: any) => {
               return {
-                ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
-                // selectedAllGroup: 'Group 1'
-                // Concatenate first, middle (if present), and last name
+                ...employee, 
+                fullName: `${
+                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${
+                  employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
               };
             });
           }
@@ -334,7 +362,7 @@ export class TraineeOfferLetterComponent {
   //get employee ids for Trainee Employees Drop Dowm
   getEmployeeId() {
     this.subscription = this.http
-      .getData('Employeedata/GetTraineeAndVerified')
+      .getData('Employeedata/GetProspectiveAndVerified')
       .subscribe({
         next: (data: any) => {
           console.log(data);
@@ -342,10 +370,11 @@ export class TraineeOfferLetterComponent {
           this.employeeiddetails = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-
+              fullName: `${
+                employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
             };
           });
         },
@@ -381,16 +410,32 @@ export class TraineeOfferLetterComponent {
     });
   }
   //get offer letter Authority list
+  // getAuthorityDetails() {
+  //   let offertype = 'Offer Letter';
+  //   this.subscription = this.http
+  //     .getData(`SignaturesList?LetterType=${offertype}`)
+  //     .subscribe({
+  //       next: (data: any) => {
+  //         console.log(data);
+  //         this.authorityDetails = data;
+  //       },
+  //     });
+  // }
   getAuthorityDetails() {
     let offertype = 'Offer Letter';
-    this.subscription = this.http
-      .getData(`SignaturesList?LetterType=${offertype}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.authorityDetails = data;
-        },
-      });
+    this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+        console.log(this.authorityDetails); 
+      },
+      error: (error: any) => {
+        console.error(error);
+      }
+    });
   }
   //get method for gender
   getgender() {
@@ -423,13 +468,13 @@ export class TraineeOfferLetterComponent {
     });
   }
   //Function to generate offer letter
-  onTraineeOfferLetterFormSubmitForGenerateDoc(f: NgForm) {
+  onTraineeOfferLetterFormSubmitForGenerateDoc(f: FormGroup) {
     this.loading = true;
     //const data =  this.traineeEmpData;
     if (this.traineeEmpData.isEmployeevalid === true) {
-      this.updateTraineeOfferLetterFieldsDetails(f); //existing emp  offer lettr
+      this.updateTraineeOfferLetterFieldsDetails(f.value); //existing emp  offer lettr
     } else {
-      this.postTraineeOfferLetterFieldsDetails(f); //new offer lettr
+      this.postTraineeOfferLetterFieldsDetails(f.value); //new offer lettr
     }
   }
   onclickcheckempidnull(empidValue: any) {

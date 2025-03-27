@@ -376,13 +376,20 @@ export class AppointmentLetterComponent {
   }
   //get offer letter Authority list 
   getAuthorityDetails() {
-    let offertype = 'Appointment Letter'
+    let offertype = 'Appointment Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.authorityDetails = data
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+        console.log(this.authorityDetails); 
+      },
+      error: (error: any) => {
+        console.error(error);
       }
-    })
+    });
   }
   private formatDatewithDate(date: Date): string | void {
     if (date) {

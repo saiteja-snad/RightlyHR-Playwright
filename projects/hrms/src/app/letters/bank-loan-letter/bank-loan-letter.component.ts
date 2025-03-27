@@ -239,7 +239,7 @@ onclickauthority(ValueName:any){
   }
 //get offer letter Authority list 
 getAuthorityDetails() {
-  let offertype = 'Address Proof Letter';
+  let offertype = 'Bank Loan Letter';
   this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
     next: (data: any) => {
       console.log(data);
@@ -247,7 +247,8 @@ getAuthorityDetails() {
         ...authority,
         fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
       }));
-      console.log(this.authorityDetails); 
+
+      console.log(this.authorityDetails);  // Check the transformed data
     },
     error: (error: any) => {
       console.error(error);

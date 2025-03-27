@@ -230,17 +230,22 @@ export class SalaryRevisionLetterComponent {
     }
   }
 
-  //get offer letter Authority list
   getAuthorityDetails() {
     let offertype = 'Appraisal Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.authorityDetails = data;
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+        console.log(this.authorityDetails); 
       },
+      error: (error: any) => {
+        console.error(error);
+      }
     });
   }
-
   //hostlister to close the dropdown when we Click out side the box
   @HostListener('document:click', ['$event.target'])
   onClickOutside(target: any) {

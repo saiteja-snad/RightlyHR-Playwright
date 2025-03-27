@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, model, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -14,6 +14,7 @@ import { LettersTabComponent } from '../../shared/letters-tab/letters-tab.compon
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
+import { IAuthority } from '../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-trainee-appointment-letter',
@@ -22,11 +23,9 @@ import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone
   styleUrl: './trainee-appointment-letter.component.scss'
 })
 export class TraineeAppointmentLetterComponent {
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Full-Time' },
-    { id: 2, name: 'Part-Time' },
-    { id: 3, name: 'Contract' },
-    { id: 4, name: 'Internship' }
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
   ];
 
   designation: { id: number; name: string }[] = [
@@ -56,7 +55,10 @@ export class TraineeAppointmentLetterComponent {
     { id: 3, name: 'Mark Taylor' },
     { id: 4, name: 'Emily Johnson' }
   ];
-
+  addressdata: { name: string, value: string }[] = [
+    { name: 'Current Address', value: 'C' },
+    { name: 'Permanent Address', value: 'P' },
+  ];
   subscription!: Subscription;
   employeeiddetails = [] as any;
   traineeAppointmentletterData = {} as any;
@@ -107,6 +109,14 @@ export class TraineeAppointmentLetterComponent {
     this.traineeAppointmentletterData.make = null
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
+          ...emp,
+          fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
+        }));
+        this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
+              ...authority,
+              fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
+            }));
     this.initializeForm();
     this.getEmployeeId();
     this.getDepartment();
@@ -186,14 +196,17 @@ Onclickemployeeid(Value:any){
  }
  initializeForm() {
   this.employeeForm = this.fb.group({
-    searchEmployee: ['', Validators.required],
-    appointmentSentDate: ['', Validators.required],
-    address: ['', Validators.required],
-    joiningDate: ['', Validators.required],
+    fusionEmpId: ['', Validators.required],
+    appointmentdate: ['', Validators.required],
+    SelectDropDown: ['', Validators.required],
+    dateOfJoining: ['', Validators.required],
     department: ['', Validators.required],
-    branchLocation: ['', Validators.required],
-    documentType: ['', Validators.required],
+    branchCode: ['', Validators.required],
+    Documenttype: ['', Validators.required],
+    asserttype:['',Validators.required],
     note: ['', Validators.required],
+    model: ['', Validators.required],
+    serial: ['', Validators.required],
     signatureAuthority: ['', Validators.required]
   });
 }
@@ -287,13 +300,20 @@ addressFlag= false;
   }
   //get offer letter Authority list 
 getAuthorityDetails(){
-  let offertype='Appointment Letter'
-  this.subscription=this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
-    next:(data:any)=>{
+  let offertype = 'Appointment Letter';
+  this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+    next: (data: any) => {
       console.log(data);
-      this.authorityDetails=data
+      this.authorityDetails = data.map((authority: any) => ({
+        ...authority,
+        fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+      }));
+      console.log(this.authorityDetails); 
+    },
+    error: (error: any) => {
+      console.error(error);
     }
-  })
+  });
 }
 private formatDatewithDate(date: Date): string | void {
   if (date) {
@@ -616,21 +636,21 @@ getIssueLocation() {
  
 getEmployeeId() {
   this.subscription = this.http
-    .getData('TraineeOfferLetter/traineeActiveEmployees')
-    .subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.employeeiddetails = data as IemployeeDetails[];
-        console.log(this.employeeiddetails);
-        this.employeeiddetailsauthorityName = data as IemployeeDetails[];
-      //  this.EmployeeName=this.employeeiddetails.firstName+" "+this.employeeiddetails.lastName
-        
-      },
-      error: (reason: any) => {
+  .getData('TraineeOfferLetter/traineeActiveEmployees')
+  .subscribe({
+    next: (data: any) => {
+      console.log(data);
+      this.employeeiddetails = data as IemployeeDetails[];
+      console.log(this.employeeiddetails);
+      this.employeeiddetailsauthorityName = data as IemployeeDetails[];
+    //  this.EmployeeName=this.employeeiddetails.firstName+" "+this.employeeiddetails.lastName
+      
+    },
+    error: (reason: any) => {
 
-        console.log(reason);
-      },
-    });
+      console.log(reason);
+    },
+  });
 }
 //function to get department dropdown
 getDepartment() {

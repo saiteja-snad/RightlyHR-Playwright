@@ -11,11 +11,11 @@
     <div>
 
         <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5">
-            @for (item of cardItems; track $index) {
+            @for (item of categoryDetails; track $index) {
             <div class="col">
-                <div class="card employee-details-card cursor w-100 mb-3">
+                <div class="card employee-details-card w-100 mb-3">
                     <div class="d-flex align-items-center justify-content-center">
-                        <p class="label text-nowrap mb-2 mt-2">{{item.label}}</p>
+                        <p class="label text-nowrap mb-2 mt-2">{{item.category.name}}</p>
                     </div>
                     <div class="d-flex align-items-center  justify-content-center gap-3">
 
@@ -28,16 +28,16 @@
                         <hr class="dashed-line">
                     </div>
                     <div>
-                        <div class="d-flex justify-content-between p-3">
+                        <div  class="d-flex justify-content-between p-3">
 
-                            <p class="count mb-0">Available:{{item.available}}</p>
-                            <p class="count mb-0">Processed:{{item.available}}</p>
+                            <p class="count mb-0">Available:{{item.allowedDays - item.utilizedDays -item.booked}}</p>
+                            <p class="count mb-0">Processed:{{item.utilizedDays}}</p>
 
                         </div>
 
                         <div class="d-flex justify-content-between p-3">
-                            <p class="count mb-0">Entitled:{{item.available}}</p>
-                            <p class="count mb-0">Booked:{{item.available}}</p>
+                            <p class="count mb-0">Entitled:{{item.allowedDays}}</p>
+                            <p class="count mb-0">Booked:{{item.booked}}</p>
                         </div>
                     </div>
                 </div>

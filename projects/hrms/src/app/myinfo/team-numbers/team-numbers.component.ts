@@ -9,12 +9,13 @@ import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Ipersonal, Iteammembers } from '../../Interface/members-model';
+import { SearchfilterPipe } from "../../pipes/searchfilter.pipe";
 //import { Iteammembers } from '../../models/teammembers';
 
 
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule,Select,FormsModule, PaginatorModule, DropdownModule],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, DropdownModule, SearchfilterPipe],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
@@ -34,6 +35,7 @@ export class TeamNumbersComponent {
       { label: 25, value: 25 }
     ];
     empinfo = {} as Ipersonal;
+    searchValue: any;
   
   constructor(
     private http: HttpService,
@@ -44,9 +46,11 @@ export class TeamNumbersComponent {
 
   }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
-     this.getAllTeammembersList();
-     this.getEmployee();
+    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    console.log(this.empinfo);
+
+    this.getAllTeammembersList();
+    this.getEmployee();
    }
  
   onPageChange(event: PaginatorState) {
@@ -153,13 +157,11 @@ export class TeamNumbersComponent {
     });
   }
   getAllTeammembersList() {
-    let EmployeeId = parseInt(this.empinfo.employeeId)
+    let EmployeeId = (this.empinfo.employeeId)
     this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
       (responseData: any) => {
         console.log(responseData);
         this.TeamMemberArray = responseData as Iteammembers[];
-      
-        // Initialize the selected property for each team member
         this.TeamMemberArray.forEach(member => member.selected = false);
 
       },
@@ -168,6 +170,7 @@ export class TeamNumbersComponent {
       }
     );
   }
+
   getEmployee() {
     this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
       next: (data: any) => {

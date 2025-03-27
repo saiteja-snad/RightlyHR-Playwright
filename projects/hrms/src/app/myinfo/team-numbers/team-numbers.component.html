@@ -19,12 +19,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>7655</td>
-                    <td>vamsi</td>
-                    <td>vamsigmail.com</td>
-                    <td>9876543210</td>
-                    <td>Q.a</td>
+                <tr *ngFor="let details of TeamMemberArray| searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','workEmail', 'contactnumber', 'jobRole']">
+                    <td class="center">{{details.fusionEmpId}}</td>
+                        <td class="center">{{details.firstName}} {{details.middleName}} {{details.lastName}}</td>
+                        <td class="center">{{details.workEmail}}</td>
+                        <td class="center">{{details.contactnumber}}</td>
+                        <td class="center">{{details.jobRole}}</td>
+                        <td>
                     <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">

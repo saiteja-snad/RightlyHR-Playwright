@@ -37,6 +37,7 @@ export class AddProspectiveEmployeeComponent {
   emailErrorweb = false; //array to store all the jobroles
   //function to get the job rol details
   initialLocationId: any;
+designation: any;
   ngOnInit(): void {
     this.getJobrole();
     this.jobLocationList();
@@ -50,19 +51,6 @@ export class AddProspectiveEmployeeComponent {
     this.postProspectiveEmpDetails.personalEmail = true;
     console.log(this.postProspectiveEmpDetails.personalEmail);
   }
-
-  //function to get the job rol details
-  // getJobrole() {
-  //   this.subscription = this.http.getData('DesignationGradeMapper').subscribe({
-  //     next: (data: any) => {
-  //       console.log(data);
-  //       this.JobroleDetails = data;
-  //       this.AllJobRoles = this.JobroleDetails.map(
-  //         (item: { designationName: any }) => item.designationName
-  //       );
-  //     },
-  //   });
-  // }
 
   getJobrole() {
     this.subscription = this.http.getData('DesignationGradeMapper').subscribe({
@@ -131,8 +119,7 @@ export class AddProspectiveEmployeeComponent {
         next: (data: any) => {
           console.log(data);
 
-          this.subLocationsDropdown = data.jobSubLocations;
-          // console.log(this.subLocationsDropdown);
+          this.subLocationsDropdown = data.jobSubLocations;       
           console.log('sub-Dropdown Options:', this.subLocationsDropdown);
         },
       });
@@ -197,29 +184,10 @@ export class AddProspectiveEmployeeComponent {
           //alert('employee created')
           if (res.statusCode == 201) {
             this.result = res.employeeData;
-            // if (res) {
-            //   const modalElement = document.getElementById('successhide');
-            //   if (modalElement) {
-            //     modalElement.classList.add('show');
-            //     modalElement.style.display = 'block';
-            //     this.Status = 'Prospective employee created successfully'
-            //   }
-            //   setTimeout(function () {
-            //     location.reload();
-            //     // f.resetForm();
-            //   }, 9000);
-
-            // }
-            // this.toaster.success({
-            //   detail: 'SUCCESS',
-            //   summary: 'Prospective employee created successfully',
-            //   duration: 5000,
-            // });
-            // this.emailForRequestDoc(this.result);
             console.log(this.result);
             this.modalService.dismissAll();
             setTimeout(() => {
-              this.router.navigate(['/ProspectiveEmployee']); // Navigate after UI update
+              this.router.navigate(['/prospective-employees']); // Navigate after UI update
             }, 500);
             if (this.result.employeeId != null) {
               const jobdata = {
@@ -237,9 +205,6 @@ export class AddProspectiveEmployeeComponent {
                   next: (data: any) => {
                     console.log(data);
                     this.select(this.result);
-                    //this.router.navigate(["/admin/personal"])
-                    // window.location.reload();
-                    //alert("job data successfully added")
                   },
                   error: (Reason) => console.log(Reason),
                 });

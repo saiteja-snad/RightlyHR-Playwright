@@ -1,75 +1,94 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router, RouterModule } from '@angular/router';
+import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProgressService } from '../../common-services/progress.service';
 import { Subscription } from 'rxjs';
 import { IdocumentType } from '../../models/documents.model';
 import { HttpService } from '../../http-services/http.service';
-import { NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
 import { Location } from '@angular/common';
-
+import { DateFormatPipe } from "../../pipes/date-format.pipe";
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { PopupService } from '../../common-services/popup.service';
 @Component({
   selector: 'app-onboarding-documents',
-  imports: [CommonModule, ReactiveFormsModule,],
+  imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbTooltipModule, NgxDocViewerModule, RouterModule],
   templateUrl: './onboarding-documents.component.html',
   styleUrl: './onboarding-documents.component.scss'
 })
+
 export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   currentStep: string = '';
-  @ViewChild('uploadPopup') uploadPopup: any;
   subscription!: Subscription;
-  a = false;
-  b = true;
   loading: any;
-  loadingcircle: boolean = false
+  loadingcircle: boolean = false;
   file: any;
   documentType: any;
   prosempdata = {} as any;
   getDocumentsDetails = [] as any;
   submitbuttondisable: boolean = false;
   submitbuttondisableforrejected: boolean = false;
-  getDocumentDropdown = [] as IdocumentType[];//variable to get list to documenttypes
+  getDocumentDropdown = [] as IdocumentType[];
   documentAttachment!: File
   documentSelectFields = {} as any
   DocViewURL!: any;
   DocImageUrl!: any;
   showErrorrforsize: boolean = false;
   showErrorforpdf: boolean = false;
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   Status: any;
+  documentForm!: FormGroup;
+  selectedItem: any;
+  @ViewChild('uploadPopup') uploadPopup: any;
+  @ViewChild('viewpopup') viewpopup: any;
+  @ViewChild('confirmationPopup') confirmationPopup: any;
 
-  constructor(private router: Router, private modalService: NgbModal, private ProgressServices: ProgressService
-    , private http: HttpService, private location: Location
-  ) { }
+  constructor(private router: Router, private modalService: NgbModal, private ProgressServices: ProgressService,
+    private http: HttpService, private location: Location, private fb: FormBuilder , private openPopup:PopupService) { }
 
   ngOnInit(): void {
-    this.ProgressServices.step$.subscribe((step) => {
-      this.currentStep = '1';
-    });
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     this.getDocuments();
-  }
-
-  openUpload() {
-    this.modalService.open(this.uploadPopup, { centered: true, backdrop: 'static' });
+    this.initializeForm();
   }
 
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
 
+  initializeForm() {
+    this.documentForm = this.fb.group({
+      documentType: [{ value: '', disabled: true }, Validators.required],
+      documentNumber: ['', [Validators.required, Validators.minLength(this.IdentityMinNumber), Validators.maxLength(this.IdentityMaxNumber), Validators.pattern(this.pattern)]],
+      docFile: [null, Validators.required],
+    });
+  }
+
+  // Submit Form Data
+  onDocumentSubmit() {
+    if (this.documentForm.valid) {
+      console.log('Form Data:', this.documentForm.value);
+    } else {
+      console.log('Form is invalid');
+    }
+  }
+
+  openConfirmation() {
+    this.modalService.open(this.confirmationPopup, { backdrop: 'static', centered: true })
+  }
+
   close() {
     this.modalService.dismissAll();
+    this.documentForm.reset(); // Reset form to initial state
+    this.documentForm.markAsPristine(); // Mark as pristine (optional)
+    this.documentForm.markAsUntouched(); // Mark as untouched (optional)
   }
 
   //function to view the doc
   onViewClick(url: string) {
     const isImage = url.match(/\.(jpg|jpeg|png)$/i);
     const isPDF = url.toLowerCase().endsWith('pdf');
-
     if (isImage) {
       // Generate absolute URL for image
       this.handleImage(url);
@@ -80,13 +99,13 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       // Handle other document types
       console.log(`Unsupported file type: ${url}`);
     }
+    this.modalService.open(this.viewpopup, { centered: true, backdrop: 'static', size: 'lg' });
   }
+
   private handleImage(url: string) {
     const baseUrl = this.location.normalize('/');
     const imageUrl = `${baseUrl}${url}`;
     this.DocImageUrl = `${environment.viewUrl}${imageUrl}`;
-
-    // Log imageUrl to console
     console.log(`Image URL: ${this.DocImageUrl}`);
   }
 
@@ -95,24 +114,8 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
     const baseUrl = this.location.normalize('/');
     const pdfUrl = `${baseUrl}${url}`;
     this.DocViewURL = `${environment.viewUrl}${pdfUrl}`;
-
     // Log pdfUrl to console
     console.log(`PDF URL: ${this.DocViewURL}`);
-  }
-  reload() {
-    window.location.reload()
-    //f.resetForm()
-  }
-  change() {
-    this.a = false;
-    this.b = true;
-  }
-
-  submittedsuccess() {
-    const modelDivSuccess = document.getElementById("submittedsuccess");
-    if (modelDivSuccess != null) {
-      modelDivSuccess.style.display = 'block'
-    }
   }
 
   //function to get the document type
@@ -120,107 +123,61 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   getDocumentType() {
     this.subscription = this.http.getData('PreonboardingDocumentList').subscribe({
       next: (data: any) => {
-        // console.log(data);
-        this.getDocumentDropdown = data
-        let experienceType = this.prosempdata.experienceType
-        console.log(experienceType);
+        this.getDocumentDropdown = data;
       }
     })
   }
+
   //function to get the file 
   onChange(event: any) {
     this.file = event.target.files[0];
   }
-  onFormClose(f: NgForm) {
-    //console.log(f);
 
-    f.resetForm()
-  }
-
-  //function to upload the document 
-  UploadDocuments(f: any) {
-    let filePath = `/FusionDocuments/Employee Documents/Pre Onboarding Documents/${this.prosempdata.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.file)
-      .subscribe({
-        next: (data: any) => {
-          // console.log(data);
-          if (data) {
-            this.file = null
-            //this.getAllFiles()
-          }
-          let postdata = {
-            empId: this.prosempdata.employeeId,
-            documentType: this.documentType,
-            documentUrl: data.path,
-            status: null,
-            rejectedBy: null,
-            reason: null
-          }
-          this.subscription = this.http.postData(`PreonboardingDocuments`, postdata).subscribe({
-            next: (data: any) => {
-              // console.log(data);
-              this.a = false;
-              this.b = true;
-              // this.toaster.success({
-              //   detail: 'SUCCESS',
-              //   summary: 'Document uploaded successfully',
-              //   duration: 5000,
-              // });
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-
-              this.getDocuments();
-            }
-          })
-
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
-  
   //onclik for document
-  IdentityMaxNumber: number = 15   // used to max fields for comparision
-  IdentityMinNumber: number = 12
+  IdentityMaxNumber: number = 15;   // used to max fields for comparision
+  IdentityMinNumber: number = 12;
   isMandatory: boolean = false;
   pattern: any;
   errorMsg = 'Special characters are not allowed';
   onClickEditDocument(data: any) {
-    this.documentSelectFields = JSON.parse(JSON.stringify(data))
+    this.documentSelectFields = JSON.parse(JSON.stringify(data));
     console.log(this.documentSelectFields);
     this.isMandatory = false
     if (this.documentSelectFields.documentType?.toLowerCase() === "pan") {
       this.isMandatory = this.documentSelectFields.isMandatory
-      this.IdentityMaxNumber = 10
-      this.IdentityMinNumber = 10
-      this.pattern = "[a-zA-Z0-9]*"
-      this.errorMsg = 'Special characters are not allowed'
+      this.IdentityMaxNumber = 10;
+      this.IdentityMinNumber = 10;
+      this.pattern = "[a-zA-Z0-9]*";
+      this.errorMsg = 'Special characters are not allowed';
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "aadhaar") {
       this.isMandatory = this.documentSelectFields.isMandatory
-      this.IdentityMaxNumber = 12
-      this.IdentityMinNumber = 12
-      this.pattern = "[0-9]*"
-      this.errorMsg = 'Alphabets and special characters are not allowed'
+      this.IdentityMaxNumber = 12;
+      this.IdentityMinNumber = 12;
+      this.pattern = "[0-9]*";
+      this.errorMsg = 'Alphabets and special characters are not allowed';
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "uan") {
-      this.isMandatory = this.documentSelectFields.isMandatory
-      this.IdentityMaxNumber = 12
-      this.IdentityMinNumber = 12
-      this.pattern = "[0-9]*"
-      this.errorMsg = 'Alphabets and special characters are not allowed'
+      this.isMandatory = this.documentSelectFields.isMandatory;
+      this.IdentityMaxNumber = 12;
+      this.IdentityMinNumber = 12;
+      this.pattern = "[0-9]*";
+      this.errorMsg = 'Alphabets and special characters are not allowed';
     }
+  }
+
+  openModal(item: any) {
+    this.selectedItem = item;
+    this.documentForm.patchValue({ documentType: item.documentType || '', documentNumber: item.documentNumber || '' });
+    this.modalService.open(this.uploadPopup, { centered: true, backdrop: 'static' });
   }
 
   onCheckMandatory(Value: number) {
     if (Value) {
-      this.isMandatory = false
+      this.isMandatory = false;
     }
     else {
-      this.isMandatory = this.documentSelectFields.isMandatory
+      this.isMandatory = this.documentSelectFields.isMandatory;
     }
   }
 
@@ -230,7 +187,6 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
     let d: Date = new Date()
     let documentType = this.documentSelectFields.documentType.replace(/\//g, ' ')
     this.documentAttachment = this.renameFileAttchment(file, `${this.prosempdata.employeeId}_${documentType}_${d.getTime()}_${file.name}`)
-    // console.log(this.documentAttachment);
   }
 
   private renameFileAttchment(originalFile: File, newName: string) {
@@ -241,21 +197,20 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   }
 
   //function to update the   document 
-  updateDocuments(f: NgForm) {
-    if (this.documentSelectFields.isIdentityType == true) {
-      let IdentityfilePath = `/FusionDocuments/Employee Documents/Identity Documents/${this.prosempdata.employeeId}`;
-      this.subscription = this.http
-        .uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', IdentityfilePath, this.documentAttachment)
-        .subscribe({
-          next: (data: any) => {
-            console.log(data);
-          }
-        });
-    }
-    let filePath = `/FusionDocuments/Employee Documents/Pre Onboarding Documents/${this.prosempdata.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, this.documentAttachment)
-      .subscribe({
+  updateDocuments() {
+    if (this.documentForm.valid) {
+      if (this.documentSelectFields.isIdentityType == true) {
+        let IdentityfilePath = `/FusionDocuments/Employee Documents/Identity Documents/${this.prosempdata.employeeId}`;
+        this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', IdentityfilePath, this.documentAttachment)
+          .subscribe({
+            next: (data: any) => {
+              console.log(data);
+              this.modalService.dismissAll();
+            }
+          });
+      }
+      let filePath = `/FusionDocuments/Employee Documents/Pre Onboarding Documents/${this.prosempdata.employeeId}`;
+      this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, this.documentAttachment).subscribe({
         next: (data: any) => {
           console.log(data);
           if (data) {
@@ -274,20 +229,32 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
           }
           this.subscription = this.http.postData(`PreonboardingDocuments/Update`, postdata).subscribe({
             next: (data: any) => {
-              this.getDocuments();
+              this.openPopup.openSuccessOffCanvas("Document uploaded successfully");
+              setTimeout(() => { 
+                this.modalService.dismissAll();
+                this.getDocuments();
+              }, 2000);  
             }
           })
         },
         error: (reason: any) => {
           console.log(reason);
           if (reason.status == 400) {
+            this.openPopup.openErrorOffCanvas(reason.error.Message);
+          }else{
+            this.openPopup.openErrorOffCanvas("file upload  is failed");
           }
+          setTimeout(() => { 
+            this.modalService.dismissAll();
+            this.getDocuments();
+          }, 2000); 
         },
       });
+    }
   }
 
   //function validate the file
-  onoChanges(event: Event) {
+  onChanges(event: Event) {
     if (event) {
       const input = event.target as HTMLInputElement;
       if (input.files && input.files.length > 0) {
@@ -330,10 +297,10 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
           return element.isMandatory === true;
         }).length;
         if (countofDocumentssubmitted == countMandatoryTrue) {
-          this.aftersubmitbuttondisable = true
+          this.aftersubmitbuttondisable = true;
         }
         else {
-          this.aftersubmitbuttondisable = false
+          this.aftersubmitbuttondisable = false;
         }
         this.submitbuttondisableforrejected = disablerejectvalue;
       },
@@ -350,11 +317,11 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.DownloadDataWithQuery('PreonboardingFilesystem/Downloadfile', file).subscribe({
       next: (res: any) => {
         let blob: Blob = res.body as Blob;
-        let a = document.createElement('a')
-        a.href = window.URL.createObjectURL(blob)
+        let a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
         let filename = file.split('/')[file.split('/').length - 1];
-        a.download = filename
-        a.click()
+        a.download = filename;
+        a.click();
       },
       error: reason => console.log(reason)
     })
@@ -362,8 +329,9 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   //function to submit the documents 
   submit() {
-    let empId = this.prosempdata.employeeId
-    let data = { empId: this.prosempdata.employeeId }
+    debugger
+    let empId = this.prosempdata.employeeId;
+    let data = { empId: this.prosempdata.employeeId };
     this.subscription = this.http.putData(`PreonboardingDocuments/submit/${empId}`, data).subscribe({
       next: (data: any) => {
         this.loadingcircle = true;
@@ -390,10 +358,14 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postData(`PreonboardingEmail/DocumentsUpload`, data).subscribe({
       next: (data: any) => {
-        //console.log(data);
         this.loadingcircle = false;
         this.submitNotification();
         this.emailacknowledgementtoemp();
+        this.openPopup.openSuccessOffCanvas("Submitted Successfully, We’ll get back to you soon!!");
+        setTimeout(() => { 
+          this.modalService.dismissAll();
+          this.http.logOut();
+        }, 2000);
       },
       error: (err: any) => {
         console.log(err);
@@ -413,15 +385,14 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       empId: this.prosempdata.employeeId
     }
     if (this.prosempdata.middleName) {
-      senddata.notificationType = `${this.prosempdata.firstName} ${this.prosempdata.middleName} ${this.prosempdata.lastName}`
+      senddata.notificationType = `${this.prosempdata.firstName} ${this.prosempdata.middleName} ${this.prosempdata.lastName}`;
     }
     else {
-      senddata.notificationType = `${this.prosempdata.firstName} ${this.prosempdata.lastName}`
+      senddata.notificationType = `${this.prosempdata.firstName} ${this.prosempdata.lastName}`;
     }
     this.subscription = this.http.postData(`preonboardingNotifications/cretedempid`, senddata).subscribe({
       next: (data: any) => {
-        // console.log(data);
-
+        console.log(data);
       },
       error: (err: any) => {
         console.log(err);
@@ -430,9 +401,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   }
 
   emailacknowledgementtoemp() {
-    let data = {
-      empId: this.prosempdata.employeeId,
-    }
+    let data = { empId: this.prosempdata.employeeId };
     this.subscription = this.http.postData(`PreonboardingEmail/SubmitEmployeeDocumentsAndNotify`, data).subscribe({
       next: (data: any) => {
         console.log(data);

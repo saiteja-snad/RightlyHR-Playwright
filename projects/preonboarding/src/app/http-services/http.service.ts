@@ -63,6 +63,6 @@ export class HttpService {
 
   logOut() {
     localStorage.removeItem('prospectiveusertoken')
-    this.router.navigate(['/login'])
+    this.router.navigate([''])
   }
 }

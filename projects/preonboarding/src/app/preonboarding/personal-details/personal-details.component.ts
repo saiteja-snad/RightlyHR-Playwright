@@ -34,10 +34,10 @@ export class PersonalDetailsComponent implements OnInit {
   permanentAddress = {} as IAddress;
   identityDetails = {} as any;
   @ViewChild('success') success: any;
-  selectedDialCode: any;
-  formattedPhoneNumber: string = '';
-  placeholderPhoneNumber: string = '';
-  selectedCountryCode: any;
+  // selectedDialCode: any;
+  // formattedPhoneNumber: string = '';
+  // placeholderPhoneNumber: string = '';
+  // selectedCountryCode: any;
   spinnerLoader = false;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
@@ -187,10 +187,11 @@ export class PersonalDetailsComponent implements OnInit {
     });
     console.log(this.personalDetailsForm);
     this.selectedCountryConfig = {
-      hideCode: true,  // Ensure you include this
-      hideName: true,  // Ensure you include this
-      dialCode: this.employeeData.mobilePhoneCountryCode, // Bind the country code
+      hideCode: true,  
+      hideName: true,  
+      dialCode: this.employeeData.mobilePhoneCountryCode, 
     };
+    console.log(this.selectedCountryConfig)
   }
 
   // Copy Current Address to Permanent Address
@@ -251,7 +252,7 @@ export class PersonalDetailsComponent implements OnInit {
         dob: formEmployeeData.dob,
         contactnumber: formEmployeeData.phonenumber,
         title: formEmployeeData.salutation,
-        mobilePhoneCountryCode: this.selectedCountryCode,
+        // mobilePhoneCountryCode: this.selectedCountryCode,
         bloodGroup: formEmployeeData.bloodGroup,
         generateOffer: false
       }
@@ -294,55 +295,55 @@ export class PersonalDetailsComponent implements OnInit {
   }
 
   // mobile number functions
-  onCountryChange(country: any) {
-    this.selectedCountryCode = country.dialling_code;
-    this.selectedDialCode = country.code;
-    this.updatePlaceholder();
-    this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
-    this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
-  }
+  // onCountryChange(country: any) {
+  //   this.selectedCountryCode = country.dialling_code;
+  //   this.selectedDialCode = country.code;
+  //   this.updatePlaceholder();
+  //   this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
+  //   this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
+  // }
 
-  formatPhoneNumber(value: string): string {
-    if (!this.selectedDialCode || !value) return value;
-    const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
-    if (phoneNumber && phoneNumber.isValid()) {
-      this.formattedPhoneNumber = phoneNumber.formatInternational();
-      return phoneNumber.formatNational();
-    }
-    return value;
-  }
+  // formatPhoneNumber(value: string): string {
+  //   if (!this.selectedDialCode || !value) return value;
+  //   const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
+  //   if (phoneNumber && phoneNumber.isValid()) {
+  //     this.formattedPhoneNumber = phoneNumber.formatInternational();
+  //     return phoneNumber.formatNational();
+  //   }
+  //   return value;
+  // }
 
-  phoneNumberValidator() {
-    return (control: AbstractControl) => {
-      const value = control.value;
-      if (!this.selectedDialCode || !value) {
-        return null;
-      }
-      const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
-      if (phoneNumber && phoneNumber.isValid()) {
-        return null;
-      } else {
-        return { invalidPhoneNumber: true };
-      }
-    };
-  }
+  // phoneNumberValidator() {
+  //   return (control: AbstractControl) => {
+  //     const value = control.value;
+  //     if (!this.selectedDialCode || !value) {
+  //       return null;
+  //     }
+  //     const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
+  //     if (phoneNumber && phoneNumber.isValid()) {
+  //       return null;
+  //     } else {
+  //       return { invalidPhoneNumber: true };
+  //     }
+  //   };
+  // }
 
-  updatePlaceholder() {
-    if (this.selectedDialCode) {
-      const samplePhoneNumber = `+${this.selectedDialCode}1234567890`;
-      try {
-        const phoneNumber = parsePhoneNumberFromString(samplePhoneNumber, this.selectedDialCode);
-        if (phoneNumber && phoneNumber.isValid()) {
-          this.placeholderPhoneNumber = phoneNumber.formatNational();
-        } else {
-          this.placeholderPhoneNumber = '';
-        }
-      } catch (error) {
-        console.error('Error parsing phone number:', error);
-        this.placeholderPhoneNumber = '';
-      }
-    }
-  }
+  // updatePlaceholder() {
+  //   if (this.selectedDialCode) {
+  //     const samplePhoneNumber = `+${this.selectedDialCode}1234567890`;
+  //     try {
+  //       const phoneNumber = parsePhoneNumberFromString(samplePhoneNumber, this.selectedDialCode);
+  //       if (phoneNumber && phoneNumber.isValid()) {
+  //         this.placeholderPhoneNumber = phoneNumber.formatNational();
+  //       } else {
+  //         this.placeholderPhoneNumber = '';
+  //       }
+  //     } catch (error) {
+  //       console.error('Error parsing phone number:', error);
+  //       this.placeholderPhoneNumber = '';
+  //     }
+  //   }
+  // }
 
   close() {
     this.modalService.dismissAll();

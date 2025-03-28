@@ -22,7 +22,7 @@
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeeiddetails" optionLabel="fullName"  [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select employee" (change)="onClickValidation(employeeForm.get('fusionEmpId')?.value)"
+                                    [showClear]="true" placeholder="Please select employee" (change)="Onclick(employeeiddetails)"
                                     formControlName="fusionEmpId" class="custom-select w-100" >
                                 </p-select>
                             </div>
@@ -917,3 +917,4 @@
       <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
     </div>
   </ng-template>
+  

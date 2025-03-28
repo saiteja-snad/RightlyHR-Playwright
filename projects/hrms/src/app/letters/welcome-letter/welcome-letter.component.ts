@@ -99,6 +99,10 @@ dataFailureMsg(msg:string){
     this.getEmployeeId();
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
+    this.employeeForm.get('note')?.valueChanges.subscribe((value: string) => {
+      // Update the bankloanLetterData.note when the note value changes
+      this.bankloanLetterData.note = value;
+    });
   }
   //get Welcome letter Authority list
   getAuthorityDetails() {
@@ -131,13 +135,17 @@ Onclickemployeeid(Value:any){
     this.disablebuttonforemployeeid=false
   }
 }
-  Onclick(fusionemployeeId: any) {
-  if(fusionemployeeId){
-    this.fusionEmpId = fusionemployeeId;
-    console.log(fusionemployeeId);
+employeeFullname:any;
+  Onclick(event:any) {
+    const selectedEmployee = event.value;
+    console.log(selectedEmployee);
+    this.employeeFullname = selectedEmployee.firstName + ' ' + selectedEmployee.middleName + ' ' + selectedEmployee.lastName;
+  if(selectedEmployee.fusionemployeeId){
+    this.fusionEmpId = selectedEmployee.fusionemployeeId;
+    console.log(selectedEmployee.fusionemployeeId);
     this.bankloanLetterData = {}
     this.bankloanLetterData = this.employeeiddetails.find(
-      (c: any) => c.employeeId == fusionemployeeId
+      (c: any) => c.employeeId === this.fusionEmpId
     );
     this.disablebuttonforemployeeid=true
     if(this.bankloanLetterData.workEmail){
@@ -225,17 +233,33 @@ onclickauthority(ValueName:any){
     console.log(this.authorityDesignation);
   }
   }
-  onclickDesignation(){
+  // onclickDesignation(){
+  //   const signatureAuthorityDetails = this.authorityDetails.find(
+  //     (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
+  //   );
+  //   console.log(signatureAuthorityDetails);
+  //   this.bankloanLetterData.authorityName=signatureAuthorityDetails.authorityName;
+  //   this.bankloanLetterData.designation=signatureAuthorityDetails.designation;
+  //   this.bankloanLetterData.countrycode=signatureAuthorityDetails.countrycode;
+  //   this.bankloanLetterData.workNumber=signatureAuthorityDetails.workNumber;
+  //   this.bankloanLetterData.workEmail=signatureAuthorityDetails.workEmail
+  // }
+  onclickDesignation() {
+    console.log('Authority selected:', this.bankloanLetterData.authorityid);
     const signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
+      (c: any) => c.employeeId === this.bankloanLetterData.authorityid
     );
-    console.log(signatureAuthorityDetails);
-    this.bankloanLetterData.authorityName=signatureAuthorityDetails.authorityName;
-    this.bankloanLetterData.designation=signatureAuthorityDetails.designation;
-    this.bankloanLetterData.countrycode=signatureAuthorityDetails.countrycode;
-    this.bankloanLetterData.workNumber=signatureAuthorityDetails.workNumber;
-    this.bankloanLetterData.workEmail=signatureAuthorityDetails.workEmail
+    console.log('Selected Authority Details:', signatureAuthorityDetails);
+    if (signatureAuthorityDetails) {
+      this.bankloanLetterData.authorityName = signatureAuthorityDetails.fullName;
+      this.bankloanLetterData.designation = signatureAuthorityDetails.designation;
+      this.bankloanLetterData.countrycode = signatureAuthorityDetails.countrycode;
+      this.bankloanLetterData.workNumber = signatureAuthorityDetails.workNumber;
+      this.bankloanLetterData.workEmail = signatureAuthorityDetails.workEmail;
+    }
   }
+  
+  
 //hostlister to close the dropdown when we Click out side the box
 @HostListener('document:click', ['$event.target'])
 onClickOutside(target: any) {

@@ -71,6 +71,7 @@ export class RelievingLetterComponent {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    
     this.initializeForm();
     this.getEmployeeId();
     this.getRelievingTemplate();
@@ -85,7 +86,7 @@ export class RelievingLetterComponent {
     this.employeeForm = this.fb.group({ 
       searchEmployee: [null, Validators.required],
       documentType: [null, Validators.required],
-      // dateofRelieving: ['', Validators.required],
+      dateofRelieving: ['', Validators.required],
       signatureAuthority: [null, Validators.required]
      });
   }
@@ -147,13 +148,15 @@ export class RelievingLetterComponent {
     this.relievingLetterData = [];
   }
 
-  Onclick(fusionemployeeId: any) {
-    this.fusionEmpId = fusionemployeeId;
-    this.comparisioncheck = fusionemployeeId;
-    console.log(fusionemployeeId);
+  Onclick(event:any) {
+    const selectedEmployee = event.value;
+    console.log(selectedEmployee);
+    this.fusionEmpId = selectedEmployee.fusionemployeeId;
+    this.comparisioncheck = selectedEmployee.fusionemployeeId;
+    console.log(selectedEmployee.fusionemployeeId);
     this.relievingLetterData = {}
     this.relievingLetterData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
+      (c: any) => c.fusionEmpId == this.fusionEmpId
     );
     this.disablebuttonforemployeeid = false
     this.getJobdetails(this.relievingLetterData);

@@ -17,7 +17,7 @@
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeeiddetails" optionLabel="fullName"  [filter]="true" filterBy="fullName"
-                                     placeholder="Please select employee"
+                                [showClear]="true"  placeholder="Please select employee"
                                     formControlName="fusionEmpId" class="custom-select w-100" (onChange)="Onclick($event)">
                                 </p-select>
                             </div>

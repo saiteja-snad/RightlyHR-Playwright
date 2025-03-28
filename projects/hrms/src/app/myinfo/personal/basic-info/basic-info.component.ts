@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { HttpService } from '../../../services/http.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-basic-info',
@@ -12,42 +15,56 @@ import { Select } from 'primeng/select';
   styleUrl: './basic-info.component.scss'
 })
 export class BasicInfoComponent {
-  // Dummy data for dropdowns
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Full-Time' },
-    { id: 2, name: 'Part-Time' },
-    { id: 3, name: 'Contract' },
-    { id: 4, name: 'Internship' }
-  ];
+  basicInfoForm!: FormGroup;
+  subscription!:Subscription
+  empinfo:any
+  buttons=false
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
-  designation: { id: number; name: string }[] = [
-    { id: 1, name: 'Software Engineer' },
-    { id: 2, name: 'Project Manager' },
-    { id: 3, name: 'HR Executive' },
-    { id: 4, name: 'Data Analyst' }
-  ];
-
-  location: { id: number; name: string }[] = [
-    { id: 1, name: 'New York' },
-    { id: 2, name: 'Los Angeles' },
-    { id: 3, name: 'Chicago' },
-    { id: 4, name: 'Houston' }
-  ];
-
-  sublocation: { id: number; name: string; locationId: number }[] = [
-    { id: 1, name: 'Brooklyn', locationId: 1 },
-    { id: 2, name: 'Downtown', locationId: 1 },
-    { id: 3, name: 'Hollywood', locationId: 2 },
-    { id: 4, name: 'South Side', locationId: 3 }
-  ];
-  buttons= false;
-  @ViewChild('success') success: any;
-
-  constructor(private router: Router, private modalService: NgbModal) { }
-
-  close() {
-    this.modalService.dismissAll();
+  ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.initializeForm();
+    this.getEmployeeId(); // Fetch employee data and patch the form
   }
+ 
+  initializeForm(): void {
+    this.basicInfoForm = this.fb.group({
+      employeeId: ['', Validators.required],
+      salutation: [null, Validators.required],
+      firstName: ['', Validators.required],
+      middleName: [''],
+      lastName: ['', Validators.required],
+      gender: [null, Validators.required],
+      dob: ['', Validators.required],
+      bloodGroup: [null, Validators.required],
+      maritalStatus: [null, Validators.required],
+    });
+  }
+
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+       // this.patchForm(data);
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
+
+  // patchForm(data: any): void {
+  //   this.basicInfoForm.patchValue({
+  //     employeeId: data.employeeId,
+  //     salutation: this.designation.find((item: any) => item.id === data.salutation),
+  //     firstName: data.firstName,
+  //     middleName: data.middleName,
+  //     lastName: data.lastName,
+  //     gender: this.employeementType.find((item: any) => item.name === data.gender),
+  //     dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
+  //     bloodGroup: this.location.find((item: any) => item.name === data.bloodGroup),
+  //     maritalStatus: this.sublocation.find((item: any) => item.name === data.maritalStatus),
+  //   });
+  // }
+
 
   showButtons() {
     this.buttons = !this.buttons

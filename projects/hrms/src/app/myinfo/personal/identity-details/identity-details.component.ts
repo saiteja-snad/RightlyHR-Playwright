@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Select } from 'primeng/select';
+
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,6 +18,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 export class IdentityDetailsComponent implements OnInit {
   subscription!: Subscription;
   unmatchedIdentityDetails: any = [];
+  displayidentiydocument:any
   selectedIdentityId: any
   getidentitydropdetails: Iidentitydrop[] = [];
   getIdentitydetails = new BehaviorSubject<Iidentity[]>([]);
@@ -216,9 +217,12 @@ export class IdentityDetailsComponent implements OnInit {
       identityupdateNumber: identityDetails.identityNumber,
 
     });
+
+    this.displayidentiydocument=identityDetails.attachment
+    ? identityDetails.attachment.split('/').pop()
+    : null;
     this.IdentityAttachment = identityDetails.attachment
-      ? identityDetails.attachment.split('/').pop()
-      : null;
+      
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 

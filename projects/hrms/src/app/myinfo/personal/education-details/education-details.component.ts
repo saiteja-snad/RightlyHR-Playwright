@@ -22,6 +22,7 @@ export class EducationDetailsComponent {
   educationData = new BehaviorSubject<Ieducation[]>([])
   degreeDetails: IDegre[] = [];
   educationAttachment: any;
+  displalyeducationattachment:any
   selectedEducationDetails: any
   subscription!: Subscription;
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
@@ -236,7 +237,9 @@ export class EducationDetailsComponent {
     });
 
     this.educationAttachment = educationDetails.attachment
-      ? educationDetails.attachment.split('/').pop()
+    
+     this.displalyeducationattachment=educationDetails.attachment
+     ? educationDetails.attachment.split('/').pop()
       : null;
 
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -248,15 +251,16 @@ export class EducationDetailsComponent {
 
      
       const payload = {
-        id: this.selectedEducationId,
+        id:this.selectedEducationId,
+        university:formData.universityupdate,
         degree: formData.educationupdate?.degreeName,
         specialization: formData.specializationupdate,
         gpa: formData.gpaupdate,
-        isDeleted: false,
+        status: "Active",
         degreeStartDate: formData.degreeStartDateupdate,
         degreeEndDate: formData.degreeEndDateupdate,
         attachment: this.educationAttachment || '', // Use the existing attachment or the new one
-        empId: this.empinfo.employeeId // Add employee ID if required
+        employeeId: this.empinfo.employeeId // Add employee ID if required
       };
 
       // Check if a new attachment is selected
@@ -291,6 +295,7 @@ export class EducationDetailsComponent {
     this.subscription = this.http.postdata(`Education/UPDATER`, payload).subscribe({
       next: (data: any) => {
         console.log('Education updated successfully', data);
+        this.getEducationEmpid()
         this.educationupdateForm.reset()
         this.modalService.dismissAll()
         this.conformationPopup.openSuccessModal('Education updated successfully')

@@ -277,8 +277,8 @@
               *ngIf="educationupdateForm.get('attachmentupdate')?.invalid && educationupdateForm.get('attachmentupdate')?.touched">
               File is required
             </div>
-            <div *ngIf="educationAttachment" class="mb-2 mt-2">
-              <b style="font-size: 14px;">{{ educationAttachment?.name || educationAttachment }}</b>
+            <div *ngIf="displalyeducationattachment" class="mb-2 mt-2">
+              <b style="font-size: 14px;">{{ displalyeducationattachment?.name || displalyeducationattachment }}</b>
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
               <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.

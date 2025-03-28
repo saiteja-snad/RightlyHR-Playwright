@@ -270,8 +270,8 @@
                             *ngIf="bankDetailsUpdateForm.get('attachmentupdate')?.invalid && bankDetailsUpdateForm.get('attachmentupdate')?.touched">
                             Attachment is required
                         </div>
-                        <div *ngIf="bankdocument" class="mb-2 mt-2">
-                            <b style="font-size: 14px;">{{ bankdocument.name || bankdocument }}</b>
+                        <div *ngIf="displayblankdocument" class="mb-2 mt-2">
+                            <b style="font-size: 14px;">{{ displayblankdocument.name || displayblankdocument }}</b>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.

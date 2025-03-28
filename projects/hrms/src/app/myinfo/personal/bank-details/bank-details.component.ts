@@ -24,6 +24,7 @@ export class BankDetailsComponent {
   subscription!: Subscription
   proofValid: boolean = true;
   bankdocument: any
+  displayblankdocument:any
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -139,7 +140,7 @@ export class BankDetailsComponent {
       .subscribe({
         next: (data: any) => {
           if (data) {
-            payload.attachment = data.path;
+            payload.docUrl= data.path;
             this.saveBankDetails(payload);
           }
         },
@@ -152,6 +153,7 @@ export class BankDetailsComponent {
   saveBankDetails(payload: any): void {
     this.subscription = this.http.postdata('BankDetail', payload).subscribe({
       next: () => {
+        this.getbankempid()
         this.bankDetailsForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank details added successfully')
@@ -171,7 +173,7 @@ export class BankDetailsComponent {
       accountNo: this.bankDetailsForm.get('accountNo')?.value,
       ifscCode: this.bankDetailsForm.get('ifscCode')?.value,
       isPrimary: this.bankDetailsForm.get('isPrimary')?.value,
-      attachment: attachmentPath || ''
+     
     };
   }
   //download Functionality
@@ -235,9 +237,12 @@ export class BankDetailsComponent {
       isPrimaryupdate: bankDetail.isPrimary,
 
     });
+    this.displayblankdocument= bankDetail.docUrl
+    ? bankDetail.docUrl.split('/').pop()
+    : null;
+   
     this.bankdocument = bankDetail.docUrl
-      ? bankDetail.docUrl.split('/').pop()
-      : null;
+   
 
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -251,7 +256,7 @@ export class BankDetailsComponent {
       const payload = {
         bankId: this.bankid,
         empId: parseInt(this.empinfo.employeeId),
-
+        docUrl:this.bankdocument,
         bankName: formData.bankNameupdate?.bankName1 || formData.bankNameupdate, // Extract bank name
         accountName: formData.accountNameupdate, // Account holder's name
         accountNo: formData.accountNoupdate, // Account number
@@ -281,7 +286,7 @@ export class BankDetailsComponent {
       .subscribe({
         next: (data: any) => {
           if (data) {
-            payload.attachment = data.path; // Update the payload with the uploaded file path
+            payload.docUrl = data.path; // Update the payload with the uploaded file path
             this.saveUpdatedBankDetails(payload);
           }
         },

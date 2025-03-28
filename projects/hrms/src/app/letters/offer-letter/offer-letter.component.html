@@ -22,7 +22,7 @@
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeeiddetails" optionLabel="fullName"  [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select employee"
+                                    [showClear]="true" placeholder="Please select employee" (change)="onClickValidation(employeeForm.get('fusionEmpId')?.value)"
                                     formControlName="fusionEmpId" class="custom-select w-100" >
                                 </p-select>
                             </div>
@@ -248,7 +248,7 @@
                             <label class="form-label custom-label mb-2">Variable Amount <span
                                     class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="variablePayAmount"
-                                placeholder="Please enter variableAmount" />
+                                placeholder="Please enter variable amount" />
                                 <div *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
                                     <div class="error-msg">Variable Amount is required</div>
                                 </div>
@@ -258,7 +258,7 @@
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select workLocation"
+                                    [showClear]="true" placeholder="Please select work location" (change)="OnClickLocation()"
                                     formControlName="locationId" class="custom-select w-100" >
                                 </p-select>
                             </div>
@@ -270,12 +270,12 @@
                             <label class="form-label custom-label mb-2">Sub Location<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="subLocationsDropdown" optionLabel="name" [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select subLocation"
-                                    formControlName="sublocationId" class="custom-select w-100" >
+                                <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select sub location"
+                                    formControlName="JobSubLocationName" class="custom-select w-100" >
                                 </p-select>
                             </div>
-                            <div *ngIf="employeeForm.get('sublocationId')?.invalid && employeeForm.get('sublocationId')?.touched">
+                            <div *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
                                 <div class="error-msg">Sub Location is required</div>
                             </div>
                         </div>
@@ -283,7 +283,7 @@
                             <label class="form-label custom-label mb-2">Offer Issued Date <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
-                                placeholder="Please enter offerIssuedDate" />
+                                placeholder="Please enter offer issued date" />
                                 <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
                                     <div class="error-msg">Offer Issued Date is required</div>
                                 </div>
@@ -292,7 +292,7 @@
                             <label class="form-label custom-label mb-2">Expected Start Date <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter expectedStartDate" />
+                                placeholder="Please enter expected start date" />
                                 <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                     <div class="error-msg">Expected Start Date is required</div>
                                 </div>
@@ -305,7 +305,7 @@
                             <label class="form-label custom-label mb-2">Offer Expiry Date <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                                placeholder="Please enter offerExpiryDate" />
+                                placeholder="Please enter offer expiry date" />
                                 <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                                     <div class="error-msg">Offer Expiry Date is required</div>
                                 </div>

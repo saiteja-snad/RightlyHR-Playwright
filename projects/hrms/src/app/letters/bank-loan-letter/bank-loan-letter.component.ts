@@ -22,6 +22,7 @@ import { IemployeeDetails } from '../../Interfaces/letters-model';
   styleUrl: './bank-loan-letter.component.scss'
 })
 export class BankLoanLetterComponent {
+  employeeFullname:any;
   subscription!: Subscription;
   employeeiddetails = {} as any;
   bankloanLetterData = {} as any;
@@ -58,6 +59,8 @@ export class BankLoanLetterComponent {
     { name: 'Hard Copy', value: false },
   ];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
+  employeedatabank: any;
+  signaturedetails:any;
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
@@ -108,6 +111,10 @@ DateValidation() {
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
     this.initializeForm();
+    this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
+      this.bankloanLetterData.dateofbankloan = newDate;
+      this.DateValidation();
+    });
     this.getEmployeeId();
     this.getBankLoanTemplate();
     this.getIssuedEmployeebyId();
@@ -139,13 +146,17 @@ Onclickemployeeid(Value:any){
     this.disablebuttonforemployeeid=false
   }
 }
-  Onclick(fusionemployeeId: any) {
-  
-    this.fusionEmpId = fusionemployeeId;
-    console.log(fusionemployeeId);
+  Onclick(event:any) {
+    this.employeedatabank = event.value;
+    console.log(this.employeedatabank);
+    const selectedEmployee = event.value;
+    console.log(selectedEmployee);
+    this.employeeFullname = selectedEmployee.firstName + ' ' + selectedEmployee.middleName + ' ' + selectedEmployee.lastName;
+    this.fusionEmpId = selectedEmployee.fusionemployeeId;
+    console.log(selectedEmployee.fusionemployeeId);
     this.bankloanLetterData = {}
     this.bankloanLetterData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
+      (c: any) => c.fusionEmpId === this.fusionEmpId
     );
     this.disablebuttonforemployeeid=true
     console.log(this.bankloanLetterData.gender);
@@ -163,9 +174,7 @@ Onclickemployeeid(Value:any){
    }
     // this.getCompensationById(this.BankLoanLetterData)
     this.getJobdetails(this.bankloanLetterData);
-    console.log(this.bankloanLetterData);
-    
-    
+    console.log(this.bankloanLetterData); 
   }
 //toggledropdown to open and close the dropdown list
 toggleDropdown(dropcategory:any) {
@@ -220,23 +229,42 @@ onclickauthority(ValueName:any){
     console.log(this.authorityDesignation);
   }
   }
-  onclickDesignation(){
+  // onclickDesignation(){
+  //   let signatureAuthorityDetails = this.authorityDetails.find(
+  //     (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
+  //   );
+  //   console.log(signatureAuthorityDetails);
+  //   if (signatureAuthorityDetails) {
+  //     this.authorityDesignation = signatureAuthorityDetails.designation;
+  //     if (signatureAuthorityDetails.middleName) {
+  //       this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
+  //     } else
+  //       this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+  //   }
+  //   else if(signatureAuthorityDetails==undefined||signatureAuthorityDetails==null){
+  //     this.bankloanLetterData.authorityName =''
+  //     this.authorityDesignation=''
+  //   }
+  // }
+  onclickDesignation() {
     let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
+      (c: any) => c.employeeId == this.bankloanLetterData.authorityid
     );
     console.log(signatureAuthorityDetails);
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
       if (signatureAuthorityDetails.middleName) {
         this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
-      } else
+      } else {
         this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+      }
+    } else {
+      this.bankloanLetterData.authorityName = '';
+      this.authorityDesignation = '';
     }
-    else if(signatureAuthorityDetails==undefined||signatureAuthorityDetails==null){
-      this.bankloanLetterData.authorityName =''
-      this.authorityDesignation=''
-    }
-  }
+
+}
+
 //get offer letter Authority list 
 getAuthorityDetails() {
   let offertype = 'Bank Loan Letter';

@@ -22,7 +22,7 @@
               <div class="custom-p-select-content">
                   <p-select [options]="employeeiddetails" optionLabel="fullName"  [filter]="true" filterBy="name"
                       [showClear]="true" placeholder="Please select employee"
-                      formControlName="fusionEmployeeId" class="custom-select w-100" >
+                      formControlName="fusionEmployeeId" class="custom-select w-100"  (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
                   </p-select>
               </div>
               <div *ngIf="employeeForm.get('fusionEmployeeId')?.invalid && employeeForm.get('fusionEmployeeId')?.touched">

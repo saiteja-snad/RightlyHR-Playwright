@@ -66,114 +66,110 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form action="">
+            <!-- <form [formGroup]="jobDetailsForm" (ngSubmit)="onSubmit()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Effective Date<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
-
+                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="effectiveDate" formControlName="effectiveDate">
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('effectiveDate')?.invalid && jobDetailsForm.get('effectiveDate')?.touched">
+                            Effective Date is required
+                        </small>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Job Role<span
-                                class="text-danger">*</span></label>
+                        <label for="jobRole" class="form-label custom-label mb-2">Job Role<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name"
-                                placeholder="Please select job role" class="form-select custom-select" />
+                            <p-select [options]="JobroleDetails" optionLabel="name" formControlName="jobRole" placeholder="Please select job role" class="form-select custom-select"></p-select>
                         </div>
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('jobRole')?.invalid && jobDetailsForm.get('jobRole')?.touched">
+                            Job Role is required
+                        </small>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Grade<span
-                                class="text-danger">*</span></label>
+                        <label for="grade" class="form-label custom-label mb-2">Grade<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select grade"
-                                class="form-select custom-select" />
+                            <p-select [options]="grades" optionLabel="name" formControlName="grade" placeholder="Please select grade" class="form-select custom-select"></p-select>
                         </div>
-
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('grade')?.invalid && jobDetailsForm.get('grade')?.touched">
+                            Grade is required
+                        </small>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Department<span
-                                class="text-danger">*</span></label>
+                        <label for="department" class="form-label custom-label mb-2">Department<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name"
-                                placeholder="Please select department" class="form-select custom-select" />
+                            <p-select [options]="departments" optionLabel="name" formControlName="department" placeholder="Please select department" class="form-select custom-select"></p-select>
                         </div>
-
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('department')?.invalid && jobDetailsForm.get('department')?.touched">
+                            Department is required
+                        </small>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Team<span
-                                class="text-danger">*</span></label>
+                        <label for="team" class="form-label custom-label mb-2">Team<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select team"
-                                class="form-select custom-select" />
+                            <p-select [options]="teams" optionLabel="name" formControlName="team" placeholder="Please select team" class="form-select custom-select"></p-select>
                         </div>
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('team')?.invalid && jobDetailsForm.get('team')?.touched">
+                            Team is required
+                        </small>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Team Manager<span
-                                class="text-danger">*</span></label>
+                        <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name"
-                                placeholder="Please select team manager" class="form-select custom-select" />
+                            <p-select [options]="managers" optionLabel="name" formControlName="teamManager" placeholder="Please select team manager" class="form-select custom-select"></p-select>
                         </div>
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('teamManager')?.invalid && jobDetailsForm.get('teamManager')?.touched">
+                            Team Manager is required
+                        </small>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reporting
-                            Manager<span class="text-danger">*</span></label>
+                        <label for="location" class="form-label custom-label mb-2">Location<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name"
-                                placeholder="Please select reporting manager" class="form-select custom-select" />
+                            <p-select [options]="locations" optionLabel="name" formControlName="location" placeholder="Please select location" class="form-select custom-select"></p-select>
                         </div>
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('location')?.invalid && jobDetailsForm.get('location')?.touched">
+                            Location is required
+                        </small>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Location<span
-                                class="text-danger">*</span></label>
+                        <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select label"
-                                class="form-select custom-select" />
+                            <p-select [options]="subLocations" optionLabel="name" formControlName="subLocation" placeholder="Please select sub location" class="form-select custom-select"></p-select>
                         </div>
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('subLocation')?.invalid && jobDetailsForm.get('subLocation')?.touched">
+                            Sub Location is required
+                        </small>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Sub Location<span
-                                class="text-danger">*</span></label>
+                        <label for="shift" class="form-label custom-label mb-2">Shift<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name"
-                                placeholder="Please select sub location" class="form-select custom-select" />
+                            <p-select [options]="shifts" optionLabel="name" formControlName="shift" placeholder="Please select shift" class="form-select custom-select"></p-select>
                         </div>
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('shift')?.invalid && jobDetailsForm.get('shift')?.touched">
+                            Shift is required
+                        </small>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Shift<span
-                                class="text-danger">*</span></label>
+                        <label for="jobType" class="form-label custom-label mb-2">Job Type<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select shift"
-                                class="form-select custom-select" />
+                            <p-select [options]="jobTypes" optionLabel="name" formControlName="jobType" placeholder="Please select job type" class="form-select custom-select"></p-select>
                         </div>
+                        <small class="error-msg" *ngIf="jobDetailsForm.get('jobType')?.invalid && jobDetailsForm.get('jobType')?.touched">
+                            Job Type is required
+                        </small>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Job Type<span
-                                class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name"
-                                placeholder="Please select job type" class="form-select custom-select" />
-                        </div>
-                    </div>
-
-                </div>
-
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="onReset()">Reset</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="jobDetailsForm.invalid">Submit</button>
                 </div>
-            </form>
+            </form> -->
         </div>
     </div>
 </ng-template>

@@ -5,44 +5,42 @@
                 <span class="contact-sub-header">Contact Details</span>
             </div>
             <div *ngIf="!buttons">
-                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+                <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
             </div>
             <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
-                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid" >Save</button>
             </div>
         </div>
 
-        <!--input content-->
+        <!-- Reactive Form -->
         <div class="myinfo-input-content">
-            <form action="">
+            <form [formGroup]="contactForm">
                 <div class="row">
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Work Number<span
+                        <label for="workNumber" class="form-label custom-label mb-2">Work Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter work number ">
+                        <input type="text" class="form-control custom-input" id="workNumber" formControlName="workNumber"
+                            placeholder="Please enter work number">
                     </div>
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Phone Number <span
+                        <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter phone number ">
-
+                        <input type="text" class="form-control custom-input" id="phoneNumber" formControlName="phoneNumber"
+                            placeholder="Please enter phone number">
                     </div>
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Work Mail<span
+                        <label for="workMail" class="form-label custom-label mb-2">Work Mail<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail"
                             placeholder="Please enter work mail">
                     </div>
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Personal Email<span
+                        <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail"
                             placeholder="Please enter personal email">
                     </div>
-                    
                 </div>
             </form>
         </div>

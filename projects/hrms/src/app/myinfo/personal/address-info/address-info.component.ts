@@ -15,8 +15,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
 })
 export class AddressInfoComponent {
   buttons= false;
-
-  basicInfoForm!: FormGroup;
+  addressForm!: FormGroup;
+ 
   subscription!:Subscription
   empinfo:any
   bloodGroups = [
@@ -37,22 +37,38 @@ export class AddressInfoComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.getEmployeeId();
+;
+    this.addressForm.disable(); 
   
-    this.basicInfoForm.disable();
+   
   }
  
   initializeForm(): void {
-    this.basicInfoForm = this.fb.group({
-      employeeId: ['', Validators.required],
-      salutation: [null, Validators.required],
-      firstName: ['', Validators.required],
-      middleName: [''],
-      lastName: ['', Validators.required],
-      gender: [null, Validators.required],
-      dob: ['', Validators.required],
-      bloodGroup: [null, Validators.required],
-      maritalStatus: [null, Validators.required],
+    this.addressForm = this.fb.group({
+      currentAddressLine1: ['', Validators.required],
+      currentAddressLine2: [''],
+      currentCity: ['', Validators.required],
+      currentState: ['', Validators.required],
+      currentCountry: ['', Validators.required],
+      currentZipCode: ['', Validators.required],
+      permanentAddressLine1: ['', Validators.required],
+      permanentAddressLine2: [''],
+      permanentCity: ['', Validators.required],
+      permanentState: ['', Validators.required],
+      permanentCountry: ['', Validators.required],
+      permanentZipCode: ['', Validators.required],
     });
+  }
+
+  enableForm(): void {
+    this.buttons = true;
+    this.addressForm.enable();
+  }
+
+  disableForm(): void {
+    this.buttons = false;
+    this.addressForm.reset();
+    this.addressForm.disable();
   }
 
   getEmployeeId(): void {
@@ -66,26 +82,56 @@ export class AddressInfoComponent {
   }
 
   patchForm(data: any): void {
-    this.basicInfoForm.patchValue({
+    this.addressForm.patchValue({
       employeeId: data.employeeId,
+      currentAddressLine1: data.currentAddressLine1,
+      currentAddressLine2: data.currentAddressLine2,
+      currentCity: data.currentCity,
+
+      currentState: data.currentState,
+      currentCountry: data.currentCountry,
+      currentZipCode: data.currentZipCode,
+      permanentAddressLine1: data.permanentAddressLine1,
+      permanentAddressLine2: data.permanentAddressLine2,
+      permanentCity: data.permanentCity,
+      permanentState: data.permanentState,
+      permanentCountry: data.permanentCountry,
+      permanentZipCode: data.permanentZipCode,
+      // Add any other fields you need to patch
       
     });
   }
 
-
-
-
-  showButtons(): void {
-    this.buttons = !this.buttons;
-
-    if (this.buttons) {
-        // Enable the form when the user clicks "Edit"
-        this.basicInfoForm.enable();
+  copyCurrentAddress(event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (isChecked) {
+      this.addressForm.patchValue({
+        permanentAddressLine1: this.addressForm.value.currentAddressLine1,
+        permanentAddressLine2: this.addressForm.value.currentAddressLine2,
+        permanentCity: this.addressForm.value.currentCity,
+        permanentState: this.addressForm.value.currentState,
+        permanentCountry: this.addressForm.value.currentCountry,
+        permanentZipCode: this.addressForm.value.currentZipCode,
+      });
     } else {
-        // Disable the form when the user clicks "Close"
-        this.basicInfoForm.disable();
+      this.addressForm.patchValue({
+        permanentAddressLine1: '',
+        permanentAddressLine2: '',
+        permanentCity: '',
+        permanentState: '',
+        permanentCountry: '',
+        permanentZipCode: '',
+      });
     }
+  }
+  saveForm(): void {
+    if (this.addressForm.valid) {
+      console.log('Form Data:', this.addressForm.value);
+      this.disableForm();
+    }
+  }
+
 }
 
   
-}
+

@@ -82,4 +82,5 @@ export interface LeaveApproval {
     approvalHeader: ApprovalHeader;
     module: Module;
     currentApprover: string;
+    request: any;
 }

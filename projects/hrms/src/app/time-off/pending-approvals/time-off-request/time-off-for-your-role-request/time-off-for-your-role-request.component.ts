@@ -23,6 +23,8 @@ export class TimeOffForYourRoleRequestComponent {
   subscription!: Subscription;
   leaves = [] as LeaveApproval[];
   approverComments = [] as LeaveApproverComment[];
+  selectedLeaveData = {} as any;
+  issubmitdiable: boolean = false;
   @ViewChild('commentspopup') modalContent: any;
   options = [
     { label: 10, value: 10 },
@@ -66,5 +68,86 @@ export class TimeOffForYourRoleRequestComponent {
     comments(value: any){
       this.approverComments = value;
       console.log(this.approverComments);
+    }
+    
+    ifreasonnull(Value: any) {
+      console.log(Value)
+      if (!Value || !Value.trim()) {
+        this.issubmitdiable = true;
+      } else {
+        this.issubmitdiable = false;
+      }
+    }
+
+    rejectleave(rejectPopup : any, selecteddata : any) {
+      this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+      this.approveRequest(selecteddata);
+     }
+     processleave(selecteddata : any) {
+      //this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
+      this.approveRequest(selecteddata);
+      this.handleProcess(selecteddata);
+     }
+     approveRequest(leaveRequest:LeaveApproval){
+      //this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
+      if(leaveRequest){
+        
+        this.subscription = this.http.getData(`Timeoff/getById/${leaveRequest.approvalHeader.referenceEntityId}`).subscribe({
+          next:(response : any) =>{
+            this.selectedLeaveData =  response
+            this.selectedLeaveData.request = leaveRequest
+            console.log(this.selectedLeaveData.request);
+            
+          },
+          error:(err) =>{},
+          complete:()=>{}
+        })
+      }
+    }
+    handleProcess(data: LeaveApproval){
+      let requestBody={
+        status: "Processed",
+        approvedBy:this.LOGIN.employeeId.toString()
+      }
+      console.log(data);
+      console.log(data.approvalHeader.id);
+      console.log(requestBody)
+      this.subscription =  this.http.putData(`PendingApproval/process/${data.approvalHeader.id}`,requestBody).subscribe({
+        next:(respone:any)=>{
+          console.log(respone);
+          console.log(alert('Success'));
+        },
+        error:(reason:any)=>{
+          console.log(reason);
+          console.log(alert('Success'));
+        },
+        complete:()=>{
+         },
+      })
+    }
+
+    handleReject(data: LeaveApproval) {
+      let requestBody = {
+        status: "Rejected",
+        comments: this.selectedLeaveData.comments,
+        approvedBy: this.LOGIN.employeeId.toString()
+      }
+      console.log(data);
+      console.log(requestBody)
+      this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
+        next: (respone: any) => {
+          console.log(respone);
+          console.log(alert("Success"));
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          console.log(alert(reason));
+        },
+        complete: () => {
+  
+        },
+  
+  
+      })
     }
 }

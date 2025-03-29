@@ -158,8 +158,7 @@ export class LeavesComponent {
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
       availing: [{value : '',disabled: true}, Validators.required, ], 
-      halfDay: [{ value: '', disabled: true }, Validators.required],
-      halfDayType: [{ value: '', disabled: true }, Validators.required],
+      
       reason: ['', [Validators.required, Validators.minLength(150)]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
@@ -1122,7 +1121,16 @@ export class LeavesComponent {
     if (daytype === 'half') {
       this.leaveFormData.isDaytype = true;
       this.enableButton = true;
-      this.selectedValue = '';
+      if(this.leaveForm.get('availing')?.value === 'firsthalf'){
+        this.selectedValue = '1'
+      }
+      if(this.leaveForm.get('availing')?.value === 'secondhalf'){
+        this.selectedValue = '3'
+      }
+      else{
+        this.selectedValue = '';
+      }
+      
     }
     else if (daytype === 'full') {
       this.leaveFormData.isDaytype = false;
@@ -1164,9 +1172,12 @@ export class LeavesComponent {
         let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
         this.leaveFormData.employeeId = empdata.employeeId;
         this.leaveFormData.durationType = this.selectedValue;
-        this.leaveFormData.duration = this.dateDiff;
+        this.leaveFormData.duration = 1;
         this.leaveFormData.date = moment();
         this.leaveFormData.isdeleted = true;
+        this.leaveFormData.startdate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+        this.leaveFormData.enddate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+
         if (this.empdata.probationEndDate) {
           // Check if the employee is still on probation
           this.getDataByLPID()

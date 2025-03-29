@@ -154,9 +154,9 @@
                                             class="form-check-input"
                                             type="radio" 
                                             id="flexRadioDefault0"
-                                            formControlName="halfDay"
+                                            formControlName="availing"
                                             value="0"
-                                            name="halfDay"
+                                            name="availing"
                                             (change)="chooseDayType('half')"
                                             required>
                                         Half Day
@@ -170,9 +170,9 @@
                                                 class="form-check-input"
                                                 type="radio"
                                                 id="flexRadioDefault1"
-                                                formControlName="halfDayType"
-                                                value="1"
-                                                name="halfDayType"
+                                                formControlName="availing"
+                                                value="firsthalf"
+                                                name="availing"
                                                 required>
                                             First Half
                                         </label>
@@ -183,9 +183,9 @@
                                                 class="form-check-input"
                                                 type="radio"
                                                 id="flexRadioDefault2"
-                                                formControlName="halfDayType"
-                                                value="3"
-                                                name="halfDayType"
+                                                formControlName="availing"
+                                                value="secondhalf"
+                                                name="availing"
                                                 required>
                                             Second Half
                                         </label>
@@ -193,10 +193,10 @@
                                 </ul>
                             
                                 <!-- Error Message for Half Day Selection -->
-                                <small class="text-danger" *ngIf="leaveForm.get('halfDay')?.invalid && leaveForm.get('halfDay')?.touched">
+                                <small class="text-danger" *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
                                     Please select Half Day option
                                 </small>
-                                <small class="text-danger" *ngIf="leaveForm.get('halfDayType')?.invalid && leaveForm.get('halfDayType')?.touched">
+                                <small class="text-danger" *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
                                     Please select First or Second Half
                                 </small>
                             </div>

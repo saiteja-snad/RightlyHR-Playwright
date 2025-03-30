@@ -28,17 +28,17 @@
                 <option [ngValue]="undefined" disabled>Select</option>
                 <option *ngFor="let item of terminationDetails" [ngValue]="item.reason">{{ item.reason }}</option>
               </select>
-              <small class="text-danger" *ngIf="offboardingForm.get('exitReason')?.invalid && offboardingForm.get('exitReason')?.touched">
+              <div class="error-msg" *ngIf="offboardingForm.get('exitReason')?.invalid && offboardingForm.get('exitReason')?.touched">
                 Exit Reason is required.
-              </small>
+              </div>
             </div>
   
             <div class="col-lg-4 col-md-6 mb-4">
               <label for="eligibleForRehire" class="form-label custom-label mb-2">Eligible For Rehire<span class="text-danger">*</span></label>
               
-              <small class="text-danger" *ngIf="offboardingForm.get('eligibleForRehire')?.invalid && offboardingForm.get('eligibleForRehire')?.touched">
+              <div class="error-msg" *ngIf="offboardingForm.get('eligibleForRehire')?.invalid && offboardingForm.get('eligibleForRehire')?.touched">
                 Eligible For Rehire is required.
-              </small>
+              </div>
             </div>
   
             <div class="col-lg-4 col-md-6 mb-4">
@@ -51,9 +51,9 @@
                 placeholder="Please enter relieving type"
                 [disabled]="!isEditing"
               />
-              <small class="text-danger" *ngIf="offboardingForm.get('relievingType')?.invalid && offboardingForm.get('relievingType')?.touched">
+              <div class="error-msg" *ngIf="offboardingForm.get('relievingType')?.invalid && offboardingForm.get('relievingType')?.touched">
                 Relieving Type is required.
-              </small>
+              </div>
             </div>
   
             <div class="col-lg-4 col-md-6 mb-4">
@@ -65,9 +65,9 @@
                 formControlName="lastWorkingDay"
                 [disabled]="!isEditing"
               />
-              <small class="text-danger" *ngIf="offboardingForm.get('lastWorkingDay')?.invalid && offboardingForm.get('lastWorkingDay')?.touched">
+              <div class="error-msg" *ngIf="offboardingForm.get('lastWorkingDay')?.invalid && offboardingForm.get('lastWorkingDay')?.touched">
                 Last Working Day is required.
-              </small>
+              </div>
             </div>
           </div>
         </form>

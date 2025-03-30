@@ -71,18 +71,18 @@
                     <div class="col-md-6 mb-3">
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" id="effectiveDate" formControlName="effectiveDate">
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('effectiveDate')?.invalid && jobDetailsForm.get('effectiveDate')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('effectiveDate')?.invalid && jobDetailsForm.get('effectiveDate')?.touched">
                             Effective Date is required
-                        </small>
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="jobRole" class="form-label custom-label mb-2">Job Role<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="JobroleDetails" optionLabel="name" formControlName="jobRole" placeholder="Please select job role" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('jobRole')?.invalid && jobDetailsForm.get('jobRole')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('jobRole')?.invalid && jobDetailsForm.get('jobRole')?.touched">
                             Job Role is required
-                        </small>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -91,18 +91,18 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="grades" optionLabel="name" formControlName="grade" placeholder="Please select grade" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('grade')?.invalid && jobDetailsForm.get('grade')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('grade')?.invalid && jobDetailsForm.get('grade')?.touched">
                             Grade is required
-                        </small>
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="department" class="form-label custom-label mb-2">Department<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="departments" optionLabel="name" formControlName="department" placeholder="Please select department" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('department')?.invalid && jobDetailsForm.get('department')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('department')?.invalid && jobDetailsForm.get('department')?.touched">
                             Department is required
-                        </small>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -111,18 +111,18 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="teams" optionLabel="name" formControlName="team" placeholder="Please select team" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('team')?.invalid && jobDetailsForm.get('team')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('team')?.invalid && jobDetailsForm.get('team')?.touched">
                             Team is required
-                        </small>
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="managers" optionLabel="name" formControlName="teamManager" placeholder="Please select team manager" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('teamManager')?.invalid && jobDetailsForm.get('teamManager')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('teamManager')?.invalid && jobDetailsForm.get('teamManager')?.touched">
                             Team Manager is required
-                        </small>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -131,18 +131,18 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="locations" optionLabel="name" formControlName="location" placeholder="Please select location" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('location')?.invalid && jobDetailsForm.get('location')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('location')?.invalid && jobDetailsForm.get('location')?.touched">
                             Location is required
-                        </small>
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocations" optionLabel="name" formControlName="subLocation" placeholder="Please select sub location" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('subLocation')?.invalid && jobDetailsForm.get('subLocation')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('subLocation')?.invalid && jobDetailsForm.get('subLocation')?.touched">
                             Sub Location is required
-                        </small>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -151,18 +151,18 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="shifts" optionLabel="name" formControlName="shift" placeholder="Please select shift" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('shift')?.invalid && jobDetailsForm.get('shift')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('shift')?.invalid && jobDetailsForm.get('shift')?.touched">
                             Shift is required
-                        </small>
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="jobType" class="form-label custom-label mb-2">Job Type<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="jobTypes" optionLabel="name" formControlName="jobType" placeholder="Please select job type" class="form-select custom-select"></p-select>
                         </div>
-                        <small class="error-msg" *ngIf="jobDetailsForm.get('jobType')?.invalid && jobDetailsForm.get('jobType')?.touched">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('jobType')?.invalid && jobDetailsForm.get('jobType')?.touched">
                             Job Type is required
-                        </small>
+                        </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
@@ -318,10 +318,10 @@
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="applieddate"
                                 formControlName="appliedDate" />
-                            <small class="error-msg"
+                            <div class="error-msg"
                                 *ngIf="separationRequestForm.get('appliedDate')?.invalid && separationRequestForm.get('appliedDate')?.touched">
                                 Raised Date is required
-                            </small>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="jobrole" class="form-label custom-label mb-2">Job Role <span
@@ -371,10 +371,10 @@
                                 <span class="color">{{ separationRequestForm.get('description')?.value?.length || 0 }} /
                                     400</span>
                             </div>
-                            <small class="error-msg"
+                            <div class="error-msg"
                                 *ngIf="separationRequestForm.get('description')?.invalid && separationRequestForm.get('description')?.touched">
                                 Reason for Separation is required
-                            </small>
+                            </div>
                         </div>
                     </div>
 
@@ -392,10 +392,10 @@
                                 <span class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="earlyRelievingDate"
                                 formControlName="earlyRelievingDate" />
-                            <small class="error-msg"
+                            <div class="error-msg"
                                 *ngIf="separationRequestForm.get('earlyRelievingDate')?.invalid && separationRequestForm.get('earlyRelievingDate')?.touched">
                                 Expected Relieving Date is required
-                            </small>
+                            </div>
                         </div>
                     </div>
 
@@ -411,10 +411,10 @@
                                     separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }} /
                                     400</span>
                             </div>
-                            <small class="error-msg"
+                            <div class="error-msg"
                                 *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.invalid && separationRequestForm.get('reasonForEarlyRelieving')?.touched">
                                 Reason for Early Relieving is required
-                            </small>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -18,7 +18,7 @@ import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader
 
 @Component({
   selector: 'app-bank-loan-letter',
-  imports: [CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss'
 })

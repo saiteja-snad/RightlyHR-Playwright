@@ -91,32 +91,37 @@ dataFailureMsg(msg:string){
       this.isdateofbankloan = true;
     }
   }
+  
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    this.initializeForm();
     this.getEmployeeId();
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
+    this.employeeForm.get('note')?.valueChanges.subscribe((value: string) => {
+      // Update the bankloanLetterData.note when the note value changes
+      this.bankloanLetterData.note = value;
+    });
   }
   //get Welcome letter Authority list
- getAuthorityDetails() {
-  const welcometype = 'Welcome Letter';
-  this.subscription = this.http
-  .getData(`SignaturesList?LetterType=${welcometype}`)
-    .subscribe({
+  getAuthorityDetails() {
+    let offertype = 'Welcome Letter';
+    this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
-        this.authorityDetails = data.map((employee: any) => {
-          return {
-            ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            authorityName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-            // selectedAllGroup: 'Group 1'
-             // Concatenate first, middle (if present), and last name
-          };
-        });
+        console.log(data);
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+        console.log(this.authorityDetails); 
       },
+      error: (error: any) => {
+        console.error(error);
+      }
     });
-}
+  }
   //function for issuedby
   getIssuedEmployeebyId(){
     this.employeedata=this.Employeeinfo.firstName+" "+this.Employeeinfo.lastName
@@ -131,13 +136,18 @@ Onclickemployeeid(Value:any){
     this.disablebuttonforemployeeid=false
   }
 }
-  Onclick(fusionemployeeId: any) {
-  if(fusionemployeeId){
-    this.fusionEmpId = fusionemployeeId;
-    console.log(fusionemployeeId);
+
+employeeFullname:any;
+  Onclick(event:any) {
+    const selectedEmployee = event.value;
+    console.log(selectedEmployee);
+    this.employeeFullname = selectedEmployee.firstName + ' ' + selectedEmployee.middleName + ' ' + selectedEmployee.lastName;
+  if(selectedEmployee.fusionemployeeId){
+    this.fusionEmpId = selectedEmployee.fusionemployeeId;
+    console.log(selectedEmployee.fusionemployeeId);
     this.bankloanLetterData = {}
     this.bankloanLetterData = this.employeeiddetails.find(
-      (c: any) => c.employeeId == fusionemployeeId
+      (c: any) => c.employeeId === this.fusionEmpId
     );
     this.disablebuttonforemployeeid=true
     if(this.bankloanLetterData.workEmail){
@@ -225,17 +235,73 @@ onclickauthority(ValueName:any){
     console.log(this.authorityDesignation);
   }
   }
-  onclickDesignation(){
-    const signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
+  // onclickDesignation(){
+  //   const signatureAuthorityDetails = this.authorityDetails.find(
+  //     (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
+  //   );
+  //   console.log(signatureAuthorityDetails);
+  //   this.bankloanLetterData.authorityName=signatureAuthorityDetails.authorityName;
+  //   this.bankloanLetterData.designation=signatureAuthorityDetails.designation;
+  //   this.bankloanLetterData.countrycode=signatureAuthorityDetails.countrycode;
+  //   this.bankloanLetterData.workNumber=signatureAuthorityDetails.workNumber;
+  //   this.bankloanLetterData.workEmail=signatureAuthorityDetails.workEmail
+  // }
+  // onclickDesignation() {
+  //   debugger
+  //   console.log('Authority selected:', this.bankloanLetterData.authorityid);
+  //   const signatureAuthorityDetails = this.authorityDetails.find(
+  //     (c: any) => c.employeeId === this.bankloanLetterData.authorityid
+  //   );
+  //   debugger
+  //   console.log('Selected Authority Details:', signatureAuthorityDetails);
+  
+  //   if (signatureAuthorityDetails) {
+  //     this.bankloanLetterData.authorityName = signatureAuthorityDetails.fullName;
+  //     this.bankloanLetterData.designation = signatureAuthorityDetails.designation;
+  //     this.bankloanLetterData.countrycode = signatureAuthorityDetails.countrycode;
+  //     this.bankloanLetterData.workNumber = signatureAuthorityDetails.workNumber;
+  //     this.bankloanLetterData.workEmail = signatureAuthorityDetails.workEmail;
+  
+  //     console.log('Updated bankloanLetterData:', this.bankloanLetterData); // Check if data is updated
+  //   }
+  // }
+  onclickDesignation(selectedAuthority: any) {
+    console.log("Selected Authority ID:", selectedAuthority);
+  
+    if (!selectedAuthority) {
+      this.bankloanLetterData.authorityName = '';
+      this.bankloanLetterData.designation = ''; // Ensure this is also cleared
+      this.bankloanLetterData.workEmail = ''; // Ensure this is also cleared
+      return;
+    }
+  
+    let signatureAuthorityDetails = this.authorityDetails.find(
+      (c: any) => c.employeeId == selectedAuthority.employeeId
     );
-    console.log(signatureAuthorityDetails);
-    this.bankloanLetterData.authorityName=signatureAuthorityDetails.authorityName;
-    this.bankloanLetterData.designation=signatureAuthorityDetails.designation;
-    this.bankloanLetterData.countrycode=signatureAuthorityDetails.countrycode;
-    this.bankloanLetterData.workNumber=signatureAuthorityDetails.workNumber;
-    this.bankloanLetterData.workEmail=signatureAuthorityDetails.workEmail
-  }
+  
+    console.log("Selected Authority Details:", signatureAuthorityDetails);
+  
+    if (signatureAuthorityDetails) {
+      // 🔹 Construct full name correctly
+      
+      this.bankloanLetterData.authorityName = signatureAuthorityDetails.middleName
+        ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
+        : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+      
+      this.bankloanLetterData.designation = signatureAuthorityDetails.designation;
+      this.bankloanLetterData.workEmail = signatureAuthorityDetails.workEmail;
+
+      console.log('Updated bankloanLetterData:', this.bankloanLetterData); // Log to check if fields are updated
+    } else {
+      this.bankloanLetterData.authorityName = '';
+      this.bankloanLetterData.designation = '';
+      this.bankloanLetterData.workEmail = '';
+    }
+}
+
+  
+  
+  
 //hostlister to close the dropdown when we Click out side the box
 @HostListener('document:click', ['$event.target'])
 onClickOutside(target: any) {
@@ -258,14 +324,12 @@ onClickOutside(target: any) {
           console.log(data);
           this.employeeiddetails = data.map((employee: any) => {
             return {
-              ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
+              ...employee, 
               fullName: `${
                 employee.employeeId ? employee.employeeId + ' - ' : ''
               }${employee.firstName} ${
                 employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
-              // selectedAllGroup: 'Group 1'
-              // Concatenate first, middle (if present), and last name
             };
           });
 
@@ -298,7 +362,7 @@ onClickOutside(target: any) {
   }
 
 
-  async postBankLoanLetterFormSubmit(f: NgForm) {
+  async postBankLoanLetterFormSubmit(f: FormGroup) {
     this.loading=true;
     const data = await this.bankloanLetterData;
     data.dateofbankloan = this.formatDate(data.dateofbankloan);

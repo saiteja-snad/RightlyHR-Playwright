@@ -1,8 +1,13 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+        <div class="d-flex py-3">
+            <div>
+                <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                        class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+            </div>
+            <div>
+                <span class="heading"><span class="px-2">>></span>Address Proof Letter</span>
+            </div>
         </div>
     </div>
 
@@ -10,46 +15,66 @@
     <div class="main-letter-content row">
         <div class="col-sm-12 col-md-3">
             <div class="card letter-fields-content p-4">
-                <form action="">
+                <form [formGroup]="employeeForm" (ngSubmit)="postAddressLetterFormSubmit(employeeForm)">
                     <div class="row">
                         <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search Employee<span class="text-danger">*</span></label>
+                            <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100">
-                                    <!-- Template for selected item -->
-                                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
-                                    <!-- Template for dropdown items -->
-                                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
+                                    placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
+                                    (onChange)="Onclick($event.value)">
                                 </p-select>
                             </div>
-                        </div>
-                        <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select Address<span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select address" class="form-select custom-select" />
+                            <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                                <div class="error-msg">Employee is required</div>
                             </div>
                         </div>
                         <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Document Type<span class="text-danger">*</span></label>
+                            <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location" class="form-select custom-select" />
+                                <p-select [options]="addressOptions" optionLabel="label" placeholder="Please select address"
+                                    formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
+                                    class="form-select custom-select">
+                                </p-select>
+                        
+                            </div>
+                            <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
+                                <div class="error-msg">Address is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeementType" optionLabel="name"
+                                    placeholder="Please select document type" formControlName="Documenttype"
+                                    class="form-select custom-select" >
+                                    <option disabled [ngValue]="undefined">Select</option>
+                                    <option Value="true">Yes</option>
+                                    <option Value="false">No</option>
+                                </p-select>
+                            </div>
+                            <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+                                <div class="error-msg">Document Type is required</div>
                             </div>
                         </div>
                         <div class="col-md-12 mb-4">
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                                Authority Name<span class="text-danger">*</span></label>
+                              Authority Name<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="sublocation" optionLabel="name"
-                                    placeholder="Please select sub location" class="form-select custom-select" />
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                class="form-select custom-select" formControlName="authorityid"(onChange)="onclickDesignation($event.value)"/>
+                            </div>
+                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
+                              <div class="error-msg">Signature Authority Name is required</div>
                             </div>
                         </div>
                         <div>
-                            <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name, Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
+                            <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name, Designation, Joining Date,
+                                Address, in Personal and Job Tabs before Generating the Document.</p>
                         </div>
                       </div>
                     <div class="d-flex flex-wrap gap-3 pt-4">
-                        <button type="button" class="custom-btn btn-primary">Generate Document</button>
+                        <button type="submit" class="custom-btn btn-primary">Generate Document</button>
                     </div>
                 </form>
             </div>
@@ -65,23 +90,38 @@
                             </div>
                             <div class="mb-5">
                                 <p>
-                                    <span class="letter-text">This letter is to confirm that
-                                        <!-- <span *ngIf="!addressLetterData.firstName;else name">_______________________</span>
-                                                            <ng-template #name><b>{{addressLetterData.firstName}} {{addressLetterData.middleName}}
-                                                            {{addressLetterData.lastName}}</b></ng-template>  -->
-                                        has been working in our Establishment "RightlyHR" as
-                                        <!-- <span *ngIf="!addressLetterData.jobRole;else role">_______________________</span>
-                                                             <ng-template #role><b>{{addressLetterData.jobRole}} </b></ng-template> since
-                                                             <span *ngIf="!addressLetterData.dateOfJoining;else joining"> _______________________.</span>
-                                                             <ng-template #joining><b>{{addressLetterData.dateOfJoining|dateformat}}.
-                                                             </b></ng-template> Currently, residential address is <span *ngIf="!addressFlag;else address">
-                                                             _______________________</span><ng-template #address><b>
-                                                            {{addressLetterData.addressLine1}}, {{addressLetterData.addressLine2}}, {{addressLetterData.city}}, 
-                                                            {{addressLetterData.state}}, {{addressLetterData.country}} - {{addressLetterData.zipCode}}.</b>
-                                                         </ng-template> -->
+                                  <span class="letter-text">
+                                    This letter is to confirm that
+                                    <span *ngIf="!employeeForm.value.firstName; else name">_______________________</span>
+                                    <ng-template #name>
+                                      <b>{{ employeeForm.value.firstName }} {{ employeeForm.value.middleName }} {{ employeeForm.value.lastName }}</b>
+                                    </ng-template>
+                                    has been working in our Establishment "RightlyHR" as 
+                                    <span *ngIf="employeeForm.get('jobRole')?.value === 'Fetching...'; else role">
+                                        Fetching...
                                     </span>
+                                    <ng-template #role>
+                                        <b>{{ employeeForm.get('jobRole')?.value || 'Not Available' }}</b>
+                                    </ng-template>  since
+                                    <span *ngIf="!employeeForm.value.dateOfJoining; else joining">_______________________</span>
+                                    <ng-template #joining><b>{{ employeeForm.value.dateOfJoining | dateformat }}</b></ng-template>.
+                                    Currently, residential address is 
+                                    <span *ngIf="!addressFlag; else address">_______________________</span>
+                                    <ng-template #address>
+                                        <b *ngIf="employeeForm">
+                                            {{ employeeForm.get('addressLine1')?.value || 'No Data' }}, 
+                                            {{ employeeForm.get('addressLine2')?.value }},
+                                            {{ employeeForm.get('city')?.value }},
+                                            {{ employeeForm.get('state')?.value }},
+                                            {{ employeeForm.get('country')?.value }} - 
+                                            {{ employeeForm.get('zipCode')?.value }}.
+                                        </b>
+                                    </ng-template>
+                                    
+                                  </span>
                                 </p>
-                            </div>
+                              </div>
+                              
                             <div class="mb-4">
                                 <p>If you have any further questions, you can call us at 8886651309.</p>
                             </div>
@@ -90,16 +130,36 @@
                                 <p><b>For RightlyHR</b></p>
                             </div>
                             <div>
-                                <div class="authority-signature mb-3">Authority Signature</div>
-                                <div>
-                                    <p>Authority Name</p>
-                                    <p>Designation</p>
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <div *ngIf="!addressLetterData.authorityName?.trim()" class="authority-signature mb-3">
+                                    Authority Signature
+                                  </div>
+                              
+                                <!-- Show Name & Designation only when authorityName is set -->
+                                <div *ngIf="addressLetterData.authorityName?.trim()">
+                                  <p style="font-weight: bold;">Authority Name</p>
+                                  <p style="font-weight: bold;">Designation</p>
                                 </div>
-                                <!-- <div class="stamp-img">
-                                                        <p class="stamp-text"><span> {{addressLetterData.authorityName}}</span></p>
-                                                        <p class="stamp-text1"><span>{{authorityDesignation}}</span></p><br>
-                                                    </div> -->
-                            </div>
+                              
+                                <!-- Signature in custom font (Only show when valid name exists) -->
+                                <div *ngIf="addressLetterData.authorityName?.trim()" 
+                                style="font-family: autographsignatureFont; font-size: xx-large;">
+                             {{ addressLetterData.authorityName }}
+                           </div>
+                              
+                                <!-- Stamp & Designation (Only show when valid name exists) -->
+                                <div class="stamp-img" *ngIf="addressLetterData.authorityName?.trim()">
+                                  <p class="stamp-text">
+                                    <span>{{ addressLetterData.authorityName }}</span>
+                                  </p>
+                                  <p class="stamp-text1">
+                                    <span>{{ authorityDesignation }}</span>
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              
+                              
                         </div>
                         <div class="letter-footer text-center">
                             <p class="company-name">RightlyHR</p>

@@ -1,4 +1,5 @@
 export interface IJob {
+    employeeId: any,
     firstName?: string,
     lastName?: string,
     middleName?:string,

@@ -1,1 +1,300 @@
-<p>certification works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center">
+        <div> <span class="education-sub-header">Certification Details
+            </span></div>
+        <div class="plus-button">
+            <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
+                    (click)="openModal(addexperincemodal)" class="plus-text">Add
+                    New</span></span>
+        </div>
+    </div>
+    <div class="custom-table-content mt-2">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Employment Type</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Job Role</th>
+                    <th>Currently Working</th>
+                    <th>Document</th>
+                    <th class="text-center">Actions</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="((empcertsdata | async) ?? []).length > 0; else noDataTemplate">
+                    <tr *ngFor="let empcreficition of empcertsdata | async">
+                        <td>{{ empcreficition.certificationName }}</td>
+                        <td>{{empcreficition.certificationId}}</td>
+                        <td>{{empcreficition.issuedDate | dateformat}}</td>
+                        <td>{{empcreficition.toDate | dateformat}}</td>
+                        <td>{{empcreficition.jobTitle}}</td>
+                        <td>
+                            <span *ngIf="empcreficition.expirationDate != null; else NoExpiration"></span><ng-template
+                                #NoExpiration>No Expiration</ng-template>{{ empcreficition.expirationDate | dateformat
+                            }}
+                        </td>
+                        <td><span *ngIf="empcreficition.docUrl;else noData" class="dowload-text"
+                                (click)="onSelectBankProofDownload(empcreficition)" style="cursor: pointer;"><i
+                                    class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
+                                #noData>-</ng-template></td>
+
+
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                     <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>
+                                    <li (click)="opendeletModal(deleteconformation,empcreficition)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                        </a>
+                                    </li> 
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td colspan="9" class="text-center">No data found</td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<ng-template #addexperincemodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Add Previous Experience Details
+                </p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="certificationName" class="form-label custom-label mb-2">
+                            Certification Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control custom-input" id="certificationName"
+                            formControlName="certificationName" placeholder="Please enter certification name" />
+                        <div class="error-msg"
+                            *ngIf="certificationForm.get('certificationName')?.invalid && certificationForm.get('certificationName')?.touched">
+                            <span *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification
+                                Name is required</span>
+                            <span *ngIf="certificationForm.get('certificationName')?.errors?.['pattern']">Enter a
+                                valid Certification Name</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="certificationId" class="form-label custom-label mb-2">
+                            Certification ID <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control custom-input" id="certificationId"
+                            formControlName="certificationId" placeholder="Please enter certification ID" />
+                        <div class="error-msg"
+                            *ngIf="certificationForm.get('certificationId')?.invalid && certificationForm.get('certificationId')?.touched">
+                            <span *ngIf="certificationForm.get('certificationId')?.errors?.['required']">Certification
+                                ID is required</span>
+                            <span *ngIf="certificationForm.get('certificationId')?.errors?.['pattern']">Enter a
+                                valid Certification ID</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="issuedDate" class="form-label custom-label mb-2 ">
+                            Issued Date <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control custom-input" id="issuedDate"
+                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" />
+                        <div class="error-msg"
+                            *ngIf="certificationForm.get('issuedDate')?.invalid && certificationForm.get('issuedDate')?.touched">
+                            Issued Date is required
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="expiryDate" class="form-label custom-label mb-2">
+                            Expiry Date <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control custom-input" id="expiryDate"
+                            formControlName="expiryDate" [min]="certificationForm.get('issuedDate')?.value" />
+                        <div class="error-msg"
+                            *ngIf="certificationForm.get('expiryDate')?.invalid && certificationForm.get('expiryDate')?.touched">
+                            Expiry Date is required
+                        </div>
+                        <!-- <div class="error-msg" *ngIf="!isExpiryDate">Expiry Date cannot be less than Issued Date</div> -->
+                        <div class="form-check">
+                            <input class="form-check-input mt-2" type="checkbox" id="noExpiry"
+                                formControlName="isExpired" />
+                            <label class="form-check-label label-in mt-2" for="noExpiry">No Expiry</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="attachment" class="form-label custom-label mb-2">
+                            Attachment <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control custom-input mb-3" type="file" id="attachment"
+                            formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
+                        <div class="error-msg"
+                            *ngIf="certificationForm.get('attachment')?.invalid && certificationForm.get('attachment')?.touched">
+                            Please choose a file
+                        </div>
+                        <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
+                        <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" (click)="onReset()">Close</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="certificationForm.invalid">Add
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #updateexperincemodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Update Certification Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="certificationName" class="form-label custom-label mb-2">
+                            Certification Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control custom-input" id="certificationName"
+                            formControlName="certificationName" placeholder="Please enter certification name" />
+                        <div class="error-msg"
+                            *ngIf="updateCertificationForm.get('certificationName')?.invalid && updateCertificationForm.get('certificationName')?.touched">
+                            <span *ngIf="updateCertificationForm.get('certificationName')?.errors?.['required']">Certification
+                                Name is required</span>
+                            <span *ngIf="updateCertificationForm.get('certificationName')?.errors?.['pattern']">Enter a
+                                valid Certification Name</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="certificationId" class="form-label custom-label mb-2">
+                            Certification ID <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control custom-input" id="certificationId"
+                            formControlName="certificationId" placeholder="Please enter certification ID" />
+                        <div class="error-msg"
+                            *ngIf="updateCertificationForm.get('certificationId')?.invalid && updateCertificationForm.get('certificationId')?.touched">
+                            <span *ngIf="updateCertificationForm.get('certificationId')?.errors?.['required']">Certification
+                                ID is required</span>
+                            <span *ngIf="updateCertificationForm.get('certificationId')?.errors?.['pattern']">Enter a
+                                valid Certification ID</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="issuedDate" class="form-label custom-label mb-2 ">
+                            Issued Date <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control custom-input" id="issuedDate"
+                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" />
+                        <div class="error-msg"
+                            *ngIf="updateCertificationForm.get('issuedDate')?.invalid && updateCertificationForm.get('issuedDate')?.touched">
+                            Issued Date is required
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="expiryDate" class="form-label custom-label mb-2">
+                            Expiry Date <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control custom-input" id="expiryDate"
+                            formControlName="expiryDate" [min]="updateCertificationForm.get('issuedDate')?.value" />
+                        <div class="error-msg"
+                            *ngIf="updateCertificationForm.get('expiryDate')?.invalid && updateCertificationForm.get('expiryDate')?.touched">
+                            Expiry Date is required
+                        </div>
+                        <!-- <div class="error-msg" *ngIf="!isExpiryDate">Expiry Date cannot be less than Issued Date</div> -->
+                        <div class="form-check">
+                            <input class="form-check-input mt-2" type="checkbox" id="noExpiry"
+                                formControlName="isExpired" />
+                            <label class="form-check-label label-in mt-2" for="noExpiry">No Expiry</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="attachment" class="form-label custom-label mb-2">
+                            Attachment <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control custom-input mb-3" type="file" id="attachment"
+                            formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
+                        <div class="error-msg"
+                            *ngIf="updateCertificationForm.get('attachment')?.invalid && updateCertificationForm.get('attachment')?.touched">
+                            Please choose a file
+                        </div>
+                        <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
+                        <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" (click)="onReset()">Close</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="updateCertificationForm.invalid">update
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to delete the Certification Details?</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteCertification()">Yes</button>
+        </div>
+    </div>
+
+</ng-template>

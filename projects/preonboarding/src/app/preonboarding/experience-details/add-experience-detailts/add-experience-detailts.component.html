@@ -1,0 +1,54 @@
+<div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="pt-2">
+            <p class="popup-heading mb-0">Add Experience Details</p>
+        </div>
+        <div>
+            <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+    </div>
+    <div class="custom-main-popup-content p-4">
+        <form action="">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="eventDate" class="form-label custom-label mb-2">Education<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="education">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="eventDate" class="form-label custom-label mb-2">University<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="university">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="eventDate" class="form-label custom-label mb-2">Specialization<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="specialization">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="eventDate" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="gpa">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="title" class="form-label custom-label mb-2">Start Date<span
+                            class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" id="start date"
+                        placeholder="Please enter event title">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="title" class="form-label custom-label mb-2">To Date<span
+                            class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" id="end date"
+                        placeholder="Please enter event title">
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label for="file" class="form-label custom-label mb-2">Attachment(Image and PDF only)<span
+                            class="text-danger">*</span></label>
+                    <input type="file" class="form-control custom-input" id="file">
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-3 mt-4">
+                <button type="reset" class="custom-btn btn-secondary" (click)="close()">Close</button>
+                <button type="submit" class="custom-btn btn-primary">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+

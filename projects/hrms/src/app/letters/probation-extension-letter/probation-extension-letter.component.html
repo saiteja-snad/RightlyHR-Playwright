@@ -1,1 +1,182 @@
-<p>probation-extension-letter works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex py-3">
+            <div>
+                <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                        class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+            </div>
+            <div>
+                <span class="heading"><span class="px-2">>></span>Probation Extenstion Letter</span>
+            </div>
+        </div>
+    </div>
+
+    <!--letter content-->
+    <div class="main-letter-content row">
+        <div class="col-sm-12 col-md-3">
+            <div class="card letter-fields-content p-4">
+                <form [formGroup]="employeeForm" (ngSubmit)="postProbationExtensionLetterFormSubmit(employeeForm)">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
+                                    placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
+                                    (onChange)="Onclick($event.value)">
+                                </p-select>
+                            </div>
+                            <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                                <div class="error-msg">Employee is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Issued Date <span class="error-msg">*</span></label>
+                            <input type="date" class="form-control custom-input" formControlName="dateofprobationextension" placeholder="Please enter Date"
+                                (change)="DateValidation()" />
+                            <div *ngIf="employeeForm.get('dateofprobationextension')?.invalid && employeeForm.get('dateofprobationextension')?.touched">
+                                <div class="error-msg">Issued Date is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                              <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select document type" formControlName="Documenttype"
+                                class="form-select custom-select">
+                                <option disabled [ngValue]="undefined">Select</option>
+                              </p-select>
+                            </div>
+                            <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+                              <div class="error-msg">Document Type is required</div>
+                            </div>
+                          </div>
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
+                              Authority Name<span class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                              <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" />
+                            </div>
+                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
+                              <div class="error-msg">Signature Authority Name is required</div>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name, Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
+                        </div>
+                      </div>
+                    <div class="d-flex flex-wrap gap-3 pt-4">
+                        <button type="button" class="custom-btn btn-primary">Generate Document</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-9">
+            <div class="card letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+                    <div class="letter-page-content" id="pdfContent">
+                        <div class="letter-page-sub-content">
+                            <div *ngIf="probationExtensionLetterData.Documenttype;else doc" class="mb-5">
+                                <app-lettersheader></app-lettersheader>>
+                             </div>
+                             <ng-template #doc>
+                                <div style="margin-bottom: 6.5rem;"></div>
+                             </ng-template>
+                            <div class="letter-div mb-4">
+                                <div class="d-flex justify-content-between">
+                                    <div >
+                                        <ul style="padding-left: 0px;">
+                                            <li class="letter-text"
+                                                *ngIf="!probationExtensionLetterData.firstName && !probationExtensionLetterData.lastName;else fullname">
+                                            </li>
+                                            <ng-template #fullname>
+                                                <li class="letter-text">{{probationExtensionLetterData.firstName}}
+                                                    {{probationExtensionLetterData.middleName}}
+                                                    {{probationExtensionLetterData.lastName}}
+                                                </li>
+
+                                            </ng-template>
+                                            <li class="letter-text">{{probationExtensionLetterData.fusionEmpId}}</li>
+                                            <li class="letter-text">{{probationExtensionLetterData.jobRole}}</li>
+                                            <li class="letter-text">{{probationExtensionLetterData.department}}</li>
+                                            <li class="letter-text">{{probationExtensionLetterData.workLocation}}</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <p class="letter-text">Issued Date:
+                                            {{probationExtensionLetterData.dateofprobationextension | dateformat}}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="mb-4 mt-4">
+                                <div class="heading-div"><span class="letter-heading border-bottom1"></span></div>
+                            </div> -->
+                            <div class="letter-heading-div" style="margin-bottom: 5px;">
+                                <p class="letter-text"><strong>Dear </strong>
+                                    <strong>{{probationExtensionLetterData.firstName}}
+                                        {{probationExtensionLetterData.middleName}}
+                                        {{probationExtensionLetterData.lastName}},</strong></p>
+                            </div>
+                            <div class="mb-2 mt-2 letter-heading-div">
+                                <p class="letter-text">We are pleased to inform that following a performance appraisal
+                                    and subsequent review, your probation period has been extended by {{probationExtensionLetterData.probationmonths}} months.
+                                    This extension will conclude on {{ probationExtensionLetterData.probationExtendedDate|dateformat}}.
+                                    At the conclusion of this extended probation period, we will conduct
+                                    another performance review to determine the subsequent course of action based on
+                                    your performance.</p>
+
+                                <p class="letter-text">
+                                    During this extended probationary period, we will continue to provide you with
+                                    guidance, feedback, and support
+                                    to help you excel in your role. Our aim is to ensure that you have the necessary
+                                    time and resources to meet our
+                                    performance expectations and demonstrate your full potential as a valuable member of
+                                    our team.
+                                </p>
+
+                                <p class="letter-text">Please be aware that your terms and conditions of employment will
+                                    remain the same during this extension, and all
+                                    other aspects of your employment relationship with RightlyHR
+                                    will remain unchanged.</p>
+
+                                <p class="letter-text"> We believe that this extension will provide you with an
+                                    opportunity to further showcase your abilities, and we
+                                    have confidence in your potential to succeed in your current role. We are committed
+                                    to working closely with you to ensure your continued growth and success within our organization.</p>
+
+                                <p class="letter-text"> We look forward to witnessing your continued progress and
+                                    contributions to our team during this extended probationary period.</p>
+
+                                <p class="letter-text" style="margin-bottom: 0rem;"><Span class="letter-text">Sincerely,
+                                    </Span></p>
+                                <p class="letter-headingappraisal"><strong>for RightlyHR
+                                    </strong></p>
+
+                                <div style="font-family: autographsignatureFont; font-size: xx-large;">
+                                    {{probationExtensionLetterData.authorityName}}</div>
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <div>
+                                            <div class="stamp-img">
+                                                <p class="stamp-text"><span>
+                                                        <b>{{probationExtensionLetterData.authorityName}}</b></span></p>
+                                                <p class="stamp-text1"><span
+                                                        class="letter-text"><b>{{authorityDesignation}}</b></span></p>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="letter-footer text-center">
+                            <p class="company-name">RightlyHR</p>
+                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

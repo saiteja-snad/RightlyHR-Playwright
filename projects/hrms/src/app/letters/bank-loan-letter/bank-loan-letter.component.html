@@ -1,8 +1,13 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex py-3">
         <div>
             <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
                     class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+        </div>
+        <div>
+            <span class="heading"><span class="px-2">>></span>Bank Loan Letter</span>
+        </div>
         </div>
     </div>
 
@@ -10,45 +15,51 @@
     <div class="main-letter-content row">
         <div class="col-sm-12 col-md-3">
             <div class="card letter-fields-content p-4">
-                <form [formGroup]="employeeForm">
+                <form [formGroup]="employeeForm" (ngSubmit)="postBankLoanLetterFormSubmit(employeeForm)">
                     <div class="row">
                         <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search
-                                Employee<span class="text-danger">*</span></label>
+                            <label class="form-label custom-label mb-2">Search Employee<span
+                                    class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="name" [filter]="true"
-                                    filterBy="name" [showClear]="true" placeholder="Please select employee"
-                                    class="custom-select w-100">
-                                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name
-                                        }}</ng-template>
-                                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                                <p-select [options]="employeeiddetails" optionLabel="fullName"  [filter]="true" filterBy="fullName"
+                                [showClear]="true"  placeholder="Please select employee"
+                                    formControlName="fusionEmpId" class="custom-select w-100" (onChange)="Onclick($event)">
                                 </p-select>
                             </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Date <span
-                                    class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
-                                placeholder="Please enter offerIssuedDate" />
-                                <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
-                                    <div class="error-msg">Date is required</div>
-                                </div>
-                        </div>
-                        <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Document
-                                Type<span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="sublocation" optionLabel="name"
-                                    placeholder="Please select sub location" class="form-select custom-select" />
+                            <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                                <div class="error-msg">Employee is required</div>
                             </div>
                         </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Date <span class="error-msg">*</span></label>
+                            <input type="date" class="form-control custom-input" formControlName="dateofbankloan" placeholder="Please enter Date" (change)="DateValidation()"/>
+                            <div *ngIf="employeeForm.get('dateofbankloan')?.invalid && employeeForm.get('dateofbankloan')?.touched">
+                              <div class="error-msg">Date is required</div>
+                            </div>
+                          </div>
+                          <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                              <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select document type" formControlName="Documenttype"
+                                class="form-select custom-select">
+                                <option disabled [ngValue]="undefined">Select</option>
+                              </p-select>
+                            </div>
+                            <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+                              <div class="error-msg">Document Type is required</div>
+                            </div>
+                          </div>
                         <div class="col-md-12 mb-4">
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                                Authority Name<span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="sublocation" optionLabel="name"
-                                    placeholder="Please select sub location" class="form-select custom-select" />
+                              Authority Name<span class="error-msg">*</span></label>
+                              <div class="custom-p-select-content">
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                class="form-select custom-select" formControlName="authorityid"(onChange)="onclickDesignation($event.value)"/>
                             </div>
+                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
+                                <div class="error-msg">Signature Authority Name is required</div>
+                              </div>
                         </div>
                         <div>
                             <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
@@ -58,7 +69,7 @@
                         </div>
                     </div>
                     <div class="d-flex flex-wrap gap-3 pt-4">
-                        <button type="button" class="custom-btn btn-primary">Generate Document</button>
+                        <button type="submit" class="custom-btn btn-primary" disabled="employeeForm.invalid">Generate Document</button>
                     </div>
                 </form>
             </div>
@@ -69,18 +80,18 @@
                 <div class="d-flex justify-content-center">
                     <div class="letter-page-content" id="pdfContent">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="bankloanLetterData.Documenttype; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
-                            </div>
-                            <ng-template #doc>
+                            <div *ngIf="employeeForm.get('Documenttype')?.value === true; else doc">
+                                <app-lettersheader></app-lettersheader>
+                              </div>
+                              <ng-template #doc>
                                 <div style="margin-bottom: 3rem;"></div>
-                            </ng-template>
+                              </ng-template>
                             <div class="row">
                                 <div class="col-lg-2 col-md-2"></div>
                                 <div class="col-lg-10 col-md-10">
                                     <div class="date-div">
                                         <div class="date-div"><span class="letter-text">Date: </span>
-                                            <span class="letter-text">{{bankloanLetterData.dateofbankloan|
+                                            <span class="letter-text">{{bankloanLetterData.dateofbankloan |
                                                 dateformat}}</span>
                                         </div>
                                     </div>
@@ -96,23 +107,22 @@
                                         <span *ngIf="!bankloanLetterData.firstName;else name">
                                             _______________________</span>
                                         <ng-template #name><b>
-                                                {{bankloanLetterData.firstName}} {{bankloanLetterData.middleName}}
-                                                {{bankloanLetterData.lastName}}
+                                                {{employeeFullname}} 
                                             </b></ng-template> has been working in our Establishment "RightlyHR"
                                         currently designated as
                                         <span *ngIf="!bankloanLetterData.jobRole;else role">
                                             _______________________</span>
-                                        <ng-template #role><b> {{bankloanLetterData.jobRole}} </b></ng-template>
+                                        <ng-template #role><b> {{employeedatabank.jobRole}} </b></ng-template>
                                         since <span
                                             *ngIf="!bankloanLetterData.dateOfJoining;else joining">_______________________.</span>
                                         <ng-template #joining><b>
-                                                {{bankloanLetterData.dateOfJoining|dateformat}}.</b></ng-template>
+                                                {{employeedatabank.dateOfJoining|dateformat}}.</b></ng-template>
                                     </span>
                                 </p>
                             </div>
                             <div class="text-content-div">
                                 <p>
-                                    <span class="letter-text">This letter is being issued on {{hisOrHerdata}} request to
+                                    <span class="letter-text">This letter is being issued on {{ hisOrHerdata}} request to
                                         enable {{herOrHimdata}} to
                                         apply for a bank Loan.</span>
                                 </p>
@@ -128,22 +138,38 @@
                                 </p>
                             </div>
                             <div>
-                                <!-- <img src=".\assets\images\signature.png" alt=""> -->
-                                <div style="font-family: autographsignatureFont; font-size: xx-large;" class="mt-4">
-                                    {{bankloanLetterData.authorityName}}</div>
-                                <div class="stamp-img">
-                                    <!-- <img src=".\assets\images\Fusion stamp.png" alt=""> -->
-                                    <p class="stamp-text letter-text"><span>{{bankloanLetterData.authorityName}}</span>
-                                    </p>
-                                    <p class="stamp-text1"><span class="letter-text">{{authorityDesignation}}</span></p>
-                                    <br>
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <div *ngIf="!bankloanLetterData.authorityName?.trim()" class="authority-signature mb-3">
+                                    Authority Signature
+                                  </div>
+                              
+                                <!-- Show Name & Designation only when authorityName is set -->
+                                <div *ngIf="bankloanLetterData.authorityName?.trim()">
+                                  <p style="font-weight: bold;">Authority Name</p>
+                                  <p style="font-weight: bold;">Designation</p>
                                 </div>
-                            </div>
-                            <div class="letter-footer text-center">
-                                <p class="company-name">RightlyHR</p>
-                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                    Gachibowli, HYD - 500032</p>
-                            </div>
+                              
+                                <!-- Signature in custom font (Only show when valid name exists) -->
+                                <div *ngIf="bankloanLetterData.authorityName?.trim()" 
+                                style="font-family: autographsignatureFont; font-size: xx-large;">
+                             {{ bankloanLetterData.authorityName }}
+                           </div>
+                              
+                                <!-- Stamp & Designation (Only show when valid name exists) -->
+                                <div class="stamp-img" *ngIf="bankloanLetterData.authorityName?.trim()">
+                                  <p class="stamp-text">
+                                    <span>{{ bankloanLetterData.authorityName }}</span>
+                                  </p>
+                                  <p class="stamp-text1">
+                                    <span>{{ authorityDesignation }}</span>
+                                  </p>
+                                </div>
+                              </div>
+                              
+                        </div>
+                        <div class="letter-footer text-center">
+                            <p class="company-name">RightlyHR</p>
+                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
                         </div>
                     </div>
                 </div>

@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
-import { IemployeeDetails } from '../offer-letter/offer-letter.model';
+
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -14,14 +14,20 @@ import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { IemployeeDetails } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-salary-revision-letter',
-  imports: [CommonModule,Select,CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss'
 })
 export class SalaryRevisionLetterComponent {
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
+  ];
   subscription!: Subscription;
   appraisalTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template
   appraisalData = {} as any; //appraisal letter form object
@@ -55,10 +61,6 @@ export class SalaryRevisionLetterComponent {
   // employeementType = [{ name: 'Permanent' }, { name: 'Contract' }];
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
-  employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
-  ];
   constructor( private http: HttpService, private httpclient: HttpClient, 
     // private toaster: NgToastService,
      private router: Router, 
@@ -106,6 +108,7 @@ export class SalaryRevisionLetterComponent {
     // this._userAcessService.checkRouteAccess('Dashboard.view');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
     console.log(this.Employeeinfo);
+    this.initializeForm();
     this.getAppraisalTemplate();
     this.getEmployeeId();
     this.getCompensationById;
@@ -114,10 +117,10 @@ export class SalaryRevisionLetterComponent {
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
-      searchEmployee: ['', Validators.required],
-      documentType: ['', Validators.required],
-      dateofbankloan: ['', Validators.required],
-      signatureAuthority: ['', Validators.required]
+      fusionEmpId: ['', Validators.required],
+      dateofAppraisal: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+      authorityid: ['', Validators.required]
      });
   }
   //function for issed by
@@ -228,17 +231,22 @@ export class SalaryRevisionLetterComponent {
     }
   }
 
-  //get offer letter Authority list
   getAuthorityDetails() {
     let offertype = 'Appraisal Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.authorityDetails = data;
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+        console.log(this.authorityDetails); 
       },
+      error: (error: any) => {
+        console.error(error);
+      }
     });
   }
-
   //hostlister to close the dropdown when we Click out side the box
   @HostListener('document:click', ['$event.target'])
   onClickOutside(target: any) {
@@ -531,23 +539,29 @@ export class SalaryRevisionLetterComponent {
       });
   }
 
-  //get employee ids for dropdown
   getEmployeeId() {
     this.subscription = this.http
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.employeeiddetails = data as IemployeeDetails[];
-
-          console.log(this.employeeiddetails);
+          //this.employeeiddetails = data as IemployeeDetails[];
+          this.employeeiddetails = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
         },
         error: (reason: any) => {
           console.log(reason);
         },
       });
   }
-
   async postAppraisalLetterFormSubmit(f: NgForm) {
     const data = await this.appraisalData;
     data.dateofAppraisal = this.formatDate(data.dateofAppraisal);

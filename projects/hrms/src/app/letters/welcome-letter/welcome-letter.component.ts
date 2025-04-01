@@ -11,12 +11,11 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+
 
 @Component({
   selector: 'app-welcome-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule,],
   templateUrl: './welcome-letter.component.html',
   styleUrl: './welcome-letter.component.scss',
   encapsulation:ViewEncapsulation.None

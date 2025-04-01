@@ -58,15 +58,8 @@
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                               Authority Name<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select 
-  [options]="authorityDetails" 
-  optionLabel="fullName" 
-  placeholder="Please select sub location"
-  class="form-select custom-select" 
-  formControlName="authorityid"
-  (onChange)="onclickDesignation($event.value)"
-/>
-
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                class="form-select custom-select" formControlName="authorityid"(onChange)="onclickDesignation($event.value)"/>
                             </div>
                             <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                               <div class="error-msg">Signature Authority Name is required</div>
@@ -134,24 +127,25 @@
                                 <p><b>For RightlyHR</b></p>
                             </div>
                             <div>
-                                <div *ngIf="!addressLetterData.authorityName || addressLetterData.authorityName.trim() === ''" 
-     class="authority-signature mb-3">
-  Authority Signature
-</div>
-
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <div *ngIf="!addressLetterData.authorityName?.trim()" class="authority-signature mb-3">
+                                    Authority Signature
+                                  </div>
                               
-                                <div *ngIf="addressLetterData.authorityName">
+                                <!-- Show Name & Designation only when authorityName is set -->
+                                <div *ngIf="addressLetterData.authorityName?.trim()">
                                   <p style="font-weight: bold;">Authority Name</p>
                                   <p style="font-weight: bold;">Designation</p>
                                 </div>
                               
-                                <!-- Signature in custom font -->
-                                <div *ngIf="addressLetterData.authorityName" 
-                                     style="font-family: autographsignatureFont; font-size: xx-large;">
-                                  {{ addressLetterData.authorityName }}
-                                </div>
+                                <!-- Signature in custom font (Only show when valid name exists) -->
+                                <div *ngIf="addressLetterData.authorityName?.trim()" 
+                                style="font-family: autographsignatureFont; font-size: xx-large;">
+                             {{ addressLetterData.authorityName }}
+                           </div>
                               
-                                <div class="stamp-img" *ngIf="addressLetterData.authorityName">
+                                <!-- Stamp & Designation (Only show when valid name exists) -->
+                                <div class="stamp-img" *ngIf="addressLetterData.authorityName?.trim()">
                                   <p class="stamp-text">
                                     <span>{{ addressLetterData.authorityName }}</span>
                                   </p>
@@ -160,6 +154,7 @@
                                   </p>
                                 </div>
                               </div>
+                              
                               
                               
                         </div>

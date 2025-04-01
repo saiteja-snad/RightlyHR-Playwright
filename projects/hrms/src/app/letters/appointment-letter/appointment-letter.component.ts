@@ -15,9 +15,10 @@ import jsPDF from 'jspdf';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import { IAuthority } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 @Component({
   selector: 'app-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, Select, DateformatPipe,ReactiveFormsModule],
+  imports: [CommonModule, LettersTabComponent, Select, DateformatPipe, ReactiveFormsModule, LettersheaderComponent],
   templateUrl: './appointment-letter.component.html',
   styleUrl: './appointment-letter.component.scss'
 })

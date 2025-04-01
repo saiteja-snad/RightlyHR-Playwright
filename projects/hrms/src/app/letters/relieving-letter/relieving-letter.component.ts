@@ -14,10 +14,11 @@ import moment from 'moment';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IemployeeDetails } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-relieving-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss'
 })
@@ -57,8 +58,8 @@ export class RelievingLetterComponent {
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false }
   ];
   constructor(private router: Router, private modalService: NgbModal,private fb: FormBuilder,private http: HttpService,
     private httpclient: HttpClient,

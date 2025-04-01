@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
@@ -13,19 +13,19 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IAddress, IaddressemployeeDetails, IProbationEmployees } from '../../Interfaces/letters-model';
 import { Subscription } from 'rxjs';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-probation-confirmation-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './probation-confirmation-letter.component.html',
   styleUrl: './probation-confirmation-letter.component.scss'
 })
 export class ProbationConfirmationLetterComponent {
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Full-Time' },
-    { id: 2, name: 'Part-Time' },
-    { id: 3, name: 'Contract' },
-    { id: 4, name: 'Internship' }
+  employeementType: { name: string, value: boolean }[] = [
+    // { name: 'Select', value: false },
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false }
   ];
 
   designation: { id: number; name: string }[] = [
@@ -34,14 +34,6 @@ export class ProbationConfirmationLetterComponent {
     { id: 3, name: 'HR Executive' },
     { id: 4, name: 'Data Analyst' }
   ];
-
-  location: { id: number; name: string }[] = [
-    { id: 1, name: 'New York' },
-    { id: 2, name: 'Los Angeles' },
-    { id: 3, name: 'Chicago' },
-    { id: 4, name: 'Houston' }
-  ];
-
   sublocation: { id: number; name: string; locationId: number }[] = [
     { id: 1, name: 'Brooklyn', locationId: 1 },
     { id: 2, name: 'Downtown', locationId: 1 },
@@ -123,14 +115,18 @@ export class ProbationConfirmationLetterComponent {
     this.todayDate = today.toISOString().split('T')[0];
     this.initializeForm();
     this.getProbationEmployees();
-    //this.getEmployeeId();
+    this.getEmployeeId();
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
    }
 
    initializeForm() {
     this.employeeForm = this.fb.group({   
-
+      fusionEmpId: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+      issuedDate: ['', Validators.required],
+      effectiveDate: ['', Validators.required],
+      authorityid: ['', Validators.required]
 
      })
     }
@@ -409,7 +405,7 @@ getJobdetails(Employee: any) {
     });
 }
 
-async postProbationLetterFormSubmit(f: NgForm) {
+async postProbationLetterFormSubmit(f: FormGroup) {
   this.loading=true;
   const data = await this.probationLetterData;
   data.dateofaddress = this.formatDate(data.dateofaddress);

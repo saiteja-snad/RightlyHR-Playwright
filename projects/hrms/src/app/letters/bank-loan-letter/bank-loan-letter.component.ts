@@ -13,11 +13,12 @@ import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IemployeeDetails } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 
 @Component({
   selector: 'app-bank-loan-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss'
 })
@@ -56,7 +57,7 @@ export class BankLoanLetterComponent {
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
-    { name: 'Hard Copy', value: false },
+    { name: 'Hard Copy', value: false }
   ];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
   employeedatabank: any;
@@ -114,6 +115,9 @@ DateValidation() {
     this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
       this.bankloanLetterData.dateofbankloan = newDate;
       this.DateValidation();
+    });
+    this.employeeForm = this.fb.group({
+      Documenttype: [undefined, Validators.required] // Add any other validation as needed
     });
     this.getEmployeeId();
     this.getBankLoanTemplate();

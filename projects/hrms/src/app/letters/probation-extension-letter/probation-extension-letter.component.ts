@@ -4,7 +4,7 @@ import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
@@ -14,19 +14,18 @@ import moment from 'moment';
 import { IAddress, IaddressemployeeDetails } from '../../Interfaces/letters-model';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-probation-extension-letter',
-  imports: [CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './probation-extension-letter.component.html',
   styleUrl: './probation-extension-letter.component.scss'
 })
 export class ProbationExtensionLetterComponent {
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Full-Time' },
-    { id: 2, name: 'Part-Time' },
-    { id: 3, name: 'Contract' },
-    { id: 4, name: 'Internship' }
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false }
   ];
 
   designation: { id: number; name: string }[] = [
@@ -34,13 +33,6 @@ export class ProbationExtensionLetterComponent {
     { id: 2, name: 'Project Manager' },
     { id: 3, name: 'HR Executive' },
     { id: 4, name: 'Data Analyst' }
-  ];
-
-  location: { id: number; name: string }[] = [
-    { id: 1, name: 'New York' },
-    { id: 2, name: 'Los Angeles' },
-    { id: 3, name: 'Chicago' },
-    { id: 4, name: 'Houston' }
   ];
 
   sublocation: { id: number; name: string; locationId: number }[] = [
@@ -101,11 +93,13 @@ export class ProbationExtensionLetterComponent {
   }
 
   initializeForm() {
-    this.employeeForm = this.fb.group({
-
- 
-    })
-  }
+    this.employeeForm = this.fb.group({   
+      fusionEmpId: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+      dateofprobationextension: ['', Validators.required],
+      authorityid: ['', Validators.required]
+     })
+    }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -404,7 +398,7 @@ export class ProbationExtensionLetterComponent {
       });
   }
 
-  async postProbationExtensionLetterFormSubmit(f: NgForm) {
+  async postProbationExtensionLetterFormSubmit(f: FormGroup) {
     const data = await this.probationExtensionLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);

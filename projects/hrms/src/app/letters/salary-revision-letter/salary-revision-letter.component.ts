@@ -15,14 +15,19 @@ import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { IemployeeDetails } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-salary-revision-letter',
-  imports: [CommonModule,Select,CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss'
 })
 export class SalaryRevisionLetterComponent {
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
+  ];
   subscription!: Subscription;
   appraisalTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template
   appraisalData = {} as any; //appraisal letter form object
@@ -56,10 +61,6 @@ export class SalaryRevisionLetterComponent {
   // employeementType = [{ name: 'Permanent' }, { name: 'Contract' }];
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
-  employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
-  ];
   constructor( private http: HttpService, private httpclient: HttpClient, 
     // private toaster: NgToastService,
      private router: Router, 

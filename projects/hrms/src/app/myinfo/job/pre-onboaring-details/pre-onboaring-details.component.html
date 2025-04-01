@@ -5,78 +5,109 @@
                 <span class="myinfo-sub-header">Pre Onboarding Details</span>
             </div>
             <div *ngIf="!buttons">
-                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+                <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
             </div>
             <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
-                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="preOnboardingForm.invalid"
+                    (click)="saveForm()">Save</button>
             </div>
         </div>
 
-        <!--input content-->
+        <!-- Reactive Form -->
         <div class="myinfo-input-content">
-            <form action="">
+            <form [formGroup]="preOnboardingForm">
                 <div class="row">
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Offer Sent Date<span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter offer sent date">
+                        <label for="offerSentDate" class="form-label custom-label mb-2">Offer Sent Date<span
+                                class="error-msg">*</span></label>
+                        <input type="date" class="form-control custom-input" id="offerSentDate"
+                            formControlName="offerSentDate">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('offerSentDate')?.invalid && preOnboardingForm.get('offerSentDate')?.touched">
+                            Offer Sent Date is required.
+                        </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Offer Sent By<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter offer sent by">
+                        <label for="offerSentBy" class="form-label custom-label mb-2">Offer Sent By<span
+                                class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" id="offerSentBy"
+                            formControlName="offerSentBy" placeholder="Please enter offer sent by">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('offerSentBy')?.invalid && preOnboardingForm.get('offerSentBy')?.touched">
+                            Offer Sent By is required.
+                        </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Offer Sent Status<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter offer sent status">
+                        <label for="offerSentStatus" class="form-label custom-label mb-2">Offer Sent Status<span
+                                class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" id="offerSentStatus"
+                            formControlName="offerSentStatus" placeholder="Please enter offer sent status">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('offerSentStatus')?.invalid && preOnboardingForm.get('offerSentStatus')?.touched">
+                            Offer Sent Status is required.
+                        </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Appointment Sent Date<span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter middle name">
+                        <label for="appointmentSentDate" class="form-label custom-label mb-2">Appointment Sent Date<span
+                                class="error-msg">*</span></label>
+                        <input type="date" class="form-control custom-input" id="appointmentSentDate"
+                            formControlName="appointmentSentDate">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('appointmentSentDate')?.invalid && preOnboardingForm.get('appointmentSentDate')?.touched">
+                            Appointment Sent Date is required.
+                        </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Appointment Sent By<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter appointment sent by">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Appointment Sent Status<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                        placeholder="Please enter appointment sent status">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Trainee Offer Sent Date<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+                        <label for="appointmentSentBy" class="form-label custom-label mb-2">Appointment Sent By<span
+                                class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" id="appointmentSentBy"
+                            formControlName="appointmentSentBy" placeholder="Please enter appointment sent by">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('appointmentSentBy')?.invalid && preOnboardingForm.get('appointmentSentBy')?.touched">
+                            Appointment Sent By is required.
+                        </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Trainee Offer Sent By<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee offer sent by">
+                        <label for="appointmentSentStatus" class="form-label custom-label mb-2">Appointment Sent
+                            Status<span class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" id="appointmentSentStatus"
+                            formControlName="appointmentSentStatus" placeholder="Please enter appointment sent status">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('appointmentSentStatus')?.invalid && preOnboardingForm.get('appointmentSentStatus')?.touched">
+                            Appointment Sent Status is required.
+                        </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Trainee Offer Sent Status<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        <label for="traineeOfferSentDate" class="form-label custom-label mb-2">Trainee Offer Sent
+                            Date<span class="error-msg">*</span></label>
+                        <input type="date" class="form-control custom-input" id="traineeOfferSentDate"
+                            formControlName="traineeOfferSentDate">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('traineeOfferSentDate')?.invalid && preOnboardingForm.get('traineeOfferSentDate')?.touched">
+                            Trainee Offer Sent Date is required.
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="traineeOfferSentBy" class="form-label custom-label mb-2">Trainee Offer Sent By<span
+                                class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" id="traineeOfferSentBy"
+                            formControlName="traineeOfferSentBy" placeholder="Please enter trainee offer sent by">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('traineeOfferSentBy')?.invalid && preOnboardingForm.get('traineeOfferSentBy')?.touched">
+                            Trainee Offer Sent By is required.
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="traineeOfferSentStatus" class="form-label custom-label mb-2">Trainee Offer Sent
+                            Status<span class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" id="traineeOfferSentStatus"
+                            formControlName="traineeOfferSentStatus"
                             placeholder="Please enter trainee offer sent status">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Date Of Birth<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Trainee Appointment Sent By <span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee offer sent by">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Trainee Appointment Sent Status<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee appointment sent status">
+                        <div class="error-msg"
+                            *ngIf="preOnboardingForm.get('traineeOfferSentStatus')?.invalid && preOnboardingForm.get('traineeOfferSentStatus')?.touched">
+                            Trainee Offer Sent Status is required.
+                        </div>
                     </div>
                 </div>
             </form>

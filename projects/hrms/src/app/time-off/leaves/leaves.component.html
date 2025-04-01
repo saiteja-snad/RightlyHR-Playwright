@@ -79,24 +79,26 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Leave Type<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content"> 
-                            <p-select [options]="categoryDetails" optionLabel="category.name" optionValue="category.id" placeholder="Please select leave type"
+                            <p-select [options]="categoryDetails" name="leaveType" optionLabel="category.name" optionValue="category.id" placeholder="Please select leave type"
                                 class="form-select custom-select" formControlName="leaveType" (onChange)="onleaveSelect($event.value)" ></p-select>
                         </div>
-                        <small class="error-message text-danger" *ngIf="leaveForm.get('leaveType')?.invalid && leaveForm.get('leaveType')?.touched">Leave Type is required</small>
-                                <div *ngIf="selectedleave"></div>
+                        <small class="error-message text-danger" *ngIf="leaveForm.get('leaveType')?.invalid && leaveForm.get('leaveType')?.touched">
+                            Leave Type is required</small>
+                                
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="startdate" 
-                            (keypress)="false" (onChange)="onstartdate('add')" (onChange)="onStartDateChange()">
-                            <small class="error-message text-danger" style="margin-left: -10%;" class="invalid-feedback" *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">Start Date is required</small>
-                                    <small class="error-message text-danger" style="margin-left: -10%;" *ngIf="(isHolidaySelected)">
+                            (keypress)="false" (ngModelChange)="onstartdate('add')" (ngModelChange)="onStartDateChange()">
+                            <small class="error-message text-danger" class="invalid-feedback" *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
+                                Start Date is required
+                            </small>
+                                    <small class="error-message text-danger" *ngIf="(isHolidaySelected)">
                                         Selected date is a holiday
                                     </small>
-                                    <small class="error-message text-danger" style="margin-left: -10%;"
-                                        *ngIf="(isWeekOffSelected) && !(isWeekOffSelected && isWeekOffSelectedEndate) && (startdatevalid && leaveFormData.startdate)">
+                                    <small class="error-message text-danger" *ngIf="(isWeekOffSelected)">
                                         Selected date is a weekend
                                     </small>
                                     <small class="error-message text-danger" style="margin-left: -10%;" *ngIf="!startdatevalid && leaveFormData.startdate">
@@ -111,7 +113,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" formControlName="enddate" [min]="leaveFormData.startdate" [max]="maxEndDate" (onChange)="onEndDate('add')">
+                        <input type="date" class="form-control custom-input" formControlName="enddate" [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
                         <small class="error-message text-danger"
                                         *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched) || 
                                         (leaveFormData.startdate && leaveFormData.enddate && leaveFormData.enddate < leaveFormData.startdate)">
@@ -119,7 +121,7 @@
                                     </small>
                             
                                     <!-- Weekend Error -->
-                                    <small class="error-message text-danger" *ngIf="(isWeekOffSelectedEndate) && (startdatevalid && leaveFormData.enddate)">
+                                    <small class="error-message text-danger" *ngIf="(isWeekOffSelectedEndate)">
                                         Selected date is a weekend
                                     </small>
                             
@@ -143,21 +145,16 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-3">Availing<span class="text-danger">*</span></label>
                         <div class="d-flex gap-3">
-                            <!-- <div class="form-check">
-                                <input type="radio" class="form-check-input" id="halfDay" formControlName="availing" value="Half Day">
-                                <label class="form-check-label custom-label" for="halfDay">Half Day</label>
-                            </div> -->
                             <div id="halfDayCheck">
                                 <div class="form-check form-check-inline" [class.no-pointer-events]="!enableHalfDayOptions">
-                                    <label class="form-check-label" for="flexRadioDefault0">
+                                    <label class="form-check-label" for="halfday">
                                         <input 
                                             class="form-check-input"
                                             type="radio" 
                                             id="flexRadioDefault0"
                                             formControlName="availing"
-                                            value="0"
                                             name="availing"
-                                            (change)="chooseDayType('half')"
+                                            (change)="toggleHalfDayOptions(true)"
                                             required>
                                         Half Day
                                     </label>
@@ -173,6 +170,7 @@
                                                 formControlName="availing"
                                                 value="firsthalf"
                                                 name="availing"
+                                                (change)="chooseDayType('half')"
                                                 required>
                                             First Half
                                         </label>
@@ -186,6 +184,7 @@
                                                 formControlName="availing"
                                                 value="secondhalf"
                                                 name="availing"
+                                                (change)="chooseDayType('half')"
                                                 required>
                                             Second Half
                                         </label>
@@ -193,17 +192,16 @@
                                 </ul>
                             
                                 <!-- Error Message for Half Day Selection -->
-                                <small class="text-danger" *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
-                                    Please select Half Day option
-                                </small>
-                                <small class="text-danger" *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
-                                    Please select First or Second Half
-                                </small>
+                                
+                                
                             </div>
                             <div class="form-check">
                                 <input type="radio" class="form-check-input" id="fullDay" formControlName="availing" value="2" (change)="chooseDayType('full')">
                                 <label class="form-check-label custom-label" for="fullDay">Full Day</label>
                             </div>
+                            <small class="text-danger" *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
+                                Please select any of the option
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -215,9 +213,9 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary">Request</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="leaveForm.invalid">Request</button>
                 </div>
             </form>
         </div>
-    </div>
+    </div>  
 </ng-template>

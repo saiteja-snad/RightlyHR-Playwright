@@ -93,6 +93,8 @@ export class LeavesComponent {
   issEndDategreater: boolean = true;
   allPolicy = {} as any;
   hasErrors = false;
+  startDate:any;
+  endDate : any;
   @ViewChild('leaveForm') work!: NgForm;
   totalRecords = 100
   first: any = 0;
@@ -124,6 +126,8 @@ export class LeavesComponent {
     this.dateFormate();
     this.getweekendbyempid()
     this.checkPreviousOptionalLeaves();
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
   }
   dd: any;
   mm: any;
@@ -158,7 +162,6 @@ export class LeavesComponent {
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
       availing: [{value : '',disabled: true}, Validators.required, ], 
-      
       reason: ['', [Validators.required, Validators.minLength(150)]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
@@ -322,6 +325,8 @@ export class LeavesComponent {
 
   onleaveSelect(categoryId: number) {
     this.leaveFormData.categoryId = categoryId;
+    console.log(this.leaveFormData.categoryId);
+    
     this.isSubmitted = false;
     this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails
     console.log(this.selectedleave);
@@ -333,9 +338,9 @@ export class LeavesComponent {
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeWeekends) {
       this.getweekendbyempid();
     }
-    const maxDays = this.selectedleave.allowedDays;
-    const leavesTaken = this.selectedleave.utilizedDays;
-    const booked = this.selectedleave.booked; // If no booked days, default to 0
+    const maxDays = this.selectedleave?.allowedDays;
+    const leavesTaken = this.selectedleave?.utilizedDays;
+    const booked = this.selectedleave?.booked; // If no booked days, default to 0
     // Calculate remaining leaves by subtracting utilized and booked days from allowed days
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked;
     // Log the result for debugging
@@ -354,11 +359,11 @@ export class LeavesComponent {
       this.remainingProbationLeaves = 0;
     }    
     // Call calculateDateDifference function here
-    if (this.leaveFormData.startdate && this.leaveFormData.enddate) {
-      this.calculateDateDifference(this.leaveFormData.startdate, this.leaveFormData.enddate);
+    if (this.startDate && this.endDate) {
+      this.calculateDateDifference(this.startDate, this.endDate);
     }
     setTimeout(() => {
-      if (this.leaveFormData.startdate?.control) { // Ensure control exists
+      if (this.startDate?.control) { // Ensure control exists
       }
     });
   }
@@ -369,9 +374,9 @@ export class LeavesComponent {
     this.onEndDateChange();
     this.checkWeekends(action);
     this.dateCheckWithHolidayOrWeekend(action)
-    if (!this.leaveFormData.startdate) {
+    if (!this.startDate) {
       // Clear the end date when the start date is cleared
-      this.leaveFormData.enddate = null;
+      this.endDate = null;
 
       // Optionally reset any errors or validations tied to the end date
       this.isWeekOffSelectedEndate = false; // Example: Resetting the weekend error
@@ -381,7 +386,9 @@ export class LeavesComponent {
   }
   
   updateStartDateValidity1(): void {
-    if (!this.leaveFormData.startdate || !this.leaveFormData.enddate || this.leaveFormData.startdate <= this.leaveFormData.enddate) {
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    if (!this.startDate || !this.endDate || this.startDate <= this.endDate) {
       this.startdatevalid = true;
     } else {
       this.startdatevalid = false;
@@ -389,7 +396,9 @@ export class LeavesComponent {
   }
  
   vldateofjoin1(): void {
-    if (this.leaveFormData.startdate < this.empdata.dateOfJoining) {
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    //this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    if (this.startDate < this.empdata.dateOfJoining) {
       this.isstimeoffValid = false;
     } else {
       this.isstimeoffValid = true;
@@ -397,24 +406,28 @@ export class LeavesComponent {
   }
   
   onEndDateChange() {
-    this.calculateDateDifference(this.leaveFormData.startdate, this.leaveFormData.enddate);
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    this.calculateDateDifference(this.startDate, this.endDate);
     console.log(this.selectedFields.isDaytype);
-    if (this.leaveFormData.enddate && this.leaveFormData.startdate) {
+    if (this.startDate && this.endDate) {
       // Check if End Date is before Start Date
-      this.isEndDateBeforeStart = new Date(this.leaveFormData.enddate) < new Date(this.leaveFormData.startdate);
+      this.isEndDateBeforeStart = new Date(this.endDate) < new Date(this.startDate);
     }
 
   }
   
   checkWeekends(action: string) {
     let selectedDate: any;
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     if (action === 'add') {
-      console.log(this.leaveFormData.startdate);
-      selectedDate = moment(this.leaveFormData.startdate);
+      console.log(this.startDate);
+      selectedDate = moment(this.startDate);
       console.log(selectedDate.day());
     }
     if (action === 'update') {
-      console.log(this.leaveFormData.startdate);
+      console.log(this.startDate);
       // selectedDate = moment(this.selectedfields.startdate);
       console.log(selectedDate.day());
     }
@@ -480,20 +493,21 @@ export class LeavesComponent {
   dateCheckWithHolidayOrWeekend(action: string) {
     let selectedDate: any;
     let selectedendDate: any;
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     if (action == 'add') {
-      //  console.log(this.leaveFormData.startdate);
-      // console.log(this.orgholidays.orgHolidaysItems);
-      if (this.leaveFormData.startdate) {
-        selectedDate = moment(this.leaveFormData.startdate);
+      
+      if (this.startDate) {
+        selectedDate = moment(this.startDate);
       }
-      if (this.leaveFormData.enddate) {
-        selectedendDate = moment(this.leaveFormData.enddate);
+      if (this.endDate) {
+        selectedendDate = moment(this.endDate);
       }
     }
     // if (action == 'update') {
     //   selectedDate = moment(this.selectedfields.startdate);
     // }
-    if (this.orgholidays.orgHolidaysItems && !this.selectedleave.category.isOptionalHoliday) {
+    if (this.orgholidays?.orgHolidaysItems && !this.selectedleave?.category?.isOptionalHoliday) {
       this.orgholidays.orgHolidaysItems.forEach((element: any) => {
         const currentDate = moment(element.holidayDate);
         // if(element.isOptional!=true){
@@ -519,7 +533,7 @@ export class LeavesComponent {
       // this.isHolidaySelected=isWorkingDayBetweenDates;
       console.log(this.isHolidaySelected);
     }
-    if (this.orgholidays.orgHolidaysItems && this.selectedleave.category.isOptionalHoliday) {
+    if (this.orgholidays?.orgHolidaysItems && this.selectedleave?.category?.isOptionalHoliday) {
       let filteredData = this.orgholidays.orgHolidaysItems.forEach((element: any) => {
         const currentDate = moment(element.holidayDate);
         if (element.isOptional != true) {
@@ -546,11 +560,13 @@ export class LeavesComponent {
   
   onStartDateChange() {
     // Set the min and max for the end date based on the selected start date
-    this.minEndDate = this.leaveFormData.startdate;
-    this.maxEndDate = `${new Date(this.leaveFormData.startdate).getFullYear() + 1}-12-31`;
-    if (!this.leaveFormData.startdate) {
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    this.minEndDate = this.startDate;
+    this.maxEndDate = `${new Date(this.startDate).getFullYear() + 1}-12-31`;
+    if (!this.startDate) {
       // Clear the end date if start date is cleared
-      this.leaveFormData.enddate = null;
+      this.endDate = null;
 
       // Reset end date related errors
       this.isWeekOffSelectedEndate = false;
@@ -598,7 +614,9 @@ export class LeavesComponent {
     this.dateCheckWithHolidayOrWeekend(action);
   }
   updateEndDateValidity(): void {
-    if (this.leaveFormData.enddate < this.leaveFormData.startdate) {
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    if (this.endDate < this.startDate) {
       this.issEndDategreater = false;
 
     } else {
@@ -608,15 +626,16 @@ export class LeavesComponent {
   }
   checkWeekendsEndate(action: string) {
     let selectedDate: any;
-
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     if (action === 'add') {
-      console.log(this.leaveFormData.enddate);
-      selectedDate = moment(this.leaveFormData.enddate);
+      console.log(this.endDate);
+      selectedDate = moment(this.endDate);
       console.log(selectedDate.day());
     }
 
     if (action === 'update') {
-      console.log(this.leaveFormData.enddate);
+      console.log(this.endDate);
       // selectedDate = moment(this.selectedfields.startdate);
       console.log(selectedDate.day());
     }
@@ -1127,10 +1146,6 @@ export class LeavesComponent {
       if(this.leaveForm.get('availing')?.value === 'secondhalf'){
         this.selectedValue = '3'
       }
-      else{
-        this.selectedValue = '';
-      }
-      
     }
     else if (daytype === 'full') {
       this.leaveFormData.isDaytype = false;
@@ -1161,18 +1176,23 @@ export class LeavesComponent {
   }
 
 
+  toggleHalfDayOptions(isHalfDay: boolean) {
+    this.enableButton = isHalfDay;
+    this.leaveForm.patchValue({ availing: '' }); // Reset selection
+  }
+
  
   onSubmit() {
       console.log('Starting leave submission process...');
       this.isSubmitted = true;
       if (this.leaveForm.invalid) {
         this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
+        let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
         this.leaveFormData.status = "Waiting for Approval";
         this.leaveFormData.requestType = "TimeOff";
-        let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
         this.leaveFormData.employeeId = empdata.employeeId;
         this.leaveFormData.durationType = this.selectedValue;
-        this.leaveFormData.duration = 1;
+        this.leaveFormData.duration = this.dateDiff;
         this.leaveFormData.date = moment();
         this.leaveFormData.isdeleted = true;
         this.leaveFormData.startdate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
@@ -1195,9 +1215,9 @@ export class LeavesComponent {
             // Calculate the number of probation days
             let dateOfJoining = moment(this.empdata.dateOfJoining);
             console.log('Date of Joining:', dateOfJoining);
-            let startdate = moment(this.leaveFormData.startdate);
+            let startdate = moment(this.startDate);
             console.log('Startdate:', startdate)
-            let enddate = moment(this.leaveFormData.enddate)
+            let enddate = moment(this.endDate)
             console.log('enddate:', enddate)
             let Duration = this.leaveFormData.duration
             console.log('Duration:', Duration)
@@ -1223,7 +1243,7 @@ export class LeavesComponent {
           
           }
         }
-        const category = this.categoryDetails.find(c => c.category.id === this.selectedleave.category.id);
+        const category = this.categoryDetails.find(c => c.category.id === this.selectedleave?.category.id);
     if (category) {
       // Update the booked leaves temporarily (UI-only change)
       category.booked += this.leaveFormData.duration;
@@ -1310,7 +1330,7 @@ export class LeavesComponent {
           return;
         } else {
           otherCategoriesUsed += this.leaveFormData.duration;
-          console.log(`Optional holiday on ${this.leaveFormData.startdate} booked with ${this.leaveFormData.categoryName}, duration: ${this.leaveFormData.duration}.`);
+          console.log(`Optional holiday on ${this.startDate} booked with ${this.leaveFormData.categoryName}, duration: ${this.leaveFormData.duration}.`);
         }
       }
     }
@@ -1320,8 +1340,8 @@ export class LeavesComponent {
             if (data) {
               this.disableSubmitButton = true;
               console.log('Leave submitted successfully.');
-              console.log('Start date:', this.leaveFormData.startdate);
-              console.log('End date:', this.leaveFormData.enddate);
+              console.log('Start date:', this.startDate);
+              console.log('End date:', this.endDate);
               const modalElement = document.getElementById('successhide');
               if (modalElement) {
                 modalElement.classList.add('show');

@@ -2,7 +2,7 @@
   <ul class="nav flex-column gap-2">
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['time-off-request/for-you']"
-        [class.active-tab]="isActive('/time-off/pending-approvals/time-off-request/for-you')">Time-Off (9)</a>
+        [class.active-tab]="isActive('/time-off/pending-approvals/time-off-request/for-you')">Time-Off ({{countEmp + countRole}})</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['wfh/for-you']"

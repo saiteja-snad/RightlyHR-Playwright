@@ -1,16 +1,16 @@
 <div class="tabs-header">
   <ul class="nav">
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }" aria-current="page">Waiting For Approval (12)</a>
+      <a class="nav-link" [routerLink]="['waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }" aria-current="page">Waiting For Approval ({{waitingForApprovalCount}})</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['approved']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: true }">Approved (12)</a>
+      <a class="nav-link" [routerLink]="['approved']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: true }">Approved ({{approvedCount}})</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['processed']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: true }">Processed (12)</a>
+      <a class="nav-link" [routerLink]="['processed']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: true }">Processed ({{processedCount}})</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['rejected']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Rejected (12)</a>
+      <a class="nav-link" [routerLink]="['rejected']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Rejected ({{rejectedCount}})</a>
     </li>
   </ul>
 </div>

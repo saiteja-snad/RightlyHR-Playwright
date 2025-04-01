@@ -49,12 +49,13 @@
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                               Authority Name<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                              <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" />
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                  class="form-select custom-select" formControlName="authorityid" (onChange)="onclickDesignation($event.value)">
+                                </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                              <div class="error-msg">Signature Authority Name is required</div>
-                            </div>
+                                <div class="error-msg">Signature Authority Name is required</div>
+                              </div>
                         </div>
                         <div class="d-flex flex-wrap gap-3 pt-4">
                             <button type="submit" class="custom-btn btn-primary" >Generate Welcome Letter</button>
@@ -115,12 +116,27 @@
                                         with us and can’t wait to see what we will achieve together.</p>
                                     <p class="content-text">Best wishes,</p>
                                     <ul class="px-0 content-text">
-                                        <li class="family2">{{ bankloanLetterData.authorityName }}</li>
-                                        <li>{{ bankloanLetterData.authorityName }}</li>
-                                        <li>{{ bankloanLetterData.designation }}</li>
-                                        <li>{{ bankloanLetterData.workEmail }}</li>
-                                        <!-- <li>Mobile: {{ bankloanLetterData.countrycode }} {{ bankloanLetterData.workNumber | phoneformatter : bankloanLetterData.countrycode }}</li> -->
-                                      </ul>
+                                       
+                                        <li *ngIf="bankloanLetterData.authorityName && bankloanLetterData.authorityName.trim() !== ''" 
+                                            class="family2" 
+                                            style="font-family: autographsignatureFont; font-size: xx-large;">
+                                            {{ bankloanLetterData.authorityName }}
+                                        </li>
+                                    
+                                        
+                                        <li *ngIf="bankloanLetterData.authorityName && bankloanLetterData.designation && bankloanLetterData.designation.trim() !== ''">
+                                            {{ bankloanLetterData.designation }}
+                                        </li>
+                                    
+                                        
+                                        <li *ngIf="bankloanLetterData.authorityName && bankloanLetterData.workEmail && bankloanLetterData.workEmail.trim() !== ''">
+                                            {{ bankloanLetterData.workEmail }}
+                                        </li>
+                                    </ul>
+                                    
+                                    
+                                    
+                                    
                                       
                                 </div>
                             <div class="letter-footer text-center">

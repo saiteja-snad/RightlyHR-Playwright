@@ -250,23 +250,50 @@ onclickauthority(ValueName:any){
   //     this.authorityDesignation=''
   //   }
   // }
-  onclickDesignation() {
-    let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => c.employeeId == this.bankloanLetterData.authorityid
-    );
-    console.log(signatureAuthorityDetails);
-    if (signatureAuthorityDetails) {
-      this.authorityDesignation = signatureAuthorityDetails.designation;
-      if (signatureAuthorityDetails.middleName) {
-        this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
-      } else {
-        this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
-      }
-    } else {
-      this.bankloanLetterData.authorityName = '';
-      this.authorityDesignation = '';
-    }
+//   onclickDesignation() {
+//     let signatureAuthorityDetails = this.authorityDetails.find(
+//       (c: any) => c.employeeId == this.bankloanLetterData.authorityid
+//     );
+//     console.log(signatureAuthorityDetails);
+//     if (signatureAuthorityDetails) {
+//       this.authorityDesignation = signatureAuthorityDetails.designation;
+//       if (signatureAuthorityDetails.middleName) {
+//         this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
+//       } else {
+//         this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+//       }
+//     } else {
+//       this.bankloanLetterData.authorityName = '';
+//       this.authorityDesignation = '';
+//     }
 
+// }
+onclickDesignation(selectedAuthority: any) {
+  console.log("Selected Authority ID:", selectedAuthority);
+
+  if (!selectedAuthority) {
+    this.bankloanLetterData.authorityName = '';
+    this.authorityDesignation = '';
+    return;
+  }
+
+  let signatureAuthorityDetails = this.authorityDetails.find(
+    (c: any) => c.employeeId == selectedAuthority.employeeId
+  );
+
+  console.log("Selected Authority Details:", signatureAuthorityDetails);
+
+  if (signatureAuthorityDetails) {
+    this.authorityDesignation = signatureAuthorityDetails.designation;
+
+    // 🔹 Construct full name correctly
+    this.bankloanLetterData.authorityName = signatureAuthorityDetails.middleName
+      ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
+      : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+  } else {
+    this.bankloanLetterData.authorityName = '';
+    this.authorityDesignation = '';
+  }
 }
 
 //get offer letter Authority list 

@@ -53,13 +53,13 @@
                         <div class="col-md-12 mb-4">
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                               Authority Name<span class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">
-                              <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" />
+                              <div class="custom-p-select-content">
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                class="form-select custom-select" formControlName="authorityid"(onChange)="onclickDesignation($event.value)"/>
                             </div>
                             <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                              <div class="error-msg">Signature Authority Name is required</div>
-                            </div>
+                                <div class="error-msg">Signature Authority Name is required</div>
+                              </div>
                         </div>
                         <div>
                             <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
@@ -138,23 +138,31 @@
                                 </p>
                             </div>
                             <div>
-                                <!-- Signature Authority Name and Designation in the Letter -->
-                                <div style="font-family: autographsignatureFont; font-size: xx-large;" class="mt-4">
-                                  <!-- Authority Name Displayed Here -->
-                                  {{authorityDetails.authorityName}}
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <div *ngIf="!bankloanLetterData.authorityName?.trim()" class="authority-signature mb-3">
+                                    Authority Signature
+                                  </div>
+                              
+                                <!-- Show Name & Designation only when authorityName is set -->
+                                <div *ngIf="bankloanLetterData.authorityName?.trim()">
+                                  <p style="font-weight: bold;">Authority Name</p>
+                                  <p style="font-weight: bold;">Designation</p>
                                 </div>
                               
-                                <div class="stamp-img">
-                                  <p class="stamp-text letter-text">
-                                    <!-- Authority Name Again for the Stamp -->
-                                    <span>{{authorityDetails.authorityName}}</span>
-                                  </p>
+                                <!-- Signature in custom font (Only show when valid name exists) -->
+                                <div *ngIf="bankloanLetterData.authorityName?.trim()" 
+                                style="font-family: autographsignatureFont; font-size: xx-large;">
+                             {{ bankloanLetterData.authorityName }}
+                           </div>
                               
-                                  <p class="stamp-text1">
-                                    <!-- Authority Designation Displayed Here -->
-                                    <span class="letter-text">{{authorityDetails.authorityDesignation }}</span>
+                                <!-- Stamp & Designation (Only show when valid name exists) -->
+                                <div class="stamp-img" *ngIf="bankloanLetterData.authorityName?.trim()">
+                                  <p class="stamp-text">
+                                    <span>{{ bankloanLetterData.authorityName }}</span>
                                   </p>
-                                  <br />
+                                  <p class="stamp-text1">
+                                    <span>{{ authorityDesignation }}</span>
+                                  </p>
                                 </div>
                               </div>
                               

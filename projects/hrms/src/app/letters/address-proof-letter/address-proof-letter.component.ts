@@ -233,8 +233,8 @@ export class AddressProofLetterComponent {
   
       console.log("Selected Employee Data After Find:", this.addressLetterData);
   
-      // ✅ Find the employee's address
-      let selectedAddress = this.addressLetterData.address || {};  // Ensure `address` exists
+  
+      let selectedAddress = this.addressLetterData.address || {};
   
       if (!selectedAddress || Object.keys(selectedAddress).length === 0) {
           console.warn("No address found for employee:", this.fusionEmpId);
@@ -246,7 +246,7 @@ export class AddressProofLetterComponent {
           firstName: this.addressLetterData.firstName || '',
           middleName: this.addressLetterData.middleName || '',
           lastName: this.addressLetterData.lastName || '',
-          jobRole: 'Fetching...', // ✅ Placeholder value before fetching job role
+          jobRole: 'Fetching...',
           dateOfJoining: this.addressLetterData.dateOfJoining || '',
           authorityDesignation: this.addressLetterData.authorityDesignation || '',
           authorityName: this.addressLetterData.authorityName || '',
@@ -262,7 +262,7 @@ export class AddressProofLetterComponent {
       if (this.addressLetterData.employeeId) {
           console.log("Fetching Job and Address details for EmployeeId:", this.addressLetterData.employeeId);
           this.getEmployeeAddress(this.addressLetterData);
-          this.getJobdetails(this.addressLetterData); // ✅ Fetch job role
+          this.getJobdetails(this.addressLetterData);
       } else {
           console.warn("Selected employee does not have a valid employeeId!");
       }

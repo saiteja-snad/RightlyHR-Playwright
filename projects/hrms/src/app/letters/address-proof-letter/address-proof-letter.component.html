@@ -17,7 +17,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
                                     placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+                                    (onChange)="Onclick($event.value)">
                                 </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
@@ -28,12 +28,12 @@
                             <label class="form-label custom-label mb-2">Select Address<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="addressdata" optionLabel="name"
-                                    placeholder="Please select address" formControlName="SelectDropDown" (change)="onclickSelectAddress(SelectDropDown)"
-                                    class="form-select custom-select">
-                                    <option di [ngValue]="undefined">Select Address</option>
-                                    <option value="c">Current Address</option>
-                                    <option value="p">Permanent Address</option></p-select>
+                                <p-select [options]="addressOptions" optionLabel="label"
+        placeholder="Please select address" formControlName="SelectDropDown"
+        (onChange)="onclickSelectAddress($event)"
+        class="form-select custom-select">
+    </p-select>
+
                             </div>
                             <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
                                 <div class="error-msg">Address is required</div>
@@ -58,8 +58,8 @@
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                               Authority Name<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                              <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" />
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                class="form-select custom-select" formControlName="authorityid"(onChange)="onclickDesignation($event.value)"/>
                             </div>
                             <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                               <div class="error-msg">Signature Authority Name is required</div>
@@ -94,16 +94,27 @@
                                       <b>{{ employeeForm.value.firstName }} {{ employeeForm.value.middleName }} {{ employeeForm.value.lastName }}</b>
                                     </ng-template>
                                     has been working in our Establishment "RightlyHR" as 
-                                    <span *ngIf="!employeeForm.value.jobRole; else role">_______________________</span>
-                                    <ng-template #role><b>{{ employeeForm.value.jobRole }}</b></ng-template> since 
+                                    <span *ngIf="employeeForm.get('jobRole')?.value === 'Fetching...'; else role">
+                                        Fetching...
+                                    </span>
+                                    <ng-template #role>
+                                        <b>{{ employeeForm.get('jobRole')?.value || 'Not Available' }}</b>
+                                    </ng-template>  since
                                     <span *ngIf="!employeeForm.value.dateOfJoining; else joining">_______________________</span>
                                     <ng-template #joining><b>{{ employeeForm.value.dateOfJoining | dateformat }}</b></ng-template>.
                                     Currently, residential address is 
                                     <span *ngIf="!addressFlag; else address">_______________________</span>
                                     <ng-template #address>
-                                      <b>{{ employeeForm.value.addressLine1 }}, {{ employeeForm.value.addressLine2 }}, {{ employeeForm.value.city }},
-                                          {{ employeeForm.value.state }}, {{ employeeForm.value.country }} - {{ employeeForm.value.zipCode }}.</b>
+                                        <b *ngIf="employeeForm">
+                                            {{ employeeForm.get('addressLine1')?.value || 'No Data' }}, 
+                                            {{ employeeForm.get('addressLine2')?.value }},
+                                            {{ employeeForm.get('city')?.value }},
+                                            {{ employeeForm.get('state')?.value }},
+                                            {{ employeeForm.get('country')?.value }} - 
+                                            {{ employeeForm.get('zipCode')?.value }}.
+                                        </b>
                                     </ng-template>
+                                    
                                   </span>
                                 </p>
                               </div>
@@ -116,16 +127,36 @@
                                 <p><b>For RightlyHR</b></p>
                             </div>
                             <div>
-                                <div class="authority-signature mb-3">Authority Signature</div>
-                                <div>
-                                    <p>Authority Name</p>
-                                    <p>Designation</p>
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <div *ngIf="!addressLetterData.authorityName?.trim()" class="authority-signature mb-3">
+                                    Authority Signature
+                                  </div>
+                              
+                                <!-- Show Name & Designation only when authorityName is set -->
+                                <div *ngIf="addressLetterData.authorityName?.trim()">
+                                  <p style="font-weight: bold;">Authority Name</p>
+                                  <p style="font-weight: bold;">Designation</p>
                                 </div>
-                                <div class="stamp-img">
-                                                        <p class="stamp-text"><span> {{employeeForm.value.authorityName}}</span></p>
-                                                        <p class="stamp-text1"><span>{{authorityDesignation}}</span></p><br>
-                                                    </div>
-                            </div>
+                              
+                                <!-- Signature in custom font (Only show when valid name exists) -->
+                                <div *ngIf="addressLetterData.authorityName?.trim()" 
+                                style="font-family: autographsignatureFont; font-size: xx-large;">
+                             {{ addressLetterData.authorityName }}
+                           </div>
+                              
+                                <!-- Stamp & Designation (Only show when valid name exists) -->
+                                <div class="stamp-img" *ngIf="addressLetterData.authorityName?.trim()">
+                                  <p class="stamp-text">
+                                    <span>{{ addressLetterData.authorityName }}</span>
+                                  </p>
+                                  <p class="stamp-text1">
+                                    <span>{{ authorityDesignation }}</span>
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              
+                              
                         </div>
                         <div class="letter-footer text-center">
                             <p class="company-name">RightlyHR</p>

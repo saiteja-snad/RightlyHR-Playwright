@@ -15,10 +15,11 @@ import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { IAuthority } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-trainee-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './trainee-appointment-letter.component.html',
   styleUrl: './trainee-appointment-letter.component.scss'
 })

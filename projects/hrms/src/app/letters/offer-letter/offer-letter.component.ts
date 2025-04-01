@@ -16,10 +16,11 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IAddress, IAuthority, ICountry, IemployeeDetails, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })

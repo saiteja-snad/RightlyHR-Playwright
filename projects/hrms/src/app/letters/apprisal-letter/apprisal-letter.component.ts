@@ -15,10 +15,11 @@ import { LettersTabComponent } from '../../shared/letters-tab/letters-tab.compon
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss'
 })

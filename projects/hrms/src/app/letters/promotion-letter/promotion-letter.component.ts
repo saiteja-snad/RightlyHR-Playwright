@@ -13,10 +13,11 @@ import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-promotion-letter',
-  imports: [CommonModule,Select,CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './promotion-letter.component.html',
   styleUrl: './promotion-letter.component.scss'
 })

@@ -14,10 +14,11 @@ import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-trainee-offer-letter',
-  imports: [LettersTabComponent, CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe],
+  imports: [LettersTabComponent, CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './trainee-offer-letter.component.html',
   styleUrl: './trainee-offer-letter.component.scss'
 })

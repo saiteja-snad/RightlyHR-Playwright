@@ -91,6 +91,7 @@ dataFailureMsg(msg:string){
       this.isdateofbankloan = true;
     }
   }
+  
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
@@ -135,6 +136,7 @@ Onclickemployeeid(Value:any){
     this.disablebuttonforemployeeid=false
   }
 }
+
 employeeFullname:any;
   Onclick(event:any) {
     const selectedEmployee = event.value;
@@ -244,20 +246,60 @@ onclickauthority(ValueName:any){
   //   this.bankloanLetterData.workNumber=signatureAuthorityDetails.workNumber;
   //   this.bankloanLetterData.workEmail=signatureAuthorityDetails.workEmail
   // }
-  onclickDesignation() {
-    console.log('Authority selected:', this.bankloanLetterData.authorityid);
-    const signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => c.employeeId === this.bankloanLetterData.authorityid
-    );
-    console.log('Selected Authority Details:', signatureAuthorityDetails);
-    if (signatureAuthorityDetails) {
-      this.bankloanLetterData.authorityName = signatureAuthorityDetails.fullName;
-      this.bankloanLetterData.designation = signatureAuthorityDetails.designation;
-      this.bankloanLetterData.countrycode = signatureAuthorityDetails.countrycode;
-      this.bankloanLetterData.workNumber = signatureAuthorityDetails.workNumber;
-      this.bankloanLetterData.workEmail = signatureAuthorityDetails.workEmail;
+  // onclickDesignation() {
+  //   debugger
+  //   console.log('Authority selected:', this.bankloanLetterData.authorityid);
+  //   const signatureAuthorityDetails = this.authorityDetails.find(
+  //     (c: any) => c.employeeId === this.bankloanLetterData.authorityid
+  //   );
+  //   debugger
+  //   console.log('Selected Authority Details:', signatureAuthorityDetails);
+  
+  //   if (signatureAuthorityDetails) {
+  //     this.bankloanLetterData.authorityName = signatureAuthorityDetails.fullName;
+  //     this.bankloanLetterData.designation = signatureAuthorityDetails.designation;
+  //     this.bankloanLetterData.countrycode = signatureAuthorityDetails.countrycode;
+  //     this.bankloanLetterData.workNumber = signatureAuthorityDetails.workNumber;
+  //     this.bankloanLetterData.workEmail = signatureAuthorityDetails.workEmail;
+  
+  //     console.log('Updated bankloanLetterData:', this.bankloanLetterData); // Check if data is updated
+  //   }
+  // }
+  onclickDesignation(selectedAuthority: any) {
+    console.log("Selected Authority ID:", selectedAuthority);
+  
+    if (!selectedAuthority) {
+      this.bankloanLetterData.authorityName = '';
+      this.bankloanLetterData.designation = ''; // Ensure this is also cleared
+      this.bankloanLetterData.workEmail = ''; // Ensure this is also cleared
+      return;
     }
-  }
+  
+    let signatureAuthorityDetails = this.authorityDetails.find(
+      (c: any) => c.employeeId == selectedAuthority.employeeId
+    );
+  
+    console.log("Selected Authority Details:", signatureAuthorityDetails);
+  
+    if (signatureAuthorityDetails) {
+      // 🔹 Construct full name correctly
+      
+      this.bankloanLetterData.authorityName = signatureAuthorityDetails.middleName
+        ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
+        : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+      
+      this.bankloanLetterData.designation = signatureAuthorityDetails.designation;
+      this.bankloanLetterData.workEmail = signatureAuthorityDetails.workEmail;
+
+      console.log('Updated bankloanLetterData:', this.bankloanLetterData); // Log to check if fields are updated
+    } else {
+      this.bankloanLetterData.authorityName = '';
+      this.bankloanLetterData.designation = '';
+      this.bankloanLetterData.workEmail = '';
+    }
+}
+
+  
   
   
 //hostlister to close the dropdown when we Click out side the box

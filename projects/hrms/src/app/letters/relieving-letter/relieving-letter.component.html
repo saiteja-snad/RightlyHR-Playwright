@@ -1,8 +1,13 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+        <div class="d-flex py-3">
+            <div>
+                <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+                        class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+            </div>
+            <div>
+                <span class="heading"><span class="px-2">>></span>Relieving Letter</span>
+            </div>
         </div>
     </div>
 
@@ -15,43 +20,46 @@
                         <div class="col-md-12 mb-4">
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search Employee<span class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="name" [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100">
-                                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
-                                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100"
+                                    formControlName="fusionEmpId" class="custom-select w-100" (onChange)="Onclick($event)">
                                 </p-select>
+                                <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                                    <div class="error-msg">Employee is required</div>
+                                </div>
                             </div>
                         </div>
-                        <!-- <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Date <span
-                                    class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
-                                placeholder="Please enter date" />
-                                <small *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
-                                    <small class="text-danger">Date is required</small>
-                                </small>
-                        </div> -->
-                        <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Document Type <span class="text-danger">*</span></label>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Date <span class="error-msg">*</span></label>
+                            <input type="date" class="form-control custom-input" formControlName="dateofRelieving" placeholder="Please enter Date" (change)="DateValidation()"/>
+                            <div *ngIf="employeeForm.get('dateofRelieving')?.invalid && employeeForm.get('dateofRelieving')?.touched">
+                              <div class="error-msg">Date is required</div>
+                            </div>
+                          </div>
+                          <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeementType" optionLabel="name"
-                                    placeholder="Please select document type" formControlName="documentType"
+                                    placeholder="Please select document type" formControlName="Documenttype"
                                     class="form-select custom-select" >
                                     <option disabled [ngValue]="undefined">Select</option>
                                     <option Value="true">Yes</option>
                                     <option Value="false">No</option>
                                 </p-select>
                             </div>
-                            <small *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                                <small class="text-danger">Document Type is required</small>
-                            </small>
+                            <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+                                <div class="error-msg">Document Type is required</div>
+                            </div>
                         </div>
                         <div class="col-md-12 mb-4">
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                                Authority Name<span class="text-danger">*</span></label>
+                              Authority Name<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="authorityDetails" optionLabel="name"
-                                    placeholder="Please select sub location" class="form-select custom-select" />
+                              <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" />
+                            </div>
+                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
+                              <div class="error-msg">Signature Authority Name is required</div>
                             </div>
                         </div>
                         <div>
@@ -71,7 +79,7 @@
                     <div class="letter-page-content" id="pdfContent">
                         <div class="letter-page-sub-content">
                             <div *ngIf="relievingLetterData.Documenttype; else doc" class="mb-5">
-                                <!-- <app-letterhead></app-letterhead> -->
+                                <app-lettersheader></app-lettersheader>>
                              </div>
                              <ng-template #doc>
                                 <div style="margin-bottom: 6.5rem;"></div>

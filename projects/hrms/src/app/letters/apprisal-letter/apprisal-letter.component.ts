@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from 
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import moment from 'moment';
-import { IemployeeDetails, IJob } from '../offer-letter/offer-letter.model';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
@@ -15,10 +14,12 @@ import { CommonModule } from '@angular/common';
 import { LettersTabComponent } from '../../shared/letters-tab/letters-tab.component';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
+import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss'
 })
@@ -81,6 +82,10 @@ export class ApprisalLetterComponent {
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   Status: any;
   employeeForm!: FormGroup;
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
+  ];
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
@@ -142,6 +147,15 @@ export class ApprisalLetterComponent {
     // this._userAcessService.checkRouteAccess('Dashboard.view');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
     console.log(this.Employeeinfo);
+      this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
+          ...emp,
+          fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
+        }));
+        this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
+                  ...authority,
+                  fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
+                }));
+    this.initializeForm();
     this.getAppraisalTemplate();
     this.getEmployeeId();
     // this.getCompensationById;
@@ -270,8 +284,16 @@ export class ApprisalLetterComponent {
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.authorityDetails = data;
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+  
+        console.log(this.authorityDetails);
       },
+      error: (error: any) => {
+        console.error(error);
+      }
     });
   }
   //hostlister to close the dropdown when we Click out side the box
@@ -591,24 +613,32 @@ export class ApprisalLetterComponent {
         },
       });
   }
-
-  //get employee ids for dropdown
   getEmployeeId() {
-    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.employeeiddetails = data as IemployeeDetails[];
-
-        console.log(this.employeeiddetails);
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+    this.subscription = this.http
+      .getData('Employeedata/ActiveEmployees')
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          //this.employeeiddetails = data as IemployeeDetails[];
+          this.employeeiddetails = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
 
 
-  async postAppraisalLetterFormSubmit(f: NgForm) {
+  async postAppraisalLetterFormSubmit(f: FormGroup) {
     const data = await this.appraisalData;
     data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
     data.compeffectivedate = this.formatDate(data.compeffectivedate);
@@ -875,6 +905,7 @@ export class ApprisalLetterComponent {
   getDesignationwithGradeid() {
     this.subscription = this.http.getData('DesignationGradeMapper').subscribe({
       next: (data: any) => {
+        console.log(data);
         this.getDesignationWithGradeIdDetails = data;
         this.AllDesignationwithGradeId =
           this.getDesignationWithGradeIdDetails.map(
@@ -984,6 +1015,7 @@ export class ApprisalLetterComponent {
       fusionEmpId: [null, Validators.required],
       dateofAppraisal: ['', Validators.required],
       reviewdate: ['', Validators.required],
+      JobRole:['', Validators.required],
       Documenttype: [null, Validators.required],
       bonus: [0],
       isVariablePay: [null, Validators.required],

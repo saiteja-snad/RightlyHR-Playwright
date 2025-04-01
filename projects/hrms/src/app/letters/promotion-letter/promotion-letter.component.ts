@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -100,8 +100,11 @@ export class PromotionLetterComponent {
 
   initializeForm() {
     this.employeeForm = this.fb.group({   
-
-
+      fusionEmpId: ['', Validators.required],
+      dateofpromotion: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+      note: ['',],
+      authorityid: ['', Validators.required],
      })
     }
   openmodel(content: any) {

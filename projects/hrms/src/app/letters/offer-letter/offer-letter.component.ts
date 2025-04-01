@@ -188,7 +188,7 @@ export class OfferLetterComponent {
       isVariablePay: [null, Validators.required],
       variablePayAmount: ['', Validators.required],
       locationId: [null, Validators.required],
-      sublocationId: [null, Validators.required],
+      JobSubLocationName: [null, Validators.required],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
       Copys: [null, Validators.required],
@@ -196,6 +196,7 @@ export class OfferLetterComponent {
       note: [''],
       authorityid: [null, Validators.required]
     });
+    
   }
 
   handlePhoneChange(event: any) {

@@ -21,9 +21,9 @@
                             <label class="form-label custom-label mb-2">Search Employee<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
+                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
                                     placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+                                    (onChange)="Onclick($event)">
                                 </p-select>
                             </div>
                             <small *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
@@ -31,7 +31,7 @@
                             </small>
                         </div>
                         <div class="col-md-12 mb-4">
-                            <label for="note" class="fform-label custom-label mb-2">Key Responsibility
+                            <label for="note" class="form-label custom-label mb-2">Key Responsibility
                                 <span class="error-msg">*</span></label>
                             <textarea formControlName="note" placeholder="Please enter key responsibility" maxlength="250" autocomplete="off"
                                 class="form-control custom-textarea" id="note" rows="2" required></textarea>
@@ -93,8 +93,7 @@
                                 </div>
                                 <div class="dimcon-content">
                                     <p class="content-text">Dear
-                                        <span class="ms-1">{{ bankloanLetterData.firstName }}
-                                            {{ bankloanLetterData.middleName ??'' }} {{ bankloanLetterData.lastName }},</span>
+                                        <span class="ms-1">{{employeeFullname}},</span>
                                     </p>
                                     <p class="content-text"><b>Welcome to RightlyHR.!</b></p>
                                     <p class="content-text">We are excited to have you onboard and look forward to the
@@ -116,12 +115,13 @@
                                         with us and can’t wait to see what we will achieve together.</p>
                                     <p class="content-text">Best wishes,</p>
                                     <ul class="px-0 content-text">
-                                        <li class="family2">{{bankloanLetterData.authorityName}}</li>
-                                        <li>{{bankloanLetterData.authorityName}}</li>
-                                        <li>{{bankloanLetterData.designation}}</li>
-                                        <li>{{bankloanLetterData.workEmail}}</li>
-                                        <!-- <li>Mobile: {{bankloanLetterData.countrycode}} {{bankloanLetterData.workNumber | phoneformatter : bankloanLetterData.countrycode }}</li> -->
-                                    </ul>
+                                        <li class="family2">{{ bankloanLetterData.authorityName }}</li>
+                                        <li>{{ bankloanLetterData.authorityName }}</li>
+                                        <li>{{ bankloanLetterData.designation }}</li>
+                                        <li>{{ bankloanLetterData.workEmail }}</li>
+                                        <!-- <li>Mobile: {{ bankloanLetterData.countrycode }} {{ bankloanLetterData.workNumber | phoneformatter : bankloanLetterData.countrycode }}</li> -->
+                                      </ul>
+                                      
                                 </div>
                             <div class="letter-footer text-center">
                                 <p class="company-name">RightlyHR</p>

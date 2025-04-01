@@ -18,7 +18,7 @@ import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader
 
 @Component({
   selector: 'app-relieving-letter',
-  imports: [CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss'
 })

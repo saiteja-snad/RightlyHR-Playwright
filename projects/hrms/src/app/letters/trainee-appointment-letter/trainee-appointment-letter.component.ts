@@ -19,7 +19,7 @@ import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader
 
 @Component({
   selector: 'app-trainee-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './trainee-appointment-letter.component.html',
   styleUrl: './trainee-appointment-letter.component.scss'
 })

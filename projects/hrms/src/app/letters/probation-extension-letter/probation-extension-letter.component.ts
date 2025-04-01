@@ -18,7 +18,7 @@ import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader
 
 @Component({
   selector: 'app-probation-extension-letter',
-  imports: [CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './probation-extension-letter.component.html',
   styleUrl: './probation-extension-letter.component.scss'
 })

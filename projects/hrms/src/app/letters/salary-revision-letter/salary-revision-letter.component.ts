@@ -19,7 +19,7 @@ import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader
 
 @Component({
   selector: 'app-salary-revision-letter',
-  imports: [CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss'
 })

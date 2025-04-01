@@ -65,7 +65,7 @@
                     <label for="location" class="form-label custom-label mb-2">Mobile Number<span
                             class="text-danger">*</span></label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <!-- <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                             [countryListConfig]="countryListConfig" class="country-input"
                             (onCountryChange)="onCountryChange($event)"></lib-country-list>
 
@@ -73,7 +73,7 @@
                             placeholder="{{ placeholderPhoneNumber || 'Please enter your mobile number' }}"
                             id="phonenumbers" aria-describedby="phonenumbers"
                             [value]="personalDetailsForm.get('phonenumber')?.value ? formatPhoneNumber(personalDetailsForm.get('phonenumber')?.value) : ''"
-                            autocomplete="off" required> -->
+                            autocomplete="off" required>
                     </div>
                     <div class="error-msg my-1"
                         *ngIf="personalDetailsForm.get('phonenumber')?.invalid &&  (personalDetailsForm.get('phonenumber')?.touched || personalDetailsForm.get('phonenumber')?.dirty)">

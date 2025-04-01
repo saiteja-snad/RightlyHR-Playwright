@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -13,10 +13,11 @@ import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-promotion-letter',
-  imports: [CommonModule,Select,CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './promotion-letter.component.html',
   styleUrl: './promotion-letter.component.scss'
 })
@@ -92,10 +93,21 @@ export class PromotionLetterComponent {
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
     // this.getPromotionTemplate();
+    this.initializeForm();
     this.getEmployeeId();
     this.getAuthorityDetails();
     this.getIssuedEmployeebyId();
   }
+
+  initializeForm() {
+    this.employeeForm = this.fb.group({   
+      fusionEmpId: ['', Validators.required],
+      dateofpromotion: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+      note: ['',],
+      authorityid: ['', Validators.required],
+     })
+    }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -231,14 +243,22 @@ onclickauthority(ValueName:any){
     }
   }
   //get offer letter Authority list 
-getAuthorityDetails(){
-  let offertype='Promotion Letter'
-  this.subscription=this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
-    next:(data:any)=>{
+
+getAuthorityDetails() {
+  let offertype = 'Promotion Letter';
+  this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+    next: (data: any) => {
       console.log(data);
-      this.authorityDetails=data
+      this.authorityDetails = data.map((authority: any) => ({
+        ...authority,
+        fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+      }));
+      console.log(this.authorityDetails); 
+    },
+    error: (error: any) => {
+      console.error(error);
     }
-  })
+  });
 }
 //hostlister to close the dropdown when we Click out side the box
 @HostListener('document:click', ['$event.target'])

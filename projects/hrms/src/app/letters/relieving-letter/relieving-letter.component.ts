@@ -7,17 +7,18 @@ import { Subscription } from 'rxjs';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
-import { IemployeeDetails } from '../offer-letter/offer-letter.model';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { IemployeeDetails } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-relieving-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss'
 })
@@ -57,8 +58,8 @@ export class RelievingLetterComponent {
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false }
   ];
   constructor(private router: Router, private modalService: NgbModal,private fb: FormBuilder,private http: HttpService,
     private httpclient: HttpClient,
@@ -71,6 +72,8 @@ export class RelievingLetterComponent {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    
+    this.initializeForm();
     this.getEmployeeId();
     this.getRelievingTemplate();
     this.getIssuedEmployeebyId();
@@ -84,7 +87,7 @@ export class RelievingLetterComponent {
     this.employeeForm = this.fb.group({ 
       searchEmployee: [null, Validators.required],
       documentType: [null, Validators.required],
-      // dateofRelieving: ['', Validators.required],
+      dateofRelieving: ['', Validators.required],
       signatureAuthority: [null, Validators.required]
      });
   }
@@ -146,13 +149,15 @@ export class RelievingLetterComponent {
     this.relievingLetterData = [];
   }
 
-  Onclick(fusionemployeeId: any) {
-    this.fusionEmpId = fusionemployeeId;
-    this.comparisioncheck = fusionemployeeId;
-    console.log(fusionemployeeId);
+  Onclick(event:any) {
+    const selectedEmployee = event.value;
+    console.log(selectedEmployee);
+    this.fusionEmpId = selectedEmployee.fusionemployeeId;
+    this.comparisioncheck = selectedEmployee.fusionemployeeId;
+    console.log(selectedEmployee.fusionemployeeId);
     this.relievingLetterData = {}
     this.relievingLetterData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
+      (c: any) => c.fusionEmpId == this.fusionEmpId
     );
     this.disablebuttonforemployeeid = false
     this.getJobdetails(this.relievingLetterData);
@@ -236,13 +241,20 @@ export class RelievingLetterComponent {
     }
     //get offer letter Authority list 
     getAuthorityDetails() {
-      let offertype = 'Releving Letter'
+      let offertype = 'Releving Letter';
       this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
         next: (data: any) => {
           console.log(data);
-          this.authorityDetails = data
+          this.authorityDetails = data.map((authority: any) => ({
+            ...authority,
+            fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+          }));
+          console.log(this.authorityDetails); 
+        },
+        error: (error: any) => {
+          console.error(error);
         }
-      })
+      });
     }
     //hostlister to close the dropdown when we Click out side the box
     @HostListener('document:click', ['$event.target'])

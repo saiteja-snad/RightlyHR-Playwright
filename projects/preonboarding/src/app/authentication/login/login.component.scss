@@ -53,9 +53,7 @@
             cursor: pointer;
         }
 
-        .error-msg {
-            font-size: var(--fontsize16);
-        }
+
     }
 
     input:focus {
@@ -68,5 +66,27 @@
     .logo-image {
         width: 14rem;
         height: 4.8rem;
+    }
+}
+
+.p-toast {
+    width: 28rem !important;
+
+    .p-toast-message-content {
+        padding: 1.2rem !important;
+        gap: 1rem !important;
+
+        .p-icon {
+            width: 1.4rem !important;
+            height: 1.4rem !important;
+        }
+
+        .p-toast-summary {
+            font-size: 1.4rem !important;
+        }
+
+        .p-toast-detail {
+            font-size: 1.1rem !important;
+        }
     }
 }

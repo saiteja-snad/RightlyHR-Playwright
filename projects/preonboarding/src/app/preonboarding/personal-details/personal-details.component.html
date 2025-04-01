@@ -1,1 +1,235 @@
-<p>personal-details works!</p>
+<div class="custom-main-component-container">
+    <div class="main-content-heading my-4">
+        <span>Personal Details</span>
+    </div>
+
+    <div>
+        <form [formGroup]="personalDetailsForm" (ngSubmit)="onSubmit()">
+            <div class="row custom-main-sub-content">
+                <!-- First Name -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="firstName" class="form-label custom-label mb-2">First Name<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input text-capitalize" id="firstName"
+                        formControlName="firstName" (keypress)="letters($event)"
+                        placeholder="Please enter first name" />
+                    <div class="error-msg my-1"
+                        *ngIf="personalDetailsForm.get('firstName')?.touched && personalDetailsForm.get('firstName')?.invalid">
+                        <div *ngIf="personalDetailsForm.get('firstName')?.errors?.['required']">First name is required
+                        </div>
+                        <div *ngIf="personalDetailsForm.get('firstName')?.errors?.['pattern']">Enter valid first name
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle Name -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="middleName" class="form-label custom-label mb-2">Middle Name</label>
+                    <input type="text" class="form-control custom-input text-capitalize" id="middleName"
+                        formControlName="middleName" placeholder="Please enter middle name" />
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="lastName" class="form-label custom-label mb-2">Last Name<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input text-capitalize" id="lastName"
+                        formControlName="lastName" placeholder="Please enter last name" />
+                    <div class="error-msg my-1"
+                        *ngIf="personalDetailsForm.get('lastName')?.touched && personalDetailsForm.get('lastName')?.invalid">
+                        <div *ngIf="personalDetailsForm.get('lastName')?.errors?.['required']">Last name is required</div>
+                        <div *ngIf="personalDetailsForm.get('lastName')?.errors?.['pattern']">Enter valid last name</div>
+                    </div>
+                </div>
+
+                <!-- Gender -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="gender" class="form-label custom-label mb-2">Gender<span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="Gender" optionLabel="genderName" optionValue="genderName" id="gender" formControlName="gender"
+                            placeholder="Please select gender" class="form-select custom-select"></p-select>
+                    </div>
+                </div>
+
+                <!-- Salutation -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="salutation" class="form-label custom-label mb-2">Salutation<span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="titleDetails" optionLabel="titlename" optionValue="titlename" id="salutation" formControlName="salutation"
+                            placeholder="Please select salutation" class="form-select custom-select"></p-select>
+                    </div>
+                </div>
+
+                <!--Mobile Number-->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="location" class="form-label custom-label mb-2">Mobile Number<span
+                            class="text-danger">*</span></label>
+                    <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                            [countryListConfig]="countryListConfig" class="country-input"
+                            (onCountryChange)="onCountryChange($event)"></lib-country-list>
+
+                        <input type="text" class="form-control custom-input" formControlName="phonenumber"
+                            placeholder="{{ placeholderPhoneNumber || 'Please enter your mobile number' }}"
+                            id="phonenumbers" aria-describedby="phonenumbers"
+                            [value]="personalDetailsForm.get('phonenumber')?.value ? formatPhoneNumber(personalDetailsForm.get('phonenumber')?.value) : ''"
+                            autocomplete="off" required>
+                    </div>
+                    <div class="error-msg my-1"
+                        *ngIf="personalDetailsForm.get('phonenumber')?.invalid &&  (personalDetailsForm.get('phonenumber')?.touched || personalDetailsForm.get('phonenumber')?.dirty)">
+                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('required')">Mobile number is
+                            required.</div>
+                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('pattern')">Please enter a valid
+                            mobile number.</div>
+                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('invalidPhoneNumber')">
+                            The phone number is not valid for the selected country.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date of birth -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="dob" class="form-label custom-label mb-2">Date Of Birth<span class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" id="dob" formControlName="dob" />
+                </div>
+
+                <!-- blood group -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group</label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="bloodGroups" optionLabel="name" optionValue="value" id="bloodGroup"
+                            formControlName="bloodGroup" placeholder="Please select blood group" class="form-select custom-select">
+                        </p-select>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="location" class="form-label custom-label mb-2">Location<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input text-capitalize" id="location" formControlName="location" placeholder="Please enter location" />
+                </div>
+
+                <!-- Sub Location -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input text-capitalize" id="subLocation"
+                        formControlName="subLocation" placeholder="Please enter sub location" />
+                </div>
+
+                <!-- Designation -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="designation" class="form-label custom-label mb-2">Designation<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input text-capitalize" id="designation"
+                        formControlName="designation" placeholder="Please enter sub location" />
+                </div>
+
+                <!-- Personal Email -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <label for="personalEmail" class="form-label custom-label mb-2">Personal Email ID<span class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="personalEmail"
+                        formControlName="personalEmail" placeholder="Please enter personal email Id" />
+                </div>
+
+                <!-- Current Address Heading -->
+                <div class="main-content-heading my-4">
+                    <span>Current Address</span>
+                </div>
+
+                <!-- Current Address Fields -->
+                <ng-container formGroupName="currentAddress">
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentAddressLine1"
+                            formControlName="addressLine1" placeholder="Please enter address line 1" />
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line2<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentAddressLine2"
+                            formControlName="addressLine2" placeholder="Please enter address line 2">
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="currentCity" class="form-label custom-label mb-2">City<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentCity" formControlName="city"
+                            placeholder="Please enter city" />
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="currentstate" class="form-label custom-label mb-2">State<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentState"
+                            placeholder="Please enter state" formControlName="state">
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="currentCountry" class="form-label custom-label mb-2">Country<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentCountry"
+                            placeholder="Please enter country" formControlName="country">
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="currentzipCode" class="form-label custom-label mb-2">Zip Code<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentzipCode"
+                            placeholder="Please enter zip code" formControlName="zipCode">
+                    </div>
+                </ng-container>
+
+                <!-- Permanent Address Heading -->
+                <div class="main-content-heading my-4">
+                    <span>Permanent Address</span>
+                </div>
+
+                <div class="form-check custom-label m-3">
+                    <input class="form-check-input" type="checkbox" id="sameAddress"
+                        (change)="copyCurrentAddress($event)" />
+                    <label class="form-check-label" for="sameAddress">Same as Current Address</label>
+                </div>
+
+                <!-- Permanent Address Fields -->
+                <ng-container formGroupName="permanentAddress">
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine1"
+                            formControlName="addressLine1" placeholder="Please enter address line 1" />
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine2"
+                            formControlName="addressLine2" placeholder="Please enter address line 2" />
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="permanentCity" class="form-label custom-label mb-2">City<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
+                            placeholder="Please enter city" />
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="permanentstate" class="form-label custom-label mb-2">State<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentState"
+                            placeholder="Please enter state" formControlName="state">
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentCountry"
+                            placeholder="Please enter country" formControlName="country">
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="permanentzipCode" class="form-label custom-label mb-2">Zip Code<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentzipCode"
+                            placeholder="Please enter zip code" formControlName="zipCode">
+                    </div>
+                </ng-container>
+            </div>
+
+            <div class="footer-btn-content d-flex justify-content-end pt-5">
+                <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="!personalDetailsForm.valid">Next</button>
+            </div>
+        </form>
+    </div>
+</div>

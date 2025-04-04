@@ -13,7 +13,7 @@ import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-leaves-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, DateformatPipe],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe],
   templateUrl: './leaves-approval.component.html',
   styleUrl: './leaves-approval.component.scss'
 })

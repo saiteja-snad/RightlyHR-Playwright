@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="custom-main-popup-content p-4">
-        <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="employeeForm" (ngSubmit)="postTraineeData(employeeForm)">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">
@@ -21,12 +21,9 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">
-                        {{'Middle Name'|translate}}<span class="text-danger">*</span>
+                        {{'Middle Name'|translate}}
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="middleName" placeholder="Please enter middle name">
-                    <div *ngIf="employeeForm.get('middleName')?.invalid && employeeForm.get('middleName')?.touched" class="text-danger">
-                        Middle Name is required.
-                    </div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">

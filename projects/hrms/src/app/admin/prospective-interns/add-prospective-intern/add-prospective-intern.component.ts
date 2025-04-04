@@ -7,6 +7,8 @@ import { Select } from 'primeng/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { Iprospective } from '../../prospective-employees/Prospective-model';
 @Component({
   selector: 'app-add-prospective-intern',
   imports: [CommonModule, Select, TranslateModule, ReactiveFormsModule],
@@ -33,16 +35,19 @@ export class AddProspectiveInternComponent {
   emailErroremail = false;
   JobroleDetails: any[] = [];
   emailErrorweb = false;
+  Prospective = [] as any;
   initialLocationId: any;
-
+  @ViewChild('successhide') private readonly successhide!: NgbModal;
+  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   @ViewChild('success') success: any;
+  @ViewChild('pospectivecreate') private readonly pospectivecreate!:NgbModal;
   sublocation: any[] | undefined;
 
-  constructor(private router: Router, private authService: AuthService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal) {
+  constructor(private router: Router, private conformationPopup: OpenModalService,private authService: AuthService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal) {
 
     this.employeeForm = this.fb.group({
       firstName: ['', Validators.required],
-      middleName: ['', Validators.required],
+      middleName: ['',],
       lastName: ['', Validators.required],
       personalEmail: ['', [Validators.required, Validators.email]],
       designation: ['', Validators.required],
@@ -53,8 +58,22 @@ export class AddProspectiveInternComponent {
   }
 
   ngOnInit(): void {
+    // this._userAcessService.checkRouteAccess('Dashboard.view');
+    this.empdata();
     this.getJobrole();
     this.jobLocationList();
+  }
+  empdata() {
+    this.subscription = this.http
+      .getData(`Employeedata/ProspectiveEmployees`)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.Prospective = data as Iprospective[];
+        },
+
+        error: (reason: any) => console.log(reason),
+      });
   }
 
   //function to check the email pattren
@@ -162,78 +181,83 @@ export class AddProspectiveInternComponent {
     { id: 2, name: 'Experienced' }
   ];
 
-  onSubmit() {
-    this.postTraineeData();
-    const requestBody = this.employeeForm.value;
-    console.log('Request Body:', requestBody);
+  // onSubmit() {
+  //   this.postTraineeData();
+  //   const requestBody = this.employeeForm.value;
+  //   console.log('Request Body:', requestBody);
+  // }
+
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true,backdrop: 'static' });
   }
 
-  postTraineeData() {
-    let loggedInUser = this.authService.getToken();
-    let postdata = {
+  postTraineeData(f: FormGroup) {
 
-      firstName: this.employeeForm.get('firstName')?.value,
-      lastName: this.employeeForm.get('lastName')?.value,
-      employeeStatus: 'Trainee Prospective',
-      empType: 'Trainee',
-      emailaddress: this.employeeForm.get('emailaddress')?.value,
+    let loggedInUser = this.authService.getToken();
+    const data = this.postProspectiveEmpDetails
+    let postdata = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      employeeStatus: 'Prospective',
+      emailaddress: data.personalEmail,
       createdBy: loggedInUser.employeeId,
-      middleName: this.employeeForm.get('middlename')?.value,
-      experienceType: this.employeeForm.get('experienceType')?.value
+      middleName: data.middleName,
+      experienceType: data.experienceType,
     }
-    console.log(postdata)
-    this.subscription = this.http
-      .postdata('Employeedata/createEmployee', postdata)
-      .subscribe({
-        next: (res: any) => {
-          console.log(res);
-          //alert('employee created')
-          if (res.statusCode == 201) {
-            this.result = res.employeeData;
-            console.log(this.result);
-            this.modalService.dismissAll();
-            setTimeout(() => {
-              this.router.navigate(['/prospective-interns']); // Navigate after UI update
-            }, 500);
-          } else if (res.statusCode == 409) {
-            const modalElement = document.getElementById('errorpop');
-            if (modalElement) {
-              this.Status = res.message
-              modalElement.classList.add('show');
-              modalElement.style.display = 'block';
-              setTimeout(() => {
-                modalElement.classList.remove('show');
-                modalElement.style.display = 'none';
-              }, 2000)
-            }
-            setTimeout(() => {
-              const modalElement = document.getElementById('errorpopup');
-              if (modalElement) {
-                modalElement.classList.remove('show');
-                modalElement.style.display = 'none';
-              }
-            }, 3000)
-            //f.resetForm();
-            this.selectedValueJobRoledrop = '';
-          } else {
-            const modalElement = document.getElementById('errorpop');
-            if (modalElement) {
-              this.Status = res.message
-              modalElement.classList.add('show');
-              modalElement.style.display = 'block';
-            }
-            setTimeout(() => {
-              location.reload();
-            }, 3000)
+    this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
+      next: (res: any) => {
+        console.log(res);
+
+        //alert('employee created')
+        
+          this.result = res.employeeData;
+          this.conformationPopup.openSuccessModal('Prospective employee created successfully')
+          this.modalService.dismissAll();
+          console.log(this.result);
+          if (this.result.employeeId != null) {
+            const jobdata = {
+              employeeId: this.result.employeeId,
+              gradeId: this.gradeIdValue.gradeId,
+              locationid: data.locationid,
+              sublocationid: data.sublocationid,
+              jobRole: data.designationName,
+            };
+            this.subscription = this.http
+              .postdata('JobDetails', jobdata)
+              .subscribe({
+                next: (data: any) => {
+                  console.log(data);
+                  this.select(this.result);
+                },
+                error: (Reason) => console.log(Reason),
+              });
           }
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
+
+         else if (res.statusCode == 409) {
+          this.conformationPopup.openErrorModal(res.message);
+          setTimeout(() => {
+            this.openModal(this.pospectivecreate);
+            
+          }, 3000);
+        } else {
+          this.conformationPopup.openErrorModal(res.message);
+        }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.message);
+        console.log(err);
+        f.reset();
+      },
+    });
   }
 
   close() {
     this.modalService.dismissAll();
+  }
+  select(act: any) {
+    this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+    console.log(this.emp);
+    localStorage.setItem("routestatus", 'Prospective');
+    this.router.navigate(['/admin/personal']);
   }
 }

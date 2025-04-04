@@ -1,4 +1,5 @@
 export interface Ipersonal {
+experienceType: string;
 employeeId: any;
 }
 export interface Iteammembers{

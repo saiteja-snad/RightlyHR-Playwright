@@ -4,7 +4,7 @@ import { TeamNumbersComponent } from './team-numbers/team-numbers.component';
 import { OnboardingRequestComponent } from './onboarding-request/onboarding-request.component';
 
 export default [
-    { path: '', redirectTo: '/myinfo/personal/basic-info', pathMatch: 'full' },
+    { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
     {
         path: 'personal', children: [
             { path: '', redirectTo: 'basic-info', pathMatch: 'full' },

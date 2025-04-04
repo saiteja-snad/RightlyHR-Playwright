@@ -26,35 +26,7 @@ export class EmergencyContactDetailsComponent {
     this.initializeForm();
     this.emergencyContactForm.disable(); // Disable the form initially
   }
-  showButtons() {
-    this.buttons = !this.buttons
-  }
-  getEmployeeId(): void {
-    const employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-     //  this.patchForm(data);
-      },
-      error: (reason) => console.error('Error fetching employee data:', reason),
-    });
-  }
-  // patchForm(data: any): void {
-  //   this.emergencyContactForm.patchValue({ 
-  //     employeeId: data.employeeId,
-  //     contact1Name: data.contact1Name,
-  //     contact1Email: data.contact1Email,
-  //     contact1Phone: data.contact1Phone,
-  //     contact1Relationship: data.contact1Relationship,
-  //     contact2Name: data.contact2Name,
 
-
-  //     contact2Email: data.contact2Email,
-
-
-  //     contact2Phone: data.contact2Phone,
-  //     contact2Relationship: data.contact2Relationship,
-  //   });
-  // }
   initializeForm(): void {
     this.emergencyContactForm = this.fb.group({
       contact1Name: ['', Validators.required],
@@ -67,17 +39,53 @@ export class EmergencyContactDetailsComponent {
       contact2Relationship: ['', Validators.required],
     });
   }
+  showButtons() {
+    this.buttons = !this.buttons
+  }
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+       this.patchForm(data);
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
+  patchForm(data: any): void {
+    this.emergencyContactForm.patchValue({
+      contact1Name: data.emergencyName || '', // Bind first emergency contact name
+      contact1Email: data.emailId || '',      // Bind first emergency contact email
+      contact1Phone: data.emergencynumber || '', // Bind first emergency contact phone
+      contact1Relationship: data.relationShip || '', // Bind first emergency contact relationship
+      contact2Name: data.emergencyName1 || '', // Bind second emergency contact name
+      contact2Email: data.emergencyEmail1 || '', // Bind second emergency contact email
+      contact2Phone: data.emergencyNumber1 || '', // Bind second emergency contact phone
+      contact2Relationship: data.relationship1 || '', // Bind second emergency contact relationship
+    });
+  }
+
   enableForm(): void {
     this.buttons = true;
-    this.emergencyContactForm.enable();
+    this.emergencyContactForm.get('contact1Name')?.enable();
+    this.emergencyContactForm.get('contact1Email')?.enable();
+    this.emergencyContactForm.get('contact1Phone')?.enable();
+    this.emergencyContactForm.get('contact1Relationship')?.enable();
+  
   }
 
   disableForm(): void {
     this.buttons = false;
-    this.emergencyContactForm.reset();
+    this.buttons2 = false;
     this.emergencyContactForm.disable();
   }
 
+  enableForm2(): void {
+    this.buttons2 = true;
+    this.emergencyContactForm.get('contact2Name')?.enable();
+    this.emergencyContactForm.get('contact2Email')?.enable();
+    this.emergencyContactForm.get('contact2Phone')?.enable();
+    this.emergencyContactForm.get('contact2Relationship')?.enable();
+  }
   saveForm(): void {
     if (this.emergencyContactForm.valid) {
       console.log('Form Data:', this.emergencyContactForm.value);

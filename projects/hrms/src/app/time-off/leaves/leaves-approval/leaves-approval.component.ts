@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';

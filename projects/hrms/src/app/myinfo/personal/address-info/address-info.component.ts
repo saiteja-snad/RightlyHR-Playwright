@@ -9,16 +9,17 @@ import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-address-info',
-  imports: [CommonModule, ReactiveFormsModule, ],
+  imports: [CommonModule, ReactiveFormsModule,],
   templateUrl: './address-info.component.html',
   styleUrl: './address-info.component.scss'
 })
 export class AddressInfoComponent {
-  buttons= false;
+  buttons = false;
+  buttons2 = false;
   addressForm!: FormGroup;
- 
-  subscription!:Subscription
-  empinfo:any
+
+  subscription!: Subscription
+  empinfo: any
   bloodGroups = [
     { name: 'A+' },
     { name: 'A-' },
@@ -37,12 +38,12 @@ export class AddressInfoComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.getEmployeeId();
-;
-    this.addressForm.disable(); 
-  
-   
+    ;
+    this.addressForm.disable();
+
+
   }
- 
+
   initializeForm(): void {
     this.addressForm = this.fb.group({
       currentAddressLine1: ['', Validators.required],
@@ -62,12 +63,26 @@ export class AddressInfoComponent {
 
   enableForm(): void {
     this.buttons = true;
-    this.addressForm.enable();
+    this.addressForm.get('currentAddressLine1')?.enable();
+    this.addressForm.get('currentAddressLine2')?.enable();
+    this.addressForm.get('currentCity')?.enable();
+    this.addressForm.get('currentState')?.enable();
+    this.addressForm.get('currentCountry')?.enable();
+    this.addressForm.get('currentZipCode')?.enable();
+  }
+  enableForm2(): void {
+    this.buttons2 = true;
+    this.addressForm.get('permanentAddressLine1')?.enable();
+    this.addressForm.get('permanentAddressLine2')?.enable();
+    this.addressForm.get('permanentCity')?.enable();
+    this.addressForm.get('permanentState')?.enable();
+    this.addressForm.get('permanentCountry')?.enable();
+    this.addressForm.get('permanentZipCode')?.enable();
   }
 
   disableForm(): void {
     this.buttons = false;
-    this.addressForm.reset();
+    this.buttons2 = false;
     this.addressForm.disable();
   }
 
@@ -75,30 +90,31 @@ export class AddressInfoComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-       this.patchForm(data);
+        this.patchForm(data);
       },
-      error: (reason:any) => console.error('Error fetching employee data:', reason),
+      error: (reason: any) => console.error('Error fetching employee data:', reason),
     });
   }
 
   patchForm(data: any): void {
+    const currentAddress = data.employeeAddresses.find((address: any) => address.type === 'C');
+    const permanentAddress = data.employeeAddresses.find((address: any) => address.type === 'P');
+
     this.addressForm.patchValue({
       employeeId: data.employeeId,
-      currentAddressLine1: data.currentAddressLine1,
-      currentAddressLine2: data.currentAddressLine2,
-      currentCity: data.currentCity,
-
-      currentState: data.currentState,
-      currentCountry: data.currentCountry,
-      currentZipCode: data.currentZipCode,
-      permanentAddressLine1: data.permanentAddressLine1,
-      permanentAddressLine2: data.permanentAddressLine2,
-      permanentCity: data.permanentCity,
-      permanentState: data.permanentState,
-      permanentCountry: data.permanentCountry,
-      permanentZipCode: data.permanentZipCode,
+      currentAddressLine1: currentAddress?.addressLine1 || '',
+      currentAddressLine2: currentAddress?.addressLine2 || '',
+      currentCity: currentAddress?.city || '',
+      currentState: currentAddress?.state || '',
+      currentCountry: currentAddress?.country || '',
+      currentZipCode: currentAddress?.zipCode || '',
+      permanentAddressLine1: permanentAddress?.addressLine1 || '',
+      permanentAddressLine2: permanentAddress?.addressLine2 || '',
+      permanentCity: permanentAddress?.city || '',
+      permanentState: permanentAddress?.state || '',
+      permanentCountry: permanentAddress?.country || '',
+      permanentZipCode: permanentAddress?.zipCode || '',
       // Add any other fields you need to patch
-      
     });
   }
 
@@ -133,5 +149,5 @@ export class AddressInfoComponent {
 
 }
 
-  
+
 

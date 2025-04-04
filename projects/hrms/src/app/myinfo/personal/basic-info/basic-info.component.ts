@@ -62,6 +62,7 @@ export class BasicInfoComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+       this.empinfo = data;
        this.patchForm(data);
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
@@ -71,16 +72,51 @@ export class BasicInfoComponent {
   patchForm(data: any): void {
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
-      salutation: this.Titledetails.find((item: any) => item.id === data.title),
+      salutation: data.title,
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
       gender: this.Gender.find((item: any) => item.genderName === data.gender),
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalStatus: this.Maritaldetails.find((item: any) => item.name === data.maritalstatus1),
+      maritalstatus1:this.Maritaldetails.find((item: any) => item.maritalstatus1 === data.maritalStatus),
     });
+    console.log(this.basicInfoForm.value);
+    
   }
+
+  updateBasicInfo(): void {
+    const formValue = this.basicInfoForm.value;
+    console.log(formValue);
+    
+    const updatePayload = {
+      employeeId: formValue.employeeId,
+      title: formValue.salutation || null,
+      firstName: formValue.firstName,
+      middleName: formValue.middleName,
+      lastName: formValue.lastName,
+      gender: formValue.gender.genderName || null,
+      dob: formValue.dob,
+      bloodGroup: formValue.bloodGroup.name|| null,
+      maritalStatus: formValue.maritalStatus || null,
+      empStatus: 'Active',
+    };
+    console.log(updatePayload);
+    
+    this.subscription = this.http
+        .postdata(`Employeedata/UPDATER`, updatePayload)
+        .subscribe({
+          next: (data: any) => {
+            alert('Data updated successfully!');
+            console.log('Data updated successfully:', data);
+          },
+          error: (reason: any) => {
+              console.log(reason);
+              
+          },
+        });
+  }
+
   getGender() {
     this.subscription = this.http.getData('gender').subscribe({
       next: (data: any) => {

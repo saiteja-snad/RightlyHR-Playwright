@@ -1,0 +1,123 @@
+<div class="custom-main-component-container">
+    <div class="card address-content-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <span class="address-sub-header">Current Address</span>
+            </div>
+            <div *ngIf="!buttons">
+                <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid" (click)="saveForm()">Save</button>
+            </div>
+        </div>
+
+        <!-- Reactive Form -->
+        <div class="myinfo-input-content">
+            <form [formGroup]="addressForm">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentAddressLine1" formControlName="currentAddressLine1"
+                            placeholder="Please enter address line">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
+                        <input type="text" class="form-control custom-input" id="currentAddressLine2" formControlName="currentAddressLine2"
+                            placeholder="Please enter address line">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentCity" class="form-label custom-label mb-2">City<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentCity" formControlName="currentCity"
+                            placeholder="Please enter city">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentState" class="form-label custom-label mb-2">State<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentState" formControlName="currentState"
+                            placeholder="Please enter state">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentCountry" class="form-label custom-label mb-2">Country<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentCountry" formControlName="currentCountry"
+                            placeholder="Please enter country">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="currentZipCode" formControlName="currentZipCode"
+                            placeholder="Please enter zip code/post code">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card address-content-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <span class="address-sub-header">Permanent Address</span>
+                <span class="form-check mt-4">
+                    <input class="form-check-input custom-check" type="checkbox" id="sameAsCurrent" (change)="copyCurrentAddress($event)">
+                    <label class="form-check-label custom-check-label" for="sameAsCurrent">
+                        Same as Current Address
+                    </label>
+                </span>
+            </div>
+            <div *ngIf="!buttons2">
+                <a (click)="enableForm2()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons2">
+                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid" (click)="saveForm()">Save</button>
+            </div>
+        </div>
+
+        <!-- Reactive Form -->
+        <div class="myinfo-input-content">
+            <form [formGroup]="addressForm">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine1" formControlName="permanentAddressLine1"
+                            placeholder="Please enter address line">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine2" formControlName="permanentAddressLine2"
+                            placeholder="Please enter address line">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentCity" class="form-label custom-label mb-2">City<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentCity" formControlName="permanentCity"
+                            placeholder="Please enter city">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentState" class="form-label custom-label mb-2">State<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentState" formControlName="permanentState"
+                            placeholder="Please enter state">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentCountry" formControlName="permanentCountry"
+                            placeholder="Please enter country">
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentZipCode" formControlName="permanentZipCode"
+                            placeholder="Please enter zip code/post code">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

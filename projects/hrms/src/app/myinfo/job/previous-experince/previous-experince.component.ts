@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { IJobtype } from '../../../Interfaces/job-model';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-previous-experince',
@@ -33,9 +34,10 @@ export class PreviousExperinceComponent {
   showErrorr = false;
   empinfo: any
   previousexperincedocument: any
-  file: any
+  currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+
+  constructor(private modalService: NgbModal, private http: HttpService,public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -206,6 +208,7 @@ export class PreviousExperinceComponent {
         }
       });
   }
+
   saveExperienceData(payload: any): void {
     this.subscription = this.http.postdata('ExperienceDetail', payload).subscribe({
       next: () => {
@@ -265,7 +268,7 @@ export class PreviousExperinceComponent {
   //download Functionality
   onSelectBankProofDownload(file: any) {
     this.subscription = this.http
-      .DownloadDataWithQuery('FileSystem/Downloadfile', file.docUrl)
+      .DownloadDataWithQuery('FileSystem/Downloadfile', file.attachment)
       .subscribe({
         next: (res: any) => {
           let fileName = res.headers
@@ -276,7 +279,7 @@ export class PreviousExperinceComponent {
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
           let filename =
-            file.docUrl.split('/')[file.docUrl.split('/').length - 1];
+            file.docUrl.split('/')[file.attachment.split('/').length - 1];
           a.download = filename;
           a.click();
         },
@@ -374,9 +377,10 @@ export class PreviousExperinceComponent {
   }
 
   saveUpdatedExperienceDetails(): void {
+
+    const currentDate = new Date().toISOString().split('T')[0];
     if (this.employeeExperienceupdateForm.valid) {
       const formData = this.employeeExperienceupdateForm.value;
-
       // Prepare the payload
       const payload = {
         id: this.selectedid,
@@ -390,7 +394,8 @@ export class PreviousExperinceComponent {
         previousContactNumber: formData.previousContactNumberupdate,
         previousContactEmail: formData.previousContactEmailupdate,
         isPresent: formData.isPresentupdate,
-
+        createdAt: currentDate, 
+        updatedAt: currentDate, 
         isDeleted: false,
       };
 

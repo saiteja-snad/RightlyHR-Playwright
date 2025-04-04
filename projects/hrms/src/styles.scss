@@ -728,3 +728,15 @@ input[type="file"] {
             color: #06274F;
         }
     }
+
+// download text
+    .dowload-text {
+        font-weight: 600;
+        font-size: 13px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-decoration: underline;
+        text-decoration-style: solid;
+        text-decoration-thickness: 0%;
+        color: rgba(6, 39, 79, 1);
+    }

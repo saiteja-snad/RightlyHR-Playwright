@@ -10,7 +10,7 @@ import moment from 'moment';
 
 @Component({
   selector: 'app-pre-onboaring-details',
-  imports: [CommonModule, Select, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   standalone: true,
   templateUrl: './pre-onboaring-details.component.html',
   styleUrl: './pre-onboaring-details.component.scss'

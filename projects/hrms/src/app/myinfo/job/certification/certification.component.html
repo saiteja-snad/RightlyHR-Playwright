@@ -12,14 +12,12 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Company Name</th>
-                    <th>Employment Type</th>
-                    <th>From Date</th>
-                    <th>To Date</th>
-                    <th>Job Role</th>
-                    <th>Currently Working</th>
-                    <th>Document</th>
-                    <th class="text-center">Actions</th>
+                    <th>CERTIFICATION NAME</th>
+                    <th>CERTIFICATION ID</th>
+                    <th>ISSUED DATE</th>
+                    <th>EXPIRY DATE</th>
+                    <th  class="text-center">Document</th>
+                    <th class="text-center">ACTIONS</th>
 
                 </tr>
             </thead>
@@ -29,17 +27,17 @@
                         <td>{{ empcreficition.certificationName }}</td>
                         <td>{{empcreficition.certificationId}}</td>
                         <td>{{empcreficition.issuedDate | dateformat}}</td>
-                        <td>{{empcreficition.toDate | dateformat}}</td>
-                        <td>{{empcreficition.jobTitle}}</td>
+                    
+                      
                         <td>
                             <span *ngIf="empcreficition.expirationDate != null; else NoExpiration"></span><ng-template
                                 #NoExpiration>No Expiration</ng-template>{{ empcreficition.expirationDate | dateformat
                             }}
                         </td>
-                        <td><span *ngIf="empcreficition.docUrl;else noData" class="dowload-text"
+                        <td class="text-center"><span *ngIf="empcreficition.attachment;else noData" class="dowload-text"
                                 (click)="onSelectBankProofDownload(empcreficition)" style="cursor: pointer;"><i
                                     class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
-                                #noData>-</ng-template></td>
+                                #noData><span class="text-center">-</span></ng-template></td>
 
 
                         <td class="text-center">
@@ -78,7 +76,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Previous Experience Details
+                <p class="popup-heading mb-0">Add Certification Details
                 </p>
             </div>
             <div>
@@ -147,7 +145,7 @@
                         <div class="form-check">
                             <input class="form-check-input mt-2" type="checkbox" id="noExpiry"
                                 formControlName="isExpired" />
-                            <label class="form-check-label label-in mt-2" for="noExpiry">No Expiry</label>
+                            <label class="form-check-label  custom-label mt-2" for="noExpiry">No Expiry</label>
                         </div>
                     </div>
                 </div>
@@ -169,8 +167,8 @@
                 </div>
 
                 <div class="modal-footer d-flex justify-content-end">
-                    <button type="button" class="btn btn-secondary me-2" (click)="onReset()">Close</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="certificationForm.invalid">Add
+                    <button type="button" class="custom-btn btn-secondary" (click)="onReset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="certificationForm.invalid">Add
                     </button>
                 </div>
 
@@ -274,8 +272,8 @@
                 </div>
 
                 <div class="modal-footer d-flex justify-content-end">
-                    <button type="button" class="btn btn-secondary me-2" (click)="onReset()">Close</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="updateCertificationForm.invalid">update
+                    <button type="button" class="custom-btn btn-secondary" (click)="onReset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateCertificationForm.invalid">update
                     </button>
                 </div>
 

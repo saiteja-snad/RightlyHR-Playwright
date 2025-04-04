@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { IDepartment, IJob, IJobdetails, IJobtype, IRole } from '../../../Interfaces/job-model';
+import { IDepartment, IGrade, IJob, IJobdetails, IJobtype, IRole } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -27,6 +27,7 @@ export class JobDetailsComponent {
   employeinfo: any
   allempdata: any;
   allReportees: any;
+  GradeDetails = [] as IGrade[];
   employeementType: { id: number; name: string }[] = [
     { id: 1, name: 'Full-Time' },
     { id: 2, name: 'Part-Time' },
@@ -61,16 +62,13 @@ export class JobDetailsComponent {
     this.initializeForm();
     this.initializejobForm();
     this.getDepartment();
-    this.getJobrole();
     this.getJobtype();
     this.getReportingTo();
     this.getEmployeeId();
+    this.getGrade();
    // this.getSubDepartmentName();  
-    this.getJobtype();
-    this.getJobrole();
-    this.getDepartment();
-    this.getReportingTo();
-    this.getJobDetails();
+    this.getJobrole();  
+      this.getJobDetails();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
   }
 
@@ -114,6 +112,15 @@ export class JobDetailsComponent {
        
       },
       error: (reason:any) => console.error('Error fetching employee data:', reason),
+    });
+  }
+  //function to get grade dropdown
+  getGrade() {
+    this.subscription = this.http.getData('GradeTable').subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.GradeDetails = data as IGrade[];
+      },
     });
   }
 

@@ -29,10 +29,17 @@
                         <td>{{ empexperimentdata.companyName }}</td>
                         <td>{{empexperimentdata.employmentType}}</td>
                         <td>{{empexperimentdata.fromDate | dateformat}}</td>
-                        <td>{{empexperimentdata.toDate | dateformat}}</td>
+
+
+                        <td>
+                            <span *ngIf="empexperimentdata.toDate != null; else NoExpiration"></span><ng-template
+                                #NoExpiration>-</ng-template>{{ empexperimentdata.toDate | dateformat
+                            }}
+                        </td>
+
                         <td>{{empexperimentdata.jobTitle}}</td>
                         <td>{{empexperimentdata.isPresent ? 'Yes' :'No'}}</td>
-                        <td><span *ngIf="empexperimentdata.docUrl;else noData" class="dowload-text"
+                        <td><span *ngIf="empexperimentdata.attachment;else noData" class="dowload-text"
                                 (click)="onSelectBankProofDownload(empexperimentdata)" style="cursor: pointer;"><i
                                     class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
                                 #noData>-</ng-template></td>
@@ -133,7 +140,7 @@
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"
-                                formControlName="fromDate" [min]="'1940-01-01'" (change)="currentDateValidation()" />
+                                formControlName="fromDate" [min]="'1940-01-01'"  [max]="currentDate | date: 'yyyy-MM-dd'"  (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
                                 class="error-msg">
                                 From Date is required
@@ -147,7 +154,7 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
-                                (change)="toDateValidation()" />
+                                (change)="toDateValidation()" [min]="employeeExperienceForm.get('fromDate')?.value" />
                             <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
                                 class="error-msg">
                                 To Date is required

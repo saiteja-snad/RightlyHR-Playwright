@@ -19,7 +19,7 @@ import { PersonalJobTabsComponent } from "../../shared/personal-job-tabs/persona
 
 @Component({
   selector: 'app-myinfo-layout',
-  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, PersonalPersonalTabsComponent, PersonalJobTabsComponent],
+  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule,],
   templateUrl: './myinfo-layout.component.html',
   styleUrl: './myinfo-layout.component.scss'
 })
@@ -32,8 +32,7 @@ export class MyinfoLayoutComponent implements OnInit {
   activeSideNav!: string;
   activeItem!: string;
   empinfo = {} as Ipersonal;
-  emppersonalinfo={} as Ipersonal;
-  postIsApplicable!: any; //variable to store the data
+  
   subscription!: Subscription;
   // rmData = [
   //   { name: 'Rajesh', designation: 'Software Engineer', team: 'Development', location: 'Bangalore' }]
@@ -41,7 +40,7 @@ export class MyinfoLayoutComponent implements OnInit {
   selectedData: any = {};
 
   selectedEmployeeIds: any;
-  constructor(private http: HttpService,private authService: AuthService,private router: Router, private modalService: NgbModal,
+  constructor(private http: HttpService,private router: Router, private modalService: NgbModal,
     private fb: FormBuilder,private conformationPopup: OpenModalService) { }
   
 
@@ -55,78 +54,9 @@ export class MyinfoLayoutComponent implements OnInit {
     console.log(this.empinfo);
     this.getAllTeammembersList();
     this.getEmployee();
-     this.emppersonalinfo=JSON.parse(localStorage.getItem("personaldata") || '{}')
+  
   }
-  emailForRequestDoc() {
-    console.log('hgshgfs')
-    let loggedInUser = this.authService.getToken();
-    if (this.emppersonalinfo.experienceType == 'Fresher') {
-      this.postIsApplicable = 'Fresher';
-    } else if (this.emppersonalinfo.experienceType == 'Trainee') {
-      this.postIsApplicable = 'Trainee';
-    } else if (this.emppersonalinfo.experienceType == 'Experienced') {
-      this.postIsApplicable = 'Experienced';
-    }
-    let pdata = {
-      empId: this.emppersonalinfo.employeeId,
-      // userName: Value.emailaddress,
-      // password: Value.password,
-      // personEmail: this.postProspectiveEmpDetails.personalEmail,
-      // personName: this.postProspectiveEmpDetails.firstName+" "+this.postProspectiveEmpDetails.lastName,
-      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-      senderEmail: loggedInUser.workEmail,
-      status: this.postIsApplicable,
-      // jobRole: this.selectedValueJobRoledrop,
-    };
-    if (loggedInUser.middleName) {
-      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
-    } else {
-      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
-    }
-    this.subscription = this.http
-      .postdata(`CustomEmail/RequestDocuments`, pdata)
-      .subscribe({
-        next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Email Sent Successfully')
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
-     
-  }
-  reRequestEmail(f: NgForm) {
-    let loggedInUser = this.authService.getToken();
-    let pdata = {
-      empId: this.empinfo.employeeId,
-      // userName: Value.emailaddress,
-      // password: Value.password,
-      // personEmail: this.postProspectiveEmpDetails.personalEmail,
-      // personName: this.postProspectiveEmpDetails.firstName+" "+this.postProspectiveEmpDetails.lastName,
-      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-      senderEmail: loggedInUser.workEmail,
-      // status: this.postreason,
-      // comments: this.comments,
-      // jobRole: this.selectedValueJobRoledrop,
-    };
-    if (loggedInUser.middleName) {
-      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
-    } else {
-      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
-    }
-    this.subscription = this.http
-      .postdata(`CustomEmail/RerequestDocuments`, pdata)
-      .subscribe({
-        next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Email Sent Successfully')
-          
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
-   
-  }
+ 
   selectedManager: any = null;
 
   onSelectManager(event: any, field: string) {

@@ -9,7 +9,7 @@
             </div>
             <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
                 <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid" >Save</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid" (click)="updateAddressInfo()" >Save</button>
             </div>
         </div>
 

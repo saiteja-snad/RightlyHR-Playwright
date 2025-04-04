@@ -13,17 +13,16 @@
     }
 
     <!--Education place holder-->
-    <!-- @if (getEducationData.length <= 0) { <div class="placeholder-container">
-
+    @if (getEducationData.length <= 0) { <div class="placeholder-container">
         <div>
             <img src="/images/education-placeholder.png" alt="placeholder Image" class="place-holder-image mb-4">
             <p class="placeholder-text mb-5">Please provide education details</p>
             <button class="custom-btn btn-primary px-5" (click)="openEducation()">Add</button>
         </div>
 </div>
-} -->
+}
 
-<!-- @if (getEducationData.length > 0) { -->
+@if (getEducationData.length > 0) {
 <!--Education table-->
 <div class="custom-main-sub-content">
     <div class="custom-table-content">
@@ -55,8 +54,10 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                <li><a class="dropdown-item" (click)="openUpdate()"><i class="bi bi-pencil me-2"></i>Update</a></li>
-                                <li><a class="dropdown-item" (click)="deleteeducation(data.id,data.employeeId,data.degree,data.university,data.specialization,data.gpa,data.degreeStartDate,data.degreeEndDate)"><i class="bi bi-trash3 me-2"></i>Delete</a></li>
+                                <li><a class="dropdown-item" (click)="openUpdate(data)"><i class="bi bi-pencil me-2"></i>Update</a></li>
+                                <li><a class="dropdown-item"
+                                     (click)="deleteeducation(data.id,data.employeeId,data.degree,data.university,data.specialization,data.gpa,data.degreeStartDate,data.degreeEndDate)"><i
+                                            class="bi bi-trash3 me-2"></i>Delete</a></li>
                             </ul>
                         </div>
                     </td>
@@ -65,7 +66,7 @@
         </table>
     </div>
 </div>
-<!-- } -->
+}
 
 <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
     <button class="custom-btn btn-primary px-5">Next</button>

@@ -33,8 +33,12 @@ export class EducationDetailsComponent {
     this.modalService.open(AddEducationDetailsComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
-  openUpdate() {
-    this.modalService.open(UpdateEducationDetailsComponent, { centered: true, backdrop: 'static', size: 'lg' });
+  openUpdate(data:any) {
+    console.log(data);
+    const modalRef = this.modalService.open(UpdateEducationDetailsComponent, { centered: true, backdrop: 'static', size: 'lg' });
+    // Pass data to the modal component instance
+    modalRef.componentInstance.educationData = data;
+    // this.modalService.open(UpdateEducationDetailsComponent, { centered: true,  backdrop: 'static', size: 'lg' });
   }
 
   navigateDashboard() {
@@ -108,16 +112,8 @@ export class EducationDetailsComponent {
   //function to delete the data
   deleteeducation(id: number, employeeId: number, degree: string, university: string, specialization: string,
     gpa: number, degreeStartDate: any, degreeEndDate: any) {
-    let edudata = {
-      "status": "Void",
-      "id": id,
-      "employeeId": employeeId,
-      "degree": degree,
-      "university": university,
-      "specialization": specialization,
-      "gpa": gpa,
-      "degreeStartDate": degreeStartDate,
-      "degreeEndDate": degreeEndDate,
+    let edudata = { "status": "Void", "id": id, "employeeId": employeeId, "degree": degree, "university": university, "specialization": specialization,
+       "gpa": gpa, "degreeStartDate": degreeStartDate, "degreeEndDate": degreeEndDate,
     }
     this.subscription = this.http.postData("PreonboardingEducation/UPDATER", edudata).subscribe({
       next: (data: any) => {

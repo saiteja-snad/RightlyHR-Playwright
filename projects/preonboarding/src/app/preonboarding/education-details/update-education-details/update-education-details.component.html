@@ -8,15 +8,14 @@
         </div>
     </div>
     <div class="custom-main-popup-content p-4">
-        <form [formGroup]="educationForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="educationForm" (ngSubmit)="updateEducation()">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="education" class="form-label custom-label mb-2">Education<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="allDegrees" optionLabel="genderName" optionValue="education" id="education"
-                            formControlName="education" placeholder="Please select education"
-                            class="form-select custom-select"></p-select>
+                        <p-select [options]="degreeDetails" optionLabel="degreeName" optionValue="degreeName" id="education" formControlName="education" 
+                          placeholder="Please select education" class="form-select custom-select"></p-select>
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -27,8 +26,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                             class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="specialization"
-                        formControlName="specialization">
+                    <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
@@ -47,8 +45,10 @@
                 <div class="col-md-12 mb-3">
                     <label for="attachment" class="form-label custom-label mb-2">Attachment(Image and PDF only)<span
                             class="text-danger">*</span></label>
-                    <input type="file" class="form-control custom-input" id="attachment"
-                        (change)="onChangeEducation($event)" (change)="onEducChanges($event)">
+                    <input type="file" class="form-control custom-input" id="attachment" (change)="fileAttachment($event);fileChange($event)">
+                    <div class="file-name my-1">
+                        <span>File Name: {{getFileName(this.educationData.attachment)}}</span>
+                    </div>
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4">

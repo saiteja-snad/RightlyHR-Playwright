@@ -70,6 +70,7 @@ export class BasicInfoComponent {
   }
 
   patchForm(data: any): void {
+    
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       salutation: data.title,
@@ -107,7 +108,9 @@ export class BasicInfoComponent {
         .postdata(`Employeedata/UPDATER`, updatePayload)
         .subscribe({
           next: (data: any) => {
-            alert('Data updated successfully!');
+           this.conformationPopup.openSuccessModal('Basic Information Updated Successfully', );
+           this.getEmployeeId();
+           this.basicInfoForm.disable();
             console.log('Data updated successfully:', data);
           },
           error: (reason: any) => {

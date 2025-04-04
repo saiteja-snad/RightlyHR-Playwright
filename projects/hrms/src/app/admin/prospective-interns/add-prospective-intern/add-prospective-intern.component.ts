@@ -191,18 +191,18 @@ export class AddProspectiveInternComponent {
     this.modalService.open(content, { centered: true,backdrop: 'static' });
   }
 
-  postTraineeData(f: FormGroup) {
+  postTraineeData() {
 
     let loggedInUser = this.authService.getToken();
     const data = this.postProspectiveEmpDetails
     let postdata = {
-      firstName: data.firstName,
-      lastName: data.lastName,
+      firstName: this.employeeForm.get('firstName')?.value,
+      middleName: this.employeeForm.get('middleName')?.value,
+      lastName: this.employeeForm.get('lastName')?.value,
       employeeStatus: 'Prospective',
-      emailaddress: data.personalEmail,
+      emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
-      middleName: data.middleName,
-      experienceType: data.experienceType,
+      experienceType: this.employeeForm.get('experienceType')?.value,
     }
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
@@ -218,9 +218,9 @@ export class AddProspectiveInternComponent {
             const jobdata = {
               employeeId: this.result.employeeId,
               gradeId: this.gradeIdValue.gradeId,
-              locationid: data.locationid,
-              sublocationid: data.sublocationid,
-              jobRole: data.designationName,
+              locationid: this.employeeForm.get('location')?.value,
+              sublocationid: this.employeeForm.get('subLocation')?.value,
+              jobRole: this.employeeForm.get('designation')?.value,
             };
             this.subscription = this.http
               .postdata('JobDetails', jobdata)
@@ -246,7 +246,7 @@ export class AddProspectiveInternComponent {
       error: (err: any) => {
         this.conformationPopup.openErrorModal(err.error.message);
         console.log(err);
-        f.reset();
+        // f.reset();
       },
     });
   }

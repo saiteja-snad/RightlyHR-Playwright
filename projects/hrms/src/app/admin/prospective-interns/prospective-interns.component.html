@@ -34,28 +34,6 @@
                         <th>{{'Sub Status'|translate}}</th>
                     </tr>
                 </thead>
-                <!-- <tbody>
-                    <tr>
-                        <td>10410</td>
-                        <td>Jhon Doe</td>
-                        <td>Jhon&#64;gmail.com</td>
-                        <td>+91 9087654321</td>
-                        <td>Bengaluru</td>
-                        <td>Mysore IT park</td>
-                        <td>HR Administrator</td>
-                        <td>Employee Created</td>
-                    </tr>
-                    <tr>
-                        <td>10410</td>
-                        <td>Jhon Doe</td>
-                        <td>Jhon&#64;gmail.com</td>
-                        <td>+91 9087654321</td>
-                        <td>Bengaluru</td>
-                        <td>Mysore IT park</td>
-                        <td>HR Administrator</td>
-                        <td>Employee Created</td>
-                    </tr>
-                </tbody> -->
                 <tbody>
                     <tr *ngFor="let act of Trainee | activeEmployee : searchValue" class="hover" (click)="select(act)">
           

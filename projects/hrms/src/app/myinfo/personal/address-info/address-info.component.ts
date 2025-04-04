@@ -163,6 +163,10 @@ export class AddressInfoComponent {
     bloodGroup: this.empinfo.bloodGroup || null,
     maritalStatus: this.empinfo.maritalStatus || null,
     empStatus: this.empinfo.empstatus,
+    emailaddress: this.empinfo.emailaddress || null, 
+    workEmail: this.empinfo.workEmail || null, 
+    contactnumber: this.empinfo.contactnumber || null,
+    workPhone: this.empinfo.workPhone || null, 
   };
 
   // Send employee basic details update

@@ -101,6 +101,10 @@ export class BasicInfoComponent {
       bloodGroup: formValue.bloodGroup.name|| null,
       maritalStatus: formValue.maritalStatus || null,
       empStatus: 'Active',
+      emailaddress: this.empinfo.emailaddress || null, 
+      workEmail: this.empinfo.workEmail || null, 
+      contactnumber: this.empinfo.contactnumber || null,
+      workPhone: this.empinfo.workPhone || null, 
       
     };
     console.log(updatePayload);

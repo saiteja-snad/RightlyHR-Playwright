@@ -53,6 +53,7 @@ disableForm(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+      this.empinfo = data;
       this.patchForm(data);
       },
       error: (reason) => console.error('Error fetching employee data:', reason),

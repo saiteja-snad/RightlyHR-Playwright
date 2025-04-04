@@ -16,12 +16,12 @@
         <div class="input-content mb-4">
             <label for="exampleFormControlInput1" class="form-label custom-label mb-3">Search Employee<span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name"
-                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100">
+                <p-select [options]="Activeemployeedata" optionLabel="name" optionValue="employeeId" [filter]="true" filterBy="name"
+                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100" >
                     <!-- Template for selected item -->
-                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }} - {{selectedOption.workEmail ?? 'NA'}}</ng-template>
                     <!-- Template for dropdown items -->
-                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
+                    <ng-template let-employee #item>{{ employee.firstName }} {{ employee.middleName }} {{ employee.lastName }} - {{employee.workEmail ?? 'NA'}}</ng-template>
                 </p-select>
             </div>
         </div>

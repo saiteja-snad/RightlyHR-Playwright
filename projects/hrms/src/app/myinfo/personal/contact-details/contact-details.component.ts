@@ -28,15 +28,12 @@ subscription!:Subscription
 
   initializeForm(): void {
     this.contactForm = this.fb.group({
-      employeeId: ['', Validators.required],
-      addressLine1: ['', Validators.required],
-      addressLine2: [''],
-      city: ['', Validators.required],
-      state: ['', Validators.required],
-      country: ['', Validators.required],
-      pinCode: ['', Validators.required],
+ 
+      personalEmail: ['', Validators.required],
+      workMail: ['',Validators.required],
       phoneNumber: ['', Validators.required],
-      emailId: ['', [Validators.required, Validators.email]],
+      workNumber: ['', Validators.required],
+  
     });
   }
 
@@ -56,25 +53,20 @@ disableForm(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-     //  this.patchForm(data);
+      this.patchForm(data);
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
-  // patchForm(data: any): void {   
-  //   this.contactForm.patchValue({
-  //     employeeId: data.employeeId,
-  //     addressLine1: data.addressLine1,
-  //     addressLine2: data.addressLine2,
-  //     city: data.city,
-  //     state: data.state,
 
-  //     country: data.country,
-  //     pinCode: data.pinCode,
-  //     phoneNumber: data.phoneNumber,
-  //     emailId: data.emailId,
-  //   });
-  // }
+  patchForm(data: any): void {   
+    this.contactForm.patchValue({
+      personalEmail: data.emailaddress || '', // Bind personal email
+      workMail: data.workEmail || '',         // Bind work email
+      phoneNumber: data.contactnumber || '',  // Bind personal phone number
+      workNumber: data.workPhone || '',       // Bind work phone number
+    });
+  }
 
   showButtons() {
     this.buttons = !this.buttons

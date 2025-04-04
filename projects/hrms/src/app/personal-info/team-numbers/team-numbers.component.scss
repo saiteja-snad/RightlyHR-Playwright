@@ -1,0 +1,11 @@
+.custom-dropdown-width {
+    width: 100% !important;
+}
+
+.scroll-menu {
+    max-height: 180px;
+    overflow-y: auto;
+    cursor: pointer;
+    position: absolute;
+    z-index: 1000;
+}

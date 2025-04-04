@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IAddress, IJobDetails, Iofferletter } from '../../models/offer-letter.model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../http-services/http.service';
-import { NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import moment from 'moment';
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, DateFormatPipe],
+  imports: [CommonModule, DateFormatPipe, ReactiveFormsModule],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss'
 })
@@ -35,8 +36,11 @@ export class OfferLetterComponent implements OnInit {
   generatedfile = {} as any;
   employeeaddress = [] as any;
   loadingcircle: boolean = false;
+  rejectForm!: FormGroup;
+  @ViewChild('acceptpopup') acceptpopup: any;
+  @ViewChild('rejectpopup') rejectpopup: any;
 
-  constructor(private router: Router, private http: HttpService) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     // this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -47,31 +51,46 @@ export class OfferLetterComponent implements OnInit {
     // this.getCompensationDetails(this.prosempdata);
     // this.getEmployeeAddress();
     // this.getAuthorityDetails();
+    this.initializeRejectForm();
   }
 
-  navigateExperience() {
-    this.router.navigate(['/education-details'])
+  initializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      rejectReason: ['', Validators.required],
+    });
+  }
+
+  navigateNext() {
+    this.router.navigate(['/education-details']);
   }
 
   formatDate(data: any): any {
     if (data) {
       return moment(data).format('YYYY-MM-DD');
     }
-    return data
+    return data;
+  }
+
+  openAccept(){
+    this.modalService.open(this.acceptpopup, { centered: true });
+  }
+  
+  openReject(){
+    this.modalService.open(this.rejectpopup, { centered: true });
   }
 
   //function to navigate to the previous page
   navigatePrevious() {
-    this.router.navigate(['/preonboarding/documentsupload']);
+    this.router.navigate(['/document']);
   }
 
   //function to get address details 
   getEmployeeAddress() {
-    let EmployeeId = this.prosempdata.employeeId
+    let EmployeeId = this.prosempdata.employeeId;
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.employeeaddress = data as IAddress[];
-        this.getOfferLetterDetails()
+        this.getOfferLetterDetails();
       },
       error: (err: any) => {
         console.log(err);
@@ -136,20 +155,20 @@ export class OfferLetterComponent implements OnInit {
   }
 
   submitRejectReason(form: NgForm) {
-    let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter
-    offerUpdateDetails.candidateComments = this.rejectionReason.comments
-    offerUpdateDetails.candidateStatus = "Offer Letter Rejected"
-    this.updateOfferDetails(offerUpdateDetails)
-    this.prosempdata.substatus = "Offer Letter Rejected"
-    this.updateEmployeeDetails(this.prosempdata)
-    this.loadingcircle = true
+    let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
+    offerUpdateDetails.candidateComments = this.rejectionReason.comments;
+    offerUpdateDetails.candidateStatus = "Offer Letter Rejected";
+    this.updateOfferDetails(offerUpdateDetails);
+    this.prosempdata.substatus = "Offer Letter Rejected";
+    this.updateEmployeeDetails(this.prosempdata);
+    this.loadingcircle = true;
     form.resetForm();
   }
 
   updateOfferDetails(updatedData: Iofferletter) {
     this.subscription = this.http.postData('PreonboardingOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
-        this.rejectEmailSubmit(respone)
+        this.rejectEmailSubmit(respone);
       },
       error: (err) => {
         console.log(err);
@@ -165,6 +184,10 @@ export class OfferLetterComponent implements OnInit {
       modalElement.style.display = 'none';
     }
     this.router.navigate(['/login'])
+  }
+
+  closeModal(){
+    this.modalService.dismissAll();
   }
 
   rejectEmailSubmit(Value: any) {
@@ -310,49 +333,34 @@ export class OfferLetterComponent implements OnInit {
         //===========================================================================================================
         // calculation for the basicsalary
         Employee.basicSalary = Math.round(Employee.totalGrossSalary * (60 / 100))
-
         //calculation for the hraSalary
         Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100))
-
         //total deductions per month
         Employee.totalDeduction = Math.round(Employee.pfContribution + Employee.employeeEsi + Employee.professionalTax)
-
         //total net salary  per month
         Employee.netSalary = Math.round(Employee.totalGrossSalary - Employee.totalDeduction);
-
         //calculation for the otherallowances
         Employee.otherAllowances = Math.round(Employee.totalGrossSalary * (10 / 100))
-
         //pfcontribution per annum
         Employee.pfPreAnuum = Math.round(Employee.pfContribution * Employee.grossby)
-
         //totalGrossPerAnnum calculation
         Employee.totalGrossPerAnnum = Math.round(Employee.totalGrossSalary * Employee.grossby)
-
         //basicsalaryperannum
         Employee.basicPerannum = Math.round(Employee.basicSalary * Employee.grossby)
-
         //HRA per annum
         Employee.hraPerAnnum = Math.round(Employee.hraSalary * Employee.grossby);
-
         //esiper anuum
         Employee.esiPerAnnum = Math.round(Employee.esicContribution * Employee.grossby);
-
         //esiper anuum for employee
         Employee.esiPerAnnumemployee = Math.round(Employee.employeeEsi * Employee.grossby);
-
         //otherAllowancesper annum
         Employee.otherAllowancesPerAnnum = Math.round(Employee.otherAllowances * Employee.grossby);
-
         //professional per annum
         Employee.professionalPerAnnum = Math.round(Employee.professionalTax * Employee.grossby);
-
         //salary deductions per annum
         Employee.totalDeductionsPerAnnum = Math.round(Employee.pfPreAnuum + Employee.esiPerAnnumemployee + Employee.professionalPerAnnum);
-
         //net salary per annum
         Employee.netSalaryPerAnnum = Math.round(Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum);
-
         //Ctc per annum
         Employee.ctcperannum = Math.round(Employee.totalGrossPerAnnum + Employee.pfPreAnuum + Employee.esiPerAnnum)
       },

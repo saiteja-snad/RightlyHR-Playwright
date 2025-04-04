@@ -19,15 +19,9 @@
           <div class="row">
             <div class="col-lg-4 col-md-6 mb-4">
               <label for="exitReason" class="form-label custom-label mb-2">Exit Reason<span class="text-danger">*</span></label>
-              <select
-                class="form-select"
-                id="exitReason"
-                formControlName="exitReason"
-                [disabled]="!isEditing"
-              >
-                <option [ngValue]="undefined" disabled>Select</option>
-                <option *ngFor="let item of terminationDetails" [ngValue]="item.reason">{{ item.reason }}</option>
-              </select>
+              <div class="custom-p-select-content">
+                <p-select [options]="terminationDetails" optionValue="id" optionLabel="reason" placeholder="Please select exit reason" formControlName="exitReason" class="form-select custom-select"></p-select>
+              </div>
               <div class="error-msg" *ngIf="offboardingForm.get('exitReason')?.invalid && offboardingForm.get('exitReason')?.touched">
                 Exit Reason is required.
               </div>
@@ -35,7 +29,9 @@
   
             <div class="col-lg-4 col-md-6 mb-4">
               <label for="eligibleForRehire" class="form-label custom-label mb-2">Eligible For Rehire<span class="text-danger">*</span></label>
-              
+              <div class="custom-p-select-content">
+                <p-select [options]="rehireDetails" optionValue="id" optionLabel="eligibleforrehire1" placeholder="Please select exit reason" formControlName="eligibleForRehire" class="form-select custom-select"></p-select>
+              </div>
               <div class="error-msg" *ngIf="offboardingForm.get('eligibleForRehire')?.invalid && offboardingForm.get('eligibleForRehire')?.touched">
                 Eligible For Rehire is required.
               </div>
@@ -49,7 +45,7 @@
                 id="relievingType"
                 formControlName="relievingType"
                 placeholder="Please enter relieving type"
-                [disabled]="!isEditing"
+              
               />
               <div class="error-msg" *ngIf="offboardingForm.get('relievingType')?.invalid && offboardingForm.get('relievingType')?.touched">
                 Relieving Type is required.
@@ -63,7 +59,7 @@
                 class="form-control custom-input"
                 id="lastWorkingDay"
                 formControlName="lastWorkingDay"
-                [disabled]="!isEditing"
+          
               />
               <div class="error-msg" *ngIf="offboardingForm.get('lastWorkingDay')?.invalid && offboardingForm.get('lastWorkingDay')?.touched">
                 Last Working Day is required.

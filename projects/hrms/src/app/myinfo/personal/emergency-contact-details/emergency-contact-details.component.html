@@ -51,10 +51,10 @@
             <div>
                 <span class="emergency-contact-sub-header">Emergency Contact 2</span>
             </div>
-            <div *ngIf="!buttons">
-                <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+            <div *ngIf="!buttons2">
+                <a (click)="enableForm2()"><i class="bi bi-pencil-square"></i></a>
             </div>
-            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons2">
                 <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid" (click)="saveForm()">Save</button>
             </div>

@@ -65,7 +65,6 @@ export interface IJob {
     offerIssueddate: any,
     offerstatus: string,
     documentUrl: string,
-    // employeeId: any,
     fusionEmpId: any
     noduerequestpassed:any,
   }

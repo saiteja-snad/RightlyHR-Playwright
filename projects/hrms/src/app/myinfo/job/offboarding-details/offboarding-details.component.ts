@@ -8,10 +8,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-offboarding-details',
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule,ReactiveFormsModule,Select],
   templateUrl: './offboarding-details.component.html',
   styleUrl: './offboarding-details.component.scss'
 })

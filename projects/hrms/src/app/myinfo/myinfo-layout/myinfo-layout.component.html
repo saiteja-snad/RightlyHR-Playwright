@@ -12,7 +12,7 @@
             <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info')" >
                 Archive
             </button>
-            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')" (onChange)="emailForRequestDoc()">
+            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')" (click)="emailForRequestDoc()">
                 Request for Documents
             </button>
             <!-- <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button> -->

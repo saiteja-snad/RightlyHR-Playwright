@@ -68,7 +68,7 @@ export class MyinfoLayoutComponent implements OnInit {
       this.postIsApplicable = 'Experienced';
     }
     let pdata = {
-      empId: this.empinfo.employeeId,
+      empId: this.emppersonalinfo.employeeId,
       // userName: Value.emailaddress,
       // password: Value.password,
       // personEmail: this.postProspectiveEmpDetails.personalEmail,

@@ -210,7 +210,7 @@ selectgradId(event:any){
       employeeStatus: 'Prospective',
       emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
-      empType:this.employeeForm.get('employmentType')?.value,
+      experienceType:this.employeeForm.get('employmentType')?.value,
     };
     this.subscription = this.http
       .postdata('Employeedata/createEmployee', postdata)

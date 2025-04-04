@@ -191,6 +191,7 @@ export interface IJob {
     isdeleted: string,
   }
   export interface IJobdetails {
+gradeName: any;
     subdeptId: any;
     id: number,
     employeeId: any,
@@ -287,9 +288,13 @@ export interface IJob {
   }
   
   export interface IRole {
+  
+    id: any;
     sno: number,
     jobRole1: string;
+    designationName: string;
     isdeleted: string;
+    gradeId:any
   }
   
   

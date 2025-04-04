@@ -67,7 +67,40 @@ disableForm(): void {
       workNumber: data.workPhone || '',       // Bind work phone number
     });
   }
+  updateAddressInfo(): void {
+    const formValue = this.contactForm.value; 
+  const updatePayload = {
+    employeeId: this.empinfo.employeeId,
+    title: this.empinfo.title || null,
+    firstName: this.empinfo.firstName,
+    middleName: this.empinfo.middleName,
+    lastName: this.empinfo.lastName,
+    gender: this.empinfo.gender || null,
+    dob: this.empinfo.dob,
+    bloodGroup: this.empinfo.bloodGroup || null,
+    maritalStatus: this.empinfo.maritalStatus || null,
+    empStatus: this.empinfo.empstatus,
+    emailaddress: formValue.personalEmail || null, 
+    workEmail: formValue.workMail || null, 
+    contactnumber: formValue.phoneNumber || null,
+    workPhone: formValue.workNumber || null, 
+  };
 
+ 
+  this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
+    .subscribe({
+      next: (data: any) => {
+        console.log('Data updated successfully:', data);
+        this.modalService.dismissAll();
+        
+        this.conformationPopup.openSuccessModal('Basic Info updated successfully');
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        this.conformationPopup.openErrorModal('Basic Info update failed');
+      },
+    });
+  }
   showButtons() {
     this.buttons = !this.buttons
   }

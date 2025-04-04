@@ -21,7 +21,7 @@ export class EmergencyContactDetailsComponent {
   constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) {}
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getEmployeeId();
     this.initializeForm();
     this.emergencyContactForm.disable(); // Disable the form initially

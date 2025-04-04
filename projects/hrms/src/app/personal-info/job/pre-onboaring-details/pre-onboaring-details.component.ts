@@ -30,7 +30,7 @@ export class PreOnboaringDetailsComponent {
   constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getEmployeeId();
     this.getAppointmentEmployeebyId();
     this.getOfferLetterEmployeebyId();

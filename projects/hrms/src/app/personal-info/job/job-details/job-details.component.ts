@@ -69,7 +69,7 @@ export class JobDetailsComponent {
    // this.getSubDepartmentName();  
     this.getJobrole();  
       this.getJobDetails();
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
   }
 
   initializeForm(): void {

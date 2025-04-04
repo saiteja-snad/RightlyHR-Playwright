@@ -32,7 +32,7 @@ export class IdentityDetailsComponent implements OnInit {
   constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     console.log('Employee info:', this.empinfo);
     this.getIdentityDropDown();
     this.initializeForm();

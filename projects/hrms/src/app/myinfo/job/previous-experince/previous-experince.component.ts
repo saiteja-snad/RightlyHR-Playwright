@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { IJobtype } from '../../../Interfaces/job-model';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-previous-experince',
@@ -36,7 +37,7 @@ export class PreviousExperinceComponent {
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
 
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private http: HttpService,public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -207,7 +208,7 @@ export class PreviousExperinceComponent {
         }
       });
   }
-  
+
   saveExperienceData(payload: any): void {
     this.subscription = this.http.postdata('ExperienceDetail', payload).subscribe({
       next: () => {

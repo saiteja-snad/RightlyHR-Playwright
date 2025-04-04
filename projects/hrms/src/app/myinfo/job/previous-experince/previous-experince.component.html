@@ -110,7 +110,7 @@
                             </label>
                             <input type="text" class="form-control custom-input" id="CompanyName"
                                 formControlName="companyName" placeholder="Please enter company name"
-                                (keypress)="restrictInput($event)" />
+                                (keypress)="formValidation.restrictInput($event)" />
                             <div *ngIf="employeeExperienceForm.get('companyName')?.invalid && employeeExperienceForm.get('companyName')?.touched"
                                 class="error-msg">
                                 <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">Company

@@ -8,24 +8,37 @@ import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn } from '@angu
 export class FormValidationService {
   constructor() { }
 
-  checkInputs(form: FormGroup, controlName: string) {
-    const control = form.get(controlName);
-    if (control) {
-      const value = control.value || '';
-      let updatedValue = value;
-      if (controlName.includes('Email')) {
-        // For Email, remove spaces
-        updatedValue = value.replace(/\s+/g, '');
-      } else if (controlName.includes('comment')) {
-        // For "comment", disallow leading spaces and only allow specific characters
-        updatedValue = value.replace(/^\s+/, '') // Remove leading spaces.replace(/[^a-zA-Z0-9.,/_ -]/g, ''); // Allow alphanumeric and specific special characters
-      } else {
-        // For other controls, remove leading spaces and invalid characters
-        updatedValue = value.replace(/^\s+/, '') // Remove leading spaces.replace(/[^a-zA-Z0-9.,/_ -]/g, ''); // Allow alphanumeric and specific special characters
-      }
-      if (value !== updatedValue) {
-        control.setValue(updatedValue, { emitEvent: false });
-      }
+  restrictInitialSpace(event: any) {
+    const value = event.target.value;
+    if (value.length === 0 && event.key === ' ') {
+      event.preventDefault(); // Block space at the start
+    }
+  }
+  
+  restrictAlphabets(event: KeyboardEvent) {
+    const key = event.key;
+    if (!/[0-9]/.test(key)) {
+      event.preventDefault();  
+    }
+  }
+  //aplicatives
+  restrictInput(event: KeyboardEvent) {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      return;
+    }
+
+    // Prevent the first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const isAlphabetic = /^[A-Za-z\s]$/.test(key);
+    if (!isAlphabetic) {
+      event.preventDefault();
     }
   }
 
@@ -130,4 +143,7 @@ export class FormValidationService {
 
     return minLengths[countryCode] || 10; // Default to 10 if not found
   }
+
+
+
 }

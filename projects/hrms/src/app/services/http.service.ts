@@ -22,6 +22,13 @@ export class HttpService {
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }
+  //to get the employee id
+  employeeIdSubject = new BehaviorSubject<number>(0);
+  employeeId$ = this.employeeIdSubject.asObservable();
+
+  updateemployeeId(employeeid: number) {
+    this.employeeIdSubject.next(employeeid);
+  }
   //to get template on offer letter
   getTemplate(): Observable<ArrayBuffer> {
     return this.http.get('../assets/offer.docx', {

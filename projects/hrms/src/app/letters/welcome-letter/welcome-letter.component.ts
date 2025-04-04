@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
+import { OpenModalService } from '../../services/open-modal.service';
 
 
 @Component({
@@ -57,30 +58,13 @@ export class WelcomeLetterComponent {
     private authService: AuthService,
     // private _userAcessService:UserAccessService,
     private elementRef: ElementRef,private fb: FormBuilder,
-    config: NgbModalConfig, private modalService: NgbModal
+    config: NgbModalConfig, private modalService: NgbModal,private conformationPopup: OpenModalService,
   ) { config.backdrop = 'static';
     config.keyboard = false;
 }
 
 openmodel(content: any) {
   this.modalService.open(content, { centered: true })
-}
- 
-dataSuccessMsg(msg:string){
-  this.Status = msg;
-        this.openmodel(this.successhide);
-        setTimeout(() => {
-          this.modalService.dismissAll();
-        }, 2000);
-
-}
-
-dataFailureMsg(msg:string){
-  this.Status = msg;
-        this.openmodel(this.errorhide);
-        setTimeout(() => {
-          this.modalService.dismissAll();
-        }, 2000);
 }
 
   DateValidation(){
@@ -234,36 +218,7 @@ onclickauthority(ValueName:any){
     console.log(this.authorityDesignation);
   }
   }
-  // onclickDesignation(){
-  //   const signatureAuthorityDetails = this.authorityDetails.find(
-  //     (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
-  //   );
-  //   console.log(signatureAuthorityDetails);
-  //   this.bankloanLetterData.authorityName=signatureAuthorityDetails.authorityName;
-  //   this.bankloanLetterData.designation=signatureAuthorityDetails.designation;
-  //   this.bankloanLetterData.countrycode=signatureAuthorityDetails.countrycode;
-  //   this.bankloanLetterData.workNumber=signatureAuthorityDetails.workNumber;
-  //   this.bankloanLetterData.workEmail=signatureAuthorityDetails.workEmail
-  // }
-  // onclickDesignation() {
-  //   debugger
-  //   console.log('Authority selected:', this.bankloanLetterData.authorityid);
-  //   const signatureAuthorityDetails = this.authorityDetails.find(
-  //     (c: any) => c.employeeId === this.bankloanLetterData.authorityid
-  //   );
-  //   debugger
-  //   console.log('Selected Authority Details:', signatureAuthorityDetails);
-  
-  //   if (signatureAuthorityDetails) {
-  //     this.bankloanLetterData.authorityName = signatureAuthorityDetails.fullName;
-  //     this.bankloanLetterData.designation = signatureAuthorityDetails.designation;
-  //     this.bankloanLetterData.countrycode = signatureAuthorityDetails.countrycode;
-  //     this.bankloanLetterData.workNumber = signatureAuthorityDetails.workNumber;
-  //     this.bankloanLetterData.workEmail = signatureAuthorityDetails.workEmail;
-  
-  //     console.log('Updated bankloanLetterData:', this.bankloanLetterData); // Check if data is updated
-  //   }
-  // }
+
   onclickDesignation(selectedAuthority: any) {
     console.log("Selected Authority ID:", selectedAuthority);
   
@@ -414,7 +369,7 @@ onClickOutside(target: any) {
         },
         error: (reason: any) => {
           console.log(reason);
-        this.dataFailureMsg('file upload  is failed');
+        this.conformationPopup.openErrorModal('file upload  is failed')
         },
       });
   }
@@ -427,12 +382,7 @@ const payload={
   this.subscription=this.http.postdata(`CustomEmail/generatewelcomeemail/${this.bankloanLetterData.employeeId}`,payload).subscribe({
     next:(data:any)=>{
       console.log(data);
-      this.dataSuccessMsg('Welcome Letter Generated Successfully')
-      // this.toaster.success({
-      //   detail: 'SUCCESS',
-      //   summary: 'Bank Loan Letter Generated Successfully',
-      //   duration: 5000,
-      // });
+      this.conformationPopup.openSuccessModal('Welcome Letter Generated Successfully')
       this.router.navigate(['/admin']);
     },
     error:(err:any)=>{

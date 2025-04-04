@@ -10,7 +10,7 @@ import moment from 'moment';
 
 @Component({
   selector: 'app-pre-onboaring-details',
-  imports: [CommonModule, Select, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   standalone: true,
   templateUrl: './pre-onboaring-details.component.html',
   styleUrl: './pre-onboaring-details.component.scss'
@@ -30,7 +30,7 @@ export class PreOnboaringDetailsComponent {
   constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getEmployeeId();
     this.getAppointmentEmployeebyId();
     this.getOfferLetterEmployeebyId();

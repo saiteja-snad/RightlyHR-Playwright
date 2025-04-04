@@ -1,26 +1,25 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
-import { MyInfoPersonalTabsComponent } from '../../shared/myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component';
-import { MyinfoJobTabsComponent } from "../../shared/myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
-import { Select } from 'primeng/select';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { HttpService } from '../../services/http.service';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Ipersonal, Iteammembers } from '../../Interface/members-model';
 import { Subscription } from 'rxjs';
-import { FormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpService } from '../../services/http.service';
+import { AuthService } from '../../services/auth.service';
+import { Router, RouterOutlet } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
-
+import { CommonModule } from '@angular/common';
+import { Select } from 'primeng/select';
+import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
+import { PersonalPersonalTabsComponent } from '../../shared/personal-personal-tabs/personal-personal-tabs.component';
+import { PersonalJobTabsComponent } from '../../shared/personal-job-tabs/personal-job-tabs.component';
 
 @Component({
-  selector: 'app-myinfo-layout',
-  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent,FormsModule,ReactiveFormsModule],
-  templateUrl: './myinfo-layout.component.html',
-  styleUrl: './myinfo-layout.component.scss'
+  selector: 'app-personalinfo-layout',
+  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, PersonalPersonalTabsComponent, PersonalJobTabsComponent,FormsModule,ReactiveFormsModule],
+  templateUrl: './personalinfo-layout.component.html',
+  styleUrl: './personalinfo-layout.component.scss'
 })
-export class MyinfoLayoutComponent implements OnInit {
+export class PersonalinfoLayoutComponent implements OnInit{
   teamForm!: FormGroup;
   managers: any[] = [];
   teamMembersdata: any[] = [];
@@ -30,13 +29,15 @@ export class MyinfoLayoutComponent implements OnInit {
   activeItem!: string;
   empinfo = {} as Ipersonal;
   subscription!: Subscription;
+  emppersonalinfo={} as Ipersonal;
+  postIsApplicable!: any; //variable to store the data
   // rmData = [
   //   { name: 'Rajesh', designation: 'Software Engineer', team: 'Development', location: 'Bangalore' }]
   
   selectedData: any = {};
 
   selectedEmployeeIds: any;
-  constructor(private http: HttpService,private router: Router, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService) { }
+  constructor(private http: HttpService,private authService: AuthService,private router: Router, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService) { }
   
 
   ngOnInit(): void {
@@ -49,6 +50,76 @@ export class MyinfoLayoutComponent implements OnInit {
     console.log(this.empinfo);
     this.getAllTeammembersList();
     this.getEmployee();
+    this.emppersonalinfo=JSON.parse(localStorage.getItem("personaldata") || '{}')
+  }
+  emailForRequestDoc() {
+    let loggedInUser = this.authService.getToken();
+    if (this.emppersonalinfo.experienceType == 'Fresher') {
+      this.postIsApplicable = 'Fresher';
+    } else if (this.emppersonalinfo.experienceType == 'Trainee') {
+      this.postIsApplicable = 'Trainee';
+    } else if (this.emppersonalinfo.experienceType == 'Experienced') {
+      this.postIsApplicable = 'Experienced';
+    }
+    let pdata = {
+      empId: this.emppersonalinfo.employeeId,
+      // userName: Value.emailaddress,
+      // password: Value.password,
+      // personEmail: this.postProspectiveEmpDetails.personalEmail,
+      // personName: this.postProspectiveEmpDetails.firstName+" "+this.postProspectiveEmpDetails.lastName,
+      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+      senderEmail: loggedInUser.workEmail,
+      status: this.postIsApplicable,
+      // jobRole: this.selectedValueJobRoledrop,
+    };
+    if (loggedInUser.middleName) {
+      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
+    } else {
+      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+    }
+    this.subscription = this.http
+      .postdata(`CustomEmail/RequestDocuments`, pdata)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
+     
+  }
+  reRequestEmail() {
+    let loggedInUser = this.authService.getToken();
+    let pdata = {
+      empId: this.empinfo.employeeId,
+      // userName: Value.emailaddress,
+      // password: Value.password,
+      // personEmail: this.postProspectiveEmpDetails.personalEmail,
+      // personName: this.postProspectiveEmpDetails.firstName+" "+this.postProspectiveEmpDetails.lastName,
+      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+      senderEmail: loggedInUser.workEmail,
+      // status: this.postreason,
+      // comments: this.comments,
+      // jobRole: this.selectedValueJobRoledrop,
+    };
+    if (loggedInUser.middleName) {
+      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
+    } else {
+      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+    }
+    this.subscription = this.http
+      .postdata(`CustomEmail/RerequestDocuments`, pdata)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal('Email Sent Successfully')
+          
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
+   
   }
   selectedManager: any = null;
 

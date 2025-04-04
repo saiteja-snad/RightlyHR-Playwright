@@ -11,15 +11,13 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
-import { LettersTabComponent } from '../../shared/letters-tab/letters-tab.component';
 import { Select } from 'primeng/select';
-import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss'
 })

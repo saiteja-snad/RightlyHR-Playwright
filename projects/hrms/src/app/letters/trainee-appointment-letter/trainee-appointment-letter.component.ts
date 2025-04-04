@@ -16,6 +16,7 @@ import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { IAuthority } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-trainee-appointment-letter',
@@ -29,33 +30,6 @@ export class TraineeAppointmentLetterComponent {
     { name: 'No', value: false },
   ];
 
-  designation: { id: number; name: string }[] = [
-    { id: 1, name: 'Software Engineer' },
-    { id: 2, name: 'Project Manager' },
-    { id: 3, name: 'HR Executive' },
-    { id: 4, name: 'Data Analyst' }
-  ];
-
-  location: { id: number; name: string }[] = [
-    { id: 1, name: 'New York' },
-    { id: 2, name: 'Los Angeles' },
-    { id: 3, name: 'Chicago' },
-    { id: 4, name: 'Houston' }
-  ];
-
-  sublocation: { id: number; name: string; locationId: number }[] = [
-    { id: 1, name: 'Brooklyn', locationId: 1 },
-    { id: 2, name: 'Downtown', locationId: 1 },
-    { id: 3, name: 'Hollywood', locationId: 2 },
-    { id: 4, name: 'South Side', locationId: 3 }
-  ];
-
-  employees = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Mark Taylor' },
-    { id: 4, name: 'Emily Johnson' }
-  ];
   addressdata: { name: string, value: string }[] = [
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },
@@ -96,7 +70,7 @@ export class TraineeAppointmentLetterComponent {
     private authService: AuthService,
     // private _userAcessService: UserAccessService,
     private elementRef: ElementRef,
-    config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,
+    config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService,
   ) { 
     config.backdrop = 'static';
     config.keyboard = false;
@@ -131,22 +105,6 @@ export class TraineeAppointmentLetterComponent {
     this.modalService.open(content, { centered: true })
   }
 
-  dataSuccessMsg(msg:string){
-    this.Status = msg;
-          this.openmodel(this.successhide);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 2000);
-
-  }
-
-  dataFailureMsg(msg:string){
-    this.Status = msg;
-          this.openmodel(this.errorhide);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 2000);
-  }
   
 //function for assert type get
 getAssertType() {
@@ -801,22 +759,13 @@ getDepartment() {
         .subscribe({
           next: (data: any) => {
             console.log(data);
-            //this.AppointmentLetterEmail(docUrl)
-            this.dataSuccessMsg('Appointment Letter Generated Successfully')
-            // this.toaster.success({
-            //   detail: 'SUCCESS',
-            //   summary: 'Appointment Letter Generated Successfully',
-            //   duration: 5000,
-            // });
-  
-  
+            this.conformationPopup.openSuccessModal('Appointment Letter Generated Successfully')
             this.router.navigate(['/admin']);
           },
           error: (reason: any) => {
             console.log(reason);
           },
         });
-  
     }
   
     //to Upload Appoinment letter
@@ -834,13 +783,11 @@ getDepartment() {
               this.postAppointmentDetails(data.path);
               this.AppointmentLetterEmail(data.path);
               console.log(data);
-  
             }
           },
           error: (reason: any) => {
             console.log(reason);
-            this.dataFailureMsg('File upload Failed')
-           
+           this.conformationPopup.openErrorModal('File upload Failed')
           },
         });
     }
@@ -875,19 +822,10 @@ getDepartment() {
     this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.dataSuccessMsg('Email Sent Successfully')
-        // this.toaster.success({
-        //   detail: 'SUCCESS',
-        //   summary: 'Email Sent Successfully',
-        //   duration: 5000,
-
-        // });
-        //this.router.navigate(['/admin']);
+        this.conformationPopup.openSuccessModal('Email Sent Successfully')
       },
       error: (err: any) => {
         console.log(err);
-        //this.router.navigate(['/admin']);
-
       }
     })
     

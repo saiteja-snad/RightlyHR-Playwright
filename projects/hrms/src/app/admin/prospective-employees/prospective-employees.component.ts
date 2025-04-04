@@ -28,7 +28,11 @@ export class ProspectiveEmployeesComponent implements OnInit {
   ngOnInit(): void {
       this.empdata();
       this.jobLocationList();
-    
+      this.http.activeTabSubject
+      .subscribe((selectedObj) => {
+        console.log('Received designation from child via Observable:', selectedObj);
+        this.empdata();
+      });
   }
   empdata() {
     this.subscription = this.http
@@ -63,8 +67,7 @@ export class ProspectiveEmployeesComponent implements OnInit {
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     console.log(this.emp);
-
-    this.router.navigate(['/admin/personal']);
+    this.router.navigate(['/personalinfo']);
   }
 
 }

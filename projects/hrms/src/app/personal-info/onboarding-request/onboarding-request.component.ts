@@ -40,7 +40,7 @@ export class OnboardingRequestComponent {
   { }
   ngOnInit(): void {
     
-    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
     this.getOnboardrequest();
     this.getonboardPeriodData();
   }

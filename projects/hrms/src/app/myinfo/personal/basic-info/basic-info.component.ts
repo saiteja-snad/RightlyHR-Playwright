@@ -64,6 +64,7 @@ export class BasicInfoComponent {
       next: (data: any) => {
        this.empinfo = data;
        this.patchForm(data);
+       localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -100,6 +101,19 @@ export class BasicInfoComponent {
       bloodGroup: formValue.bloodGroup.name|| null,
       maritalStatus: formValue.maritalStatus || null,
       empStatus: 'Active',
+      emailaddress: this.empinfo.emailaddress || null, 
+      workEmail: this.empinfo.workEmail || null, 
+      contactnumber: this.empinfo.contactnumber || null,
+      workPhone: this.empinfo.workPhone || null, 
+      emergencyName: this.empinfo.emergencyName,
+      emailId: this.empinfo.emailId,
+      relationShip: this.empinfo.relationShip,
+      mobileNumber: this.empinfo.mobileNumber,
+      emergencyName1: this.empinfo.emergencyName1,
+      emergencyEmail1: this.empinfo.emergencyEmail1,
+      emergencyNumber1: this.empinfo.emergencyNumber1,
+      relationship1: this.empinfo.relationship1,
+      
     };
     console.log(updatePayload);
     
@@ -107,11 +121,14 @@ export class BasicInfoComponent {
         .postdata(`Employeedata/UPDATER`, updatePayload)
         .subscribe({
           next: (data: any) => {
-            alert('Data updated successfully!');
+            // alert('Data updated successfully!');
             console.log('Data updated successfully:', data);
+            this.modalService.dismissAll();
+           this.conformationPopup.openSuccessModal('Basic Info updated successfully')
           },
           error: (reason: any) => {
               console.log(reason);
+              this.conformationPopup.openErrorModal('Basic Info update failed')
               
           },
         });

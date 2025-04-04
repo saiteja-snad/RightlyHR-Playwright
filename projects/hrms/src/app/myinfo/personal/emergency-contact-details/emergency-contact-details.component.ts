@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-emergency-contact-details',
@@ -18,7 +19,7 @@ export class EmergencyContactDetailsComponent {
   buttons2= false;
   emergencyContactForm!: FormGroup;
   empinfo:any
-  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) {}
+  constructor(private modalService: NgbModal,private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) {}
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -46,6 +47,7 @@ export class EmergencyContactDetailsComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.empinfo = data;
        this.patchForm(data);
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
@@ -55,7 +57,7 @@ export class EmergencyContactDetailsComponent {
     this.emergencyContactForm.patchValue({
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
-      contact1Phone: data.emergencynumber || '', // Bind first emergency contact phone
+      contact1Phone: data.mobileNumber || '', // Bind first emergency contact phone
       contact1Relationship: data.relationShip || '', // Bind first emergency contact relationship
       contact2Name: data.emergencyName1 || '', // Bind second emergency contact name
       contact2Email: data.emergencyEmail1 || '', // Bind second emergency contact email
@@ -87,9 +89,45 @@ export class EmergencyContactDetailsComponent {
     this.emergencyContactForm.get('contact2Relationship')?.enable();
   }
   saveForm(): void {
-    if (this.emergencyContactForm.valid) {
-      console.log('Form Data:', this.emergencyContactForm.value);
-      this.disableForm();
+      const formValue = this.emergencyContactForm.value; 
+    const updatePayload = {
+      employeeId: this.empinfo.employeeId,
+      title: this.empinfo.title || null,
+      firstName: this.empinfo.firstName,
+      middleName: this.empinfo.middleName,
+      lastName: this.empinfo.lastName,
+      gender: this.empinfo.gender || null,
+      dob: this.empinfo.dob,
+      bloodGroup: this.empinfo.bloodGroup || null,
+      maritalStatus: this.empinfo.maritalStatus || null,
+      empStatus: this.empinfo.empstatus,
+      emailaddress: this.empinfo.emailaddress || null, 
+      workEmail: this.empinfo.workEmail || null, 
+      contactnumber: this.empinfo.contactnumber || null,
+      workPhone: this.empinfo.workPhone || null, 
+      emergencyName: formValue.contact1Name || this.empinfo.emergencyName,
+      emailId: formValue.contact1Email || this.empinfo.emailId,
+      relationShip: formValue.contact1Relationship || this.empinfo.relationShip,
+      mobileNumber: formValue.contact1Phone || this.empinfo.mobileNumber,
+      emergencyName1: formValue.contact2Name || this.empinfo.emergencyName1,
+      emergencyEmail1: formValue.contact2Email || this.empinfo.emergencyEmail1,
+      emergencyNumber1: formValue.contact2Phone || this.empinfo.emergencyNumber1,
+      relationship1: formValue.contact2Relationship || this.empinfo.relationship1,
+    };
+  
+   
+    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Data updated successfully:', data);
+          this.modalService.dismissAll();
+          
+          this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          this.conformationPopup.openErrorModal('Emergency Contact Details update failed');
+        },
+      });
     }
-  }
 }

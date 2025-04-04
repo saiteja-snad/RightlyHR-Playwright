@@ -81,10 +81,18 @@ disableForm(): void {
     bloodGroup: this.empinfo.bloodGroup || null,
     maritalStatus: this.empinfo.maritalStatus || null,
     empStatus: this.empinfo.empstatus,
-    emailaddress: formValue.personalEmail || null, 
-    workEmail: formValue.workMail || null, 
-    contactnumber: formValue.phoneNumber || null,
-    workPhone: formValue.workNumber || null, 
+    emailaddress: formValue.personalEmail || this.empinfo.personalEmail, 
+    workEmail: formValue.workMail || this.empinfo.workMail, 
+    contactnumber: formValue.phoneNumber || this.empinfo.phoneNumber,
+    workPhone: formValue.workNumber || this.empinfo.workNumber,
+    emergencyName: this.empinfo.emergencyName,
+    emailId: this.empinfo.emailId,
+    relationShip: this.empinfo.relationShip,
+    mobileNumber: this.empinfo.mobileNumber,
+    emergencyName1: this.empinfo.emergencyName1,
+    emergencyEmail1: this.empinfo.emergencyEmail1,
+    emergencyNumber1: this.empinfo.emergencyNumber1,
+    relationship1: this.empinfo.relationship1,
   };
 
  
@@ -94,11 +102,11 @@ disableForm(): void {
         console.log('Data updated successfully:', data);
         this.modalService.dismissAll();
         
-        this.conformationPopup.openSuccessModal('Basic Info updated successfully');
+        this.conformationPopup.openSuccessModal('Contact Details updated successfully');
       },
       error: (reason: any) => {
         console.log(reason);
-        this.conformationPopup.openErrorModal('Basic Info update failed');
+        this.conformationPopup.openErrorModal('Contact Details update failed');
       },
     });
   }

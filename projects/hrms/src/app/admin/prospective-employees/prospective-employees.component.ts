@@ -28,7 +28,11 @@ export class ProspectiveEmployeesComponent implements OnInit {
   ngOnInit(): void {
       this.empdata();
       this.jobLocationList();
-    
+      this.http.activeTabSubject
+      .subscribe((selectedObj) => {
+        console.log('Received designation from child via Observable:', selectedObj);
+        this.empdata();
+      });
   }
   empdata() {
     this.subscription = this.http

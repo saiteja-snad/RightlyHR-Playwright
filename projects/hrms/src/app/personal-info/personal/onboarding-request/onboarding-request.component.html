@@ -22,16 +22,18 @@
                                 <div class="text-center">-</div>
                             </span>
                             <ng-template #attachment>
-
-                                <a type="button"
-                                    (click)="onSelectDownload(data.documentUrl)"><span><i
-                                            class="bi bi-download me-1"></i></span> Download</a>
+                            
+                            <div *ngIf="data.documentUrl.endsWith('jpg') || data.documentUrl.endsWith('jpeg') || data.documentUrl.endsWith('png') ;else downloadView">
+                                <a type="button" class="view-btn" (click)="onViewClick(data.documentUrl,viewmodel);onClickEditDocument(data)">
+                                    <i class="bi bi-paperclip me-1"></i>View
+                                </a>
+                            </div>
+                            <ng-template #downloadView>
+                                <a type="button" class="view-btn" (click)="onSelectDownload(data.documentUrl)"><i
+                                        class="bi bi-download me-2"></i>Download</a>
                             </ng-template>
-
-                            <div class="modal fade" id="myModals" tabindex="-1" aria-labelledby="exampleModalLabel"
-                                aria-hidden="true">
-                                <div class="modal-dialog modal-xl">
-                                    <div class="modal-content">
+                        </ng-template>
+                          <ng-template #viewmodel let-modal>
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">
                                                 {{documentSelectFields.documentType }}</h5>
@@ -50,10 +52,7 @@
                                         <div class="modal-footer">
                                             <!-- Additional buttons or content -->
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                                    </ng-template>   
                         </td>
                         <td><span
                                 *ngIf="data.status!='Waiting for submission' ||data.status==null||data.status==''; else status">{{data.status}}</span>
@@ -67,15 +66,16 @@
                             <ng-template #approverejectbuttons>
                                 <button class="custom-btn btn-primary-approve me-3 mb-3"
                                     *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'"
-                                    data-bs-target="#approvedoc" data-bs-toggle="modal"
-                                    (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,data.reason,data.referenceNumber,data.referenceId)"
+                                   
+                                    (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,
+                                    data.rejectedBy,data.reason,data.referenceNumber,data.referenceId);openModal(approveModal)"
                                     >Approve
                                 </button>
 
                                 <button class="custom-btn btn-primary-reject me-3 mb-3"
                                     *ngIf="data.status !== 'Verified' && data.status !== 'Rejected'&& data.status=='Submitted' "
-                                    (click)="submitRejectReason(data)" data-bs-toggle="modal"
-                                    data-bs-target="#rejectModal">
+                                    (click)="submitRejectReason(data);openModal(rejectModal)"
+                                    >
                                     Reject
                                 </button>
                             </ng-template>
@@ -88,3 +88,55 @@
         </table>
     </div>
 </div>
+<ng-template #rejectModal let-modal>
+        <div class="modal-header">
+            <h5 class="modal-title" id="rejectModalLabel">Reject Reason </h5>
+            <button type="button" class="btn-close" (click)="modal.dismiss()" (click)="reload()"
+                aria-label="Close"></button>
+        </div>
+        <form [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs()">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="rejectReason" >Reject Reason
+                        <span class="error-msg">*</span></label>
+                    <textarea type="text" name="rejectReason" class="form-control"
+                        placeholder="Please provide reason for rejection" rows="3" maxlength="250"
+                        formControlName="comments"
+                        ></textarea>
+                        <div class="mt-2">
+                            <span class="color">
+                              {{ rejectDocument.get('comments')?.value?.length || 0 }} / 250
+                            </span>
+                          </div>
+                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
+                    class="text-danger">
+                    {{'Reason'| translate}}.
+                </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div>
+                    <button type="button" class="custom-btn btn-secondary" 
+                    (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                </div>
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+            </div>
+        </form>
+    </ng-template>
+    <!-- preonboard  approve documents popup -->
+    <ng-template #approveModal let-modal>
+
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+        <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Approve Document? </h4>
+        <div class="d-flex mb-4 mt-3 pb-2 mt-1 justify-content-around w-100">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
+              (click)="approvedocuments()"  >{{'Yes'|translate}}</button>
+        </div>
+    </div>
+
+</ng-template>

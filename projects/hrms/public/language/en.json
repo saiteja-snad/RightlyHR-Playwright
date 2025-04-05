@@ -41,6 +41,9 @@
    "Close":"Close",
    "Add":"Add",
    "First Name":"First Name",
-   "Designation is required":"Designation is required"
-
+   "Designation is required":"Designation is required",
+   "Reason":"Reason is required",
+   "Submit":"Submit",
+   "No":"No",
+   "Yes":"Yes"
 }

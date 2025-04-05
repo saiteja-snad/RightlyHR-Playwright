@@ -12,11 +12,14 @@ import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
+import { AuthService } from '../../services/auth.service';
+import { PersonalPersonalTabsComponent } from "../../shared/personal-personal-tabs/personal-personal-tabs.component";
+import { PersonalJobTabsComponent } from "../../shared/personal-job-tabs/personal-job-tabs.component";
 
 
 @Component({
   selector: 'app-myinfo-layout',
-  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule,],
   templateUrl: './myinfo-layout.component.html',
   styleUrl: './myinfo-layout.component.scss'
 })
@@ -29,6 +32,7 @@ export class MyinfoLayoutComponent implements OnInit {
   activeSideNav!: string;
   activeItem!: string;
   empinfo = {} as Ipersonal;
+  
   subscription!: Subscription;
   // rmData = [
   //   { name: 'Rajesh', designation: 'Software Engineer', team: 'Development', location: 'Bangalore' }]
@@ -36,7 +40,8 @@ export class MyinfoLayoutComponent implements OnInit {
   selectedData: any = {};
 
   selectedEmployeeIds: any;
-  constructor(private http: HttpService,private router: Router, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService) { }
+  constructor(private http: HttpService,private router: Router, private modalService: NgbModal,
+    private fb: FormBuilder,private conformationPopup: OpenModalService) { }
   
 
   ngOnInit(): void {
@@ -49,7 +54,9 @@ export class MyinfoLayoutComponent implements OnInit {
     console.log(this.empinfo);
     this.getAllTeammembersList();
     this.getEmployee();
+  
   }
+ 
   selectedManager: any = null;
 
   onSelectManager(event: any, field: string) {

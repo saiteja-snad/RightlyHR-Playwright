@@ -1,0 +1,429 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center">
+        <div> <span class="education-sub-header">Job Details</span></div>
+        <div class="plus-button">
+            <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
+                    (click)="openModal(addEducationmodal)" class="plus-text">Add
+                    New</span></span>
+        </div>
+    </div>
+    <div class="custom-table-content mt-2">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Education</th>
+                    <th>University</th>
+                    <th>Specialization</th>
+                    <th>GPA</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Document</th>
+                    <th class="text-center">Actions</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>b.tech</td>
+                    <td>sasi</td>
+                    <td>ff</td>
+                    <td>67.9</td>
+                    <td>33/09/2025</td>
+                    <td>33/09/2025</td>
+
+                    <td> <a type="button" class="me-2 dowload-text"><i class="bi bi-download  me-2"></i>Download</a>
+                    </td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li (click)="openModal(updatejobmodal)"><a class="dropdown-item"><i
+                                            class="bi bi bi-pencil  me-2"></i>Update</a></li>
+                                <li><a class="dropdown-item"><i class="bi bi bi-trash3 me-2"></i>Delete</a></li>
+                                <li (click)="openModal(seprationModal)"><a class="dropdown-item"><img
+                                            src="icons\sepration.png" alt="sepration"
+                                            class="sepration-icon me-2">Sepration Request</a></li>
+
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<ng-template #addEducationmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Add Job Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <!-- <form [formGroup]="jobDetailsForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="effectiveDate" formControlName="effectiveDate">
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('effectiveDate')?.invalid && jobDetailsForm.get('effectiveDate')?.touched">
+                            Effective Date is required
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="jobRole" class="form-label custom-label mb-2">Job Role<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="JobroleDetails" optionLabel="name" formControlName="jobRole" placeholder="Please select job role" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('jobRole')?.invalid && jobDetailsForm.get('jobRole')?.touched">
+                            Job Role is required
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="grade" class="form-label custom-label mb-2">Grade<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="grades" optionLabel="name" formControlName="grade" placeholder="Please select grade" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('grade')?.invalid && jobDetailsForm.get('grade')?.touched">
+                            Grade is required
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="department" class="form-label custom-label mb-2">Department<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="departments" optionLabel="name" formControlName="department" placeholder="Please select department" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('department')?.invalid && jobDetailsForm.get('department')?.touched">
+                            Department is required
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="team" class="form-label custom-label mb-2">Team<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="teams" optionLabel="name" formControlName="team" placeholder="Please select team" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('team')?.invalid && jobDetailsForm.get('team')?.touched">
+                            Team is required
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="managers" optionLabel="name" formControlName="teamManager" placeholder="Please select team manager" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('teamManager')?.invalid && jobDetailsForm.get('teamManager')?.touched">
+                            Team Manager is required
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="location" class="form-label custom-label mb-2">Location<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="locations" optionLabel="name" formControlName="location" placeholder="Please select location" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('location')?.invalid && jobDetailsForm.get('location')?.touched">
+                            Location is required
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="subLocations" optionLabel="name" formControlName="subLocation" placeholder="Please select sub location" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('subLocation')?.invalid && jobDetailsForm.get('subLocation')?.touched">
+                            Sub Location is required
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="shift" class="form-label custom-label mb-2">Shift<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="shifts" optionLabel="name" formControlName="shift" placeholder="Please select shift" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('shift')?.invalid && jobDetailsForm.get('shift')?.touched">
+                            Shift is required
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="jobType" class="form-label custom-label mb-2">Job Type<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="jobTypes" optionLabel="name" formControlName="jobType" placeholder="Please select job type" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="jobDetailsForm.get('jobType')?.invalid && jobDetailsForm.get('jobType')?.touched">
+                            Job Type is required
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="onReset()">Reset</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="jobDetailsForm.invalid">Submit</button>
+                </div>
+            </form> -->
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #updatejobmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Update Job Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form action="">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Effective Date<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Job Role<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select job role" class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Grade<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select grade"
+                                class="form-select custom-select" />
+                        </div>
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Department<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select department" class="form-select custom-select" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Team<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select team"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Team Manager<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select team manager" class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reporting
+                            Manager<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select reporting manager" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Location<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select label"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Sub Location<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select sub location" class="form-select custom-select" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Shift<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select shift"
+                                class="form-select custom-select" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Job Type<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select job type" class="form-select custom-select" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #seprationModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Separation Request</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="separationRequestForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="applieddate" class="form-label custom-label mb-2">Raised Date <span
+                                    class="text-danger">*</span></label>
+                            <input type="date" class="form-control custom-input" id="applieddate"
+                                formControlName="appliedDate" />
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('appliedDate')?.invalid && separationRequestForm.get('appliedDate')?.touched">
+                                Raised Date is required
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jobrole" class="form-label custom-label mb-2">Job Role <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="jobrole" formControlName="jobRole" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="department" class="form-label custom-label mb-2">Department <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="department" formControlName="departmentName" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="subDepartmentUpdate" class="form-label custom-label mb-2">Team <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="subDepartmentUpdate"
+                                formControlName="subdepartmentName" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="teamManager" class="form-label custom-label mb-2">Team Manager <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="teamManager" formControlName="teamManager" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="reportingManager" class="form-label custom-label mb-2">Reporting Manager <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="reportingManager"
+                                formControlName="reportingManager" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label for="description" class="form-label custom-label mb-2">Reason for Separation <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control custom-input" id="description" formControlName="description"
+                                rows="3" placeholder="Please provide separation reason..."></textarea>
+                            <div>
+                                <span class="color">{{ separationRequestForm.get('description')?.value?.length || 0 }} /
+                                    400</span>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('description')?.invalid && separationRequestForm.get('description')?.touched">
+                                Reason for Separation is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <input class="form-check-input me-2" type="checkbox" id="check1"
+                            formControlName="isEarlyRelieving" (change)="onCheckEarlyRelieving()" />
+                        <label class="form-check-label custom-label mb-2">
+                            <span>Request For Early Relieving?</span>
+                        </label>
+                    </div>
+
+                    <div class="col-md-6" *ngIf="separationRequestForm.get('isEarlyRelieving')?.value">
+                        <div class="mb-3">
+                            <label for="earlyRelievingDate" class="form-label custom-label mb-2">Expected Relieving Date
+                                <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control custom-input" id="earlyRelievingDate"
+                                formControlName="earlyRelievingDate" />
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('earlyRelievingDate')?.invalid && separationRequestForm.get('earlyRelievingDate')?.touched">
+                                Expected Relieving Date is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" *ngIf="separationRequestForm.get('isEarlyRelieving')?.value">
+                        <div class="mb-3">
+                            <label for="reasonForEarlyRelieving" class="form-label custom-label mb-2">Reason for Early
+                                Relieving <span class="text-danger">*</span></label>
+                            <textarea class="form-control custom-input" id="reasonForEarlyRelieving"
+                                formControlName="reasonForEarlyRelieving" rows="3"
+                                placeholder="Please provide early relieving reason..."></textarea>
+                            <div>
+                                <span class="color">{{
+                                    separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }} /
+                                    400</span>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.invalid && separationRequestForm.get('reasonForEarlyRelieving')?.touched">
+                                Reason for Early Relieving is required
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

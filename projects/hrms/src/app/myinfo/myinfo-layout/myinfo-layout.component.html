@@ -1,14 +1,13 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <p class="main-content-heading mb-0">My Info</p>
+            <p class="main-content-heading mb-0" *ngIf="isActive('myinfo/personal/basic-info')">My Info</p>
         </div>
         <div>
             <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/job')">Inactive</button>
             <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">
                 Change RM
             </button>
-            
             <!-- <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button> -->
         </div>
     </div>
@@ -18,9 +17,10 @@
         <div *ngIf="isActive('myinfo/personal')" class="mb-3">
             <app-my-info-personal-tabs></app-my-info-personal-tabs>
         </div>
-        <div *ngIf="isActive('myinfo/job')" class="mb-3">
+        <div *ngIf="isActive('myinfo/job' )" class="mb-3">
             <app-myinfo-job-tabs></app-myinfo-job-tabs>
         </div>
+     
     </div>
 
     <div class="myinfo-main-container d-flex gap-4">

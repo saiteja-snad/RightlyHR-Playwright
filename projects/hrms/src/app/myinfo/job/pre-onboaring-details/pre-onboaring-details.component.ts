@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
@@ -10,7 +9,7 @@ import moment from 'moment';
 
 @Component({
   selector: 'app-pre-onboaring-details',
-  imports: [CommonModule, Select, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   standalone: true,
   templateUrl: './pre-onboaring-details.component.html',
   styleUrl: './pre-onboaring-details.component.scss'

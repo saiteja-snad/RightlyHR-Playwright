@@ -15,6 +15,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-trainee-offer-letter',
@@ -108,7 +109,7 @@ export class TraineeOfferLetterComponent {
     private router: Router,
     private authService: AuthService,
     // private _userAcessService: UserAccessService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,private conformationPopup: OpenModalService,
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -181,22 +182,6 @@ export class TraineeOfferLetterComponent {
     this.modalService.open(content, { centered: true })
   }
 
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-
-  }
-
-  dataFailureMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.errorhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
   filterEmployees() {
     console.log(this.employeedetails)
     if (this.employeedetails) {
@@ -1098,10 +1083,10 @@ export class TraineeOfferLetterComponent {
               });
           }
         } else if (res.statusCode == 409) {
-          this.dataFailureMsg(res.message);
+          this.conformationPopup.openErrorModal(res.message);
           f.resetForm();
         } else {
-          this.dataFailureMsg(res.message);
+          this.conformationPopup.openErrorModal(res.message);
         }
       },
       error: (err: any) => {
@@ -1180,7 +1165,7 @@ export class TraineeOfferLetterComponent {
     this.generatedfile = file;
     this.generatingEmployeeId = EmpValue.empId;
     this.loading = false;
-    this.dataSuccessMsg('Trainee Offer Letter Generated Successfully');
+    this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully');
 
     // });
     // }
@@ -1202,7 +1187,7 @@ export class TraineeOfferLetterComponent {
         },
         error: (reason: any) => {
           console.log(reason);
-          this.dataFailureMsg('file upload  is failed');
+          this.conformationPopup.openErrorModal('file upload  is failed');
         },
       });
   }
@@ -1308,7 +1293,7 @@ export class TraineeOfferLetterComponent {
           console.log(res);
           this.result = res;
           if (res.statusCode == 409) {
-            this.dataFailureMsg(res.message);
+            this.conformationPopup.openErrorModal(res.message);
           } else if (res.statusCode == 200) {
             this.UpdateFieldsToRespectiveTables();
             this.downLoadDocument(this.traineeEmpData);
@@ -1635,7 +1620,7 @@ export class TraineeOfferLetterComponent {
             console.log(res);
             this.result = res;
             if (res.statusCode == 409) {
-              this.dataFailureMsg(res.message);
+              this.conformationPopup.openErrorModal(res.message);
             } else if (res.statusCode == 200) {
               this.UpdateFieldsToRespectiveTables();
               this.downLoadDocument(this.traineeEmpData);
@@ -1662,7 +1647,7 @@ export class TraineeOfferLetterComponent {
             console.log(res);
             this.result = res;
             if (res.statusCode == 409) {
-              this.dataFailureMsg(res.message);
+              this.conformationPopup.openErrorModal(res.message);
             } else if (res.statusCode == 200) {
               this.UpdateFieldsToRespectiveTables();
               this.downLoadDocument(this.traineeEmpData);

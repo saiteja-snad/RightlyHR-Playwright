@@ -128,6 +128,7 @@ export class TraineeOfferLetterComponent {
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
+    this.initializeForm();
     // (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
   }
   ngOnInit(): void {
@@ -166,9 +167,9 @@ export class TraineeOfferLetterComponent {
       fusionEmpId: [null, Validators.required],
       personalEmail: ['', [Validators.required, Validators.email]],
       title: [null, Validators.required],
-      firstName: ['', Validators.required, Validators.minLength(3)],
+      firstName: ['', [Validators.required, Validators.minLength(3)]],
       middleName: [''],
-      lastName: ['', Validators.required, Validators.minLength(3)],
+      lastName: ['', [Validators.required, Validators.minLength(3)]],
       gender: [null, Validators.required],
       SelectDropDown: [null, Validators.required],
       addressLine1: ['', Validators.required],
@@ -216,11 +217,16 @@ export class TraineeOfferLetterComponent {
   }
 
   requestForApproval() {
-    if (this.employeeForm.valid) {
-      console.log('Request for approval:', this.employeeForm.value);
+    if (this.traineeEmpData.isEmployeevalid === true) {
+      this.traineeofferletterUpload(this.generatingEmployeeId, this.generatedfile);
     } else {
-      console.log('Form is invalid');
+      this.traineeofferletterUpload(this.generatingEmployeeId, this.generatedfile);
     }
+    // if (this.employeeForm.valid) {
+    //   console.log('Request for approval:', this.employeeForm.value);
+    // } else {
+    //   console.log('Form is invalid');
+    // }
   }
 
   toggleDropdown1() {
@@ -623,6 +629,29 @@ export class TraineeOfferLetterComponent {
               if (Empidvalue) {
                 this.disableFields = false; // User clicked "OK," enable fields
                 this.traineeEmpData = data.checkofferletter;
+                this.employeeForm?.patchValue({
+                  personalEmail:this.traineeEmpData.personalEmail,
+                  title:this.traineeEmpData?.title,
+                   firstName:this.traineeEmpData?.firstName,
+                   middleName:this.traineeEmpData?.middleName,
+                   lastName:this.traineeEmpData?.lastName,
+                   gender:this.traineeEmpData?.gender,
+                   SelectDropDown: null,
+                   jobRoleDetails: this.traineeEmpData?.jobRole,
+                   esic: this.traineeEmpData?.esic,
+                   pf: this.traineeEmpData?.pf,
+                   amount:this.traineeEmpData?.amount,
+                   isVariablePay: this.traineeEmpData?.isVariablePay,
+                   variablePayAmount:this.traineeEmpData?.variablePayAmount,
+                   locationId: this.traineeEmpData?.locationId,
+                   JobSubLocationName: this.traineeEmpData?.sublocationId,
+                   offerIssuedDate:this.traineeEmpData?.offerIssuedDate,
+                   dateOfJoining: this.traineeEmpData?.dateOfJoining,
+                   Copys: this.traineeEmpData?.copys,
+                   offerExpiryDate: this.traineeEmpData?.offerExpiryDate,
+                   note:this.traineeEmpData?.note,
+                   authorityid: this.traineeEmpData?.authorityid,
+                 })
                 this.getTraineeEmployeeAddress(data.checkofferletter.empId);
                 this.traineeEmpData.CreateOffer =
                   this.traineeEmpData.CreateOffer;
@@ -737,6 +766,8 @@ export class TraineeOfferLetterComponent {
   //ctc Calculation in offer letter
   ctcCalculation() {
     console.log(this.traineeEmpData.amount);
+    this.traineeEmpData.pf=this.employeeForm.get('pf')?.value.value;
+    this.traineeEmpData.esic=this.employeeForm.get('esic')?.value.value;
     //CTC calculation stated
     let Employee = this.traineeEmpData;
     Employee.grossby = 12;
@@ -834,7 +865,7 @@ export class TraineeOfferLetterComponent {
     }
     //==============================================================================================================================
     //Calculation conditions for esic contribution of an employeer
-    if (this.traineeEmpData.esic == true) {
+    if (this.traineeEmpData.esic.toString() == 'true') {
       let condition1 = Employee.grossSalary >= 23195;
       if (!condition1) {
         Employee.esicContribution = Math.round(
@@ -1017,31 +1048,52 @@ export class TraineeOfferLetterComponent {
     return moment(date).format('YYYY-MM-DD');
   }
   //function to post the data of the offer letter to the respective feilds
-  postTraineeOfferLetterFieldsDetails(f: NgForm) {
+  postTraineeOfferLetterFieldsDetails(f: FormGroup) {
     const data = this.traineeEmpData;
-
+    this.loading = true;
     let sdata = {
-      firstName: this.employeeForm.get('firstName')?.value,
-      lastName: this.employeeForm.get('lastName')?.value,
-      middleName: this.employeeForm.get('middleName')?.value,
-      empstatus: 'prospective',
+      // firstName: this.employeeForm.get('firstName')?.value,
+      // lastName: this.employeeForm.get('lastName')?.value,
+      // middleName: this.employeeForm.get('middleName')?.value,
+      // empstatus: 'prospective',
+      // emptype: 'Trainee',
+      // emailaddress: this.employeeForm.get('personalEmail')?.value,
+      // gender: this.employeeForm.get('gender')?.value,
+      // contactnumber: parseInt(this.employeeForm.get('phoneNumber')?.value),
+      // addressLine1: this.employeeForm.get('addressLine1')?.value,
+      // addressLine2: this.employeeForm.get('addressLine2')?.value,
+      // city: this.employeeForm.get('city')?.value,
+      // state: this.employeeForm.get('state')?.value,
+      // zipCode: parseInt(this.employeeForm.get('pinCode')?.value),
+      // country: this.employeeForm.get('country')?.value,
+      // mobilePhoneCountryCode: this.employeeForm.get('mobilePhoneCountryCode')?.value,
+      // title: this.employeeForm.get('title')?.value,
+      // pf: this.employeeForm.get('pf')?.value,
+      // esic: this.employeeForm.get('esic')?.value,
+      // dateOfJoining: this.traineeEmpData.dateOfJoining,
+      // substatus: 'Offer Letter Generated',
+      // trainingEndDate: this.traineeEmpData.endDate,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      middleName: data.middleName,
+      empstatus: 'Prospective',
       emptype: 'Trainee',
-      emailaddress: this.employeeForm.get('personalEmail')?.value,
-      gender: this.employeeForm.get('gender')?.value,
-      contactnumber: parseInt(this.employeeForm.get('phoneNumber')?.value),
-      addressLine1: this.employeeForm.get('addressLine1')?.value,
-      addressLine2: this.employeeForm.get('addressLine2')?.value,
-      city: this.employeeForm.get('city')?.value,
-      state: this.employeeForm.get('state')?.value,
-      zipCode: parseInt(this.employeeForm.get('pinCode')?.value),
-      country: this.employeeForm.get('country')?.value,
-      mobilePhoneCountryCode: this.employeeForm.get('mobilePhoneCountryCode')?.value,
-      title: this.employeeForm.get('title')?.value,
-      pf: this.employeeForm.get('pf')?.value,
-      esic: this.employeeForm.get('esic')?.value,
-      dateOfJoining: this.traineeEmpData.dateOfJoining,
+      emailaddress: data.personalEmail,
+      gender:data.gender,
+      contactnumber: parseInt(data.phoneNumber),
+      addressLine1: data.addressLine1,
+      addressLine2: data.addressLine2,
+      city: data.city,
+      state: data.state,
+      zipCode: parseInt(data.pinCode),
+      country: data.country,
+      mobilePhoneCountryCode: data.mobilePhoneCountryCode,
+      title: data.title,
+      pf: data.pf,
+      esic: data.esic,
+      dateOfJoining: data.dateOfJoining,
       substatus: 'Offer Letter Generated',
-      trainingEndDate: this.traineeEmpData.endDate,
+      trainingEndDate: data.endDate,
     };
     console.log(sdata);
 
@@ -1120,7 +1172,7 @@ export class TraineeOfferLetterComponent {
           }
         } else if (res.statusCode == 409) {
           this.conformationPopup.openErrorModal(res.message);
-          f.resetForm();
+          f.reset();
         } else {
           this.conformationPopup.openErrorModal(res.message);
         }
@@ -1128,6 +1180,10 @@ export class TraineeOfferLetterComponent {
       error: (err: any) => {
         console.log(err);
       },
+      complete: () => {
+        this.conformationPopup.openSuccessModal(
+           'Trainee Offer Letter Generated Successfully');
+       }
     });
   }
   //download document
@@ -1796,12 +1852,13 @@ export class TraineeOfferLetterComponent {
   address = {} as IAddress;
   onclickSelectAddress(Value: any) {
     console.log(Value);
-    this.addressType = Value
+    this.addressType = Value.value;
     console.log(this.addressType);
 
     console.log(this.employeeaddress.employeeAddresses);
     if (this.employeeaddress.employeeAddresses.length > 0) {
-      this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == Value)
+      this.address = this.employeeaddress.employeeAddresses.find(
+        (address: IAddress) => address?.type.toLowerCase() == Value?.value?.toLowerCase())
 
     }
     console.log(this.address);
@@ -1811,7 +1868,14 @@ export class TraineeOfferLetterComponent {
     this.traineeEmpData.state = this.address.state
     this.traineeEmpData.country = this.address.country
     this.traineeEmpData.pinCode = this.address.zipCode
-
+    this.employeeForm?.patchValue({
+      addressLine1: this.address.addressLine1,
+      addressLine2: this.address.addressLine2,
+      city: this.address.city,
+      state: this.address.state,
+      country: this.address.country,
+      pinCode: this.address.zipCode,
+    })
 
   }
   //onclick function to select the designation in the search dropdown

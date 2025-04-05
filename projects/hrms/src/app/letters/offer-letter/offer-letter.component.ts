@@ -8,7 +8,7 @@ import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
 import { CountryCodePhoneNumberComponent } from "../../shared/country-code-phone-number/country-code-phone-number.component";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { count, last, Subscription } from 'rxjs';
 import moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
@@ -16,6 +16,9 @@ import { HttpService } from '../../services/http.service';
 import { IAddress, IAuthority, ICountry, IemployeeDetails, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { Title } from '@angular/platform-browser';
+import { state } from '@angular/animations';
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-offer-letter',
@@ -125,11 +128,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   ];
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder,private http: HttpService,
     private httpclient: HttpClient,
-    private authService: AuthService,
+    private authService: AuthService,private conformationPopup: OpenModalService
     // private _userAcessService: UserAccessService,
-    private elementRef: ElementRef,
-    config: NgbModalConfig,
-   ) { }
+   ) {  this.initializeForm();}
 
   ngOnInit(): void {
    
@@ -167,28 +168,28 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmpId: [null, Validators.required],
-      personalEmail: ['', [Validators.required, Validators.email]],
-      title: [null, Validators.required],
-      firstName: ['', Validators.required,Validators.minLength(3)],
-      middleName: [''],
-      lastName: ['', Validators.required,Validators.minLength(3)],
-      gender: [null, Validators.required],
+      personalEmail: [{ value: null, disabled: true }],
+      title: [{ value: null, disabled: true }],
+      firstName: [{ value: null, disabled: true }],
+      middleName: [{ value: null, disabled: true }],
+      lastName: [{ value: null, disabled: true }],
+      gender: [{ value: null, disabled: true }],
       SelectDropDown: [null, Validators.required],
-      addressLine1: ['', Validators.required],
-      addressLine2: [''],
-      city: ['', Validators.required],
-      state: ['', Validators.required],
-      country: ['', Validators.required],
-      pinCode: ['', Validators.required],
-      phoneNumber: ['', Validators.required],
-      jobRoleDetails: ['', Validators.required],
+      addressLine1: [{ value: null, disabled: true }],
+      addressLine2: [{ value: null, disabled: true }],
+      city: [{ value: null, disabled: true }],
+      state: [{ value: null, disabled: true }],
+      country: [{ value: null, disabled: true }],
+      pinCode: [{ value: null, disabled: true }],
+      phoneNumber: [{ value: null, disabled: true }],
+      jobRoleDetails: [{ value: null, disabled: true }],
       esic: [null, Validators.required],
       pf: [null, Validators.required],
       amount: ['', Validators.required],
       isVariablePay: [null, Validators.required],
       variablePayAmount: ['', Validators.required],
-      locationId: [null, Validators.required],
-      JobSubLocationName: [null, Validators.required],
+      locationId: [{ value: null, disabled: true }],
+      JobSubLocationName: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
       Copys: [null, Validators.required],
@@ -198,7 +199,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     });
     
   }
-
+  onclickCTC(Value: any) {
+    console.log(Value);
+    this.prospectiveEmpData.amount = Value;
+    this.ctcCalculation();
+  }
   handlePhoneChange(event: any) {
     this.employeeForm.patchValue({
       phoneNumber: event
@@ -206,10 +211,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   }
 
   requestForApproval() {
-    if (this.employeeForm.valid) {
-      console.log('Request for approval:', this.employeeForm.value);
+    if (this.prospectiveEmpData.isEmployeevalid === true) {
+      this.offerletterUpload(this.generatingEmployeeId, this.generatedfile);
     } else {
-      console.log('Form is invalid');
+      this.offerletterUpload(this.generatingEmployeeId, this.generatedfile);
     }
   }
 
@@ -281,15 +286,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     } else {
       this.isExpiryDateValid = true;
     }
-
-    // if (
-    //   this.prospectiveEmpData.offerExpiryDate <
-    //   this.prospectiveEmpData.offerIssuedDate
-    // ) {
-    //   this.isExpiryDateValid = false;
-    // } else {
-    //   this.isExpiryDateValid = true;
-    // }
   }
   //function to validate the offer expected start date and offer issued date
   updateEndDateValidityForExpectedStartDate() {
@@ -302,12 +298,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       } else {
         this.isStartDateValid = true;
       }
-
-      // if ( this.prospectiveEmpData.dateOfJoining <this.prospectiveEmpData.offerIssuedDate ) {
-      //   this.isStartDateValid = false;
-      // } else {
-      //   this.isStartDateValid = true;
-      // }
     }
   }
   //function to validate the offer expiry date and offer issued date and expected start date
@@ -320,31 +310,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     } else {
       this.isStartDateValidofexpected = true;
     }
-
-    // if (
-    //   this.prospectiveEmpData.dateOfJoining >
-    //   this.prospectiveEmpData.offerExpiryDate
-    // ) {
-    //   this.isStartDateValidofexpected = false;
-    // } else {
-    //   this.isStartDateValidofexpected = true;
-    // }
   }
-  shouldShowError(): boolean {
-    // Add your conditions here to determine whether to show the error message
-    return false; // Return true or false based on your conditions
-  }
-  optionsFound!: boolean;
-  updateOptionsFound(found: boolean) {
-    this.optionsFound = found;
-  }
-
-  islistedItem: boolean = true;
-
-  isItemIntheList(isitem: boolean) {
-    console.log(isitem);
-    this.islistedItem = isitem;
-  }
+ 
 
   //get employee ids for Prospective Employees Drop Dowm
   getEmployeeId() {
@@ -403,22 +370,30 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   onclickSelectAddress(Value:any){
     console.log(Value);
     this.addresFlag= true;
-    this.addressType=Value
+    this.addressType=Value.value;
     console.log(this.addressType);
 
     console.log(this.employeeaddress.employeeAddresses);
-    if (this.employeeaddress.employeeAddresses.length > 0) {
-      this.address = this.employeeaddress.employeeAddresses.find(
-        (address: IAddress) => address.type.toLowerCase() == Value
+    if (this.employeeaddress?.employeeAddresses.length > 0) {
+      this.address = this.employeeaddress?.employeeAddresses.find(
+        (address: IAddress) => address?.type?.toLowerCase() == Value?.value?.toLowerCase()
       );
     }
     console.log(this.address);
-    this.prospectiveEmpData.addressLine1 = this.address.addressLine1;
-    this.prospectiveEmpData.addressLine2 = this.address.addressLine2;
-    this.prospectiveEmpData.city = this.address.city;
-    this.prospectiveEmpData.state = this.address.state;
-    this.prospectiveEmpData.country = this.address.country;
-    this.prospectiveEmpData.pinCode = this.address.zipCode;
+    this.prospectiveEmpData.addressLine1 = this.address?.addressLine1;
+    this.prospectiveEmpData.addressLine2 = this.address?.addressLine2;
+    this.prospectiveEmpData.city = this.address?.city;
+    this.prospectiveEmpData.state = this.address?.state;
+    this.prospectiveEmpData.country = this.address?.country;
+    this.prospectiveEmpData.pinCode = this.address?.zipCode;
+    this.employeeForm?.patchValue({
+      addressLine1: this.address.addressLine1,
+      addressLine2: this.address.addressLine2,
+      city: this.address.city,
+      state: this.address.state,
+      country: this.address.country,
+      pinCode: this.address.zipCode,
+    })
   }
   //function for getAllWorkLocation
   getAllWorkLocation() {
@@ -429,23 +404,12 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       },
     });
   }
-  //function to get SubLocation
-  OnClickLocation() {
-    let locationName = this.prospectiveEmpData.jobLocationName;
-    console.log(locationName);
-    let jobSubLocationDetails = this.LocationDropDownData.find(
-      (c: any) => c.jobLocationName === locationName
-    );
-    console.log(this.LocationDropDownData);
-
-    console.log(jobSubLocationDetails);
-    this.getSubLocationByid(jobSubLocationDetails);
-  }
   //function to get sublocation by id
   getSubLocationByid(ValuesForSublocation: any) {
+    console.log(ValuesForSublocation);
     this.subscription = this.http
       .getData(
-        `JobLocation/sub-location-by-joblocation/${ValuesForSublocation.id} `
+        `JobLocation/sub-location-by-joblocation/${ValuesForSublocation} `
       )
       .subscribe({
         next: (data: any) => {
@@ -457,89 +421,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
         },
       });
   }
-
-  //toggledropdown to open and close the dropdown list
-  toggleDropdown(dropcategory: any) {
-    if (dropcategory == 'job') {
-      this.isDropdownOpenjob = !this.isDropdownOpenjob;
-      if (this.isDropdownOpenjob) {
-      } else {
-        this.filteredOptions = [];
-      }
-    } else if (dropcategory == 'empid') {
-      this.isDropdownOpen = !this.isDropdownOpen;
-      if (this.isDropdownOpen) {
-      } else {
-        this.filteredOptions = [];
-      }
-    } else if (dropcategory == 'authority') {
-      this.isDropdownOpenauthority = !this.isDropdownOpenauthority;
-      if (this.isDropdownOpen) {
-      } else {
-        this.filteredOptions = [];
-      }
-    }
-  }
-  //hostlister to close the dropdown when we Click out side the box
-  @HostListener('document:click', ['$event.target'])
-  onClickOutside(target: any) {
-    const dropdownToggle =
-      this.elementRef.nativeElement.querySelector('.dropdown-toggles');
-    const dropdownMenu =
-      this.elementRef.nativeElement.querySelector('.dropdown-menu');
-    const dropdownTogglejob = this.elementRef.nativeElement.querySelector(
-      '.dropdown-togglesjob'
-    );
-
-    if (
-      dropdownToggle &&
-      !dropdownToggle.contains(target) &&
-      dropdownMenu &&
-      !dropdownMenu.contains(target)
-    ) {
-      this.isDropdownOpen = false;
-      this.filteredOptions = [];
-    } else if (
-      dropdownTogglejob &&
-      !dropdownTogglejob.contains(target) &&
-      dropdownMenu &&
-      !dropdownMenu.contains(target)
-    ) {
-      this.isDropdownOpenjob = false;
-      this.filteredOptions = [];
-    }
-  }
-  //onclick function to select the designation in the search dropdown
-  Onclick(jobdValues: any) {
-    this.jobRoleDetails = jobdValues;
-    console.log(this.jobRoleDetails);
-    if (this.jobRoleDetails == '') {
-      this.disablebuttonfordesignation = true;
-    } else {
-      this.disablebuttonfordesignation = false;
-    }
-    let jobInfo = this.JobroleDetails.find((c) => c.jobRole1 == jobdValues);
-    console.log(jobInfo);
-    if (jobInfo) {
-      const jobRole1Value = jobInfo.jobRole1;
-      if (jobRole1Value === jobdValues) {
-        this.disablebuttonfordesignation = true;
-      } else {
-        this.disablebuttonfordesignation = false;
-      }
-    }
-    // else {
-    //   console.log('Job role not found.');
-
-    // }
-
-    this.jobDesignation = JSON.parse(JSON.stringify(this.jobRoleDetails));
-    if (jobInfo == undefined) {
-      this.jobDesignation = null;
-      // this.disablebuttonfordesignation=false
-    }
-  }
-
   onclickDesignation() {
     let signatureAuthorityDetails = this.authorityDetails.find(
       (c: any) => c.employeeId == this.prospectiveEmpData.authorityid
@@ -567,20 +448,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       event.preventDefault(); // Cancel the paste event if the data is not numeric
     }
   }
-
-  //get offer letter Authority list
-  // getAuthorityDetails() {
-  //   let offertype = 'Offer Letter';
-    
-  //   this.subscription = this.http
-  //     .getData(`SignaturesList?LetterType=${offertype}`)
-  //     .subscribe({
-  //       next: (data: any) => {
-  //         console.log(data);
-  //         this.authorityDetails = data;
-  //       },
-  //     });
-  // }
   getAuthorityDetails() {
     let offertype = 'Offer Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
@@ -606,7 +473,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       },
     });
   }
-
   //get method for gender
   getgender() {
     this.subscription = this.http.getData('Gender').subscribe({
@@ -627,7 +493,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       error: (reason) => console.log(reason),
     });
   }
-
   //get method for Country
   getCountry() {
     this.subscription = this.http.getData('Country').subscribe({
@@ -637,7 +502,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       error: (reason) => console.log(reason),
     });
   }
-
   //to get offer letter template
   async getOfferTemplate() {
     this.offerLetterTemplate = await this.httpclient
@@ -712,6 +576,29 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
               if (Empidvalue) {
                 this.disableFields = false; // User clicked "OK," enable fields
                 this.prospectiveEmpData = data.checkofferletter;
+                this.employeeForm?.patchValue({
+                 personalEmail:this.prospectiveEmpData.personalEmail,
+                 title:this.prospectiveEmpData?.title,
+                  firstName:this.prospectiveEmpData?.firstName,
+                  middleName:this.prospectiveEmpData?.middleName,
+                  lastName:this.prospectiveEmpData?.lastName,
+                  gender:this.prospectiveEmpData?.gender,
+                  SelectDropDown: null,
+                  jobRoleDetails: this.prospectiveEmpData?.jobRole,
+                  esic: this.prospectiveEmpData?.esic,
+                  pf: this.prospectiveEmpData?.pf,
+                  amount:this.prospectiveEmpData?.amount,
+                  isVariablePay: this.prospectiveEmpData?.isVariablePay,
+                  variablePayAmount:this.prospectiveEmpData?.variablePayAmount,
+                  locationId: this.prospectiveEmpData?.locationId,
+                  JobSubLocationName: this.prospectiveEmpData?.sublocationId,
+                  offerIssuedDate:this.prospectiveEmpData?.offerIssuedDate,
+                  dateOfJoining: this.prospectiveEmpData?.dateOfJoining,
+                  Copys: this.prospectiveEmpData?.copys,
+                  offerExpiryDate: this.prospectiveEmpData?.offerExpiryDate,
+                  note:this.prospectiveEmpData?.note,
+                  authorityid: this.prospectiveEmpData?.authorityid,
+                })
                 this.getEmployeeAddress(data.checkofferletter.empId);
                 this.prospectiveEmpData.CreateOffer =
                   this.prospectiveEmpData.CreateOffer;
@@ -761,24 +648,15 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
                     this.prospectiveEmpData.signatureAuthority;
                   this.onclickDesignation();
                 }
-                // if (this.prospectiveEmpData.mobilePhoneCountryCode) {
-                //   this.countryvalues = this.countryCodes.find(
-                //     (c: any) =>
-                //       c.countryCodeId ==
-                //       this.prospectiveEmpData.mobilePhoneCountryCode
-                //   );
-                //   this.prospectiveEmpData.mobilePhoneCountryCodewithname =
-                //     this.countryvalues.countryName;
-                // }
-                // this.buttonValue = 'Regenerate Offer Letter';
                 this.prospectiveEmpData.jobLocationName =
                   data.checkofferletter.workLocation;
                 this.prospectiveEmpData.jobSubLocationName =
                   data.checkofferletter.subLocation;
                 console.log(this.prospectiveEmpData.jobLocationName);
                 console.log(this.prospectiveEmpData.jobSubLocationName);
+                this.getSubLocationByid(this.prospectiveEmpData?.locationId);
                 this.ctcCalculation();
-                this.OnClickLocation();
+              
                 this.disablebuttonforemployeeid = true;
               }
             }
@@ -808,6 +686,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   esicshouldbecometrue!: any;
   ctcCalculation() {
     console.log(this.prospectiveEmpData.amount);
+    this.prospectiveEmpData.pf=this.employeeForm.get('pf')?.value.value;
+    this.prospectiveEmpData.esic=this.employeeForm.get('esic')?.value.value;
     //CTC calculation stated
     let Employee = this.prospectiveEmpData;
     Employee.grossby = 12;
@@ -816,7 +696,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     );
     console.log(Employee.grossby);
     console.log(Employee.grossSalary);
-
     //Calculation condition for pf contribution of an employee]
     console.log(this.prospectiveEmpData.pf);
     if (
@@ -825,7 +704,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     ) {
       switch (this.prospectiveEmpData.pf) {
         case true:
-          if (this.prospectiveEmpData.esic == false) {
+          if (this.prospectiveEmpData.esic.toString() == 'false') {
             Employee.pfContribution = Math.round(
               Employee.grossSalary * (6.719 / 100)
             );
@@ -1095,10 +974,23 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     );
     console.log(Employee.ctcperannum);
   }
-  onVariablePayChange(isVariablePay: boolean): void {
-    if (isVariablePay === false) {
+  onVariablePayChange(isVariablePay: any){
+    console.log(isVariablePay.value.value);
+    this.prospectiveEmpData.isVariablePay = isVariablePay.value.value;
+    if (isVariablePay.value.value === false) {
       this.prospectiveEmpData.variablePayAmount = '0';
+      this.employeeForm.get('variablePayAmount')?.setValue(0);
+      this.employeeForm.get('variablePayAmount')?.disable();
     }
+    else {
+      this.prospectiveEmpData.variablePayAmount = '0';
+      this.employeeForm.get('variablePayAmount')?.enable();
+      this.employeeForm.get('variablePayAmount')?.setValue(null);
+    }
+  }
+  onVariablePayChangeAmount(Value:any){
+    console.log(Value);
+    this.prospectiveEmpData.variablePayAmount=Value;
   }
   //download document
   
@@ -1122,8 +1014,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       country: data.country,
       mobilePhoneCountryCode: data.mobilePhoneCountryCode,
       title: data.title,
-      pf: data.pf,
-      esic: data.esic,
+      pf: this.employeeForm.get('pf')?.value.value,
+      esic: this.employeeForm.get('esic')?.value.value,
       dateOfJoining: this.prospectiveEmpData.dateOfJoining,
       substatus: 'Offer Letter Generated',
     };
@@ -1147,7 +1039,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
               locationid: data.locationId,
               sublocationid: data.sublocationId,
               jobRole: this.jobRoleDetails,
-              jobTypeId: '',
             };
             const Compensationdata = {
               employeeId: this.result.employeeId,
@@ -1159,7 +1050,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
               paytype: null,
               compensationamount: parseInt(data.amount),
               variablePayAmount: data.variablePayAmount,
-              isVariablePay: data.isVariablePay,
+              isVariablePay: this.employeeForm.get('isVariablePay')?.value.value,
               status: 'Active',
               compensationcomments: null,
             };
@@ -1185,16 +1076,20 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
               });
           }
         } else if (res.statusCode == 409) {
-          this.dataFailureMsg(res.message);
+          this.conformationPopup.openErrorModal(res.message);
           // f.resetForm();
           this.employeeForm.reset()
         } else {
-          this.dataFailureMsg(res.message);
+          this.conformationPopup.openErrorModal(res.message);
         }
       },
       error: (err: any) => {
         console.log(err);
       },
+      complete: () => {
+       this.conformationPopup.openSuccessModal(
+          'Offer Letter Generated Successfully'	);
+      }
     });
   }
   //to fromat Date
@@ -1237,7 +1132,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
         },
         error: (reason: any) => {
           console.log(reason);
-          this.dataFailureMsg('file upload  is failed');
+          this.conformationPopup.openErrorModal('file upload  is failed');
         },
       });
   }
@@ -1428,7 +1323,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   UpdateFieldsToRespectiveTables() {
     let data = this.prospectiveEmpData;
     console.log(data);
-
     console.log(this.result);
     const jobdata = {
       id: data.jobId,
@@ -1477,7 +1371,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       paytype: null,
       compensationamount: parseInt(data.amount),
       variablePayAmount: data.variablePayAmount,
-      isVariablePay: data.isVariablePay,
+      isVariablePay: this.employeeForm.get('isVariablePay')?.value.value,
       status: 'Active',
       compensationcomments: null,
     };
@@ -1594,16 +1488,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       lastName: null,
       comments: null,
     };
-    if (loggedInUser.middleName) {
-      emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
-    } else {
-      emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
-    }
-    if (this.prospectiveEmpData.middleName) {
-      emaildetails.personName = `${this.prospectiveEmpData.firstName} ${this.prospectiveEmpData.middleName} ${this.prospectiveEmpData.lastName}`;
-    } else {
-      emaildetails.personName = `${this.prospectiveEmpData.firstName} ${this.prospectiveEmpData.lastName}`;
-    }
     console.log(emaildetails);
 
     this.subscription = this.http
@@ -1613,7 +1497,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
           console.log(data);
          
           this.Approvednotification();
-          this.dataSuccessMsg('Email Sent Successfully');
+          this.conformationPopup.openSuccessModal('Email Sent Successfully');
 
           this.loading = false;
           // this.router.navigate(['/admin']);
@@ -1621,7 +1505,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
         error: (err: any) => {
           console.log(err);
           //this.router.navigate(['/admin']);
-          this.dataFailureMsg('Email Sent Failed');
+          this.conformationPopup.openErrorModal('Email Sent Failed');
         },
         complete: () => {},
       });
@@ -1677,13 +1561,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     return true;
   }
 
-  onOptionSelected(option: string, dropdownCategory: string) {
-    this.islistedItem = true;
-    this.optionsFound = true;
-    if (dropdownCategory === 'mobilePhoneCountryCode') {
-      this.prospectiveEmpData.mobilePhoneCountryCode = option;
-    }
-  }
 
   numbers(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);

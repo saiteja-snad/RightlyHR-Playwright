@@ -21,8 +21,8 @@
                             <label class="form-label custom-label mb-2">Search Employee<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="fullName"  [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select employee" (change)="Onclick(employeeiddetails)"
+                                <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"  [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
                                     formControlName="fusionEmpId" class="custom-select w-100" >
                                 </p-select>
                             </div>

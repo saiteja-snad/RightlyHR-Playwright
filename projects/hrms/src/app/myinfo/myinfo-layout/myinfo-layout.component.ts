@@ -12,9 +12,8 @@ import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
-import { AuthService } from '../../services/auth.service';
-import { PersonalPersonalTabsComponent } from "../../shared/personal-personal-tabs/personal-personal-tabs.component";
-import { PersonalJobTabsComponent } from "../../shared/personal-job-tabs/personal-job-tabs.component";
+
+
 
 
 @Component({

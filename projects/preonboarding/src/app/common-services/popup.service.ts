@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SuccessPopupComponent } from '../shared/success-popup/success-popup.component';
 import { ErrorPopupComponent } from '../shared/error-popup/error-popup.component';
 
@@ -7,21 +7,21 @@ import { ErrorPopupComponent } from '../shared/error-popup/error-popup.component
   providedIn: 'root'
 })
 export class PopupService {
-  constructor(private offCanvas: NgbOffcanvas) { }
+  constructor(private modalService: NgbModal) { }
 
-  openSuccessOffCanvas(status: string) {
-    const successOffcanvas = this.offCanvas.open(SuccessPopupComponent, { position: 'end', backdrop: 'static' });
-    successOffcanvas.componentInstance.status = status;
+  openSuccess(status: string) {
+    const successpopup = this.modalService.open(SuccessPopupComponent, { centered:true, backdrop: 'static' });
+    successpopup.componentInstance.status = status;
     setTimeout(() => {
-      successOffcanvas.dismiss();
+      successpopup.dismiss();
     }, 2000);
   }
 
-  openErrorOffCanvas(status: string){
-    const errorOffCanvas = this.offCanvas.open(ErrorPopupComponent,{ position: 'end', backdrop: 'static' });
-    errorOffCanvas.componentInstance.status = status;
+  openError(status: string){
+    const errorpopup = this.modalService.open(ErrorPopupComponent,{ centered:true, backdrop: 'static' });
+    errorpopup.componentInstance.status = status;
     setTimeout(() => {
-      errorOffCanvas.dismiss();
+      errorpopup.dismiss();
     }, 2000);
   }
 }

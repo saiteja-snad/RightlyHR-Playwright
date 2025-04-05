@@ -10,8 +10,9 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
-import { PersonalPersonalTabsComponent } from '../../shared/personal-personal-tabs/personal-personal-tabs.component';
-import { PersonalJobTabsComponent } from '../../shared/personal-job-tabs/personal-job-tabs.component';
+import { PersonalPersonalTabsComponent } from '../../shared/personalinfo-tabs/personal-personal-tabs/personal-personal-tabs.component';
+import { PersonalJobTabsComponent } from '../../shared/personalinfo-tabs/personal-job-tabs/personal-job-tabs.component';
+
 
 @Component({
   selector: 'app-personalinfo-layout',

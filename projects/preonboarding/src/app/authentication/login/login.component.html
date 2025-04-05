@@ -7,7 +7,7 @@
         <div class="px-3">
             <form [formGroup]="loginform" (ngSubmit)="login(loginform)">
                 <div class="mb-4">
-                    <label for="name" class="form-label custom-label mb-2">User Name<span class="required">*</span></label>
+                    <label for="name" class="form-label custom-label mb-2">User Name<span class="text-danger">*</span></label>
                     <div class="input-group custom-input-group" [ngClass]="{'error-border': loginform.get('username')?.touched && loginform.get('username')?.invalid}">
                         <span class="input-group-text custom-input-group-text" id="basic-addon1">
                             <img src="/icons/mail.png" alt="profile icon" class="form-icon">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="mb-4">
-                    <label for="password" class="form-label custom-label mb-2">Password<span class="required">*</span></label>
+                    <label for="password" class="form-label custom-label mb-2">Password<span class="text-danger">*</span></label>
                     <div class="input-group custom-input-group"
                         [ngClass]="{'error-border': loginform.get('password')?.touched && loginform.get('password')?.invalid }">
                         <span class="input-group-text custom-input-group-text"><img src="/icons/lock.png" alt="profile icon" class="form-icon"></span>

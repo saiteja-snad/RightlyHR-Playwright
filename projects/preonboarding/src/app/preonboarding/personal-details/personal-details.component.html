@@ -65,22 +65,18 @@
                     <label for="location" class="form-label custom-label mb-2">Mobile Number<span
                             class="text-danger">*</span></label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                            [countryListConfig]="countryListConfig" class="country-input"
-                            (onCountryChange)="onCountryChange($event)"></lib-country-list>
-
+                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"  [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig" class="country-input"
+                         (onCountryChange)="onCountryChange($event)"></lib-country-list>
                         <input type="text" class="form-control custom-input" formControlName="phonenumber"
-                            placeholder="{{ placeholderPhoneNumber || 'Please enter your mobile number' }}"
-                            id="phonenumbers" aria-describedby="phonenumbers"
+                            placeholder="Please enter your mobile number" id="phonenumbers"
+                            aria-describedby="phonenumbers"
                             [value]="personalDetailsForm.get('phonenumber')?.value ? formatPhoneNumber(personalDetailsForm.get('phonenumber')?.value) : ''"
                             autocomplete="off" required>
                     </div>
                     <div class="error-msg my-1"
                         *ngIf="personalDetailsForm.get('phonenumber')?.invalid &&  (personalDetailsForm.get('phonenumber')?.touched || personalDetailsForm.get('phonenumber')?.dirty)">
-                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('required')">Mobile number is
-                            required.</div>
-                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('pattern')">Please enter a valid
-                            mobile number.</div>
+                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('required')">Mobile number is required.</div>
+                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('pattern')">Please enter a valid mobile number.</div>
                         <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('invalidPhoneNumber')">
                             The phone number is not valid for the selected country.
                         </div>

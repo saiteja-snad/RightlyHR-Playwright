@@ -10,6 +10,7 @@ import { PersonalinfoLayoutComponent } from "../../personal-info/personalinfo-la
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
     { path: 'admin', component: AdminLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../admin/admin.route') },
+    { path: 'dashboard', component: MyinfoLayoutComponent,canActivate: [MsalGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
     { path: 'myinfo', component: MyinfoLayoutComponent,canActivate: [MsalGuard], loadChildren: () => import('../../myinfo/myinfo-routes') },
     { path: 'personalinfo', component: PersonalinfoLayoutComponent,canActivate: [MsalGuard], loadChildren: () => import('../../personal-info/personalinfo-routes') },
     { path: 'time-off', component: TimeOffLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../time-off/time-off.route') },

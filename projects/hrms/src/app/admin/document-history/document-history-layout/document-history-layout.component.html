@@ -1,0 +1,22 @@
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <li [ngbNavItem]="1">
+        <button class="custom-nav-btn" ngbNavLink>offer Letter</button>
+        <ng-template ngbNavContent>
+            <app-document-history-offer-letter />
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="2">
+        <button class="custom-nav-btn" ngbNavLink>Appointment Letter</button>
+        <ng-template ngbNavContent>
+            <app-document-history-appointment-letter />
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="3">
+        <button class="custom-nav-btn" ngbNavLink>Intern offer letter</button>
+        <ng-template ngbNavContent>
+            <app-document-history-intern-offer-letter />
+        </ng-template>
+    </li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="pt-4"></div>

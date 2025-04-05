@@ -10,48 +10,42 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-inactive-employees',
-  imports: [CommonModule, RouterModule, InactiveEmployeePipe,TranslateModule,FormsModule],
+  imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule],
   templateUrl: './inactive-employees.component.html',
   styleUrl: './inactive-employees.component.scss'
 })
 
 export class InactiveEmployeesComponent {
   subscription!: Subscription;
-  InActive=[] as any;
-  emp={} as any;
+  InActive = [] as any;
+  emp = {} as any;
   searchValue: any;
-  constructor(private router: Router,private http: HttpService, private modalService: NgbModal) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-this.empdata();
+    this.empdata();
   }
-//function for inactive employees
-empdata() {
-  this.subscription = this.http.getData(`Employeedata/InactiveEmployees`).subscribe({
-    next: (data: any) => {
-      console.log(data);
-
-   this.InActive = data as Iinactive[];
-
-
-    },
-
-    error: (reason: any) => console.log(reason)
-  });
-
-}
-select(act: any) {
-  this.emp=localStorage.setItem("personaldata", JSON.stringify(act));
-  console.log(this.emp);
-
-  this.router.navigate(["/admin/personal"])
-
-}
-ngOnDestroy(): void {
-  if (this.subscription) {
-    this.subscription.unsubscribe()
+  //function for inactive employees
+  empdata() {
+    this.subscription = this.http.getData(`Employeedata/InactiveEmployees`).subscribe({
+      next: (data: any) => {
+        this.InActive = data as Iinactive[];
+      },
+      error: (reason: any) => console.log(reason)
+    });
   }
-}
+
+  select(act: any) {
+    this.emp = localStorage.setItem("personaldata", JSON.stringify(act));
+    this.router.navigate(["/admin/personal"])
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
+
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }

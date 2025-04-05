@@ -24,11 +24,9 @@ import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader
 })
 
 export class AppointmentLetterComponent {
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Full-Time' },
-    { id: 2, name: 'Part-Time' },
-    { id: 3, name: 'Contract' },
-    { id: 4, name: 'Internship' }
+  documentType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
   ];
 
   designation: { id: number; name: string }[] = [
@@ -104,7 +102,10 @@ export class AppointmentLetterComponent {
   disablebuttonforemployeeid: boolean = true; //variable to disable the fields
   disablebuttonforauthority: boolean = true; //variable to disable the fields
   employeeaddress = [] as any;
-  SelectDropDown: any;
+  SelectDropDown = [
+    { name: 'Current Address', code: 'C' },
+    { name: 'Permanent Address', code: 'P' }
+  ];
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   Status: any;
@@ -124,21 +125,7 @@ export class AppointmentLetterComponent {
 
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
-    this.appointmentletter.branchCode = null
-    this.appointmentletter.department = null
-    this.fusionEmployeeId = null
-    this.appointmentletter.make = null
-    this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
-    console.log(this.Employeeinfo);
-    this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
-          ...emp,
-          fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
-        }));
-        this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
-          ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
-        }));
-        this.initializeForm();
+    this.initializeForm();
     this.getEmployeeId();
     this.getDepartment();
     this.getMakeDropDown();
@@ -146,16 +133,26 @@ export class AppointmentLetterComponent {
     this.getIssuedEmployeebyId();
     this.getAssertType();
     this.getAuthorityDetails();
+    this.appointmentletter.branchCode = null
+    this.appointmentletter.department = null
+    this.fusionEmployeeId = null
+    this.appointmentletter.make = null
+    this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    console.log(this.Employeeinfo);
+    
+        
+   
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmployeeId: ['', Validators.required],
+      fullName: ['', Validators.required],
       appointmentdate: ['', Validators.required],
       SelectDropDown: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
       department: ['', Validators.required],
       branchCode: ['', Validators.required],
-      Copys: ['', Validators.required],
+      documentType: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required]
     });
@@ -216,7 +213,7 @@ export class AppointmentLetterComponent {
     console.log(fusionemployeeId);
     this.appointmentletter = {}
     this.appointmentletter = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
+      (c: any) => c.fusionEmpId == fusionemployeeId.value
     );
     this.disablebuttonforemployeeid = true
     this.appointmentletter.dateOfJoining = this.formatDatewithDate(this.appointmentletter.dateOfJoining)
@@ -227,8 +224,7 @@ export class AppointmentLetterComponent {
     this.getEmployeeAddress(this.appointmentletter.employeeId)
     this.getIdentityByEmpid(this.appointmentletter.employeeId)
     console.log(this.appointmentletter);
-    // this.appointmentletter=this.departmentDetails
-    // console.log(this.departmentDetails);
+
   }
 
   // //function to get the pan nuber
@@ -249,7 +245,11 @@ export class AppointmentLetterComponent {
       }
     })
   }
-
+  onclickDocumentType(Value: any) {
+    console.log(Value);
+    this.appointmentletter.documentType = Value.value
+    console.log(this.appointmentletter.documentType);
+  }
   //function to get the address 
   getEmployeeAddress(Value: any) {
     let EmployeeId = Value
@@ -270,7 +270,7 @@ export class AppointmentLetterComponent {
     console.log(Value);
     console.log(this.employeeaddress.employeeAddresses);
     if (this.employeeaddress.employeeAddresses.length > 0) {
-      this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == Value)
+      this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == Value.value.toLowerCase())
 
     }
     console.log(this.address);
@@ -405,7 +405,7 @@ export class AppointmentLetterComponent {
 
     let date = this.appointmentletter.offerIssueddate
     console.log(date);
-    let date2 = this.appointmentletter.appointmentdate
+    let date2 = this.appointmentletter.appointmentSentDate
     console.log(date2);
     if (date >= date2) {
       this.DateValid = false
@@ -415,7 +415,11 @@ export class AppointmentLetterComponent {
     }
 
   }
-
+  onDataClick(value: any) {
+    this.appointmentletter.appointmentdate = value;
+    console.log(this.appointmentletter.appointmentdate);
+    
+  }
   //function for the Joining date validation
   JoiningDateValidation() {
     let Joindate = this.appointmentletter.appointmentdate
@@ -829,10 +833,20 @@ export class AppointmentLetterComponent {
         next: (data: any) => {
           console.log(data);
           this.employeeiddetails = data as IemployeeDetails[];
+          
           console.log(this.employeeiddetails);
           this.employeeiddetailsauthorityName = data as IemployeeDetails[];
           //  this.EmployeeName=this.employeeiddetails.firstName+" "+this.employeeiddetails.lastName
-
+          this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
+            ...emp,
+            fullName: `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
+          }));
+          this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
+            ...authority,
+            fullName: `${authority.firstName ?? ''} ${authority.middleName ?? ''} ${authority.lastName ?? ''}`.trim(), // Concatenate and remove excess spaces
+          }));
+  
+      console.log(this.employeeiddetails);
         },
         error: (reason: any) => {
 
@@ -878,11 +892,11 @@ export class AppointmentLetterComponent {
     );
   }
   isLoading: boolean = false;
-  async onAppointmentLetterSubmit(f: NgForm) {
+  async onAppointmentLetterSubmit() {
 
     const data = this.appointmentletter;
     //data.dateOfJoining = this.formatDate(data.dateOfJoining);
-    //data.appointmentdate = this.formatDate(data.appointmentdate);
+    //data.appointmentSentDate = this.formatDate(data.appointmentSentDate);
 
     console.log(data);
 

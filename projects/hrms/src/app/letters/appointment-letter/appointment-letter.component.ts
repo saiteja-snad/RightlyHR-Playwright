@@ -760,7 +760,7 @@ export class AppointmentLetterComponent {
           //  this.EmployeeName=this.employeeiddetails.firstName+" "+this.employeeiddetails.lastName
           this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
             ...emp,
-            fullName: `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
+            fullName: `${emp.fusionEmpId ?? ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
           }));
           this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
             ...authority,

@@ -20,10 +20,28 @@
               <label class="form-label custom-label mb-2">Search Employee<span
                       class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                  <p-select [options]="employeeiddetails" optionLabel="fullName"  [filter]="true" filterBy="name"
-                      [showClear]="true" placeholder="Please select employee"
-                      formControlName="fusionEmployeeId" class="custom-select w-100"  (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
-                  </p-select>
+                <p-select [options]="employeeiddetails"
+                [filter]="true"
+                filterBy="firstName"
+                [showClear]="true"
+                optionLabel="fullName"
+                optionValue="fusionEmpId"
+                placeholder="Please select employee"
+                formControlName="fusionEmployeeId"
+                class="custom-select w-100"
+                [dataKey]="'fusionEmpId'"
+                (onChange)="Onclick($event)"> 
+        
+        <ng-template let-emp pTemplate="item">
+          {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+        </ng-template>
+      
+        <ng-template let-emp pTemplate="selectedItem">
+          {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+        </ng-template>
+      
+      </p-select>
+      
               </div>
               <div *ngIf="employeeForm.get('fusionEmployeeId')?.invalid && employeeForm.get('fusionEmployeeId')?.touched">
                   <div class="error-msg">Employee is required</div>
@@ -31,9 +49,9 @@
           </div>
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Appointment Sent Date<span class="error-msg">*</span></label>
-              <input type="date" class="form-control custom-input" formControlName="appointmentSentDate"
+              <input type="date" class="form-control custom-input" formControlName="appointmentdate" (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
                 placeholder="Please enter appointment sent date" />
-              <div *ngIf="employeeForm.get('appointmentSentDate')?.invalid && employeeForm.get('appointmentSentDate')?.touched">
+              <div *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
                 <div class="error-msg">Appointment Sent Date is required</div>
               </div>
             </div>
@@ -41,12 +59,9 @@
             <div class="col-xl-12 mb-4">
               <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="SelectDropDown" optionLabel="name" placeholder="Please select address"
-                  formControlName="SelectDropDown" (change)="onclickSelectAddress(SelectDropDown)"
+                <p-select [options]="SelectDropDown" optionLabel="name" optionValue="code" placeholder="Please select address"
+                  formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
                   class="form-select custom-select">
-                  <option di [ngValue]="undefined">Select Address</option>
-                  <option value="c">Current Address</option>
-                  <option value="p">Permanent Address</option>
                 </p-select>
               </div>
               <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
@@ -85,14 +100,12 @@
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
-                  formControlName="Copys" class="form-select custom-select">
-                  <option disabled [ngValue]="undefined">Select</option>
-                  <option Value="true">Yes</option>
-                  <option Value="false">No</option>
+                <p-select [options]="documentType" optionLabel="name" placeholder="Please select document type"
+                  formControlName="documentType" class="form-select custom-select" (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
+                 
                 </p-select>
               </div>
-              <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
+              <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
                 <div class="error-msg">Document Type is required</div>
               </div>
             </div>
@@ -108,8 +121,16 @@
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                 Authority Name<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="sublocation" optionLabel="name" placeholder="Please select sub location"
-                  class="form-select custom-select" formControlName="authorityid" />
+                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location" (change)="onclickDesignation()"
+                  class="form-select custom-select" formControlName="authorityid"> 
+                  <ng-template let-emp pTemplate="item">
+                    {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+                  </ng-template>
+                
+                  <ng-template let-emp pTemplate="selectedItem">
+                    {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+                  </ng-template>
+                </p-select>
               </div>
               <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
                 <div class="error-msg">Signature Authority Name is required</div>
@@ -120,7 +141,7 @@
                 Job Tab Before Generating the Document.</p>
             </div>
             <div class="d-flex flex-wrap gap-3 pt-4">
-              <button type="button" class="custom-btn btn-primary">Generate Document</button>
+              <button type="button" class="custom-btn btn-primary" (click)="onAppointmentLetterSubmit()">Generate Document</button>
               <!-- <button type="button" class="custom-btn btn-primary">Request For Approval</button> -->
             </div>
           </div>
@@ -135,8 +156,8 @@
             <!--page-1-->
             <div class="letter-page-content" id="pdfContent1">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <app-lettersheader></app-lettersheader>>
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>

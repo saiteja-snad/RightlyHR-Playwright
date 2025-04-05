@@ -25,4 +25,5 @@ export interface Iteammembers{
     dateOfJoining: any,
     id: number;
     selected?: boolean;
+    emailaddress: string,
 }

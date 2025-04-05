@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Ipersonal, Iteammembers } from '../../Interface/members-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
@@ -12,11 +11,14 @@ import { Select } from 'primeng/select';
 import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
 import { PersonalPersonalTabsComponent } from '../../shared/personalinfo-tabs/personal-personal-tabs/personal-personal-tabs.component';
 import { PersonalJobTabsComponent } from '../../shared/personalinfo-tabs/personal-job-tabs/personal-job-tabs.component';
+import { Iteammembers } from '../../Interface/members-model';
+import { Ipersonal } from '../../Interfaces/personal-modal';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-personalinfo-layout',
-  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, PersonalPersonalTabsComponent, PersonalJobTabsComponent,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, PersonalPersonalTabsComponent, PersonalJobTabsComponent,FormsModule,ReactiveFormsModule,TranslateModule],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss'
 })
@@ -32,6 +34,7 @@ export class PersonalinfoLayoutComponent implements OnInit{
   subscription!: Subscription;
   emppersonalinfo={} as Ipersonal;
   employeeForm!: FormGroup;
+  revokeForm!: FormGroup;
   postIsApplicable!: any; 
   postreason!: any; 
   empdata = {} as any;
@@ -39,6 +42,7 @@ export class PersonalinfoLayoutComponent implements OnInit{
   selectedEmployeeIds: any;
   pouptext1: any
   selectedManager: any = null;
+  jobPostData: any;
 
   constructor(private http: HttpService,private authService: AuthService,private router: Router, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService) { }
   
@@ -50,6 +54,7 @@ export class PersonalinfoLayoutComponent implements OnInit{
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.empinfo);
     this.initializeForm();
+    this.initialzerevoke();
     this.getAllTeammembersList();
     this.getEmployee();
     this.emppersonalinfo=JSON.parse(localStorage.getItem("personaldata") || '{}')
@@ -244,6 +249,7 @@ close(){
 onclose(){
   this.modalService.dismissAll();
   this.employeeForm.reset();
+  this.revokeForm.reset();
 }
   reRequestEmail(f:FormGroup) {
     let loggedInUser = this.authService.getToken();
@@ -280,22 +286,22 @@ onclose(){
           next: (data: any) => {
             console.log(data);
             this.updateOnboardingStatus();
-            const modalElement2 = document.getElementById('commonall');
-            if (modalElement2) {
-              modalElement2.classList.remove('show');
-              modalElement2.style.display = 'none';
-            }
-            this.pouptext1 = 'Employee archived sucessfully';
-            const modalElement = document.getElementById('successhide1');
-            if (modalElement) {
-              modalElement.classList.add('show');
-              modalElement.style.display = 'block';
-            }
+            this.conformationPopup.openSuccessModal('Employee archived successfully');
+            // const modalElement2 = document.getElementById('commonall');
+            // if (modalElement2) {
+            //   modalElement2.classList.remove('show');
+            //   modalElement2.style.display = 'none';
+            // }
+            // this.pouptext1 = 'Employee archived sucessfully';
+            // const modalElement = document.getElementById('successhide1');
+            // if (modalElement) {
+            //   modalElement.classList.add('show');
+            //   modalElement.style.display = 'block';
+            // }
 
             setTimeout(() => {
               this.router.navigate(['/admin']);
             }, 3000);
-            // window.location.reload();
           },
           error: (err: any) => {
             console.log(err);
@@ -321,5 +327,223 @@ onclose(){
           }, 2000);
         },
       });
+  }
+  updatePassword() {
+    const employeeId = this.empdata.employeeId;
+    this.http
+      .getData(`PreonboardingEmployeedata/regeneratePassword/${employeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          this.conformationPopup.openSuccessModal('Password updated successfully');
+          setTimeout(function () {
+            const modalElement = document.getElementById('successhide');
+            if (modalElement) {
+              modalElement.classList.remove('show');
+              modalElement.style.display = 'none';
+            }
+          }, 2000);
+        },
+        error: (error: any) => {
+          console.log(error);
+          // Handle error
+        },
+        complete: () => {
+          this.emailToEmployee();
+        },
+      });
+  }
+  emailToEmployee() {
+    let data = {
+      personName: `${this.empdata.firstName ?? ''} ${this.empdata.middleName ?? ''
+        } ${this.empdata.lastName ?? ''}`,
+      personEmail: this.empdata.emailaddress,
+      employeeId: this.empdata.employeeId,
+    };
+    this.http.postdata(`CustomEmail/generateCredentialEmail`, data).subscribe({
+      next: (res: any) => {
+        // window.location.reload();
+      },
+      error: (error: any) => {
+        console.log(error);
+        // Handle error
+      },
+      complete: () => {
+        location.reload();
+      },
+    });
+  }
+  revokepopup() {
+    
+ }
+ closerevolesubmit(){
+
+ }
+ submitrevoke() {
+  (this.empdata.empstatus = 'Revoked'),
+    (this.empdata.substatus = 'Offer Revoked'),
+    (this.empdata.revokeComments = this.empdata.revokeComments);
+  if (this.empdata.marriedDate == 'Invalid date') {
+    this.empdata.marriedDate = null;
+  }
+  this.subscription = this.http
+    .postdata(`Employeedata/UPDATER`, this.empdata)
+    .subscribe({
+      next: (data: any) => {
+        this.revokeEmail();
+        this.updateRevokeStatustooffer();
+        this.revokeEmailToEmployee();
+        this.updateOnboardingStatus();
+
+        if (this.jobPostData.id) {
+          this.updateJobapplicantdata();
+        } else {
+
+          setTimeout(() => {
+            this.router.navigate(['/admin']);
+          }, 3000);
+        }
+        const modalElement2 = document.getElementById('commonall');
+        if (modalElement2) {
+          modalElement2.classList.remove('show');
+          modalElement2.style.display = 'none';
+        }
+        this.pouptext1 = 'Offer Revoked';
+        const modalElement = document.getElementById('successhide1');
+        if (modalElement) {
+          modalElement.classList.add('show');
+          modalElement.style.display = 'block';
+        }
+
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+}
+revokeEmail() {
+  let loggedInUser = this.authService.getToken();
+  let sdata = {
+    personName: `${this.empdata?.firstName} ${this.empdata?.middleName} ${this.empdata?.lastName}`,
+    personEmail: 'string',
+    personRole: 'string',
+    employeeId: loggedInUser.employeeId,
+    documentUrl: 'string',
+    workLocation: 'string',
+    senderName: 'string',
+    senderEmail: 'string',
+    approvedBy: 0,
+    approvedByName: 'string',
+    firstName: 'string',
+    lastName: 'string',
+    middleName: 'string',
+    comments: this.empdata.revokeComments,
+    offerStartDate: '2023-12-24T17:33:45.271Z',
+    offerExpiryDate: '2023-12-24T17:33:45.271Z',
+  };
+  if (this.empdata.middleName) {
+    sdata.personName = `${this.empdata?.firstName} ${this.empdata?.middleName} ${this.empdata?.lastName}`;
+  } else {
+    sdata.personName = `${this.empdata?.firstName} ${this.empdata?.lastName}`;
+  }
+  this.subscription = this.http
+    .postdata(`CustomEmail/revokeemailtomanager`, sdata)
+    .subscribe({
+      next: (data: any) => {
+      },
+      error: (err: any) => {
+      },
+    });
+}
+//function to send email to employee
+revokeEmailToEmployee() {
+  let pdata = {
+    empId: this.empinfo.employeeId,
+    userName: 'string',
+    password: 'string',
+    personEmail: this.empinfo.emailaddress,
+    personName: 'string',
+    senderName: 'string',
+    senderEmail: 'string',
+    jobRole: 'string',
+    comments: this.empdata.revokeComments,
+  };
+
+  this.subscription = this.http
+    .postdata(`CustomEmail/revokeemailtoemployee`, pdata)
+    .subscribe({
+      next: (data: any) => {
+
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+}
+updateRevokeStatustooffer() {
+  this.getOfferDetails.offerSentStatus = 'Revoked';
+  this.subscription = this.http
+    .postdata('OfferLetter/UPDATE', this.getOfferDetails)
+    .subscribe({
+      next: (data: any) => {
+        if (data.offerSentStatus == 'Revoked') {
+          this.revokeEmailToEmployee();
+        }
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+}
+getOfferDetails = {} as any;
+getofferdetails() {
+  let EmpId = this.empinfo.employeeId;
+  this.subscription = this.http.getData(`OfferLetter/${EmpId}`).subscribe({
+    next: (data: any) => {
+      this.getOfferDetails = data;
+    },
+    error: (err: any) => {
+      console.log(err);
+    },
+  });
+}
+updateJobapplicantdata() {
+  const empData = JSON.parse(localStorage.getItem('personaldata') || '{}');
+  const data = {
+    status: "Revoked",
+    employeeId: parseInt(empData.employeeId),
+    id: this.jobPostData.id,
+    firstName: empData.firstName,
+    lastName: empData.lastName,
+    jobId: this.jobPostData.jobId,
+    emailid: empData.emailaddress,
+    mobileNumber: empData.contactnumber,
+    resume: 'demo',
+    gender: empData.gender,
+  }
+  this.subscription = this.http
+    .postdata('JobApplicantsData/UPDATER', data)
+    .subscribe({
+      next: (data: any) => {
+        this.pouptext1 = 'Offer Revoked';
+        const modalElement = document.getElementById('successhide1');
+        if (modalElement) {
+          modalElement.classList.add('show');
+          modalElement.style.display = 'block';
+        }
+        setTimeout(() => {
+          this.router.navigate(['/admin']);
+        }, 3000)
+
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+
+}
+initialzerevoke() {
+  this.revokeForm = this.fb.group({
+    revokeComments: ['', [Validators.required, Validators.maxLength(250)]],
+  });
   }
 }

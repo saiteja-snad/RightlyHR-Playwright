@@ -10,6 +10,7 @@ import { Select } from 'primeng/select';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';
 import parsePhoneNumberFromString from 'libphonenumber-js';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-emergency-contact-details',
@@ -38,7 +39,7 @@ export class EmergencyContactDetailsComponent {
     };
     mobileNumberData: IphoneNumberData | null = null;
   empinfo: any
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder,   public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

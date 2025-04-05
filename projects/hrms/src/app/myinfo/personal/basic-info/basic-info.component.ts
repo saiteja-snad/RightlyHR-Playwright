@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-basic-info',
@@ -32,7 +33,7 @@ export class BasicInfoComponent {
   Titledetails :ITitle[]=[];
   Maritaldetails:IMarital[]=[];
   buttons=false
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder,  public formValidation: FormValidationService,  private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

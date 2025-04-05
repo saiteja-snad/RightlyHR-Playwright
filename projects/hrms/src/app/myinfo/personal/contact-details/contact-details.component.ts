@@ -28,11 +28,10 @@ subscription!:Subscription
 
   initializeForm(): void {
     this.contactForm = this.fb.group({
- 
-      personalEmail: ['', Validators.required],
-      workMail: ['',Validators.required],
-      phoneNumber: ['', Validators.required],
-      workNumber: ['', Validators.required],
+      personalEmail: ['', [Validators.required, Validators.email]], 
+      workMail: ['', [Validators.required, Validators.email]], // Required and valid email format
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]], // Required and 10-digit phone number
+      workNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]], // Required and 10-digit phone number
   
     });
   }

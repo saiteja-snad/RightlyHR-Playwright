@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 
 @Component({
@@ -33,7 +34,7 @@ export class AddressInfoComponent {
   ];
 
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -52,13 +53,13 @@ export class AddressInfoComponent {
       currentCity: ['', Validators.required],
       currentState: ['', Validators.required],
       currentCountry: ['', Validators.required],
-      currentZipCode: ['', Validators.required],
+      currentZipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
       permanentAddressLine1: ['', Validators.required],
       permanentAddressLine2: [''],
       permanentCity: ['', Validators.required],
       permanentState: ['', Validators.required],
       permanentCountry: ['', Validators.required],
-      permanentZipCode: ['', Validators.required],
+      permanentZipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
     });
   }
 

@@ -45,7 +45,7 @@
                             <label class="form-label custom-label mb-2">Salutation<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="titleDetails" optionLabel="titlename"
+                                <p-select [options]="titleDetails" optionValue="titlename" optionLabel="titlename"
                                     placeholder="Please select salutation" formControlName="title"
                                     class="form-select custom-select"></p-select>
                             </div>
@@ -94,7 +94,7 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Gender<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="genderDetails" optionLabel="genderName"
+                                <p-select [options]="genderDetails" optionValue="genderName" optionLabel="genderName"
                                     placeholder="Please select gender" formControlName="gender"
                                     class="form-select custom-select"></p-select>
                             </div>
@@ -107,8 +107,8 @@
                             <label class="form-label custom-label mb-2">Select Address<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="addressdata" optionLabel="name"
-                                    placeholder="Please select address" formControlName="SelectDropDown" (change)="onclickSelectAddress(SelectDropDown)"
+                                <p-select [options]="addressdata" optionValue="value" optionLabel="name"
+                                    placeholder="Please select address" formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
                                     class="form-select custom-select">
                                     <option di [ngValue]="undefined">Select Address</option>
                                     <option value="c">Current Address</option>
@@ -186,8 +186,8 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Designation <span
                                     class="error-msg">*</span></label>
-                                    <p-select [options]="JobroleDetails" optionLabel="jobRole1"
-                                    placeholder="Please select gender" formControlName="jobRoleDetails"
+                                    <p-select [options]="JobroleDetails" optionValue="jobRole1" optionLabel="jobRole1"
+                                    placeholder="Please select gender" formControlName="jobRoleDetails" 
                                     class="form-select custom-select"></p-select>
                                 <div *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
                                     <div class="error-msg">Designation is required</div>
@@ -214,7 +214,7 @@
                             <label class="form-label custom-label mb-2">PF <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="pfdata" optionLabel="name" placeholder="Please select PF" formControlName="pf"
-                                    class="form-select custom-select"></p-select>
+                                    class="form-select custom-select" (ngModelChange)="ctcCalculation()"></p-select>
                                     <div *ngIf="employeeForm.get('pf')?.invalid && employeeForm.get('pf')?.touched">
                                         <div class="error-msg">PF is required</div>
                                     </div>
@@ -224,7 +224,7 @@
                             <label class="form-label custom-label mb-2">Salary (Cost to Company) <span
                                     class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="amount"
-                                placeholder="Please enter salary" />
+                                placeholder="Please enter salary" (ngModelChange)="onclickCTC($event)"/>
                                 <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
                                     <div class="error-msg">Salary is required</div>
                                 </div>
@@ -232,8 +232,8 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Variable Pay <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="variabledata" optionLabel="name"
-                                    placeholder="Please select variable pay" formControlName="isVariablePay"
+                                <p-select [options]="variabledata" optionLabel="name" 
+                                    placeholder="Please select variable pay" formControlName="isVariablePay" (onChange)="onVariablePayChange($event)"
                                     class="form-select custom-select" >
                                     <option disabled [ngValue]="undefined">Select</option>
                                     <option Value="true">Yes</option>
@@ -247,7 +247,7 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Variable Amount <span
                                     class="error-msg">*</span></label>
-                            <input type="text" class="form-control custom-input" formControlName="variablePayAmount"
+                            <input type="text" class="form-control custom-input" formControlName="variablePayAmount" (ngModelChange)="onVariablePayChangeAmount($event)"
                                 placeholder="Please enter variable amount" />
                                 <div *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
                                     <div class="error-msg">Variable Amount is required</div>
@@ -257,8 +257,8 @@
                             <label class="form-label custom-label mb-2">Work Location<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select work location" (change)="OnClickLocation()"
+                                <p-select [options]="LocationDropDownData" optionValue="id" optionLabel="jobLocationName" [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select work location"
                                     formControlName="locationId" class="custom-select w-100" >
                                 </p-select>
                             </div>
@@ -270,7 +270,7 @@
                             <label class="form-label custom-label mb-2">Sub Location<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" [filter]="true" filterBy="name"
+                                <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true" filterBy="name"
                                     [showClear]="true" placeholder="Please select sub location"
                                     formControlName="JobSubLocationName" class="custom-select w-100" >
                                 </p-select>
@@ -345,8 +345,8 @@
                             </div>
                         </div>
                         <div class="d-flex flex-wrap gap-3 pt-4">
-                            <button type="submit" class="custom-btn btn-primary" >Generate Offer Letter</button>
-                            <button type="button" class="custom-btn btn-primary" (click)="requestForApproval()">Request
+                            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">Generate Offer Letter</button>
+                            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" (onChange)="requestForApproval()">Request
                                 For Approval</button>
                         </div>
                     </div>

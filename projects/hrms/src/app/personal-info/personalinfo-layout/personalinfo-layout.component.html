@@ -5,15 +5,19 @@
         </div>
         <div>
             <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/job')">Inactive</button>
-            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">
+            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')"
+                (click)="openModal(changermmodal)">
                 Change RM
             </button>
-            <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info')" >
+            <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info')" (click)="openModal(archivedbtn)">
                 Archive
             </button>
-            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')" (click)="emailForRequestDoc()">
+            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
+                (click)="emailForRequestDoc()">
                 Request for Documents
             </button>
+            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
+            (click)="openModal(request)">Re-Request Documents </button>
             <!-- <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button> -->
         </div>
     </div>
@@ -22,11 +26,11 @@
     <div>
         <div *ngIf="isActive('personalinfo/personal' )" class="mb-3">
             <app-personal-personal-tabs></app-personal-personal-tabs>
-         </div>
- 
-         <div *ngIf="isActive('personalinfo/job' ) " class="mb-3">
-             <app-personal-job-tabs></app-personal-job-tabs>
-         </div>
+        </div>
+
+        <div *ngIf="isActive('personalinfo/job' ) " class="mb-3">
+            <app-personal-job-tabs></app-personal-job-tabs>
+        </div>
     </div>
 
     <div class="myinfo-main-container d-flex gap-4">
@@ -40,6 +44,7 @@
             <router-outlet />
         </div>
     </div>
+    
     <ng-template #changermmodal let-modal>
         <div class="custom-main-popup-container">
             <div class="d-flex justify-content-between popup-header-border p-4">
@@ -53,50 +58,96 @@
             <div class="custom-main-popup-content p-4">
                 <form [formGroup]="teamForm" (ngSubmit)="updateTeamRM()">
                     <div class="row">
-                      
-                      <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">
-                          Select Team Member(s) <span class="text-danger">*</span>
-                        </label>
-                        <div class="custom-p-select-content">
-                            <p-select formControlName="teamMembers"
-                            id="teamMembers"
-                            optionLabel="name"
-                            [options]="teamMembersdata"
-                            placeholder="Select Team Member(s)"
-                            class="form-select custom-select"
-                            multiple="true"
-                            (onChange)="onSelectManager($event, 'teamMembers')">
-                          </p-select>
-                          
 
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label custom-label mb-2">
+                                Select Team Member(s) <span class="error-msg">*</span>
+                            </label>
+                            <div class="custom-p-select-content">
+                                <p-select formControlName="teamMembers" id="teamMembers" optionLabel="name"
+                                    [options]="teamMembersdata" placeholder="Select Team Member(s)"
+                                    class="form-select custom-select" multiple="true"
+                                    (onChange)="onSelectManager($event, 'teamMembers')">
+                                </p-select>
+
+
+                            </div>
                         </div>
-                      </div>
-                  
-                     
-                      <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">
-                          Select Reporting Manager <span class="text-danger">*</span>
-                        </label>
-                        <div class="custom-p-select-content">
-                            <p-select 
-                            formControlName="reportingManager" id="reportingManager"
-                            optionLabel="name" [options]="managers"
-                            placeholder="Select Reporting Manager" 
-                            class="form-select custom-select" 
-                            (onChange)="onSelectManager($event, 'reportingManager')">
-                          </p-select>
+
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label custom-label mb-2">
+                                Select Reporting Manager <span class="error-msg">*</span>
+                            </label>
+                            <div class="custom-p-select-content">
+                                <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name"
+                                    [options]="managers" placeholder="Select Reporting Manager"
+                                    class="form-select custom-select"
+                                    (onChange)="onSelectManager($event, 'reportingManager')">
+                                </p-select>
+                            </div>
                         </div>
-                      </div>
                     </div>
-                  
+
                     <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-3 mt-4">
-                      <button type="reset" class="custom-btn btn-secondary">Close</button>
-                      <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid">Submit</button>
+                        <button type="reset" class="custom-btn btn-secondary">Close</button>
+                        <button type="submit" class="custom-btn btn-primary"
+                            [disabled]="teamForm.invalid">Submit</button>
                     </div>
-                  </form>
-                  
+                </form>
+
             </div>
         </div>
     </ng-template>
+
+    <ng-template #request let-modal>
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-4">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">Re-Request Documents</p>
+                </div>
+                <div>
+                    <a (click)="onclose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-4">
+                <form [formGroup]="employeeForm" (ngSubmit)="reRequestEmail(employeeForm)" class="w-100">
+                        <div class="mt-3 ps-3 pe-3">
+                            <div class="mb-3">
+                                <label for="comments" class="form-label custom-label mb-2">Comments <span class="error-msg">*</span></label>
+                                <textarea class="form-control custom-input" formControlName="comments"
+                                    placeholder="Leave a comment here"></textarea>
+                                <div>
+                                    <span class="color">{{ employeeForm.get('comments')?.value?.length || 0 }}
+                                        /250</span>
+                                </div>
+                            </div>
+                            <div *ngIf="employeeForm.get('comments')?.invalid && employeeForm.get('comments')?.touched">
+                                <div class="error-msg">Comments are required</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-3 mt-4">
+                            <button type="reset" class="custom-btn btn-secondary"
+                            (click)="close()">Close</button>
+                            <button type="submit" class="custom-btn btn-primary"
+                                [disabled]="!employeeForm.valid">Submit</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #archivedbtn let-modal>
+        <div class="result-popup-content" ngbAutofocus>
+          <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to Archive?</p>
+          </div>
+          <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="submitArchive()">Yes</button>
+          </div>
+        </div>
+      
+      </ng-template>

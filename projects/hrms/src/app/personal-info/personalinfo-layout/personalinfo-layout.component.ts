@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Ipersonal, Iteammembers } from '../../Interface/members-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -31,28 +31,30 @@ export class PersonalinfoLayoutComponent implements OnInit{
   empinfo = {} as Ipersonal;
   subscription!: Subscription;
   emppersonalinfo={} as Ipersonal;
-  postIsApplicable!: any; //variable to store the data
-  // rmData = [
-  //   { name: 'Rajesh', designation: 'Software Engineer', team: 'Development', location: 'Bangalore' }]
-  
+  employeeForm!: FormGroup;
+  postIsApplicable!: any; 
+  postreason!: any; 
+  empdata = {} as any;
   selectedData: any = {};
-
   selectedEmployeeIds: any;
+  pouptext1: any
+  selectedManager: any = null;
+
   constructor(private http: HttpService,private authService: AuthService,private router: Router, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService) { }
   
-
   ngOnInit(): void {
-    
     this.teamForm = this.fb.group({
       teamMembers: [null, Validators.required],
       reportingManager: [null, Validators.required]
     });
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.empinfo);
+    this.initializeForm();
     this.getAllTeammembersList();
     this.getEmployee();
     this.emppersonalinfo=JSON.parse(localStorage.getItem("personaldata") || '{}')
   }
+
   emailForRequestDoc() {
     let loggedInUser = this.authService.getToken();
     if (this.emppersonalinfo.experienceType == 'Fresher') {
@@ -64,14 +66,9 @@ export class PersonalinfoLayoutComponent implements OnInit{
     }
     let pdata = {
       empId: this.emppersonalinfo.employeeId,
-      // userName: Value.emailaddress,
-      // password: Value.password,
-      // personEmail: this.postProspectiveEmpDetails.personalEmail,
-      // personName: this.postProspectiveEmpDetails.firstName+" "+this.postProspectiveEmpDetails.lastName,
       senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
       senderEmail: loggedInUser.workEmail,
       status: this.postIsApplicable,
-      // jobRole: this.selectedValueJobRoledrop,
     };
     if (loggedInUser.middleName) {
       pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
@@ -88,41 +85,7 @@ export class PersonalinfoLayoutComponent implements OnInit{
           console.log(err);
         },
       });
-     
   }
-  reRequestEmail() {
-    let loggedInUser = this.authService.getToken();
-    let pdata = {
-      empId: this.empinfo.employeeId,
-      // userName: Value.emailaddress,
-      // password: Value.password,
-      // personEmail: this.postProspectiveEmpDetails.personalEmail,
-      // personName: this.postProspectiveEmpDetails.firstName+" "+this.postProspectiveEmpDetails.lastName,
-      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-      senderEmail: loggedInUser.workEmail,
-      // status: this.postreason,
-      // comments: this.comments,
-      // jobRole: this.selectedValueJobRoledrop,
-    };
-    if (loggedInUser.middleName) {
-      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
-    } else {
-      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
-    }
-    this.subscription = this.http
-      .postdata(`CustomEmail/RerequestDocuments`, pdata)
-      .subscribe({
-        next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Email Sent Successfully')
-          
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
-   
-  }
-  selectedManager: any = null;
 
   onSelectManager(event: any, field: string) {
     console.log("Selected Value for", field, event.value);
@@ -131,20 +94,15 @@ export class PersonalinfoLayoutComponent implements OnInit{
         this.selectedEmployees = Array.isArray(event.value) ? event.value : [event.value];
         this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);
     }
-
     if (field === 'reportingManager') {
         this.teamForm.patchValue({
             reportingManager: event.value
         });
     }
-
     console.log("Updated selectedEmployees:", this.selectedEmployees);
     console.log("Updated selectedEmployeeIds:", this.selectedEmployeeIds);
 }
 
-  
-  
-  
   getEmployee() {
     this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
       next: (data: any) => {
@@ -158,6 +116,7 @@ export class PersonalinfoLayoutComponent implements OnInit{
       error: (err: any) => console.log(err),
     });
   }
+
   getAllTeammembersList() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
@@ -166,15 +125,11 @@ export class PersonalinfoLayoutComponent implements OnInit{
           ...member,
           name: `${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
         }));
-
-    
       },
       error: (err: any) => console.log(err),
       }
     );
-
 }
-pouptext1: any
 
 updateTeamRM() {
   console.log("Raw Selected Employees:", this.selectedEmployees);
@@ -229,8 +184,6 @@ showSuccessPopup() {
   setTimeout(() => location.reload(), 1500);
 }
 
-
-
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -257,6 +210,7 @@ showSuccessPopup() {
   
     return nameParts.join(' ');
   }
+
   firstSelectedEmployee: Iteammembers | null = null;
   getSelectedTeamMembersLabel(): string {
     const selectedCount = this.selectedEmployees.length;
@@ -274,7 +228,98 @@ showSuccessPopup() {
       teamMembers: [null, Validators.required],
       reportingManager: [null, Validators.required]
     });
-    
-    
 }
+
+initializeForm() {
+this.employeeForm = this.fb.group({
+  comments: ['', [Validators.required, Validators.maxLength(250)]],
+});
+}
+
+close(){
+  this.modalService.dismissAll();
+  
+}
+
+onclose(){
+  this.modalService.dismissAll();
+  this.employeeForm.reset();
+}
+  reRequestEmail(f:FormGroup) {
+    let loggedInUser = this.authService.getToken();
+    let pdata = {
+      empId: this.empinfo.employeeId,
+      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+      senderEmail: loggedInUser.workEmail,
+      status: this.postreason,
+      comments: this.employeeForm.get('comments')?.value,
+      // jobRole: this.selectedValueJobRoledrop,
+    };
+    if (loggedInUser.middleName) {
+      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
+    } else {
+      pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+    }
+    this.subscription = this.http
+      .postdata(`CustomEmail/RerequestDocuments`, pdata)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
+  }
+  submitArchive() {
+    (this.empdata.empstatus = 'archived'),
+      (this.empdata.substatus = 'Employee Created'),
+      this.subscription = this.http
+        .postdata(`Employeedata/UPDATER`, this.empdata)
+        .subscribe({
+          next: (data: any) => {
+            console.log(data);
+            this.updateOnboardingStatus();
+            const modalElement2 = document.getElementById('commonall');
+            if (modalElement2) {
+              modalElement2.classList.remove('show');
+              modalElement2.style.display = 'none';
+            }
+            this.pouptext1 = 'Employee archived sucessfully';
+            const modalElement = document.getElementById('successhide1');
+            if (modalElement) {
+              modalElement.classList.add('show');
+              modalElement.style.display = 'block';
+            }
+
+            setTimeout(() => {
+              this.router.navigate(['/admin']);
+            }, 3000);
+            // window.location.reload();
+          },
+          error: (err: any) => {
+            console.log(err);
+          },
+        });
+  }
+  updateOnboardingStatus() {
+    let data = {
+      status: 'Revoked',
+      employeeId: this.empdata.employeeId,
+    };
+    this.subscription = this.http
+      .postdata('JobApplicantsData/UPDATERbyEmployeeId', data)
+      .subscribe({
+        next: (data: any) => {
+        },
+        error: (reason: any) => {
+          this.conformationPopup.openErrorModal('Something went wrong');
+          setTimeout(function () {
+            // if (modalElement) {
+            //   modalElement.classList.remove('show');
+            // }
+          }, 2000);
+        },
+      });
+  }
 }

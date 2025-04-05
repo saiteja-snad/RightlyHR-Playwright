@@ -17,7 +17,7 @@ import { IaddressemployeeDetails, IAuthority } from '../../Interfaces/letters-mo
 
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })

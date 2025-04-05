@@ -22,7 +22,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
                                     placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+                                    (onChange)="Onclick($event.value)">
                                 </p-select>
                             </div>
                             <div
@@ -109,20 +109,16 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-12 mb-4">
-                            <label class="form-label custom-label mb-2">Select Address<span
-                                    class="error-msg">*</span></label>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="addressdata" optionLabel="name" placeholder="Please select address"
-                                    formControlName="SelectDropDown" (change)="onclickSelectAddress(SelectDropDown)"
+                                <p-select [options]="addressdata" optionLabel="label" placeholder="Please select address"
+                                    formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
                                     class="form-select custom-select">
-                                    <option di [ngValue]="undefined">Select Address</option>
-                                    <option value="c">Current Address</option>
-                                    <option value="p">Permanent Address</option>
                                 </p-select>
+                        
                             </div>
-                            <div
-                                *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
+                            <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
                                 <div class="error-msg">Address is required</div>
                             </div>
                         </div>
@@ -175,7 +171,7 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Pincode<span class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="pincode"
-                                placeholder="Please enter country" />
+                                placeholder="Please enter pincode" />
                             <div *ngIf="employeeForm.get('pincode')?.invalid && employeeForm.get('pincode')?.touched">
                                 <div class="error-msg">Pincode is required</div>
                             </div>
@@ -196,7 +192,7 @@
                             <label class="form-label custom-label mb-2">Designation <span
                                     class="error-msg">*</span></label>
                             <p-select [options]="JobroleDetails" optionLabel="jobRole1"
-                                placeholder="Please select gender" formControlName="jobRoleDetails"
+                                placeholder="Please select designation" formControlName="jobRoleDetails"
                                 class="form-select custom-select"></p-select>
                             <div
                                 *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
@@ -280,8 +276,8 @@
                             <label class="form-label custom-label mb-2">Select Internship Period(Months) <span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name"
-                                    placeholder="Please select document type" formControlName="documentType"
+                                <p-select [options]="internshipPeriod" optionLabel="name"
+                                    placeholder="Please select internship period" formControlName="documentType"
                                     class="form-select custom-select">
                                     <option di [ngValue]="undefined">Select Internship Period</option>
                                     <option value="1">1</option>
@@ -336,17 +332,15 @@
                                 <div class="error-msg">Note is required</div>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Signature Authority Name <span
-                                    class="error-msg">*</span></label>
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
+                              Authority Name<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="authorityDetails" optionLabel="fullName"
-                                    placeholder="Please select signature authority" formControlName="authorityid"
-                                    class="form-select custom-select"></p-select>
-                                <div
-                                    *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                                    <div class="error-msg">Signature Authority is required</div>
-                                </div>
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                class="form-select custom-select" formControlName="authorityid"(onChange)="onclickDesignation($event.value)"/>
+                            </div>
+                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
+                              <div class="error-msg">Signature Authority Name is required</div>
                             </div>
                         </div>
                         <div class="d-flex flex-wrap gap-3 pt-4">
@@ -520,7 +514,7 @@
                                     <div class="pt-3">
                                         <p class="m-0 family2">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
-                                        <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1" *ngIf="traineeEmpData.authorityName?.trim()" style="font-family: autographsignatureFont; font-size: xx-large;">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0  paragraph boldsize1">{{authorityDesignation}} </p>
                                         <br>
                                         <hr>

@@ -122,14 +122,10 @@ a {
 }
 
 // disable-btn
-.custom-btn-primary:disabled {
-    background-color: var(--btn-secondary-color);
-    color: var(--btn-color-ts);
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: none;
+.btn-primary:disabled {
+    opacity: 0.5;
 }
-
+ 
 
 
 /* width */
@@ -722,11 +718,25 @@ input[type="file"] {
         .confirmation-icon {
             width: 9rem;
         }
-
+        .confirmation-delete-icon{
+            width: 5rem;
+        }
         .confirmation-text {
             font-weight: 500;
             font-size: var(--fontsize20);
             line-height: 30px;
             color: #06274F;
         }
+    }
+
+// download text
+    .dowload-text {
+        font-weight: 600;
+        font-size: 13px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-decoration: underline;
+        text-decoration-style: solid;
+        text-decoration-thickness: 0%;
+        color: rgba(6, 39, 79, 1);
     }

@@ -2,11 +2,14 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+                    class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate}}
+                    <span
+                    class="ms-2">>></span> <span class="component-heading px-2">{{'Probation Employees'|translate}}</span>
+                </p>
         </div>
         <div class="dropdown">
             <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-plus me-2"></i>Generate Documents
+                <i class="bi bi-plus me-2"></i>{{'Generate Documents'| translate}}
             </button>
             <ul class="dropdown-menu custom-dropdown-menu">
                 <li><a class="dropdown-item" [routerLink]="['/admin/letters/probation-confirmation-letter']" routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>Probation Confirmation Letter</a></li>
@@ -18,24 +21,24 @@
         <!--Input search-->
         <div class="input-group custom-search mb-4">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search"  #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Employee Name</th>
-                        <th>Personal Email</th>
-                        <th>Phone Number</th>
-                        <th>Location</th>
-                        <th>Sub Location</th>
-                        <th>Designation</th>
-                        <th>Sub Status</th>
+                        <th>{{'ID'|translate}}</th>
+                        <th>{{'EmployeeName'|translate}}</th>
+                        <th>{{'Personal Email'|translate}}</th>
+                        <th>{{'Phone Number'|translate}}</th>
+                        <th>{{'Location'|translate}}</th>
+                        <th>{{'Sub Location'|translate}}</th>
+                        <th>{{'Designation'|translate}}</th>
+                        <th>{{'Sub Status'|translate}}</th>
                     </tr>
                 </thead>
-                <tbody>
+                <!-- <tbody>
                     <tr>
                         <td>10410</td>
                         <td>Jhon Doe</td>
@@ -55,6 +58,57 @@
                         <td>Mysore IT park</td>
                         <td>HR Administrator</td>
                         <td>Employee Created</td>
+                    </tr>
+                </tbody> -->
+                <tbody>
+                    <tr *ngFor="let item of probationemp | probationEmp:searchValue "  (click)="select(item)">
+
+                        <td>
+                            <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
+                            <ng-template #fusionid>
+                                -
+                            </ng-template>
+                        </td>
+                        <td> <span *ngIf="item.firstName;else fistname"> </span>{{item?.firstName}} {{item?.middleName}}
+                            {{item?.lastName}}
+                            <ng-template #fistname>
+                                -
+                            </ng-template>
+                        </td>
+                        <td><span *ngIf="item.workEmail;else workemail"> {{item.workEmail}}</span>
+                            <ng-template #workemail>
+                                -
+                            </ng-template>
+                        </td>
+                        <td><span *ngIf="item?.contactnumber;else contactnumb"> {{item.contactnumber}}</span>
+                            <ng-template #contactnumb>
+                                -
+                            </ng-template>
+                        </td>
+                        <td>
+                          <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | dataformat }}</span>
+                          <ng-template #prostartdate>
+                            -
+                          </ng-template>
+                        </td>
+                        <td>
+                          <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate | dataformat}}</span>
+                          <ng-template #proenddate>
+                            -
+                          </ng-template>
+                        </td>
+                        <td>
+                          <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate | dataformat}}</span>
+                          <ng-template #proextenddate>
+                            -
+                          </ng-template>
+                        </td>
+                        <td>
+                          <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
+                          <ng-template #designation>
+                            -
+                          </ng-template>
+                        </td>
                     </tr>
                 </tbody>
             </table>

@@ -15,6 +15,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-trainee-offer-letter',
@@ -83,12 +84,26 @@ export class TraineeOfferLetterComponent {
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
   employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
   ];
   addressdata: { name: string, value: string }[] = [
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },
+  ];
+  internshipPeriod: { name: string, value: string }[] = [
+    { name: '1 month', value: '1' },
+    { name: '2 months', value: '2' },
+    { name: '3 months', value: '3' },
+    { name: '4 months', value: '4' },
+    { name: '5 months', value: '5' },
+    { name: '6 months', value: '6' },
+    { name: '7 months', value: '7' },
+    { name: '8 months', value: '8' },
+    { name: '9 months', value: '9' },
+    { name: '10 months', value: '10' },
+    { name: '11 months', value: '11' },
+    { name: '12 months', value: '12' }
   ];
   countryvalues = {} as any;
   selectedCountryConfig = {
@@ -103,12 +118,12 @@ export class TraineeOfferLetterComponent {
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   constructor(
     private http: HttpService,
-    config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,
+    config: NgbModalConfig, private modalService: NgbModal, private fb: FormBuilder,
     // private toaster: NgToastService,
     private router: Router,
     private authService: AuthService,
     // private _userAcessService: UserAccessService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef, private conformationPopup: OpenModalService,
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -146,13 +161,13 @@ export class TraineeOfferLetterComponent {
   selectedEmployees: number[] = [];
 
   initializeForm() {
-    this.employeeForm = this.fb.group({   
+    this.employeeForm = this.fb.group({
       fusionEmpId: [null, Validators.required],
       personalEmail: ['', [Validators.required, Validators.email]],
       title: [null, Validators.required],
-      firstName: ['', Validators.required,Validators.minLength(3)],
+      firstName: ['', Validators.required, Validators.minLength(3)],
       middleName: [''],
-      lastName: ['', Validators.required,Validators.minLength(3)],
+      lastName: ['', Validators.required, Validators.minLength(3)],
       gender: [null, Validators.required],
       SelectDropDown: [null, Validators.required],
       addressLine1: ['', Validators.required],
@@ -175,28 +190,12 @@ export class TraineeOfferLetterComponent {
       note: [''],
       authorityid: [null, Validators.required],
       reportingmanagerId: [null, Validators.required],
-     })
-    }
+    })
+  }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
 
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-
-  }
-
-  dataFailureMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.errorhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
   filterEmployees() {
     console.log(this.employeedetails)
     if (this.employeedetails) {
@@ -332,12 +331,10 @@ export class TraineeOfferLetterComponent {
             // this.getAllEmployeeInfo = response;
             this.getAllEmployeeInfo = response.map((employee: any) => {
               return {
-                ...employee, 
-                fullName: `${
-                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${
-                  employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
               };
             });
           }
@@ -371,11 +368,9 @@ export class TraineeOfferLetterComponent {
           this.employeeiddetails = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${
-                employee.employeeId ? employee.employeeId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
             };
           });
         },
@@ -431,7 +426,7 @@ export class TraineeOfferLetterComponent {
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
         }));
-        console.log(this.authorityDetails); 
+        console.log(this.authorityDetails);
       },
       error: (error: any) => {
         console.error(error);
@@ -492,24 +487,51 @@ export class TraineeOfferLetterComponent {
       this.resetInputFields();
     }
   }
-  onclickDesignation() {
+  // onclickDesignation(selectedAuthority: any) {
 
 
+  //   let signatureAuthorityDetails = this.authorityDetails.find(
+  //     (c: any) => (c.employeeId == this.traineeEmpData.authorityid)
+  //   );
+  //   console.log(signatureAuthorityDetails);
+  //   this.SignatureAuthorityValue = signatureAuthorityDetails
+  //   if (signatureAuthorityDetails) {
+  //     this.authorityDesignation = signatureAuthorityDetails.designation;
+  //     if (signatureAuthorityDetails.middleName) {
+  //       this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
+  //     } else
+  //       this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+  //   }
+  //   else if (signatureAuthorityDetails == undefined || signatureAuthorityDetails == null) {
+  //     this.traineeEmpData.authorityName = ''
+  //     this.authorityDesignation = ''
+  //   }
+  // }
+  onclickDesignation(selectedAuthority: any) {
+    console.log("Selected Authority ID:", selectedAuthority);
+  
+    if (!selectedAuthority) {
+      this.traineeEmpData.authorityName = '';
+      this.authorityDesignation = '';
+      return;
+    }
+  
     let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => (c.employeeId == this.traineeEmpData.authorityid)
+      (c: any) => c.employeeId == selectedAuthority.employeeId
     );
-    console.log(signatureAuthorityDetails);
-    this.SignatureAuthorityValue = signatureAuthorityDetails
+  
+    console.log("Selected Authority Details:", signatureAuthorityDetails);
+  
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
-      if (signatureAuthorityDetails.middleName) {
-        this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
-      } else
-        this.traineeEmpData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
-    }
-    else if (signatureAuthorityDetails == undefined || signatureAuthorityDetails == null) {
-      this.traineeEmpData.authorityName = ''
-      this.authorityDesignation = ''
+  
+      // 🔹 Construct full name correctly
+      this.traineeEmpData.authorityName = signatureAuthorityDetails.middleName
+        ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
+        : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+    } else {
+      this.traineeEmpData.authorityName = '';
+      this.authorityDesignation = '';
     }
   }
   letters(event: KeyboardEvent): boolean {
@@ -645,7 +667,7 @@ export class TraineeOfferLetterComponent {
                 }
                 if (this.traineeEmpData.signatureAuthority) {
                   this.traineeEmpData.authorityid = this.traineeEmpData.signatureAuthority;
-                  this.onclickDesignation();
+                  this.onclickDesignation(this.traineeEmpData.authorityid);
                 }
                 if (this.traineeEmpData.dateOfJoining && this.traineeEmpData.offertrainingEndDate) {
                   const months = this.getMonthsBetween(this.traineeEmpData.dateOfJoining, this.traineeEmpData.offertrainingEndDate)
@@ -999,28 +1021,27 @@ export class TraineeOfferLetterComponent {
     const data = this.traineeEmpData;
 
     let sdata = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      middleName: data.middleName,
+      firstName: this.employeeForm.get('firstName')?.value,
+      lastName: this.employeeForm.get('lastName')?.value,
+      middleName: this.employeeForm.get('middleName')?.value,
       empstatus: 'prospective',
       emptype: 'Trainee',
-      emailaddress: data.personalEmail,
-      gender: data.gender,
-      contactnumber: parseInt(data.phoneNumber),
-      addressLine1: data.addressLine1,
-      addressLine2: data.addressLine2,
-      city: data.city,
-      state: data.state,
-      zipCode: parseInt(data.pinCode),
-      country: data.country,
-      mobilePhoneCountryCode: data.mobilePhoneCountryCode,
-      title: data.title,
-      pf: data.pf,
-      esic: data.esic,
+      emailaddress: this.employeeForm.get('personalEmail')?.value,
+      gender: this.employeeForm.get('gender')?.value,
+      contactnumber: parseInt(this.employeeForm.get('phoneNumber')?.value),
+      addressLine1: this.employeeForm.get('addressLine1')?.value,
+      addressLine2: this.employeeForm.get('addressLine2')?.value,
+      city: this.employeeForm.get('city')?.value,
+      state: this.employeeForm.get('state')?.value,
+      zipCode: parseInt(this.employeeForm.get('pinCode')?.value),
+      country: this.employeeForm.get('country')?.value,
+      mobilePhoneCountryCode: this.employeeForm.get('mobilePhoneCountryCode')?.value,
+      title: this.employeeForm.get('title')?.value,
+      pf: this.employeeForm.get('pf')?.value,
+      esic: this.employeeForm.get('esic')?.value,
       dateOfJoining: this.traineeEmpData.dateOfJoining,
       substatus: 'Offer Letter Generated',
       trainingEndDate: this.traineeEmpData.endDate,
-
     };
     console.log(sdata);
 
@@ -1098,10 +1119,10 @@ export class TraineeOfferLetterComponent {
               });
           }
         } else if (res.statusCode == 409) {
-          this.dataFailureMsg(res.message);
+          this.conformationPopup.openErrorModal(res.message);
           f.resetForm();
         } else {
-          this.dataFailureMsg(res.message);
+          this.conformationPopup.openErrorModal(res.message);
         }
       },
       error: (err: any) => {
@@ -1180,7 +1201,7 @@ export class TraineeOfferLetterComponent {
     this.generatedfile = file;
     this.generatingEmployeeId = EmpValue.empId;
     this.loading = false;
-    this.dataSuccessMsg('Trainee Offer Letter Generated Successfully');
+    this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully');
 
     // });
     // }
@@ -1202,7 +1223,7 @@ export class TraineeOfferLetterComponent {
         },
         error: (reason: any) => {
           console.log(reason);
-          this.dataFailureMsg('file upload  is failed');
+          this.conformationPopup.openErrorModal('file upload  is failed');
         },
       });
   }
@@ -1308,7 +1329,7 @@ export class TraineeOfferLetterComponent {
           console.log(res);
           this.result = res;
           if (res.statusCode == 409) {
-            this.dataFailureMsg(res.message);
+            this.conformationPopup.openErrorModal(res.message);
           } else if (res.statusCode == 200) {
             this.UpdateFieldsToRespectiveTables();
             this.downLoadDocument(this.traineeEmpData);
@@ -1635,7 +1656,7 @@ export class TraineeOfferLetterComponent {
             console.log(res);
             this.result = res;
             if (res.statusCode == 409) {
-              this.dataFailureMsg(res.message);
+              this.conformationPopup.openErrorModal(res.message);
             } else if (res.statusCode == 200) {
               this.UpdateFieldsToRespectiveTables();
               this.downLoadDocument(this.traineeEmpData);
@@ -1662,7 +1683,7 @@ export class TraineeOfferLetterComponent {
             console.log(res);
             this.result = res;
             if (res.statusCode == 409) {
-              this.dataFailureMsg(res.message);
+              this.conformationPopup.openErrorModal(res.message);
             } else if (res.statusCode == 200) {
               this.UpdateFieldsToRespectiveTables();
               this.downLoadDocument(this.traineeEmpData);

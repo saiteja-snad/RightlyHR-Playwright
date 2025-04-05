@@ -4,12 +4,13 @@ import { Router, RouterModule } from '@angular/router';
 import { TimeOffTabsComponent } from '../time-off-tabs/time-off-tabs.component';
 import { MyExpensesTabComponent } from "../claimsandexpenses-tabs/my-expenses-tab/my-expenses-tab.component";
 import { MyinfoHeaderTabsComponent } from '../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component';
+import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalinfo-header-tabs/personalinfo-header-tabs.component";
 
 
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

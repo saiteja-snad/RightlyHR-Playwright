@@ -102,10 +102,8 @@
 
                     <!-- Email -->
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <label class="form-label custom-label mb-2">Personal Mail ID<span
-                                class="text-danger">*</span></label>
-                        <input type="email" class="form-control custom-input" formControlName="email"
-                            placeholder="Please enter email">
+                        <label class="form-label custom-label mb-2">Personal Mail ID<span class="text-danger">*</span></label>
+                        <input type="email" class="form-control custom-input" formControlName="email" placeholder="Please enter email">
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact2.email')?.invalid && (contactForm.get('contact2.email')?.touched || contactForm.get('contact2.email')?.dirty)">
                             <div *ngIf="contactForm.get('contact2.email')?.hasError('required')">Email is required.

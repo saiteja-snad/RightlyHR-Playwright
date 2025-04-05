@@ -20,9 +20,9 @@
                             <label class="form-label custom-label mb-2">{{'Search Employee'|translate}}<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
-                                    placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (onChange)="Onclick($event.value)">
+                                <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"  [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
+                                    formControlName="fusionEmpId" class="custom-select w-100" >
                                 </p-select>
                             </div>
                             <div
@@ -203,7 +203,7 @@
                             <label class="form-label custom-label mb-2"> {{'Salary (Cost to Company)'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="amount"
-                                placeholder="Please enter salary" />
+                                placeholder="Please enter salary" (ngModelChange)="ctcCalculation()"/>
                             <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
                                 <div class="error-msg">Salary is required</div>
                             </div>
@@ -214,7 +214,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true"
                                     filterBy="name" [showClear]="true" placeholder="Please select work location"
-                                    formControlName="locationId" class="custom-select w-100">
+                                    formControlName="locationId" class="custom-select w-100" (change)="OnClickLocation()">
                                 </p-select>
                             </div>
                             <div
@@ -240,7 +240,8 @@
                             <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
-                                placeholder="Please enter offer issued date" />
+                                placeholder="Please enter offer issued date" (change)="updateEndDateValidity()" min="{{ currentDate | date: 'yyyy-MM-dd' }}"
+                                (change)="updateEndDateValidityForExpectedStartDate()"/>
                             <div
                                 *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
                                 <div class="error-msg">Offer Issued Date is required</div>
@@ -250,7 +251,8 @@
                             <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter expected start date" />
+                                placeholder="Please enter expected start date" (change)="onDateOfJoiningChange()"
+                                (change)="updateEndDateValidityupdate()" (change)="updateEndDateValidityForExpectedStartDate()"/>
                             <div
                                 *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                 <div class="error-msg">Expected Start Date is required</div>
@@ -264,7 +266,8 @@
                             <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                                placeholder="Please enter offer expiry date" />
+                                placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate" (change)="updateEndDateValidity()"
+                                min="{{ currentDate | date: 'yyyy-MM-dd' }}"/>
                             <div
                                 *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                                 <div class="error-msg">Offer Expiry Date is required</div>
@@ -278,7 +281,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="internshipPeriod" optionLabel="name"
                                     placeholder="Please select internship period" formControlName="documentType"
-                                    class="form-select custom-select">
+                                    class="form-select custom-select"(click)="calculateEndDate(traineeEmpData.internshipperiod)">
                                     <option di [ngValue]="undefined">Select Internship Period</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -299,7 +302,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="getAllEmployeeInfo" optionLabel="fullName" [filter]="true"
                                     filterBy="name" [showClear]="true" placeholder="Please select reporting manager"
-                                    formControlName="reportingmanagerId" class="custom-select w-100">
+                                    formControlName="reportingmanagerId" class="custom-select w-100"(ngModelChange)="selectReportingname(traineeEmpData.reportingmanagerId)">
                                 </p-select>
                             </div>
                             <div
@@ -341,7 +344,7 @@
                             </div>
                         </div>
                         <div class="d-flex flex-wrap gap-3 pt-4">
-                            <button type="submit" class="custom-btn btn-primary">{{'Generate Offer Letter'|translate}}</button>
+                            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">{{'Generate Offer Letter'|translate}}</button>
                             <button type="button" class="custom-btn btn-primary" (click)="requestForApproval()">{{'Request For Approval'|translate}}</button>
                         </div>
                     </div>
@@ -356,7 +359,7 @@
                         <!--page-1-->
                         <div class="letter-page-content" id="pdfContent1">
                             <div class="letter-page-sub-content">
-                                <div *ngIf="traineeEmpData.Copys; else doc" class="mb-5">
+                                <div *ngIf="this.traineeEmpData.documentType === true" class="mb-5">
                                     <app-lettersheader></app-lettersheader>
                                 </div>
                                 <ng-template #doc>

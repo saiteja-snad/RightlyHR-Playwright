@@ -607,12 +607,11 @@ export class TraineeOfferLetterComponent {
   }
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
-
     if (Empidvalue) {
-      this.fusionEmpId = Empidvalue;
+      this.fusionEmpId = Empidvalue.value;
       this.subscription = this.http
         .getData(
-          `OfferLetter/getEmployeeByEmailAddressAndStatus?EmpId=${Empidvalue}`
+          `OfferLetter/getEmployeeByEmailAddressAndStatus?EmpId=${Empidvalue.value}`
         )
         .subscribe({
           next: (data: any) => {
@@ -1262,24 +1261,6 @@ export class TraineeOfferLetterComponent {
         next: (data: any) => {
           this.emailToSendManager();
           console.log(data);
-          // if (data) {
-          //   const modalElement = document.getElementById('successhide');
-          //   if (modalElement) {
-          //     modalElement.classList.add('show');
-          //     modalElement.style.display = 'block';
-          //     this.Status = 'Trainee Offer Letter Generated Successfully'
-          //   }
-          //   setTimeout(function () {
-          //     location.reload();
-          //   }, 5000);
-
-          // }
-
-          // this.toaster.success({
-          //   detail: 'SUCCESS',
-          //   summary: 'Trainee Offer Letter Generated Successfully',
-          //   duration: 5000,
-          // });
         },
         error: (reason: any) => {
           console.log(reason);

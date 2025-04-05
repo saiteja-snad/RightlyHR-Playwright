@@ -17,7 +17,7 @@ import { Iprospective } from '../../prospective-employees/Prospective-model';
 })
 export class AddProspectiveInternComponent {
   postProspectiveEmpDetails = {} as any; //variable to post the details
-  employeeForm: FormGroup;
+  employeeForm!: FormGroup;
   Prospectiveemp: any;
   subscription: any;
   result: any;
@@ -43,26 +43,32 @@ export class AddProspectiveInternComponent {
   @ViewChild('pospectivecreate') private readonly pospectivecreate!:NgbModal;
   sublocation: any[] | undefined;
 
-  constructor(private router: Router, private conformationPopup: OpenModalService,private authService: AuthService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal) {
+  constructor(private router: Router,
+     private conformationPopup: OpenModalService,
+     private authService: AuthService, 
+     private http: HttpService, private fb: FormBuilder, private modalService: NgbModal) {
+  }
 
+  ngOnInit(): void {
+    // this._userAcessService.checkRouteAccess('Dashboard.view');
+    this.initializeProspectiveEmpDetails();
+    this.empdata();
+    this.getJobrole();
+    this.jobLocationList();
+  }
+  initializeProspectiveEmpDetails() {
     this.employeeForm = this.fb.group({
-      firstName: ['', Validators.required],
-      middleName: ['',],
-      lastName: ['', Validators.required],
-      personalEmail: ['', [Validators.required, Validators.email]],
+      firstName: [ '',[ Validators.required,  Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$')]],
+      middleName: [ '', [   Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]],
+      lastName: [ '',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]  ],
+      personalEmail: [ '', [Validators.required,Validators.email]],
       designation: ['', Validators.required],
       employmentType: ['', Validators.required],
       location: ['', Validators.required],
       subLocation: ['', Validators.required]
     });
   }
-
-  ngOnInit(): void {
-    // this._userAcessService.checkRouteAccess('Dashboard.view');
-    this.empdata();
-    this.getJobrole();
-    this.jobLocationList();
-  }
+  
   empdata() {
     this.subscription = this.http
       .getData(`Employeedata/ProspectiveEmployees`)
@@ -194,7 +200,6 @@ export class AddProspectiveInternComponent {
   postTraineeData() {
 
     let loggedInUser = this.authService.getToken();
-    const data = this.postProspectiveEmpDetails
     let postdata = {
       firstName: this.employeeForm.get('firstName')?.value,
       middleName: this.employeeForm.get('middleName')?.value,
@@ -217,7 +222,7 @@ export class AddProspectiveInternComponent {
           if (this.result.employeeId != null) {
             const jobdata = {
               employeeId: this.result.employeeId,
-              gradeId: this.gradeIdValue.gradeId,
+              gradeId: this.employeeForm.get('gradeId')?.value,
               locationid: this.employeeForm.get('location')?.value,
               sublocationid: this.employeeForm.get('subLocation')?.value,
               jobRole: this.employeeForm.get('designation')?.value,
@@ -236,8 +241,8 @@ export class AddProspectiveInternComponent {
          else if (res.statusCode == 409) {
           this.conformationPopup.openErrorModal(res.message);
           setTimeout(() => {
-            this.openModal(this.pospectivecreate);
-            
+            // this.openModal(this.pospectivecreate);
+            this.modalService.dismissAll();
           }, 3000);
         } else {
           this.conformationPopup.openErrorModal(res.message);

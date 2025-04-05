@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild,} from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
@@ -15,17 +15,16 @@ import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IAddress, IAuthority, ICountry, IemployeeDetails, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
-
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, LettersheaderComponent, DateformatPipe],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
 
-export class OfferLetterComponent {
+export class OfferLetterComponent implements OnInit, OnDestroy{
   max = "{{ new Date().toISOString().split('T')[0] }}";
   currentDate: Date = new Date();
   isIssuedDateValid: boolean = true;
@@ -686,21 +685,6 @@ export class OfferLetterComponent {
     this.fusionEmpId = null;
     this.prospectiveEmpData.title = null;
   }
-  onclickcheckempidnull(empidValue: any) {
-    if (empidValue == '') {
-      this.disablebuttonforemployeeid = true;
-      this.isDropdownOpen = false;
-    } else {
-      this.disablebuttonforemployeeid = false;
-      //this.isDropdownOpen=false;
-    }
-    this.fusionEmpId = empidValue;
-    if (this.fusionEmpId) {
-      this.onClickValidation(this.fusionEmpId);
-    } else {
-      this.resetInputFields();
-    }
-  }
   //to validate the email
   isValidEmail(email: string): boolean {
     // Here you can implement your email validation logic
@@ -710,11 +694,13 @@ export class OfferLetterComponent {
 
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
+    console.log(Empidvalue);
     if (Empidvalue) {
-      this.fusionEmpId = Empidvalue;
+      console.log(Empidvalue);
+      this.fusionEmpId = Empidvalue.value;
       this.subscription = this.http
         .getData(
-          `OfferLetter/getEmployeeByEmailAddressAndStatus?EmpId=${Empidvalue}`
+          `OfferLetter/getEmployeeByEmailAddressAndStatus?EmpId=${Empidvalue.value}`
         )
         .subscribe({
           next: (data: any) => {
@@ -803,9 +789,9 @@ export class OfferLetterComponent {
         });
     }
 
-    //  else if(this.fusionEmpId===null){
-    //   this.resetInputFields();
-    //  }
+     else {
+      this.resetInputFields();
+     }
   }
   //Function to generate offer letter
   onOfferLetterFormSubmitForGenerateDoc(f: FormGroup) {

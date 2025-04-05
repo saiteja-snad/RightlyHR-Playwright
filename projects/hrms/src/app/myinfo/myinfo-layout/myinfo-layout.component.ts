@@ -7,14 +7,14 @@ import { MyinfoJobTabsComponent } from "../../shared/myinfo-tabs/myinfo-job-tabs
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
-import { Ipersonal, Iteammembers } from '../../Interface/members-model';
+
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { AuthService } from '../../services/auth.service';
-import { PersonalPersonalTabsComponent } from "../../shared/personal-personal-tabs/personal-personal-tabs.component";
-import { PersonalJobTabsComponent } from "../../shared/personal-job-tabs/personal-job-tabs.component";
+import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
+
 
 
 @Component({

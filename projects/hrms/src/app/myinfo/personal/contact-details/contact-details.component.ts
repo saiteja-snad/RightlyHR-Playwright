@@ -46,7 +46,7 @@ enableForm(): void {
 
 disableForm(): void {
   this.buttons = false;
-  this.contactForm.reset();
+
   this.contactForm.disable();
 }
   getEmployeeId(): void {
@@ -101,7 +101,9 @@ disableForm(): void {
       next: (data: any) => {
         console.log('Data updated successfully:', data);
         this.modalService.dismissAll();
-        
+        this.contactForm.disable();
+        this.buttons = false; // Disable the button after successful update
+        this.getEmployeeId(); 
         this.conformationPopup.openSuccessModal('Contact Details updated successfully');
       },
       error: (reason: any) => {

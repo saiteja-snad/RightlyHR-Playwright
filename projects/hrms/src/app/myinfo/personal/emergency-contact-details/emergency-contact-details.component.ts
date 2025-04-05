@@ -5,25 +5,29 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IRelation } from '../../../Interfaces/personal-modal';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-emergency-contact-details',
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, Select],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss'
 })
 export class EmergencyContactDetailsComponent {
- 
-  subscription!:Subscription
-  buttons= false;
-  buttons2= false;
+
+  subscription!: Subscription
+  buttons = false;
+  buttons2 = false;
+  familyRelations: IRelation[] = [];
   emergencyContactForm!: FormGroup;
-  empinfo:any
-  constructor(private modalService: NgbModal,private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) {}
+  empinfo: any
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeId();
+    this.getFamilyRelations();
     this.initializeForm();
     this.emergencyContactForm.disable(); // Disable the form initially
   }
@@ -48,21 +52,28 @@ export class EmergencyContactDetailsComponent {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empinfo = data;
-       this.patchForm(data);
+        this.patchForm(data);
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
   patchForm(data: any): void {
+    const contact1Relationship = this.familyRelations.find(
+      (relation) => relation.relationship1 === data.relationShip
+    ) || null;
+  
+    const contact2Relationship = this.familyRelations.find(
+      (relation) => relation.relationship1 === data.relationship1
+    ) || null;
     this.emergencyContactForm.patchValue({
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
       contact1Phone: data.mobileNumber || '', // Bind first emergency contact phone
-      contact1Relationship: data.relationShip || '', // Bind first emergency contact relationship
+      contact1Relationship:contact1Relationship || '', // Bind first emergency contact relationship
       contact2Name: data.emergencyName1 || '', // Bind second emergency contact name
       contact2Email: data.emergencyEmail1 || '', // Bind second emergency contact email
       contact2Phone: data.emergencyNumber1 || '', // Bind second emergency contact phone
-      contact2Relationship: data.relationship1 || '', // Bind second emergency contact relationship
+      contact2Relationship: contact2Relationship  || '', // Bind second emergency contact relationship
     });
   }
 
@@ -72,7 +83,7 @@ export class EmergencyContactDetailsComponent {
     this.emergencyContactForm.get('contact1Email')?.enable();
     this.emergencyContactForm.get('contact1Phone')?.enable();
     this.emergencyContactForm.get('contact1Relationship')?.enable();
-  
+
   }
 
   disableForm(): void {
@@ -89,7 +100,7 @@ export class EmergencyContactDetailsComponent {
     this.emergencyContactForm.get('contact2Relationship')?.enable();
   }
   saveForm(): void {
-      const formValue = this.emergencyContactForm.value; 
+    const formValue = this.emergencyContactForm.value;
     const updatePayload = {
       employeeId: this.empinfo.employeeId,
       title: this.empinfo.title || null,
@@ -101,27 +112,28 @@ export class EmergencyContactDetailsComponent {
       bloodGroup: this.empinfo.bloodGroup || null,
       maritalStatus: this.empinfo.maritalStatus || null,
       empStatus: this.empinfo.empstatus,
-      emailaddress: this.empinfo.emailaddress || null, 
-      workEmail: this.empinfo.workEmail || null, 
+      emailaddress: this.empinfo.emailaddress || null,
+      workEmail: this.empinfo.workEmail || null,
       contactnumber: this.empinfo.contactnumber || null,
-      workPhone: this.empinfo.workPhone || null, 
+      workPhone: this.empinfo.workPhone || null,
       emergencyName: formValue.contact1Name || this.empinfo.emergencyName,
       emailId: formValue.contact1Email || this.empinfo.emailId,
-      relationShip: formValue.contact1Relationship || this.empinfo.relationShip,
+      relationShip: this.emergencyContactForm.get('contact1Relationship')?.value?.relationship1 || this.empinfo.relationShip,
       mobileNumber: formValue.contact1Phone || this.empinfo.mobileNumber,
       emergencyName1: formValue.contact2Name || this.empinfo.emergencyName1,
       emergencyEmail1: formValue.contact2Email || this.empinfo.emergencyEmail1,
       emergencyNumber1: formValue.contact2Phone || this.empinfo.emergencyNumber1,
-      relationship1: formValue.contact2Relationship || this.empinfo.relationship1,
+      relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.empinfo.relationship1,
     };
-  
-   
+
+
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
           this.modalService.dismissAll();
-          
+          this.buttons = false;
+          this.buttons2 = false;
           this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
         },
         error: (reason: any) => {
@@ -129,5 +141,17 @@ export class EmergencyContactDetailsComponent {
           this.conformationPopup.openErrorModal('Emergency Contact Details update failed');
         },
       });
-    }
+  }
+
+
+  //get family relations dropdown
+  getFamilyRelations() {
+    this.subscription = this.http
+      .getData('Relationship?isDependent=true')
+      .subscribe({
+        next: (data: any) => {
+          this.familyRelations = data as IRelation[];
+        },
+      });
+  }
 }

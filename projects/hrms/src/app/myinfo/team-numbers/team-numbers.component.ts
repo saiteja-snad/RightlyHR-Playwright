@@ -8,10 +8,11 @@ import { Select } from 'primeng/select';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Ipersonal, Iteammembers } from '../../Interface/members-model';
+
 import { SearchfilterPipe } from "../../pipes/searchfilter.pipe";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
+import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 //import { Iteammembers } from '../../models/teammembers';
 
 

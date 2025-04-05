@@ -1,7 +1,6 @@
 import { Route, } from '@angular/router';
 import { BasicInfoComponent } from './personal/basic-info/basic-info.component';
 import { TeamNumbersComponent } from './team-numbers/team-numbers.component';
-import { OnboardingRequestComponent } from './onboarding-request/onboarding-request.component';
 
 export default [
     { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
@@ -16,6 +15,7 @@ export default [
             { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent) },
             { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent) },
             { path: 'onboarding-documents', loadComponent: () => import('./personal/onboarding-documents/onboarding-documents.component').then(m => m.OnboardingDocumentsComponent) },
+            { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent) },
             { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent) }
         ]
     },
@@ -40,9 +40,6 @@ export default [
     {
         path:'team-members', component: TeamNumbersComponent
     },
-    {
-        path:'onboarding-request', component: OnboardingRequestComponent
-    }
 
 ] as Route[];
 

@@ -115,7 +115,14 @@ a {
     background-color: var(--btn-primary-color);
     color: var(--btn-color-tp);
 }
-
+.btn-primary-approve {
+    background-color: green;
+    color: var(--btn-color-tp);
+}
+.btn-primary-reject {
+    background-color: red;
+    color: var(--btn-color-tp);
+}
 .btn-secondary {
     background-color: var(--btn-secondary-color);
     color: var(--btn-color-ts);

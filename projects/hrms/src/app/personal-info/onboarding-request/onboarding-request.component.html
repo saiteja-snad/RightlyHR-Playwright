@@ -1,124 +1,90 @@
 <div class="custom-main-component-container mt-4">
     <!--Input search-->
-    <div class="input-group custom-search mb-4">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
-            aria-describedby="basic-addon1">
-    </div>
     <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Employee ID</th>
-                    <th>Employee Name</th>
-                    <th>Designation</th>
-                    <th>Requested Date</th>
-                    <th>Training Start Day</th>
-                    <th>Training End Day</th>
-                    <th>Training Extended Day</th>
-                    <th>Status</th>
-                    <th>Reason</th>
-                    <th>Feedback</th>
-
+                    <th>DOCUMENT TYPE</th>
+                    <th>DOCUMENT NUMBER</th>
+                    <th>SUBMITTED DATE</th>
+                    <th>DOCUMENT</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of dynamicData | searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','emptrainingStartDate', 'status', 'emptrainingEndDate']" >
-                    <td class="center">{{ item.fusionEmpId }}</td>
-                    <td class="center">{{item.firstname}} {{item.middlename}} {{item.lastname}}</td>
-                    <td class="center">{{item.jobRole}}</td>
-                    <td class="center">{{ item.requestedDate ? (item.requestedDate | date: 'dd-MMM-yyyy') : '-' }}</td>
-                    <td class="center">{{ item.emptrainingStartDate ? (item.emptrainingStartDate | date: 'dd-MMM-yyyy') : '-' }}</td>
-                    <td class="center">{{ item.emptrainingEndDate ? (item.emptrainingEndDate | date: 'dd-MMM-yyyy') : '-' }}</td>
-                    <td class="center">{{ item.extendedDate ? (item.extendedDate | date: 'dd-MMM-yyyy') : '-' }}</td>
-                    <td class="center">{{ item.status }}</td>
-                    <td class="center">
-                        <span *ngIf="item.rejectedReason;else rejectComment">     
-                               <!-- <div *ngFor="let comments of dynamicData.feedbackComments"> -->
-                                    <div  data-bs-toggle="modal" data-bs-target="#CommentsPopup" (click)="fustiontostorefeedback(item.rejectedReason)" >
-                                        <i class="bi bi-info-circle-fill "></i></div>
-                                        <!-- </div> -->
-                        </span>
-                        <ng-template #rejectComment>-</ng-template>   
-                    </td>
-                    <td class="center">
-                        <span *ngIf="item.feedbackComments;else feedbackComment">     
-                               <!-- <div *ngFor="let comments of dynamicData.feedbackComments"> -->
-                                    <div  data-bs-toggle="modal" data-bs-target="#CommentsPopup" (click)="fustiontostorefeedback(item.feedbackComments)" >
-                                        <i class="bi bi-info-circle-fill "></i></div>
-                                        <!-- </div> -->
-                        </span>
-                        <ng-template #feedbackComment>-</ng-template>   
-                    </td>
-                    <td class="center" *ngIf="((shouldShowButton(item.emptrainingEndDate) && item.status!='Waiting for Approval'
-                    && item.status!='Approved' && item.status!='Processed' && item.status!='Rejected' && item.status!='Extended' ) 
-                    || shouldShowButtonWhenExtended(item.emptrainingEndDate, item.status, item.employeeid,item.extendedDate))">
-                        <!-- Three dots icon for options -->
-                        <div class="dots bot-m" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="bi bi-three-dots-vertical"></i>
-                        </div>
-
-                        <!-- Dropdown menu with "Update" option -->
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2"
-                            style="cursor: pointer;">
-                            <a  
-                                class="dropdown-item"
-                                data-bs-toggle="modal"
-                                (click)="requestForOnboard(item)">Request for Onboard
-                            </a>
-                        </div>
-                    </td>
-
-                    <!-- <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">Feaver </p>
-                                    </div>
-                                </ng-template>
+                <ng-container *ngFor="let data of documentData">
+                    <tr *ngIf="data.status != 'Not Submitted'">
+                        <td>{{ data.documentType ? data.documentType : '-' }}</td>
+                        <td>{{ data.referenceNumber ? data.referenceNumber : '-' }}</td>
+                        <td>{{ data.submittedDate ? (data.submittedDate | dateformat) : '-' }}</td>
+                        <td> <span *ngIf="data.documentUrl == null || data.documentUrl == '';else attachment">
+                                <div class="text-center">-</div>
                             </span>
-                        </div>
-                    </td> -->
-                    <!-- <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">Feaver </p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div>
-                    </td> -->
+                            <ng-template #attachment>
 
-                </tr>
+                                <a type="button"
+                                    (click)="onSelectDownload(data.documentUrl)"><span><i
+                                            class="bi bi-download me-1"></i></span> Download</a>
+                            </ng-template>
+
+                            <div class="modal fade" id="myModals" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">
+                                                {{documentSelectFields.documentType }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close" (click)="reload()"></button>
+                                        </div>
+                                        <div class="modal-body" style="text-align: center;">
+                                            <p *ngIf="!OnbImageUrl;else imageViews">
+                                                <ngx-doc-viewer [url]="OnbViewURL" viewer="google"
+                                                    ></ngx-doc-viewer>
+                                            </p>
+                                            <ng-template #imageViews>
+                                                <img [src]="OnbImageUrl" alt="My Image" class="modal-image">
+                                            </ng-template>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <!-- Additional buttons or content -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td><span
+                                *ngIf="data.status!='Waiting for submission' ||data.status==null||data.status==''; else status">{{data.status}}</span>
+                            <ng-template #status>
+                                <div >-</div>
+                            </ng-template>
+                        </td>
+                        <td><span *ngIf="!data.documentUrl; else approverejectbuttons">
+                                <div ></div>
+                            </span>
+                            <ng-template #approverejectbuttons>
+                                <button class="custom-btn btn-primary me-3 mb-3"
+                                    *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'"
+                                    data-bs-target="#approvedoc" data-bs-toggle="modal"
+                                    (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,data.reason,data.referenceNumber,data.referenceId)"
+                                    >Approve
+                                </button>
+
+                                <button class="custom-btn btn-primary me-3 mb-3"
+                                    *ngIf="data.status !== 'Verified' && data.status !== 'Rejected'&& data.status=='Submitted' "
+                                    (click)="submitRejectReason(data)" data-bs-toggle="modal"
+                                    data-bs-target="#rejectModal">
+                                    Reject
+                                </button>
+                            </ng-template>
+
+
+                        </td>
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
-    </div>
-    <div class="pagination-content pt-2 w-100">
-        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-            <!-- Dropdown for Rows per Page -->
-            <div class="d-flex align-items-center gap-3 p-2">
-                <!-- Bootstrap Select -->
-                <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
-                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                    </option>
-                </select>
-                <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                    totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-            </div>
-    
-            <!-- Pagination -->
-            <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                (onPageChange)="onPageChange($event)"></p-paginator>
-        </div>
     </div>
 </div>

@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="familyDetailsupdateForm" (ngSubmit)="postFamilyDetails()">
+            <form [formGroup]="familyDetailsForm" (ngSubmit)="postFamilyDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="memberName" class="form-label custom-label mb-2">Name<span
@@ -81,7 +81,7 @@
                         <input type="text" class="form-control custom-input" id="memberName"
                             formControlName="memberName" placeholder="Please enter name">
                         <div class="error-msg"
-                            *ngIf="familyDetailsupdateForm.get('memberName')?.invalid && familyDetailsForm.get('memberName')?.touched">
+                            *ngIf="familyDetailsForm.get('memberName')?.invalid && familyDetailsForm.get('memberName')?.touched">
                             <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['required']">Name is required
                             </div>
                             <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['pattern']">Name must contain only

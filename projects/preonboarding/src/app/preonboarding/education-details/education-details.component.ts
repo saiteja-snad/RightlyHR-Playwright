@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddEducationDetailsComponent } from './add-education-details/add-education-details.component';
@@ -10,6 +10,7 @@ import moment from 'moment';
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { PopupService } from '../../common-services/popup.service';
 import { UpdateEducationDetailsComponent } from './update-education-details/update-education-details.component';
+import { DataService } from '../../common-services/data.service';
 @Component({
   selector: 'app-education-details',
   imports: [CommonModule, DateFormatPipe],
@@ -22,7 +23,14 @@ export class EducationDetailsComponent {
   getEducationData = [] as any;
   empinfo = {} as Ipersonal;
 
-  constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private openPopup:PopupService) { }
+  constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private openPopup: PopupService, private getData: DataService) {
+    effect(() => {
+      if (this.getData.getEducation()) {
+        this.getEducationEmpid();
+        getData.getEducation.set(false);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -34,11 +42,9 @@ export class EducationDetailsComponent {
   }
 
   openUpdate(data:any) {
-    console.log(data);
     const modalRef = this.modalService.open(UpdateEducationDetailsComponent, { centered: true, backdrop: 'static', size: 'lg' });
     // Pass data to the modal component instance
     modalRef.componentInstance.educationData = data;
-    // this.modalService.open(UpdateEducationDetailsComponent, { centered: true,  backdrop: 'static', size: 'lg' });
   }
 
   navigateDashboard() {

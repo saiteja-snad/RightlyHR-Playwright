@@ -275,10 +275,11 @@ export class PersonalDetailsComponent implements OnInit {
     this.subscription = this.http.postData("PreonboardingEmployeeAddress", payload).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.router.navigate(['/document']);
       },
       error: reason => console.log(reason),
       complete: () => {
-        this.router.navigate(['/document']);
+        
       }
     })
   }

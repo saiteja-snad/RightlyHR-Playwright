@@ -1,119 +1,80 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import moment from 'moment';
+import { Component } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../http-services/http.service';
-import { IRole, IJobtype, IEmpExperience } from '../../../models/experience.model';
-import { Ipersonal } from '../../../models/personal-details.model';
+import { IJobtype } from '../../../models/experience.model';
 import { Select } from 'primeng/select';
+import parsePhoneNumberFromString from 'libphonenumber-js';
+import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import { IphoneNumberData } from '../../../models/mobilenumber.model';
+import { PopupService } from '../../../common-services/popup.service';
+import { DataService } from '../../../common-services/data.service';
 @Component({
   selector: 'app-add-experience-detailts',
-  imports: [CommonModule, Select, ReactiveFormsModule, ],
+  imports: [CommonModule, Select, ReactiveFormsModule, NgxCountriesDropdownModule],
   templateUrl: './add-experience-detailts.component.html',
   styleUrl: './add-experience-detailts.component.scss'
 })
+
 export class AddExperienceDetailtsComponent {
   subscription!: Subscription;
-  empinfo = {} as Ipersonal;
-  JobroleDetails = [] as IRole[];
   JobemploymenttypeDetails = [] as IJobtype[];
-  currentDate: Date = new Date();
-  isInvalidToDate: boolean = false;
-  selectedfieldsexperience = {} as any;
-  // posttotalExperience = {} as any;
-  isCurrentdateDisable: boolean = false;
-  isCurrentdateDisableupdate: boolean = false;
-  disableFromandtovalidationbutton: boolean = false;
   showErrorforpdf: boolean = false;
   showErrorforsize: boolean = false;
-  isFutureDate: boolean = false;
-  a = true;
-  b = false;
   file: any;
-  Experiencedoc!: File
-  getempexpdata = [] as any;
-  isDisabletoDate: boolean = false;
   isfileselected: boolean = true;
-  ExpenseViewURL!: any;
-  ExpenseImageUrl!: any;
-  postEmployeeExperience = {} as IEmpExperience;//variable to get the employee experiences
   prosempdata = {} as any;
   ExperienceDetails !: File;
-  selectedValueJobRoleExpirencedropUpdate: string = '';
-  selectedValueExperiencedropUpdateInitial: string = '';//to post the data
-  selectedValuecontactnumberCountryCodeInitial: string = '';
-  selectedValueCountryCodedropUpdate: string = '';
-  selectedValuecontactnumberCountrydropdown: string = '';//previously setected value
-  selectedValueJobRoledrop: string = '';//to post the data
-  selectedValueJobRoledropUpdate: string = '';//to post the data
-  selectedValueReportstodropUpdate: string = '';//to post the data
-  selectedValueemployeementtypedropUpdate: string = '';
-  selectedValueEmployementtypedropInitial: string = '';//to post the data
-  allempdata = [] as Ipersonal[];
   empdata = {} as any;
-  optionsFound: boolean = true;
-  StatusMsg: any;
-  islistedItem: boolean = true;
-  pouptext1: any;
-  Status: any
-  toatlexp = {} as any;
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
-  isItemIntheList(isitem: boolean) {
-    console.log(isitem);
-    this.islistedItem = isitem;
-  }
-  updateOptionsFound(found: boolean) {
-    this.optionsFound = found;
-  }
-  isEditing: boolean = false;
-  constructor(
-    private http: HttpService, private fb: FormBuilder,
-    config: NgbModalConfig, private modalService: NgbModal
-  ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
+  experienceForm!: FormGroup;
+  isDisabletoDate = false;
+  selectedDialCode: any;
+  formattedPhoneNumber: string = '';
+  placeholderPhoneNumber: string = '';
+  selectedCountryCode: any;
+  spinnerLoader = false;
+  selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
+    hideCode: true,
+    hideName: true
+  };
+  countryListConfig = {
+    hideCode: true,
+  };
+  mobileNumberData: IphoneNumberData | null = null;
 
-  }
+  constructor(private http: HttpService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { }
+
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
     this.getemploymenttype();
+    this.initializeExperienceForm();
   }
 
-
-  formatDate(data: any): any {
-    if (data) {
-      return moment(data).format('YYYY-MM-DD');
-    }
-    return data
-  }
-
-
-  //function to check the check box
-  onclickcheckbox() {
-    if (this.postEmployeeExperience.isPresent == false) {
-      this.isDisabletoDate = true;
-      this.postEmployeeExperience.toDate = null;
-      this.postEmployeeExperience.isPresent == false;
-    }
-    else if (this.postEmployeeExperience.isPresent == true) {
-      this.isDisabletoDate = false;
-      this.postEmployeeExperience.isPresent == true;
-    }
-    else if (this.postEmployeeExperience.isPresent == undefined) {
-      this.isDisabletoDate = true;
-      this.postEmployeeExperience.toDate = null;
-      this.postEmployeeExperience.isPresent == true;
-    }
-  }
-
-  onExperienceSelected(event: any) {
-    let file = event.target.files[0];
-    console.log(this.Experiencedoc);
-    let d: Date = new Date()
-    this.Experiencedoc = this.renameFile(file, `${this.empinfo.employeeId}_${d.getTime()}_${file.name}`)
+  initializeExperienceForm() {
+    this.experienceForm = this.fb.group({
+      isPresent: [false],
+      companyName: ['', Validators.required],
+      employmentType: ['', Validators.required],
+      fromDate: ['', Validators.required],
+      toDate: [''],
+      jobTitle: ['', Validators.required],
+      responsibilities: ['', Validators.required],
+      contactName: ['', Validators.required],
+      phonenumber: ['', [Validators.required, this.phoneNumberValidator()]],
+      workEmail: ['', [Validators.required, Validators.email]],
+      attachment: [null, Validators.required]
+    });
+    this.experienceForm.get('isPresent')?.valueChanges.subscribe((isPresent) => {
+      this.isDisabletoDate = isPresent;
+      if (isPresent) {
+        this.experienceForm.get('toDate')?.setValue(null);
+        this.experienceForm.get('toDate')?.disable();
+      } else {
+        this.experienceForm.get('toDate')?.enable();
+      }
+    });
   }
 
   private renameFile(originalFile: File, newName: string) {
@@ -140,20 +101,16 @@ export class AddExperienceDetailtsComponent {
     this.isfileselected = false;
     this.file = event.target.files[0];
     let d: Date = new Date()
-    this.ExperienceDetails = this.renameFile(this.file, `${this.prosempdata.employeeId}_${d.getTime()}_${this.file.name}`)
-    console.log(this.ExperienceDetails);
+    this.ExperienceDetails = this.renameFile(this.file, `${this.prosempdata.employeeId}_${d.getTime()}_${this.file.name}`);
+    this.experienceForm.get('attachment')?.setValue(this.file);
+    this.experienceForm.get('attachment')?.updateValueAndValidity();
   }
-
+  
   onChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const allowedTypes = [
-        'image/jpeg',
-        'image/*',
-        'application/pdf',
-        'image/png'
-      ];
+      const allowedTypes = ['image/jpeg', 'image/*', 'application/pdf', 'image/png'];
       const maxSizeInBytes = 25 * 1024 * 1024; // 5MB
       if (!allowedTypes.includes(file.type)) {
         this.showErrorforpdf = true;
@@ -172,106 +129,90 @@ export class AddExperienceDetailtsComponent {
     }
   }
 
-  //function to post experience details
   postExpDetails() {
-    this.postEmployeeExperience.empId = parseInt(this.prosempdata.employeeId)
-    this.postEmployeeExperience.countryCode = this.selectedValuecontactnumberCountrydropdown;
-    this.postEmployeeExperience.isDeleted = true
+    const formData = this.experienceForm.value;
+    const payload = {
+      ...formData,
+      empId: parseInt(this.prosempdata.employeeId),
+      isDeleted: true,
+      attachment: ''
+    };
+    const submitData = (finalPayload: any) => {
+      this.subscription = this.http.postData("PreonboardingExperience", finalPayload).subscribe({
+        next: (data: any) => {
+          this.modalService.dismissAll();
+          this.openPopup.openSuccess("Data Added Successfully!");
+          this.getData.getExperience.set(true);
+          this.experienceForm.reset();
+        },
+        error: (error: any) => {
+          console.log('Save failed:', error);
+          if (error.status == 409) {
+            this.openPopup.openError(error.error);
+          } else if (error.status == 400) {
+            this.openPopup.openError(error.error.message);
+          } else {
+            this.openPopup.openError("Insertion of data is failed");
+          }
+        },
+        complete: () => {
+
+        }
+      });
+    };
     if (this.file) {
-      let filepath = `/FusionDocuments/Employee Documents/Previous Experience Documents/${this.prosempdata.employeeId}`;
-      this.subscription = this.http
-        .uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filepath,
-          this.file
-        )
+      const filepath = `/FusionDocuments/Employee Documents/Previous Experience Documents/${this.prosempdata.employeeId}`;
+      this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filepath, this.file)
         .subscribe({
           next: (data: any) => {
-            this.postEmployeeExperience.attachment = data.path;
-            this.postEmployeeExperience.empId = this.prosempdata.employeeId;
-            console.log(this.postEmployeeExperience);
-            this.subscription = this.http.postData("PreonboardingExperience", this.postEmployeeExperience).subscribe({
-              next: (data: any) => {
-                console.log(data);
-                this.pouptext1 = 'Data added sucessfully';
-                // const modalElement = document.getElementById('successhide');
-                // if (modalElement) {
-                //   modalElement.classList.add('show');
-                //   modalElement.style.display = 'block';
-                // }
-                setTimeout(() => {
-                  // const modalElement = document.getElementById('successhide');
-                  // if (modalElement) {
-                  //   modalElement.classList.remove('show');
-                  //   modalElement.style.display = 'none';
-                  //   this.getexperiencedetails();
-                  //   location.reload();
-                  // }
-                }, 9000);
-                // location.reload();
-              },
-              error: (reason: any) => {
-                console.log(reason);
-                if (reason.status == 409) {
-                  // this.dataFailureMsg(reason.error)
-                }
-                else if (reason.status == 400) {
-                  // this.dataFailureMsg(reason.error.message)
-                }
-                else {
-                  // this.dataFailureMsg("Insertion of data is failed");
-                }
-              },
-              complete: () => "",
-            });
+            payload.attachment = data.path;
+            submitData(payload);
+          },
+          error: (error: any) => {
+            this.openPopup.openError("File upload failed");
           }
         });
-    }
-    else {
-      this.postEmployeeExperience.empId = parseInt(this.prosempdata.employeeId)
-      this.postEmployeeExperience.countryCode = this.selectedValuecontactnumberCountrydropdown;
-      this.postEmployeeExperience.isDeleted = true;
-      this.postEmployeeExperience.attachment = '';
-      this.subscription = this.http.postData("PreonboardingExperience", this.postEmployeeExperience).subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.pouptext1 = 'Data added sucessfully';
-          setTimeout(() => {
-            // const modalElement = document.getElementById('successhide');
-            // if (modalElement) {
-            //   modalElement.classList.remove('show');
-            //   modalElement.style.display = 'none';
-            // }
-          }, 9000);
-        },
-        error: (reason: any) => {
-          console.log(reason);
-          if (reason.status == 409) {
-            // this.dataFailureMsg(reason.error)
-          }
-          else if (reason.status == 400) {
-            // this.dataFailureMsg(reason.error.message)
-          }
-          else {
-            // this.dataFailureMsg("Insertion of data is failed");
-          }
-        },
-        complete: () => "",
-      });
+    } else {
+      submitData(payload);
     }
   }
 
-  getFileName(attachmentPath: string): string {
-    if (attachmentPath) {
-      const splitPath = attachmentPath.split('/');
-      let fileName = splitPath[splitPath.length - 1];
-      if (fileName.length > 12) {
-        fileName = fileName.substring(12);
-      }
-      return fileName;
+  // mobile number functions
+  onCountryChange(country: any) {
+    this.selectedCountryCode = country.dialling_code;
+    this.selectedDialCode = country.code;
+    this.experienceForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
+    this.experienceForm.get('phonenumber')?.updateValueAndValidity();
+  }
+
+  formatPhoneNumber(value: string): string {
+    if (!this.selectedDialCode || !value) return value;
+    const stringValue = String(value); // Make sure it's a string
+    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedDialCode);
+    if (phoneNumber && phoneNumber.isValid()) {
+      this.formattedPhoneNumber = phoneNumber.formatInternational();
+      return phoneNumber.formatNational();
     }
-    return '';
+    return stringValue;
+  }
+
+  phoneNumberValidator() {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      if (!this.selectedDialCode || !value) {
+        return null;
+      }
+      const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
+      if (phoneNumber && phoneNumber.isValid()) {
+        return null;
+      } else {
+        return { invalidPhoneNumber: true };
+      }
+    };
   }
 
   close(): void {
+    this.experienceForm.reset();
     this.modalService.dismissAll();
   }
 

@@ -5,10 +5,11 @@ import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { PopupService } from '../../../common-services/popup.service';
 import { HttpService } from '../../../http-services/http.service';
-import { Ieducation, IDegre } from '../../../models/education.model';
+import { IDegre } from '../../../models/education.model';
 import { Ipersonal } from '../../../models/personal-details.model';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
+import { DataService } from '../../../common-services/data.service';
 @Component({
   selector: 'app-update-education-details',
   imports: [CommonModule, Select, ReactiveFormsModule],
@@ -32,8 +33,8 @@ export class UpdateEducationDetailsComponent {
   selectedValueDegreeNameUpdate: string = '';//to post the data
   selectedFile: File | null = null;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-     private openPopup: PopupService ) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService,
+     private getData:DataService) { }
   
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -127,12 +128,15 @@ export class UpdateEducationDetailsComponent {
     this.selectedfields = {
       ...this.selectedfields,
       ...this.educationForm.value,
+        id:this.educationData.id,
+        status:this.educationData.status,
         degree: this.educationForm.value.education,
         university: this.educationForm.value.university,
         specialization: this.educationForm.value.specialization,
         gpa: this.educationForm.value.gpa,
         degreeStartDate: this.educationForm.value.startDate,
         degreeEndDate: this.educationForm.value.endDate,
+        employeeId: parseInt(this.empinfo.employeeId),
     };
     if (this.file) {
       let filepath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
@@ -145,7 +149,9 @@ export class UpdateEducationDetailsComponent {
               next: (data: any) => {
                 console.log(data);
                 this.modalService.dismissAll();
+                this.getData.getEducation.set(true);
                 this.openPopup.openSuccess("Data updated successfully");
+                this.educationForm.reset();
               },
               error: (reason: any) => {
                 console.log(reason);
@@ -158,9 +164,10 @@ export class UpdateEducationDetailsComponent {
     else {
       this.subscription = this.http.postData(`PreonboardingEducation/UPDATER`, this.selectedfields).subscribe({
         next: (data: any) => {
-          console.log(data);
           this.modalService.dismissAll();
+          this.getData.getEducation.set(true);
           this.openPopup.openSuccess("Data updated successfully");
+          this.educationForm.reset();
         },
         error: (reason: any) => {
           console.log(reason);

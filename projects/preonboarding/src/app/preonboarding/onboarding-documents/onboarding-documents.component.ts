@@ -225,7 +225,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
             rejectedBy: this.documentSelectFields.rejectedBy,
             reason: this.documentSelectFields.reason,
             referenceId: this.documentSelectFields.referenceId,
-            referenceNumber: this.documentSelectFields.referenceNumber
+            referenceNumber: this.documentForm.get('documentNumber')?.value,
           }
           this.subscription = this.http.postData(`PreonboardingDocuments/Update`, postdata).subscribe({
             next: (data: any) => {

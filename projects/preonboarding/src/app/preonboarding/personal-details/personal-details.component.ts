@@ -270,7 +270,14 @@ export class PersonalDetailsComponent implements OnInit {
 
   postEmployeeAddresses() {
     let payload = {
-      employeeAddresses: [this.personalDetailsForm.get('currentAddress')?.value, this.personalDetailsForm.get('permanentAddress')?.value]
+      employeeAddresses: [  {
+        ...this.personalDetailsForm.get('currentAddress')?.value,
+        zipCode: String(this.personalDetailsForm.get('currentAddress')?.value?.zipCode)
+      },
+      {
+        ...this.personalDetailsForm.get('permanentAddress')?.value,
+        zipCode: String(this.personalDetailsForm.get('permanentAddress')?.value?.zipCode)
+      }]
     }
     this.subscription = this.http.postData("PreonboardingEmployeeAddress", payload).subscribe({
       next: (data: any) => {

@@ -20,10 +20,20 @@
                             <label class="form-label custom-label mb-2">Search Employee<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
-                                placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
-                            </p-select>
+                                <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                                    optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                                    formControlName="fusionEmployeeId" class="custom-select w-100" [dataKey]="'fusionEmpId'"
+                                    (onChange)="Onclick($event)">
+                            
+                                    <ng-template let-emp pTemplate="item">
+                                        {{emp.fusionEmpId}} - {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+                                    </ng-template>
+                            
+                                    <ng-template let-emp pTemplate="selectedItem">
+                                        {{emp.fusionEmpId}} - {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+                                    </ng-template>
+                            
+                                </p-select>
                             </div>
                             <div
                                 *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
@@ -33,7 +43,7 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Appointment Sent Date<span
                                     class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="appointmentdate"
+                            <input type="date" class="form-control custom-input" formControlName="appointmentdate"  (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
                                 placeholder="Please enter appointment sent date" />
                             <div
                                 *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
@@ -45,12 +55,10 @@
                             <label class="form-label custom-label mb-2">Select Address<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="addressdata" optionLabel="name"
+                                <p-select [options]="SelectDropDown" optionLabel="name" optionValue="code"
                                     placeholder="Please select address" formControlName="SelectDropDown"
-                                    (change)="onclickSelectAddress(SelectDropDown)" class="form-select custom-select">
-                                    <!-- <option di [ngValue]="undefined">Select Address</option> -->
-                                    <option value="c">Current Address</option>
-                                    <option value="p">Permanent Address</option>
+                                    (onChange)="onclickSelectAddress($event)" class="form-select custom-select">
+                                    
                                 </p-select>
                             </div>
                             <div
@@ -96,7 +104,7 @@
                             </div>
                         </div>
                         <div class="mb-4 mt-4">
-                            <label for="laptop" class="form-label label-text"><b>Laptop/Desktop Information
+                            <label for="laptop" class="form-label label-text" style="font-size: 14px;"><b>Laptop/Desktop Information
                                     :</b></label>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
@@ -136,12 +144,10 @@
                             <label class="form-label custom-label mb-2">Document Type <span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name"
-                                    placeholder="Please select document type" formControlName="Copys"
-                                    class="form-select custom-select">
-                                    <option disabled [ngValue]="undefined">Select</option>
-                                    <option Value="true">Yes</option>
-                                    <option Value="false">No</option>
+                                <p-select [options]="documentType" optionLabel="name"
+                                    placeholder="Please select document type" formControlName="documentType"
+                                    class="form-select custom-select" (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
+                                   
                                 </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
@@ -157,9 +163,16 @@
                             <label class="form-label custom-label mb-2">Signature Authority Name <span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="authorityDetails" optionLabel="fullName"
-                                    placeholder="Please select signature authority" formControlName="authorityid"
-                                    class="form-select custom-select"></p-select>
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                    (onChange)="onclickDesignation($event)" class="form-select custom-select" formControlName="authorityid">
+                                    <ng-template let-emp pTemplate="item">
+                                        {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+                                    </ng-template>
+                                
+                                    <ng-template let-emp pTemplate="selectedItem">
+                                        {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+                                    </ng-template>
+                                </p-select>
                                 <div
                                     *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                                     <div class="error-msg">Signature Authority is required</div>
@@ -172,7 +185,7 @@
                                 Job Tab Before Generating the Document.</p>
                         </div>
                         <div class="d-flex flex-wrap gap-3 pt-4">
-                            <button type="button" class="custom-btn btn-primary">Generate Document</button>
+                            <button type="button" class="custom-btn btn-primary" (click)="onTraineeAppointmentLetterSubmit()">Generate Document</button>
                             <!-- <button type="button" class="custom-btn btn-primary">Request For Approval</button> -->
                         </div>
                     </div>
@@ -187,9 +200,9 @@
                         <!--page-1-->
                         <div class="letter-page-content" id="pdfContent1">
                             <div class="letter-page-sub-content">
-                                <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
+                                <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
                                     <app-lettersheader></app-lettersheader>
-                                </div>
+                                  </div>
                                 <ng-template #doc>
                                     <div style="margin-bottom: 3rem;"></div>
                                 </ng-template>
@@ -310,7 +323,7 @@
                                         <p class="paragraph">Sincerely,</p>
                                         <p class="paragraph"><b>for RightlyHR</b></p>
                                         <div class="mt-4 mb-3"
-                                            style="font-family: autographsignatureFont; font-size: xx-large;">
+                                        style="font-family: Segoe script; font-size: large;">
                                             {{traineeAppointmentletterData.authorityName}}</div>
                                         <div class="row">
                                             <div class="col-md-7">
@@ -359,9 +372,9 @@
                         <div class="letter-page-content" id="pdfContent2">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
-                                        <!-- <app-letterhead></app-letterhead> -->
-                                    </div>
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
@@ -515,9 +528,9 @@
                         <div class="letter-page-content" id="pdfContent3">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
-                                        <!-- <app-letterhead></app-letterhead> -->
-                                    </div>
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
@@ -671,9 +684,9 @@
                         <div class="letter-page-content" id="pdfContent4">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
-                                        <!-- <app-letterhead></app-letterhead> -->
-                                    </div>
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
@@ -837,9 +850,9 @@
                         <div class="letter-page-content" id="pdfContent5">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
-                                        <!-- <app-letterhead></app-letterhead> -->
-                                    </div>
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
@@ -957,9 +970,9 @@
                         <div class="letter-page-content" id="pdfContent6">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
-                                        <!-- <app-letterhead></app-letterhead> -->
-                                    </div>
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
@@ -1034,9 +1047,9 @@
                         <div class="letter-page-content" id="pdfContent7">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
-                                        <!-- <app-letterhead></app-letterhead> -->
-                                    </div>
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
@@ -1200,9 +1213,9 @@
                         <div class="letter-page-content" id="pdfContent8">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
-                                        <!-- <app-letterhead></app-letterhead> -->
-                                    </div>
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
@@ -1391,9 +1404,9 @@
                         <div class="letter-page-content" id="pdfContent9">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeAppointmentletterData.Copys; else doc" class="mb-5">
-                                        <!-- <app-letterhead></app-letterhead> -->
-                                    </div>
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>

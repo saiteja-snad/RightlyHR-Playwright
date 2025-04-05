@@ -3,15 +3,17 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { IJob } from '../../Interfaces/job-model';
+import { PaginatorModule, } from 'primeng/paginator';
+
 import { Subscription } from 'rxjs';
-import { HttpService } from '../../services/http.service';
-import { OpenModalService } from '../../services/open-modal.service';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
-import { AuthService } from '../../services/auth.service';
-import { Idocsdetail } from '../../Interfaces/personal-modal';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { IJob } from '../../../Interfaces/letters-model';
+import { Idocsdetail } from '../../../Interfaces/personal-modal';
+import { AuthService } from '../../../services/auth.service';
+import { HttpService } from '../../../services/http.service';
+import { OpenModalService } from '../../../services/open-modal.service';
+
 
 @Component({
   selector: 'app-onboarding-request',
@@ -69,7 +71,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
           a.download = filename;
           a.click();
         },
-        error: (reason) => console.log(reason),
+        error: (reason: any) => console.log(reason),
       });
   }
   //function to reload the page

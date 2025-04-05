@@ -65,14 +65,14 @@
                                 <div ></div>
                             </span>
                             <ng-template #approverejectbuttons>
-                                <button class="custom-btn btn-primary me-3 mb-3"
+                                <button class="custom-btn btn-primary-approve me-3 mb-3"
                                     *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'"
                                     data-bs-target="#approvedoc" data-bs-toggle="modal"
                                     (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,data.reason,data.referenceNumber,data.referenceId)"
                                     >Approve
                                 </button>
 
-                                <button class="custom-btn btn-primary me-3 mb-3"
+                                <button class="custom-btn btn-primary-reject me-3 mb-3"
                                     *ngIf="data.status !== 'Verified' && data.status !== 'Rejected'&& data.status=='Submitted' "
                                     (click)="submitRejectReason(data)" data-bs-toggle="modal"
                                     data-bs-target="#rejectModal">

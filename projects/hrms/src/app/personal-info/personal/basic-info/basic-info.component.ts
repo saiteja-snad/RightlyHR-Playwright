@@ -6,12 +6,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
-import { OnboardingRequestComponent } from "../../onboarding-request/onboarding-request.component";
 
 
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select, OnboardingRequestComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })

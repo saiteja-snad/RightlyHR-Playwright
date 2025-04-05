@@ -17,6 +17,7 @@ import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 
 
 
+
 @Component({
   selector: 'app-myinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule,],

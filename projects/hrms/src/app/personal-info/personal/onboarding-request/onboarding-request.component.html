@@ -1,0 +1,90 @@
+<div class="custom-main-component-container mt-4">
+    <!--Input search-->
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>DOCUMENT TYPE</th>
+                    <th>DOCUMENT NUMBER</th>
+                    <th>SUBMITTED DATE</th>
+                    <th>DOCUMENT</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let data of documentData">
+                    <tr *ngIf="data.status != 'Not Submitted'">
+                        <td>{{ data.documentType ? data.documentType : '-' }}</td>
+                        <td>{{ data.referenceNumber ? data.referenceNumber : '-' }}</td>
+                        <td>{{ data.submittedDate ? (data.submittedDate | dateformat) : '-' }}</td>
+                        <td> <span *ngIf="data.documentUrl == null || data.documentUrl == '';else attachment">
+                                <div class="text-center">-</div>
+                            </span>
+                            <ng-template #attachment>
+
+                                <a type="button"
+                                    (click)="onSelectDownload(data.documentUrl)"><span><i
+                                            class="bi bi-download me-1"></i></span> Download</a>
+                            </ng-template>
+
+                            <div class="modal fade" id="myModals" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">
+                                                {{documentSelectFields.documentType }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close" (click)="reload()"></button>
+                                        </div>
+                                        <div class="modal-body" style="text-align: center;">
+                                            <p *ngIf="!OnbImageUrl;else imageViews">
+                                                <ngx-doc-viewer [url]="OnbViewURL" viewer="google"
+                                                    ></ngx-doc-viewer>
+                                            </p>
+                                            <ng-template #imageViews>
+                                                <img [src]="OnbImageUrl" alt="My Image" class="modal-image">
+                                            </ng-template>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <!-- Additional buttons or content -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td><span
+                                *ngIf="data.status!='Waiting for submission' ||data.status==null||data.status==''; else status">{{data.status}}</span>
+                            <ng-template #status>
+                                <div >-</div>
+                            </ng-template>
+                        </td>
+                        <td><span *ngIf="!data.documentUrl; else approverejectbuttons">
+                                <div ></div>
+                            </span>
+                            <ng-template #approverejectbuttons>
+                                <button class="custom-btn btn-primary-approve me-3 mb-3"
+                                    *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'"
+                                    data-bs-target="#approvedoc" data-bs-toggle="modal"
+                                    (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,data.reason,data.referenceNumber,data.referenceId)"
+                                    >Approve
+                                </button>
+
+                                <button class="custom-btn btn-primary-reject me-3 mb-3"
+                                    *ngIf="data.status !== 'Verified' && data.status !== 'Rejected'&& data.status=='Submitted' "
+                                    (click)="submitRejectReason(data)" data-bs-toggle="modal"
+                                    data-bs-target="#rejectModal">
+                                    Reject
+                                </button>
+                            </ng-template>
+
+
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -11,7 +11,7 @@
                     <label for="firstName" class="form-label custom-label mb-2">First Name<span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input text-capitalize" id="firstName"
-                        formControlName="firstName" (keypress)="letters($event)"
+                        formControlName="firstName" 
                         placeholder="Please enter first name" />
                     <div class="error-msg my-1"
                         *ngIf="personalDetailsForm.get('firstName')?.touched && personalDetailsForm.get('firstName')?.invalid">
@@ -65,22 +65,18 @@
                     <label for="location" class="form-label custom-label mb-2">Mobile Number<span
                             class="text-danger">*</span></label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                            [countryListConfig]="countryListConfig" class="country-input"
-                            (onCountryChange)="onCountryChange($event)"></lib-country-list>
-
+                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"  [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig" class="country-input"
+                         (onCountryChange)="onCountryChange($event)"></lib-country-list>
                         <input type="text" class="form-control custom-input" formControlName="phonenumber"
-                            placeholder="{{ placeholderPhoneNumber || 'Please enter your mobile number' }}"
-                            id="phonenumbers" aria-describedby="phonenumbers"
+                            placeholder="Please enter your mobile number" id="phonenumbers"
+                            aria-describedby="phonenumbers"
                             [value]="personalDetailsForm.get('phonenumber')?.value ? formatPhoneNumber(personalDetailsForm.get('phonenumber')?.value) : ''"
                             autocomplete="off" required>
                     </div>
                     <div class="error-msg my-1"
                         *ngIf="personalDetailsForm.get('phonenumber')?.invalid &&  (personalDetailsForm.get('phonenumber')?.touched || personalDetailsForm.get('phonenumber')?.dirty)">
-                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('required')">Mobile number is
-                            required.</div>
-                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('pattern')">Please enter a valid
-                            mobile number.</div>
+                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('required')">Mobile number is required.</div>
+                        <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('pattern')">Please enter a valid mobile number.</div>
                         <div *ngIf="personalDetailsForm.get('phonenumber')?.hasError('invalidPhoneNumber')">
                             The phone number is not valid for the selected country.
                         </div>
@@ -170,7 +166,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentzipCode" class="form-label custom-label mb-2">Zip Code<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="currentzipCode"
+                        <input type="number" class="form-control custom-input" id="currentzipCode"
                             placeholder="Please enter zip code" formControlName="zipCode">
                     </div>
                 </ng-container>
@@ -221,14 +217,14 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentzipCode" class="form-label custom-label mb-2">Zip Code<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="permanentzipCode"
+                        <input type="number" class="form-control custom-input" id="permanentzipCode"
                             placeholder="Please enter zip code" formControlName="zipCode">
                     </div>
                 </ng-container>
             </div>
 
             <div class="footer-btn-content d-flex justify-content-end pt-5">
-                <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="!personalDetailsForm.valid">Next</button>
+                <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="personalDetailsForm.invalid">Next</button>
             </div>
         </form>
     </div>

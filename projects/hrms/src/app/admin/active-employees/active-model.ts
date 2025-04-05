@@ -1,4 +1,5 @@
 export interface Iactive{
+    fullName: any;
     durationOfTrainee: any;
     noticePeriod: any;
     employeeId: number,

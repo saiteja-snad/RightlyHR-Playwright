@@ -14,7 +14,6 @@ export interface Iofferletter {
     candidateStatus?: string
     candidateComments?: string
 }
-
 export interface IJobDetails {
     id: number,
     employeeId: number,
@@ -29,7 +28,6 @@ export interface IJobDetails {
     updateddate: any,
     subdeptId: null
 }
-
 export interface IemployeeDetails {
     firstName: string,
     lastName: string,
@@ -62,7 +60,6 @@ export interface IemployeeDetails {
     backgroundCheckStatus: string,
     employeeAddresses: []
 }
-
 export interface IAddress {
     id: number,
     empId: number,

@@ -93,20 +93,19 @@ export class AddExperienceDetailtsComponent {
 
   //function to check the check box
   onclickcheckbox() {
-    console.log(this.postEmployeeExperience.isPresent);
     if (this.postEmployeeExperience.isPresent == false) {
-      this.isDisabletoDate = true
-      this.postEmployeeExperience.toDate = null
-      this.postEmployeeExperience.isPresent == false
+      this.isDisabletoDate = true;
+      this.postEmployeeExperience.toDate = null;
+      this.postEmployeeExperience.isPresent == false;
     }
     else if (this.postEmployeeExperience.isPresent == true) {
-      this.isDisabletoDate = false
-      this.postEmployeeExperience.isPresent == true
+      this.isDisabletoDate = false;
+      this.postEmployeeExperience.isPresent == true;
     }
     else if (this.postEmployeeExperience.isPresent == undefined) {
-      this.isDisabletoDate = true
-      this.postEmployeeExperience.toDate = null
-      this.postEmployeeExperience.isPresent == true
+      this.isDisabletoDate = true;
+      this.postEmployeeExperience.toDate = null;
+      this.postEmployeeExperience.isPresent == true;
     }
   }
 

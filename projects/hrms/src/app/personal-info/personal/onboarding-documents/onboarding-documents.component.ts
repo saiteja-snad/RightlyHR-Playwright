@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -12,7 +10,7 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 
 @Component({
   selector: 'app-onboarding-documents',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './onboarding-documents.component.html',
   styleUrl: './onboarding-documents.component.scss'
 })

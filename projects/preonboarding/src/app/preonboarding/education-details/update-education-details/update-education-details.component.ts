@@ -85,7 +85,6 @@ export class UpdateEducationDetailsComponent {
         'image/png'
       ];
       const maxSizeInBytes = 25 * 1024 * 1024; // 5MB
-
       if (!allowedTypes.includes(file.type)) {
         this.showErrorforpdf = true;
         this.showErrorforsize = false;

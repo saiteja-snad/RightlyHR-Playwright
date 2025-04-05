@@ -24,26 +24,22 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="eventDate" class="form-label custom-label mb-2">Employeement Type<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="university">
+                    <p-select [options]="JobemploymenttypeDetails" optionLabel="degreeName" optionValue="degreeName" id="education"
+                    formControlName="education" placeholder="Please select education"
+                    class="form-select custom-select"></p-select>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="eventDate" class="form-label custom-label mb-2">From Date<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="specialization">
+                    <input type="date" class="form-control custom-input" id="specialization">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="eventDate" class="form-label custom-label mb-2">To Date<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="gpa">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="title" class="form-label custom-label mb-2">Start Date<span
-                            class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="start date"
-                        placeholder="Please enter event title">
+                    <input type="date" class="form-control custom-input" id="">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="title" class="form-label custom-label mb-2">Job Role<span
                             class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="end date"
+                    <input type="text" class="form-control custom-input" id=""
                         placeholder="Please enter event title">
                 </div>
                 <div class="col-md-12 mb-3">
@@ -57,25 +53,25 @@
                 <div class="col-md-6 mb-3">
                     <label for="title" class="form-label custom-label mb-2">Contact Name<span
                             class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="end date"
+                    <input type="text" class="form-control custom-input" id="end date"
                         placeholder="Please enter event title">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="title" class="form-label custom-label mb-2">Contact Number<span
                             class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="end date"
+                    <input type="number" class="form-control custom-input" id="end date"
                         placeholder="Please enter event title">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="title" class="form-label custom-label mb-2">Contact Email<span
+                    <label for="title" class="form-label custom-label mb-2">Work Email<span
                             class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="end date"
+                    <input type="email" class="form-control custom-input" id="end date"
                         placeholder="Please enter event title">
                 </div>
                 <div class="col-md-12 mb-3">
                     <label for="file" class="form-label custom-label mb-2">Attachment(Image and PDF only)<span
                             class="text-danger">*</span></label>
-                    <input type="file" class="form-control custom-input" id="file">
+                    <input type="file" class="form-control custom-input" id="file" (change)="onChangeexperience($event);onChange($event)">
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4">

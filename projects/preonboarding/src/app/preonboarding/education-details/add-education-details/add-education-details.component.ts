@@ -7,6 +7,7 @@ import { IDegre, Ieducation, Ipersonal } from '../../../models/education.model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../http-services/http.service';
 import { PopupService } from '../../../common-services/popup.service';
+import { DataService } from '../../../common-services/data.service';
 @Component({
   selector: 'app-add-education-details',
   imports: [CommonModule, ReactiveFormsModule, Select],
@@ -27,7 +28,7 @@ export class AddEducationDetailsComponent {
   subscription!: Subscription;
   degreeDetails = [] as any;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService, private getData:DataService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -117,6 +118,8 @@ export class AddEducationDetailsComponent {
               this.postEducationdata = data as Ieducation;
               this.modalService.dismissAll();
               this.openPopup.openSuccess("Data Added Successfully");
+              this.getData.getEducation.set(true);
+              this.educationForm.reset();
             },
             error: (reason: any) => {
               console.log(reason);

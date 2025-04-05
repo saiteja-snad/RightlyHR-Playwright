@@ -8,12 +8,13 @@ import { Subscription } from 'rxjs';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { IJob } from '../../../Interfaces/letters-model';
-import { Idocsdetail } from '../../../Interfaces/personal-modal';
+import { Idocsdetail, Ipersonal } from '../../../Interfaces/personal-modal';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment.dev';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -24,7 +25,8 @@ import { environment } from '../../../../environments/environment.dev';
 })
 export class OnboardingRequestComponent implements OnInit, OnDestroy{
   documentData = [] as any;
-  empinfo = {} as IJob;
+  empinfo = {} as Ipersonal;
+  empdata = {} as Ipersonal;
   subscription!: Subscription;
   documentSelectFields = {} as any;
   OnbImageUrl!: any;
@@ -32,9 +34,10 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
   doumentsapprovedata: any = {} as any;
   rejectionData = {} as Idocsdetail;
   rejectDocument!:FormGroup;
+  reRequestForm!:FormGroup;
   rerequestdisplayforrejected: boolean = false;
  modelref!:NgbModal;
-  constructor(private authService: AuthService,private fb: FormBuilder,private http: HttpService,
+  constructor(private authService: AuthService,private fb: FormBuilder,private http: HttpService,private router: Router,
     private conformationPopup: OpenModalService,private modalService: NgbModal,) 
   {this.intitalizeForm(); }
  
@@ -43,6 +46,21 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
     this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
     this.getdocumentdeatilsbyempid();
     this.intitalizeForm();
+    this.getEmployeeId();
+  }
+  getEmployeeId() {
+    let employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.empdata = data;
+        },
+        error: (reason) => console.log(reason),
+      });
+  }
+  isActive(route: string): boolean {
+    return this.router.url.includes(route); //based on the route, header tab will be changes
   }
   openModal(content: any) {
     this.modalService.open(content, {
@@ -55,8 +73,37 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
     this.rejectDocument =this.fb.group({
       comments: ['', [Validators.required,Validators.maxLength(250)]],
         });
+          this.reRequestForm = this.fb.group({
+            comments: ['', [Validators.required, Validators.maxLength(250)]],
+          });
+          
     }
-
+    reRequestEmail(f:FormGroup) {
+      let loggedInUser = this.authService.getToken();
+      let pdata = {
+        empId: this.empinfo.employeeId,
+        senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+        senderEmail: loggedInUser.workEmail,
+        // status: this.postreason,
+        comments: this.reRequestForm.get('comments')?.value,
+        // jobRole: this.selectedValueJobRoledrop,
+      };
+      if (loggedInUser.middleName) {
+        pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
+      } else {
+        pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+      }
+      this.subscription = this.http
+        .postdata(`CustomEmail/RerequestDocuments`, pdata)
+        .subscribe({
+          next: (data: any) => {
+            this.conformationPopup.openSuccessModal('Email Sent Successfully')
+          },
+          error: (err: any) => {
+            console.log(err);
+          },
+        });
+    }
  //function to get the details of the document
   getdocumentdeatilsbyempid() {
     let EmpId = parseInt(this.empinfo.employeeId);
@@ -162,6 +209,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
           setTimeout(() => {
             this.modalService.dismissAll();
             this.getdocumentdeatilsbyempid();
+            this.getEmployeeId();
           }, 2000);
         },
         error: (reason: any) => {
@@ -190,6 +238,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
           setTimeout(() => {
             this.modalService.dismissAll();
             this.getdocumentdeatilsbyempid();
+            this.getEmployeeId();
           }, 2000);
 
         },

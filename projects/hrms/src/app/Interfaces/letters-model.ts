@@ -139,6 +139,7 @@ export interface IemployeeDetails {
     documentUrl: string,
     employeeId: any,
     fusionEmpId: any
+    substatus: string,
   }
   export interface Iprospective {
     employeeId: number,

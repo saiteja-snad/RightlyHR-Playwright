@@ -13,8 +13,6 @@
                 (click)="emailForRequestDoc()">
                 {{'Request for Documents'|translate}}
             </button>
-            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info') && (empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective')  && empdata.substatus=='Documents Rejected' "
-            (click)="openModal(request)">{{'Re-Request Documents'|translate}}</button>
             <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info') && (empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus=='Employee Created'
              ||empdata?.substatus=='Requested Documents' ||empdata?.substatus=='Documents Submitted'||empdata?.substatus=='Documents Rejected'||empdata?.substatus=='Documents Accepted' ||empdata?.substatus=='Documents Verified' )" (click)="openModal(archivedbtn)">
                  {{'Archive'|translate}}

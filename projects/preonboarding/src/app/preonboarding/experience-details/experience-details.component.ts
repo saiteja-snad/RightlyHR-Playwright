@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, effect, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../http-services/http.service';
 import { AddExperienceDetailtsComponent } from './add-experience-detailts/add-experience-detailts.component';
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
+import { PopupService } from '../../common-services/popup.service';
+import { DataService } from '../../common-services/data.service';
+import { UpdateExperienceDetailsComponent } from './update-experience-details/update-experience-details.component';
 @Component({
   selector: 'app-experience-details',
   imports: [CommonModule, DateFormatPipe],
@@ -16,8 +19,17 @@ export class ExperienceDetailsComponent {
   getempexpdata = [] as any;
   prosempdata = {} as any;
   ExperienceDetails !: File;
+  selectExperience:any;
+  @ViewChild('deletepopup') deletepopup: any;
 
-  constructor(private http: HttpService, private modalService: NgbModal) { }
+  constructor(private http: HttpService, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { 
+    effect(() => {
+      if (this.getData.getExperience()) {
+        this.getexperiencedetails();
+        getData.getExperience.set(false);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -26,6 +38,18 @@ export class ExperienceDetailsComponent {
 
   openExperience() {
     this.modalService.open(AddExperienceDetailtsComponent, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
+  openUpdate(data: any) {
+    console.log(data)
+    const modalRef = this.modalService.open(UpdateExperienceDetailsComponent, { centered: true, backdrop: 'static', size: 'lg' });
+    // Pass data to the modal component instance
+    modalRef.componentInstance.experienceData = data;
+  }
+
+  openDelete(event:any) {
+    this.selectExperience = event;
+    this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
   }
 
   //function to get all experiences 
@@ -62,12 +86,21 @@ export class ExperienceDetailsComponent {
   deleteExperienceDetails(item: any) {
     this.subscription = this.http.getData(`PreonboardingExperience/Deletebyid/${item.id}`).subscribe({
       next: (data: any) => {
-        console.log(data);
+        this.modalService.dismissAll();
+        this.openPopup.openSuccess("Data Deleted Successfully!");
       },
       error: (err: any) => {
-        console.log(err);
+        this.modalService.dismissAll();
+        this.openPopup.openError("Error Occured");
       },
+      complete: () => {
+        this.getexperiencedetails();
+      }
     })
+  }
+
+  close(){
+    this.modalService.dismissAll();
   }
 
   ngOnDestroy(): void {

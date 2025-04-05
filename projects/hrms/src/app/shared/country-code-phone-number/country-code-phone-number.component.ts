@@ -18,7 +18,7 @@ export class CountryCodePhoneNumberComponent {
     hideName: true
   };
   @Input() countryListConfig: any;
-  @Input() placeholderPhoneNumber: string = 'Please enter your mobile number';
+  @Input() placeholderPhoneNumber: string = 'Please enter mobile number';
 
   @Output() onPhoneChange = new EventEmitter<string>();
 

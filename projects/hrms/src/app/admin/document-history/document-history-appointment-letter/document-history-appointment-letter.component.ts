@@ -31,7 +31,6 @@ searchValue: any;
     this.subscription = this.http.getData('AppointmentLetter/getAllNames').subscribe({
       next: (data: any) => {
         this.AppointmentLetters = data;
-
       }
     });
   }
@@ -46,8 +45,6 @@ searchValue: any;
             ?.split(':')[1]
             .split('=')[1];
           let blob: Blob = res.body as Blob;
-         // console.log(fileName);
-
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
           let filename =

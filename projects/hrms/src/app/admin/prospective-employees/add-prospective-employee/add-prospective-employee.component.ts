@@ -256,15 +256,16 @@ selectgradId(event:any){
               this.modalService.dismissAll();
             }, 3000);
           } else {
-            this.conformationPopup.openErrorModal(res.message);
-            
+            this.conformationPopup.openErrorModal(res.message); 
           }
         },
         error: (err: any) => {
           console.log(err);
+        this.conformationPopup.openErrorModal(err.error.message);
         },
       });
   }
+  
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     console.log(this.emp);

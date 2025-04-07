@@ -42,6 +42,10 @@ export class AddProspectiveInternComponent {
   @ViewChild('success') success: any;
   @ViewChild('pospectivecreate') private readonly pospectivecreate!:NgbModal;
   sublocation: any[] | undefined;
+  employeementType: { id: number; name: string }[] = [
+    { id: 1, name: 'Fresher' },
+    { id: 2, name: 'Experienced' }
+  ];
 
   constructor(private router: Router,
      private conformationPopup: OpenModalService,
@@ -81,7 +85,13 @@ export class AddProspectiveInternComponent {
         error: (reason: any) => console.log(reason),
       });
   }
-
+  selectgradId(event:any){
+    console.log(event.value);
+    if(event){
+      this.gradeIdValue = event.value;
+      console.log(this.gradeIdValue);
+    }
+}
   //function to check the email pattren
   changepaternemail() {
     this.patern = '[A-Za-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$';
@@ -126,22 +136,28 @@ export class AddProspectiveInternComponent {
 
 
   OnClickLocation(event: any) {
-    console.log("Selected Location ID:", event.value); // PrimeNG sends event.value instead of ngModel directly
-    // Assign selected value properly
-    this.postProspectiveEmpDetails.locationid = event.value;
-    // Find selected location details
-    let selectedLocation = this.jobLocationDropDownData.find(
-      (c: any) => c.id == event.value
-    );
+    const selectedLocationId = event?.value;
+    if (selectedLocationId) {
+      console.log("Selected Location ID:", selectedLocationId); 
+      this.postProspectiveEmpDetails.locationid = selectedLocationId;
+      
+      let selectedLocation = this.jobLocationDropDownData.find(
+        (location: any) => location.id === selectedLocationId
+      );
+  
+      console.log("Selected Job Location Details:", selectedLocation);
+  
+      if (selectedLocation) {
+        this.getSubLocationByid(selectedLocation);
+      } else {
+        console.warn("No matching job location found for ID:", selectedLocationId);
+      }
 
-    console.log("Selected Job Location Details:", selectedLocation);
-
-    if (selectedLocation) {
-      this.getSubLocationByid(selectedLocation);
     } else {
-      console.warn("No matching job location found!");
+      console.warn("No location ID selected.");
     }
   }
+  
 
 
   onClickValue() {
@@ -182,11 +198,7 @@ export class AddProspectiveInternComponent {
   }
 
   // Dummy data for dropdowns
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Fresher' },
-    { id: 2, name: 'Experienced' }
-  ];
-
+ 
   // onSubmit() {
   //   this.postTraineeData();
   //   const requestBody = this.employeeForm.value;
@@ -198,7 +210,6 @@ export class AddProspectiveInternComponent {
   }
 
   postTraineeData() {
-
     let loggedInUser = this.authService.getToken();
     let postdata = {
       firstName: this.employeeForm.get('firstName')?.value,
@@ -216,13 +227,13 @@ export class AddProspectiveInternComponent {
         //alert('employee created')
         
           this.result = res.employeeData;
-          this.conformationPopup.openSuccessModal('Prospective employee created successfully')
-          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Prospective Trainee created successfully')
+          // this.modalService.dismissAll();
           console.log(this.result);
           if (this.result.employeeId != null) {
             const jobdata = {
               employeeId: this.result.employeeId,
-              gradeId: this.employeeForm.get('gradeId')?.value,
+              gradeId: this.gradeIdValue.gradeId,
               locationid: this.employeeForm.get('location')?.value,
               sublocationid: this.employeeForm.get('subLocation')?.value,
               jobRole: this.employeeForm.get('designation')?.value,
@@ -242,6 +253,7 @@ export class AddProspectiveInternComponent {
           this.conformationPopup.openErrorModal(res.message);
           setTimeout(() => {
             // this.openModal(this.pospectivecreate);
+            // this.conformationPopup.openErrorModal('Prospective employee already exists');
             this.modalService.dismissAll();
           }, 3000);
         } else {

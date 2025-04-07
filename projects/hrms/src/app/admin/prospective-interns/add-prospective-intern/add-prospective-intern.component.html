@@ -62,8 +62,10 @@
                         {{'Designation'|translate}}<span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="JobroleDetails" optionValue="id" optionLabel="designationName" formControlName="designation"
-                            placeholder="Please select designation" class="form-select custom-select">
+                        <p-select [options]="JobroleDetails" optionValue="designationName" optionLabel="designationName"
+                            [filter]="true" filterBy="designationName" [showClear]="true"
+                            (onChange)="selectgradId($event)" placeholder="Please select designation"
+                            formControlName="designation" class="custom-select w-100">
                         </p-select>
                         
                     </div>

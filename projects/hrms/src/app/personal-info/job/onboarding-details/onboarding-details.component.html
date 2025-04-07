@@ -8,8 +8,8 @@
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
             </div>
             <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
-                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="showButtons();onSubmit()">Save</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
+                <button type="button" class="custom-btn btn-primary" (click)="showButtons();onSubmit()">Save</button>
             </div>
         </div>
 

@@ -211,6 +211,8 @@ gradeName: any;
     gradeId:any;
     jobTypeId:any;
     teamManagerId : any;
+    subdepartmentName : any;
+
   }
   export interface Icompensation {
     employeeId: number,
@@ -294,7 +296,8 @@ gradeName: any;
     jobRole1: string;
     designationName: string;
     isdeleted: string;
-    gradeId:any
+    gradeId:any;
+    gradeName : string
   }
   
   

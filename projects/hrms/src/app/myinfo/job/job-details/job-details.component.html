@@ -378,7 +378,7 @@
                         <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <input type="text" class="form-control custom-input" id="teamManager"
+                            <input type="text" class="form-control custom-input" id="teamManager" 
                                 formControlName="teamManager" placeholder="Please enter team manager">
                         </div>
                         <div class="error-msg"
@@ -427,7 +427,8 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName"
                                 formControlName="subLocation" placeholder="Please select sub location"
-                                class="form-select custom-select" (onChange)="getShiftBYid($event.value)"></p-select>
+                                class="form-select custom-select" (onChange)="getShiftBYid($event.value)">
+                            </p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('subLocation')?.invalid && jobDetailsupdateForm.get('subLocation')?.touched">
@@ -438,7 +439,7 @@
                         <label for="shift" class="form-label custom-label mb-2">Shift<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="shiftDropdown" optionLabel="shiftName" formControlName="shift"
+                            <p-select [options]="shiftDropdown" optionLabel="shiftName" formControlName="shiftName"
                                 placeholder="Please select shift" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
@@ -464,7 +465,7 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
+                    <button type="button" (click)="updateJobDetails()" class="custom-btn btn-primary"
                         [disabled]="jobDetailsupdateForm.invalid">Update</button>
                 </div>
             </form>

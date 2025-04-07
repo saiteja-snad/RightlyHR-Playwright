@@ -25,9 +25,9 @@ export class JobDetailsComponent {
   jobDetailsForm!: FormGroup;
   subscription!: Subscription;
   empinfo: any;
-  departmentDetails: any;
+  departmentDetails= [] as IDepartment[];
   JobroleDetails: any;
-  JobtypeDetails: any;
+  JobtypeDetails = [] as IJobtype[];
   employeinfo: any
   allempdata: any;
   allReportees: any;
@@ -98,11 +98,11 @@ export class JobDetailsComponent {
       grade: [{ value: null, disabled: true }, Validators.required],
       department: ['', Validators.required],
       team: ['', Validators.required],
-      teamManager: ['', Validators.required],
+      teamManager: [{ value: '', disabled: true }, Validators.required],
       reportingManager: ['', Validators.required],
       location: ['', Validators.required],
       subLocation: ['', Validators.required],
-      shift: ['', Validators.required],
+      shiftName: ['', Validators.required],
       jobType: ['', Validators.required],
     });
   }
@@ -336,7 +336,7 @@ export class JobDetailsComponent {
     })
   }
 
-  subLocationsDropdown: any[] = []; // To store the dynamically fetched sub-locations
+  subLocationsDropdown: any = [] // To store the dynamically fetched sub-locations
 
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation.id) {
@@ -361,7 +361,7 @@ export class JobDetailsComponent {
       });
     } else {
       this.subLocationsDropdown = []; // Reset if no location is selected
-      this.jobDetailsForm.patchValue({ subLocation: null }); // Reset the sub-location field
+      //this.jobDetailsForm.patchValue({ subLocation: null }); // Reset the sub-location field
     }
   }
 
@@ -369,7 +369,7 @@ export class JobDetailsComponent {
 
   getShiftBYid(selectedSubLocation: any): void {
     if (selectedSubLocation && selectedSubLocation.id) {
-      const locationId = this.jobDetailsForm.get('location')?.value?.id; // Get the selected location ID
+      const locationId = this.jobDetailsForm.get('location')?.value?.id ??  this.jobDetailsForm.get('location')?.value; // Get the selected location ID
       const subLocationId = selectedSubLocation.id; // Get the selected sub-location ID
 
       console.log('Location ID:', locationId);
@@ -460,47 +460,109 @@ export class JobDetailsComponent {
         },
       });
   }
-
-  openModalupdate(content: any, data: any): void {
-   
-    this.selectedjobdetailesid = data.id; // Store the selected job details ID
-    console.log('Selected Job Details ID:', data);
   
-    // Convert dates to ISO format if they exist
+  selectedJobRoleObj :any; // To store the selected job role object
+  teamManagerName: string = ''; // To store the team manager name
+  shiftDropdowns: any = []; // To store the dynamically fetched shifts
+  selectedData = {} as any; // To store the selected job details data for updating
+  openModalupdate(content: any, data: any): void {
+    const locationId = data.locationId; // Get the location ID from the selected job details
+    const subLocationId = data.subLocationId; // Get the sub-location ID from the selected job details
+    this.selectedjobdetailesid = data.id; 
+    this.selectedData = data; // Store the selected job details data for updating
+    console.log('Selected Job Details ID:', data);
+    this.teamManagerName = data?.firstName + ' ' + data?.middleName + ' ' + data?.lastName
     const effectiveDate = data.effectiveDate
       ? new Date(data.effectiveDate).toISOString().split('T')[0]
       : null;
-  
-      this.jobDetailsupdateForm.patchValue({
-        effectiveDate: effectiveDate,
-        jobRole: this.JobroleDesignation.find(
-          role => role.designationName === data.jobRole
-        ),
-        // department: this.departmentDetails.find(
-        //   dept => dept.departmentName === data.department
-        // ),
-        team: this.teamDropdownValues.find(
-          team => team.subdepartmentName === data?.team
-        ),
-        // teamManager: data.teamManager, // this one is a normal input
-        // reportingManager: this.allReportees.find(
-        //   mgr => mgr.employee === data.reportingManager
-        // ),
-        // location: this.jobLocationDropDownData.find(
-        //   loc => loc.jobLocationName === data.location
-        // ),
-        subLocation: this.subLocationsDropdown.find(
-          sub => sub.jobSubLocationName === data.subLocation
-        ),
-        shift: this.shiftDropdown.find(
-          shift => shift.shiftName === data.shift
-        ),
-        jobType: this.JobtypeDetails.find(
-         ( jt:any) => jt.jobType1 === data.jobType
-        ),
-        grade: this.GradeDetails.find(
-          grade => grade.gradeName === data.grade
-        )
+      this.selectedJobRoleObj = this.JobroleDesignation.find(
+        role => role.designationName === data.jobRole
+      ); 
+      this.subscription = this.http.getData(`Subdepartments/Getnames/${data.departmentId}`).subscribe({
+        next: (teamData: any) => {
+          this.teamDropdownValues = teamData || [];
+          console.log('Team Dropdown Values:', this.teamDropdownValues);
+          this.teamManagerDropdownValues = this.teamDropdownValues.map((manager: any) => ({
+            id: manager.reportingmanagerId,
+            teamManager: manager.middleName
+              ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
+              : `${manager.firstName} ${manager.lastName}`,
+          }));
+          this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${locationId}`).subscribe({
+            next: (data: any) => {
+              console.log('Sub Location Data:', data);
+    
+              if (data.length === 0) {
+                this.subLocationsDropdown = []; // Reset if no sub-locations are found
+              } else {
+                this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+              }
+    
+             
+            },
+            error: (err: any) => {
+              console.error('Error fetching sub-location data:', err);
+             
+            },
+          });
+          this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
+            next: (data: any) => {
+              console.log('Shift Data:', data);
+    
+              if (data.length === 0) {
+                this.shiftDropdowns = []; // Reset if no shifts are found
+    
+              } else {
+                this.shiftDropdowns = [].concat(...data.map((element: any) => element.orgShiftsItems)); // Flatten the shift data
+              }
+    
+              console.log('Shift Dropdown Values:', this.shiftDropdowns);
+            },
+            error: (err: any) => {
+              console.error('Error fetching shift data:', err);
+             
+    
+            },
+          });
+          
+          this.jobDetailsupdateForm.patchValue({
+            effectiveDate: effectiveDate,
+            jobRole: this.selectedJobRoleObj,
+            location : this.jobLocationDropDownData.find(
+              (location: { jobLocationName: any; }) => location.jobLocationName === data.locationName
+            ),
+            department: this.departmentDetails.find(
+              dept => dept.departmentName === data.departmentName
+            ),
+            team: this.teamDropdownValues.find(
+              team => team.subdepartmentName === data?.subdepartmentName
+            ),
+            subLocation: this.subLocationsDropdown.find(
+              (sub: { jobSubLocationName: any; }) => sub.jobSubLocationName === data.subLocation
+            ),
+            shiftName: this.shiftDropdowns.find(
+              (shift: { shiftName: any; }) => shift.shiftName === data.shiftName
+            ),
+            teamManager : this.teamManagerName,
+            jobType: this.JobtypeDetails.find(
+              jt => jt.jobType1 === data.jobTypeName
+            ),
+            reportingManager : this.allReportees.find(
+              (report: { id: any; employee : any }) => report.id === data.reportingmanagerId
+            ),
+            grade: this.selectedJobRoleObj?.gradeName,
+            
+            
+          });
+    
+        
+          console.log('Form Value After Patching:', this.jobDetailsupdateForm.value);
+          //this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+        },
+        error: (err: any) => {
+          console.error('Error fetching teams:', err);
+          
+        }
       });
       
   
@@ -510,6 +572,8 @@ export class JobDetailsComponent {
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
+
 
   opendeletModal(content: any, empexperimentdata: any): void {
     // Store the selected job details data for deletion
@@ -529,6 +593,40 @@ export class JobDetailsComponent {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
   
+  formData: any; // To store the form data for updating job details
+  updateJobDetails(): void {
+    this.formData = this.jobDetailsupdateForm.value;
+    const sdata = {
+      id: this.selectedData.id,
+      employeeId: this.selectedData.employeeId,
+      effectiveDate: this.formData.effectiveDate ?? this.selectedData.effectiveDate,
+      reportsto: this.formData.reportingManager.id ?? this.selectedData.reportsto,
+      jobRole: this.formData.jobRole.designationName ?? this.selectedData.jobRole,
+      subdeptId : this.formData.team.subdepartmentId ?? this.selectedData.subdeptId,
+      status: "Active",
+      shiftId : this.formData.shiftName.id ?? this.selectedData.shiftId,
+      locationid : this.formData.location.id ?? this.selectedData.locationid,
+      sublocationid : this.formData.subLocation.id ?? this.selectedData.sublocationid,
+      gradeId : this.selectedData.gradeId,
+      teamManagerId : this.formData.team.reportingmanagerId ?? this.selectedData.teamManagerId,
+      updateddate : this.selectedData.updateddate,
+      createddate : this.selectedData.createddate,
+      jobTypeId : this.formData.jobType.sno ?? this.selectedData.jobTypeId,
+    };
+  
+    // Make the POST request to delete the job details
+    this.subscription = this.http.postdata("JobDetails/UPDATER", sdata).subscribe({
+      next: (data: any) => {
+        console.log('Update Response:', data);
+        this.conformationPopup.openSuccessModal('Job Details updated successfully');
+        this.getJobDetails();
+      },
+      error: (err: any) => {
+        console.error('Error deleting job details:', err);
+        this.conformationPopup.openErrorModal('Job Details update failed');
+      },
+    });
+  }
   jobdetailsdelte(): void {
     // Prepare the payload for the delete request
     const sdata = {

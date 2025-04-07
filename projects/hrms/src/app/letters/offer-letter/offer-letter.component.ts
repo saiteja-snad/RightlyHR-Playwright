@@ -483,7 +483,33 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     // For example, a simple check for presence of "@" and "."
     return email.includes('@') && email.includes('.com');
   }
-
+//function to patch the values in the form to the template
+pathValuesFuction(){
+  const formValues = this.employeeForm.value;
+console.log(formValues);
+this.prospectiveEmpData = {
+  personalEmail: formValues.personalEmail,
+  title: formValues.title,
+  firstName: formValues.firstName,
+  middleName: formValues.middleName,
+  lastName: formValues.lastName,
+  gender: formValues.gender,
+  jobRole: formValues.jobRoleDetails,
+  esic: formValues.esic,
+  pf: formValues.pf,
+  amount: formValues.amount,
+  isVariablePay: formValues.isVariablePay,
+  variablePayAmount: formValues.variablePayAmount,
+  locationId: formValues.locationId,
+  sublocationId: formValues.JobSubLocationName,
+  offerIssuedDate: formValues.offerIssuedDate,
+  dateOfJoining: formValues.dateOfJoining,
+  copys: formValues.Copys,
+  offerExpiryDate: formValues.offerExpiryDate,
+  note: formValues.note,
+  authorityid: formValues.authorityid,
+};
+}
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
     console.log(Empidvalue);
@@ -501,7 +527,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
               // const userConfirmed = window.confirm("Data already exists. Do you want to regenerate?");
               if (Empidvalue) {
                 this.prospectiveEmpData = data.checkofferletter;
-                debugger
                 this.employeeForm?.patchValue({
                  personalEmail:this.prospectiveEmpData.personalEmail,
                  title:this.prospectiveEmpData?.title,

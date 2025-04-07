@@ -58,6 +58,7 @@ export class PersonalinfoLayoutComponent implements OnInit{
     this.getAllTeammembersList();
     this.getEmployee();
     this.emppersonalinfo=JSON.parse(localStorage.getItem("personaldata") || '{}')
+    this.getTraineeofferdetails();
   }
 
   emailForRequestDoc() {
@@ -402,17 +403,18 @@ onclose(){
             this.router.navigate(['/admin']);
           }, 3000);
         }
-        const modalElement2 = document.getElementById('commonall');
-        if (modalElement2) {
-          modalElement2.classList.remove('show');
-          modalElement2.style.display = 'none';
-        }
-        this.pouptext1 = 'Offer Revoked';
-        const modalElement = document.getElementById('successhide1');
-        if (modalElement) {
-          modalElement.classList.add('show');
-          modalElement.style.display = 'block';
-        }
+        this.conformationPopup.openSuccessModal('Offer Revoked Successfully');
+        // const modalElement2 = document.getElementById('commonall');
+        // if (modalElement2) {
+        //   modalElement2.classList.remove('show');
+        //   modalElement2.style.display = 'none';
+        // }
+        // this.pouptext1 = 'Offer Revoked';
+        // const modalElement = document.getElementById('successhide1');
+        // if (modalElement) {
+        //   modalElement.classList.add('show');
+        //   modalElement.style.display = 'block';
+        // }
 
       },
       error: (err: any) => {
@@ -524,12 +526,13 @@ updateJobapplicantdata() {
     .postdata('JobApplicantsData/UPDATER', data)
     .subscribe({
       next: (data: any) => {
-        this.pouptext1 = 'Offer Revoked';
-        const modalElement = document.getElementById('successhide1');
-        if (modalElement) {
-          modalElement.classList.add('show');
-          modalElement.style.display = 'block';
-        }
+        this.conformationPopup.openSuccessModal('Offer Revoked Successfully');
+        // this.pouptext1 = 'Offer Revoked';
+        // const modalElement = document.getElementById('successhide1');
+        // if (modalElement) {
+        //   modalElement.classList.add('show');
+        //   modalElement.style.display = 'block';
+        // }
         setTimeout(() => {
           this.router.navigate(['/admin']);
         }, 3000)
@@ -545,5 +548,21 @@ initialzerevoke() {
   this.revokeForm = this.fb.group({
     revokeComments: ['', [Validators.required, Validators.maxLength(250)]],
   });
+  }
+  getTraineeOfferDetails = {} as any;
+  getTraineeofferdetails() {
+    let EmpId = this.empinfo.employeeId;
+    console.log(EmpId);
+
+    this.subscription = this.http.getData(`TraineeOfferLetter/${EmpId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.getTraineeOfferDetails = data;
+        console.log(this.getTraineeOfferDetails);
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
   }
 }

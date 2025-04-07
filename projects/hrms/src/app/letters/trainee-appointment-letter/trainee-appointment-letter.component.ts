@@ -25,14 +25,14 @@ import { OpenModalService } from '../../services/open-modal.service';
   styleUrl: './trainee-appointment-letter.component.scss'
 })
 export class TraineeAppointmentLetterComponent {
-  employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
+  documentType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false }
   ];
 
-  addressdata: { name: string, value: string }[] = [
-    { name: 'Current Address', value: 'C' },
-    { name: 'Permanent Address', value: 'P' },
+  SelectDropDown: { name: string, code: string }[] = [
+    { name: 'Current Address', code: 'c' },
+    { name: 'Permanent Address', code: 'p' },
   ];
   subscription!: Subscription;
   employeeiddetails = [] as any;
@@ -48,7 +48,7 @@ export class TraineeAppointmentLetterComponent {
   employeeJobDetails = {} as any; //to store the values of jobDetails
   employeeCompensationDetails = {} as any; //to store the values of compensationDetails
   employeeaddress=[] as any;
-  SelectDropDown: any;
+  // SelectDropDown: any;
   departmentDetails = [] as any;
   issueLocationdata = [] as any;
   AssertTypeGet = [] as any;
@@ -60,38 +60,30 @@ export class TraineeAppointmentLetterComponent {
   makeDetails = [] as any;
   Status:any
   employeeForm!: FormGroup;
+  addressFlag= false;
+  address = {} as IAddress;
   @ViewChild('successhide') private readonly successhide!:NgbModal;
   @ViewChild('errorhide') private readonly errorhide!:NgbModal;
+
+
   constructor(
     private http: HttpService,
-    // private httpclient: HttpClient,
-    // private toaster: NgToastService,
     private router: Router,
     private authService: AuthService,
-    // private _userAcessService: UserAccessService,
     private elementRef: ElementRef,
-    config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService,
-  ) { 
+    config: NgbModalConfig, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
+  ) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
 
   ngOnInit(): void {
-    // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.traineeAppointmentletterData.branchCode = null
     this.traineeAppointmentletterData.department = null
     this.fusionEmployeeId = null
     this.traineeAppointmentletterData.make = null
-    this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
+    this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.Employeeinfo);
-    this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
-          ...emp,
-          fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
-        }));
-        this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
-              ...authority,
-              fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
-            }));
     this.initializeForm();
     this.getEmployeeId();
     this.getDepartment();
@@ -101,49 +93,65 @@ export class TraineeAppointmentLetterComponent {
     this.getAssertType();
     this.getAuthorityDetails();
   }
+
+
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
 
   
 //function for assert type get
-getAssertType() {
-  this.subscription = this.http.getData(`AssetType`).subscribe({
-    next: (data: any) => {
-      console.log(data);
-      this.AssertTypeGet = data;
-    }
-  })
-}
-//function for issedby
-getIssuedEmployeebyId() {
-  this.employeedata = this.Employeeinfo.firstName + " " + this.Employeeinfo.middleName + " " +this.Employeeinfo.lastName
-  console.log(this.employeedata);
-}
-Onclickemployeeid(Value:any){
-  this.traineeAppointmentletterData.branchCode = null
-  console.log(Value);
-  if(Value==""){
-   this.disablebuttonforemployeeid=true
- }
- else{
-   this.disablebuttonforemployeeid=false
- }
-  let employeeinfo=this.employeeiddetails.find(
-   (c: any) => c.fusionEmpId == Value
- );
-  console.log(employeeinfo);
-  if(Value!=employeeinfo && employeeinfo!=undefined){
-   this.disablebuttonforemployeeid=false
+  getAssertType() {
+    this.subscription = this.http.getData(`AssetType`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.AssertTypeGet = data;
+      }
+    })
   }
-  
- }
+//function for issedby
+  getIssuedEmployeebyId() {
+    this.employeedata = this.Employeeinfo.firstName + " " + this.Employeeinfo.middleName + " " + this.Employeeinfo.lastName
+    console.log(this.employeedata);
+  }
+
+
+  Onclickemployeeid(Value: any) {
+    this.traineeAppointmentletterData.branchCode = null
+    console.log(Value);
+    if (Value == "") {
+      this.disablebuttonforemployeeid = true
+    }
+    else {
+      this.disablebuttonforemployeeid = false
+    }
+    let employeeinfo = this.employeeiddetails.find(
+      (c: any) => c.fusionEmpId == Value
+    );
+    console.log(employeeinfo);
+    if (Value != employeeinfo && employeeinfo != undefined) {
+      this.disablebuttonforemployeeid = false
+    }
+
+  }
+
+
+  onDataClick(value: any) {
+    this.traineeAppointmentletterData.appointmentdate = value;
+    console.log(this.traineeAppointmentletterData.appointmentdate);
+  }
+  onclickDocumentType(Value: any) {
+    console.log(Value);
+    this.traineeAppointmentletterData.documentType = Value.value
+    console.log(this.traineeAppointmentletterData.documentType);
+  }
+
  Onclick(fusionemployeeId: any) {
   this.fusionEmployeeId = fusionemployeeId;
    console.log(fusionemployeeId);
    this.traineeAppointmentletterData = {}
    this.traineeAppointmentletterData = this.employeeiddetails.find(
-     (c: any) => c.fusionEmpId == fusionemployeeId
+     (c: any) => c.fusionEmpId == fusionemployeeId.value
    );
    this.disablebuttonforemployeeid=true
    this.traineeAppointmentletterData.dateOfJoining = this.formatDatewithDate(this.traineeAppointmentletterData.dateOfJoining)
@@ -153,22 +161,28 @@ Onclickemployeeid(Value:any){
    this.getCompensationDetails(this.traineeAppointmentletterData);
    this.getEmployeeAddress(this.traineeAppointmentletterData.employeeId)
  }
- initializeForm() {
-  this.employeeForm = this.fb.group({
-    fusionEmpId: ['', Validators.required],
-    appointmentdate: ['', Validators.required],
-    SelectDropDown: ['', Validators.required],
-    dateOfJoining: ['', Validators.required],
-    department: ['', Validators.required],
-    branchCode: ['', Validators.required],
-    Documenttype: ['', Validators.required],
-    asserttype:['',Validators.required],
-    note: ['', Validators.required],
-    model: ['', Validators.required],
-    serial: ['', Validators.required],
-    signatureAuthority: ['', Validators.required]
-  });
-}
+
+
+  initializeForm() {
+    this.employeeForm = this.fb.group({
+      fusionEmpId: ['', Validators.required],
+      fullName: ['', Validators.required],
+      appointmentdate: ['', Validators.required],
+      SelectDropDown: ['', Validators.required],
+      dateOfJoining: ['', Validators.required],
+      department: ['', Validators.required],
+      branchCode: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+      asserttype: ['', Validators.required],
+      note: ['', Validators.required],
+      model: ['', Validators.required],
+      serial: ['', Validators.required],
+      signatureAuthority: ['', Validators.required],
+      documentType : ['', Validators.required],
+    });
+  }
+
+
  //function to get the address 
  getEmployeeAddress(Value:any) {
   let EmployeeId = Value
@@ -183,18 +197,18 @@ Onclickemployeeid(Value:any){
     }
   })
 }
-navigateDashboard() {
-  this.router.navigate(['/admin/dashboard'])
-}
-addressFlag= false;
 
-  address = {} as IAddress;
+
+  navigateDashboard() {
+    this.router.navigate(['/admin/dashboard'])
+  }
+
   onclickSelectAddress(Value: any) {
     this.addressFlag= true;
     console.log(Value);
     console.log(this.employeeaddress.employeeAddresses);
     if (this.employeeaddress.employeeAddresses.length > 0) {
-      this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == Value)
+      this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == Value.value)
 
     }
     console.log(this.address);
@@ -237,25 +251,9 @@ addressFlag= false;
 }
 
    //function to select the current address 
-   onclickDesignation(){
-    //console.log(this.authorityDetails);
-    //console.log(this.prospectiveEmpData.authorityid);
-  
-    let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => (c.employeeId == this.traineeAppointmentletterData.authorityid)
-    );
-    console.log(signatureAuthorityDetails);
-    if (signatureAuthorityDetails) {
-      this.authorityDesignation = signatureAuthorityDetails.designation;
-      if (signatureAuthorityDetails.middleName) {
-        this.traineeAppointmentletterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
-      } else
-        this.traineeAppointmentletterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
-    }
-    else if(signatureAuthorityDetails==undefined||signatureAuthorityDetails==null){
-      this.traineeAppointmentletterData.authorityName =''
-      this.authorityDesignation=''
-    }
+   onclickDesignation(data: any) {
+    this.traineeAppointmentletterData.authorityName = data.value.firstName + ' ' + data.value.middleName + ' ' + data.value.lastName;
+    this.authorityDesignation = data.value.designation;
   }
   //get offer letter Authority list 
 getAuthorityDetails(){
@@ -293,7 +291,7 @@ private formatDatewithDate(date: Date): string | void {
         this.employeeJobDetails = res;
         console.log(this.employeeJobDetails);
         
-        Employee.jobRole = res.jobRole;
+        Employee.jobRole = res?.jobRole;
 
         Employee.workLocation = res.lopcation;
         Employee.subLocation=res.subLocation;
@@ -602,6 +600,14 @@ getEmployeeId() {
       this.employeeiddetails = data as IemployeeDetails[];
       console.log(this.employeeiddetails);
       this.employeeiddetailsauthorityName = data as IemployeeDetails[];
+      this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
+        ...emp,
+        fullName: `${emp.fusionEmpId ?? ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, 
+      }));
+      this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
+            ...authority,
+            fullName: `${authority.firstName ?? ''} ${authority.middleName ?? ''} ${authority.lastName ?? ''}`.trim(), // Concatenate and remove excess spaces
+          }));
     //  this.EmployeeName=this.employeeiddetails.firstName+" "+this.employeeiddetails.lastName
       
     },
@@ -624,7 +630,7 @@ getDepartment() {
   });
 }
   isLoading: boolean = false;
-  async onTraineeAppointmentLetterSubmit(f: NgForm) {
+  async onTraineeAppointmentLetterSubmit() {
 
     const data = this.traineeAppointmentletterData;
     //data.dateOfJoining = this.formatDate(data.dateOfJoining);

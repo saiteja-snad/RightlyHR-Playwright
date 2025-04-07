@@ -16,6 +16,7 @@ import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import { IAuthority } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { OpenModalService } from '../../services/open-modal.service';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, LettersTabComponent, Select, DateformatPipe, ReactiveFormsModule, LettersheaderComponent],
@@ -115,6 +116,7 @@ export class AppointmentLetterComponent {
     private httpclient: HttpClient,
     private router: Router,
     private authService: AuthService,
+    private conformationPopup: OpenModalService,
     // private _userAcessService: UserAccessService,
     private elementRef: ElementRef,private fb: FormBuilder, 
     config: NgbModalConfig, private modalService: NgbModal
@@ -250,6 +252,11 @@ export class AppointmentLetterComponent {
     this.appointmentletter.documentType = Value.value
     console.log(this.appointmentletter.documentType);
   }
+  onclickSignature(Value: any) {
+    console.log(Value);
+    this.appointmentletter.documentType = Value.value
+    console.log(this.appointmentletter.documentType);
+  }
   //function to get the address 
   getEmployeeAddress(Value: any) {
     let EmployeeId = Value
@@ -355,25 +362,10 @@ export class AppointmentLetterComponent {
       event.preventDefault(); // Block the input of the character 
     }
   }
-  onclickDesignation() {
-    //console.log(this.authorityDetails);
-    //console.log(this.prospectiveEmpData.authorityid);
-
-    let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => (c.employeeId == this.appointmentletter.authorityid)
-    );
-    console.log(signatureAuthorityDetails);
-    if (signatureAuthorityDetails) {
-      this.authorityDesignation = signatureAuthorityDetails.designation;
-      if (signatureAuthorityDetails.middleName) {
-        this.appointmentletter.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
-      } else
-        this.appointmentletter.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
-    }
-    else if (signatureAuthorityDetails == undefined || signatureAuthorityDetails == null) {
-      this.appointmentletter.authorityName = ''
-      this.authorityDesignation = ''
-    }
+  onclickDesignation(data:any) {
+      this.appointmentletter.authorityName = data.value.firstName + ' ' + data.value.middleName + ' ' + data.value.lastName;
+      this.authorityDesignation = data.value.designation;
+    
   }
   //get offer letter Authority list 
   getAuthorityDetails() {
@@ -593,37 +585,6 @@ export class AppointmentLetterComponent {
             this.appointmentletter.esic = false
             console.log(Employee.esicContribution);
           }
-
-          //     break;
-          //   case false:
-          //     let condition2 = (Employee.grossSalary >= 23195)
-          //     if (!condition2) {
-          //       // Employee.esicContribution = Math.round(Employee.grossSalary * (2.94 / 100));
-          //       // console.log(Employee.esicContribution);
-          //       Employee.esicContribution = 0
-          //       console.log(Employee.esicContribution);
-          //     }
-          //     else {
-          //       Employee.esicContribution = 0
-          //       console.log(Employee.esicContribution);
-
-          //     }
-          // //     Employee.employeeEsi = 0
-          // // console.log(Employee.employeeEsi);
-          //     break;
-          //   default:
-          // }
-          // }
-          // else {
-          //   Employee.esicContribution = 0
-          //   console.log(Employee.esicContribution);
-
-          // }
-          // ========================================================================================
-          //condtitions for professionaltax calulation.
-          // if (this.appointmentletter.pt == true) {
-          // switch (this.appointmentletter.pt) {
-          // case true:
           if (Employee.grossSalary < 15000) {
             Employee.professionalTax = 0
             this.appointmentletter.pt = false
@@ -648,27 +609,11 @@ export class AppointmentLetterComponent {
             console.log(Employee.professionalTax);
 
           }
-          //   break;
-          // case false:
-          //   Employee.professionalTax = 0;
-          // }
-          // }
-          // else {
-          //   Employee.professionalTax = 0;
-          // }
-
 
           //calcution for the totalgrosssalary
           Employee.totalGrossSalary = Math.round(Employee.grossSalary - Employee.pfContribution - Employee.esicContribution)
           console.log(Employee.totalGrossSalary);
-          //claculation for ESIC for employee
-
-          // if (this.appointmentletter.esic == false || this.appointmentletter.esic == true) {
-          //   console.log(this.appointmentletter.esic);
-
-          //   switch (this.appointmentletter.esic) {
-
-          // case true:
+          
           if (this.appointmentletter.esic == true) {
             if (Employee.totalGrossSalary <= 21000) {
 
@@ -686,31 +631,7 @@ export class AppointmentLetterComponent {
             this.appointmentletter.esic = false
           }
 
-          //     break;
-          //   case false:
-          //     if (Employee.totalGrossSalary >= 23195) {
-          //       Employee.employeeEsi = 0;
-          //     }
-          //     else if (Employee.totalGrossSalary <= 21000) {
-          //       // Employee.employeeEsi = Math.round(Employee.totalGrossSalary * (0.75 / 100));
-          //       // console.log(Employee.employeeEsi);
-          //       Employee.employeeEsi = 0
-          //       console.log(Employee.employeeEsi);
-          //     }
-          //     else {
-          //       Employee.employeeEsi = Math.round(Employee.totalGrossSalary * 2.94) / 100;
-          //     }
-
-          //     break;
-          //   default:
-          // }
-
-          // }
-          // else {
-          //   Employee.employeeEsi = 0
-          //   console.log(Employee.employeeEsi);
-
-          // }
+        
 
           //===========================================================================================================
           // calculation for the basicsalary
@@ -839,7 +760,7 @@ export class AppointmentLetterComponent {
           //  this.EmployeeName=this.employeeiddetails.firstName+" "+this.employeeiddetails.lastName
           this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
             ...emp,
-            fullName: `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
+            fullName: `${emp.fusionEmpId ?? ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
           }));
           this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
             ...authority,
@@ -1046,7 +967,8 @@ export class AppointmentLetterComponent {
         },
         error: (reason: any) => {
           console.log(reason);
-          this.dataFailureMsg('file upload  is failed');
+          // this.dataFailureMsg('file upload  is failed');
+          this.conformationPopup.openErrorModal('File upload  is failed')
         },
       });
   }
@@ -1067,7 +989,8 @@ export class AppointmentLetterComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.dataSuccessMsg('Appointment Letter Generated Successfully')
+          //this.dataSuccessMsg('Appointment Letter Generated Successfully');
+          this.conformationPopup.openSuccessModal('Appointment Letter Generated Successfully')
           this.router.navigate(['/admin']);
         },
         error: (reason: any) => {
@@ -1109,7 +1032,7 @@ export class AppointmentLetterComponent {
     this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.dataSuccessMsg('Email Sent Successfully')
+        this.conformationPopup.openSuccessModal('Email Sent Successfully');
       },
       error: (err: any) => {
         console.log(err);

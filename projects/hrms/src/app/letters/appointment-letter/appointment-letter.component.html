@@ -121,7 +121,7 @@
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                 Authority Name<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location" (change)="onclickDesignation()"
+                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location" (onChange)="onclickDesignation($event)"
                   class="form-select custom-select" formControlName="authorityid"> 
                   <ng-template let-emp pTemplate="item">
                     {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
@@ -271,8 +271,8 @@
             <!--page-2-->
             <div class="letter-page-content" id="pdfContent2">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -410,8 +410,8 @@
             <!--page-3-->
             <div class="letter-page-content" id="pdfContent3">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -511,8 +511,8 @@
             <!--page-4-->
             <div class="letter-page-content" id="pdfContent4">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -616,8 +616,8 @@
             <div class="letter-page-content" id="pdfContent5">
               <div class="letter-page-sub-content">
                 <!--page-4-->
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -720,8 +720,8 @@
             <!--page-6-->
             <div class="letter-page-content" id="pdfContent6">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -814,8 +814,8 @@
             <!--page-7-->
             <div class="letter-page-content" id="pdfContent7">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -833,9 +833,8 @@
                 <p class="letter-heading">
                   For RightlyHR
                 </p>
-                <div class="mb-5 mt-5 pt-2">
-                </div>
-                <p class="family2">
+                
+                <p class="family2" style="font-family: Segoe script; font-size: large;">
                   {{appointmentletter.authorityName}}
                 </p>
                 <p class="letter-heading d-black">Authorized Signatory</p>
@@ -882,8 +881,8 @@
             <!--page-8-->
             <div class="letter-page-content" id="pdfContent8">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -1002,8 +1001,8 @@
             <!--page-9-->
             <div class="letter-page-content" id="pdfContent9">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -1135,8 +1134,8 @@
             <!--page-10-->
             <div class="letter-page-content" id="pdfContent10">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -1267,8 +1266,8 @@
             <!--page-11-->
             <div class="letter-page-content" id="pdfContent11">
               <div class="letter-page-sub-content">
-                <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
-                  <!-- <app-letterhead></app-letterhead> -->
+                <div *ngIf="this.appointmentletter.documentType === true" class="mb-5">
+                  <app-lettersheader></app-lettersheader>
                 </div>
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
@@ -1337,7 +1336,7 @@
 
                 <div class="img-space mb-3"></div>
 
-                <p class="family2">{{appointmentletter.authorityName}}</p>
+                <p class="family2" style="font-family: Segoe script; font-size: large;">{{appointmentletter.authorityName}}</p>
 
                 <p class="letter-heading unerlineo d-black">Authorized Signatory</p>
                 <p class="letter-heading unerlineo d-black">{{appointmentletter.authorityName}}</p>

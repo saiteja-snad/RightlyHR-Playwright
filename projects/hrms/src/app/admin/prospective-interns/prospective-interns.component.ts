@@ -64,6 +64,6 @@ export class ProspectiveInternsComponent {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     console.log(this.emp);
 
-    this.router.navigate(['/admin/personal']);
+    this.router.navigate(['/personalinfo']);
   }
 }

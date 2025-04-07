@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="custom-main-popup-content p-4">
-        <form [formGroup]="experienceForm" (ngSubmit)="postExpDetails()">
+        <form [formGroup]="experienceForm" (ngSubmit)="updateExpDetails()">
             <div class="row">
                 <div class="col-md-12 mb-3">
                     <div class="form-check">
@@ -49,7 +49,7 @@
                 <div class="col-md-12 mb-3">
                     <label class="form-label custom-label mb-2">Roles & Responsibilities<span
                             class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" formControlName="responsibilities"></textarea>
+                    <textarea class="form-control custom-input" formControlName="description"></textarea>
                 </div>
         
                 <div class="mb-3">
@@ -58,7 +58,7 @@
         
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Name<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="contactName">
+                    <input type="text" class="form-control custom-input" formControlName="previousContactName">
                 </div>
         
                 <div class="col-md-6 mb-3">
@@ -66,17 +66,17 @@
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                         <lib-country-list [selectedCountryConfig]="selectedCountryConfig"  [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig" class="country-input"
                          (onCountryChange)="onCountryChange($event)"></lib-country-list>
-                        <input type="text" class="form-control custom-input" formControlName="phonenumber"
+                        <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
                             placeholder="Please enter your mobile number" id="phonenumbers"
                             aria-describedby="phonenumbers"
-                            [value]="experienceForm.get('phonenumber')?.value ? formatPhoneNumber(experienceForm.get('phonenumber')?.value) : ''"
+                            [value]="experienceForm.get('previousContactNumber')?.value ? formatPhoneNumber(experienceForm.get('previousContactNumber')?.value) : ''"
                             autocomplete="off" required>
                     </div>
                     <div class="error-msg my-1"
-                        *ngIf="experienceForm.get('phonenumber')?.invalid &&  (experienceForm.get('phonenumber')?.touched || experienceForm.get('phonenumber')?.dirty)">
-                        <div *ngIf="experienceForm.get('phonenumber')?.hasError('required')">Mobile number is required.</div>
-                        <div *ngIf="experienceForm.get('phonenumber')?.hasError('pattern')">Please enter a valid mobile number.</div>
-                        <div *ngIf="experienceForm.get('phonenumber')?.hasError('invalidPhoneNumber')">
+                        *ngIf="experienceForm.get('previousContactNumber')?.invalid &&  (experienceForm.get('previousContactNumber')?.touched || experienceForm.get('previousContactNumber')?.dirty)">
+                        <div *ngIf="experienceForm.get('previousContactNumber')?.hasError('required')">Mobile number is required.</div>
+                        <div *ngIf="experienceForm.get('previousContactNumber')?.hasError('pattern')">Please enter a valid mobile number.</div>
+                        <div *ngIf="experienceForm.get('previousContactNumber')?.hasError('invalidPhoneNumber')">
                             The phone number is not valid for the selected country.
                         </div>
                     </div>
@@ -84,12 +84,15 @@
         
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Work Email<span class="text-danger">*</span></label>
-                    <input type="email" class="form-control custom-input" formControlName="workEmail">
+                    <input type="email" class="form-control custom-input" formControlName="previousContactEmail">
                 </div>
         
                 <div class="col-md-12 mb-3">
                     <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span class="text-danger">*</span></label>
                     <input type="file" class="form-control custom-input" (change)="onChangeexperience($event);onChange($event)">
+                    <div class="file-name my-1">
+                        <span>File Name: {{getFileName(this.experienceData.attachment)}}</span>
+                    </div>
                 </div>
             </div>
         

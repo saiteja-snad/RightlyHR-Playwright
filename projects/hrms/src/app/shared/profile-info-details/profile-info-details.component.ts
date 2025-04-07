@@ -3,10 +3,11 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../services/open-modal.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile-info-details',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './profile-info-details.component.html',
   styleUrl: './profile-info-details.component.scss'
 })
@@ -30,7 +31,7 @@ export class ProfileInfoDetailsComponent {
 
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getJobDetails();
     this.getEmployeeId();
   }

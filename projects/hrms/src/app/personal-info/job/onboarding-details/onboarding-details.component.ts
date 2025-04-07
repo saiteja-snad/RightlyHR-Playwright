@@ -7,7 +7,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
-import { IProbation } from '../../../Interfaces/job-model';
+import { IBackground, IProbation } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-onboarding-details',
@@ -21,12 +21,51 @@ export class OnboardingDetailsComponent {
   Statusdetails: any;
   probation = [] as IProbation[];
   empinfo = {} as IJob;
+  backgroundDetails = [] as IBackground[];
   branchLocations = [] as IBranchLocation[] 
+  Manager: any=[];
   showButtons() {
     this.buttons = !this.buttons
   }
   onboardingForm!: FormGroup;
+  noticePeriodStatus = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+  ]
 
+  sarleryonhold = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+  ]
+  pfdata = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+  ]
+  ptdata = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+  ]
+  esicdata = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+  ]
+
+  WorkFromHome = [
+    { name: 'Remote/Hybrid', value: true },
+    { name: 'Work Location', value: true },
+  ]
+  remoteLogin = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false },
+
+  ]
+
+  worklocation = [
+    { name: 'Remote/Hybrid', value: 'Remote/Hybrid', allowWFH: true },
+    { name: 'Work From Home', value: 'Work From Home', allowWFH: false }
+  ];
+  filteredWorkLocations: any[] = [];
+  selectedWorkLocation: any = null;
   constructor( private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
@@ -34,9 +73,13 @@ export class OnboardingDetailsComponent {
     this.getStatus();
    // this.getEmployeeId();
     this.initializeForm();
+    this.getBackground();
     this.getBranchLocations();
     this.getprobation();
+    this.remoteLoginChange();
+    this.getWorkfromhomeManager();
     this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
+    //this.onboardingForm.get('dateOfJoining')?.setValue(this.empinfo?.);
   }
 
   initializeForm(): void {
@@ -56,6 +99,7 @@ export class OnboardingDetailsComponent {
       totalExperience: ['', Validators.required],
       remoteLogin: ['', Validators.required],
       workLocation: ['', Validators.required],
+      wfhmanger: ['', Validators.required],
     });
   }
 
@@ -66,6 +110,25 @@ export class OnboardingDetailsComponent {
       console.error('Form is invalid');
     }
   }
+
+  remoteLoginChange() {
+      // Initialize filteredWorkLocations if remoteLogin has a default
+  const initialWFH = this.onboardingForm.get('remoteLogin')?.value;
+  this.filterWorkLocationOptions(initialWFH);
+
+  // Listen to changes
+  this.onboardingForm.get('remoteLogin')?.valueChanges.subscribe(value => {
+    this.filterWorkLocationOptions(value);
+
+    // Optionally reset workLocation field
+    this.onboardingForm.get('workLocation')?.setValue(null);
+  });
+}
+
+filterWorkLocationOptions(allowWFH: boolean) {
+  this.filteredWorkLocations = this.worklocation.filter(loc => loc.allowWFH === allowWFH);
+}
+  
 
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
@@ -132,4 +195,33 @@ export class OnboardingDetailsComponent {
   
       })
     }
+
+    
+  getBackground() {
+    this.subscription = this.http.getData("Background").subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.backgroundDetails = data as IBackground[]
+      }
+    })
+  }
+
+  getWorkfromhomeManager() {
+    this.subscription = this.http.getData('FusionRole/getbyNormalizedName?Nname=WORK FROM HOME MANAGER&includeAssignee=true').subscribe({
+      next: (data: any) => {
+        console.log(data);
+        // Assuming IWfh is your interface/model for the Manager data
+        this.Manager = data.getUserWithRoleNames.map((user: { firstName: any; middleName: any; lastName: any; userId: any;fusionEmpId:any }) => ({
+          ...user,
+          name: ` ${user.fusionEmpId ?? ''} -${user.firstName} ${user.middleName ?? ''} ${user.lastName ?? ''}`.trim(),
+          value: user.userId // or user.employeeId or any unique identifier you want to bind
+        }));
+        console.log(this.Manager);
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        // Handle error appropriately, e.g., show error message to the user
+      }
+    });
+  }
 }

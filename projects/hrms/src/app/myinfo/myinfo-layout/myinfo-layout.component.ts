@@ -7,11 +7,14 @@ import { MyinfoJobTabsComponent } from "../../shared/myinfo-tabs/myinfo-job-tabs
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
-import { Ipersonal, Iteammembers } from '../../Interface/members-model';
+
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
+
+import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
+
 @Component({
   selector: 'app-myinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule,],

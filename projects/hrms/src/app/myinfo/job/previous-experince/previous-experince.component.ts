@@ -40,7 +40,7 @@ export class PreviousExperinceComponent {
   constructor(private modalService: NgbModal, private http: HttpService,public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
     this.getJobtype();
     this.getexperiencedetailsbyemployeid()

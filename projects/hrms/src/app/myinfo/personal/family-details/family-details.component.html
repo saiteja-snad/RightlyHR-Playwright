@@ -79,7 +79,7 @@
                         <label for="memberName" class="form-label custom-label mb-2">Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="memberName"
-                            formControlName="memberName" placeholder="Please enter name">
+                            formControlName="memberName" placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
                         <div class="error-msg"
                             *ngIf="familyDetailsForm.get('memberName')?.invalid && familyDetailsForm.get('memberName')?.touched">
                             <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['required']">Name is required
@@ -156,7 +156,7 @@
                         <label for="memberNameupdate" class="form-label custom-label mb-2">Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="memberNameupdate"
-                            formControlName="memberNameupdate" placeholder="Please enter name">
+                            formControlName="memberNameupdate" placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
                         <div class="error-msg"
                             *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.invalid && familyDetailsupdateForm.get('memberNameupdate')?.touched">
                             <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['required']">Name is

@@ -1,79 +1,107 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-                    <p class="dashboard-text" (click)="navigateDashboard()"><i
-                        class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate}}
-                        <span
-                        class="ms-2">>></span> <span class="component-heading px-2">{{'Prospective Interns'|translate}}</span>
-                    </p>
-        </div>
-        <div class="d-flex gap-3">
-            <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i class="bi bi-plus me-2"></i>{{'Add  Prospective Trainee'| translate}}</button>
-        </div>
-    </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-4">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search"  #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
-
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>             
-                        <th>{{'ID'|translate}}</th>
-                        <th>{{'EmployeeName'|translate}}</th>
-                        <th>{{'Personal Email'|translate}}</th>
-                        <th>{{'Phone Number'|translate}}</th>
-                        <th>{{'Location'|translate}}</th>
-                        <th>{{'Sub Location'|translate}}</th>
-                        <th>{{'Designation'|translate}}</th>
-                        <th>{{'Sub Status'|translate}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr *ngFor="let act of Trainee | activeEmployee : searchValue" class="hover" (click)="select(act)">
-                      <td>{{act.employeeId}}</td>
-                      <td ><span *ngIf="act.firstName ; else firstname">{{act.firstName}} {{act.middleName}} {{act.lastName}} </span></td>
-                      <ng-template #firstname>
-                        -
-                    </ng-template>
-                    <td>{{act.emailaddress}}</td>
-                    <td> <span *ngIf="act.contactnumber;else contact">+91 {{act.contactnumber}}</span> 
-                      <ng-template #contact>
-                       <span class="d-inline-block">-</span>
-                      </ng-template>
-                    </td>
-                      <td>
-                        <div *ngFor="let jobDetail of act?.jobDetails">
-                          <span *ngIf="jobDetail?.lopcation; else locationColumn" >
-                            {{ jobDetail?.lopcation }}
-                          </span>
-                          <ng-template #locationColumn>
-                            -
-                          </ng-template>
-                        </div>
-                      </td>
-                      <td > <div *ngFor="let jobDetail of act?.jobDetails">
-                        <span *ngIf="jobDetail?.subLocation ; else sublocation">{{ jobDetail?.subLocation}} </span> </div> 
-                        <ng-template #sublocation>
-                          -
-                      </ng-template>
-                    </td>
-                      <td > <div *ngFor="let jobDetail of act?.jobDetails">
-                        <span *ngIf="jobDetail?.jobRole ; else jobrole">{{ jobDetail?.jobRole}} </span> </div> 
-                        <ng-template #jobrole>
-                          -
-                      </ng-template>
-                    </td>
-                    <td ><span *ngIf="act.substatus; else substate">{{act.substatus}}</span>
-                    <ng-template #substate>-</ng-template>
-                  </td>
-                    </tr>
-                  </tbody>
-            </table>
-        </div>
+      <p class="dashboard-text" (click)="navigateDashboard()"><i class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'|
+        translate}}
+        <span class="ms-2">>></span> <span class="component-heading px-2">{{'Prospective Interns'|translate}}</span>
+      </p>
     </div>
+    <div class="d-flex gap-3">
+      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
+          class="bi bi-plus me-2"></i>{{'Add Prospective Trainee'| translate}}</button>
+    </div>
+  </div>
+  <div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-4">
+      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+      <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+        placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
+
+    <div class="custom-table-content">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>{{'ID'|translate}}</th>
+            <th>{{'EmployeeName'|translate}}</th>
+            <th>{{'Personal Email'|translate}}</th>
+            <th>{{'Phone Number'|translate}}</th>
+            <th>{{'Location'|translate}}</th>
+            <th>{{'Sub Location'|translate}}</th>
+            <th>{{'Designation'|translate}}</th>
+            <th>{{'Duration of Training'|translate}}</th>
+            <th>{{'Sub Status'|translate}}</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr *ngFor="let act of Trainee | activeEmployee : searchValue" class="hover" (click)="select(act)">
+            <td>{{act.employeeId}}</td>
+            <td><span *ngIf="act.firstName ; else firstname">{{act.firstName}} {{act.middleName}} {{act.lastName}}
+              </span></td>
+            <ng-template #firstname>
+              -
+            </ng-template>
+            <td>{{act.emailaddress}}</td>
+            <td> <span *ngIf="act.contactnumber;else contact">+91 {{act.contactnumber}}</span>
+              <ng-template #contact>
+                <span class="d-inline-block">-</span>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="act?.jobDetails ; else noData">
+                <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                  <span *ngIf="first"><span *ngIf="jobDetail.lopcation;else location">{{ jobDetail.lopcation }} </span>
+                    <ng-template #location>
+                      -
+                    </ng-template>
+                  </span>
+                </div>
+              </ng-container>
+              <ng-template #noData>
+                <div>-</div>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="act?.jobDetails ; else noData">
+                <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                  <span *ngIf="first">
+                    <span *ngIf="jobDetail.subLocation;else subloaction">{{ jobDetail.subLocation }} </span>
+                    <ng-template #subloaction>
+                      <div>-</div>
+                    </ng-template>
+                  </span>
+                </div>
+              </ng-container>
+              <ng-template #noData>
+                <div>-</div>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="act?.jobDetails ; else noData">
+                <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                  <span *ngIf="first"><span *ngIf="jobDetail.jobRole;else jobrole">{{ jobDetail.jobRole }} </span>
+                    <ng-template #jobrole>
+                      -
+                    </ng-template>
+                  </span>
+                </div>
+              </ng-container>
+
+              <ng-template #noData>
+                <div>-</div>
+              </ng-template>
+            </td>
+            <td><span *ngIf="act?.durationOfTrainee; else notice">{{act?.durationOfTrainee}}</span>
+              <ng-template #notice>-</ng-template>
+            </td>
+            <td><span *ngIf="act.substatus; else substate">{{act.substatus}}</span>
+              <ng-template #substate>-</ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

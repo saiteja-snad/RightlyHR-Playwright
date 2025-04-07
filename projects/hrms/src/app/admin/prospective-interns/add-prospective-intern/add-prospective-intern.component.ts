@@ -204,7 +204,7 @@ export class AddProspectiveInternComponent {
       firstName: this.employeeForm.get('firstName')?.value,
       middleName: this.employeeForm.get('middleName')?.value,
       lastName: this.employeeForm.get('lastName')?.value,
-      employeeStatus: 'Prospective',
+      employeeStatus: 'Trainee Prospective',
       emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
       experienceType: this.employeeForm.get('experienceType')?.value,

@@ -14,7 +14,7 @@
         <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
             <div class="card letter-fields-content p-4">
                 <form [formGroup]="employeeForm"
-                    (ngSubmit)="postTraineeOfferLetterFieldsDetails(employeeForm)">
+                (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
                     <div class="row">
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">{{'Search Employee'|translate}}<span
@@ -193,9 +193,9 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span
                                     class="error-msg">*</span></label>
-                            <p-select [options]="JobroleDetails" optionLabel="jobRole1"
+                            <p-select [options]="JobroleDetails" optionValue="jobRole1" optionLabel="jobRole1"
                                 placeholder="Please select designation" formControlName="jobRoleDetails"
-                                class="form-select custom-select"></p-select>
+                                class="form-select custom-select" (onChange)="onclickDesignation($event)"></p-select>
                             <div
                                 *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
                                 <div class="error-msg">Designation is required</div>
@@ -205,7 +205,7 @@
                             <label class="form-label custom-label mb-2"> {{'Salary (Cost to Company)'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="amount"
-                                placeholder="Please enter salary" (ngModelChange)="ctcCalculation()"/>
+                                placeholder="Please enter salary" (ngModelChange)="onclickCTC($event)"/>
                             <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
                                 <div class="error-msg">Salary is required</div>
                             </div>
@@ -228,24 +228,23 @@
                             <label class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="subLocationsDropdown" optionLabel="name" [filter]="true"
+                                <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true"
                                     filterBy="name" [showClear]="true" placeholder="Please select sub location"
-                                    formControlName="sublocationId" class="custom-select w-100">
+                                    formControlName="JobSubLocationName" class="custom-select w-100">
                                 </p-select>
                             </div>
                             <div
-                                *ngIf="employeeForm.get('sublocationId')?.invalid && employeeForm.get('sublocationId')?.touched">
+                                *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
                                 <div class="error-msg">Sub Location is required</div>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                                     class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
-                                placeholder="Please enter offer issued date" (change)="updateEndDateValidity()" min="{{ currentDate | date: 'yyyy-MM-dd' }}"
-                                (change)="updateEndDateValidityForExpectedStartDate()"/>
+                            <input type="date" class="form-control custom-input" formControlName="offerSentDate"
+                                placeholder="Please enter offer issued date"  (click)="pathValuesFuction()"/>
                             <div
-                                *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
+                                *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                                 <div class="error-msg">Offer Issued Date is required</div>
                             </div>
                         </div>
@@ -253,8 +252,7 @@
                             <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter expected start date" (change)="onDateOfJoiningChange()"
-                                (change)="updateEndDateValidityupdate()" (change)="updateEndDateValidityForExpectedStartDate()"/>
+                                placeholder="Please enter expected start date" (click)="pathValuesFuction()"/>
                             <div
                                 *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                 <div class="error-msg">Expected Start Date is required</div>
@@ -268,8 +266,7 @@
                             <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                                placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate" (change)="updateEndDateValidity()"
-                                min="{{ currentDate | date: 'yyyy-MM-dd' }}"/>
+                                placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate" (click)="pathValuesFuction()"/>
                             <div
                                 *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                                 <div class="error-msg">Offer Expiry Date is required</div>
@@ -278,26 +275,22 @@
                                 Offer Issued Date</div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2"> {{'Select Internship Period(Months)'|translate}}<span
-                                    class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">
+                              {{'Select Internship Period(Months)' | translate}}<span class="error-msg">*</span>
+                            </label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="internshipPeriod" optionLabel="name"
-                                    placeholder="Please select internship period" formControlName="documentType"
-                                    class="form-select custom-select"(click)="calculateEndDate(traineeEmpData.internshipperiod)">
-                                    <option di [ngValue]="undefined">Select Internship Period</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                </p-select>
+                              <p-select 
+                                [options]="internshipPeriod" 
+                                optionLabel="name"
+                                placeholder="Please select internship period" 
+                                formControlName="internshipperiod"
+                                class="form-select custom-select">
+                              </p-select>
                             </div>
-                            <div
-                                *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                                <div class="error-msg">Internship
-                                    Period is required</div>
+                            <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
+                              <div class="error-msg">Internship Period is required</div>
                             </div>
-                        </div>
+                          </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}<span
                                     class="error-msg">*</span></label>
@@ -313,24 +306,21 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2"> {{'Document Type'|translate}}<span
-                                    class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name"
-                                    placeholder="Please select document type" formControlName="Copys"
-                                    class="form-select custom-select">
-                                    <option disabled [ngValue]="undefined">{{'Select'|translate}}</option>
-                                </p-select>
+                              <p-select [options]="documentType" optionLabel="name" placeholder="Please select document type"
+                                formControlName="documentType" class="form-select custom-select" (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
+                              </p-select>
                             </div>
-                            <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
-                                <div class="error-msg">Document Type is required</div>
+                            <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
+                              <div class="error-msg">Document Type is required</div>
                             </div>
-                        </div>
+                          </div>
 
                         <div class="col-xl-12 mb-4">
                             <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
                             <textarea class="form-control custom-input" formControlName="note"
-                                placeholder="Note"></textarea>
+                                placeholder="Note" (click)="pathValuesFuction()"></textarea>
                             <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                                 <div class="error-msg">Note is required</div>
                             </div>
@@ -338,8 +328,16 @@
                         <div class="col-md-12 mb-4">
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name'|translate}}<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                class="form-select custom-select" formControlName="authorityid"(onChange)="onclickDesignation($event.value)"/>
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select signature authority" (onChange)="onclickDesignations($event)"
+                                class="form-select custom-select" formControlName="authorityid"> 
+                                <ng-template let-emp pTemplate="item">
+                                  {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+                                </ng-template>
+                              
+                                <ng-template let-emp pTemplate="selectedItem">
+                                  {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+                                </ng-template>
+                              </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                               <div class="error-msg">Signature Authority Name is required</div>
@@ -347,7 +345,7 @@
                         </div>
                         <div class="d-flex flex-wrap gap-3 pt-4">
                             <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">{{'Generate Offer Letter'|translate}}</button>
-                            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" (onChange)="requestForApproval()">{{'Request For Approval'|translate}}</button>
+                            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" (click)="emailSendingforApprover()">{{'Request For Approval'|translate}}</button>
                         </div>
                     </div>
                 </form>
@@ -398,8 +396,7 @@
                                             </ul>
                                         </div>
                                         <div class="col-md-4 fw-bolder">
-                                            <p class="text-end letter-text p-0">Date: {{traineeEmpData.offerIssuedDate |
-                                                dateformat}}</p>
+                                            <p class="text-end letter-text p-0">Date: {{traineeEmpData.offerIssuedDate | dateformat}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -412,13 +409,11 @@
 
                                     <ol class="liststylenumber">
                                         <li class="paragraph mb-3">
-                                            <strong>{{'Start Date and Duration'|translate}}: </strong>Your internship will commence on
-                                            <u><strong>{{traineeEmpData.dateOfJoining}}</strong></u> and is expected to
-                                            complete
-                                            on
-                                            <u><strong></strong></u>
-                                            lasting for a period of <strong>{{this.traineeEmpData.endDate}}</strong> .
-                                        </li>
+                                            <strong>{{'Start Date and Duration' | translate}}: </strong>Your internship will commence on
+                                            <u><strong>{{traineeEmpData.dateOfJoining | dateformat}}</strong></u> and is expected to complete on
+                                            <u><strong>{{traineeEmpData.endDate | dateformat}}</strong></u>, lasting for a period of 
+                                            <strong>{{traineeEmpData.internshipperiod}} Months</strong>.
+                                          </li>
                                         <li class="paragraph mb-3"><strong>{{'Working Hours and Location'|translate}}: </strong>The
                                             standard
                                             working
@@ -491,8 +486,8 @@
                         <div class="letter-page-content my-4" id="pdfContent2">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeEmpData.Copys; else doc">
-                                        <!-- <app-letterhead></app-letterhead> -->
+                                    <div *ngIf="this.traineeEmpData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
                                     </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 7rem;"></div>

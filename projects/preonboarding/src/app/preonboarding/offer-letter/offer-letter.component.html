@@ -530,9 +530,9 @@
         @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
             <button class="custom-btn btn-secondary px-5" (click)="downloadoffer()">Download</button>
         }
-        <!-- @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){ -->
+        @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
             <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
-        <!-- } -->
+        }
         @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
             <button class="custom-btn accepted-btn px-5">Accepted</button>
         } 
@@ -553,7 +553,7 @@
                 </div>
                 <div class="d-flex gap-5 pt-4 w-100">
                     <button class="custom-btn btn-secondary w-50 py-3" (click)="closeModal()">Close</button>
-                    <button class="custom-btn btn-primary w-50 py-3" (click)="acceptoffer()">yes</button>
+                    <button class="custom-btn btn-primary w-50 py-3" (click)="acceptoffer()">Yes</button>
                 </div>
             </div>
         </div>
@@ -564,7 +564,7 @@
 <ng-template #rejectpopup let-modal>
     <div class="modal-body" ngbAutofocus>
         <div class="custom-main-popup-container">
-            <form [formGroup]="rejectForm">
+            <form [formGroup]="rejectForm " (ngSubmit)="submitRejectReason()">
                 <div class="custom-main-popup-content p-4">
                     <div class="py-4 text-center">
                         <p class="confirmation-text">Are you sure you want to reject offer?</p>

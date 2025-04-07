@@ -45,29 +45,35 @@ designation: any;
 @ViewChild('success') success: any;
   constructor(private router: Router,private authService: AuthService,private conformationPopup: OpenModalService, private http: HttpService,private fb: FormBuilder,private modalService: NgbModal ) { 
   
+    
+  }
+  ngOnInit(): void {
+    this.getJobrole();
+    this.jobLocationList();
+    // this.initializeProspectiveEmpDetails();
+    this.createForm();
+  }
+  
+  initializeProspectiveEmpDetails() {
     this.employeeForm = this.fb.group({
-      firstName: ['', Validators.required],
-      middleName: ['', ],
-      lastName: ['', Validators.required],
-      personalEmail: ['', [Validators.required, Validators.email]],
+      firstName: [ '',[ Validators.required,  Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$')]],
+      middleName: [ '', [   Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]],
+      lastName: [ '',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]  ],
+      personalEmail: [ '', [Validators.required,Validators.email]],
       designation: ['', Validators.required],
       employmentType: ['', Validators.required],
       location: ['', Validators.required],
       subLocation: ['', Validators.required]
     });
   }
-  ngOnInit(): void {
-    this.getJobrole();
-    this.jobLocationList();
-    this.createForm();
-  }
+
   //function to create the form template
   createForm() {
     this.employeeForm = this.fb.group({
-      firstName: ['', Validators.required],
-      middleName: [''],
-      lastName: ['', Validators.required],
-      personalEmail: ['', [Validators.required, Validators.email]],
+      firstName: [ '',[ Validators.required,  Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$')]],
+      middleName: [ '', [   Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]],
+      lastName: [ '',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]  ],
+      personalEmail: [ '', [Validators.required,Validators.email]],
       designation: ['', Validators.required],
       employmentType: ['', Validators.required],
       location: ['', Validators.required],
@@ -222,13 +228,6 @@ selectgradId(event:any){
             this.result = res.employeeData;
             console.log(this.result);
             this.conformationPopup.openSuccessModal('Prospective Employee Created Successfully');
-            
-            setTimeout(() => {
-              this.modalService.open(ProspectiveEmployeesComponent);
-              this.modalService.dismissAll();
-              this.http.activeTabSubject.next(true);
-            }, 500);
-            
             if (this.result.employeeId != null) {
               const jobdata = {
                 employeeId: this.result.employeeId,
@@ -249,6 +248,16 @@ selectgradId(event:any){
                   error: (Reason) => console.log(Reason),
                 });
             }
+          }
+          else if (res.statusCode == 409) {
+            this.conformationPopup.openErrorModal(res.message);
+            setTimeout(() => {
+              // this.openmodel(this.pospectivecreate);
+              this.modalService.dismissAll();
+            }, 3000);
+          } else {
+            this.conformationPopup.openErrorModal(res.message);
+            
           }
         },
         error: (err: any) => {

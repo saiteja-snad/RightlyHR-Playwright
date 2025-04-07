@@ -4,26 +4,41 @@
             <p class="main-content-heading mb-0">Employee My Info</p>
         </div>
         <div>
-            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/job')">Inactive</button>
-            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')"
-                (click)="openModal(changermmodal)">
-                {{'Change RM'|translate}}
-            </button>
-            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
-                (click)="emailForRequestDoc()">
-                {{'Request for Documents'|translate}}
-            </button>
-            <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info') && (empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus=='Employee Created'
-             ||empdata?.substatus=='Requested Documents' ||empdata?.substatus=='Documents Submitted'||empdata?.substatus=='Documents Rejected'||empdata?.substatus=='Documents Accepted' ||empdata?.substatus=='Documents Verified' )" (click)="openModal(archivedbtn)">
-                 {{'Archive'|translate}}
-            </button>
-            <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info') " (click)="openModal(revokeoffer)">
-                {{' Revoke Offer'|translate}}
-            </button>
-            <!-- && (empdata.empstatus=='Prospective' || empdata.empstatus =='Trainee Prospective')  && (empdata?.substatus!='Employee Created')" -->
-            <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info')" [hidden]="!empdata?.isCredentialExpired" (click)="updatePassword()">
-                {{'Generate Credentials'|translate}}
-            </button>
+            <div>
+                <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/job')">Inactive</button>
+            </div>
+            <div><button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')"
+                    (click)="openModal(changermmodal)">
+                    {{'Change RM'|translate}}
+                </button></div>
+            <!-- <div *ngIf="(empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') "> -->
+                <button class="custom-btn btn-primary"
+                    *ngIf="isActive('personalinfo/personal/basic-info') "
+                    (click)="emailForRequestDoc()">
+                    {{'Request for Documents'|translate}}
+                </button>
+            <!-- </div> -->
+            <!-- <div *ngIf="getOfferDetails.status !== 'Released' || getTraineeOfferDetails.status!=='Released'"> -->
+                <button class="custom-btn btn-secondary me-3"
+                    *ngIf="isActive('personalinfo/personal/basic-info') && (empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus=='Employee Created'
+                                 ||empdata?.substatus=='Requested Documents' ||empdata?.substatus=='Documents Submitted'||empdata?.substatus=='Documents Rejected'||empdata?.substatus=='Documents Accepted' ||empdata?.substatus=='Documents Verified' )"
+                    (click)="openModal(archivedbtn)">
+                    {{'Archive'|translate}}
+                </button>
+            <!-- </div> -->
+            <!-- <div *ngIf="getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'"> -->
+                <button class="custom-btn btn-secondary me-3"
+                    *ngIf="isActive('personalinfo/personal/basic-info')  && (empdata.empstatus=='Prospective' || empdata.empstatus =='Trainee Prospective')  && (empdata?.substatus!='Employee Created')"
+                    (click)="openModal(revokeoffer)">
+                    {{' Revoke Offer'|translate}}
+                </button>
+            <!-- </div> -->
+            <div>
+                <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info')"
+                    [hidden]="!empdata?.isCredentialExpired" (click)="updatePassword()">
+                    {{'Generate Credentials'|translate}}
+                </button>
+            </div>
             <!-- <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button> -->
         </div>
     </div>

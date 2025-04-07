@@ -10,6 +10,7 @@ import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PopupService } from '../../common-services/popup.service';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, DateFormatPipe, ReactiveFormsModule],
@@ -40,17 +41,17 @@ export class OfferLetterComponent implements OnInit {
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder,private confiramtionpopups:PopupService) { }
 
   ngOnInit(): void {
-    // this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
-    // this.getOfferLetterDetails();
-    // this.offeraccepteddata = localStorage.getItem("offeraccepteddata");
-    // this.offerLetterData = this.prosempdata;
-    // this.getJobDetails(this.prosempdata)
-    // this.getCompensationDetails(this.prosempdata);
-    // this.getEmployeeAddress();
-    // this.getAuthorityDetails();
+    this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
+    this.getOfferLetterDetails();
+    this.offeraccepteddata = localStorage.getItem("offeraccepteddata");
+    this.offerLetterData = this.prosempdata;
+    this.getJobDetails(this.prosempdata)
+    this.getCompensationDetails(this.prosempdata);
+    this.getEmployeeAddress();
+    this.getAuthorityDetails();
     this.initializeRejectForm();
   }
 
@@ -121,7 +122,7 @@ export class OfferLetterComponent implements OnInit {
         this.offerLetterData.offerSentDate = this.getofferdata.offerSentDate
         this.offerLetterData.offerExpiryDate = this.getofferdata.offerExpiryDate
         this.offerLetterData.note = this.getofferdata.note
-        if (this.employeeaddress.employeeAddresses.length > 0) {
+        if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
         }
         this.offerLetterData.addressLine1 = this.address.addressLine1
@@ -154,7 +155,7 @@ export class OfferLetterComponent implements OnInit {
     })
   }
 
-  submitRejectReason(form: NgForm) {
+  submitRejectReason() {
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
     offerUpdateDetails.candidateComments = this.rejectionReason.comments;
     offerUpdateDetails.candidateStatus = "Offer Letter Rejected";
@@ -162,7 +163,6 @@ export class OfferLetterComponent implements OnInit {
     this.prosempdata.substatus = "Offer Letter Rejected";
     this.updateEmployeeDetails(this.prosempdata);
     this.loadingcircle = true;
-    form.resetForm();
   }
 
   updateOfferDetails(updatedData: Iofferletter) {
@@ -199,11 +199,11 @@ export class OfferLetterComponent implements OnInit {
       next: (data: any) => {
         console.log(data);
         this.loadingcircle = false;
-        const modalElement = document.getElementById('submittedreject');
-        if (modalElement) {
-          modalElement.classList.add('show');
-          modalElement.style.display = 'block';
-        }
+      this.confiramtionpopups.openSuccess('Offer Letter Rejected Successfully');
+      this.modalService.dismissAll();
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 300); // Adjust delay if needed
       },
       error: (err: any) => {
         console.log(err);
@@ -510,11 +510,8 @@ export class OfferLetterComponent implements OnInit {
       next: (data: any) => {
         if (data) {
           localStorage.setItem('offerletterurl', data.path);
-          const modalElement = document.getElementById('submittedaccept');
-          if (modalElement) {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-          }
+          this.confiramtionpopups.openSuccess('Offer Letter Accepted Successfully');
+          this.modalService.dismissAll();
           this.loadingcircle = false;
         }
       },

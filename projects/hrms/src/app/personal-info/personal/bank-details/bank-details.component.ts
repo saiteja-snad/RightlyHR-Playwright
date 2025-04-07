@@ -27,7 +27,7 @@ export class BankDetailsComponent {
   displayblankdocument:any
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeBankDetailsForm();
     this.initializeBankDetailsupdateForm()
     this.getbanknames()

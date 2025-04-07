@@ -36,7 +36,7 @@ export class BasicInfoComponent {
   constructor(private modalService: NgbModal, private fb: FormBuilder,  public formValidation: FormValidationService,  private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
     this.getEmployeeId();
     this.getGender()

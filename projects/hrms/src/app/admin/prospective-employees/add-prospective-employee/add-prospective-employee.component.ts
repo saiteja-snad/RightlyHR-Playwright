@@ -251,12 +251,12 @@ selectgradId(event:any){
           }
           else if (res.statusCode == 409) {
             this.conformationPopup.openErrorModal(res.message);
-            setTimeout(() => {
-              // this.openmodel(this.pospectivecreate);
-              this.modalService.dismissAll();
-            }, 3000);
+         
           } else {
             this.conformationPopup.openErrorModal(res.message); 
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 3000);
           }
         },
         error: (err: any) => {

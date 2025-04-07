@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-basic-info',
@@ -32,7 +33,7 @@ export class BasicInfoComponent {
   Titledetails :ITitle[]=[];
   Maritaldetails:IMarital[]=[];
   buttons=false
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder,  public formValidation: FormValidationService,  private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -71,7 +72,10 @@ export class BasicInfoComponent {
   }
 
   patchForm(data: any): void {
-    
+    const maritalStatus = this.Maritaldetails.find(
+      (item: any) => item.maritalstatus1 === data.maritalStatus
+    ) || null;
+  
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       salutation: data.title,
@@ -81,7 +85,7 @@ export class BasicInfoComponent {
       gender: this.Gender.find((item: any) => item.genderName === data.gender),
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalstatus1:this.Maritaldetails.find((item: any) => item.maritalstatus1 === data.maritalStatus),
+      maritalstatus1:maritalStatus,
     });
     console.log(this.basicInfoForm.value);
     

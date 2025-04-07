@@ -4,19 +4,23 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { IDepartment, IGrade, IJob, IJobdetails, IJobtype, IRole } from '../../../Interfaces/job-model';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, Select,ReactiveFormsModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })
 export class JobDetailsComponent {
   separationRequestForm!: FormGroup;
-  jobdetails: IJobdetails[] = [];
+  jobDetailsupdateForm!: FormGroup;
+  jobdetails = new BehaviorSubject<any[]>([]);
+  teamDropdownValues: any[] = [];
+  teamManagerDropdownValues: any[] = [];
   selectedDepartmentId: number = 0;
   jobDetailsForm!: FormGroup;
   subscription!: Subscription;
@@ -27,49 +31,80 @@ export class JobDetailsComponent {
   employeinfo: any
   allempdata: any;
   allReportees: any;
+
+  empdata: {
+    id?: number;
+    employeeId?: number;
+    effectiveDate?: string;
+    reportsto?: string;
+    department?: string;
+    bussinessArea?: string;
+    lopcation?: string;
+    jobRole?: string;
+  } = {};
+
+  selectedEmployeeId: any
+  selectedGradeName: string = '';
+  getGradename: any
   GradeDetails = [] as IGrade[];
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Full-Time' },
-    { id: 2, name: 'Part-Time' },
-    { id: 3, name: 'Contract' },
-    { id: 4, name: 'Internship' }
-  ];
+  subDepartmentsDropdownValues: any = [];
+  subdeparmentSingleobj: any;
+  jobLocationDropDownData: any = [];
+  JobroleDesignation = [] as IRole[];
 
-  designation: { id: number; name: string }[] = [
-    { id: 1, name: 'Software Engineer' },
-    { id: 2, name: 'Project Manager' },
-    { id: 3, name: 'HR Executive' },
-    { id: 4, name: 'Data Analyst' }
-  ];
+  teammangerid: any;
+  getGradeid: any;
+  selectedjobdetailesid: any;
 
-  location: { id: number; name: string }[] = [
-    { id: 1, name: 'New York' },
-    { id: 2, name: 'Los Angeles' },
-    { id: 3, name: 'Chicago' },
-    { id: 4, name: 'Houston' }
-  ];
-
-  sublocation: { id: number; name: string; locationId: number }[] = [
-    { id: 1, name: 'Brooklyn', locationId: 1 },
-    { id: 2, name: 'Downtown', locationId: 1 },
-    { id: 3, name: 'Hollywood', locationId: 2 },
-    { id: 4, name: 'South Side', locationId: 3 }
-  ];
-  subDepartmentsDropdownValues: any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.initializejobForm();
+    this.initializeupdatejobForm();
     this.getDepartment();
     this.getJobtype();
     this.getReportingTo();
     this.getEmployeeId();
-    this.getGrade();
-   // this.getSubDepartmentName();  
-    this.getJobrole();  
-      this.getJobDetails();
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.getjobLocationList();
+    this.getJobDetails();
+    this.getJobDesignation();
+   
+
+  }
+
+  initializejobForm(): void {
+    this.jobDetailsForm = this.fb.group({
+      effectiveDate: ['', Validators.required],
+      jobRole: ['', Validators.required],
+      grade: [{ value: null, disabled: true }, Validators.required],
+      department: ['', Validators.required],
+      team: ['', Validators.required],
+      teamManager: [{ value: null, disabled: true }, Validators.required],
+      reportingManager: ['', Validators.required],
+      location: ['', Validators.required],
+      subLocation: ['', Validators.required],
+      shift: ['', Validators.required],
+      jobType: ['', Validators.required],
+    });
+  }
+
+
+  initializeupdatejobForm(): void {
+    this.jobDetailsupdateForm = this.fb.group({
+      effectiveDate: ['', Validators.required],
+      jobRole: ['', Validators.required],
+      grade: [{ value: null, disabled: true }, Validators.required],
+      department: ['', Validators.required],
+      team: ['', Validators.required],
+      teamManager: ['', Validators.required],
+      reportingManager: ['', Validators.required],
+      location: ['', Validators.required],
+      subLocation: ['', Validators.required],
+      shift: ['', Validators.required],
+      jobType: ['', Validators.required],
+    });
   }
 
   initializeForm(): void {
@@ -109,70 +144,52 @@ export class JobDetailsComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-       
+
       },
-      error: (reason:any) => console.error('Error fetching employee data:', reason),
-    });
-  }
-  //function to get grade dropdown
-  getGrade() {
-    this.subscription = this.http.getData('GradeTable').subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.GradeDetails = data as IGrade[];
-      },
+      error: (reason: any) => console.error('Error fetching employee data:', reason),
     });
   }
 
-  initializejobForm(): void {
-    this.jobDetailsForm = this.fb.group({
-      effectiveDate: ['', Validators.required],
-      jobRole: ['', Validators.required],
-      grade: ['', Validators.required],
-      department: ['', Validators.required],
-      team: ['', Validators.required],
-      teamManager: ['', Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
-      shift: ['', Validators.required],
-      jobType: ['', Validators.required],
-    });
-  }
+
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
-  onSubmit(): void {
-    if (this.jobDetailsForm.valid) {
-      console.log('Form Submitted:', this.jobDetailsForm.value);
-    }
-  }
 
-
-
-  allDepartments: any; //array to store all the departments
   getDepartment() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
         console.log(data);
         this.departmentDetails = data as IDepartment[];
-        this.allDepartments = this.departmentDetails.map(
-          (item: { departmentName: any; }) => item.departmentName
-        );
-      },
+      }
     });
   }
-  AllJobRoles: any; //array to store all the jobroles
-  getJobrole() {
-    this.subscription = this.http.getData('JobRole').subscribe({
+
+  onDepartmentChange(selectedDepartment: any): void {
+    const selectedDepartmentId = selectedDepartment.sno; // Get the sno of the selected department
+    console.log('Selected Department ID:', selectedDepartmentId);
+
+    // Fetch the teams based on the selected department ID
+    this.subscription = this.http.getData(`Subdepartments/Getnames/${selectedDepartmentId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.JobroleDetails = data as IRole[];
-        this.AllJobRoles = this.JobroleDetails.map((item: { jobRole1: any; }) => item.jobRole1);
+        if (data) {
+          this.teamDropdownValues = data; // Update the team dropdown values
+        } else {
+          this.teamDropdownValues = []; // Reset if no teams are found
+        }
+        this.jobDetailsForm.patchValue({ team: null }); // Reset the team selection
+        console.log('Team Dropdown Values:', this.teamDropdownValues);
       },
+      error: (err: any) => {
+        console.error('Error fetching teams:', err);
+        this.teamDropdownValues = []; // Reset on error
+        this.jobDetailsForm.patchValue({ team: null }); // Reset the team selection
+      }
     });
   }
+
+
 
   //function to get jobtype dropdown
   getJobtype() {
@@ -184,83 +201,237 @@ export class JobDetailsComponent {
     });
   }
 
-  getReportingTo() {
+  getReportingTo(): void {
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        console.log('Employee Data:', data);
+        this.allempdata = data as IJob[];
+
+        // Map the employee data to the format required by p-select
+        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string,fusionEmpId:any }) => ({
+          id: employee.employeeId, // Use the employeeId as the unique identifier
+          employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName} ${employee.lastName}`, // Combine first and last name
+        }));
+
+        console.log('All Reportees:', this.allReportees);
+      },
+      error: (err: any) => {
+        console.error('Error fetching employee data:', err);
+        this.allReportees = []; // Reset on error
+      },
+    });
+  }
+
+  // Method to handle selection of a reporting manager
+  onReportingManagerChange(selectedManager: any): void {
+    this.selectedEmployeeId = selectedManager?.id; // Store the selected employee ID
+    console.log('Selected Employee ID:', this.selectedEmployeeId);
+  }
+  onSubDepartmentNameChange(selectedSubDepartment: any): void {
+    const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId; // Get the subdepartmentId of the selected team
+    console.log('Selected SubDepartment ID:', selectedSubDepartmentId);
+
+    // Fetch the team manager data based on the selected subdepartmentId
+    this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
+      next: (data: any) => {
+        this.subdeparmentSingleobj = data;
+
+        console.log('SubDepartment Data:', this.subdeparmentSingleobj);
+
+        // Update the team manager dropdown values
+        this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
+          id: manager.reportingmanagerId,
+          name: manager.middleName
+            ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
+            : `${manager.firstName} ${manager.lastName}`,
+        }));
+
+        console.log('Team Manager Dropdown Values:', this.teamManagerDropdownValues);
+        this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
+        // Reset the team manager selection
+        this.jobDetailsForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
+      },
+      error: (err: any) => {
+        console.error('Error fetching team manager data:', err);
+        this.teamManagerDropdownValues = []; // Reset on error
+        this.jobDetailsForm.patchValue({ teamManager: null }); // Reset the team manager selection
+      },
+    });
+  }
+
+  onDepartmentNameChange() {
+    console.log(this.selectedDepartmentId);
     this.subscription = this.http
-      .getData('Employeedata/ActiveEmployees')
+      .getData(`Subdepartments/Getnames/${this.selectedDepartmentId}`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-          this.allempdata = data as IJob[];
-          console.log(this.allempdata);
-          this.allReportees = this.allempdata.map(
-            (employee: { firstName: string; lastName: string }) => `${employee.firstName} ${employee.lastName}`
-          );
-
-          console.log(this.allReportees);
+          this.subDepartmentsDropdownValues = data;
+          console.log(this.subDepartmentsDropdownValues);
         },
+        complete: () => { },
+      });
+
+  }
+
+  getJobDesignation() {
+    this.subscription = this.http
+      .getData('DesignationGradeMapper?sort=designationName')
+      .subscribe({
+        next: (data: any) => {
+          this.JobroleDesignation = data as IRole[];
+
+        },
+        error: () => {
+          console.error('Error fetching job designations');
+        },
+
       });
   }
 
 
-  // onDepartmentNameChange() {
-  //   console.log(this.selectedDepartmentId);
-  //   this.subscription = this.http
-  //     .getData(`Subdepartments/Getnames/${this.selectedDepartmentId}`)
-  //     .subscribe({
-  //       next: (data: any) => {
-  //         this.subDepartmentsDropdownValues = data;
-  //         console.log(this.subDepartmentsDropdownValues);
-  //       },
-  //       complete: () => {},
-  //     });
-  //   this.isDepartmentSelected = false;
-  //   this.selectedReportingManagerName = '';
-  // }
-  // selectedDepartmentId(selectedDepartmentId: any) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // onSubDepartmentNameChange() {
-  //   console.log(this.selectedSubDepartmentId);
-  //   this.subscription = this.http
-  //     .getData(`Subdepartments/${this.selectedSubDepartmentId}`)
-  //     .subscribe({
-  //       next: (data: any) => {
-  //         this.subdeparmentSingleobj = data;
-  //         console.log(this.subdeparmentSingleobj);
-  //         this.selectedReportingManagerId =
-  //           this.subdeparmentSingleobj[0].reportingmanagerId;
-  //         console.log(this.selectedReportingManagerId);
+  onDesignationChange(selectedDesignation: any): void {
+    // Find the selected designation in the JobroleDesignation array
+    const designation = this.JobroleDesignation.find(
+      (item) => item.id === selectedDesignation.id
+    );
+    this.getGradeid = designation?.gradeId; // Store the selected grade ID
+    if (designation) {
 
-  //         this.selectedReportingManagerName =
-  //           this.subdeparmentSingleobj[0].firstName +
-  //           ' ' +
-  //           this.subdeparmentSingleobj[0].lastName;
-  //         console.log(this.selectedReportingManagerName);
-  //       },
-  //     });
-  // }
+      this.jobDetailsForm.patchValue({ grade: designation.gradeId }); // Update the grade in the form
 
+      // Call the API to fetch the grade name based on gradeId
+      this.getGradeNameById(designation.gradeId);
+    } else {
+      this.selectedGradeName = ''; // Reset if no designation is found
+      this.jobDetailsForm.patchValue({ grade: '' });
+    }
+  }
+
+  getGradeNameById(gradeId: number): void {
+    this.subscription = this.http.getData(`GradeTable/getbyid/${gradeId}`).subscribe({
+      next: (data: any) => {
+        console.log('Grade Data:', data);
+        this.selectedGradeName = data.gradeName; // Update the grade name from the API response
+        // Store the grade data for further use
+        // Patch the grade name into the form
+        this.jobDetailsForm.patchValue({ grade: this.selectedGradeName });
+      },
+      error: (err: any) => {
+        console.error('Error fetching grade name:', err);
+        this.selectedGradeName = ''; // Reset the grade name on error
+
+        // Reset the grade field in the form
+        this.jobDetailsForm.patchValue({ grade: '' });
+      },
+    });
+  }
+  //function to get joblocations in to a dropdown 
+
+  getjobLocationList() {
+    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.jobLocationDropDownData = data
+      }
+    })
+  }
+
+  subLocationsDropdown: any[] = []; // To store the dynamically fetched sub-locations
+
+  getSubLocationByid(selectedLocation: any): void {
+    if (selectedLocation && selectedLocation.id) {
+      this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
+        next: (data: any) => {
+          console.log('Sub Location Data:', data);
+
+          if (data.length === 0) {
+            this.subLocationsDropdown = []; // Reset if no sub-locations are found
+          } else {
+            this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+          }
+
+          // Reset the sub-location selection in the form
+          this.jobDetailsForm.patchValue({ subLocation: null });
+        },
+        error: (err: any) => {
+          console.error('Error fetching sub-location data:', err);
+          this.subLocationsDropdown = []; // Reset on error
+          this.jobDetailsForm.patchValue({ subLocation: null }); // Reset the sub-location field
+        },
+      });
+    } else {
+      this.subLocationsDropdown = []; // Reset if no location is selected
+      this.jobDetailsForm.patchValue({ subLocation: null }); // Reset the sub-location field
+    }
+  }
+
+  shiftDropdown: any[] = []; // To store the dynamically fetched shifts
+
+  getShiftBYid(selectedSubLocation: any): void {
+    if (selectedSubLocation && selectedSubLocation.id) {
+      const locationId = this.jobDetailsForm.get('location')?.value?.id; // Get the selected location ID
+      const subLocationId = selectedSubLocation.id; // Get the selected sub-location ID
+
+      console.log('Location ID:', locationId);
+      console.log('Sub Location ID:', subLocationId);
+
+      this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
+        next: (data: any) => {
+          console.log('Shift Data:', data);
+
+          if (data.length === 0) {
+            this.shiftDropdown = []; // Reset if no shifts are found
+
+          } else {
+            this.shiftDropdown = [].concat(...data.map((element: any) => element.orgShiftsItems)); // Flatten the shift data
+          }
+
+          console.log('Shift Dropdown Values:', this.shiftDropdown);
+        },
+        error: (err: any) => {
+          console.error('Error fetching shift data:', err);
+          this.shiftDropdown = []; // Reset on error
+
+        },
+      });
+    } else {
+      this.shiftDropdown = []; // Reset if no sub-location is selected
+
+    }
+  }
 
 
   postJobDetails(): void {
+    const currentDate = new Date().toISOString();
     if (this.jobDetailsForm.valid) {
-      const postJobDetails = {
-        ...this.jobDetailsForm.value, // Get all form values
-        employeeId: parseInt(this.empinfo.employeeId), // Add employee ID from `empinfo`
+      const playload = {
+        jobRole: this.jobDetailsForm.get('jobRole')?.value?.designationName, // Job Role from the form
+        employeeId: parseInt(this.empinfo.employeeId), // Employee ID from `empinfo`
+        subdeptId: this.jobDetailsForm.get('team')?.value?.subdepartmentId, // Sub-department ID from the selected team
         status: 'Active', // Set status to 'Active'
+        reportsTo: this.selectedEmployeeId,
+        teamManagerId: this.teammangerid, // Team Manager ID
+        gradeId: this.getGradeid, // Grade ID
+        jobTypeId: parseInt(this.jobDetailsForm.get('jobType')?.value?.sno), // Job Type ID
+        locationId: this.jobDetailsForm.get('location')?.value?.id, // Location ID
+        subLocationId: this.jobDetailsForm.get('subLocation')?.value?.id, // Sub-location ID
+        shiftId: this.jobDetailsForm.get('shift')?.value?.id, // Shift ID
+        effectiveDate: this.jobDetailsForm.get('effectiveDate')?.value, // Effective Date,
+        createdAt: currentDate,
+        updatedAt: currentDate,
       };
-  
-      console.log('Job Details to Submit:', postJobDetails);
-  
-      this.subscription = this.http.postdata('JobDetails', postJobDetails).subscribe({
+
+      console.log('Job Details to Submit:', playload);
+
+      this.subscription = this.http.postdata('JobDetails', playload).subscribe({
         next: (data: any) => {
           console.log('Response:', data);
-          if (data) {
-            this.getJobDetails(); // Refresh job details
-            this.conformationPopup.openSuccessModal('Data added successfully');
-            this.jobDetailsForm.reset(); // Reset the form
-            this.modalService.dismissAll(); // Close the modal if applicable
-          }
+          this.conformationPopup.openSuccessModal('Job Details added successfully');
+          this.getJobDetails(); // Refresh job details
+
+          this.jobDetailsForm.reset(); // Reset the form
+          this.modalService.dismissAll(); // Close the modal if applicable
+
         },
         error: (reason: any) => {
           console.error('Error:', reason);
@@ -284,9 +455,114 @@ export class JobDetailsComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.jobdetails = data as IJobdetails[];
+          this.jobdetails.next(data)
           console.log(this.jobdetails);
         },
       });
+  }
+
+  openModalupdate(content: any, data: any): void {
+   
+    this.selectedjobdetailesid = data.id; // Store the selected job details ID
+    console.log('Selected Job Details ID:', data);
+  
+    // Convert dates to ISO format if they exist
+    const effectiveDate = data.effectiveDate
+      ? new Date(data.effectiveDate).toISOString().split('T')[0]
+      : null;
+  
+      this.jobDetailsupdateForm.patchValue({
+        effectiveDate: effectiveDate,
+        jobRole: this.JobroleDesignation.find(
+          role => role.designationName === data.jobRole
+        ),
+        // department: this.departmentDetails.find(
+        //   dept => dept.departmentName === data.department
+        // ),
+        team: this.teamDropdownValues.find(
+          team => team.subdepartmentName === data?.team
+        ),
+        // teamManager: data.teamManager, // this one is a normal input
+        // reportingManager: this.allReportees.find(
+        //   mgr => mgr.employee === data.reportingManager
+        // ),
+        // location: this.jobLocationDropDownData.find(
+        //   loc => loc.jobLocationName === data.location
+        // ),
+        subLocation: this.subLocationsDropdown.find(
+          sub => sub.jobSubLocationName === data.subLocation
+        ),
+        shift: this.shiftDropdown.find(
+          shift => shift.shiftName === data.shift
+        ),
+        jobType: this.JobtypeDetails.find(
+         ( jt:any) => jt.jobType1 === data.jobType
+        ),
+        grade: this.GradeDetails.find(
+          grade => grade.gradeName === data.grade
+        )
+      });
+      
+  
+    // Debugging: Log the form value after patching
+    console.log('Form Value After Patching:', this.jobDetailsupdateForm.value);
+  
+    // Open the modal
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
+  opendeletModal(content: any, empexperimentdata: any): void {
+    // Store the selected job details data for deletion
+    this.selectedjobdetailesid = empexperimentdata.id; // Store the job details ID
+    this.empdata = {
+      id: empexperimentdata.id,
+      employeeId: empexperimentdata.employeeId,
+      effectiveDate: empexperimentdata.effectiveDate,
+      reportsto: empexperimentdata.reportsto,
+      department: empexperimentdata.departmentName,
+      bussinessArea: empexperimentdata.bussinessArea || '', // Optional field
+      lopcation: empexperimentdata.lopcation,
+      jobRole: empexperimentdata.jobRole,
+    };
+  
+    // Open the delete confirmation modal
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  
+  jobdetailsdelte(): void {
+    // Prepare the payload for the delete request
+    const sdata = {
+      status: "Void",
+      id: this.empdata.id,
+      employeeId: this.empdata.employeeId,
+      effectiveDate: this.empdata.effectiveDate,
+      reportsto: this.empdata.reportsto,
+      department: this.empdata.department,
+      bussinessArea: this.empdata.bussinessArea,
+      lopcation: this.empdata.lopcation,
+      jobRole: this.empdata.jobRole,
+    };
+  
+    // Make the POST request to delete the job details
+    this.subscription = this.http.postdata("JobDetails/UPDATER", sdata).subscribe({
+      next: (data: any) => {
+        console.log('Delete Response:', data);
+  
+        // Show success modal
+        this.conformationPopup.openSuccessModal('Job Details deleted successfully');
+  
+        // Refresh the job details list
+        this.getJobDetails();
+  
+        // Close the modal
+        this.modalService.dismissAll();
+      },
+      error: (err: any) => {
+        console.error('Error deleting job details:', err);
+  
+        // Show error modal
+        this.conformationPopup.openErrorModal('Deletion of data failed');
+      },
+    });
   }
 }

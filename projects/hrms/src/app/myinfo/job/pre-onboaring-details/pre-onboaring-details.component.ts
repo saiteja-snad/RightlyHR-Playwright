@@ -40,16 +40,16 @@ export class PreOnboaringDetailsComponent {
   initializeForm(): void {
     this.preOnboardingForm = this.fb.group({
       offerSentDate: [{ value: '', disabled: true }],
-    
+
       offerSentBy: [{ value: '', disabled: true }],
-      offerSentStatus: [{ value: '', disabled: true }], 
-      appointmentSentDate: [{ value: '', disabled: true }], 
-      appointmentSentBy: [{ value: '', disabled: true }], 
-      appointmentSentStatus: [{ value: '', disabled: true }], 
-      traineeOfferSentDate: [{ value: '', disabled: true }], 
-      traineeOfferSentBy: [{ value: '', disabled: true }], 
-      traineeOfferSentStatus: [{ value: '', disabled: true }], 
-      traineeAppointmentSentBy: [{ value: '', disabled: true }], 
+      offerSentStatus: [{ value: '', disabled: true }],
+      appointmentSentDate: [{ value: '', disabled: true }],
+      appointmentSentBy: [{ value: '', disabled: true }],
+      appointmentSentStatus: [{ value: '', disabled: true }],
+      traineeOfferSentDate: [{ value: '', disabled: true }],
+      traineeOfferSentBy: [{ value: '', disabled: true }],
+      traineeOfferSentStatus: [{ value: '', disabled: true }],
+      traineeAppointmentSentBy: [{ value: '', disabled: true }],
       traineeAppointmentSentStatus: [{ value: '', disabled: true }]
     });
   }
@@ -84,6 +84,7 @@ export class PreOnboaringDetailsComponent {
       this.preOnboardingForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
     }
   }
+  
   formatDate(data: any): any {
     if (data) {
       return moment(data).format('YYYY-MM-DD');

@@ -101,13 +101,11 @@ export class OffboardingDetailsComponent {
         this.offboardingForm.patchValue({
           exitReason: this.empdata.termreasonoffboard || '', // Replace with the correct property if different
           eligibleForRehire: this.empdata.eligibleforrehire || '', // Replace with the correct property if different
-          // relievingType: this.empdata.separationType || '', // Replace with the correct property if different
+          relievingType: this.empdata.separationType || '', // Replace with the correct property if different
           lastWorkingDay: this.empdata.lastworkingday || '' // Replace with the correct property if different
         });
 
-        // Set profile picture URL
-        // this.imgurl = this.empdata.profilePic;
-        // console.log(this.imgurl);
+        
       },
       error: (err: any) => {
         console.log(err);

@@ -1,0 +1,24 @@
+.no-data-placeholder-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.no-data-image {
+    width: 13rem;
+    height: 9rem;
+}
+
+.no-data-text {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: 0.6px;
+    color: #1C2D57;
+}

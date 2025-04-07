@@ -77,6 +77,7 @@ export class OnboardingRequestComponent {
        }
     })
    }
+
    isTrainingEndDateComplete(trainingEndDate: string): boolean {
     if (trainingEndDate) {
       const endDate = new Date(trainingEndDate);
@@ -88,6 +89,8 @@ export class OnboardingRequestComponent {
     }
     return false;
   }
+
+  
    shouldShowButton(trainingEndDate: string): boolean {
     const shouldShow = (this.isTrainingEndDateComplete(trainingEndDate)) ;
     return shouldShow;

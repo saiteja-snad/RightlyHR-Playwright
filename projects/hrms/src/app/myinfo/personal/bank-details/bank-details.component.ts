@@ -7,10 +7,11 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-bank-details',
-  imports: [Select, CommonModule, ReactiveFormsModule],
+  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })

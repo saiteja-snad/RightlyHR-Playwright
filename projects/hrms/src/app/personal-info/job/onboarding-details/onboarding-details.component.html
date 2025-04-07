@@ -9,7 +9,7 @@
             </div>
             <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
                 <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="showButtons();onSubmit()">Save</button>
             </div>
         </div>
 
@@ -18,8 +18,7 @@
             <form [formGroup]="onboardingForm" (ngSubmit)="onSubmit()">
                 <div class="row">
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="status" class="form-label custom-label mb-2">Status<span
-                                class="text-danger">*</span></label>
+                        <label for="status" class="form-label custom-label mb-2">Status</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="Statusdetails" optionLabel="statusname"
                                 placeholder="Please select status" formControlName="status"
@@ -34,8 +33,7 @@
 
 
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="dateOfJoining" class="form-label custom-label mb-2">Date Of Joining<span
-                                class="text-danger">*</span></label>
+                        <label for="dateOfJoining" class="form-label custom-label mb-2">Date Of Joining</label>
                         <input type="date" class="form-control custom-input" id="dateOfJoining"
                             formControlName="dateOfJoining">
                         <div class="error-msg"
@@ -45,8 +43,7 @@
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="branchLocation" class="form-label custom-label mb-2">Branch Location / Code<span
-                                class="text-danger">*</span></label>
+                        <label for="branchLocation" class="form-label custom-label mb-2">Branch Location / Code</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="branchLocations" optionLabel="branchCode" optionValue="branchLocation1"
                                 formControlName="branchLocation" placeholder="Select Branch Location / Code"
@@ -62,8 +59,7 @@
 
                     <!-- Add New Fields -->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="probationEndDate" class="form-label custom-label mb-2">Probation End Date<span
-                                class="text-danger">*</span></label>
+                        <label for="probationEndDate" class="form-label custom-label mb-2">Probation End Date</label>
                         <input type="date" class="form-control custom-input" id="probationEndDate"
                             formControlName="probationEndDate" placeholder="Please enter probation end date">
                         <div class="error-msg"
@@ -73,8 +69,7 @@
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="probationStatus" class="form-label custom-label mb-2">Probation Status<span
-                                class="text-danger">*</span></label>
+                        <label for="probationStatus" class="form-label custom-label mb-2">Probation Status</label>
 
                         <div class="custom-p-select-content">
                             <p-select [options]="probation" optionLabel="probationstatus1"
@@ -92,12 +87,7 @@
                         <label for="noticePeriodStatus" class="form-label custom-label mb-2">Notice Period Status
                             <span class="text-danger">*</span></label>
 
-                        <div class="custom-p-select-content">
-                            <p-select [options]="noticePeriodStatus" optionLabel="name"
-                                formControlName="noticePeriodStatus" placeholder="Select Notice Period Status"
-                                class="form-select custom-select">
-                            </p-select>
-                        </div>
+                       <input type="text" class="form-control custom-input"  formControlName="noticePeriodStatus">
                         <div class="error-msg"
                             *ngIf="onboardingForm.get('noticePeriodStatus')?.invalid && onboardingForm.get('noticePeriodStatus')?.touched">
                             Notice Period Status is required
@@ -122,11 +112,11 @@
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="salaryHold" class="form-label custom-label mb-2">Salary Hold<span
-                                class="text-danger">*</span></label>
+                        <label for="salaryHold" class="form-label custom-label mb-2">Salary Hold</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="sarleryonhold" optionLabel="name" optionValue="value"  formControlName="salaryHold"
-                                placeholder="Select Salary Hold" class="form-select custom-select">
+                            <p-select [options]="sarleryonhold" optionLabel="name" optionValue="value"
+                                formControlName="salaryHold" placeholder="Select Salary Hold"
+                                class="form-select custom-select">
                             </p-select>
                         </div>
                         <div class="error-msg"
@@ -136,8 +126,7 @@
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="pf" class="form-label custom-label mb-2">PF<span
-                                class="text-danger">*</span></label>
+                        <label for="pf" class="form-label custom-label mb-2">PF</label>
 
                         <div class="custom-p-select-content">
                             <p-select [options]="pfdata" optionLabel="name" optionValue="value" formControlName="pf"
@@ -151,19 +140,13 @@
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="esic" class="form-label custom-label mb-2">ESIC<span
-                                class="text-danger">*</span></label>
-                        
-                            <div class="custom-p-select-content">
-                                <p-select 
-                                [options]="esicdata" 
-                                optionLabel="name" 
-                                optionValue="value"
-                              formControlName="esic"
-                                placeholder="Please enter ESIC details" 
-                                class="form-select custom-select">
-                              </p-select>
-                            </div>
+                        <label for="esic" class="form-label custom-label mb-2">ESIC</label>
+
+                        <div class="custom-p-select-content">
+                            <p-select [options]="esicdata" optionLabel="name" optionValue="value" formControlName="esic"
+                                placeholder="Please enter ESIC details" class="form-select custom-select">
+                            </p-select>
+                        </div>
                         <div class="error-msg"
                             *ngIf="onboardingForm.get('esic')?.invalid && onboardingForm.get('esic')?.touched">
                             ESIC is required
@@ -171,20 +154,14 @@
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="pt" class="form-label custom-label mb-2">PT<span
-                                class="text-danger">*</span></label>
-                
-                         
-                            <div class="custom-p-select-content">
-                                <p-select 
-                                [options]="ptdata" 
-                                optionLabel="name" 
-                                optionValue="value"
-                              formControlName="pt"
-                                placeholder="Please enter PT details" 
-                                class="form-select custom-select">
-                              </p-select>
-                            </div>
+                        <label for="pt" class="form-label custom-label mb-2">PT</label>
+
+
+                        <div class="custom-p-select-content">
+                            <p-select [options]="ptdata" optionLabel="name" optionValue="value" formControlName="pt"
+                                placeholder="Please enter PT details" class="form-select custom-select">
+                            </p-select>
+                        </div>
                         <div class="error-msg"
                             *ngIf="onboardingForm.get('pt')?.invalid && onboardingForm.get('pt')?.touched">
                             PT is required
@@ -203,18 +180,13 @@
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="remoteLogin" class="form-label custom-label mb-2">Remote Login<span
-                                class="text-danger">*</span></label>
-                                <div class="custom-p-select-content">
-                                    <p-select 
-                                    [options]="remoteLogin" 
-                                    optionLabel="name" 
-                                    optionValue="value"
-                                  formControlName="remoteLogin"
-                                    placeholder="Select Remote Login" 
-                                    class="form-select custom-select">
-                                  </p-select>
-                                </div>
+                        <label for="remoteLogin" class="form-label custom-label mb-2">Remote Login</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="remoteLogin" optionLabel="name" optionValue="value"
+                                formControlName="remoteLogin" placeholder="Select Remote Login"
+                                class="form-select custom-select">
+                            </p-select>
+                        </div>
                         <div class="error-msg"
                             *ngIf="onboardingForm.get('remoteLogin')?.invalid && onboardingForm.get('remoteLogin')?.touched">
                             Remote Login is required
@@ -222,19 +194,13 @@
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="workLocation" class="form-label custom-label mb-2">Work Location<span
-                                class="text-danger">*</span></label>
-                                <div class="custom-p-select-content">
-                                    <p-select 
-                                    [options]="filteredWorkLocations" 
-                                    formControlName="workLocation"
-                                    optionLabel="name" 
-                                    optionValue="value"
-                                    placeholder="Select Work Location"
-                                
-                                    class="form-select custom-select">
-                                  </p-select>
-                                </div>
+                        <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="filteredWorkLocations" formControlName="workLocation"
+                                optionLabel="name" optionValue="value" placeholder="Select Work Location"
+                                class="form-select custom-select">
+                            </p-select>
+                        </div>
                         <div class="error-msg"
                             *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
                             Work Location is required
@@ -243,22 +209,16 @@
 
 
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="workLocation" class="form-label custom-label mb-2">Work From Home Maner<span
-                                class="text-danger">*</span></label>
-                                <div class="custom-p-select-content">
-                                    <p-select 
-                                    [options]="Manager" 
-                                    formControlName="wfhmanger"
-                                    optionLabel="name" 
-                                    optionValue="value"
-                                    placeholder="Select Work Location"
-                                
-                                    class="form-select custom-select">
-                                  </p-select>
-                                </div>
+                        <label for="workLocation" class="form-label custom-label mb-2">Work From Home Maner</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="Manager" formControlName="wfhmanger" optionLabel="name"
+                                optionValue="value" placeholder="Select Work From Home Maner"
+                                class="form-select custom-select"   (onChange)="onReportingManagerChange($event.value)">
+                            </p-select>
+                        </div>
                         <div class="error-msg"
                             *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
-                            Work Location is required
+                            Work From Home Maner is required
                         </div>
                     </div>
                 </div>

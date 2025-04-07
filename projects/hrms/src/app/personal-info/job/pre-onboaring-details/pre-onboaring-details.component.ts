@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
@@ -30,7 +29,7 @@ export class PreOnboaringDetailsComponent {
   constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeId();
     this.getAppointmentEmployeebyId();
     this.getOfferLetterEmployeebyId();
@@ -40,17 +39,18 @@ export class PreOnboaringDetailsComponent {
 
   initializeForm(): void {
     this.preOnboardingForm = this.fb.group({
-      offerSentDate: ['', Validators.required],
-      offerSentBy: ['', Validators.required],
-      offerSentStatus: ['', Validators.required],
-      appointmentSentDate: ['', Validators.required],
-      appointmentSentBy: ['', Validators.required],
-      appointmentSentStatus: ['', Validators.required],
-      traineeOfferSentDate: ['', Validators.required],
-      traineeOfferSentBy: ['', Validators.required],
-      traineeOfferSentStatus: ['', Validators.required],
-      traineeAppointmentSentBy: ['', Validators.required],
-      traineeAppointmentSentStatus: ['', Validators.required],
+      offerSentDate: [{ value: '', disabled: true }],
+    
+      offerSentBy: [{ value: '', disabled: true }],
+      offerSentStatus: [{ value: '', disabled: true }], 
+      appointmentSentDate: [{ value: '', disabled: true }], 
+      appointmentSentBy: [{ value: '', disabled: true }], 
+      appointmentSentStatus: [{ value: '', disabled: true }], 
+      traineeOfferSentDate: [{ value: '', disabled: true }], 
+      traineeOfferSentBy: [{ value: '', disabled: true }], 
+      traineeOfferSentStatus: [{ value: '', disabled: true }], 
+      traineeAppointmentSentBy: [{ value: '', disabled: true }], 
+      traineeAppointmentSentStatus: [{ value: '', disabled: true }]
     });
   }
 

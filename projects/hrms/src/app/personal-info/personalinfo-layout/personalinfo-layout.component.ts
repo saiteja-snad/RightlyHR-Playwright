@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
@@ -11,9 +12,8 @@ import { Select } from 'primeng/select';
 import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
 import { PersonalPersonalTabsComponent } from '../../shared/personalinfo-tabs/personal-personal-tabs/personal-personal-tabs.component';
 import { PersonalJobTabsComponent } from '../../shared/personalinfo-tabs/personal-job-tabs/personal-job-tabs.component';
-import { Iteammembers } from '../../Interface/members-model';
-import { Ipersonal } from '../../Interfaces/personal-modal';
 import { TranslateModule } from '@ngx-translate/core';
+import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 
 
 @Component({

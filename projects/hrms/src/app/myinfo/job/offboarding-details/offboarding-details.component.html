@@ -4,13 +4,13 @@
         <div>
           <span class="myinfo-sub-header">Offboarding Details</span>
         </div>
-        <div *ngIf="!buttons">
+        <!-- <div *ngIf="!buttons">
           <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
         </div>
         <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
           <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="offboardingForm.invalid" >Save</button>
-        </div>
+        </div> -->
       </div>
   
       <!-- Reactive Form -->
@@ -18,7 +18,7 @@
         <form [formGroup]="offboardingForm">
           <div class="row">
             <div class="col-lg-4 col-md-6 mb-4">
-              <label for="exitReason" class="form-label custom-label mb-2">Exit Reason<span class="text-danger">*</span></label>
+              <label for="exitReason" class="form-label custom-label mb-2">Exit Reason</label>
               <div class="custom-p-select-content">
                 <p-select [options]="terminationDetails" optionValue="id" optionLabel="reason" placeholder="Please select exit reason" formControlName="exitReason" class="form-select custom-select"></p-select>
               </div>
@@ -28,7 +28,7 @@
             </div>
   
             <div class="col-lg-4 col-md-6 mb-4">
-              <label for="eligibleForRehire" class="form-label custom-label mb-2">Eligible For Rehire<span class="text-danger">*</span></label>
+              <label for="eligibleForRehire" class="form-label custom-label mb-2">Eligible For Rehire</label>
               <div class="custom-p-select-content">
                 <p-select [options]="rehireDetails" optionValue="id" optionLabel="eligibleforrehire1" placeholder="Please select exit reason" formControlName="eligibleForRehire" class="form-select custom-select"></p-select>
               </div>
@@ -38,7 +38,7 @@
             </div>
   
             <div class="col-lg-4 col-md-6 mb-4">
-              <label for="relievingType" class="form-label custom-label mb-2">Relieving Type<span class="text-danger">*</span></label>
+              <label for="relievingType" class="form-label custom-label mb-2">Relieving Type</label>
               <input
                 type="text"
                 class="form-control custom-input"
@@ -53,7 +53,7 @@
             </div>
   
             <div class="col-lg-4 col-md-6 mb-4">
-              <label for="lastWorkingDay" class="form-label custom-label mb-2">Last Working Day<span class="text-danger">*</span></label>
+              <label for="lastWorkingDay" class="form-label custom-label mb-2">Last Working Day</label>
               <input
                 type="date"
                 class="form-control custom-input"

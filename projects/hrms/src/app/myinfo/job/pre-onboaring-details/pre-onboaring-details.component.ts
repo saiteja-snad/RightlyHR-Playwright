@@ -39,17 +39,18 @@ export class PreOnboaringDetailsComponent {
 
   initializeForm(): void {
     this.preOnboardingForm = this.fb.group({
-      offerSentDate: ['', Validators.required],
-      offerSentBy: ['', Validators.required],
-      offerSentStatus: ['', Validators.required],
-      appointmentSentDate: ['', Validators.required],
-      appointmentSentBy: ['', Validators.required],
-      appointmentSentStatus: ['', Validators.required],
-      traineeOfferSentDate: ['', Validators.required],
-      traineeOfferSentBy: ['', Validators.required],
-      traineeOfferSentStatus: ['', Validators.required],
-      traineeAppointmentSentBy: ['', Validators.required],
-      traineeAppointmentSentStatus: ['', Validators.required],
+      offerSentDate: [{ value: '', disabled: true }],
+    
+      offerSentBy: [{ value: '', disabled: true }],
+      offerSentStatus: [{ value: '', disabled: true }], 
+      appointmentSentDate: [{ value: '', disabled: true }], 
+      appointmentSentBy: [{ value: '', disabled: true }], 
+      appointmentSentStatus: [{ value: '', disabled: true }], 
+      traineeOfferSentDate: [{ value: '', disabled: true }], 
+      traineeOfferSentBy: [{ value: '', disabled: true }], 
+      traineeOfferSentStatus: [{ value: '', disabled: true }], 
+      traineeAppointmentSentBy: [{ value: '', disabled: true }], 
+      traineeAppointmentSentStatus: [{ value: '', disabled: true }]
     });
   }
 

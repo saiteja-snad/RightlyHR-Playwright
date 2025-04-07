@@ -1,95 +1,171 @@
 <div class="custom-main-component-container">
-    <div class="card emergency-contact-content-card p-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <span class="emergency-contact-sub-header">Emergency Contact 1</span>
-            </div>
-            <div *ngIf="!buttons">
-                <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
-            </div>
-            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
-                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid" (click)="saveForm()">Save</button>
-            </div>
-        </div>
-
-        <!-- Reactive Form -->
-        <div class="myinfo-input-content">
-            <form [formGroup]="emergencyContactForm">
-                <div class="row">
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="contact1Name" class="form-label custom-label mb-2">Name<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
-                            placeholder="Please enter name">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="contact1Email" class="form-label custom-label mb-2">Email ID <span
-                                class="text-danger">*</span></label>
-                        <input type="email" class="form-control custom-input" id="contact1Email" formControlName="contact1Email"
-                            placeholder="Please enter email">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="contact1Phone" class="form-label custom-label mb-2">Phone Number <span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="contact1Phone" formControlName="contact1Phone"
-                            placeholder="Please enter phone number">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="contact1Relationship" class="form-label custom-label mb-2">Relationship<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="contact1Relationship" formControlName="contact1Relationship"
-                            placeholder="Please enter relationship">
-                    </div>
-                </div>
-            </form>
-        </div>
+  <div class="card emergency-contact-content-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+      <div>
+        <span class="emergency-contact-sub-header">Emergency Contact 1</span>
+      </div>
+      <div *ngIf="!buttons">
+        <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+      </div>
+      <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+        <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid"
+          (click)="saveForm()">Save</button>
+      </div>
     </div>
 
-    <div class="card emergency-contact-content-card p-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <span class="emergency-contact-sub-header">Emergency Contact 2</span>
+    <!-- Reactive Form -->
+    <div class="myinfo-input-content">
+      <form [formGroup]="emergencyContactForm">
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="contact1Name" class="form-label custom-label mb-2">Name<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
+              placeholder="Please enter name"  (keypress)="formValidation.restrictInput($event)">
+            <div class="error-msg"
+              *ngIf="emergencyContactForm.get('contact1Name')?.invalid && emergencyContactForm.get('contact1Name')?.touched">
+              Name is required
             </div>
-            <div *ngIf="!buttons2">
-                <a (click)="enableForm2()"><i class="bi bi-pencil-square"></i></a>
-            </div>
-            <div class="d-flex justify-content-end gap-3" *ngIf="buttons2">
-                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid" (click)="saveForm()">Save</button>
-            </div>
-        </div>
+          </div>
 
-        <!-- Reactive Form -->
-        <div class="myinfo-input-content">
-            <form [formGroup]="emergencyContactForm">
-                <div class="row">
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="contact2Name" class="form-label custom-label mb-2">Name<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
-                            placeholder="Please enter name">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="contact2Email" class="form-label custom-label mb-2">Email ID <span
-                                class="text-danger">*</span></label>
-                        <input type="email" class="form-control custom-input" id="contact2Email" formControlName="contact2Email"
-                            placeholder="Please enter email">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="contact2Phone" formControlName="contact2Phone"
-                            placeholder="Please enter phone number">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="contact2Relationship" formControlName="contact2Relationship"
-                            placeholder="Please enter relationship">
-                    </div>
-                </div>
-            </form>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="contact1Email" class="form-label custom-label mb-2">Email ID <span
+                class="text-danger">*</span></label>
+            <input type="email" class="form-control custom-input" id="contact1Email" formControlName="contact1Email"
+              placeholder="Please enter email">
+            <div class="error-msg"
+              *ngIf="emergencyContactForm.get('contact1Email')?.invalid && emergencyContactForm.get('contact1Email')?.touched">
+              <span *ngIf="emergencyContactForm.get('contact1Email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="emergencyContactForm.get('contact1Email')?.errors?.['email']">Invalid email format</span>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
+                class="text-danger">*</span></label>
+            <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+
+              <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                [selectedCountryCode]="emergencyContactForm.get('contact1CountryCode')?.value" [countryListConfig]="countryListConfig"
+                class="country-input" (onCountryChange)="onCountryChange($event)">
+              </lib-country-list>
+              <input type="text"  class="form-control custom-input" formControlName="contact1Phone"
+              autocomplete="off" placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                [value]="emergencyContactForm.get('contact1Phone')?.value ? formatPhoneNumber(emergencyContactForm.get('contact1Phone')?.value) : ''"
+                required>
+            </div>
+            <div class="error-msg"
+              *ngIf="emergencyContactForm.get('contact1Phone')?.invalid && emergencyContactForm.get('contact1Phone')?.touched">
+              <div *ngIf="emergencyContactForm.get('contact1Phone')?.errors?.['required']">Phone number is
+                required</div>
+              <div *ngIf="emergencyContactForm.get('contact1Phone')?.errors?.['pattern']">Invalid phone number
+                format</div>
+                <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('invalidPhoneNumber')">The phone number is not valid for the selected country.</div>
+
+               
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="contact1Relationship" class="form-label custom-label mb-2">Relationship<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact1Relationship"
+                placeholder="Please select relationship" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="emergencyContactForm.get('contact1Relationship')?.invalid && emergencyContactForm.get('contact1Relationship')?.touched">
+              Relationship is required
+            </div>
+          </div>
         </div>
+      </form>
     </div>
+  </div>
+
+  <div class="card emergency-contact-content-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+      <div>
+        <span class="emergency-contact-sub-header">Emergency Contact 2</span>
+      </div>
+      <!-- <div *ngIf="!buttons2">
+        <a (click)="enableForm2()"><i class="bi bi-pencil-square"></i></a>
+      </div>
+      <div class="d-flex justify-content-end gap-3" *ngIf="buttons2">
+        <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid"
+          (click)="saveForm()">Save</button>
+      </div> -->
+    </div>
+
+    <!-- Reactive Form -->
+    <div class="myinfo-input-content">
+      <form [formGroup]="emergencyContactForm">
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="contact2Name" class="form-label custom-label mb-2">Name<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
+              placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
+            <div class="error-msg"
+              *ngIf="emergencyContactForm.get('contact2Name')?.invalid && emergencyContactForm.get('contact2Name')?.touched">
+              Name is required
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="contact2Email" class="form-label custom-label mb-2">Email ID <span
+                class="text-danger">*</span></label>
+            <input type="email" class="form-control custom-input" id="contact2Email" formControlName="contact2Email"
+              placeholder="Please enter email">
+            <div class="error-msg"
+              *ngIf="emergencyContactForm.get('contact2Email')?.invalid && emergencyContactForm.get('contact2Email')?.touched">
+              <span *ngIf="emergencyContactForm.get('contact2Email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="emergencyContactForm.get('contact2Email')?.errors?.['email']">Invalid email format</span>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
+                class="text-danger">*</span></label>
+            <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+
+              <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                [selectedCountryCode]="emergencyContactForm.get('contact2CountryCode')?.value" [countryListConfig]="countryListConfig"
+                class="country-input" (onCountryChange)="onCountryChange1($event)">
+              </lib-country-list>
+              <input type="text"  class="form-control custom-input" formControlName="contact2Phone"
+              autocomplete="off" placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                [value]="emergencyContactForm.get('contact2Phone')?.value ? formatPhoneNumber(emergencyContactForm.get('contact2Phone')?.value) : ''"
+                required>
+            </div>
+            <div class="error-msg"
+              *ngIf="emergencyContactForm.get('contact2Phone')?.invalid && emergencyContactForm.get('contact2Phone')?.touched">
+              <div *ngIf="emergencyContactForm.get('contact2Phone')?.errors?.['required']">Phone number is
+                required</div>
+              <div *ngIf="emergencyContactForm.get('contact2Phone')?.errors?.['pattern']">Invalid phone number
+                format</div>
+                <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('invalidPhoneNumber')">The phone number is not valid for the selected country.</div>
+
+               
+            </div>
+          </div>
+
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact2Relationship"
+                placeholder="Please select relationship" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="emergencyContactForm.get('contact2Relationship')?.invalid && emergencyContactForm.get('contact2Relationship')?.touched">
+              Relationship is required
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

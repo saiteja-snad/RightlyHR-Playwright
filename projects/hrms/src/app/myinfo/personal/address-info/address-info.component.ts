@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 
 @Component({
@@ -33,7 +34,7 @@ export class AddressInfoComponent {
   ];
 
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -52,13 +53,13 @@ export class AddressInfoComponent {
       currentCity: ['', Validators.required],
       currentState: ['', Validators.required],
       currentCountry: ['', Validators.required],
-      currentZipCode: ['', Validators.required],
+      currentZipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
       permanentAddressLine1: ['', Validators.required],
       permanentAddressLine2: [''],
       permanentCity: ['', Validators.required],
       permanentState: ['', Validators.required],
       permanentCountry: ['', Validators.required],
-      permanentZipCode: ['', Validators.required],
+      permanentZipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
     });
   }
 
@@ -70,6 +71,12 @@ export class AddressInfoComponent {
     this.addressForm.get('currentState')?.enable();
     this.addressForm.get('currentCountry')?.enable();
     this.addressForm.get('currentZipCode')?.enable();
+    this.addressForm.get('permanentAddressLine1')?.enable();
+    this.addressForm.get('permanentAddressLine2')?.enable();
+    this.addressForm.get('permanentCity')?.enable();
+    this.addressForm.get('permanentState')?.enable();
+    this.addressForm.get('permanentCountry')?.enable();
+    this.addressForm.get('permanentZipCode')?.enable();
   }
   enableForm2(): void {
     this.buttons2 = true;
@@ -182,6 +189,7 @@ export class AddressInfoComponent {
     .subscribe({
       next: (data: any) => {
         console.log('Data updated successfully:', data);
+
         this.modalService.dismissAll();
         this.postEmployeeAddresses(); // Ensure updated addresses are sent
         //this.conformationPopup.openSuccessModal('Address Info updated successfully');
@@ -202,6 +210,10 @@ export class AddressInfoComponent {
       .subscribe({
         next: (data: any) => {
           console.log('Addresses updated successfully:', data);
+          this.addressForm.disable();
+          this.getEmployeeId();
+          this.buttons = false;
+          this.buttons2 = false;
           this.conformationPopup.openSuccessModal('Address Info updated successfully');
         },
         error: (reason) => {
@@ -211,6 +223,7 @@ export class AddressInfoComponent {
         },
       });
   }
+
   copyCurrentAddress(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     if (isChecked) {
@@ -233,9 +246,11 @@ export class AddressInfoComponent {
       });
     }
   }
-  saveForm(): void {
-    if (this.addressForm.valid) {
-      console.log('Form Data:', this.addressForm.value);
+  showButtons(): void {
+    this.buttons = !this.buttons;
+    if (this.buttons) {
+      this.enableForm();
+    } else {
       this.disableForm();
     }
   }

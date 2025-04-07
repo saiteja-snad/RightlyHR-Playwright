@@ -100,7 +100,7 @@
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="university" formControlName="university"
-              placeholder="Please enter university">
+              placeholder="Please enter university" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">
               University is required
@@ -113,7 +113,7 @@
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization"
-              placeholder="Please enter specialization">
+              placeholder="Please enter specialization" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="educationForm.get('specialization')?.invalid && educationForm.get('specialization')?.touched">
               Specialization is required
@@ -212,7 +212,7 @@
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="university" formControlName="universityupdate"
-              placeholder="Please enter university">
+              placeholder="Please enter university" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('universityupdate')?.invalid && educationupdateForm.get('universityupdate')?.touched">
               University is required
@@ -225,7 +225,7 @@
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization"
-              formControlName="specializationupdate" placeholder="Please enter specialization">
+              formControlName="specializationupdate" placeholder="Please enter specialization" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('specializationupdate')?.invalid && educationupdateForm.get('specializationupdate')?.touched">
               Specialization is required

@@ -208,9 +208,9 @@ export class JobDetailsComponent {
         this.allempdata = data as IJob[];
 
         // Map the employee data to the format required by p-select
-        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string }) => ({
+        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string,fusionEmpId:any }) => ({
           id: employee.employeeId, // Use the employeeId as the unique identifier
-          employee: `${employee.firstName} ${employee.lastName}`, // Combine first and last name
+          employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName} ${employee.lastName}`, // Combine first and last name
         }));
 
         console.log('All Reportees:', this.allReportees);
@@ -471,19 +471,38 @@ export class JobDetailsComponent {
       ? new Date(data.effectiveDate).toISOString().split('T')[0]
       : null;
   
-    this.jobDetailsupdateForm.patchValue({
-      effectiveDate: effectiveDate,
-      jobRole: data.jobRole, // Job Role as a string
-      grade: data.gradeName || '', // Grade name
-      department: data.departmentName, // Department name as a string
-      team: data.subdepartmentName, // Team name as a string
-      teamManager: data.teamManagerId || '', // Team Manager ID
-      reportingManager: `${data.firstName} ${data.lastName}`, // Reporting Manager as a string
-      location: data.locationName, // Location name as a string
-      subLocation: data.subLocation, // Sub-location name as a string
-      shift: data.shiftName, // Shift name as a string
-      jobType: data.jobTypeName, // Job Type name as a string
-    });
+      this.jobDetailsupdateForm.patchValue({
+        effectiveDate: effectiveDate,
+        jobRole: this.JobroleDesignation.find(
+          role => role.designationName === data.jobRole
+        ),
+        // department: this.departmentDetails.find(
+        //   dept => dept.departmentName === data.department
+        // ),
+        team: this.teamDropdownValues.find(
+          team => team.subdepartmentName === data?.team
+        ),
+        // teamManager: data.teamManager, // this one is a normal input
+        // reportingManager: this.allReportees.find(
+        //   mgr => mgr.employee === data.reportingManager
+        // ),
+        // location: this.jobLocationDropDownData.find(
+        //   loc => loc.jobLocationName === data.location
+        // ),
+        subLocation: this.subLocationsDropdown.find(
+          sub => sub.jobSubLocationName === data.subLocation
+        ),
+        shift: this.shiftDropdown.find(
+          shift => shift.shiftName === data.shift
+        ),
+        jobType: this.JobtypeDetails.find(
+         ( jt:any) => jt.jobType1 === data.jobType
+        ),
+        grade: this.GradeDetails.find(
+          grade => grade.gradeName === data.grade
+        )
+      });
+      
   
     // Debugging: Log the form value after patching
     console.log('Form Value After Patching:', this.jobDetailsupdateForm.value);

@@ -774,7 +774,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     //==============================================================================================================================
     //Calculation conditions for esic contribution of an employeer
     console.log(this.prospectiveEmpData.esic);
-    if (this.prospectiveEmpData.esic.toString() == 'true') {
+    if (this.prospectiveEmpData?.esic?.toString() == 'true') {
       let condition1 = Employee.grossSalary >= 23195;
       if (!condition1) {
         Employee.esicContribution = Math.round(

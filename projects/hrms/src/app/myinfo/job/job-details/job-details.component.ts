@@ -8,10 +8,11 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })

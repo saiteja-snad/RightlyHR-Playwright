@@ -4,10 +4,9 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, } from 'primeng/paginator';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { IJob } from '../../../Interfaces/letters-model';
 import { Idocsdetail, Ipersonal } from '../../../Interfaces/personal-modal';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -24,7 +23,7 @@ import { Router } from '@angular/router';
   styleUrl: './onboarding-request.component.scss'
 })
 export class OnboardingRequestComponent implements OnInit, OnDestroy{
-  documentData = [] as any;
+  documentData=new BehaviorSubject<any[]>([]);
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;
   subscription!: Subscription;
@@ -111,11 +110,14 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
       .getData(`OnBoardingDocuments/${EmpId}`)
       .subscribe({
         next: (data: any) => {
-          this.documentData = data;
-          let disablerejectvalue = !this.documentData.some((element: any) => {
-            return element.status === 'Rejected';
+          console.log(data)
+          this.documentData.next(data);
+          this.subscription = this.documentData.subscribe((documents: any[]) => {
+            let disablerejectvalue = !documents.some((element: any) => {
+              return element.status === 'Rejected';
+            });
+            this.rerequestdisplayforrejected = disablerejectvalue;
           });
-          this.rerequestdisplayforrejected = disablerejectvalue;
         },
       });
   }

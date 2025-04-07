@@ -117,8 +117,9 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
       .subscribe({
         next: (data: any) => {
           this.getOfferLetters();
-          this.employeeEmail(Values);
           this.conformationPopup.openSuccessModal('Offer Released Successfully ');
+          this.employeeEmail(Values);
+         
         },
         error: (reason: any) => {
           console.log(reason);

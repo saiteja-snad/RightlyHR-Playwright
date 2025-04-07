@@ -1,6 +1,7 @@
 export interface Ipersonal {
 experienceType: string;
 employeeId: any;
+emailaddress: string,
 }
 export interface Iteammembers{
     [x: string]: any;

@@ -186,9 +186,9 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Designation <span
                                     class="error-msg">*</span></label>
-                                    <p-select [options]="JobroleDetails" optionValue="jobRole1" optionLabel="jobRole1"
-                                    placeholder="Please select gender" formControlName="jobRoleDetails" 
-                                    class="form-select custom-select"></p-select>
+                                    <input 
+                                    placeholder="Please select Designation" formControlName="jobRoleDetails" 
+                                    class="form-control custom-input">
                                 <div *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
                                     <div class="error-msg">Designation is required</div>
                                 </div>

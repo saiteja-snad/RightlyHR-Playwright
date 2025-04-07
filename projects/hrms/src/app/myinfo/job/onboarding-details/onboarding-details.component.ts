@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Select } from 'primeng/select';
 import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -11,7 +10,7 @@ import { IProbation } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule,ReactiveFormsModule,Select],
+  imports: [CommonModule,ReactiveFormsModule,],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss'
 })

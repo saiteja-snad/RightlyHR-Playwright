@@ -14,7 +14,7 @@
         <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
             <div class="card letter-fields-content p-4">
                 <form [formGroup]="employeeForm"
-                    (ngSubmit)="postTraineeOfferLetterFieldsDetails(employeeForm)">
+                (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
                     <div class="row">
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">{{'Search Employee'|translate}}<span
@@ -242,7 +242,7 @@
                             <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerSentDate"
-                                placeholder="Please enter offer issued date" (change)="onDataClick(employeeForm.get('offerSentDate')?.value)"/>
+                                placeholder="Please enter offer issued date"  (click)="pathValuesFuction()"/>
                             <div
                                 *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                                 <div class="error-msg">Offer Issued Date is required</div>
@@ -252,7 +252,7 @@
                             <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter expected start date" (change)="onDataClick(employeeForm.get('dateOfJoining')?.value)"/>
+                                placeholder="Please enter expected start date" (click)="pathValuesFuction()"/>
                             <div
                                 *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                 <div class="error-msg">Expected Start Date is required</div>
@@ -266,7 +266,7 @@
                             <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                                placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate" />
+                                placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate" (click)="pathValuesFuction()"/>
                             <div
                                 *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                                 <div class="error-msg">Offer Expiry Date is required</div>
@@ -320,7 +320,7 @@
                         <div class="col-xl-12 mb-4">
                             <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
                             <textarea class="form-control custom-input" formControlName="note"
-                                placeholder="Note"></textarea>
+                                placeholder="Note" (click)="pathValuesFuction()"></textarea>
                             <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                                 <div class="error-msg">Note is required</div>
                             </div>
@@ -344,8 +344,8 @@
                             </div>
                         </div>
                         <div class="d-flex flex-wrap gap-3 pt-4">
-                            <button type="submit" class="custom-btn btn-primary" >{{'Generate Offer Letter'|translate}}</button>
-                            <button type="button" class="custom-btn btn-primary"  (onChange)="requestForApproval()">{{'Request For Approval'|translate}}</button>
+                            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">{{'Generate Offer Letter'|translate}}</button>
+                            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" (click)="emailSendingforApprover()">{{'Request For Approval'|translate}}</button>
                         </div>
                     </div>
                 </form>
@@ -396,8 +396,7 @@
                                             </ul>
                                         </div>
                                         <div class="col-md-4 fw-bolder">
-                                            <p class="text-end letter-text p-0">Date: {{traineeEmpData.offerIssuedDate |
-                                                dateformat}}</p>
+                                            <p class="text-end letter-text p-0">Date: {{traineeEmpData.offerIssuedDate | dateformat}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -411,8 +410,8 @@
                                     <ol class="liststylenumber">
                                         <li class="paragraph mb-3">
                                             <strong>{{'Start Date and Duration' | translate}}: </strong>Your internship will commence on
-                                            <u><strong>{{traineeEmpData.dateOfJoining}}</strong></u> and is expected to complete on
-                                            <u><strong>{{traineeEmpData.endDate}}</strong></u>, lasting for a period of 
+                                            <u><strong>{{traineeEmpData.dateOfJoining | dateformat}}</strong></u> and is expected to complete on
+                                            <u><strong>{{traineeEmpData.endDate | dateformat}}</strong></u>, lasting for a period of 
                                             <strong>{{traineeEmpData.internshipperiod}} Months</strong>.
                                           </li>
                                         <li class="paragraph mb-3"><strong>{{'Working Hours and Location'|translate}}: </strong>The

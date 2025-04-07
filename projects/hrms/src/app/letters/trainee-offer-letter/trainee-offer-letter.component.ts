@@ -114,7 +114,6 @@ export class TraineeOfferLetterComponent {
   constructor(
     private http: HttpService,
     config: NgbModalConfig, private modalService: NgbModal, private fb: FormBuilder,
-    // private toaster: NgToastService,
     private router: Router,
     private authService: AuthService,
     // private _userAcessService: UserAccessService,
@@ -222,11 +221,6 @@ export class TraineeOfferLetterComponent {
     } else {
       this.traineeofferletterUpload(this.generatingEmployeeId, this.generatedfile);
     }
-    // if (this.employeeForm.valid) {
-    //   console.log('Request for approval:', this.employeeForm.value);
-    // } else {
-    //   console.log('Form is invalid');
-    // }
   }
 
   toggleDropdown1() {
@@ -246,6 +240,7 @@ export class TraineeOfferLetterComponent {
     this.updateSelectedEmployeeDisplay();
     console.log('Selected Employees:', this.selectedEmployees);
   }
+
   updateSelectedEmployeeDisplay() {
     if (this.selectedEmployees.length > 0) {
       let firstSelectedEmployee = this.filteredEmployees.find(emp => emp.employeeId === this.selectedEmployees[0]);
@@ -268,6 +263,7 @@ export class TraineeOfferLetterComponent {
   onDateOfJoiningChange() {
     this.calculateEndDate(this.traineeEmpData.internshipperiod);
   }
+
   calculateEndDate(value: any) {
     if (this.traineeEmpData.dateOfJoining && value) {
       const startDate = new Date(this.traineeEmpData.dateOfJoining);
@@ -469,27 +465,14 @@ export class TraineeOfferLetterComponent {
   //Function to generate offer letter
   onTraineeOfferLetterFormSubmitForGenerateDoc(f: FormGroup) {
     this.loading = true;
+    console.log(f);
+    this.updateTraineeOfferLetterFieldsDetails(f.value); 
     //const data =  this.traineeEmpData;
-    if (this.traineeEmpData.isEmployeevalid === true) {
-      this.updateTraineeOfferLetterFieldsDetails(f.value); //existing emp  offer lettr
-    } else {
-      this.postTraineeOfferLetterFieldsDetails(f.value); //new offer lettr
-    }
-  }
-
-  onclickcheckempidnull(empidValue: any) {
-    if (empidValue == "") {
-      this.disablebuttonforemployeeid = true
-    }
-    else {
-      this.disablebuttonforemployeeid = false
-    }
-    this.fusionEmpId = empidValue;
-    if (this.fusionEmpId) {
-      this.onClickValidation(this.fusionEmpId);
-    } else {
-      this.resetInputFields();
-    }
+    // if (this.traineeEmpData.isEmployeevalid === true) {
+    //   this.updateTraineeOfferLetterFieldsDetails(f.value); //existing emp  offer lettr
+    // } else {
+    //   this.postTraineeOfferLetterFieldsDetails(f.value); //new offer lettr
+    // }
   }
 
   onclickDesignation(selectedAuthority: any) {
@@ -592,7 +575,36 @@ export class TraineeOfferLetterComponent {
       this.buttonValue = 'Generate Offer Letter';
     }
   }
-
+  formatDate(date:any) {
+    return date?.split('T')[0]; 
+   }
+//function to patch the values in the form to the template
+pathValuesFuction(){
+  const formValues = this.employeeForm.value;
+console.log(formValues);
+this.traineeEmpData = {
+  personalEmail: formValues.personalEmail,
+  title: formValues.title,
+  firstName: formValues.firstName,
+  middleName: formValues.middleName,
+  lastName: formValues.lastName,
+  gender: formValues.gender,
+  jobRole: formValues.jobRoleDetails,
+  esic: formValues.esic,
+  pf: formValues.pf,
+  amount: formValues.amount,
+  isVariablePay: formValues.isVariablePay,
+  variablePayAmount: formValues.variablePayAmount,
+  locationId: formValues.locationId,
+  sublocationId: formValues.JobSubLocationName,
+  offerIssuedDate: formValues.offerIssuedDate,
+  dateOfJoining: formValues.dateOfJoining,
+  copys: formValues.Copys,
+  trainingEndDate:this.traineeEmpData.endDate,
+  note: formValues.note,
+  authorityid: formValues.authorityid,
+};
+}
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
     if (Empidvalue) {
@@ -627,10 +639,11 @@ export class TraineeOfferLetterComponent {
                    variablePayAmount:this.traineeEmpData?.variablePayAmount,
                    locationId: this.traineeEmpData?.locationId,
                    JobSubLocationName: this.traineeEmpData?.sublocationId,
-                   offerIssuedDate:this.traineeEmpData?.offerIssuedDate,
-                   dateOfJoining: this.traineeEmpData?.dateOfJoining,
+                   offerIssuedDate:this.formatDate(this.traineeEmpData?.offerIssuedDate),
+                   dateOfJoining: this.formatDate(this.traineeEmpData?.dateOfJoining),
                    Copys: this.traineeEmpData?.copys,
-                   offerExpiryDate: this.traineeEmpData?.offerExpiryDate,
+                  //  offerExpiryDate: this.formatDate(this.traineeEmpData?.offerExpiryDate),
+                   trainingEndDate:this.formatDate(this.traineeEmpData.endDate),
                    note:this.traineeEmpData?.note,
                    authorityid: this.traineeEmpData?.authorityid,
                  })
@@ -777,14 +790,6 @@ export class TraineeOfferLetterComponent {
 
         case true:
           if (this.traineeEmpData.esic == false) {
-            // if(Employee.grossSalary<=15000){
-            //   Employee.pfContribution = Math.round((Employee.grossSalary * (6.519 / 100)));
-
-            //   if (Employee.pfContribution >= 1800) {
-            //     Employee.pfContribution = 1800;
-            //   }
-            //   console.log(Employee.pfContribution);
-            // }
             Employee.pfContribution = Math.round((Employee.grossSalary * (6.719 / 100)));
 
             if (Employee.pfContribution >= 1800) {
@@ -1065,7 +1070,7 @@ export class TraineeOfferLetterComponent {
       esic: data.esic,
       dateOfJoining: data.dateOfJoining,
       substatus: 'Offer Letter Generated',
-      trainingEndDate: data.endDate,
+      trainingEndDate:this.traineeEmpData.endDate,
     };
     console.log(sdata);
 
@@ -1161,8 +1166,6 @@ export class TraineeOfferLetterComponent {
   //download document
   async downLoadDocument(EmpValue: any) {
     const data = this.traineeEmpData;
-
-
     console.log(data);
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();

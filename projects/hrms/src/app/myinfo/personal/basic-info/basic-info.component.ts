@@ -48,6 +48,7 @@ export class BasicInfoComponent {
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
       employeeId: ['', Validators.required],
+      fusionEmpId: ['', Validators.required],
       salutation: [null, Validators.required],
       firstName: ['', Validators.required],
       middleName: [''],
@@ -78,6 +79,7 @@ export class BasicInfoComponent {
   
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
+      fusionEmpId: data.fusionEmpId,
       salutation: data.title,
       firstName: data.firstName,
       middleName: data.middleName,

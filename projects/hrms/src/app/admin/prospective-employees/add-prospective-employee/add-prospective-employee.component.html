@@ -96,7 +96,7 @@
                         <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
                             placeholder="Select Location" class="form-select custom-select" id="location" name="location"
                             formControlName="location" (onChange)="OnClickLocation($event)" required>
-                            <option [ngValue]="undefined">{{'Select Location'|translate}}</option>
+                            
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('location')?.invalid && employeeForm.get('location')?.touched"

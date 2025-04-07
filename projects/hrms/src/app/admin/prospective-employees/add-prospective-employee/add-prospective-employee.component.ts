@@ -234,7 +234,7 @@ selectgradId(event:any){
                 // effectiveDate: null,
                 // reportsto: ,
                 gradeId: this.gradeIdValue.gradeId,
-                locationid: this.employeeForm.get('location')?.value,
+                locationid: this.postProspectiveEmpDetails.locationid,
                 sublocationid: this.employeeForm.get('subLocation')?.value,
                 jobRole: this.employeeForm.get('designation')?.value,
               };

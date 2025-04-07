@@ -8,29 +8,30 @@
             <tr>
                 <th>{{'DATE'|translate}}</th>
                 <th>{{'EMPLOYEE NAME'|translate}}</th>
-                
-                <th >{{'ACTION'|translate}}</th>
+                <th>{{'ACTION'|translate}}</th>
             </tr>
         </thead>
         <tbody>
             @if(AppointmentLetters.length > 0){
-                @for (appointmentLetter of AppointmentLetters| appointmentletterpipe : searchValue; ; track appointmentLetter.id){
-                    <tr  class="hover">
-                    <td>{{appointmentLetter.appointmentSentDate | dateformat }}</td>
-                    <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
-                    <td style="text-align: center;">
-                        <div>
-                            <button class="custom-btn btn-primary me-3 mb-3" (click)="onSelectDownload(appointmentLetter)">Download</button>
-                        </div>
-                    </td>
-                </tr>
-                }
-            
+            @for (appointmentLetter of AppointmentLetters| appointmentletterpipe : searchValue; ; track
+            appointmentLetter.id){
+            <tr class="hover">
+                <td>{{appointmentLetter.appointmentSentDate | dateformat }}</td>
+                <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
+                <td style="text-align: center;">
+                    <div>
+                        <button class="custom-btn btn-primary me-3 mb-3"
+                            (click)="onSelectDownload(appointmentLetter)">Download</button>
+                    </div>
+                </td>
+            </tr>
+            }
+    
             }
             @else {
-                <tr>
-                    <td colspan="8" style="text-align: center;">No Data Found</td>
-                </tr>
+            <tr>
+                <td colspan="8" style="text-align: center;">No Data Found</td>
+            </tr>
             }
         </tbody>
     </table>

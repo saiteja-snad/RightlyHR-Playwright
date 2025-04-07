@@ -18,12 +18,11 @@ export class DocumentHistoryAppointmentLetterComponent {
 
   subscription!: Subscription;
   AppointmentLetters = [] as IAppointmentLetterDetails[];
-searchValue: any;
+  searchValue: any;
 
-  constructor(private http: HttpService)
-  { }
+  constructor(private http: HttpService) { }
   ngOnInit(): void {
-   this.getAppointmentLetters();
+    this.getAppointmentLetters();
 
   }
 
@@ -54,5 +53,11 @@ searchValue: any;
         },
         error: (reason) => console.log(reason),
       });
+  }
+
+  ngDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

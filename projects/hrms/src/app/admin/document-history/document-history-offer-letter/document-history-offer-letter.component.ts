@@ -148,6 +148,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
     this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
       next: (data: any) => {
         this.conformationPopup.openSuccessModal('Email Sent Successfully ');
+        this.modalService.dismissAll();
       },
       error: (err: any) => {
         console.log(err);
@@ -223,7 +224,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
         
         this.Approvednotification(datas);
         this.conformationPopup.openSuccessModal('Approved Email Sent Successfully ');
-
+        this.modalService.dismissAll();
       }
     })
 
@@ -352,7 +353,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
       next: (data: any) => {
         if (data) {
           this.conformationPopup.openSuccessModal('Rejected Email Sent Successfully')
-        
+          this.modalService.dismissAll();
         }
       },
       error: (err: any) => {

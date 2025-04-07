@@ -31,7 +31,7 @@ export class FamilyDetailsComponent implements OnInit {
 
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeFamilyDetailsForm();
     this.initializeFamilyDetailsupdateForm();
     this.getFamilyRelations();

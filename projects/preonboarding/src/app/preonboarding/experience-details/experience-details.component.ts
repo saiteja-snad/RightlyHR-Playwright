@@ -8,6 +8,7 @@ import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { PopupService } from '../../common-services/popup.service';
 import { DataService } from '../../common-services/data.service';
 import { UpdateExperienceDetailsComponent } from './update-experience-details/update-experience-details.component';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-experience-details',
   imports: [CommonModule, DateFormatPipe],
@@ -22,7 +23,7 @@ export class ExperienceDetailsComponent {
   selectExperience:any;
   @ViewChild('deletepopup') deletepopup: any;
 
-  constructor(private http: HttpService, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { 
+  constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { 
     effect(() => {
       if (this.getData.getExperience()) {
         this.getexperiencedetails();
@@ -51,7 +52,9 @@ export class ExperienceDetailsComponent {
     this.selectExperience = event;
     this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
   }
-
+  navigateNext() {
+    this.router.navigate(['/review']);
+  }
   //function to get all experiences 
   getexperiencedetails() {
     let EmployeeId = parseInt(this.prosempdata.employeeId)

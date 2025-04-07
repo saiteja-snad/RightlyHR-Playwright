@@ -60,10 +60,10 @@ export class AddExperienceDetailtsComponent {
       fromDate: ['', Validators.required],
       toDate: [''],
       jobTitle: ['', Validators.required],
-      responsibilities: ['', Validators.required],
-      contactName: ['', Validators.required],
-      phonenumber: ['', [Validators.required, this.phoneNumberValidator()]],
-      workEmail: ['', [Validators.required, Validators.email]],
+      description: ['', Validators.required],
+      previousContactName: ['', Validators.required],
+      previousContactNumber: ['', [Validators.required, this.phoneNumberValidator()]],
+      previousContactEmail: ['', [Validators.required, Validators.email]],
       attachment: [null, Validators.required]
     });
     this.experienceForm.get('isPresent')?.valueChanges.subscribe((isPresent) => {
@@ -134,8 +134,10 @@ export class AddExperienceDetailtsComponent {
     const payload = {
       ...formData,
       empId: parseInt(this.prosempdata.employeeId),
-      isDeleted: true,
-      attachment: ''
+      isDeleted: false,
+      attachment: '',
+      countryCode : this.selectedCountryCode,
+
     };
     const submitData = (finalPayload: any) => {
       this.subscription = this.http.postData("PreonboardingExperience", finalPayload).subscribe({

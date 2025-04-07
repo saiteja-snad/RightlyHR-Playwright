@@ -1,4 +1,5 @@
 export interface Ipersonal {
+  separationType: string;
     bgc: any;
     status: any;
     remoteLogin: any;

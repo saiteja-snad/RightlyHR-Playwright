@@ -8,10 +8,11 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })
@@ -210,7 +211,7 @@ export class JobDetailsComponent {
         // Map the employee data to the format required by p-select
         this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string,fusionEmpId:any }) => ({
           id: employee.employeeId, // Use the employeeId as the unique identifier
-          employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName} ${employee.lastName}`, // Combine first and last name
+          employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.lastName ?? ''}`, // Combine first and last name
         }));
 
         console.log('All Reportees:', this.allReportees);
@@ -311,8 +312,8 @@ export class JobDetailsComponent {
     this.subscription = this.http.getData(`GradeTable/getbyid/${gradeId}`).subscribe({
       next: (data: any) => {
         console.log('Grade Data:', data);
-        this.selectedGradeName = data.gradeName; // Update the grade name from the API response
-        // Store the grade data for further use
+        this.selectedGradeName = data.gradeName; 
+    
         // Patch the grade name into the form
         this.jobDetailsForm.patchValue({ grade: this.selectedGradeName });
       },
@@ -325,6 +326,7 @@ export class JobDetailsComponent {
       },
     });
   }
+
   //function to get joblocations in to a dropdown 
 
   getjobLocationList() {
@@ -426,11 +428,11 @@ export class JobDetailsComponent {
       this.subscription = this.http.postdata('JobDetails', playload).subscribe({
         next: (data: any) => {
           console.log('Response:', data);
+        
+          this.jobDetailsForm.reset();
+          this.modalService.dismissAll(); 
           this.conformationPopup.openSuccessModal('Job Details added successfully');
           this.getJobDetails(); // Refresh job details
-
-          this.jobDetailsForm.reset(); // Reset the form
-          this.modalService.dismissAll(); // Close the modal if applicable
 
         },
         error: (reason: any) => {

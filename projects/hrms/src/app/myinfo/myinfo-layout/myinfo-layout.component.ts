@@ -14,10 +14,11 @@ import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from 
 import { OpenModalService } from '../../services/open-modal.service';
 
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
+import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-details.component";
 
 @Component({
   selector: 'app-myinfo-layout',
-  imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule,],
+  imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent],
   templateUrl: './myinfo-layout.component.html',
   styleUrl: './myinfo-layout.component.scss'
 })

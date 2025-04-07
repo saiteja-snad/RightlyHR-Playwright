@@ -224,6 +224,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     console.log(file);
     this.generatedfile = file;
     this.generatingEmployeeId=this.prospectiveEmpData.empId;
+
   }
   //function to validate the offer expiry date and offer issued date
   updateEndDateValidity(): void {
@@ -487,28 +488,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
 pathValuesFuction(){
   const formValues = this.employeeForm.value;
 console.log(formValues);
-this.prospectiveEmpData = {
-  personalEmail: formValues.personalEmail,
-  title: formValues.title,
-  firstName: formValues.firstName,
-  middleName: formValues.middleName,
-  lastName: formValues.lastName,
-  gender: formValues.gender,
-  jobRole: formValues.jobRoleDetails,
-  esic: formValues.esic,
-  pf: formValues.pf,
-  amount: formValues.amount,
-  isVariablePay: formValues.isVariablePay,
-  variablePayAmount: formValues.variablePayAmount,
-  locationId: formValues.locationId,
-  sublocationId: formValues.JobSubLocationName,
-  offerIssuedDate: formValues.offerIssuedDate,
-  dateOfJoining: formValues.dateOfJoining,
-  copys: formValues.Copys,
-  offerExpiryDate: formValues.offerExpiryDate,
-  note: formValues.note,
-  authorityid: formValues.authorityid,
-};
+  this.prospectiveEmpData.offerIssuedDate= formValues.offerIssuedDate,
+  this.prospectiveEmpData.dateOfJoining= formValues.dateOfJoining,
+  this.prospectiveEmpData.copys=formValues.Copys,
+  this.prospectiveEmpData.offerExpiryDate= formValues.offerExpiryDate
 }
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
@@ -905,7 +888,6 @@ this.prospectiveEmpData = {
   }
   //to store file to the azure and return to the url
   offerletterUpload(empId: number, file: File) {
-    debugger
     let filePath = `/FusionDocuments/Employee Documents/Offer Letter/${empId}`;
     this.subscription = this.http
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
@@ -997,14 +979,10 @@ this.prospectiveEmpData = {
       substatus: 'Offer Letter Generated',
       password: this.employeeaddress.password,
     };
-    if (
-      this.buttonValue == 'Regenerate Offer Letter' &&
-      this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
+    if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       sdata.substatus = 'Offer Letter Regenerated';
-    } else {
-      sdata.substatus = 'Offer Letter Generated';
-    }
+    } else {sdata.substatus = 'Offer Letter Generated';}
     console.log(sdata);
     console.log(this.prospectiveEmpData.empId);
     this.subscription = this.http
@@ -1013,8 +991,10 @@ this.prospectiveEmpData = {
         next: (res: any) => {
           console.log(res);
           this.result = res;
+          debugger
           if (res.statusCode == 409) {
-          } else if (res.statusCode == 200) {
+            this.conformationPopup.openErrorModal(res.message);
+          } else if (res.statusCode == 200) {    
             this.UpdateFieldsToRespectiveTables();
             this.downLoadDocument(this.prospectiveEmpData);
           } else if (res.statusCode == 1002) {

@@ -1,0 +1,79 @@
+.custom-main-sub-content {
+    width: 100%;
+    height: calc(100dvh - 36rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.accepted-btn {
+    background-color: #0AAD01;
+    color: #FFFFFF;
+    border: 1px solid #0AAD01;
+}
+
+.rejected-btn {
+    background-color: #E3544C;
+    color: #FFFFFF;
+    border: 1px solid #E3544C;
+}
+
+.logo-image {
+    width: 16rem;
+    height: 4.8rem;
+}
+
+.list-style-none {
+    list-style: none;
+}
+
+.box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1px solid black;
+    margin-right: 8px;
+}
+
+table,th,td {
+    border: 1px solid #474747;
+    border-collapse: collapse;
+    color: #000;
+}
+
+th,td {
+    padding: 6px 20px;
+}
+
+th {
+    font-weight: bold;
+    text-align: center;
+}
+
+.salary-details-table {
+    tr:nth-child(4),tr:nth-child(9) {
+        background: rgba(255, 255, 204, 255);
+    }
+
+    tr:nth-child(8) {
+        background: #fff2cc;
+    }
+}
+
+.note{
+    font-weight: 600;
+}
+
+.count-text{
+    font-size: 14px;
+    font-weight: 400;
+}
+
+textarea:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    background-color: #F8FBFF !important;
+    border: 1px solid #DEE8F3 !important;
+}
+error-msg{
+    color:#ea362c;
+}

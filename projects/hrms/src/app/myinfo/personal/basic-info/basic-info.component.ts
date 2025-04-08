@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-basic-info',
@@ -32,7 +33,7 @@ export class BasicInfoComponent {
   Titledetails :ITitle[]=[];
   Maritaldetails:IMarital[]=[];
   buttons=false
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder,  public formValidation: FormValidationService,  private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -47,6 +48,7 @@ export class BasicInfoComponent {
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
       employeeId: ['', Validators.required],
+      fusionEmpId: ['', Validators.required],
       salutation: [null, Validators.required],
       firstName: ['', Validators.required],
       middleName: [''],
@@ -62,25 +64,86 @@ export class BasicInfoComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+       this.empinfo = data;
        this.patchForm(data);
+       localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
 
   patchForm(data: any): void {
+    const maritalStatus = this.Maritaldetails.find(
+      (item: any) => item.maritalstatus1 === data.maritalStatus
+    ) || null;
+  
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
-      salutation: this.Titledetails.find((item: any) => item.id === data.title),
+      fusionEmpId: data.fusionEmpId,
+      salutation: data.title,
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
       gender: this.Gender.find((item: any) => item.genderName === data.gender),
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalStatus: this.Maritaldetails.find((item: any) => item.name === data.maritalstatus1),
+      maritalstatus1:maritalStatus,
     });
+    console.log(this.basicInfoForm.value);
+    
   }
+
+  updateBasicInfo(): void {
+    const formValue = this.basicInfoForm.value;
+    console.log(formValue);
+    
+    const updatePayload = {
+      employeeId: formValue.employeeId,
+      title: formValue.salutation || null,
+      firstName: formValue.firstName,
+      middleName: formValue.middleName,
+      lastName: formValue.lastName,
+      gender: formValue.gender.genderName || null,
+      dob: formValue.dob,
+      bloodGroup: formValue.bloodGroup.name|| null,
+      maritalStatus: formValue.maritalStatus || null,
+      empStatus: 'Active',
+      emailaddress: this.empinfo.emailaddress || null, 
+      workEmail: this.empinfo.workEmail || null, 
+      contactnumber: this.empinfo.contactnumber || null,
+      workPhone: this.empinfo.workPhone || null, 
+      emergencyName: this.empinfo.emergencyName,
+      emailId: this.empinfo.emailId,
+      relationShip: this.empinfo.relationShip,
+      mobileNumber: this.empinfo.mobileNumber,
+      emergencyName1: this.empinfo.emergencyName1,
+      emergencyEmail1: this.empinfo.emergencyEmail1,
+      emergencyNumber1: this.empinfo.emergencyNumber1,
+      relationship1: this.empinfo.relationship1,
+      profileUrl : this.empinfo.profileUrl
+      
+    };
+    console.log(updatePayload);
+    
+    this.subscription = this.http
+        .postdata(`Employeedata/UPDATER`, updatePayload)
+        .subscribe({
+          next: (data: any) => {
+           this.conformationPopup.openSuccessModal('Basic Information Updated Successfully', );
+           this.getEmployeeId();
+           this.basicInfoForm.disable();
+            console.log('Data updated successfully:', data);
+            this.modalService.dismissAll();
+           this.conformationPopup.openSuccessModal('Basic Info updated successfully')
+          },
+          error: (reason: any) => {
+              console.log(reason);
+              this.conformationPopup.openErrorModal('Basic Info update failed')
+              
+          },
+        });
+  }
+
   getGender() {
     this.subscription = this.http.getData('gender').subscribe({
       next: (data: any) => {

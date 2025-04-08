@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+                    class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'|translate}}</p>
         </div>
     </div>
 
@@ -14,15 +14,15 @@
         <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
             <div class="card letter-fields-content p-4">
                 <form [formGroup]="employeeForm"
-                    (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
+                (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
                     <div class="row">
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Search Employee<span
+                            <label class="form-label custom-label mb-2">{{'Search Employee'|translate}}<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
-                                    placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+                                <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"  [filter]="true" filterBy="name"
+                                    [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
+                                    formControlName="fusionEmpId" class="custom-select w-100" >
                                 </p-select>
                             </div>
                             <div
@@ -32,7 +32,7 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Personal Email ID<span
+                            <label class="form-label custom-label mb-2">{{'Personal Email ID'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="email" class="form-control custom-input" formControlName="personalEmail"
                                 placeholder="Please enter personal email ID" />
@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Salutation<span
+                            <label class="form-label custom-label mb-2">{{'Salutation'|translate}}<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="titleDetails" optionLabel="titlename"
@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">First Name<span
+                            <label class="form-label custom-label mb-2">{{'First Name'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="firstName"
                                 placeholder="Please enter first name" />
@@ -73,7 +73,7 @@
 
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Middle Name</label>
+                            <label class="form-label custom-label mb-2">{{'Middle Name'|translate}}</label>
                             <input type="text" class="form-control custom-input" formControlName="middleName"
                                 placeholder="Please enter middle name" />
                             <div
@@ -83,7 +83,7 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Last Name<span
+                            <label class="form-label custom-label mb-2">{{'Last Name'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="lastName"
                                 placeholder="Please enter last name" />
@@ -98,7 +98,7 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Gender<span class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">{{'Gender'|translate}}<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="genderDetails" optionLabel="genderName"
                                     placeholder="Please select gender" formControlName="gender"
@@ -113,22 +113,20 @@
                             <label class="form-label custom-label mb-2">Select Address<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="addressdata" optionLabel="name" placeholder="Please select address"
-                                    formControlName="SelectDropDown" (change)="onclickSelectAddress(SelectDropDown)"
+                                <p-select [options]="addressdata" optionValue="value" optionLabel="name"
+                                    placeholder="Please select address" formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
                                     class="form-select custom-select">
                                     <option di [ngValue]="undefined">Select Address</option>
                                     <option value="c">Current Address</option>
-                                    <option value="p">Permanent Address</option>
-                                </p-select>
+                                    <option value="p">Permanent Address</option></p-select>
                             </div>
-                            <div
-                                *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
+                            <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
                                 <div class="error-msg">Address is required</div>
-                            </div>
+                            </div> 
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Address Line 1<span
+                            <label class="form-label custom-label mb-2">{{'Address Line 1'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="addressLine1"
                                 placeholder="Please enter address" />
@@ -139,7 +137,7 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Address Line 2</label>
+                            <label class="form-label custom-label mb-2">{{'Address Line 2'|translate}}</label>
                             <input type="text" class="form-control custom-input" formControlName="addressLine2"
                                 placeholder="Please enter address" />
                             <div
@@ -149,7 +147,7 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">City<span class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">{{'City'|translate}}<span class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="city"
                                 placeholder="Please enter city" />
                             <div *ngIf="employeeForm.get('city')?.invalid && employeeForm.get('city')?.touched">
@@ -157,7 +155,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">State<span class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">{{'State'|translate}}<span class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="state"
                                 placeholder="Please enter state" />
                             <div *ngIf="employeeForm.get('state')?.invalid && employeeForm.get('state')?.touched">
@@ -165,7 +163,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Country<span class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">{{'Country'|translate}}<span class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="country"
                                 placeholder="Please enter country" />
                             <div *ngIf="employeeForm.get('country')?.invalid && employeeForm.get('country')?.touched">
@@ -173,15 +171,15 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Pincode<span class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">{{'Pincode'|translate}}<span class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="pincode"
-                                placeholder="Please enter country" />
+                                placeholder="Please enter pincode" />
                             <div *ngIf="employeeForm.get('pincode')?.invalid && employeeForm.get('pincode')?.touched">
                                 <div class="error-msg">Pincode is required</div>
                             </div>
                         </div>
                         <div class="col-xl-12 mb-4">
-                            <label class="form-label custom-label mb-2">Mobile Number with Country Code<span
+                            <label class="form-label custom-label mb-2">{{'Mobile Number with Country Code'|translate}}<span
                                     class="error-msg">*</span></label>
                             <app-country-code-phone-number [selectedCountryConfig]="selectedCountryConfig"
                                 [countryListConfig]="countryListConfig" (onPhoneChange)="handlePhoneChange($event)">
@@ -193,32 +191,32 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Designation <span
+                            <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span
                                     class="error-msg">*</span></label>
-                            <p-select [options]="JobroleDetails" optionLabel="jobRole1"
-                                placeholder="Please select gender" formControlName="jobRoleDetails"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="JobroleDetails" optionValue="jobRole1" optionLabel="jobRole1"
+                                placeholder="Please select designation" formControlName="jobRoleDetails"
+                                class="form-select custom-select" (onChange)="onclickDesignation($event)"></p-select>
                             <div
                                 *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
                                 <div class="error-msg">Designation is required</div>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Salary (Cost to Company) <span
+                            <label class="form-label custom-label mb-2"> {{'Salary (Cost to Company)'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="text" class="form-control custom-input" formControlName="amount"
-                                placeholder="Please enter salary" />
+                                placeholder="Please enter salary" (ngModelChange)="onclickCTC($event)"/>
                             <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
                                 <div class="error-msg">Salary is required</div>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Work Location<span
+                            <label class="form-label custom-label mb-2">{{'Work Location'|translate}}<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true"
-                                    filterBy="name" [showClear]="true" placeholder="Please select workLocation"
-                                    formControlName="locationId" class="custom-select w-100">
+                                    filterBy="name" [showClear]="true" placeholder="Please select work location"
+                                    formControlName="locationId" class="custom-select w-100" >
                                 </p-select>
                             </div>
                             <div
@@ -227,34 +225,34 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Sub Location<span
+                            <label class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="subLocationsDropdown" optionLabel="name" [filter]="true"
-                                    filterBy="name" [showClear]="true" placeholder="Please select subLocation"
-                                    formControlName="sublocationId" class="custom-select w-100">
+                                <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true"
+                                    filterBy="name" [showClear]="true" placeholder="Please select sub location"
+                                    formControlName="JobSubLocationName" class="custom-select w-100">
                                 </p-select>
                             </div>
                             <div
-                                *ngIf="employeeForm.get('sublocationId')?.invalid && employeeForm.get('sublocationId')?.touched">
+                                *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
                                 <div class="error-msg">Sub Location is required</div>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Offer Issued Date <span
+                            <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                                     class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
-                                placeholder="Please enter offerIssuedDate" />
+                            <input type="date" class="form-control custom-input" formControlName="offerSentDate"
+                                placeholder="Please enter offer issued date"  (click)="pathValuesFuction()"/>
                             <div
-                                *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
+                                *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                                 <div class="error-msg">Offer Issued Date is required</div>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Expected Start Date <span
+                            <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter expectedStartDate" />
+                                placeholder="Please enter expected start date" (click)="pathValuesFuction()"/>
                             <div
                                 *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                 <div class="error-msg">Expected Start Date is required</div>
@@ -265,10 +263,10 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Offer Expiry Date <span
+                            <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                                placeholder="Please enter offerExpiryDate" />
+                                placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate" (click)="pathValuesFuction()"/>
                             <div
                                 *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                                 <div class="error-msg">Offer Expiry Date is required</div>
@@ -277,33 +275,29 @@
                                 Offer Issued Date</div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Select Internship Period(Months) <span
-                                    class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">
+                              {{'Select Internship Period(Months)' | translate}}<span class="error-msg">*</span>
+                            </label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name"
-                                    placeholder="Please select document type" formControlName="documentType"
-                                    class="form-select custom-select">
-                                    <option di [ngValue]="undefined">Select Internship Period</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                </p-select>
+                              <p-select 
+                                [options]="internshipPeriod" 
+                                optionLabel="name"
+                                placeholder="Please select internship period" 
+                                formControlName="internshipperiod"
+                                class="form-select custom-select">
+                              </p-select>
                             </div>
-                            <div
-                                *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                                <div class="error-msg">Internship
-                                    Period is required</div>
+                            <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
+                              <div class="error-msg">Internship Period is required</div>
                             </div>
-                        </div>
+                          </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Reporting Manager<span
+                            <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="getAllEmployeeInfo" optionLabel="fullName" [filter]="true"
                                     filterBy="name" [showClear]="true" placeholder="Please select reporting manager"
-                                    formControlName="reportingmanagerId" class="custom-select w-100">
+                                    formControlName="reportingmanagerId" class="custom-select w-100"(ngModelChange)="selectReportingname(traineeEmpData.reportingmanagerId)">
                                 </p-select>
                             </div>
                             <div
@@ -312,47 +306,46 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Document Type <span
-                                    class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name"
-                                    placeholder="Please select document type" formControlName="Copys"
-                                    class="form-select custom-select">
-                                    <option disabled [ngValue]="undefined">Select</option>
-                                    <option Value="true">Yes</option>
-                                    <option Value="false">No</option>
-                                </p-select>
+                              <p-select [options]="documentType" optionLabel="name" placeholder="Please select document type"
+                                formControlName="documentType" class="form-select custom-select" (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
+                              </p-select>
                             </div>
-                            <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
-                                <div class="error-msg">Document Type is required</div>
+                            <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
+                              <div class="error-msg">Document Type is required</div>
                             </div>
-                        </div>
+                          </div>
 
                         <div class="col-xl-12 mb-4">
-                            <label class="form-label custom-label mb-2">Note</label>
+                            <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
                             <textarea class="form-control custom-input" formControlName="note"
-                                placeholder="Leave a comment here"></textarea>
+                                placeholder="Note" (click)="pathValuesFuction()"></textarea>
                             <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                                 <div class="error-msg">Note is required</div>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Signature Authority Name <span
-                                    class="error-msg">*</span></label>
+                        <div class="col-md-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name'|translate}}<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="authorityDetails" optionLabel="fullName"
-                                    placeholder="Please select signature authority" formControlName="authorityid"
-                                    class="form-select custom-select"></p-select>
-                                <div
-                                    *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                                    <div class="error-msg">Signature Authority is required</div>
-                                </div>
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select signature authority" (onChange)="onclickDesignations($event)"
+                                class="form-select custom-select" formControlName="authorityid"> 
+                                <ng-template let-emp pTemplate="item">
+                                  {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+                                </ng-template>
+                              
+                                <ng-template let-emp pTemplate="selectedItem">
+                                  {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+                                </ng-template>
+                              </p-select>
+                            </div>
+                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
+                              <div class="error-msg">Signature Authority Name is required</div>
                             </div>
                         </div>
                         <div class="d-flex flex-wrap gap-3 pt-4">
-                            <button type="submit" class="custom-btn btn-primary">Generate Offer Letter</button>
-                            <button type="button" class="custom-btn btn-primary" (click)="requestForApproval()">Request
-                                For Approval</button>
+                            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">{{'Generate Offer Letter'|translate}}</button>
+                            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" (click)="emailSendingforApprover()">{{'Request For Approval'|translate}}</button>
                         </div>
                     </div>
                 </form>
@@ -366,14 +359,14 @@
                         <!--page-1-->
                         <div class="letter-page-content" id="pdfContent1">
                             <div class="letter-page-sub-content">
-                                <div *ngIf="traineeEmpData.Copys; else doc" class="mb-5">
-                                    <app-lettersheader></app-lettersheader>>
+                                <div *ngIf="this.traineeEmpData.documentType === true" class="mb-5">
+                                    <app-lettersheader></app-lettersheader>
                                 </div>
                                 <ng-template #doc>
                                     <div style="margin-bottom: 3rem;"></div>
                                 </ng-template>
                                 <div class="letter-div text-center mb-5">
-                                    <p class="letter-heading">Trainee Offer Letter</p>
+                                    <p class="letter-heading">{{'Trainee Offer Letter'|translate}}</p>
                                 </div>
                                 <div class="letter-div">
                                     <div class="row">
@@ -381,7 +374,7 @@
                                             <ul>
                                                 <li class="letter-text"
                                                     *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
-                                                    Name:</li>
+                                                    {{'Name'|translate}}:</li>
                                                 <ng-template #fullname>
                                                     <li class="letter-text">{{traineeEmpData.firstName}}
                                                         {{traineeEmpData.middleName}}
@@ -390,7 +383,7 @@
                                                 </ng-template>
                                                 <li class="letter-text"
                                                     *ngIf="!traineeEmpData.addressLine1;else address">
-                                                    Address:</li>
+                                                    {{'Address'|translate}}:</li>
                                                 <ng-template #address>
                                                     <li class="letter-text">{{traineeEmpData.addressLine1}},</li>
                                                     <li class="letter-text">{{traineeEmpData.addressLine2}},</li>
@@ -403,13 +396,12 @@
                                             </ul>
                                         </div>
                                         <div class="col-md-4 fw-bolder">
-                                            <p class="text-end letter-text p-0">Date: {{traineeEmpData.offerIssuedDate |
-                                                dateformat}}</p>
+                                            <p class="text-end letter-text p-0">Date: {{traineeEmpData.offerIssuedDate | dateformat}}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div style="margin-bottom: 10px;">
-                                    <p class="letter-text"><strong>Dear {{traineeEmpData.firstName}}
+                                    <p class="letter-text"><strong>{{'Dear'|translate}} {{traineeEmpData.firstName}}
                                             {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</strong>,</p>
                                 </div>
                                 <div class="watermark">
@@ -417,14 +409,12 @@
 
                                     <ol class="liststylenumber">
                                         <li class="paragraph mb-3">
-                                            <strong>Start Date and Duration: </strong>Your internship will commence on
-                                            <u><strong>{{traineeEmpData.dateOfJoining}}</strong></u> and is expected to
-                                            complete
-                                            on
-                                            <u><strong></strong></u>
-                                            lasting for a period of <strong>{{this.traineeEmpData.endDate}}</strong> .
-                                        </li>
-                                        <li class="paragraph mb-3"><strong>Working Hours and Location: </strong>The
+                                            <strong>{{'Start Date and Duration' | translate}}: </strong>Your internship will commence on
+                                            <u><strong>{{traineeEmpData.dateOfJoining | dateformat}}</strong></u> and is expected to complete on
+                                            <u><strong>{{traineeEmpData.endDate | dateformat}}</strong></u>, lasting for a period of 
+                                            <strong>{{traineeEmpData.internshipperiod}} Months</strong>.
+                                          </li>
+                                        <li class="paragraph mb-3"><strong>{{'Working Hours and Location'|translate}}: </strong>The
                                             standard
                                             working
                                             hours are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office
@@ -437,12 +427,12 @@
                                             the nature of
                                             the projects and business requirements.
                                         </li>
-                                        <li class="paragraph mb-3"><strong>Reporting Manager: </strong>You will be
+                                        <li class="paragraph mb-3"><strong>{{'Reporting Manager'|translate}}: </strong>You will be
                                             reporting to
                                             <u>{{ traineeEmpData.reportingmanagerName }}</u>
                                         </li>
                                         <li class="paragraph mb-3">
-                                            <strong>Stipend/Salary and Benefits: </strong>During the internship period,
+                                            <strong>{{'Stipend/Salary and Benefits'|translate}}: </strong>During the internship period,
                                             you’re
                                             eligible to
                                             receive Rs.10,000/- per month as a stipend/salary. After successful
@@ -452,7 +442,7 @@
                                             <b>{{traineeEmpData.amount}}</b> per annum.
                                         </li>
                                         <li class="paragraph mb-3">
-                                            <strong>Responsibilities: </strong>Your primary responsibilities will be
+                                            <strong>{{'Responsibilities'|translate}}: </strong>Your primary responsibilities will be
                                             explained
                                             by your reporting
                                             manager during the onboarding process. We expect you to conduct yourself
@@ -460,7 +450,7 @@
                                             to company policies and procedures at all times.
                                         </li>
                                         <li class="paragraph mb-3">
-                                            <strong>Confidentiality and Non-Disclosure: </strong>As an intern, you will
+                                            <strong>{{'Confidentiality and Non-Disclosure'|translate}}: </strong>As an intern, you will
                                             have
                                             access to sensitive
                                             and proprietary information. You are required to sign and adhere to the
@@ -468,14 +458,14 @@
                                             Non-Disclosure Agreement, which will be provided separately.
                                         </li>
                                         <li class="paragraph mb-3">
-                                            <strong>Evaluation and Feedback: </strong>Your performance will be evaluated
+                                            <strong>{{'Evaluation and Feedback'|translate}}: </strong>Your performance will be evaluated
                                             periodically.
                                             Constructive feedback will be provided to help you grow and make the most
                                             out of
                                             this opportunity.
                                         </li>
                                         <li class="paragraph mb-3">
-                                            <strong>Termination: </strong>The company may terminate this internship by
+                                            <strong>{{'Termination'|translate}}: </strong>The company may terminate this internship by
                                             providing
                                             15 days written
                                             notice or the company is having a right to terminate this internship
@@ -496,14 +486,14 @@
                         <div class="letter-page-content my-4" id="pdfContent2">
                             <div class="letter-page-sub-content">
                                 <div class="pt-2">
-                                    <div *ngIf="traineeEmpData.Copys; else doc">
-                                        <!-- <app-letterhead></app-letterhead> -->
+                                    <div *ngIf="this.traineeEmpData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
                                     </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 7rem;"></div>
                                     </ng-template>
                                     <div class="p-3">
-                                        <p *ngIf="(traineeEmpData.note)" class="paragraph mb-lg-4"><b>Note:</b>
+                                        <p *ngIf="(traineeEmpData.note)" class="paragraph mb-lg-4"><b>{{'Note'|translate}}:</b>
                                             {{traineeEmpData.note}} </p>
                                         <p class="paragraph mb-lg-4">Please confirm your acceptance of this offer by
                                             signing
@@ -520,7 +510,7 @@
                                     <div class="pt-3">
                                         <p class="m-0 family2">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
-                                        <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1" *ngIf="traineeEmpData.authorityName?.trim()" style="font-family: autographsignatureFont; font-size: xx-large;">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0  paragraph boldsize1">{{authorityDesignation}} </p>
                                         <br>
                                         <hr>

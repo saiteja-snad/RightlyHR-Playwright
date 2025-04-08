@@ -41,6 +41,20 @@
    "Close":"Close",
    "Add":"Add",
    "First Name":"First Name",
-   "Designation is required":"Designation is required"
-
+   "Designation is required":"Designation is required",
+   "Reason":"Reason is required",
+   "Submit":"Submit",
+   "No":"No",
+   "Yes":"Yes",
+   "DATE":"DATE",
+   "EMPLOYEE NAME":"EMPLOYEE NAME",	
+   "EMPLOYEE ID":"EMPLOYEE ID",
+   "SUB STATUS":"SUB STATUS",
+   "SUB LOCATION":"SUB LOCATION",
+   "ACTION":"ACTION",
+   "DOCUMENT TYPE":"DOCUMENT TYPE",
+   "DOCUMENT NAME":"DOCUMENT NAME",
+   "SUBMITTED DATE":"SUBMITTED DATE",
+   "DOCUMENT":"DOCUMENT",
+   "STATUS":"STATUS"
 }

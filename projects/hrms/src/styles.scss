@@ -115,7 +115,14 @@ a {
     background-color: var(--btn-primary-color);
     color: var(--btn-color-tp);
 }
-
+.btn-primary-approve {
+    background-color: green;
+    color: var(--btn-color-tp);
+}
+.btn-primary-reject {
+    background-color: red;
+    color: var(--btn-color-tp);
+}
 .btn-secondary {
     background-color: var(--btn-secondary-color);
     color: var(--btn-color-ts);
@@ -125,8 +132,6 @@ a {
 .btn-primary:disabled {
     opacity: 0.5;
 }
- 
-
 
 /* width */
 ::-webkit-scrollbar {
@@ -300,7 +305,7 @@ a {
             height: 380mm;
             width: 270mm;
             position: relative;
-            // background-image: url(src/assets/images/water-mark.png);
+            background-image: url('/images/water-mark.png');
             background-repeat: no-repeat;
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -702,29 +707,43 @@ input[type="file"] {
     }
 }
 
-    //ERROR MESSAGE
-    .error-msg {
-        font-size: var(--fontsize12);
+//ERROR MESSAGE
+.error-msg {
+    font-size: var(--fontsize12);
+    font-weight: 500;
+    color: var(--error-msg-color);
+    margin-top: 0.25rem;
+}
+
+//popup stylings
+.result-popup-content {
+    padding: 5rem;
+    text-align: center;
+
+    .confirmation-icon {
+        width: 9rem;
+    }
+
+    .confirmation-delete-icon {
+        width: 5rem;
+    }
+
+    .confirmation-text {
         font-weight: 500;
-        color: var(--error-msg-color);
-        margin-top: 0.25rem;
+        font-size: var(--fontsize20);
+        line-height: 30px;
+        color: #06274F;
     }
+}
 
-    //popup stylings
-    .result-popup-content {
-        padding: 5rem;
-        text-align: center;
-
-        .confirmation-icon {
-            width: 9rem;
-        }
-        .confirmation-delete-icon{
-            width: 5rem;
-        }
-        .confirmation-text {
-            font-weight: 500;
-            font-size: var(--fontsize20);
-            line-height: 30px;
-            color: #06274F;
-        }
-    }
+// download text
+.dowload-text {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0%;
+    color: rgba(6, 39, 79, 1);
+}

@@ -22,12 +22,13 @@
                 <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let identityDetails of getIdentitydetails | async">
                         <td>{{ identityDetails.identityType }}</td>
+                        <td>{{ identityDetails.identityNumber }}</td>
                         <td><span *ngIf="identityDetails.attachment;else noData" class="dowload-text"
                                 (click)="onSelectIdentityAttachmentDownload(identityDetails)"
                                 style="cursor: pointer;"><i
                                     class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
                                 #noData>-</ng-template></td>
-                        <td>{{ identityDetails.identityNumber }}</td>
+                   
 
                         <td class="text-center">
                             <div class="dropdown">
@@ -54,7 +55,7 @@
             <!-- No Data Found Template -->
             <ng-template #noDataTemplate>
                 <tr>
-                    <td colspan="5" class="text-center">No data found</td>
+                    <td colspan="5" class="text-center"><app-no-data-found></app-no-data-found></td>
                 </tr>
             </ng-template>
         </table>

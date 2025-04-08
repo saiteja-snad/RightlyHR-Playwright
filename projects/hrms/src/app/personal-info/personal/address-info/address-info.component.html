@@ -1,0 +1,149 @@
+<div class="custom-main-component-container">
+    <div class="card address-content-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <span class="address-sub-header">Current Address</span>
+            </div>
+            <div *ngIf="!buttons">
+                <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid" (click)="updateAddressInfo()">Save</button>
+            </div>
+        </div>
+
+        <!-- Reactive Form -->
+        <div class="myinfo-input-content">
+            <form [formGroup]="addressForm">
+                <div class="row">
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="currentAddressLine1" formControlName="currentAddressLine1" placeholder="Please enter address line">
+                    <div class="error-msg" *ngIf="addressForm.get('currentAddressLine1')?.invalid && addressForm.get('currentAddressLine1')?.touched">
+                      <div *ngIf="addressForm.get('currentAddressLine1')?.errors?.['required']">Address Line 1 is required</div>
+                    </div>
+                  </div>
+              
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
+                    <input type="text" class="form-control custom-input" id="currentAddressLine2" formControlName="currentAddressLine2" placeholder="Please enter address line">
+                  </div>
+              
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="currentCity" formControlName="currentCity" (keypress)="formValidation.restrictInput($event)" placeholder="Please enter city">
+                    <div class="error-msg" *ngIf="addressForm.get('currentCity')?.invalid && addressForm.get('currentCity')?.touched">
+                      <div *ngIf="addressForm.get('currentCity')?.errors?.['required']" >City is required</div>
+                    </div>
+                  </div>
+              
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="currentState" class="form-label custom-label mb-2">State<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="currentState" formControlName="currentState"  (keypress)="formValidation.restrictInput($event)" placeholder="Please enter state" (keypress)="formValidation.restrictInput($event)">
+                    <div class="error-msg" *ngIf="addressForm.get('currentState')?.invalid && addressForm.get('currentState')?.touched">
+                      <div *ngIf="addressForm.get('currentState')?.errors?.['required']" >State is required</div>
+                    </div>
+                  </div>
+              
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="currentCountry" class="form-label custom-label mb-2">Country<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="currentCountry" formControlName="currentCountry" placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
+                    <div class="error-msg" *ngIf="addressForm.get('currentCountry')?.invalid && addressForm.get('currentCountry')?.touched">
+                      <div *ngIf="addressForm.get('currentCountry')?.errors?.['required']" >Country is required</div>
+                    </div>
+                  </div>
+              
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="currentZipCode" formControlName="currentZipCode" placeholder="Please enter zip code/post code">
+                    <div class="error-msg" *ngIf="addressForm.get('currentZipCode')?.invalid && addressForm.get('currentZipCode')?.touched">
+                      <div *ngIf="addressForm.get('currentZipCode')?.errors?.['required']">Zip Code is required</div>
+                      <div *ngIf="addressForm.get('currentZipCode')?.errors?.['pattern']">Zip Code must be a valid 5-6 digit number</div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+        </div>
+    </div>
+
+    <div class="card address-content-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <span class="address-sub-header">Permanent Address</span>
+                <span class="form-check mt-4">
+                    <input class="form-check-input custom-check" type="checkbox" id="sameAsCurrent" (change)="copyCurrentAddress($event)">
+                    <label class="form-check-label custom-check-label" for="sameAsCurrent">
+                        Same as Current Address
+                    </label>
+                </span>
+            </div>
+            <!-- <div *ngIf="!buttons2">
+                <a (click)="enableForm2()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+            <div class="d-flex justify-content-end gap-3" *ngIf="buttons2">
+                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid" (click)="updateAddressInfo()">Save</button>
+            </div> -->
+        </div>
+
+        <!-- Reactive Form -->
+        <div class="myinfo-input-content">
+            <form [formGroup]="addressForm">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine1" formControlName="permanentAddressLine1"
+                            placeholder="Please enter address line" >
+                        <div class="error-msg" *ngIf="addressForm.get('permanentAddressLine1')?.invalid && addressForm.get('permanentAddressLine1')?.touched">
+                            <div *ngIf="addressForm.get('permanentAddressLine1')?.errors?.['required']">Address Line 1 is required</div>
+                              </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine2" formControlName="permanentAddressLine2"
+                            placeholder="Please enter address line" >
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentCity" class="form-label custom-label mb-2">City<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentCity" formControlName="permanentCity"
+                            placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
+                        <div class="error-msg" *ngIf="addressForm.get('permanentCity')?.invalid && addressForm.get('permanentCity')?.touched">
+                            <div *ngIf="addressForm.get('permanentCity')?.errors?.['required']">City is required</div>
+                            </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentState" class="form-label custom-label mb-2">State<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentState" formControlName="permanentState"
+                            placeholder="Please enter state" (keypress)="formValidation.restrictInput($event)">
+                        <div class="error-msg" *ngIf="addressForm.get('permanentState')?.invalid && addressForm.get('permanentState')?.touched">
+                            <div *ngIf="addressForm.get('permanentState')?.errors?.['required']">State is required</div>
+                            </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentCountry" formControlName="permanentCountry"
+                            placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
+                        <div class="error-msg" *ngIf="addressForm.get('permanentCountry')?.invalid && addressForm.get('permanentCountry')?.touched">
+                            <div *ngIf="addressForm.get('permanentCountry')?.errors?.['required']">Country is required</div>
+                            </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="permanentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="permanentZipCode" formControlName="permanentZipCode"
+                            placeholder="Please enter zip code/post code">
+                        <div class="error-msg" *ngIf="addressForm.get('permanentZipCode')?.invalid && addressForm.get('permanentZipCode')?.touched">
+                            <div *ngIf="addressForm.get('permanentZipCode')?.errors?.['required']">Zip Code is required</div>
+                            <div *ngIf="addressForm.get('permanentZipCode')?.errors?.['pattern']">Zip Code must be a valid 5-6 digit number</div>
+                            </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

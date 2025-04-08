@@ -527,9 +527,64 @@
         </div>
     </div>
     <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
-        <button class="custom-btn btn-secondary px-5">Download</button>
-        <button class="custom-btn accepted-btn px-5">Accepted</button>
-        <button class="custom-btn rejected-btn px-5">Reject</button>
-        <button class="custom-btn btn-primary px-5" (click)="navigateExperience()">Next</button>
+        @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
+            <button class="custom-btn btn-secondary px-5" (click)="downloadoffer()">Download</button>
+        }
+        @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
+            <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
+        }
+        @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+            <button class="custom-btn accepted-btn px-5">Accepted</button>
+        } 
+        <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+        @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+        }
     </div>
 </div>
+
+<!--Offer letter accept popup-->
+<ng-template #acceptpopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <div class="custom-main-popup-content text-center p-5">
+                <div class="py-5">
+                    <p class="confirmation-text">Are you sure you want to accept offer?</p>
+                </div>
+                <div class="d-flex gap-5 pt-4 w-100">
+                    <button class="custom-btn btn-secondary w-50 py-3" (click)="closeModal()">Close</button>
+                    <button class="custom-btn btn-primary w-50 py-3" (click)="acceptoffer()">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Documents upload popup-->
+<ng-template #rejectpopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <form [formGroup]="rejectForm " (ngSubmit)="submitRejectReason()">
+                <div class="custom-main-popup-content p-4">
+                    <div class="py-4 text-center">
+                        <p class="confirmation-text">Are you sure you want to reject offer?</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="documentType" class="form-label custom-label mb-2">Enter reason<span class="error-msg">*</span></label>
+                        <textarea type="note" name="rejectReason" class="form-control custom-input" formControlName="rejectReason"
+                            placeholder="Please enter reject reason" maxlength="250" id="rejectReason"
+                            (keypress)="blockNonAlphabetic($event)" autocomplete="off" required></textarea>
+                        <div class="error-msg py-1" *ngIf="rejectForm.get('rejectReason')?.touched && rejectForm.get('rejectReason')?.invalid">
+                            <div *ngIf="rejectForm.get('rejectReason')?.hasError('required')">Reject reason is required</div>
+                        </div>
+                        <div class="count-text text-end w-100 py-1"><span>{{ rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-3 pt-4">
+                        <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">Close</button>
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

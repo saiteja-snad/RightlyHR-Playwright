@@ -1,58 +1,67 @@
 <div class="custom-main-component-container">
+    @if (getempexpdata.length > 0) {
     <div class="main-content-heading my-4">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <span>Experience Details</span>
             </div>
             <div>
-                <button class="custom-btn btn-primary px-5" (click)="openEducation()">Add</button>
+                <button class="custom-btn btn-primary px-5" (click)="openExperience()">Add</button>
             </div>
         </div>
     </div>
+    }
 
     <!--Education place holder-->
-    <div class="placeholder-container" *ngIf="placeHolder">
-       <div>
-          <div>
-            <img src="/images/education-placeholder.png" alt="placeholder Image" class="place-holder-image mb-4">
-            <p class="placeholder-text mb-5">Please provide education details</p>
-            <button class="custom-btn btn-primary px-5" (click)="openEducation()">Add</button>
-          </div>
-       </div>
+    @if(getempexpdata.length <= 0){ <div class="placeholder-container">
+        <div>
+            <div>
+                <img src="/images/education-placeholder.png" alt="placeholder Image" class="place-holder-image mb-4">
+                <p class="placeholder-text mb-5">Please provide experience details</p>
+                <button class="custom-btn btn-primary px-5" (click)="openExperience()">Add</button>
+            </div>
+        </div>
     </div>
+    }
 
+    <!--Experience Details Table-->
+    @if (getempexpdata.length > 0) {
     <div class="custom-main-sub-content">
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Education</th>
-                        <th>University</th>
-                        <th>Specialization</th>
+                        <th>Company Name</th>
+                        <th>Employeement Type</th>
                         <th>From Date</th>
                         <th>To Date</th>
-                        <th>GPA</th>
+                        <th>Job Role</th>
+                        <th>Currently Working</th>
                         <th>Attachment</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>SSc</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
+                    <tr *ngFor="let exp of getempexpdata">
+                        <td>{{exp.companyName}}</td>
+                        <td>{{exp.employmentType}}</td>
+                        <td>{{exp.fromDate | dateFormat}}</td>
+                        <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate | dateFormat}}</span>
+                            <ng-template #todate>
+                                <div class="centerhypen">-</div>
+                            </ng-template>
+                        </td>
+                        <td>{{exp.jobTitle}}</td>
+                        <td>{{ exp.isPresent ? 'Yes' : 'No' }}</td>
+                        <td></td>
                         <td>
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a></li>
-                                    <li><a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a></li>
+                                    <li><a class="dropdown-item" (click)="openUpdate(exp)"><i class="bi bi-pencil me-2"></i>Update</a></li>
+                                    <li><a class="dropdown-item" (click)="openDelete(exp)"><i class="bi bi-trash3 me-2"></i>Delete</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -61,10 +70,25 @@
             </table>
         </div>
     </div>
-
+    }
     <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
-        <button class="custom-btn btn-primary px-5">Next</button>
+        <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
     </div>
 </div>
 
-
+<!--Offer letter accept popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <div class="custom-main-popup-content text-center p-5">
+                <div class="py-5">
+                    <p class="confirmation-text">Are you sure you want to Delete?</p>
+                </div>
+                <div class="d-flex gap-5 pt-4 w-100">
+                    <button class="custom-btn btn-secondary w-50 py-3" (click)="close()">No</button>
+                    <button class="custom-btn btn-primary w-50 py-3" (click)="deleteExperienceDetails(selectExperience)">yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

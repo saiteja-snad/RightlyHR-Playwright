@@ -1,0 +1,60 @@
+.image-content {
+    position: relative;
+
+    .edit-icon-content {
+        position: absolute;
+        padding: 0.5rem;
+        background-color: #fff;
+        border-radius: 50%;
+        top: 6rem;
+        left: 2.5rem;
+    }
+
+    .profile-image {
+        width: 7.5rem;
+        height: 7.5rem;
+        border-radius: 50%;
+    }
+
+    .edit-icon {
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 50%;
+    }
+}
+
+.name {
+    font-weight: 700;
+    font-size: var(--fontsize16);
+    vertical-align: middle;
+    color: #181817;
+}
+
+.sub-text {
+    font-weight: 500;
+    font-size: 1rem;
+    vertical-align: middle;
+    text-transform: capitalize;
+    color: #757575;
+}
+
+.qr-content {
+    width: 2rem;
+    position: relative;
+}
+
+.qr-icon {
+    margin-top: 5.5rem;
+    width: 1.6rem;
+    height: 1.6rem;
+}
+
+.profile-data-icon {
+    font-size: var(--fontsize12);
+}
+
+.details-text {
+    font-weight: 700;
+    font-size: var(--fontsize12);
+    color: #06274F;
+}

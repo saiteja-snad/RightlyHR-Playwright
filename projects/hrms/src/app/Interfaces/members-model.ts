@@ -1,5 +1,7 @@
 export interface Ipersonal {
+experienceType: string;
 employeeId: any;
+emailaddress: string,
 }
 export interface Iteammembers{
     [x: string]: any;
@@ -24,4 +26,5 @@ export interface Iteammembers{
     dateOfJoining: any,
     id: number;
     selected?: boolean;
+    emailaddress: string,
 }

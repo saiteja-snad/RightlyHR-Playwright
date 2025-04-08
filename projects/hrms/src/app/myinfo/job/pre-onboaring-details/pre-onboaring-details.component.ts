@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
@@ -10,7 +9,7 @@ import moment from 'moment';
 
 @Component({
   selector: 'app-pre-onboaring-details',
-  imports: [CommonModule, Select, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   standalone: true,
   templateUrl: './pre-onboaring-details.component.html',
   styleUrl: './pre-onboaring-details.component.scss'
@@ -40,17 +39,18 @@ export class PreOnboaringDetailsComponent {
 
   initializeForm(): void {
     this.preOnboardingForm = this.fb.group({
-      offerSentDate: ['', Validators.required],
-      offerSentBy: ['', Validators.required],
-      offerSentStatus: ['', Validators.required],
-      appointmentSentDate: ['', Validators.required],
-      appointmentSentBy: ['', Validators.required],
-      appointmentSentStatus: ['', Validators.required],
-      traineeOfferSentDate: ['', Validators.required],
-      traineeOfferSentBy: ['', Validators.required],
-      traineeOfferSentStatus: ['', Validators.required],
-      traineeAppointmentSentBy: ['', Validators.required],
-      traineeAppointmentSentStatus: ['', Validators.required],
+      offerSentDate: [{ value: '', disabled: true }],
+
+      offerSentBy: [{ value: '', disabled: true }],
+      offerSentStatus: [{ value: '', disabled: true }],
+      appointmentSentDate: [{ value: '', disabled: true }],
+      appointmentSentBy: [{ value: '', disabled: true }],
+      appointmentSentStatus: [{ value: '', disabled: true }],
+      traineeOfferSentDate: [{ value: '', disabled: true }],
+      traineeOfferSentBy: [{ value: '', disabled: true }],
+      traineeOfferSentStatus: [{ value: '', disabled: true }],
+      traineeAppointmentSentBy: [{ value: '', disabled: true }],
+      traineeAppointmentSentStatus: [{ value: '', disabled: true }]
     });
   }
 
@@ -84,6 +84,7 @@ export class PreOnboaringDetailsComponent {
       this.preOnboardingForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
     }
   }
+  
   formatDate(data: any): any {
     if (data) {
       return moment(data).format('YYYY-MM-DD');

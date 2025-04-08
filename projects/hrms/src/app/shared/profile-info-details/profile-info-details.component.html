@@ -1,40 +1,45 @@
 <div class="profile-info-main-card w-100">
     <div class="d-flex justify-content-between">
         <div class="image-content">
-            <img src="/images/profile-img.png" alt="profile Image" class="profile-image">
+            <img [src]="imageUrl" alt="profile Image" class="profile-image" >
             <div class="edit-icon-content">
-                <img src="/icons/Edit.png" alt="edit-icon" class="edit-icon cursor">
+                <label for="formFile" class="form-label"><img src="/icons/Edit.png" alt="edit-icon" class="edit-icon cursor"></label>
+                <input class="form-control d-none" type="file" id="formFile" (change)="chooseNewProfile($event)">
             </div>
         </div>
         <div class="text-nowrap pt-3">
-            <p class="name mb-0">Anima Agrawal</p>
-            <p class="sub-text mb-0">Java Developer</p>
-            <p class="sub-text mb-0">#1012</p>
+            <p class="name mb-0">{{empinfo.firstName}} {{empinfo.middleName}} {{empinfo.lastName}}</p>
+            <p class="sub-text mb-0">{{jobRole}}</p>
+            <p class="sub-text mb-0">{{this.empinfo.fusionEmpId}}</p>
         </div>
         <div class="qr-content">
             <img src="/icons/qr-code.png" alt="qr icon" class="qr-icon">
         </div>
     </div>
 
-    <!--user additional details-->
+    <!--user additional details-->  
     <div class="text-nowrap my-5">
         <div class="align-middle mb-3">
-            <i class="bi bi-telephone profile-data-icon me-3"></i><span class="details-text">+91 9999999999</span>
+            <i class="bi bi-telephone profile-data-icon me-3"></i><span class="details-text">+91 {{this.empinfo?.contactnumber }} </span>
         </div>
         <div class="mb-3">
-            <i class="bi bi-geo-alt profile-data-icon me-3"></i><span class="details-text">Hyderabad</span>
+            <i class="bi bi-geo-alt profile-data-icon me-3"></i><span class="details-text">{{jobdata?.locationName}}, {{jobdata?.sublocationName}}</span>
         </div>
         <div class="mb-3">
-            <i class="bi bi-envelope profile-data-icon me-3"></i><span class="details-text">user&#64;gmail.com</span>
+            <i class="bi bi-envelope profile-data-icon me-3"></i><span class="details-text">{{this.empinfo?.workEmail  || 'N/A'}}</span>
         </div>
         <div class="mb-3">
-            <i class="bi bi-suitcase-lg profile-data-icon me-3"></i><span class="details-text"><b>Full Time</b>(General Shift)</span>
+            <i class="bi bi-suitcase-lg profile-data-icon me-3"></i><span class="details-text"><b>{{jobdata?.jobTypeName}}</b> <span *ngIf="jobdata?.shiftName">({{jobdata?.shiftName }})</span></span>
         </div>
         <div class="mb-3">
-            <i class="bi bi-person-circle profile-data-icon me-3"></i><span class="details-text"><b>Team Manager</b> : Mithali Singh</span>
+            <i class="bi bi-person-circle profile-data-icon me-3"></i><span class="details-text"><b>Team Manager</b> :<span *ngIf="reportesto?.firstname; else nodata">
+                {{ reportesto.firstname }} {{ reportesto?.middlename ?? '' }} {{ reportesto?.lastname }}
+              </span>
+              <ng-template #nodata>N/A</ng-template>
+              </span>
         </div>
         <div class="mb-3">
-            <i class="bi bi-person-circle profile-data-icon me-3"></i><span class="details-text"><b>Reporting Manager </b> : Mithali Singh</span>
+            <i class="bi bi-person-circle profile-data-icon me-3"></i><span class="details-text"><b>Reporting Manager </b> : {{Reportingmanager || 'N/A'}}</span>
         </div>
     </div>
 

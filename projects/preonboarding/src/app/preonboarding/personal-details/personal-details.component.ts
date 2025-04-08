@@ -65,9 +65,8 @@ export class PersonalDetailsComponent implements OnInit {
     this.bnIdle.startWatching(1600).subscribe((isTimeOut: boolean) => {
       if (isTimeOut) {
         localStorage.removeItem('prospectiveusertoken')
-        this.router.navigate(['/login'], { replaceUrl: true });
+        this.router.navigate([''], { replaceUrl: true });
         this.bnIdle.stopTimer();
-        location.reload();
       }
     })
     this.prospectiveEmpData = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
@@ -86,13 +85,12 @@ export class PersonalDetailsComponent implements OnInit {
         console.log(data);
         this.employeeData = data as Ipersonal;
         this.patchForm();
-       
       },
       error: (reason: any) => {
         console.log(reason);
         if (reason.status == 401) {
           localStorage.clear();
-          this.router.navigate(['login']);
+          this.router.navigate(['']);
         }
       }
     });
@@ -167,8 +165,7 @@ export class PersonalDetailsComponent implements OnInit {
   }
 
   patchForm() {
-    const dateOfBirth = this.formatDate(this.employeeData.dob)
-    console.log(this.employeeData)
+    const dateOfBirth = this.employeeData.dob ? this.formatDate(this.employeeData.dob) : null;
     this.personalDetailsForm.patchValue({
       firstName: this.employeeData.firstName,
       middleName: this.employeeData.middleName,
@@ -185,13 +182,7 @@ export class PersonalDetailsComponent implements OnInit {
       currentAddress: this.employeeData.employeeAddresses.find((address:IAddress)=>address.type.toLowerCase() == 'c'),
       permanentAddress: this.employeeData.employeeAddresses.find((address:IAddress)=>address.type.toLowerCase() == 'p')
     });
-    console.log(this.personalDetailsForm);
-    this.selectedCountryConfig = {
-      hideCode: true,  
-      hideName: true,  
-      dialCode: this.employeeData.mobilePhoneCountryCode, 
-    };
-    console.log(this.selectedCountryConfig)
+    this.selectedCountryCode = this.employeeData.mobilePhoneCountryCode;
   }
 
   // Copy Current Address to Permanent Address
@@ -252,11 +243,10 @@ export class PersonalDetailsComponent implements OnInit {
         dob: formEmployeeData.dob,
         contactnumber: formEmployeeData.phonenumber,
         title: formEmployeeData.salutation,
-        mobilePhoneCountryCode: this.selectedCountryCode,
+        mobilePhoneCountryCode: this.selectedDialCode,
         bloodGroup: formEmployeeData.bloodGroup,
         generateOffer: false
       }
-      console.log(payload)
       this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, payload).subscribe({
         next: (data: any) => {
           console.log(data);
@@ -274,22 +264,29 @@ export class PersonalDetailsComponent implements OnInit {
         }
       });
     } else {
-      console.log('Form is invalid');
       this.personalDetailsForm.markAllAsTouched(); // Mark all fields as touched to trigger validation
     }
   }
 
   postEmployeeAddresses() {
     let payload = {
-      employeeAddresses: [this.personalDetailsForm.get('currentAddress')?.value, this.personalDetailsForm.get('permanentAddress')?.value]
+      employeeAddresses: [  {
+        ...this.personalDetailsForm.get('currentAddress')?.value,
+        zipCode: String(this.personalDetailsForm.get('currentAddress')?.value?.zipCode)
+      },
+      {
+        ...this.personalDetailsForm.get('permanentAddress')?.value,
+        zipCode: String(this.personalDetailsForm.get('permanentAddress')?.value?.zipCode)
+      }]
     }
     this.subscription = this.http.postData("PreonboardingEmployeeAddress", payload).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.router.navigate(['/document']);
       },
       error: reason => console.log(reason),
       complete: () => {
-        this.router.navigate(['/document']);
+        
       }
     })
   }
@@ -298,19 +295,19 @@ export class PersonalDetailsComponent implements OnInit {
   onCountryChange(country: any) {
     this.selectedCountryCode = country.dialling_code;
     this.selectedDialCode = country.code;
-    this.updatePlaceholder();
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
   }
 
   formatPhoneNumber(value: string): string {
     if (!this.selectedDialCode || !value) return value;
-    const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
+    const stringValue = String(value); // Make sure it's a string
+    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedDialCode);
     if (phoneNumber && phoneNumber.isValid()) {
       this.formattedPhoneNumber = phoneNumber.formatInternational();
       return phoneNumber.formatNational();
     }
-    return value;
+    return stringValue;
   }
 
   phoneNumberValidator() {
@@ -326,23 +323,6 @@ export class PersonalDetailsComponent implements OnInit {
         return { invalidPhoneNumber: true };
       }
     };
-  }
-
-  updatePlaceholder() {
-    if (this.selectedDialCode) {
-      const samplePhoneNumber = `+${this.selectedDialCode}1234567890`;
-      try {
-        const phoneNumber = parsePhoneNumberFromString(samplePhoneNumber, this.selectedDialCode);
-        if (phoneNumber && phoneNumber.isValid()) {
-          this.placeholderPhoneNumber = phoneNumber.formatNational();
-        } else {
-          this.placeholderPhoneNumber = '';
-        }
-      } catch (error) {
-        console.error('Error parsing phone number:', error);
-        this.placeholderPhoneNumber = '';
-      }
-    }
   }
 
   close() {

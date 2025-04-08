@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-certification',
@@ -25,9 +26,10 @@ export class CertificationComponent {
   isDisableExpirydate: boolean = false;
   showError: boolean = false;
   showErrorr: boolean = false;
+  selectedid: any;
 
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -69,7 +71,7 @@ export class CertificationComponent {
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
-      attachment: ['', Validators.required],
+      attachment: ['', ],
     });
 
     // Disable "expiryDate" field if "isExpired" is checked
@@ -198,6 +200,7 @@ export class CertificationComponent {
   }
 
   createCertificationPayload(attachmentPath: string = ''): any {
+    const currentDate = new Date().toISOString();
     return {
       empId: parseInt(this.empinfo.employeeId),
       certificationName: this.certificationForm.get('certificationName')?.value,
@@ -206,7 +209,8 @@ export class CertificationComponent {
       expirationDate: this.certificationForm.get('expiryDate')?.value,
       isExpired: this.certificationForm.get('isExpired')?.value,
       isDeleted: false,
-      attachment: attachmentPath || '',
+      isdeleted: false,
+      createdAt: currentDate,
     };
   }
   getEmpcertdata() {
@@ -230,113 +234,134 @@ export class CertificationComponent {
 
 
   openModalupdate(content: any, data: any) {
+    this.selectedid= data.id; // Store the selected identityId
+    const startDate = data.issuedDate
+    ? new Date(data.issuedDate).toISOString().split('T')[0]
+    : null;
+
+  const EndDate = data.expirationDate
+    ? new Date(data.expirationDate).toISOString().split('T')[0]
+    : null;
+
     this.updateCertificationForm.patchValue({
       certificationName: data.certificationName,
       certificationId: data.certificationId,
-      issuedDate: data.issuedDate,
-      expiryDate: data.expirationDate,
+      issuedDate:startDate,
+      expiryDate: EndDate,
       isExpired: data.isExpired,
     });
-    ; // Reset the document for the update form
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });      
+    this.certificationDocument=data.attachment; // Set the selected document for the update form
+    ;
+     // Reset the document for the update form
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
+
   updateCertificationDetails(): void {
-  if (this.updateCertificationForm.valid) {
-    const payload = this.createUpdateCertificationPayload();
+    if (this.updateCertificationForm.valid) {
+      const payload = this.createUpdateCertificationPayload();
 
-    if (this.certificationDocument) {
-      this.uploadUpdatedCertificationAttachment(payload);
+      if (this.certificationDocument) {
+        this.uploadUpdatedCertificationAttachment(payload);
+      } else {
+        this.saveUpdatedCertificationData(payload);
+      }
     } else {
-      this.saveUpdatedCertificationData(payload);
+      this.updateCertificationForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
     }
-  } else {
-    this.updateCertificationForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
   }
-}
 
-uploadUpdatedCertificationAttachment(payload: any): void {
-  const filePath = `/FusionDocuments/Employee Documents/Certifications/${this.empinfo.employeeId}`;
-  this.subscription = this.http
-    .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.certificationDocument)
-    .subscribe({
-      next: (data: any) => {
-        if (data) {
-          payload.attachment = data.path; // Add the uploaded file path to the payload
-          console.log('Uploaded file path:', data.path); // Debugging log
-          this.saveUpdatedCertificationData(payload); // Save the data with the updated payload
-        } else {
-          console.error('File upload response is invalid:', data);
+  uploadUpdatedCertificationAttachment(payload: any): void {
+    const filePath = `/FusionDocuments/Employee Documents/Certifications/${this.empinfo.employeeId}`;
+    this.subscription = this.http
+      .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.certificationDocument)
+      .subscribe({
+        next: (data: any) => {
+          if (data) {
+            payload.attachment = data.path; // Add the uploaded file path to the payload
+            console.log('Uploaded file path:', data.path); // Debugging log
+            this.saveUpdatedCertificationData(payload); // Save the data with the updated payload
+          } else {
+            console.error('File upload response is invalid:', data);
+          }
+        },
+        error: () => {
+          console.error('File upload failed');
+          this.conformationPopup.openErrorModal('Failed to upload the file. Please try again.');
         }
+      });
+  }
+
+  saveUpdatedCertificationData(payload: any): void {
+    this.subscription = this.http.postdata('Certification/Update', payload).subscribe({
+      next: () => {
+        this.updateCertificationForm.reset();
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Certification details updated successfully');
+        console.log('Certification data updated successfully:', payload);
+        this.getEmpcertdata(); // Refresh the certification data
       },
-      error: () => {
-        console.error('File upload failed');
-        this.conformationPopup.openErrorModal('Failed to upload the file. Please try again.');
+      error: (err: any) => {
+        console.error('Error updating certification data:', err);
+        if (err.status === 400) {
+          this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update certification details.');
+        } else {
+          this.conformationPopup.openErrorModal('Either the same certification name or certification ID already exists.');
+        }
       }
     });
-}
+  }
 
-saveUpdatedCertificationData(payload: any): void {
-  this.subscription = this.http.postdata('Certification/Update', payload).subscribe({
-    next: () => {
-      this.updateCertificationForm.reset();
-      this.modalService.dismissAll();
-      this.conformationPopup.openSuccessModal('Certification details updated successfully');
-      console.log('Certification data updated successfully:', payload);
-      this.getEmpcertdata(); // Refresh the certification data
-    },
-    error: (err: any) => {
-      console.error('Error updating certification data:', err);
-      if (err.status === 400) {
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update certification details.');
-      } else {
-        this.conformationPopup.openErrorModal('Either the same certification name or certification ID already exists.');
-      }
-    }
-  });
-}
+  createUpdateCertificationPayload(attachmentPath: string = ''): any {
+    const currentDate = new Date().toISOString(); // Current date in ISO format
 
-createUpdateCertificationPayload(attachmentPath: string = ''): any {
-  return {
-    empId: parseInt(this.empinfo.employeeId),
-    certificationName: this.updateCertificationForm.get('certificationName')?.value,
-    certificationId: this.updateCertificationForm.get('certificationId')?.value,
-    issuedDate: this.updateCertificationForm.get('issuedDate')?.value,
-    expirationDate: this.updateCertificationForm.get('expiryDate')?.value,
-    isExpired: this.updateCertificationForm.get('isExpired')?.value,
-    isDeleted: false,
-    attachment: attachmentPath || '',
-  };
-}
-opendeletModal(content: any, empexperimentdata: any): void {
-  this.selectedCertification = empexperimentdata; // Store the selected identityId
-  this.modalService.open(content, { centered: true, backdrop: 'static' });
-}
+    return {
+      id: this.selectedid,
+      empId: parseInt(this.empinfo.employeeId),
+      certificationName: this.updateCertificationForm.get('certificationName')?.value,
+      certificationId: this.updateCertificationForm.get('certificationId')?.value,
+      issuedDate: this.updateCertificationForm.get('issuedDate')?.value,
+      expirationDate: this.updateCertificationForm.get('expiryDate')?.value,
+      isExpired: this.updateCertificationForm.get('isExpired')?.value,
+      isDeleted: false,
+      isdeleted: false,
+      attachment: attachmentPath || '',
+      createdAt: currentDate, 
+      updatedAt: currentDate, 
+  
 
-deleteCertification(): void {
-  const empcertsdata = {
-    isDeleted: true,
-    id: this.selectedCertification.id,
-    empId: this.selectedCertification.empId,
-    certificationName: this.selectedCertification.certificationName,
-    issuedDate: this.selectedCertification.issuedDate,
-    expirationDate: this.selectedCertification.expirationDate,
-    certificationId: this.selectedCertification.certificationId,
-    attachment: this.selectedCertification.attachment,
-  };
+    };
+  }
+  opendeletModal(content: any, empexperimentdata: any): void {
+    this.selectedCertification = empexperimentdata; // Store the selected identityId
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 
-  this.subscription = this.http.postdata('Certification/Update', empcertsdata).subscribe({
-    next: (data: any) => {
-      console.log('Certification deleted successfully:', data);
-      this.modalService.dismissAll();
-      this.selectedCertification = null; 
-      this.conformationPopup.openSuccessModal('Certification deleted successfully');
-      this.getEmpcertdata(); 
-    },
-    error: (err: any) => {
-      console.error('Error deleting certification:', err);
-      this.conformationPopup.openErrorModal('Failed to delete the certification. Please try again.');
-    },
-  });
-}
+  deleteCertification(): void {
+    const empcertsdata = {
+      isDeleted: true,
+      id: this.selectedCertification.id,
+      empId: this.selectedCertification.empId,
+      certificationName: this.selectedCertification.certificationName,
+      issuedDate: this.selectedCertification.issuedDate,
+      expirationDate: this.selectedCertification.expirationDate,
+      certificationId: this.selectedCertification.certificationId,
+      attachment: this.selectedCertification.attachment,
+    };
+
+    this.subscription = this.http.postdata('Certification/Update', empcertsdata).subscribe({
+      next: (data: any) => {
+        console.log('Certification deleted successfully:', data);
+        this.modalService.dismissAll();
+        this.selectedCertification = null;
+        this.conformationPopup.openSuccessModal('Certification deleted successfully');
+        this.getEmpcertdata();
+      },
+      error: (err: any) => {
+        console.error('Error deleting certification:', err);
+        this.conformationPopup.openErrorModal('Failed to delete the certification. Please try again.');
+      },
+    });
+  }
 }
 

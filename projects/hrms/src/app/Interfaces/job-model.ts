@@ -65,6 +65,7 @@ export interface IJob {
     offerIssueddate: any,
     offerstatus: string,
     documentUrl: string,
+   
     fusionEmpId: any
     noduerequestpassed:any,
   }
@@ -190,6 +191,7 @@ export interface IJob {
     isdeleted: string,
   }
   export interface IJobdetails {
+gradeName: any;
     subdeptId: any;
     id: number,
     employeeId: any,
@@ -209,6 +211,8 @@ export interface IJob {
     gradeId:any;
     jobTypeId:any;
     teamManagerId : any;
+    subdepartmentName : any;
+
   }
   export interface Icompensation {
     employeeId: number,
@@ -286,9 +290,14 @@ export interface IJob {
   }
   
   export interface IRole {
+  
+    id: any;
     sno: number,
     jobRole1: string;
+    designationName: string;
     isdeleted: string;
+    gradeId:any;
+    gradeName : string
   }
   
   

@@ -8,21 +8,22 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-offboarding-details',
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, Select],
   templateUrl: './offboarding-details.component.html',
   styleUrl: './offboarding-details.component.scss'
 })
 export class OffboardingDetailsComponent {
-  buttons= false;
+  buttons = false;
   isEditing: boolean = false;
-  offboardingForm!:FormGroup
+  offboardingForm!: FormGroup
   empinfo: any
   empdata: Ipersonal = {} as Ipersonal;
   previousEmpData: Ipersonal = {} as Ipersonal;
-  subscription!:Subscription
+  subscription!: Subscription
   rehireDetails: IRehiredata[] = [];
   terminationDetails: ITermination[] = [];
   showButtons() {
@@ -40,13 +41,13 @@ export class OffboardingDetailsComponent {
 
   initializeForm(): void {
     this.offboardingForm = this.fb.group({
-      exitReason: ['', Validators.required],
-      eligibleForRehire: ['', Validators.required],
-      relievingType: ['', Validators.required],
-      lastWorkingDay: ['', Validators.required]
+      exitReason: [{ value: '', disabled: true }],
+      eligibleForRehire: [{ value: '', disabled: true }],
+      relievingType: [{ value: '', disabled: true }],
+      lastWorkingDay: [{ value: '', disabled: true }]
     });
   }
-  
+
   //function to get rehire dropdown
   getRehire() {
     this.subscription = this.http.getData('Eligibleforrehire').subscribe({
@@ -61,7 +62,7 @@ export class OffboardingDetailsComponent {
     this.isEditing = false;
     this.buttons = false;
     this.offboardingForm.reset();
-    
+
     this.offboardingForm.disable();
   }
 
@@ -70,7 +71,7 @@ export class OffboardingDetailsComponent {
     this.buttons = true;
     this.offboardingForm.enable();
   }
-  
+
   formatDate(data: any): any {
     if (data) {
       return moment(data).format('YYYY-MM-DD');
@@ -81,32 +82,30 @@ export class OffboardingDetailsComponent {
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     console.log(this.empinfo);
-  
+
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
         this.previousEmpData = JSON.parse(JSON.stringify(data));
         this.empdata = data as Ipersonal;
-  
+
         // Format dates
         this.empdata.lastworkingday = this.formatDate(this.empdata.lastworkingday);
         this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
         this.empdata.probationEndDate = this.formatDate(this.empdata.probationEndDate);
         this.empdata.offerIssueddate = this.formatDate(this.empdata.offerIssueddate);
-  
+
         console.log(this.empdata);
-  
+
         // Patch the form with the fetched data
         this.offboardingForm.patchValue({
           exitReason: this.empdata.termreasonoffboard || '', // Replace with the correct property if different
           eligibleForRehire: this.empdata.eligibleforrehire || '', // Replace with the correct property if different
-          // relievingType: this.empdata.separationType || '', // Replace with the correct property if different
+          relievingType: this.empdata.separationType || '', // Replace with the correct property if different
           lastWorkingDay: this.empdata.lastworkingday || '' // Replace with the correct property if different
         });
-  
-        // Set profile picture URL
-        // this.imgurl = this.empdata.profilePic;
-        // console.log(this.imgurl);
+
+        
       },
       error: (err: any) => {
         console.log(err);

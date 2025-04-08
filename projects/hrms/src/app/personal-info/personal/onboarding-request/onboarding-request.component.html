@@ -1,0 +1,195 @@
+<div class="custom-main-component-container mt-4">
+    <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/onboarding-verification') && (empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective')  && empdata.substatus=='Documents Rejected' "
+    (click)="openModal(request)">{{'Re-Request Documents'|translate}}</button>
+    <!--Input search-->
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'DOCUMENT TYPE'|translate}}</th>
+                    <th>{{'DOCUMENT NUMBER'|translate}}</th>
+                    <th>{{'SUBMITTED DATE'|translate}}</th>
+                    <th>{{'DOCUMENT'|translate}}</th>
+                    <th>{{'STATUS'|translate}}</th>
+                    <th>{{'ACTION'|translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                    @if( ((documentData | async) ?? []).length > 0){
+                        @for (data of (documentData|async); track data.id) {
+                            @if (data.status != 'Not Submitted'){
+                                <tr>
+                                    <td>{{ data.documentType ? data.documentType : '-' }}</td>
+                                    <td>{{ data.referenceNumber ? data.referenceNumber : '-' }}</td>
+                                    <td>{{ data.submittedDate ? (data.submittedDate | dateformat) : '-' }}</td>
+                                  
+                                    <td> 
+                                        @if(data.documentUrl == null || data.documentUrl == ''){
+                                            <div class="text-center">-</div>
+                                        }
+                                        @else {
+                                                @if(data.documentUrl.endsWith('jpg') || data.documentUrl.endsWith('jpeg') || data.documentUrl.endsWith('png')){
+                                                    <a type="button" class="view-btn" (click)="onViewClick(data.documentUrl,viewmodel);onClickEditDocument(data)">
+                                                        <i class="bi bi-paperclip me-1"></i>View
+                                                    </a>
+                                                }
+                                                @else {
+                                                    <a type="button" class="view-btn" (click)="onSelectDownload(data.documentUrl)"><i
+                                                        class="bi bi-download me-2"></i>Download</a>
+                                                }
+        
+                                        }
+     
+                                    </td>
+                                    <td><span
+                                            *ngIf="data.status!='Waiting for submission' ||data.status==null||data.status==''; else status">{{data.status}}</span>
+                                        <ng-template #status>
+                                            <div >-</div>
+                                        </ng-template>
+                                    </td>
+                                    <td><span *ngIf="!data.documentUrl; else approverejectbuttons">
+                                            <div ></div>
+                                        </span>
+                                        <ng-template #approverejectbuttons>
+                                            <button class="custom-btn btn-primary-approve me-3 mb-3"
+                                                *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'"
+                                               
+                                                (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,
+                                                data.rejectedBy,data.reason,data.referenceNumber,data.referenceId);openModal(approveModal)"
+                                                >Approve
+                                            </button>
+            
+                                            <button class="custom-btn btn-primary-reject me-3 mb-3"
+                                                *ngIf="data.status !== 'Verified' && data.status !== 'Rejected'&& data.status=='Submitted' "
+                                                (click)="submitRejectReason(data);openModal(rejectModal)"
+                                                >
+                                                Reject
+                                            </button>
+                                        </ng-template>
+            
+            
+                                    </td>
+                                </tr>
+                            }
+                          
+                        }
+                    }
+                    @else{
+                        <tr>
+                            <td colspan="9" class="text-center">No data found</td>
+                        </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- View popup start -->
+<ng-template #viewmodel let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+            {{documentSelectFields.documentType }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"
+            aria-label="Close" (click)="reload()"></button>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+        <p *ngIf="!OnbImageUrl;else imageViews">
+            <ngx-doc-viewer [url]="OnbViewURL" viewer="google"
+                ></ngx-doc-viewer>
+        </p>
+        <ng-template #imageViews>
+            <img [src]="OnbImageUrl" alt="My Image" class="modal-image">
+        </ng-template>
+    </div>
+    <div class="modal-footer">
+        <!-- Additional buttons or content -->
+    </div>
+</ng-template>  
+ <!-- View popup end -->
+<ng-template #rejectModal let-modal>
+        <div class="modal-header">
+            <h5 class="modal-title" id="rejectModalLabel">Reject Reason </h5>
+            <button type="button" class="btn-close" (click)="modal.dismiss()" (click)="reload()"
+                aria-label="Close"></button>
+        </div>
+        <form [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs()">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="rejectReason" >Reject Reason
+                        <span class="error-msg">*</span></label>
+                    <textarea type="text" name="rejectReason" class="form-control"
+                        placeholder="Please provide reason for rejection" rows="3" maxlength="250"
+                        formControlName="comments"
+                        ></textarea>
+                        <div class="mt-2">
+                            <span class="color">
+                              {{ rejectDocument.get('comments')?.value?.length || 0 }} / 250
+                            </span>
+                          </div>
+                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
+                    class="text-danger">
+                    {{'Reason'| translate}}.
+                </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div>
+                    <button type="button" class="custom-btn btn-secondary" 
+                    (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                </div>
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+            </div>
+        </form>
+    </ng-template>
+    <!-- preonboard  approve documents popup -->
+    <ng-template #approveModal let-modal>
+
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+        <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Approve Document? </h4>
+        <div class="d-flex mb-4 mt-3 pb-2 mt-1 justify-content-around w-100">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
+              (click)="approvedocuments()"  >{{'Yes'|translate}}</button>
+        </div>
+    </div>
+
+</ng-template>
+<ng-template #request let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">{{'Re-Request Documents'|translate}}</p>
+            </div>
+            <div>
+                <a (click)="reload()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="reRequestForm" (ngSubmit)="reRequestEmail(reRequestForm)" class="w-100">
+                    <div class="mt-3 ps-3 pe-3">
+                        <div class="mb-3">
+                            <label for="comments" class="form-label custom-label mb-2"> {{'Comments'|translate}} <span class="error-msg">*</span></label>
+                            <textarea class="form-control custom-input" formControlName="comments"
+                                placeholder="Leave a comment here"></textarea>
+                            <div>
+                                <span class="color">{{ reRequestForm.get('comments')?.value?.length || 0 }}
+                                    /250</span>
+                            </div>
+                        </div>
+                        <div *ngIf="reRequestForm.get('comments')?.invalid && reRequestForm.get('comments')?.touched">
+                            <div class="error-msg">Comments are required</div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-3 mt-4">
+                        <button type="reset" class="custom-btn btn-secondary"
+                        (click)="reload()">{{'Close'|translate}}</button>
+                        <button type="submit" class="custom-btn btn-primary"
+                            [disabled]="!reRequestForm.valid">{{'Submit'|translate}}</button>
+                    </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

@@ -225,11 +225,11 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
             rejectedBy: this.documentSelectFields.rejectedBy,
             reason: this.documentSelectFields.reason,
             referenceId: this.documentSelectFields.referenceId,
-            referenceNumber: this.documentSelectFields.referenceNumber
+            referenceNumber: this.documentForm.get('documentNumber')?.value,
           }
           this.subscription = this.http.postData(`PreonboardingDocuments/Update`, postdata).subscribe({
             next: (data: any) => {
-              this.openPopup.openSuccessOffCanvas("Document uploaded successfully");
+              this.openPopup.openSuccess("Document uploaded successfully");
               setTimeout(() => { 
                 this.modalService.dismissAll();
                 this.getDocuments();
@@ -240,9 +240,9 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
         error: (reason: any) => {
           console.log(reason);
           if (reason.status == 400) {
-            this.openPopup.openErrorOffCanvas(reason.error.Message);
+            this.openPopup.openError(reason.error.Message);
           }else{
-            this.openPopup.openErrorOffCanvas("file upload  is failed");
+            this.openPopup.openError("file upload  is failed");
           }
           setTimeout(() => { 
             this.modalService.dismissAll();
@@ -361,7 +361,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
         this.loadingcircle = false;
         this.submitNotification();
         this.emailacknowledgementtoemp();
-        this.openPopup.openSuccessOffCanvas("Submitted Successfully, We’ll get back to you soon!!");
+        this.openPopup.openSuccess("Submitted Successfully, We’ll get back to you soon!!");
         setTimeout(() => { 
           this.modalService.dismissAll();
           this.http.logOut();

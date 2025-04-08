@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgForm, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgForm, ReactiveFormsModule, FormsModule, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { AuthServiceService } from '../../../services/auth-service.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from '../../../services/auth.service';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { ProspectiveEmployeesComponent } from '../prospective-employees.component';
 @Component({
   selector: 'app-add-prospective-employee',
   imports: [CommonModule, ReactiveFormsModule, FormsModule, Select, TranslateModule],
@@ -17,13 +20,14 @@ import { TranslateModule } from '@ngx-translate/core';
 
 export class AddProspectiveEmployeeComponent {
   postProspectiveEmpDetails = {} as any; //variable to post the details
+  employeeForm!: FormGroup ;
   Prospectiveemp: any;
   subscription: any;
   result: any;
   Status: any;
   islistedItem: boolean = true;
-  jobLocationDropDownData = {} as any;
-  subLocationsDropdown = {} as any;
+  jobLocationDropDownData = [] as any;
+  subLocationsDropdown = [] as any;
   buttondisable: boolean = false;
   disablebutton: boolean = false;
   // JobroleDetails = [] as any;
@@ -33,15 +37,48 @@ export class AddProspectiveEmployeeComponent {
   AllJobRoles: any;
   patern: any;
   emailErroremail = false;
-  JobroleDetails: any[] = [];
+  JobroleDetails=[] as any;
   emailErrorweb = false; //array to store all the jobroles
   //function to get the job rol details
   initialLocationId: any;
 designation: any;
+@ViewChild('success') success: any;
+  constructor(private router: Router,private authService: AuthService,private conformationPopup: OpenModalService, private http: HttpService,private fb: FormBuilder,private modalService: NgbModal ) { 
+  
+    
+  }
   ngOnInit(): void {
     this.getJobrole();
     this.jobLocationList();
+    // this.initializeProspectiveEmpDetails();
+    this.createForm();
+  }
+  
+  initializeProspectiveEmpDetails() {
+    this.employeeForm = this.fb.group({
+      firstName: [ '',[ Validators.required,  Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$')]],
+      middleName: [ '', [   Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]],
+      lastName: [ '',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]  ],
+      personalEmail: [ '', [Validators.required,Validators.email]],
+      designation: ['', Validators.required],
+      employmentType: ['', Validators.required],
+      location: ['', Validators.required],
+      subLocation: ['', Validators.required]
+    });
+  }
 
+  //function to create the form template
+  createForm() {
+    this.employeeForm = this.fb.group({
+      firstName: [ '',[ Validators.required,  Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$')]],
+      middleName: [ '', [   Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]],
+      lastName: [ '',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]  ],
+      personalEmail: [ '', [Validators.required,Validators.email]],
+      designation: ['', Validators.required],
+      employmentType: ['', Validators.required],
+      location: ['', Validators.required],
+      subLocation: ['', Validators.required]
+    });
   }
   //function to check the email pattren
   changepaternemail() {
@@ -51,22 +88,30 @@ designation: any;
     this.postProspectiveEmpDetails.personalEmail = true;
     console.log(this.postProspectiveEmpDetails.personalEmail);
   }
+//functio to select grad id
+selectgradId(event:any){
+    console.log(event.value); // PrimeNG sends event.value instead of ngModel directly
 
+    // Assign selected value properly
+    if(event){
+      this.gradeIdValue = event.value;
+      console.log(this.gradeIdValue);
+    }
+  
+}
+//function to get the jobdetails
   getJobrole() {
     this.subscription = this.http.getData('DesignationGradeMapper').subscribe({
       next: (data: any) => {
         console.log('API Response:', data);
 
-        this.JobroleDetails = data.map((item: { id: number; designationName: string }) => ({
-          id: item.id,
-          designationName: item.designationName,
-        }));
-
-        console.log('Dropdown Options:', this.JobroleDetails);
+        this.JobroleDetails = data;
       },
       error: (error) => console.error('Error fetching job roles:', error),
     });
   }
+  //function to check the grade id
+
   //function to get joblocations in to a dropdown
   jobLocationList() {
     this.subscription = this.http.getData('JobLocation/getAllLocations').subscribe({
@@ -89,20 +134,23 @@ designation: any;
     console.log("Selected Location ID:", event.value); // PrimeNG sends event.value instead of ngModel directly
 
     // Assign selected value properly
-    this.postProspectiveEmpDetails.locationid = event.value;
+    if(event){
+      this.postProspectiveEmpDetails.locationid = event.value;
 
-    // Find selected location details
-    let selectedLocation = this.jobLocationDropDownData.find(
-      (c: any) => c.id == event.value
-    );
-
-    console.log("Selected Job Location Details:", selectedLocation);
-
-    if (selectedLocation) {
-      this.getSubLocationByid(selectedLocation);
-    } else {
-      console.warn("No matching job location found!");
+      // Find selected location details
+      let selectedLocation = this.jobLocationDropDownData.find(
+        (c: any) => c.id == event.value
+      );
+  
+      console.log("Selected Job Location Details:", selectedLocation);
+  
+      if (selectedLocation) {
+        this.getSubLocationByid(selectedLocation);
+      } else {
+        console.warn("No matching job location found!");
+      }
     }
+   
   }
 
 
@@ -147,12 +195,7 @@ designation: any;
     { id: 2, name: 'Experienced' }
   ];
 
-  @ViewChild('success') success: any;
-
-  constructor(private router: Router,
-    private http: HttpService,
-    private authService: AuthServiceService,
-    private modalService: NgbModal) { }
+  
   close() {
     this.modalService.dismissAll();
   }
@@ -164,17 +207,16 @@ designation: any;
   onclosepopup() {
     location.reload();
   }
-  postEmpData(f: NgForm) {
+  postEmpData() {
     let loggedInUser = this.authService.getToken();
-    const data = this.postProspectiveEmpDetails;
     let postdata = {
-      firstName: data.firstName,
-      lastName: data.lastName,
+      firstName: this.employeeForm.get('firstName')?.value,
+      middleName: this.employeeForm.get('middleName')?.value,
+      lastName: this.employeeForm.get('lastName')?.value,
       employeeStatus: 'Prospective',
-      emailaddress: data.personalEmail,
+      emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
-      middleName: data.middleName,
-      experienceType: data.experienceType.name,
+      experienceType:this.employeeForm.get('employmentType')?.value,
     };
     this.subscription = this.http
       .postdata('Employeedata/createEmployee', postdata)
@@ -185,19 +227,16 @@ designation: any;
           if (res.statusCode == 201) {
             this.result = res.employeeData;
             console.log(this.result);
-            this.modalService.dismissAll();
-            setTimeout(() => {
-              this.router.navigate(['/prospective-employees']); // Navigate after UI update
-            }, 500);
+            this.conformationPopup.openSuccessModal('Prospective Employee Created Successfully');
             if (this.result.employeeId != null) {
               const jobdata = {
                 employeeId: this.result.employeeId,
                 // effectiveDate: null,
                 // reportsto: ,
                 gradeId: this.gradeIdValue.gradeId,
-                locationid: data.locationid,
-                sublocationid: data.sublocationid,
-                jobRole: this.selectedValueJobRoledrop,
+                locationid: this.postProspectiveEmpDetails.locationid,
+                sublocationid: this.employeeForm.get('subLocation')?.value,
+                jobRole: this.employeeForm.get('designation')?.value,
               };
               this.subscription = this.http
                 .postdata('JobDetails', jobdata)
@@ -209,45 +248,24 @@ designation: any;
                   error: (Reason) => console.log(Reason),
                 });
             }
-          } else if (res.statusCode == 409) {
-            const modalElement = document.getElementById('errorpop');
-            if (modalElement) {
-              this.Status = res.message
-              modalElement.classList.add('show');
-              modalElement.style.display = 'block';
-              setTimeout(() => {
-                modalElement.classList.remove('show');
-                modalElement.style.display = 'none';
-              }, 2000)
-            }
-
-            setTimeout(() => {
-              const modalElement = document.getElementById('errorpopup');
-              if (modalElement) {
-                modalElement.classList.remove('show');
-                modalElement.style.display = 'none';
-              }
-            }, 3000)
-            //f.resetForm();
-            this.selectedValueJobRoledrop = '';
+          }
+          else if (res.statusCode == 409) {
+            this.conformationPopup.openErrorModal(res.message);
+         
           } else {
-            const modalElement = document.getElementById('errorpop');
-            if (modalElement) {
-              this.Status = res.message
-              modalElement.classList.add('show');
-              modalElement.style.display = 'block';
-            }
+            this.conformationPopup.openErrorModal(res.message); 
             setTimeout(() => {
-              location.reload();
-            }, 3000)
+              this.modalService.dismissAll();
+            }, 3000);
           }
         },
         error: (err: any) => {
           console.log(err);
-          f.resetForm();
+        this.conformationPopup.openErrorModal(err.error.message);
         },
       });
   }
+  
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     console.log(this.emp);

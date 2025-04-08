@@ -9,14 +9,12 @@ import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { OfferletterdashboardpipePipe } from '../../../pipes/offerletterdashboardpipe.pipe';
-
-
+import { OfferletterdashboardpipePipe } from "../../../Pipes/offerletterdashboardpipe.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-document-history-offer-letter',
-  imports: [CommonModule,ReactiveFormsModule, TranslateModule, DateformatPipe, FormsModule, OfferletterdashboardpipePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, OfferletterdashboardpipePipe, DateformatPipe],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss'
 })

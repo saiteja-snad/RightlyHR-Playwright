@@ -128,8 +128,7 @@ selectgradId(event:any){
       },
     });
   }
-
-
+  //function to get the location
   OnClickLocation(event: any) {
     console.log("Selected Location ID:", event.value); // PrimeNG sends event.value instead of ngModel directly
 
@@ -172,12 +171,6 @@ selectgradId(event:any){
         },
       });
   }
-
-  isItemIntheList(isitem: boolean) {
-    console.log(isitem);
-    this.islistedItem = isitem;
-  }
-
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
     if (
@@ -227,7 +220,9 @@ selectgradId(event:any){
           if (res.statusCode == 201) {
             this.result = res.employeeData;
             console.log(this.result);
+            this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Prospective Employee Created Successfully');
+            this.http.activeTabSubject.next(this.result.employeeId);
             if (this.result.employeeId != null) {
               const jobdata = {
                 employeeId: this.result.employeeId,

@@ -96,6 +96,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
         .postdata(`CustomEmail/RerequestDocuments`, pdata)
         .subscribe({
           next: (data: any) => {
+            this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Email Sent Successfully')
           },
           error: (err: any) => {

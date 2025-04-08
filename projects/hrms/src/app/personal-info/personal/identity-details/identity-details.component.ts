@@ -29,7 +29,7 @@ export class IdentityDetailsComponent implements OnInit {
   IdentityAttachment: any;
   IdentityMaxNumber = 12;
   IdentityMinNumber = 12;
-
+  employedata={} as any;
   constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
@@ -39,6 +39,7 @@ export class IdentityDetailsComponent implements OnInit {
     this.initializeForm();
     this.initializeupdateForm();
     this.getIdentityByEmpid();
+    this.getEmployeeId();
   }
 
   initializeForm(): void {
@@ -66,8 +67,26 @@ export class IdentityDetailsComponent implements OnInit {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
-
-
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employedata = data;
+        this.patchForm(data);
+        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
+  patchForm(data: any): void {
+    this.identityForm.patchValue({
+      identityType: data.identityType || '',  
+      identityNumber: data.identityNumber || '',  
+      identityAttachment: data.identityAttachment || '', 
+    });
+  
+    console.log(this.identityForm.value);  
+  }
   // Fetch identity details by employee ID
   getIdentityByEmpid(): void {
     const EmpId = parseInt(this.empinfo.employeeId);

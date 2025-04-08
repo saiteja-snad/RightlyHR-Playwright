@@ -29,7 +29,7 @@ export class FamilyDetailsComponent implements OnInit {
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
   educationtypes = [
     { label: 'Select', value: null },]
-
+    employedata={} as any;
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -37,6 +37,7 @@ export class FamilyDetailsComponent implements OnInit {
     this.initializeFamilyDetailsupdateForm();
     this.getFamilyRelations();
     this.getfamilyDetailsByEmployeid();
+    this.getEmployeeId();
   }
 
   initializeFamilyDetailsForm(): void {
@@ -116,7 +117,29 @@ export class FamilyDetailsComponent implements OnInit {
         },
       });
   }
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employedata = data;
+        this.patchForm(data);
+        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
 
+  patchForm(data: any): void {
+    this.familyDetailsForm.patchValue({
+      memberName: data.familyMemberName || '', 
+      dateOfBirth: data.familyMemberDOB || '', 
+      relationShipId: data.familyMemberRelation || '',  
+      isDependent: data.isDependent || false,  
+    });
+  
+    console.log(this.familyDetailsForm.value); 
+  }
+  
   openModalupdate(content: any, familyDetail: any): void {
     console.log(familyDetail)
     this.selectedFamilyMembername = familyDetail.relationShipName

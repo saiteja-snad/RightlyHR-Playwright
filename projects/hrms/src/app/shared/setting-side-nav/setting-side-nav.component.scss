@@ -1,0 +1,61 @@
+.sidenav-main-container {
+    position: relative;
+    width: 10rem;
+    height: 100dvh;
+    overflow: hidden;
+    border: 1px solid var(--side-nav-background-color);
+    background-color: var(--side-nav-background-color);
+}
+
+.sidenav-header {
+    border-bottom: 1px solid var(--white-color);
+    padding: 1.25rem 0rem;
+}
+
+.logo-img {
+    width: 6rem;
+    height: 4.5rem;
+    border-radius: 0.5rem;
+}
+
+.sidnav-main-content {
+    width: 100%;
+    height: calc(100dvh - 15rem);
+    overflow-y: auto;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--fontsize12);
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: -2%;
+    border-radius: 0.5rem;
+    color: var(--side-nav-item-color);
+    cursor: pointer;
+}
+
+.active-nav-link {
+    background-color: var(--side-nav-active-bg-color);
+    color: var(--side-nav-item-active-color);
+}
+
+.custom-icon {
+    font-size: var(--fontsize14);
+}
+
+.bi-person-vcard {
+    font-size: 18px;
+}
+
+.sidenav-footer-content {
+    border-top: 1px solid var(--white-color);
+}
+
+.logout-text {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--side-nav-item-color);
+}

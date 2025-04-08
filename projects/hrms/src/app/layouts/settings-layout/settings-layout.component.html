@@ -1,1 +1,11 @@
-<p>settings-layout works!</p>
+<div class="main-layout-container d-flex w-100">
+   <div class="sidebar-content">
+      <app-setting-side-nav />
+   </div>
+   <div class="main-layout-content">
+      <app-header />
+      <div class="display-area">
+         <router-outlet />
+      </div>
+   </div>
+</div>

@@ -24,7 +24,6 @@ export class OnboardingDetailsComponent {
   Statusdetails: any;
   probation = [] as IProbation[];
   noticePeriod  = [{id : 1, name : 'Yes'}, {id : 2, name : 'No'}]
-
   empinfo = {} as IJob;
   backgroundDetails = [] as IBackground[];
   branchLocations = [] as IBranchLocation[]
@@ -32,8 +31,7 @@ export class OnboardingDetailsComponent {
   previousEmpData: Ipersonal = {} as Ipersonal;
   Manager: any = [];
   noticeDetails: INotice[] = []
-  selectedEmployeeId: any
-
+  selectedEmployeeId: any;
   onboardingForm!: FormGroup;
   noticePeriodStatus = [
     { name: 'Yes', value: true },
@@ -80,7 +78,6 @@ export class OnboardingDetailsComponent {
     this.initializeForm();
     this.getStatus();
     this.getEmployeeId();
-    
     this.getBackground();
     this.getBranchLocations();
     this.getprobation();
@@ -147,8 +144,6 @@ export class OnboardingDetailsComponent {
   }
   
   patchForm(data: any): void {
-
-
     this.onboardingForm.patchValue({
       status: this.Statusdetails.find((item: any) => item.statusname === data.empstatus),
       dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
@@ -285,9 +280,6 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.markAllAsTouched();
       return;
     }
-
-    const formData = this.onboardingForm.value;
-    const currentDate = new Date().toISOString();
     const payload = {
       employeeId: this.empinfo.employeeId,
       title: this.empinfo.title,

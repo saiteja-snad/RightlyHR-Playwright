@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { IJob } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-contact-details',
@@ -16,7 +17,8 @@ export class ContactDetailsComponent {
 
   contactForm!: FormGroup;
 subscription!:Subscription
-  empinfo:any
+ empinfo = {} as IJob;
+ employedata:any[]=[]
   buttons= false;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
   ngOnInit(): void {
@@ -52,7 +54,7 @@ disableForm(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-      this.empinfo = data;
+      this.employedata = data;
       this.patchForm(data);
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
@@ -61,10 +63,10 @@ disableForm(): void {
 
   patchForm(data: any): void {   
     this.contactForm.patchValue({
-      personalEmail: data.emailaddress || '', // Bind personal email
-      workMail: data.workEmail || '',         // Bind work email
-      phoneNumber: data.contactnumber || '',  // Bind personal phone number
-      workNumber: data.workPhone || '',       // Bind work phone number
+      personalEmail: data.emailaddress || this.empinfo.emailaddress,
+      workMail: data.workEmail || this.empinfo.workMail,         // Bind work email
+      phoneNumber: data.contactnumber || this.empinfo.contactnumber,  // Bind personal phone number
+      workNumber: data.workPhone || this.empinfo.workPhone,       // Bind work phone number
     });
   }
   updateAddressInfo(): void {
@@ -77,8 +79,8 @@ disableForm(): void {
     lastName: this.empinfo.lastName,
     gender: this.empinfo.gender || null,
     dob: this.empinfo.dob,
-    bloodGroup: this.empinfo.bloodGroup || null,
-    maritalStatus: this.empinfo.maritalStatus || null,
+    bloodGroup: this.empinfo.bloodGroup ,
+    maritalStatus: this.empinfo.maritalStatus,
     empStatus: this.empinfo.empstatus,
     emailaddress: formValue.personalEmail || this.empinfo.personalEmail, 
     workEmail: formValue.workMail || this.empinfo.workMail, 

@@ -8,10 +8,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { DropdownModule } from 'primeng/dropdown';
 import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })

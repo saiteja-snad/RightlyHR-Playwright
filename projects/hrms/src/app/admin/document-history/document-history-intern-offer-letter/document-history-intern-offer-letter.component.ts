@@ -25,8 +25,18 @@ export class DocumentHistoryInternOfferLetterComponent {
   traineeofferletters = [] as IOfferLetterDetails[];
   loginuserdata = {} as any;
   selectedValuesOfOffer = {} as any;
-  employeedata = {} as any
-  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private authService: AuthService, private conformationPopup: OpenModalService) {
+  employeedata = {} as any;
+
+  
+  constructor(
+    private router: Router, 
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private authService: AuthService, 
+    private conformationPopup: OpenModalService
+  ) 
+  {
 
     this.initializeForm();
 

@@ -315,12 +315,9 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name" (onChange)="pathValuesFuction()"
+                                <p-select [options]="documentType" optionValue="value" optionLabel="name" (onChange)="pathValuesFuction()"
                                     placeholder="Please select document type" formControlName="Copys"
                                     class="form-select custom-select" >
-                                    <option disabled [ngValue]="undefined">Select</option>
-                                    <option Value="true">Yes</option>
-                                    <option Value="false">No</option>
                                 </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">

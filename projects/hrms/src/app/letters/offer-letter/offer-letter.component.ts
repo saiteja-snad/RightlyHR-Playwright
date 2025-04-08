@@ -90,9 +90,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },
   ];
-  employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
+ documentType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
   ];
   esic: { name: string, value: boolean }[] = [
     { name: 'Yes', value: true },
@@ -486,8 +486,9 @@ pathValuesFuction(){
 console.log(formValues);
   this.prospectiveEmpData.offerIssuedDate= formValues.offerIssuedDate,
   this.prospectiveEmpData.dateOfJoining= formValues.dateOfJoining,
-  this.prospectiveEmpData.copys=formValues.Copys,
+  this.prospectiveEmpData.Copys=formValues.Copys,
   this.prospectiveEmpData.offerExpiryDate= formValues.offerExpiryDate
+  console.log(this.prospectiveEmpData.Copys);
 }
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {

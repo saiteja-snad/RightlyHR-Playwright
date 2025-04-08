@@ -306,13 +306,13 @@ export class OnboardingDetailsComponent {
     const currentDate = new Date().toISOString();
     const payload = {
       employeeId: this.empinfo.employeeId,
-      status: formData.status.statusname,
-      dateOfJoining: formData.dateOfJoining,
+      status: formData.status?.statusname,
+      dateOfJoining: formData?.dateOfJoining,
       branchCode: formData.branchLocation,
       probationEndDate: formData.probationEndDate,
-      probationStatus: formData.probationStatus.probationstatus1,
+      probationStatus: formData.probationStatus?.probationstatus1,
       noticePeriodStatus: formData.noticePeriodStatus,
-      backgroundCheckStatus: formData.backgroundCheckStatus.backgroundcheckstatus1,
+      backgroundCheckStatus: formData.backgroundCheckStatus?.backgroundcheckstatus1,
       salaryHold: formData.salaryHold,
       pf: formData.pf,
       esic: formData.esic,

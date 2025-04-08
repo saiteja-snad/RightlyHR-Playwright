@@ -1,1 +1,32 @@
-<p>setting-side-nav works!</p>
+<div class="sidenav-main-container">
+    <div class="sidenav-header text-center w-100 px-0">
+        <img src="logos/snad-logo.png" alt="company logo" class="logo-img">
+    </div>
+    <hr class="white-line">
+    <div class="sidnav-main-content px-3">
+        <ul class="nav-items-list text-center ps-0">
+            <li class="nav-item p-2 mb-3" [routerLink]="['/admin']" routerLinkActive="active-nav-link">
+                <i class="bi bi-columns-gap custom-icon"></i>Dashboard
+            </li>
+            <li class="nav-item p-2 mb-3" [routerLink]="['/myinfo']" routerLinkActive="active-nav-link">
+                <i class="bi bi-person-vcard custom-icon"></i>My Info
+            </li>
+            <li class="nav-item p-2 mb-3" [routerLink]="['/events']" routerLinkActive="active-nav-link">
+                <i class="bi bi-calendar2-heart custom-icon"></i>Events
+                
+            </li>
+            <li class="nav-item p-2 mb-3" [routerLink]="['/time-off']" routerLinkActive="active-nav-link">
+                <i class="bi bi-clock-history custom-icon"></i>Time-off
+            </li>
+
+            <li class="nav-item p-2 mb-3" [routerLink]="['/claimsandexpenses']" routerLinkActive="active-nav-link">
+                <i class="bi bi-currency-dollar custom-icon"></i>Expenses
+            </li>
+         </ul>
+    </div>
+    <div class="sidenav-footer-content text-center py-4">
+        <a class="logout-text">
+            <i class="bi bi-box-arrow-right me-2"></i><span>Logout</span>
+        </a>
+    </div>
+</div>

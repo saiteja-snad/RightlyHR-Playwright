@@ -55,6 +55,9 @@ export class ExperienceDetailsComponent {
   navigateNext() {
     this.router.navigate(['/review']);
   }
+  navigateemergency(){
+    this.router.navigate(['/emergency-details']);
+  }
   //function to get all experiences 
   getexperiencedetails() {
     let EmployeeId = parseInt(this.prosempdata.employeeId)

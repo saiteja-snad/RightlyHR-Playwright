@@ -208,6 +208,7 @@ export class AddProspectiveInternComponent {
       employeeStatus: 'Trainee Prospective',
       emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
+      empType : 'Trainee'
       
     }
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({

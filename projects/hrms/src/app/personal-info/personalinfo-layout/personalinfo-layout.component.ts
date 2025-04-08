@@ -108,7 +108,9 @@ export class PersonalinfoLayoutComponent implements OnInit{
     console.log("Updated selectedEmployees:", this.selectedEmployees);
     console.log("Updated selectedEmployeeIds:", this.selectedEmployeeIds);
 }
-
+navigateDashboard() {
+  this.router.navigate(['/admin/dashboard'])
+}
   getEmployee() {
     this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
       next: (data: any) => {

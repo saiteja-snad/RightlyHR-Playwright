@@ -234,7 +234,7 @@ selectgradId(event:any){
                 // effectiveDate: null,
                 // reportsto: ,
                 gradeId: this.gradeIdValue.gradeId,
-                locationid: this.employeeForm.get('location')?.value,
+                locationid: this.postProspectiveEmpDetails.locationid,
                 sublocationid: this.employeeForm.get('subLocation')?.value,
                 jobRole: this.employeeForm.get('designation')?.value,
               };
@@ -251,20 +251,21 @@ selectgradId(event:any){
           }
           else if (res.statusCode == 409) {
             this.conformationPopup.openErrorModal(res.message);
+         
+          } else {
+            this.conformationPopup.openErrorModal(res.message); 
             setTimeout(() => {
-              // this.openmodel(this.pospectivecreate);
               this.modalService.dismissAll();
             }, 3000);
-          } else {
-            this.conformationPopup.openErrorModal(res.message);
-            
           }
         },
         error: (err: any) => {
           console.log(err);
+        this.conformationPopup.openErrorModal(err.error.message);
         },
       });
   }
+  
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     console.log(this.emp);

@@ -194,14 +194,6 @@ export class AddProspectiveInternComponent {
     return true;
   }
 
-  // Dummy data for dropdowns
- 
-  // onSubmit() {
-  //   this.postTraineeData();
-  //   const requestBody = this.employeeForm.value;
-  //   console.log('Request Body:', requestBody);
-  // }
-
   openModal(content: any) {
     this.modalService.open(content, { centered: true,backdrop: 'static' });
   }
@@ -212,10 +204,11 @@ export class AddProspectiveInternComponent {
       firstName: this.employeeForm.get('firstName')?.value,
       middleName: this.employeeForm.get('middleName')?.value,
       lastName: this.employeeForm.get('lastName')?.value,
+      experienceType: this.employeeForm.get('employmentType')?.value?.name,
       employeeStatus: 'Trainee Prospective',
       emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
-      experienceType: this.employeeForm.get('experienceType')?.value,
+      
     }
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
@@ -226,8 +219,8 @@ export class AddProspectiveInternComponent {
             const jobdata = {
               employeeId: this.result.employeeId,
               gradeId: this.gradeIdValue.gradeId,
-              locationid: this.employeeForm.get('location')?.value,
-              sublocationid: this.employeeForm.get('subLocation')?.value,
+              locationid: this.postProspectiveEmpDetails.locationid,
+              sublocationid: parseInt(this.employeeForm.get('subLocation')?.value),
               jobRole: this.gradeIdValue.designationName,
             };
             this.subscription = this.http
@@ -235,7 +228,7 @@ export class AddProspectiveInternComponent {
               .subscribe({
                 next: (data: any) => {
                   console.log(data);
-                  this.conformationPopup.openSuccessModal('Prospective employee created successfully');
+                  this.conformationPopup.openSuccessModal('Trainee Prospective employee created successfully');
                   this.empdata();
                   this.modalService.dismissAll();
                   this.select(this.result);

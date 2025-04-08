@@ -8,7 +8,8 @@ import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { IJob } from '../../../Interfaces/job-model';
+import { IJob } from '../../../Interfaces/letters-model';
+
 @Component({
   selector: 'app-basic-info',
   imports: [CommonModule, ReactiveFormsModule, Select],
@@ -120,6 +121,22 @@ export class BasicInfoComponent {
       emergencyEmail1: this.empinfo.emergencyEmail1,
       emergencyNumber1: this.empinfo.emergencyNumber1,
       relationship1: this.empinfo.relationship1,
+      profileUrl: this.empinfo.profileUrl,
+      fusionEmpId: this.empinfo.fusionEmpId,
+      dateOfJoining: this.empinfo.dateOfJoining,
+      branchCode: this.empinfo.branchCode,
+      probationEndDate: this.empinfo.probationEndDate,
+      probationStatus: this.empinfo.probationStatus,
+      noticePeriod: this.empinfo.noticePeriod,
+      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
+      issalaryhold:this.empinfo.issalaryhold,
+      pf: this.empinfo.pf,
+      esic:this.empinfo.esic,
+      pt: this.empinfo.pt,
+      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
+      allowWFH: this.empinfo.allowWFH,
+      workLocation:this.empinfo.workLocation,
+      wfhManagerId: this.empinfo.wfhManagerId
 
     };
     console.log(updatePayload);

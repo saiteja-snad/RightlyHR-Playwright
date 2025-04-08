@@ -161,7 +161,22 @@ export class EmergencyContactDetailsComponent {
       emergencyEmail1: formValue.contact2Email || this.empinfo.emergencyEmail1,
       emergencyNumber1:contact2Phone ,
       relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.empinfo.relationship1,
-      profileUrl : this.empinfo.profileUrl
+      profileUrl : this.empinfo.profileUrl,
+      fusionEmpId: this.empinfo.fusionEmpId,
+      dateOfJoining: this.empinfo.dateOfJoining,
+      branchCode: this.empinfo.branchCode,
+      probationEndDate: this.empinfo.probationEndDate,
+      probationStatus: this.empinfo.probationStatus,
+      noticePeriod: this.empinfo.noticePeriod,
+      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
+      issalaryhold:this.empinfo.issalaryhold,
+      pf: this.empinfo.pf,
+      esic:this.empinfo.esic,
+      pt: this.empinfo.pt,
+      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
+      allowWFH: this.empinfo.allowWFH,
+      workLocation:this.empinfo.workLocation,
+      wfhManagerId: this.empinfo.wfhManagerId
     };
 
 

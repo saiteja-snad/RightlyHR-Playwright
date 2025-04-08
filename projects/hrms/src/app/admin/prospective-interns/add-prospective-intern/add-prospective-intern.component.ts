@@ -212,10 +212,11 @@ export class AddProspectiveInternComponent {
       firstName: this.employeeForm.get('firstName')?.value,
       middleName: this.employeeForm.get('middleName')?.value,
       lastName: this.employeeForm.get('lastName')?.value,
+      experienceType: this.employeeForm.get('employmentType')?.value?.name,
       employeeStatus: 'Trainee Prospective',
       emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
-      experienceType: this.employeeForm.get('experienceType')?.value,
+      
     }
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
@@ -226,8 +227,8 @@ export class AddProspectiveInternComponent {
             const jobdata = {
               employeeId: this.result.employeeId,
               gradeId: this.gradeIdValue.gradeId,
-              locationid: this.employeeForm.get('location')?.value,
-              sublocationid: this.employeeForm.get('subLocation')?.value,
+              locationid: this.postProspectiveEmpDetails.locationid,
+              sublocationid: parseInt(this.employeeForm.get('subLocation')?.value),
               jobRole: this.gradeIdValue.designationName,
             };
             this.subscription = this.http

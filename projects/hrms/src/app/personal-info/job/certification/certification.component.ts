@@ -7,10 +7,11 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-certification',
-  imports: [CommonModule, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './certification.component.html',
   styleUrl: './certification.component.scss'
 })

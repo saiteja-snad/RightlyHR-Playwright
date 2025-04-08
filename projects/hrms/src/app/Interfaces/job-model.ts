@@ -1,4 +1,13 @@
 export interface IJob {
+    bloodGroup: any;
+    personalEmail: any;
+    workMail: any;
+    phoneNumber: any;
+    workNumber: any;
+    relationship1: any;
+    emergencyNumber1: any;
+    emergencyEmail1: any;
+    emergencyName1: any;
     employeeId: any,
     firstName?: string,
     lastName?: string,

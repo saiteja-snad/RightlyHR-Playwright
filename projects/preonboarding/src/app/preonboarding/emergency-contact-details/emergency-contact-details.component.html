@@ -157,10 +157,11 @@
                     </div>
                 </div>
             </div>
-
-            <div class="footer-btn-content d-flex justify-content-end pt-4">
-                <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="contactForm.invalid" (click)="navigateNext()">Next</button>
-            </div>
         </form>
+
+        <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
+            <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Education Details</button>
+            <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="contactForm.invalid" (click)="navigateNext()">Next</button>
+        </div>
     </div>
 </div>

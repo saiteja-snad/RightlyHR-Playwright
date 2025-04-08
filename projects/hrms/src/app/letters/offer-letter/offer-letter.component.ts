@@ -991,7 +991,6 @@ console.log(formValues);
         next: (res: any) => {
           console.log(res);
           this.result = res;
-          debugger
           if (res.statusCode == 409) {
             this.conformationPopup.openErrorModal(res.message);
           } else if (res.statusCode == 200) {    

@@ -513,6 +513,7 @@ export class OfferLetterComponent implements OnInit {
           this.confiramtionpopups.openSuccess('Offer Letter Accepted Successfully');
           this.modalService.dismissAll();
           this.loadingcircle = false;
+          this.getOfferLetterDetails();
         }
       },
       error: (reason: any) => {

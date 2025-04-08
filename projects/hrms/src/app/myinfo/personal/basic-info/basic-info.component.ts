@@ -66,7 +66,7 @@ export class BasicInfoComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.emsployedata = data;
+        this.empinfo = data;
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },

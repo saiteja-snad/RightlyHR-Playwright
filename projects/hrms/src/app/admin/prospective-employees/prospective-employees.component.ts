@@ -7,8 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
 import {  Iprospective } from './Prospective-model';
-import { ProspectivePipe } from "../../Pipes/prospective.pipe";
 import { TranslateModule } from '@ngx-translate/core';
+import { ProspectivePipe } from '../../Pipes/prospective.pipe';
 @Component({
   selector: 'app-prospective-employees',
   imports: [CommonModule, FormsModule, ProspectivePipe,TranslateModule],

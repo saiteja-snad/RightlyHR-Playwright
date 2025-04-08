@@ -1,11 +1,11 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center">
         <div> <span class="family-sub-header">Family Details</span></div>
-        <div class="plus-button">
+        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){ <div class="plus-button">
             <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
                     (click)="openModal(addFamilyModal)" class="plus-text">Add
                     New</span></span>
-        </div>
+        </div>}
     </div>
     <div class="custom-table-content mt-2">
         <table class="w-100">
@@ -15,8 +15,9 @@
                     <th>Relationship</th>
                     <th>Date of Birth</th>
                     <th>Dependent</th>
-                    <th class="text-center">Actions</th>
-
+                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
+                        <th class="text-center">Actions</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -29,10 +30,12 @@
 
                         <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
                         <td class="text-center">
+                            @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
+                               
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li (click)="openModalupdate(updateFamilyModal, familyDetail)">
                                         <a class="dropdown-item">
@@ -45,7 +48,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div>}
                         </td>
                     </tr>
                 </ng-container>

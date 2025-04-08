@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddProspectiveInternComponent } from './add-prospective-intern/add-prospective-intern.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { ITrainee } from './Prospective-interns-modules';
 import { FormsModule } from '@angular/forms';
 import { IServe } from '../../Interfaces/letters-model';
+import { ActiveEmployeePipe } from '../../pipes/active-employee.pipe';
 
 @Component({
   selector: 'app-prospective-interns',
@@ -17,7 +17,7 @@ import { IServe } from '../../Interfaces/letters-model';
   templateUrl: './prospective-interns.component.html',
   styleUrl: './prospective-interns.component.scss'
 })
-export class ProspectiveInternsComponent {
+export class ProspectiveInternsComponent implements OnInit, OnDestroy{
   subscription!: Subscription;
   searchValue: any;
   Trainee = [] as any;
@@ -71,12 +71,13 @@ export class ProspectiveInternsComponent {
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
+
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     console.log(this.emp);
-
     this.router.navigate(['/personalinfo']);
   }
+
   checkaccess(rba: string): boolean {
     let access = JSON.parse(localStorage.getItem('fusionroleClaims') || '{}');
     if (access.includes(rba)) return true

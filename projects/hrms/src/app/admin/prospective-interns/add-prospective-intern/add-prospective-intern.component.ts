@@ -221,9 +221,7 @@ export class AddProspectiveInternComponent {
       next: (res: any) => {
         console.log(res);
           this.result = res.employeeData;
-       
           console.log(this.result);
-          debugger
           if (res.statusCode == 201) {
             const jobdata = {
               employeeId: this.result.employeeId,

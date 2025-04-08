@@ -12,7 +12,7 @@ import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-offboarding-details',
-  imports: [CommonModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './offboarding-details.component.html',
   styleUrl: './offboarding-details.component.scss'
 })

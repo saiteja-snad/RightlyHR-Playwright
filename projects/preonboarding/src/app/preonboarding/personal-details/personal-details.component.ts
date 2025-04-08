@@ -1,10 +1,10 @@
 import { CommonModule, formatDate } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, Input, OnInit, signal, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { single, Subscription } from 'rxjs';
 import { IAddress, IGender, IJobdetails, Ipersonal, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
 import { BnNgIdleService } from 'bn-ng-idle';
@@ -38,7 +38,7 @@ export class PersonalDetailsComponent implements OnInit {
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   spinnerLoader = false;
-  selectedCountryCode:string = '';
+  selectedCountryCode = signal<string>('');
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -59,7 +59,11 @@ export class PersonalDetailsComponent implements OnInit {
   ];
 
   constructor(private router: Router, private modalService: NgbModal, private readonly fb: FormBuilder,
-    private http: HttpService, private bnIdle: BnNgIdleService) { }
+    private http: HttpService, private bnIdle: BnNgIdleService) {
+      effect(() => {
+       this.selectedCountryCode.set(this.selectedDialCode);
+      })
+     }
 
   ngOnInit(): void {
     this.bnIdle.startWatching(1600).subscribe((isTimeOut: boolean) => {
@@ -70,9 +74,9 @@ export class PersonalDetailsComponent implements OnInit {
       }
     })
     this.prospectiveEmpData = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
+    this.getprospectivempdata()
     this.initializePersonalForm();
-    this.getprospectivempdata();
-    this.getGender();
+    this.getGender();;
     this.getJobDetails();
     this.getTitle();
   }
@@ -83,7 +87,9 @@ export class PersonalDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.employeeData = data as Ipersonal;
+        this.employeeData = data as Ipersonal; 
+      this.selectedCountryCode.set(this.employeeData?.mobilePhoneCountryCode);
+      console.log(this.selectedCountryCode);
         this.patchForm();
       },
       error: (reason: any) => {
@@ -103,7 +109,6 @@ export class PersonalDetailsComponent implements OnInit {
       next: (data: any) => {
         this.jobdetails = data[0] as IJobdetails[];
         console.log(this.jobdetails);
-        this.patchForm();
       }
     })
   }
@@ -163,7 +168,7 @@ export class PersonalDetailsComponent implements OnInit {
       }),
     });
   }
-
+ 
   patchForm() {
     const dateOfBirth = this.employeeData.dob ? this.formatDate(this.employeeData.dob) : null;
     this.personalDetailsForm.patchValue({
@@ -181,12 +186,9 @@ export class PersonalDetailsComponent implements OnInit {
       personalEmail: this.employeeData.emailaddress,
       currentAddress: this.employeeData?.employeeAddresses?.find((address:IAddress)=>address?.type?.toLowerCase() == 'c'),
       permanentAddress: this.employeeData?.employeeAddresses?.find((address:IAddress)=>address?.type?.toLowerCase() == 'p')
-    });
+    }); 
 
-   this.selectedCountryCode = `'${this.employeeData.mobilePhoneCountryCode}'`;
-    console.log(this.selectedCountryCode);
   }
-
   // Copy Current Address to Permanent Address
   copyCurrentAddress(event: any) {
     if (event.target.checked) {
@@ -272,11 +274,11 @@ export class PersonalDetailsComponent implements OnInit {
     this.selectedDialCode = country.code;
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
-    this.employeeData.mobilePhoneCountryCode = country.code;
+    this.employeeData.mobilePhoneCountryCode = country.code; 
     console.log(this.employeeData.mobilePhoneCountryCode);
   }
 
-  formatPhoneNumber(value: string): string {
+  formatPhoneNumber(value: any) {
     if (!this.selectedDialCode || !value) return value;
     const stringValue = String(value); // Make sure it's a string
     const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedDialCode);

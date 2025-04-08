@@ -194,14 +194,6 @@ export class AddProspectiveInternComponent {
     return true;
   }
 
-  // Dummy data for dropdowns
- 
-  // onSubmit() {
-  //   this.postTraineeData();
-  //   const requestBody = this.employeeForm.value;
-  //   console.log('Request Body:', requestBody);
-  // }
-
   openModal(content: any) {
     this.modalService.open(content, { centered: true,backdrop: 'static' });
   }
@@ -236,7 +228,7 @@ export class AddProspectiveInternComponent {
               .subscribe({
                 next: (data: any) => {
                   console.log(data);
-                  this.conformationPopup.openSuccessModal('Prospective employee created successfully');
+                  this.conformationPopup.openSuccessModal('Trainee Prospective employee created successfully');
                   this.empdata();
                   this.modalService.dismissAll();
                   this.select(this.result);

@@ -49,6 +49,8 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
+    console.log(this.prosempdata);
+    
     this.getDocuments();
     this.initializeForm();
   }
@@ -329,7 +331,6 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   //function to submit the documents 
   submit() {
-    debugger
     let empId = this.prosempdata.employeeId;
     let data = { empId: this.prosempdata.employeeId };
     this.subscription = this.http.putData(`PreonboardingDocuments/submit/${empId}`, data).subscribe({

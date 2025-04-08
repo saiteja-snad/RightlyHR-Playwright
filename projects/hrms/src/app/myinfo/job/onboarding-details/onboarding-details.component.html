@@ -68,7 +68,7 @@
 
                     </div>
 
-                  
+
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="probationEndDate" class="form-label custom-label mb-2">Probation End Date</label>
                         <input type="date" class="form-control custom-input" id="probationEndDate"
@@ -83,17 +83,17 @@
                         <label for="probationStatus" class="form-label custom-label mb-2">Probation Status</label>
                         <input type="text" class="form-control custom-input" id="probationStatus"
                             formControlName="probationStatus" placeholder="Please enter probation status">
-                       
-                            <div class="error-msg"
+
+                        <div class="error-msg"
                             *ngIf="onboardingForm.get('probationStatus')?.invalid && onboardingForm.get('probationStatus')?.touched">
                             Probation Status is required
                         </div>
-                     
+
                     </div>
 
                     <div class="col-md-6 col-lg-4 mb-4">
                         <label for="noticePeriodStatus" class="form-label custom-label mb-2">Notice Period Status Sent
-                            By<span class="text-danger">*</span></label>
+                            By</label>
                         <input type="text" class="form-control custom-input" id="noticePeriodStatus"
                             formControlName="noticePeriodStatus" placeholder="Please enter trainee offer sent by">
                         <div class="error-msg"
@@ -104,7 +104,7 @@
 
                     <div class="col-md-6 col-lg-4 mb-4">
                         <label for="backgroundCheckStatus" class="form-label custom-label mb-2">Background Check
-                            Status<span class="text-danger">*</span></label>
+                            Status</label>
                         <input type="text" class="form-control custom-input" id="backgroundCheckStatus"
                             formControlName="backgroundCheckStatus"
                             placeholder="Please enter trainee offer sent status">
@@ -156,7 +156,7 @@
 
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="totalExperience" class="form-label custom-label mb-2">Total Previous Years
-                            Experience<span class="text-danger">*</span></label>
+                            Experience</label>
                         <input type="text" class="form-control custom-input" id="totalExperience"
                             formControlName="totalExperience" placeholder="Please enter total experience">
                         <div class="error-msg"

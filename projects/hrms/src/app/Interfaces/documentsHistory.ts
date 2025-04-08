@@ -23,3 +23,13 @@ export interface IOfferLetterDetails {
     jobRole:string,
     subLocation:string,
 }
+
+export interface IAppointmentLetterDetails {
+    id: number;
+    documentUrl: string;
+    employeeId: number,
+    fusionEmpId:string,
+    employeeName : string,
+    appointmentSentDate : any,
+
+}

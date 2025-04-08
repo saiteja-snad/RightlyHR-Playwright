@@ -21,8 +21,9 @@
             <tbody>
                 <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let identityDetails of getIdentitydetails | async">
-                        <td>{{ identityDetails.identityNumber }}</td>
+                     
                         <td>{{ identityDetails.identityType }}</td>
+                        <td>{{ identityDetails.identityNumber }}</td>
                         <td><span *ngIf="identityDetails.attachment;else noData" class="dowload-text"
                                 (click)="onSelectIdentityAttachmentDownload(identityDetails)"
                                 style="cursor: pointer;"><i

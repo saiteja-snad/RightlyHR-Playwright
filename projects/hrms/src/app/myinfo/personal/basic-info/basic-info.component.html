@@ -21,9 +21,9 @@
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" id="employeeId" formControlName="employeeId"
+            <input type="text" class="form-control custom-input" id="fusionEmpId" formControlName="fusionEmpId"
               placeholder="Please enter Employee ID" />
-            <div *ngIf="basicInfoForm.get('employeeId')?.invalid && basicInfoForm.get('employeeId')?.touched"
+            <div *ngIf="basicInfoForm.get('fusionEmpId')?.invalid && basicInfoForm.get('fusionEmpId')?.touched"
               class="error-msg">
               Employee ID is required
             </div>

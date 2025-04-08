@@ -92,6 +92,7 @@ disableForm(): void {
     emergencyEmail1: this.empinfo.emergencyEmail1,
     emergencyNumber1: this.empinfo.emergencyNumber1,
     relationship1: this.empinfo.relationship1,
+    profileUrl : this.empinfo.profileUrl
   };
 
  

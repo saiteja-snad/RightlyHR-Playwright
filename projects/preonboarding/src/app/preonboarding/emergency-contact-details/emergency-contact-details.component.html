@@ -16,26 +16,26 @@
                     <div class="col-lg-4 col-md-6 mb-4">
                         <label class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="name"
-                            placeholder="Please enter first name">
+                            placeholder="Please enter name">
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact1.name')?.invalid && (contactForm.get('contact1.name')?.touched || contactForm.get('contact1.name')?.dirty)">
-                            <div *ngIf="contactForm.get('contact1.name')?.hasError('required')">Name is required.</div>
+                            <div *ngIf="contactForm.get('contact1.name')?.hasError('required')">Name is required</div>
                             <div *ngIf="contactForm.get('contact1.name')?.hasError('minlength')">Name must be at least 2
-                                characters.</div>
+                                characters</div>
                         </div>
                     </div>
 
                     <!-- Email -->
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <label class="form-label custom-label mb-2">Mail ID<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">Personal Email ID<span class="text-danger">*</span></label>
                         <input type="email" class="form-control custom-input" formControlName="email"
-                            placeholder="Please enter email">
+                            placeholder="Please enter personal email ID">
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact1.email')?.invalid && (contactForm.get('contact1.email')?.touched || contactForm.get('contact1.email')?.dirty)">
-                            <div *ngIf="contactForm.get('contact1.email')?.hasError('required')">Email is required.
+                            <div *ngIf="contactForm.get('contact1.email')?.hasError('required')">Email ID is required
                             </div>
                             <div *ngIf="contactForm.get('contact1.email')?.hasError('email')">Please enter a valid email
-                                address.</div>
+                                ID</div>
                         </div>
                     </div>
 
@@ -49,16 +49,16 @@
                                 class="country-input" (onCountryChange)="onCountryChange($event)">
                             </lib-country-list>
                             <input type="text" class="form-control custom-input" formControlName="mobile"
-                                placeholder="Please enter your mobile number" id="phonenumbers"
+                                placeholder="Please enter mobile number" id="phonenumbers"
                                 aria-describedby="phonenumbers"
                                 [value]="contactForm.get('contact1.mobile')?.value ? formatPhoneNumber(contactForm.get('contact1.mobile')?.value) : ''"
                                 autocomplete="off" required>
                         </div>
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact1.mobile')?.invalid && (contactForm.get('contact1.mobile')?.touched || contactForm.get('contact1.mobile')?.dirty)">
-                            <div *ngIf="contactForm.get('contact1.mobile')?.hasError('required')">Mobile number is required.</div>
-                            <div *ngIf="contactForm.get('contact1.mobile')?.hasError('pattern')">Please enter a valid mobile number.</div>
-                            <div *ngIf="contactForm.get('contact1.mobile')?.hasError('invalidPhoneNumber')">The phone number is not valid for the selected country.</div>
+                            <div *ngIf="contactForm.get('contact1.mobile')?.hasError('required')">Mobile number is required</div>
+                            <div *ngIf="contactForm.get('contact1.mobile')?.hasError('pattern')">Please enter a valid mobile number</div>
+                            <div *ngIf="contactForm.get('contact1.mobile')?.hasError('invalidPhoneNumber')">The phone number is not valid for the selected country</div>
                         </div>
                     </div>
 
@@ -74,7 +74,7 @@
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact1.relationship')?.invalid && (contactForm.get('contact1.relationship')?.touched || contactForm.get('contact1.relationship')?.dirty)">
                             <div *ngIf="contactForm.get('contact1.relationship')?.hasError('required')">Relationship is
-                                required.</div>
+                                required</div>
                         </div>
                     </div>
 
@@ -91,25 +91,25 @@
                     <div class="col-lg-4 col-md-6 mb-4">
                         <label class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="name"
-                            placeholder="Please enter first name">
+                            placeholder="Please enter name">
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact2.name')?.invalid && (contactForm.get('contact2.name')?.touched || contactForm.get('contact2.name')?.dirty)">
-                            <div *ngIf="contactForm.get('contact2.name')?.hasError('required')">Name is required.</div>
+                            <div *ngIf="contactForm.get('contact2.name')?.hasError('required')">Name is required</div>
                             <div *ngIf="contactForm.get('contact2.name')?.hasError('minlength')">Name must be at least 2
-                                characters long.</div>
+                                characters long</div>
                         </div>
                     </div>
 
                     <!-- Email -->
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <label class="form-label custom-label mb-2">Personal Mail ID<span class="text-danger">*</span></label>
-                        <input type="email" class="form-control custom-input" formControlName="email" placeholder="Please enter email">
+                        <label class="form-label custom-label mb-2">Personal Email ID<span class="text-danger">*</span></label>
+                        <input type="email" class="form-control custom-input" formControlName="email" placeholder="Please enter email ID">
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact2.email')?.invalid && (contactForm.get('contact2.email')?.touched || contactForm.get('contact2.email')?.dirty)">
-                            <div *ngIf="contactForm.get('contact2.email')?.hasError('required')">Email is required.
+                            <div *ngIf="contactForm.get('contact2.email')?.hasError('required')">Email is required
                             </div>
-                            <div *ngIf="contactForm.get('contact2.email')?.hasError('email')">Please enter a valid email
-                                address.</div>
+                            <div *ngIf="contactForm.get('contact2.email')?.hasError('email')">Please enter a valid email ID
+                                </div>
                         </div>
                     </div>
 
@@ -123,7 +123,7 @@
                                 class="country-input" (onCountryChange)="onCountryChange1($event)">
                             </lib-country-list>
                             <input type="text" class="form-control custom-input" formControlName="mobile"
-                                placeholder="Please enter your mobile number" id="phonenumbers"
+                                placeholder="Please enter mobile number" id="phonenumbers"
                                 aria-describedby="phonenumbers"
                                 [value]="contactForm.get('contact2.mobile')?.value ? formatPhoneNumber(contactForm.get('contact2.mobile')?.value) : ''"
                                 autocomplete="off" required>
@@ -131,11 +131,11 @@
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact2.mobile')?.invalid && (contactForm.get('contact2.mobile')?.touched || contactForm.get('contact2.mobile')?.dirty)">
                             <div *ngIf="contactForm.get('contact2.mobile')?.hasError('required')">Mobile number is
-                                required.</div>
+                                required</div>
                             <div *ngIf="contactForm.get('contact2.mobile')?.hasError('pattern')">Please enter a valid
-                                mobile number.</div>
+                                mobile number</div>
                             <div *ngIf="contactForm.get('contact2.mobile')?.hasError('invalidPhoneNumber')">
-                                The phone number is not valid for the selected country.
+                                The phone number is not valid for the selected country
                             </div>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact2.relationship')?.invalid && (contactForm.get('contact2.relationship')?.touched || contactForm.get('contact2.relationship')?.dirty)">
                             <div *ngIf="contactForm.get('contact2.relationship')?.hasError('required')">Relationship is
-                                required.</div>
+                                required</div>
                         </div>
                     </div>
                 </div>

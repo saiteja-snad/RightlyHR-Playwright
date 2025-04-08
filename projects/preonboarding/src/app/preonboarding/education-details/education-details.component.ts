@@ -64,7 +64,7 @@ export class EducationDetailsComponent {
   navigatePrevious() {
     const storedstep = 1;
     localStorage.setItem('currentStep', storedstep.toString());
-    this.router.navigate(['/preonboarding/offerletter']);
+    this.router.navigate(['offer-letter']);
   }
 
   navigatePrevioustoTranineeofferletter() {

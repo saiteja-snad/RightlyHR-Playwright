@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IAddress, IJobDetails, Iofferletter } from '../../models/offer-letter.model';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { HttpService } from '../../http-services/http.service';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import moment from 'moment';
@@ -383,6 +383,7 @@ export class OfferLetterComponent implements OnInit {
   getOfferDetailsByOfferId(offerId: number) {
     this.subscription = this.http.getData(`PreonboardingOfferLetter/getbyid/${offerId}`).subscribe({
       next: (respone) => {
+        console.log(respone);
         if (respone) {
           this.updatedOfferLetterDetails = respone as Iofferletter;
         }
@@ -430,11 +431,8 @@ export class OfferLetterComponent implements OnInit {
   }
 
   acceptoffer() {
-    const offeraccept = "Offer Letter Accepted";
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-    offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
-    this.updateOfferDetailsforAccept(offerUpdateDetails);
-    this.downLoadDocument();
+    this.downLoadDocument(offerUpdateDetails);
     this.loadingcircle = true;
   }
 
@@ -442,6 +440,10 @@ export class OfferLetterComponent implements OnInit {
     this.subscription = this.http.postData('PreonboardingOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
         console.log(respone);
+        this.modalService.dismissAll();
+          this.confiramtionpopups.openSuccess('Offer Letter Accepted Successfully');
+          this.loadingcircle = false;
+          this.getOfferLetterDetails();
       },
       error: (err) => {
         console.log(err);
@@ -451,7 +453,7 @@ export class OfferLetterComponent implements OnInit {
   }
 
   //download document
-  async downLoadDocument() {
+  async downLoadDocument(offerUpdateDetails: Iofferletter) {
     const data = this.offerLetterData;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
@@ -490,30 +492,17 @@ export class OfferLetterComponent implements OnInit {
       type: 'application/pdf',
     });
     this.generatedfile = file;
-    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile);
+    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile,offerUpdateDetails);
   }
-
-  issubmitdiable: boolean = false;
-  ifreasonnull(Value: any) {
-    console.log(Value)
-    if (!Value || !Value.trim()) {
-      this.issubmitdiable = true;
-    } else {
-      this.issubmitdiable = false;
-    }
-  }
-
   //to store file to the azure and return to the url
-  private offerletterUpload(empId: number, file: File) {
+  private offerletterUpload(empId: number, file: File,offerUpdateDetails: Iofferletter) {
     let filePath = `/FusionDocuments/Employee Documents/Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
-          localStorage.setItem('offerletterurl', data.path);
-          this.confiramtionpopups.openSuccess('Offer Letter Accepted Successfully');
-          this.modalService.dismissAll();
-          this.loadingcircle = false;
-          this.getOfferLetterDetails();
+          offerUpdateDetails.documentUrl = data.path;
+          offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
+          this.updateOfferDetailsforAccept(offerUpdateDetails);
         }
       },
       error: (reason: any) => {
@@ -524,7 +513,7 @@ export class OfferLetterComponent implements OnInit {
   }
 
   downloadoffer() {
-    const fileurl = localStorage.getItem('offerletterurl') || '';
+    const fileurl = this.updatedOfferLetterDetails.documentUrl;
     this.subscription = this.http.DownloadDataWithQuery('PreonboardingFilesystem/Downloadfile', fileurl).subscribe({
       next: (res: any) => {
         let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];

@@ -7,7 +7,7 @@ import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
 import { CountryCodePhoneNumberComponent } from "../../shared/country-code-phone-number/country-code-phone-number.component";
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { count, last, Subscription } from 'rxjs';
 import moment from 'moment';
 import { HttpClient } from '@angular/common/http';
@@ -90,9 +90,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },
   ];
-  employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
+ documentType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
   ];
   esic: { name: string, value: boolean }[] = [
     { name: 'Yes', value: true },
@@ -163,7 +163,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       offerExpiryDate: ['', Validators.required],
       note: [''],
       authorityid: [null, Validators.required]
-    });
+    },
+    { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
+  );
     
   }
   onclickCTC(Value: any) {
@@ -185,7 +187,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3']; // IDs of the content elements to be converted to PDF
+    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3','pdfContent4','pdfContent5']; // IDs of the content elements to be converted to PDF
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;
@@ -227,39 +229,33 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
 
   }
   //function to validate the offer expiry date and offer issued date
-  updateEndDateValidity(): void {
-    const offerExpiryDate = new Date(this.prospectiveEmpData.offerExpiryDate);
-    const offerIssuedDate = new Date(this.prospectiveEmpData.offerIssuedDate);
-
-    if (offerExpiryDate <= offerIssuedDate) {
-      this.isExpiryDateValid = false;
-    } else {
-      this.isExpiryDateValid = true;
-    }
-  }
-  //function to validate the offer expected start date and offer issued date
-  updateEndDateValidityForExpectedStartDate() {
-    if (this.employeeaddress.empstatus != 'Trainee Active') {
-      const dateOfJoining = new Date(this.prospectiveEmpData.dateOfJoining);
-      const offerIssuedDate = new Date(this.prospectiveEmpData.offerIssuedDate);
-
-      if (dateOfJoining <= offerIssuedDate) {
-        this.isStartDateValid = false;
-      } else {
-        this.isStartDateValid = true;
+  offerExpiryDateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const issuedDate = control.get('offerIssuedDate')?.value;
+      const expiryDate = control.get('offerExpiryDate')?.value;
+      if (!issuedDate || !expiryDate) {
+        return null; // Don’t validate if one of the dates is missing
       }
-    }
+      return new Date(expiryDate) < new Date(issuedDate)
+        ? { offerDateInvalid: true }
+        : null;
+    };
   }
-  //function to validate the offer expiry date and offer issued date and expected start date
-  updateEndDateValidityupdate(): void {
-    const dateOfJoining = new Date(this.prospectiveEmpData.dateOfJoining);
-    const offerExpiryDate = new Date(this.prospectiveEmpData.offerExpiryDate);
 
-    if (dateOfJoining <= offerExpiryDate) {
-      this.isStartDateValidofexpected = false;
-    } else {
-      this.isStartDateValidofexpected = true;
-    }
+  //function to validate the offer expected start date and offer issued date
+  offerDateofjoiningDateValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const issuedDate = control.get('offerIssuedDate')?.value;
+      const dateOfJoiningDate = control.get('dateOfJoining')?.value;
+  
+      if (!issuedDate || !dateOfJoiningDate) {
+        return null; // Don’t validate if one of the dates is missing
+      }
+  
+      return new Date(dateOfJoiningDate) < new Date(issuedDate)
+        ? { offerdateofjoiningDateInvalid: true }
+        : null;
+    };
   }
  
 
@@ -372,10 +368,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       });
   }
   //function to get the authority designation
-  onclickDesignation(Value: any) {
-    console.log(Value);
+  onclickDesignation() {
+    let empId=this.employeeForm?.get('authorityid')?.value;
     let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => c.employeeId == Value
+      (c: any) => c.employeeId == empId
     );
     console.log(signatureAuthorityDetails);
     this.SignatureAuthorityValue = signatureAuthorityDetails;
@@ -490,8 +486,10 @@ pathValuesFuction(){
 console.log(formValues);
   this.prospectiveEmpData.offerIssuedDate= formValues.offerIssuedDate,
   this.prospectiveEmpData.dateOfJoining= formValues.dateOfJoining,
-  this.prospectiveEmpData.copys=formValues.Copys,
+  this.prospectiveEmpData.Copys=formValues.Copys,
   this.prospectiveEmpData.offerExpiryDate= formValues.offerExpiryDate
+  this.prospectiveEmpData.note= formValues.note,
+  console.log(this.prospectiveEmpData.Copys);
 }
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
@@ -508,6 +506,7 @@ console.log(formValues);
             console.log(data.checkofferletter);
             if (data.isEmployeevalid === true) {
               // const userConfirmed = window.confirm("Data already exists. Do you want to regenerate?");
+              
               if (Empidvalue) {
                 this.prospectiveEmpData = data.checkofferletter;
                 this.employeeForm?.patchValue({
@@ -531,7 +530,7 @@ console.log(formValues);
                   Copys: this.prospectiveEmpData?.copys,
                   offerExpiryDate: this.formatDate(this.prospectiveEmpData?.offerExpiryDate),
                   note:this.prospectiveEmpData?.note,
-                  authorityid: this.prospectiveEmpData?.authorityid,
+                  authorityid: this.prospectiveEmpData?.signatureAuthority,
                 })
                 console.log(this.prospectiveEmpData.values);
                 this.getEmployeeAddress(data.checkofferletter.empId);
@@ -539,10 +538,8 @@ console.log(formValues);
                   this.prospectiveEmpData.reportingmanagerId =
                     this.prospectiveEmpData.approver;
                 }
-                if (this.prospectiveEmpData.signatureAuthority) {
-                  this.prospectiveEmpData.authorityid =
-                    this.prospectiveEmpData.signatureAuthority;
-                  this.onclickDesignation(this.prospectiveEmpData.authorityid);
+                if(this.prospectiveEmpData.signatureAuthority){
+                  this.onclickDesignation();
                 }
                 this.prospectiveEmpData.jobLocationName =data.checkofferletter.workLocation;
                 this.prospectiveEmpData.jobSubLocationName =data.checkofferletter.subLocation;

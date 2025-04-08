@@ -280,6 +280,9 @@
                                 placeholder="Please enter offer issued date" (click)="pathValuesFuction()" />
                                 <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
                                     <div class="error-msg">Offer Issued Date is required</div>
+                                    <div *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerIssuedDate')?.touched" class="error-msg">
+                                      Offer Expiry Date should be after the Offer Issued Date
+                                    </div>
                                 </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
@@ -290,10 +293,12 @@
                                 <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                     <div class="error-msg">Expected Start Date is required</div>
                                 </div>
-                                <div *ngIf="!isStartDateValid" class="error-msg">
-                                    Expected Start Date should be after
-                                    the Offer Issued Date
-                                  </div>
+                                <div *ngIf="employeeForm.hasError('offerdateofjoiningDateInvalid') && employeeForm.get('dateOfJoining')?.touched" class="error-msg">
+                                  Offer Expected Start Date should be after the Offer Issued Date
+                                </div>
+                                <div *ngIf="employeeForm.hasError('offerexpectedstartDateInvalid') && employeeForm.get('dateOfJoining')?.touched" class="error-msg">
+                                  Offer Expiry Date should be after the Offer Expected Start Date
+                                </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Offer Expiry Date <span
@@ -303,17 +308,16 @@
                                 <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                                     <div class="error-msg">Offer Expiry Date is required</div>
                                 </div>
-                                <div *ngIf="!isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the Offer Issued Date</div>
+                                <div *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerExpiryDate')?.touched" class="error-msg">
+                                  Offer Expiry Date should be after the Offer Issued Date
+                                </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name" (onChange)="pathValuesFuction()"
+                                <p-select [options]="documentType" optionValue="value" optionLabel="name" (onChange)="pathValuesFuction()"
                                     placeholder="Please select document type" formControlName="Copys"
                                     class="form-select custom-select" >
-                                    <option disabled [ngValue]="undefined">Select</option>
-                                    <option Value="true">Yes</option>
-                                    <option Value="false">No</option>
                                 </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
@@ -331,7 +335,7 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Signature Authority Name <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation($event)" optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
+                                <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation()" optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
                                     class="form-select custom-select"></p-select>
                                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                                         <div class="error-msg">Signature Authority is required</div>

@@ -37,8 +37,8 @@ export class PersonalDetailsComponent implements OnInit {
   selectedDialCode: any;
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
-  selectedCountryCode: any;
   spinnerLoader = false;
+  selectedCountryCode:string = '';
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -129,37 +129,37 @@ export class PersonalDetailsComponent implements OnInit {
   initializePersonalForm() {
     let loggedInUser = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     this.personalDetailsForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
-      middleName: [''],
-      lastName: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
-      gender: ['', Validators.required],
-      salutation: ['', Validators.required],
-      phonenumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      dob: ['', Validators.required],
-      bloodGroup: [''],
-      location: [{ value: '', disabled: true }, Validators.required],
-      subLocation: [{ value: '', disabled: true }, Validators.required],
-      designation: [{ value: '', disabled: true }, Validators.required],
-      personalEmail: [{ value: '', disabled: true }, Validators.required],
+      firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+      middleName: [null],
+      lastName: [null, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+      gender: [null, Validators.required],
+      salutation: [null, Validators.required],
+      phonenumber: [null, [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      dob: [null, Validators.required],
+      bloodGroup: [null],
+      location: [{ value: null, disabled: true }, Validators.required],
+      subLocation: [{ value: null, disabled: true }, Validators.required],
+      designation: [{ value: null, disabled: true }, Validators.required],
+      personalEmail: [{ value: null, disabled: true }, Validators.required],
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
-        addressLine1: ['', Validators.required],
-        addressLine2: ['', Validators.required],
-        city: ['', Validators.required],
-        state: ['', Validators.required],
-        country: ['', Validators.required],
-        zipCode: ['', Validators.required],
+        addressLine1: [null, Validators.required],
+        addressLine2: [null, Validators.required],
+        city: [null, Validators.required],
+        state: [null, Validators.required],
+        country: [null, Validators.required],
+        zipCode: [null, Validators.required],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: ['', Validators.required],
-        addressLine2: ['', Validators.required],
-        city: ['', Validators.required],
-        state: ['', Validators.required],
-        country: ['', Validators.required],
-        zipCode: ['', Validators.required],
+        addressLine1: [null, Validators.required],
+        addressLine2: [null, Validators.required],
+        city: [null, Validators.required],
+        state: [null, Validators.required],
+        country: [null, Validators.required],
+        zipCode: [null, Validators.required],
       }),
     });
   }
@@ -179,10 +179,12 @@ export class PersonalDetailsComponent implements OnInit {
       subLocation: this.jobdetails.subLocation,
       designation: this.jobdetails.jobRole,
       personalEmail: this.employeeData.emailaddress,
-      currentAddress: this.employeeData.employeeAddresses.find((address:IAddress)=>address.type.toLowerCase() == 'c'),
-      permanentAddress: this.employeeData.employeeAddresses.find((address:IAddress)=>address.type.toLowerCase() == 'p')
+      currentAddress: this.employeeData?.employeeAddresses?.find((address:IAddress)=>address?.type?.toLowerCase() == 'c'),
+      permanentAddress: this.employeeData?.employeeAddresses?.find((address:IAddress)=>address?.type?.toLowerCase() == 'p')
     });
-    this.selectedCountryCode = this.employeeData.mobilePhoneCountryCode;
+
+   this.selectedCountryCode = `'${this.employeeData.mobilePhoneCountryCode}'`;
+    console.log(this.selectedCountryCode);
   }
 
   // Copy Current Address to Permanent Address
@@ -191,12 +193,12 @@ export class PersonalDetailsComponent implements OnInit {
       const currentAddress = this.personalDetailsForm.get('currentAddress')?.value;
       this.personalDetailsForm.patchValue({
         permanentAddress: {
-          addressLine1: currentAddress?.addressLine1 || '',
-          addressLine2: currentAddress?.addressLine2 || '',
-          city: currentAddress?.city || '',
-          state: currentAddress?.state || '',
-          country: currentAddress?.country || '',
-          zipCode: currentAddress?.zipCode || '',
+          addressLine1: currentAddress?.addressLine1 || null,
+          addressLine2: currentAddress?.addressLine2 || null,
+          city: currentAddress?.city || null,
+          state: currentAddress?.state || null,
+          country: currentAddress?.country || null,
+          zipCode: currentAddress?.zipCode || null,
         }
       });
     }
@@ -264,11 +266,14 @@ export class PersonalDetailsComponent implements OnInit {
   }
 
   // mobile number functions
+ 
   onCountryChange(country: any) {
-    this.selectedCountryCode = country.dialling_code;
+    console.log(country);
     this.selectedDialCode = country.code;
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
+    this.employeeData.mobilePhoneCountryCode = country.code;
+    console.log(this.employeeData.mobilePhoneCountryCode);
   }
 
   formatPhoneNumber(value: string): string {
@@ -284,7 +289,7 @@ export class PersonalDetailsComponent implements OnInit {
 
   phoneNumberValidator() {
     return (control: AbstractControl) => {
-      const value = control.value;
+      const value = String(control.value);
       if (!this.selectedDialCode || !value) {
         return null;
       }

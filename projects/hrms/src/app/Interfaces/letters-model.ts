@@ -75,6 +75,7 @@ export interface IemployeeDetails {
   
   export interface IJob {
     firstName: string,
+    middleName: string,
     lastName: string,
     maritalStatus: string,
     empstatus: string,
@@ -150,6 +151,12 @@ export interface IemployeeDetails {
     wfhManagerId: any,
     workLocation: any,
     allowWFH : any,
+    totalYearsOfExperience: any,
+    profileUrl: any,
+    relationship1: string,
+    emergencyNumber1: any,
+    emergencyEmail1: string,
+    emergencyName1: string
   }
   export interface Iprospective {
     employeeId: number,

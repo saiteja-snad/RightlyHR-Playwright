@@ -22,6 +22,7 @@ export interface IOfferLetterDetails {
     workLocation:string,
     jobRole:string,
     subLocation:string,
+    durationOfTraining:string,
 }
 
 export interface IAppointmentLetterDetails {

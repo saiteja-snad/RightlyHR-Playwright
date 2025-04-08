@@ -140,6 +140,16 @@ export interface IemployeeDetails {
     employeeId: any,
     fusionEmpId: any
     substatus: string,
+    branchCode: string,
+    bloodGroup: string,
+    empType: string,
+    issalaryhold: any,
+    pf : any,
+    esic : any,
+    pt : any,
+    wfhManagerId: any,
+    workLocation: any,
+    allowWFH : any,
   }
   export interface Iprospective {
     employeeId: number,

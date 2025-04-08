@@ -10,6 +10,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { IBackground, INotice, IProbation } from '../../../Interfaces/job-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
+import moment from 'moment';
 
 @Component({
   selector: 'app-onboarding-details',
@@ -22,6 +23,8 @@ export class OnboardingDetailsComponent {
   buttons = false;
   Statusdetails: any;
   probation = [] as IProbation[];
+  noticePeriod  = [{id : 1, name : 'Yes'}, {id : 2, name : 'No'}]
+
   empinfo = {} as IJob;
   backgroundDetails = [] as IBackground[];
   branchLocations = [] as IBranchLocation[]
@@ -37,7 +40,7 @@ export class OnboardingDetailsComponent {
     { name: 'No', value: false },
   ]
 
-  sarleryonhold = [
+  salaryHoldDetails = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ]
@@ -73,23 +76,22 @@ export class OnboardingDetailsComponent {
   constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getStatus();
-    // this.getEmployeeId();
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
+    this.getStatus();
+    this.getEmployeeId();
+    
     this.getBackground();
     this.getBranchLocations();
     this.getprobation();
     this.remoteLoginChange();
     this.getWorkfromhomeManager();
     this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
-    //this.onboardingForm.get('dateOfJoining')?.setValue(this.empinfo?.);
   }
 
   initializeForm(): void {
     this.onboardingForm = this.fb.group({
       status: [{ value: "", disabled: true }],
-
       dateOfJoining: [{ value: "", disabled: true }],
       branchLocation: [{ value: "", disabled: true }],
       probationEndDate: [{ value: "", disabled: true }],
@@ -135,56 +137,38 @@ export class OnboardingDetailsComponent {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.previousEmpData = JSON.parse(JSON.stringify(data));
-        this.empdata = data as Ipersonal;
-        const dateOfJoining = this.empdata.dateOfJoining
-          ? new Date(this.empdata.dateOfJoining).toISOString().split('T')[0]
-          : null;
-
-        const matchedStatus = this.Statusdetails.find(
-          (s: { statusname: string }) =>
-            s.statusname.toLowerCase() === this.empdata.empstatus?.toLowerCase()
-        );
-
-
-        const matchedBranchLocation = this.branchLocations.find(
-          (b: any) => b.branchCode === this.empdata.branchCode
-        );
-
-        const matchedProbationStatus = this.probation.find(
-          (p) => p.probationstatus1 === this.empdata.probationStatus
-        );
-
-        const matchedBackgroundStatus = this.backgroundDetails.find(
-          (b) => b.backgroundcheckstatus1 === this.empdata.bgc
-        );
-        this.onboardingForm.patchValue({
-
-          status: matchedStatus,
-
-          dateOfJoining: dateOfJoining || this.empdata.dateOfJoining,
-          branchLocation: this.empdata.branchCode || matchedBranchLocation,
-          probationEndDate: matchedBranchLocation || '',
-          probationStatus: matchedProbationStatus || '',
-
-          backgroundCheckStatus: matchedBackgroundStatus,
-          noticePeriodStatus: this.empdata.noticePeriod || '',
-          salaryHold: this.empdata.issalaryhold ?? false,
-          pf: this.empdata.pf ?? false,
-          esic: this.empdata.esic ?? false,
-          pt: this.empdata.pt ?? false,
-          totalExperience: this.empdata.totalYearsOfExperience || '',
-          remoteLogin: this.empdata.allowWFH ?? false,
-          workLocation: this.empdata.workLocation || '',
-
-        });
+        this.empdata = data;
+        this.patchForm(data);
       },
       error: (err: any) => {
         console.log(err);
       }
     });
   }
+  
+  patchForm(data: any): void {
 
+
+    this.onboardingForm.patchValue({
+      status: this.Statusdetails.find((item: any) => item.statusname === data.empstatus),
+      dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
+      branchLocation: this.branchLocations.find((item: any) => item.branchCode === data.branchCode),
+      probationEndDate: data.probationEndDate ? moment(data.probationEndDate).format('yyyy-MM-DD') : null,
+      probationStatus: this.probation.find((item: any) => item.probationstatus1 === data.probationStatus),
+      noticePeriodStatus: this.noticePeriod.find((item: any) => item.name === data.noticePeriod),
+      backgroundCheckStatus: this.backgroundDetails.find((item: any) => item.backgroundcheckstatus1 === data.backgroundCheckStatus),
+      salaryHold: this.salaryHoldDetails.find((item: any) => item.value === data.issalaryhold),
+      pf: this.pfdata.find((item: any) => item.value === data.pf),
+      esic: this.esicdata.find((item: any) => item.value === data.esic),
+      pt: this.ptdata.find((item: any) => item.value === data.pt),
+      totalExperience: data.totalYearsOfExperience,
+      remoteLogin: this.remoteLogin.find((item: any) => item.value === data.allowWFH),
+      workLocation: this.worklocation.find((item: any) => item.value === data.workLocation),
+      wfhmanger: this.Manager.find((item: any) => item.value === data.wfhManagerId),
+    });
+    console.log(this.onboardingForm.value);
+
+  }
 
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
@@ -306,26 +290,21 @@ export class OnboardingDetailsComponent {
     const currentDate = new Date().toISOString();
     const payload = {
       employeeId: this.empinfo.employeeId,
-      status: formData.status?.statusname,
-      dateOfJoining: formData?.dateOfJoining,
-      branchCode: formData.branchLocation,
-      probationEndDate: formData.probationEndDate,
-      probationStatus: formData.probationStatus?.probationstatus1,
-      noticePeriodStatus: formData.noticePeriodStatus,
-      backgroundCheckStatus: formData.backgroundCheckStatus?.backgroundcheckstatus1,
-      salaryHold: formData.salaryHold,
-      pf: formData.pf,
-      esic: formData.esic,
-      pt: formData.pt,
-      totalYearsOfExperience: formData.totalExperience,
-      remoteLogin: formData.remoteLogin,
-      workLocation: formData.workLocation,
-      wfhManagerId: this.selectedEmployeeId,
-      empstatus: "Active",
-      createdAt: currentDate,
-      updatedAt: currentDate,
-
-
+      status: this.onboardingForm.get('status')?.value.statusname ?? this.empinfo.empstatus,
+      dateOfJoining: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.dateOfJoining,
+      branchCode: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.branchCode,
+      probationEndDate: this.onboardingForm.get('probationEndDate')?.value ?? this.empinfo.probationEndDate,
+      probationStatus: this.onboardingForm.get('probationStatus')?.value.probationstatus1 ?? this.empinfo.probationStatus,
+      noticePeriodStatus: this.onboardingForm.get('noticePeriodStatus')?.value.name ?? this.empinfo.noticePeriod,
+      backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value.backgroundcheckstatus1 ?? this.empinfo.backgroundCheckStatus,
+      salaryHold: this.onboardingForm.get('salaryHold')?.value.value ?? this.empinfo.issalaryhold,
+      pf: this.onboardingForm.get('pf')?.value.value ?? this.empinfo.pf,
+      esic: this.onboardingForm.get('esic')?.value.value ?? this.empinfo.esic,
+      pt: this.onboardingForm.get('pt')?.value.value ?? this.empinfo.pt,
+      totalYearsOfExperience: this.onboardingForm.get('totalExperience')?.value ?? this.empinfo.pt,
+      remoteLogin: this.onboardingForm.get('esremoteLoginic')?.value ?? this.empinfo.allowWFH,
+      workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empinfo.workLocation,
+      wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empinfo.wfhManagerId
     };
     this.subscription = this.http
       .postdata(`Employeedata/UPDATER`, payload)

@@ -50,7 +50,9 @@ export class EducationDetailsComponent {
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
-
+  navigateNext() {
+    this.router.navigate(['/emergency-details']);
+  }
   reload() {
     window.location.reload()
   }

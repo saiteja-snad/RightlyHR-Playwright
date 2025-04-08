@@ -18,11 +18,8 @@
             <tr class="hover">
                 <td>{{appointmentLetter.appointmentSentDate | dateformat }}</td>
                 <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
-                <td style="text-align: center;">
-                    <div>
-                        <button class="custom-btn btn-primary me-3 mb-3"
-                            (click)="onSelectDownload(appointmentLetter)">Download</button>
-                    </div>
+                <td>
+                    <button class="custom-btn btn-primary me-3 mb-3" (click)="onSelectDownload(appointmentLetter)">Download</button>
                 </td>
             </tr>
             }

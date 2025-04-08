@@ -12,18 +12,17 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'FirstName'|translate}}
-                        <span class="text-danger">*</span></label>
+                        <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="firstName"
                         placeholder="Please enter first name">
                         <div *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched" class="error-msg">
-                            <div *ngIf="employeeForm.get('firstName')?.hasError('required')">First Name is required</div>
+                            <div *ngIf="employeeForm.get('firstName')?.hasError('required')">{{'First Name is required'|translate}}</div>
                             <div *ngIf="employeeForm.get('firstName')?.hasError('maxlength')">First Name cannot be more than 50 characters long</div>
                             <div *ngIf="employeeForm.get('firstName')?.hasError('pattern')">First Name can only contain letters and spaces</div>
                         </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Middle Name'|
-                        translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Middle Name'|translate}}
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="middleName"
                         placeholder="Please enter middle name">
@@ -34,11 +33,11 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Last Name'|translate}}<span class="text-danger">*</span></label>
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Last Name'|translate}}<span class="error-msg">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="lastName"
                             placeholder="Please enter last name">
                             <div *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched" class="error-msg">
-                                <div *ngIf="employeeForm.get('lastName')?.hasError('required')">Last Name is required</div>
+                                <div *ngIf="employeeForm.get('lastName')?.hasError('required')">{{'Last Name is required'|translate}}</div>
                                 <div *ngIf="employeeForm.get('lastName')?.hasError('maxlength')">Last Name cannot be more than 50 characters long</div>
                                 <div *ngIf="employeeForm.get('lastName')?.hasError('pattern')">Last Name can only contain letters and spaces</div>
                             </div>
@@ -46,7 +45,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="email" class="form-label custom-label mb-2">{{'Personal Email ID'|translate}}<span
-                            class="text-danger">*</span></label>
+                            class="error-msg">*</span></label>
                     <input type="email" class="form-control custom-input" formControlName="personalEmail"
                         placeholder="Please enter personal email Id">
                         <div *ngIf="employeeForm.get('personalEmail')?.invalid && employeeForm.get('personalEmail')?.touched" class="error-msg">
@@ -60,7 +59,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="exampleFormControlInput1"
                         class="form-label custom-label mb-2">{{'Designation'|translate}}<span
-                            class="text-danger">*</span></label>
+                            class="error-msg">*</span></label>
 
                     <div class="custom-p-select-content">
                         <p-select [options]="JobroleDetails" optionValue="designationName" optionLabel="designationName"
@@ -70,12 +69,12 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('designation')?.invalid && employeeForm.get('designation')?.touched"
-                        class="text-danger">
+                        class="error-msg">
                         {{'Designation is required'|translate}}.
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'EmploymentType'|translate}}<span class="text-danger">*</span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'EmploymentType'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeementType" optionValue="name" optionLabel="name"
                             formControlName="employmentType" placeholder="Please select employment type"
@@ -83,30 +82,30 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('employmentType')?.invalid && employeeForm.get('employmentType')?.touched"
-                        class="text-danger">
-                        {{'Employment Type is required'|translate}}.
+                        class="error-msg">
+                        {{'Employment Type is required'|translate}}
                     </div>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
-                        {{ 'Location' | translate }} <span class="text-danger">*</span>
+                        {{ 'Location' | translate }} <span class="error-msg">*</span>
                     </label>
     
                     <div class="custom-p-select-content">
                         <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
                             placeholder="Select Location" class="form-select custom-select" id="location" name="location"
                             formControlName="location" (onChange)="OnClickLocation($event)" required>
-                            <option [ngValue]="undefined">{{'Select Location'|translate}}</option>
+                            
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('location')?.invalid && employeeForm.get('location')?.touched"
-                        class="text-danger">
-                        {{ 'Location is required' | translate }}.
+                        class="error-msg">
+                        {{ 'Location is required' | translate }}
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span class="text-danger">*</span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
                             placeholder="Select Sub Location" class="form-select custom-select" id="sublocation"
@@ -116,8 +115,8 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('subLocation')?.invalid && employeeForm.get('subLocation')?.touched"
-                        class="text-danger">
-                        {{'Sub Location is required'|translate}}.
+                        class="error-msg">
+                        {{'Sub Location is required'|translate}}
                     </div>
                 </div>
             </div>

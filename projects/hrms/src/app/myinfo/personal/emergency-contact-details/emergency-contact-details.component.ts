@@ -161,6 +161,7 @@ export class EmergencyContactDetailsComponent {
       emergencyEmail1: formValue.contact2Email || this.empinfo.emergencyEmail1,
       emergencyNumber1:contact2Phone ,
       relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.empinfo.relationship1,
+      profileUrl : this.empinfo.profileUrl
     };
 
 

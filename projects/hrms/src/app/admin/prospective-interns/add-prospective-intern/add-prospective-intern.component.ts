@@ -42,6 +42,10 @@ export class AddProspectiveInternComponent {
   @ViewChild('success') success: any;
   @ViewChild('pospectivecreate') private readonly pospectivecreate!:NgbModal;
   sublocation: any[] | undefined;
+  employeementType: { id: number; name: string }[] = [
+    { id: 1, name: 'Fresher' },
+    { id: 2, name: 'Experienced' }
+  ];
 
   constructor(private router: Router,
      private conformationPopup: OpenModalService,
@@ -71,7 +75,7 @@ export class AddProspectiveInternComponent {
   
   empdata() {
     this.subscription = this.http
-      .getData(`Employeedata/ProspectiveEmployees`)
+      .getData(`Employeedata/TrainingEmployees`)
       .subscribe({
         next: (data: any) => {
           console.log(data);
@@ -81,7 +85,13 @@ export class AddProspectiveInternComponent {
         error: (reason: any) => console.log(reason),
       });
   }
-
+  selectgradId(event:any){
+    console.log(event);
+    if(event){
+      this.gradeIdValue = event.value;
+      console.log(this.gradeIdValue);
+    }
+}
   //function to check the email pattren
   changepaternemail() {
     this.patern = '[A-Za-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$';
@@ -96,10 +106,7 @@ export class AddProspectiveInternComponent {
       next: (data: any) => {
         console.log('API Response:', data);
 
-        this.JobroleDetails = data.map((item: { id: number; designationName: string }) => ({
-          id: item.id,
-          designationName: item.designationName,
-        }));
+        this.JobroleDetails =data
 
         console.log('Dropdown Options:', this.JobroleDetails);
       },
@@ -126,22 +133,28 @@ export class AddProspectiveInternComponent {
 
 
   OnClickLocation(event: any) {
-    console.log("Selected Location ID:", event.value); // PrimeNG sends event.value instead of ngModel directly
-    // Assign selected value properly
-    this.postProspectiveEmpDetails.locationid = event.value;
-    // Find selected location details
-    let selectedLocation = this.jobLocationDropDownData.find(
-      (c: any) => c.id == event.value
-    );
+    const selectedLocationId = event?.value;
+    if (selectedLocationId) {
+      console.log("Selected Location ID:", selectedLocationId); 
+      this.postProspectiveEmpDetails.locationid = selectedLocationId;
+      
+      let selectedLocation = this.jobLocationDropDownData.find(
+        (location: any) => location.id === event.value
+      );
+  
+      console.log("Selected Job Location Details:", selectedLocation);
+  
+      if (selectedLocation) {
+        this.getSubLocationByid(selectedLocation);
+      } else {
+        console.warn("No matching job location found for ID:", selectedLocationId);
+      }
 
-    console.log("Selected Job Location Details:", selectedLocation);
-
-    if (selectedLocation) {
-      this.getSubLocationByid(selectedLocation);
     } else {
-      console.warn("No matching job location found!");
+      console.warn("No location ID selected.");
     }
   }
+  
 
 
   onClickValue() {
@@ -182,11 +195,7 @@ export class AddProspectiveInternComponent {
   }
 
   // Dummy data for dropdowns
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Fresher' },
-    { id: 2, name: 'Experienced' }
-  ];
-
+ 
   // onSubmit() {
   //   this.postTraineeData();
   //   const requestBody = this.employeeForm.value;
@@ -198,7 +207,6 @@ export class AddProspectiveInternComponent {
   }
 
   postTraineeData() {
-
     let loggedInUser = this.authService.getToken();
     let postdata = {
       firstName: this.employeeForm.get('firstName')?.value,
@@ -212,45 +220,41 @@ export class AddProspectiveInternComponent {
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
         console.log(res);
-
-        //alert('employee created')
-        
           this.result = res.employeeData;
-          this.conformationPopup.openSuccessModal('Prospective employee created successfully')
-          this.modalService.dismissAll();
           console.log(this.result);
-          if (this.result.employeeId != null) {
+          if (res.statusCode == 201) {
             const jobdata = {
               employeeId: this.result.employeeId,
-              gradeId: this.employeeForm.get('gradeId')?.value,
+              gradeId: this.gradeIdValue.gradeId,
               locationid: this.employeeForm.get('location')?.value,
               sublocationid: this.employeeForm.get('subLocation')?.value,
-              jobRole: this.employeeForm.get('designation')?.value,
+              jobRole: this.gradeIdValue.designationName,
             };
             this.subscription = this.http
               .postdata('JobDetails', jobdata)
               .subscribe({
                 next: (data: any) => {
                   console.log(data);
+                  this.conformationPopup.openSuccessModal('Prospective employee created successfully');
+                  this.empdata();
+                  this.modalService.dismissAll();
                   this.select(this.result);
                 },
                 error: (Reason) => console.log(Reason),
               });
+          } 
+          else if (res.statusCode == 409) {
+            this.conformationPopup.openErrorModal(res.message);
+          
           }
 
-         else if (res.statusCode == 409) {
-          this.conformationPopup.openErrorModal(res.message);
-          setTimeout(() => {
-            // this.openModal(this.pospectivecreate);
-            this.modalService.dismissAll();
-          }, 3000);
-        } else {
-          this.conformationPopup.openErrorModal(res.message);
-        }
+        
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal(err.error.message);
-        console.log(err);
+        this.conformationPopup.openErrorModal(err.message);
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
         // f.reset();
       },
     });

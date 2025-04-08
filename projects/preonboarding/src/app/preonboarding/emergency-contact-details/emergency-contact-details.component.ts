@@ -52,7 +52,9 @@ export class EmergencyContactDetailsComponent {
     this.getempdate();
     this.initializeForm();
   }
-
+  navigateNext() {
+    this.router.navigate(['/experience-details']);
+  }
   getempdate() {
     let employeeId = parseInt(this.prosempdata.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({

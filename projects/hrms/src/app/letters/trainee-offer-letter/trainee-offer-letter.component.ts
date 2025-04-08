@@ -163,8 +163,8 @@ export class TraineeOfferLetterComponent {
       firstName: [{ value: null, disabled: true }],
       middleName: [{ value: null, disabled: true }],
       lastName: [{ value: null, disabled: true }],
-      gender: [{ value: null, disabled: true }], // Ensure gender is disabled
-      salutation: [{ value: null, disabled: true }], // Ensure salutation is disabled
+      gender: [{ value: null, disabled: true }],
+      salutation: [{ value: null, disabled: true }],
       SelectDropDown: [null, Validators.required],
       addressLine1: [{ value: null, disabled: true }],
       addressLine2: [{ value: null, disabled: true }],

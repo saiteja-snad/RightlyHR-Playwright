@@ -4,10 +4,9 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddProspectiveEmployeeComponent } from './add-prospective-employee/add-prospective-employee.component';
 import { FormsModule } from '@angular/forms';
-import { NgForm } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
-import { IRole, Iprospective } from './Prospective-model';
+import {  Iprospective } from './Prospective-model';
 import { ProspectivePipe } from "../../Pipes/prospective.pipe";
 import { TranslateModule } from '@ngx-translate/core';
 @Component({

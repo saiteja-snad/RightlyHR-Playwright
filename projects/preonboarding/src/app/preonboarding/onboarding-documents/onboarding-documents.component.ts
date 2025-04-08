@@ -58,7 +58,9 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
-
+  navigatePrevious(){
+    this.router.navigate(['/personal-details']);
+  }
   initializeForm() {
     this.documentForm = this.fb.group({
       documentType: [{ value: '', disabled: true }, Validators.required],

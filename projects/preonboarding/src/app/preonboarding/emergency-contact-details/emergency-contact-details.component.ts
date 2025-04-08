@@ -55,6 +55,9 @@ export class EmergencyContactDetailsComponent {
   navigateNext() {
     this.router.navigate(['/experience-details']);
   }
+  navigatePrevious(){
+    this.router.navigate(['/education-details']);
+  }
   getempdate() {
     let employeeId = parseInt(this.prosempdata.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({

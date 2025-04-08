@@ -219,35 +219,7 @@ export class PersonalDetailsComponent implements OnInit {
   onSubmit() {
     console.log(this.employeeData);
     if (!this.personalDetailsForm.invalid) {
-      let formEmployeeData = this.personalDetailsForm.value;
-      const payload = {
-        firstName: formEmployeeData.firstName,
-        lastName: formEmployeeData.lastName,
-        empstatus: this.employeeData.empstatus,
-        emailaddress: this.employeeData.emailaddress,
-        wfhManagerId: this.employeeData.wfhManagerId,
-        password: this.employeeData.password,
-        isManager: this.employeeData.isManager,
-        employeeId: this.employeeData.employeeId,
-        issalaryhold: this.employeeData.issalaryhold,
-        pf: this.employeeData.pf,
-        esic: this.employeeData.esic,
-        pt: this.employeeData.pt,
-        insurance: this.employeeData.insurance,
-        expirationTime: this.employeeData.expirationTime,
-        middleName: formEmployeeData.middleName,
-        substatus: this.employeeData.substatus,
-        bgc: this.employeeData.bgc,
-        allowWFH: this.employeeData.allowWFH,
-        gender: formEmployeeData.gender,
-        dob: formEmployeeData.dob,
-        contactnumber: formEmployeeData.phonenumber,
-        title: formEmployeeData.salutation,
-        mobilePhoneCountryCode: this.selectedDialCode,
-        bloodGroup: formEmployeeData.bloodGroup,
-        generateOffer: false
-      }
-      this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, payload).subscribe({
+      this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.employeeData).subscribe({
         next: (data: any) => {
           console.log(data);
           if (data.statusCode === 409) {

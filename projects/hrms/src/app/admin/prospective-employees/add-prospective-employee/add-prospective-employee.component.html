@@ -11,7 +11,7 @@
         <form [formGroup]="employeeForm" (ngSubmit)="postEmpData()">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'FirstName'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'First Name'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="firstName"
                         placeholder="Please enter first name">
@@ -47,7 +47,7 @@
                     <label for="email" class="form-label custom-label mb-2">{{'Personal Email ID'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="email" class="form-control custom-input" formControlName="personalEmail"
-                        placeholder="Please enter personal email Id">
+                        placeholder="Please enter personal email ID">
                         <div *ngIf="employeeForm.get('personalEmail')?.invalid && employeeForm.get('personalEmail')?.touched" class="error-msg">
                             <div *ngIf="employeeForm.get('personalEmail')?.hasError('required')">   Personal Email ID is required
                             </div>
@@ -63,7 +63,7 @@
 
                     <div class="custom-p-select-content">
                         <p-select [options]="JobroleDetails" optionValue="designationName" optionLabel="designationName"
-                            [filter]="true" filterBy="designationName" [showClear]="true"
+                            [filter]="true" filterBy="designationName" 
                             (onChange)="selectgradId($event)" placeholder="Please select designation"
                             formControlName="designation" class="custom-select w-100">
                         </p-select>
@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'EmploymentType'|translate}}<span class="error-msg">*</span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Employment Type'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeementType" optionValue="name" optionLabel="name"
                             formControlName="employmentType" placeholder="Please select employment type"
@@ -124,7 +124,7 @@
             <div class="d-flex justify-content-end gap-3 mt-4">
                 <button type="button" input type="reset" class="custom-btn btn-secondary" data-bs-dismiss="modal"
                     (click)="onclose()">{{'Close'|translate}}</button>
-                <button type="submit" [disabled]="employeeForm.invalid" data-bs-dismiss="modal"
+                <button type="submit" [disabled]="employeeForm.invalid"
                     class="custom-btn btn-primary">{{'Add'|translate}}</button>
             </div>
         </form>

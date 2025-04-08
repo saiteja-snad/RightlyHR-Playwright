@@ -7,16 +7,16 @@
         <div class="px-3">
             <form [formGroup]="loginform" (ngSubmit)="login(loginform)">
                 <div class="mb-4">
-                    <label for="name" class="form-label custom-label mb-2">User Name<span class="text-danger">*</span></label>
+                    <label for="name" class="form-label custom-label mb-2">Username<span class="text-danger">*</span></label>
                     <div class="input-group custom-input-group" [ngClass]="{'error-border': loginform.get('username')?.touched && loginform.get('username')?.invalid}">
                         <span class="input-group-text custom-input-group-text" id="basic-addon1">
                             <img src="/icons/mail.png" alt="profile icon" class="form-icon">
                         </span>
                         <input type="text" formControlName="username" class="form-control custom-input"
-                            placeholder="Please enter user name" id="name" aria-describedby="Name">
+                            placeholder="Please enter username" id="name" aria-describedby="Name" autocomplete="off">
                     </div>
                     <div class="error-msg my-1" *ngIf="loginform.get('username')?.touched && loginform.get('username')?.invalid">
-                        <div *ngIf="loginform.get('username')?.errors?.['required']">Username is required.</div>
+                        <div *ngIf="loginform.get('username')?.errors?.['required']">Username is required</div>
                     </div>
                 </div>
                 <div class="mb-4">
@@ -25,13 +25,13 @@
                         [ngClass]="{'error-border': loginform.get('password')?.touched && loginform.get('password')?.invalid }">
                         <span class="input-group-text custom-input-group-text"><img src="/icons/lock.png" alt="profile icon" class="form-icon"></span>
                         <input [type]="showPassword ? 'text':'password'" formControlName="password" class="form-control custom-input" 
-                           placeholder="Please enter password" id="password" aria-describedby="password">
+                           placeholder="Please enter password" id="password" aria-describedby="password" autocomplete="off">
                         <span class="input-group-text custom-input-group-text" (click)="togglePassword()">
                             <i [ngClass]=" showPassword ?'bi bi-eye':'bi bi-eye-slash'" class="custom-eye-icon"></i>
                         </span>
                     </div>
                     <div class="error-msg my-1" *ngIf="loginform.get('password')?.touched && loginform.get('password')?.invalid">
-                        <div *ngIf="loginform.get('password')?.errors?.['required']">Password is required.</div>
+                        <div *ngIf="loginform.get('password')?.errors?.['required']">Password is required</div>
                     </div>
                 </div>
                 <div class="error-msg text-center my-1" *ngIf="wrongCredentials">{{ wrongCredentials }}</div>

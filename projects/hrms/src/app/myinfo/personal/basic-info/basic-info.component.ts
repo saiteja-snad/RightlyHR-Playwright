@@ -17,8 +17,9 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 })
 export class BasicInfoComponent {
   basicInfoForm!: FormGroup;
-  subscription!:Subscription
-  empinfo:any
+  subscription!: Subscription
+  emsployedata: any
+  empinfo: any
   bloodGroups = [
     { name: 'A+' },
     { name: 'A-' },
@@ -29,14 +30,15 @@ export class BasicInfoComponent {
     { name: 'O+' },
     { name: 'O-' }
   ];
-  Gender:IGender[]=[];
-  Titledetails :ITitle[]=[];
-  Maritaldetails:IMarital[]=[];
-  buttons=false
-  constructor(private modalService: NgbModal, private fb: FormBuilder,  public formValidation: FormValidationService,  private conformationPopup: OpenModalService, private http: HttpService) { }
+  Gender: IGender[] = [];
+  Titledetails: ITitle[] = [];
+  Maritaldetails: IMarital[] = [];
+  buttons = false
+  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    console.log(this.empinfo)
     this.initializeForm();
     this.getEmployeeId();
     this.getGender()
@@ -44,7 +46,7 @@ export class BasicInfoComponent {
     this.getTitle()
     this.basicInfoForm.disable();
   }
- 
+
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
       employeeId: ['', Validators.required],
@@ -64,19 +66,17 @@ export class BasicInfoComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-       this.empinfo = data;
-       this.patchForm(data);
-       localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+        this.emsployedata = data;
+        this.patchForm(data);
+        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
 
   patchForm(data: any): void {
-    const maritalStatus = this.Maritaldetails.find(
-      (item: any) => item.maritalstatus1 === data.maritalStatus
-    ) || null;
-  
+
+
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       fusionEmpId: data.fusionEmpId,
@@ -84,34 +84,36 @@ export class BasicInfoComponent {
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
-      gender: this.Gender.find((item: any) => item.genderName === data.gender),
+      gender: this.Gender.find((item: any) => item.genderName === data.gender || this.empinfo.gender) || this.empinfo.gender,
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalstatus1:maritalStatus,
+      maritalStatus: this.Maritaldetails.find(
+        (item: any) => item.maritalstatus1 === data.maritalStatus
+      ),
     });
     console.log(this.basicInfoForm.value);
-    
+
   }
 
   updateBasicInfo(): void {
     const formValue = this.basicInfoForm.value;
     console.log(formValue);
-    
+
     const updatePayload = {
       employeeId: formValue.employeeId,
-      title: formValue.salutation || null,
+      title: formValue.salutation,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
-      gender: formValue.gender.genderName || null,
+      gender: formValue.gender.genderName,
       dob: formValue.dob,
-      bloodGroup: formValue.bloodGroup.name|| null,
-      maritalStatus: formValue.maritalStatus || null,
+      bloodGroup: formValue.bloodGroup.name,
+      maritalStatus: formValue.maritalStatus?.maritalstatus1,
       empStatus: 'Active',
-      emailaddress: this.empinfo.emailaddress || null, 
-      workEmail: this.empinfo.workEmail || null, 
-      contactnumber: this.empinfo.contactnumber || null,
-      workPhone: this.empinfo.workPhone || null, 
+      emailaddress: this.empinfo.emailaddress,
+      workEmail: this.empinfo.workEmail,
+      contactnumber: this.empinfo.contactnumber,
+      workPhone: this.empinfo.workPhone,
       emergencyName: this.empinfo.emergencyName,
       emailId: this.empinfo.emailId,
       relationShip: this.empinfo.relationShip,
@@ -120,28 +122,29 @@ export class BasicInfoComponent {
       emergencyEmail1: this.empinfo.emergencyEmail1,
       emergencyNumber1: this.empinfo.emergencyNumber1,
       relationship1: this.empinfo.relationship1,
-      profileUrl : this.empinfo.profileUrl
-      
+      profileUrl: this.empinfo.profileUrl,
+      fusionEmpId: this.empinfo.fusionEmpId,
+
     };
     console.log(updatePayload);
-    
+
     this.subscription = this.http
-        .postdata(`Employeedata/UPDATER`, updatePayload)
-        .subscribe({
-          next: (data: any) => {
-           this.conformationPopup.openSuccessModal('Basic Information Updated Successfully', );
-           this.getEmployeeId();
-           this.basicInfoForm.disable();
-            console.log('Data updated successfully:', data);
-            this.modalService.dismissAll();
-           this.conformationPopup.openSuccessModal('Basic Info updated successfully')
-          },
-          error: (reason: any) => {
-              console.log(reason);
-              this.conformationPopup.openErrorModal('Basic Info update failed')
-              
-          },
-        });
+      .postdata(`Employeedata/UPDATER`, updatePayload)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal('Basic Information Updated Successfully',);
+          this.getEmployeeId();
+          this.basicInfoForm.disable();
+          console.log('Data updated successfully:', data);
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Basic Info updated successfully')
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          this.conformationPopup.openErrorModal('Basic Info update failed')
+
+        },
+      });
   }
 
   getGender() {
@@ -170,11 +173,11 @@ export class BasicInfoComponent {
     this.buttons = !this.buttons;
 
     if (this.buttons) {
-        // Enable the form when the user clicks "Edit"
-        this.basicInfoForm.enable();
+      // Enable the form when the user clicks "Edit"
+      this.basicInfoForm.enable();
     } else {
-        // Disable the form when the user clicks "Close"
-        this.basicInfoForm.disable();
+      // Disable the form when the user clicks "Close"
+      this.basicInfoForm.disable();
     }
-}
+  }
 }

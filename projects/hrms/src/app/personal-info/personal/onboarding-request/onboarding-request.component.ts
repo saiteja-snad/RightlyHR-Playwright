@@ -14,11 +14,12 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment.dev';
 import { Router } from '@angular/router';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 
 @Component({
   selector: 'app-onboarding-request',
-  imports: [CommonModule, TranslateModule,NgbPopoverModule,ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe,NgxDocViewerModule],
+  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent],
   templateUrl: './onboarding-request.component.html',
   styleUrl: './onboarding-request.component.scss'
 })

@@ -368,10 +368,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       });
   }
   //function to get the authority designation
-  onclickDesignation(Value: any) {
-    console.log(Value);
+  onclickDesignation() {
+    let empId=this.employeeForm?.get('authorityid')?.value;
     let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => c.employeeId == Value
+      (c: any) => c.employeeId == empId
     );
     console.log(signatureAuthorityDetails);
     this.SignatureAuthorityValue = signatureAuthorityDetails;
@@ -488,6 +488,7 @@ console.log(formValues);
   this.prospectiveEmpData.dateOfJoining= formValues.dateOfJoining,
   this.prospectiveEmpData.Copys=formValues.Copys,
   this.prospectiveEmpData.offerExpiryDate= formValues.offerExpiryDate
+  this.prospectiveEmpData.note= formValues.note,
   console.log(this.prospectiveEmpData.Copys);
 }
   //employeeid validation to check we have the mail already exist or not
@@ -505,6 +506,7 @@ console.log(formValues);
             console.log(data.checkofferletter);
             if (data.isEmployeevalid === true) {
               // const userConfirmed = window.confirm("Data already exists. Do you want to regenerate?");
+              
               if (Empidvalue) {
                 this.prospectiveEmpData = data.checkofferletter;
                 this.employeeForm?.patchValue({
@@ -528,7 +530,7 @@ console.log(formValues);
                   Copys: this.prospectiveEmpData?.copys,
                   offerExpiryDate: this.formatDate(this.prospectiveEmpData?.offerExpiryDate),
                   note:this.prospectiveEmpData?.note,
-                  authorityid: this.prospectiveEmpData?.authorityid,
+                  authorityid: this.prospectiveEmpData?.signatureAuthority,
                 })
                 console.log(this.prospectiveEmpData.values);
                 this.getEmployeeAddress(data.checkofferletter.empId);
@@ -536,10 +538,8 @@ console.log(formValues);
                   this.prospectiveEmpData.reportingmanagerId =
                     this.prospectiveEmpData.approver;
                 }
-                if (this.prospectiveEmpData.signatureAuthority) {
-                  this.prospectiveEmpData.authorityid =
-                    this.prospectiveEmpData.signatureAuthority;
-                  this.onclickDesignation(this.prospectiveEmpData.authorityid);
+                if(this.prospectiveEmpData.signatureAuthority){
+                  this.onclickDesignation();
                 }
                 this.prospectiveEmpData.jobLocationName =data.checkofferletter.workLocation;
                 this.prospectiveEmpData.jobSubLocationName =data.checkofferletter.subLocation;

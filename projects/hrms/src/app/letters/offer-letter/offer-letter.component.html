@@ -335,7 +335,7 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">Signature Authority Name <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation($event)" optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
+                                <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation()" optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
                                     class="form-select custom-select"></p-select>
                                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                                         <div class="error-msg">Signature Authority is required</div>

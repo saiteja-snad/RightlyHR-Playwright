@@ -383,6 +383,7 @@ export class OfferLetterComponent implements OnInit {
   getOfferDetailsByOfferId(offerId: number) {
     this.subscription = this.http.getData(`PreonboardingOfferLetter/getbyid/${offerId}`).subscribe({
       next: (respone) => {
+        console.log(respone);
         if (respone) {
           this.updatedOfferLetterDetails = respone as Iofferletter;
         }

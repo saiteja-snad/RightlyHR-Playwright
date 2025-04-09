@@ -62,6 +62,7 @@ export class PersonalDetailsComponent implements OnInit {
 
   constructor(private router: Router, private modalService: NgbModal,private openPopup: PopupService, private readonly fb: FormBuilder,
     private http: HttpService, private bnIdle: BnNgIdleService) {
+      this.initializePersonalForm();
       effect(() => {
        this.selectedCountryCode.set(this.selectedDialCode);
       })
@@ -76,8 +77,7 @@ export class PersonalDetailsComponent implements OnInit {
       }
     })
     this.prospectiveEmpData = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
-    this.getJobDetails();
-    this.initializePersonalForm();
+
     this.getprospectivempdata()
     this.getGender();
     this.getTitle();
@@ -94,7 +94,8 @@ export class PersonalDetailsComponent implements OnInit {
         this.employeeData = data as Ipersonal; 
       this.selectedCountryCode.set(this.employeeData?.mobilePhoneCountryCode);
       console.log(this.selectedCountryCode);
-        this.patchForm();
+      this.getJobDetails();
+        
         this.loading = false;
       },
       error: (reason: any) => {
@@ -114,6 +115,7 @@ export class PersonalDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingJobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.jobdetails = data[0] as IJobdetails[];
+        this.patchForm();
         console.log(this.jobdetails);
       }
     })

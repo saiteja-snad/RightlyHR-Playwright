@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, input, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
@@ -17,10 +17,11 @@ import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, LettersTabComponent, Select, NgxCountriesDropdownModule, ReactiveFormsModule, LettersheaderComponent, DateformatPipe, LetterFooterComponent],
+  imports: [CommonModule, LettersTabComponent,TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, LettersheaderComponent, DateformatPipe, LetterFooterComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
@@ -108,7 +109,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
-
+  @ViewChild('approveModal') approveModal: any;
+  @ViewChild('approveModal1') approveModal1: any;
+  confirmation_Msg: any;
+  data_Storing={} as any;
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder,private http: HttpService,
     private authService: AuthService,private conformationPopup: OpenModalService
     // private _userAcessService: UserAccessService,
@@ -934,38 +938,30 @@ console.log(formValues);
   updateOfferLetterFieldsDetails(f: NgForm) {
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.loading = true;
-    let sdata = {
-      employeeId: this.prospectiveEmpData.empId,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      middleName: data.middleName,
-      empstatus: 'Prospective',
-      title: data.title,
-      emailaddress: data.personalEmail,
-      gender: data.gender,
-      contactnumber: parseInt(data.phoneNumber),
-      emergencyName: this.employeeaddress.emergencyName,
-      emailId: this.employeeaddress.emailId,
-      fusionEmpId: data.fusionPlusEmpId,
-      insurance: this.employeeaddress.insurance,
-      generateOffer: true,
-      pf: this.employeeForm.get('pf')?.value,
-      esic: this.employeeForm.get('esic')?.value,
-      dob: this.employeeaddress.dob,
-      bloodGroup: this.employeeaddress.bloodGroup,
-      trainingEndDate: data.trainingEndDate,
-      dateOfJoining: this.employeeForm.get('dateOfJoining')?.value,
-      substatus: 'Offer Letter Generated',
-      password: this.employeeaddress.password,
-    };
+    this.prospectiveEmpData.employeeId= this.prospectiveEmpData.empId,
+    this.prospectiveEmpData.empstatus= 'Prospective',
+    this.prospectiveEmpData.emailaddress= data.personalEmail,
+    this.prospectiveEmpData.contactnumber=parseInt(data.phoneNumber),
+    this.prospectiveEmpData. emailId= this.employeeaddress.emailId,
+    this.prospectiveEmpData.fusionEmpId= data.fusionPlusEmpId,
+    this.prospectiveEmpData.insurance=this.employeeaddress.insurance,
+    this.prospectiveEmpData.generateOffer= true,
+    this.prospectiveEmpData.pf=this.employeeForm.get('pf')?.value,
+    this.prospectiveEmpData.esic= this.employeeForm.get('esic')?.value,
+    this.prospectiveEmpData.dob=this.employeeaddress.dob,
+    this.prospectiveEmpData.bloodGroup= this.employeeaddress.bloodGroup,
+    this.prospectiveEmpData.trainingEndDate= data.trainingEndDate,
+    this.prospectiveEmpData.dateOfJoining= this.employeeForm.get('dateOfJoining')?.value,
+    this.prospectiveEmpData.substatus= 'Offer Letter Generated',
+    this.prospectiveEmpData.password= this.employeeaddress.password
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
-      sdata.substatus = 'Offer Letter Regenerated';
-    } else {sdata.substatus = 'Offer Letter Generated';}
-    console.log(sdata);
+      this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
+    } else {this.prospectiveEmpData.substatus = 'Offer Letter Generated';}
+    console.log(this.prospectiveEmpData);
     console.log(this.prospectiveEmpData.empId);
     this.subscription = this.http
-      .postdata('Employeedata/UPDATER', sdata)
+      .postdata('Employeedata/UPDATER', this.prospectiveEmpData)
       .subscribe({
         next: (res: any) => {
           console.log(res);
@@ -976,12 +972,13 @@ console.log(formValues);
             this.UpdateFieldsToRespectiveTables();
             this.downLoadDocument(this.prospectiveEmpData);
           } else if (res.statusCode == 1002) {
-            const acceptfield = window.confirm(res.message);
-            if (acceptfield) {
-              this.updateEmployeeData(sdata);
-            } else {
-              f.resetForm();
-            }
+            this.confirmation_Msg=res.message;
+            this.data_Storing = this.prospectiveEmpData;
+                this.modalService.open(this.approveModal1, {
+                  centered: true,
+                  backdrop: 'static',
+                  keyboard: false
+                });
           }
         },
         error: (err: any) => {
@@ -989,7 +986,15 @@ console.log(formValues);
         },
       });
   }
-
+  confimationfuction1(yes:any){
+    if(yes){
+      this.modalService.dismissAll();
+      this.updateEmployeeData(this.data_Storing);
+    }
+    else{
+      this.employeeForm.reset();
+    }
+    }
   updateEmployeeData(employeeData: any) {
     if (employeeData.substatus == 'Offer Letter Rejected By Manager') {
       employeeData.substatus = 'Offer Letter Generated';
@@ -1007,11 +1012,12 @@ console.log(formValues);
               this.UpdateFieldsToRespectiveTables();
               this.downLoadDocument(this.prospectiveEmpData);
             } else if (res.statusCode == 1002) {
-              const acceptfield = window.confirm(res.message);
-              if (acceptfield) {
-                this.UpdateFieldsToRespectiveTables();
-                this.downLoadDocument(this.prospectiveEmpData);
-              }
+              this.confirmation_Msg=res.message;
+                this.modalService.open(this.approveModal, {
+                  centered: true,
+                  backdrop: 'static',
+                  keyboard: false
+                });
             }
           },
           error: (err: any) => {
@@ -1034,11 +1040,12 @@ console.log(formValues);
               this.UpdateFieldsToRespectiveTables();
               this.downLoadDocument(this.prospectiveEmpData);
             } else if (res.statusCode == 1002) {
-              const acceptfield = window.confirm(res.message);
-              if (acceptfield) {
-                this.UpdateFieldsToRespectiveTables();
-                this.downLoadDocument(this.prospectiveEmpData);
-              }
+              this.confirmation_Msg=res.message;
+                this.modalService.open(this.approveModal, {
+                  centered: true,
+                  backdrop: 'static',
+                  keyboard: false
+                });
             }
           },
           error: (err: any) => {
@@ -1046,6 +1053,13 @@ console.log(formValues);
           },
         });
     }
+  }
+  confimationfuction(yes:any){
+  if(yes){
+    this.modalService.dismissAll();
+    this.UpdateFieldsToRespectiveTables();
+    this.downLoadDocument(this.prospectiveEmpData);
+  }
   }
   JobtypeDetails = [] as IJobtype[];
   jobtypeId: any;

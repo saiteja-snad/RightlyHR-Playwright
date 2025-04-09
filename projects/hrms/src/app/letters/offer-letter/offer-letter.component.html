@@ -892,3 +892,33 @@
       </div>
     </div>
 </div>
+<!-- offerletter generation popup -->
+<ng-template #approveModal let-modal>
+
+  <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+      <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg??''}} </h4>
+      <div class="d-flex mb-4 mt-3 pb-2 mt-1 justify-content-around w-100">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+          <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
+              (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
+      </div>
+  </div>
+
+</ng-template>
+<!-- offerletter generation popup 2 -->
+<ng-template #approveModal1 let-modal>
+
+  <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+      <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg??''}} </h4>
+      <div class="d-flex mb-4 mt-3 pb-2 mt-1 justify-content-around w-100">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();this.loading=false ">{{'No'|translate}}</button>
+          <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
+              (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
+      </div>
+  </div>
+
+</ng-template>

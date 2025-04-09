@@ -40,12 +40,13 @@ export class OfferLetterComponent implements OnInit {
   rejectForm!: FormGroup;
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
-
+  updateempdata={} as any;
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder,private confiramtionpopups:PopupService) { }
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
     this.getOfferLetterDetails();
+    this.getprospectivempdata();
     this.offeraccepteddata = localStorage.getItem("offeraccepteddata");
     this.offerLetterData = this.prosempdata;
     this.getJobDetails(this.prosempdata)
@@ -54,7 +55,23 @@ export class OfferLetterComponent implements OnInit {
     this.getAuthorityDetails();
     this.initializeRejectForm();
   }
-
+  // Prospective Employee Data
+  getprospectivempdata() {
+    let employeeId = parseInt(this.prosempdata.employeeId);
+    this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.updateempdata=data
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        if (reason.status == 401) {
+          localStorage.clear();
+          this.router.navigate(['']);
+        }
+      }
+    });
+  }
   initializeRejectForm() {
     this.rejectForm = this.fb.group({
       rejectReason: ['', Validators.required],
@@ -160,8 +177,7 @@ export class OfferLetterComponent implements OnInit {
     offerUpdateDetails.candidateComments = this.rejectionReason.comments;
     offerUpdateDetails.candidateStatus = "Offer Letter Rejected";
     this.updateOfferDetails(offerUpdateDetails);
-    this.prosempdata.substatus = "Offer Letter Rejected";
-    this.updateEmployeeDetails(this.prosempdata);
+    this.updateEmployeeDetails(this.updateempdata);
     this.loadingcircle = true;
   }
 
@@ -371,6 +387,7 @@ export class OfferLetterComponent implements OnInit {
   }
 
   updateEmployeeDetails(empdata: any) {
+    this.updateempdata.substatus = "Offer Letter Rejected";
     this.subscription = this.http.postData("PreonboardingEmployeedata/UPDATER", empdata).subscribe({
       next: (respone) => { },
       error: (err) => {

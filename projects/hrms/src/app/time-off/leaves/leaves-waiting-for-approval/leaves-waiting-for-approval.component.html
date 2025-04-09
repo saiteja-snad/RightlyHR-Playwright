@@ -2,7 +2,7 @@
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
-                <tr>
+                <tr >
                     <th>Date</th>
                     <th>Leave Type</th>
                     <th>Duration</th>
@@ -14,14 +14,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>20/3/2027</td>
-                    <td>Sick Leaves </td>
-    
-                    <td>1</td>
-                    <td>Full Day</td>
-                    <td>20/3/2027</td>
-                    <td>20/3/2027</td>
+                <tr *ngFor="let item of lpdata">
+                    <td>{{item.date| dateformat}}</td>
+                    <td>{{item.categoryName}}</td>
+                    <td>{{item.duration}}</td>
+                    <td>
+                        {{ item.durationType == 1 ? 'First Half' : 
+                           item.durationType == 2 ? 'Full Day' : 
+                           item.durationType == 3 ? 'Second Half' : 'Unknown' 
+                        }}
+                    </td>
+                    <td>{{item.startdate| dateformat}}</td>
+                    <td>{{item.enddate| dateformat}}</td>
     
                     <td>
                         <div>
@@ -31,14 +35,14 @@
                                 </a>
                                 <ng-template #reason>
                                     <div>
-                                        <p class="mb-0">Feaver </p>
+                                        <p class="mb-0">{{item.notes}}</p>
                                     </div>
                                 </ng-template>
                             </span>
                         </div>
                     </td>
     
-                    <td>waiting-for-approval</td>
+                    <td>{{item.status}}</td>
     
     
                 </tr>

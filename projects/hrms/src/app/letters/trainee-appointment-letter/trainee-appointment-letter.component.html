@@ -1,1 +1,1553 @@
-<p>trainee-appointment-letter works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()">
+                <i class="bi bi-arrow-90deg-left me-2"></i>Dashboard
+            </p>
+        </div>
+    </div>
+    <!--tabs content-->
+    <div class="my-4">
+        <app-letters-tab />
+    </div>
+    <!--letter content-->
+    <div class="main-letter-content row">
+        <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
+            <div class="card letter-fields-content p-4">
+                <form [formGroup]="employeeForm">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Search Employee<span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                                    optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                                    formControlName="fusionEmployeeId" class="custom-select w-100" [dataKey]="'fusionEmpId'"
+                                    (onChange)="Onclick($event)">
+                            
+                                    <ng-template let-emp pTemplate="item">
+                                        {{emp.fusionEmpId}} - {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+                                    </ng-template>
+                            
+                                    <ng-template let-emp pTemplate="selectedItem">
+                                        {{emp.fusionEmpId}} - {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+                                    </ng-template>
+                            
+                                </p-select>
+                            </div>
+                            <div
+                                *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                                <div class="error-msg">Search Employee is required</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Appointment Sent Date<span
+                                    class="error-msg">*</span></label>
+                            <input type="date" class="form-control custom-input" formControlName="appointmentdate"  (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
+                                placeholder="Please enter appointment sent date" />
+                            <div
+                                *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
+                                <div class="error-msg">Appointment Sent Date is required</div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12 mb-4">
+                            <label class="form-label custom-label mb-2">Select Address<span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="SelectDropDown" optionLabel="name" optionValue="code"
+                                    placeholder="Please select address" formControlName="SelectDropDown"
+                                    (onChange)="onclickSelectAddress($event)" class="form-select custom-select">
+                                    
+                                </p-select>
+                            </div>
+                            <div
+                                *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
+                                <div class="error-msg">Address is required</div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Joining Date<span
+                                    class="error-msg">*</span></label>
+                            <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
+                                placeholder="Please enter joining date" />
+                            <div
+                                *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
+                                <div class="error-msg">Joining Date is required</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Department<span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="departmentDetails" optionLabel="departmentName"
+                                    placeholder="Please select department" formControlName="department"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                            <div
+                                *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
+                                <div class="error-msg">Department is required</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Branch Location/Code<span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="issueLocationdata" optionLabel="branchLocation1"
+                                    placeholder="Please select branch location" formControlName="branchCode"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                            <div
+                                *ngIf="employeeForm.get('branchCode')?.invalid && employeeForm.get('branchCode')?.touched">
+                                <div class="error-msg">Branch Location/Code is required</div>
+                            </div>
+                        </div>
+                        <div class="mb-4 mt-4">
+                            <label for="laptop" class="form-label label-text" style="font-size: 14px;"><b>Laptop/Desktop Information
+                                    :</b></label>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Asset Type<span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="AssertTypeGet" optionLabel="assetType1"
+                                    placeholder="Please select asset type" formControlName="asserttype"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                            <div
+                                *ngIf="employeeForm.get('asserttype')?.invalid && employeeForm.get('asserttype')?.touched">
+                                <div class="error-msg">Asset Type is required</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Model<span
+                                    class="error-msg">*</span></label>
+                            <input type="text" class="form-control custom-input" formControlName="model"
+                                placeholder="Please enter model" />
+                            <div
+                                *ngIf="employeeForm.get('model')?.invalid && employeeForm.get('model')?.touched">
+                                <div class="error-msg">Model is required</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Serial Number<span
+                                    class="error-msg">*</span></label>
+                            <input type="text" class="form-control custom-input" formControlName="serial"
+                                placeholder="Please enter serial number" />
+                            <div
+                                *ngIf="employeeForm.get('serial')?.invalid && employeeForm.get('serial')?.touched">
+                                <div class="error-msg">Serial Number is required</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Document Type <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="documentType" optionLabel="name"
+                                    placeholder="Please select document type" formControlName="documentType"
+                                    class="form-select custom-select" (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
+                                   
+                                </p-select>
+                            </div>
+                            <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
+                                <div class="error-msg">Document Type is required</div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-xl-12 mb-4">
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note
+                                <span class="error-msg">*</span></label>
+                            <textarea class="form-control custom-input" placeholder="Leave a comment here"></textarea>
+                        </div> -->
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Signature Authority Name <span
+                                    class="error-msg">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                                    (onChange)="onclickDesignation($event)" class="form-select custom-select" formControlName="authorityid">
+                                    <ng-template let-emp pTemplate="item">
+                                        {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+                                    </ng-template>
+                                
+                                    <ng-template let-emp pTemplate="selectedItem">
+                                        {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+                                    </ng-template>
+                                </p-select>
+                                <div
+                                    *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
+                                    <div class="error-msg">Signature Authority is required</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="note-text"><span class="note me-2">Note:</span>Please Update Updated Salary,
+                                Compensation Effective Date in
+                                Job Tab Before Generating the Document.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-3 pt-4">
+                            <button type="button" class="custom-btn btn-primary" (click)="onTraineeAppointmentLetterSubmit()">Generate Document</button>
+                            <!-- <button type="button" class="custom-btn btn-primary">Request For Approval</button> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-9 cols-lg-8 col-xl-8 col-xxl-7">
+            <div class="card letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+                    <div>
+                        <!--page-1-->
+                        <div class="letter-page-content" id="pdfContent1">
+                            <div class="letter-page-sub-content">
+                                <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                    <app-lettersheader></app-lettersheader>
+                                  </div>
+                                <ng-template #doc>
+                                    <div style="margin-bottom: 3rem;"></div>
+                                </ng-template>
+
+                                <div class="row mb-3">
+                                    <div class="col d-flex justify-content-between">
+                                        <p class="letter-headings">
+                                            Ref: RightlyHR/{{ traineeAppointmentletterData.branchCode }}/Employee ID:
+                                            {{ traineeAppointmentletterData.fusionEmpId }}
+                                        </p>
+                                        <p class="letter-headings">
+                                            Date:
+                                            {{ traineeAppointmentletterData.appointmentdate | dateformat }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="mb-3 d-flex justify-content-center">
+                                    <p class="letter-heading">TRAINEE APPOINTMENT LETTER</p>
+                                </div>
+                                <div>
+                                    <p class="letter-headings mb-2">
+                                        <strong>{{ traineeAppointmentletterData.firstName }}
+                                            {{traineeAppointmentletterData.middleName}}
+                                            {{ traineeAppointmentletterData.lastName }}</strong>
+                                    </p>
+                                    <P class="letter-headings mb-2">
+                                        <strong>
+                                            <span *ngIf="addressFlag">{{ traineeAppointmentletterData.addressLine1
+                                                }},<br />
+                                                <span>{{ traineeAppointmentletterData.addressLine2 }},</span><br />
+                                                <span>{{ traineeAppointmentletterData.city }}, {{
+                                                    traineeAppointmentletterData.state }},</span><br />
+                                                <span>{{ traineeAppointmentletterData.country }} - {{
+                                                    traineeAppointmentletterData.zipCode }}.</span>
+                                            </span>
+                                        </strong>
+                                    </P>
+                                    <p class="letter-headings mb-2">Email: {{ traineeAppointmentletterData.emailaddress
+                                        }}</p>
+                                    <p class="letter-headings mb-2">Ph: + 91 {{
+                                        traineeAppointmentletterData.contactnumber }}</p>
+                                </div>
+                                <div>
+                                    <p class="mt-1 mb-4">
+                                        <span class="letter-headings"><strong>Dear
+                                                {{ traineeAppointmentletterData.firstName }}
+                                                {{traineeAppointmentletterData.middleName}}
+                                                {{ traineeAppointmentletterData.lastName }},</strong></span>
+                                    </p>
+
+                                    <!-- <h2 class="letter-heading">TRAINEE APPOINTMENT:</h2> -->
+
+                                    <p class="paragraph">
+                                        Congratulations! Further to the offer letter issued and accepted, we are pleased
+                                        to appoint you as "<span
+                                            *ngIf="!traineeAppointmentletterData.jobRole; else jobrole">___________</span><ng-template
+                                            #jobrole><b>
+                                                {{ traineeAppointmentletterData.jobRole }}
+                                                <!-- -
+                                                                                                {{ traineeAppointmentletterData.department }} -->
+                                            </b></ng-template>” with effect from <span class="p-text-bold">
+                                            “{{ traineeAppointmentletterData.dateOfJoining | dateformat }}”</span>
+                                        with <span class="p-text-bold">RightlyHR</span> associated with
+                                        <span class="p-text-bold">RightlyHR.,</span> (Hereinafter referred to
+                                        as the company or RightlyHR) at our <span
+                                            *ngIf="!traineeAppointmentletterData.workLocation; else locations">___________
+                                        </span>
+                                        <ng-template #locations>
+                                            <b>{{ traineeAppointmentletterData.workLocation }}
+                                            </b> </ng-template>Center as per the terms and conditions mentioned
+                                        hereunder.
+                                        Your employee code for all purposes at the Company would be
+                                        <span
+                                            *ngIf="!traineeAppointmentletterData.fusionEmpId; else FusionEmpId">___________</span>
+                                        <ng-template #FusionEmpId>
+                                            <b>{{ traineeAppointmentletterData.fusionEmpId }}.</b></ng-template>
+                                    </p>
+                                    <div class="mb-2 mt-2 paragraph">
+                                        <p class="mb-3">
+                                            During your trainee period, you will receive a monthly stipend of
+                                            Rs.18,000/-.
+                                            Please note that this stipend is meant to support you during your training
+                                            and
+                                            does not include additional benefits or entitlements given to regular
+                                            employees.
+                                            You will be on a training for a period of 6 months.
+                                        </p>
+                                        <p class="mb-3">
+                                            RightlyHR reserves the right to terminate your services by giving 7 calendar
+                                            days’ notice or upon payment of stipend in lieu thereof.
+                                        </p>
+                                        <p class="mb-3">As a Trainee at RightlyHR, you will have the
+                                            opportunity to learn and contribute to various aspects of our operations.
+                                            This
+                                            program is designed to provide you with comprehensive training and
+                                            experience to
+                                            start your career successfully.</p>
+                                        <p class="mb-3">Your progress and performance will be assessed periodically
+                                            during the trainee
+                                            program. Successful completion of the program may lead to potential
+                                            opportunities for permanent employment within the company, contingent on
+                                            your
+                                            performance and the availability of positions.</p>
+                                        <p class="mb-3">You will undergo an orientation program to acquaint yourself
+                                            with our company's
+                                            culture, policies, and procedures. Furthermore, you will receive specialized
+                                            training in your area of focus.</p>
+                                        <p class="mb-3">As a Trainee of RightlyHR, you are expected to uphold our
+                                            confidentiality
+                                            policies and adhere to all company rules and regulations.</p>
+                                        <p class="mb-3">Please sign and return a copy of this letter to signify your
+                                            acceptance of the
+                                            Trainee position. If you have any questions or require further information,
+                                            please do not hesitate to reach out to HR Team at hr&#64;rightlyhr.com.
+                                        </p>
+                                        <p class="mb-5">We eagerly anticipate your contribution and growth as a Trainee
+                                            at RightlyHR.</p>
+                                        <p class="paragraph">Sincerely,</p>
+                                        <p class="paragraph"><b>for RightlyHR</b></p>
+                                        <div class="mt-4 mb-3"
+                                        style="font-family: Segoe script; font-size: large;">
+                                            {{traineeAppointmentletterData.authorityName}}</div>
+                                        <div class="row">
+                                            <div class="col-md-7">
+                                                <div>
+                                                    <div class="stamp-img">
+                                                        <p class="stamp-text"><span>
+                                                                {{traineeAppointmentletterData.authorityName}}</span>
+                                                        </p>
+                                                        <p class="stamp-text1"><span
+                                                                class="paragraph">{{authorityDesignation}}</span></p>
+                                                        <br>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-5">
+                                                <ul style="float:right;margin-right: 75px;">
+                                                    <p class="paragraph"><b>Agreed & Accepted By</b><br>
+                                                        <span class="paragraph"
+                                                            *ngIf="!traineeAppointmentletterData.firstName && !traineeAppointmentletterData.middleName && !traineeAppointmentletterData.lastName;else fullnames"><b>Trainee
+                                                                Name:</b></span>
+                                                        <ng-template #fullnames>
+                                                            <span
+                                                                class="paragraph ">{{traineeAppointmentletterData.firstName}}
+                                                                {{traineeAppointmentletterData.middleName}}
+                                                                {{traineeAppointmentletterData.lastName}}
+                                                            </span>
+                                                        </ng-template>
+                                                    </p>
+                                                </ul>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+                        <!--page-2-->
+                        <div class="letter-page-content" id="pdfContent2">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
+                                    <div class="mb-3 d-flex justify-content-center">
+                                        <p class="letter-heading">Exhibit A</p>
+                                    </div>
+                                    <p class="letter-headings">CONFIDENTIALITY & NON-DISCLOSURE:</p>
+                                    <ol class="paragraph">
+                                        <li class="mb-3">
+                                            You agree that the terms and conditions applying to your trainee period are
+                                            strictly confidential. Any disclosure of these terms and conditions to third
+                                            parties
+                                            (including other employees of the Company or any other associate or
+                                            affiliate of the
+                                            Company) constitutes a breach of your trainee period.
+                                        </li>
+                                        <li class="mb-3">
+                                            You acknowledge that as a result of trainee period with the Company, you
+                                            will be
+                                            in possession of proprietary and confidential information and trade secrets
+                                            relating
+                                            to the business practices of the Company and affiliated companies, if any.
+                                            You agree
+                                            that you will not, at any time during or after the trainee period, directly
+                                            or
+                                            indirectly use or disclose to any person, firm, corporation or other entity,
+                                            detrimental to the Company or the Company’s employees or misuse in any way
+                                            any
+                                            proprietary or confidential information acquired by you during your trainee
+                                            period
+                                            by Employer regarding the clients, customers, vendors, business partners or
+                                            business
+                                            practices of employers or affiliated companies, without prior written
+                                            consent of the
+                                            Company. For purposes of this Agreement, confidential information includes,
+                                            but is
+                                            not limited to, trade secrets; list of past or present clients, customers or
+                                            consultants; product or service development plans; marketing plans; pricing
+                                            policies; business acquisition plans or targets; any portion or phase of any
+                                            technical information, technique, method, procedure, technology, or know-how
+                                            (whether or not in written on tangible form) used by the Company or any
+                                            portion or
+                                            phase of any technical information, ideas, discoveries, designs, computer
+                                            programs,
+                                            processes, procedures, formulae or improvements of the Company that is
+                                            valuable
+                                            (whether or not is written or tangible form or whether or not downloaded
+                                            onto a
+                                            computer or on computer disc) to the Company. All such information in
+                                            whatever form,
+                                            including all memoranda, notes, plan, reports, records, documents and other
+                                            evidence
+                                            thereof and any other information of whatever nature which gives the
+                                            Employer an
+                                            opportunity to obtain an advantage over its competitors shall be considered
+                                            a “trade
+                                            secret” for the purpose of this Agreement.
+                                        </li>
+                                        <li class="mb-3">
+                                            You hereby acknowledge that by reason of your trainee period with the
+                                            Company you
+                                            will have access to records, documents, drawings, forms, reports, studies,
+                                            memoranda, correspondence, manuals, plans, magnetic media and other
+                                            information
+                                            sources (“Confidential Material”) and such Confidential Material constitutes
+                                            the
+                                            property of the Company and/or its clients, enables the Company and/or its
+                                            clients
+                                            to compete successfully in business and was acquired or created by the
+                                            Company
+                                            and/or its client substantial expense. In consideration of your trainee
+                                            period and
+                                            the above-mentioned disclosures, you agree that:
+                                        </li>
+                                        <li class="mb-3">
+                                            You will disclose to the Company all information, inventions, discoveries,
+                                            products,
+                                            systems, programs, documentation including improvements or modifications
+                                            (“Proprietary Material”), relating to the
+                                            Company and its clients which you acquired or developed during the term of
+                                            your employment with the Company and that
+                                            such Proprietary Material is the sole property of the Company. or its
+                                            clients, regardless of whether or not its
+                                            acquisition or development occurred during the work hours, the Company
+                                            facilities, or with the Company property or personnel. You
+                                            will not disclose any such Proprietary Material to any unauthorized person
+                                            during or after the completion of
+                                            employment with the Company.
+                                        </li>
+                                        <li class="mb-3">You agree to comply with a supplementary Non-Disclosure
+                                            Agreement, when issued,
+                                            between the Company and a client regarding privacy and confidentiality. Such
+                                            Agreement will be incorporated into this Agreement by reference, including
+                                            improvements or modifications. “Proprietary Material” relating to the
+                                            Company and
+                                            clients who you acquired or developed during the term of your trainee period
+                                            with
+                                            the Company and its client is the sole property of the Company or its
+                                            clients,
+                                            regardless of whether or not its acquisition or development occurred during
+                                            work
+                                            hours.</li>
+                                    </ol>
+                                    <div>
+                                        <p class="letter-headings">DUTIES AND RESPONSIBILITIES:</p>
+                                        <ol class="paragraph">
+                                            <!-- 1 -->
+                                            <li class="mb-3">
+                                                For purposes of the Agreement, ‘Intellectual Property‘ means any
+                                                discovery, process, product, or device, conceived, discovered, improved
+                                                or
+                                                made by you during the term of trainee period either solely or jointly
+                                                with
+                                                others, whether patentable, trademarkable, copyrightable, aid/or subject
+                                                to
+                                                protection as a trade secret or otherwise, which is related to the
+                                                actual or
+                                                planned business or activities of the Company or related to its actual
+                                                research, design, development or suggested by or resulting from any
+                                                tasks
+                                                assigned to you for or on behalf of the Company, or misuse of the
+                                                Company's
+                                                facilities, materials or personnel. The following shall be the property
+                                                of
+                                                the Employer exclusively.1..1 Any Intellectual Property conceived,
+                                                discovered or made by you; and
+                                                1..2 Any patent, copyright, trademark, application or record relating to
+                                                any Intellectual Property.
+                                            </li>
+                                            <!-- 2 -->
+                                            <li class="mb-3">
+                                                As far as the Company is not already by law, the owner of the
+                                                intellectual property rights arising in respect of any and all works
+                                                created, you hereby assign to the Company and/or its affiliates all
+                                                intellectual property rights arising in respect of any and all works
+                                                created, compiled and/or devised by you in the course and scope of your
+                                                trainee period with the Company pursuant to this Agreement.
+                                            </li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+                        <!--page-4-->
+                        <div class="letter-page-content" id="pdfContent3">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
+                                    <ul style="list-style: none;">
+                                        <!-- 2 -->
+                                        <li class="mb-3 paragraph">
+                                            By virtue of this Agreement, any intellectual property rights which come
+                                            into existence
+                                            in the future in respect of any such work created, compiled and/or devised
+                                            by you in the course and scope of your contract with the Company, shall vest
+                                            in the Company and/or its affiliates upon their coming into existence.
+                                        </li>
+                                    </ul>
+                                    <ol start="3" class="paragraph">
+                                        <!-- 3 -->
+                                        <li class="mb-3">
+                                            You undertake and represent to the Company that to the best of your
+                                            knowledge, you are the sole beneﬁcial owner of the entire right, title and
+                                            interest in and to such intellectual property right, arising in respect of
+                                            your work created, compiled and/or devised by yourself in the course and
+                                            scope of your trainee period with the Company, that you are free to assign
+                                            such rights to the Company free of any third party claims, liens, charges or
+                                            encumbrances of any kind, and that you are free of any duties and/or
+                                            obligations to third parties which may conﬂict with the terms of this
+                                            Agreement.
+                                        </li>
+                                        <li class="mb-3">You acknowledge that your stipend, as provided hereof, includes
+                                            compensation for any loss of intellectual and/or industrial property rights
+                                            set
+                                            out in this paragraph.</li>
+                                    </ol>
+                                    <p class="letter-headings mb-3">RETURN OF PROPERTY:</p>
+                                    <ol class="paragraph">
+                                        <li class="mb-3">
+                                            Upon the termination or cessation of your training period with the Company
+                                            for any
+                                            cause whatsoever, you shall immediately deliver up to the Company or its
+                                            authorized
+                                            representative, any property or documents of the Company which may be in
+                                            your
+                                            possession, custody or under your control, including, without limitation,
+                                            mobile
+                                            phone, laptop, memoranda, correspondence, notes, records, reports, sketches,
+                                            plans, letter
+                                            heads, visiting cards or other documents and any copies or reproductions
+                                            thereof in
+                                            any medium whatsoever, and all other Confidential Information, whether or
+                                            not the
+                                            property was originally supplied to you by the Company. The provisions of
+                                            this clause shall
+                                            survive termination of this Agreement for whatsoever reason.
+                                        </li>
+                                        <li class="mb-3">If so requested, you shall provide to the Company a signed
+                                            statement confirming that
+                                            you have fully complied.</li>
+                                        <li class="mb-3">Without prejudice to any other right available under law, the
+                                            Company reserves the
+                                            right to make reasonable deductions from your full and final salary payment
+                                            or any
+                                            other amount due to you, in the event you fail to return all the property of
+                                            the Company
+                                            which is in your possession, or return it in a damaged state, other than due
+                                            to normal
+                                            wear and tear.</li>
+                                    </ol>
+                                    <p class="letter-headings mb-3">
+                                        NON-COMPLETE & NON-SOLICITATION:
+                                    </p>
+                                    <ol class="paragraph">
+                                        <li class="mb-3">You agree that during the trainee period plus two (2) years
+                                            thereafter (the
+                                            ‘Restricted Term"), you will not, directly or indirectly, in any capacity,
+                                            role or function, on its own behalf or on
+                                            behalf of any other person or organization, other than as an employee of the
+                                            Company solicit and/or attempt to
+                                            solicit or accept business from:
+                                            <br>
+                                            1..1 Any present or former clients of the Company to which you were
+                                            providing
+                                            services during the two (2)-year period immediately prior to the date on
+                                            which the Trainee ceases
+                                            to be employed as a Trainee by the Employer (‘Separation Date ‘);<br>
+                                            1..2 Will not seek and obtain employment, training, or contract for
+                                            employment or
+                                            seek to serve as you or otherwise to clients of RightlyHR., customers,
+                                            accounts or prospects,
+                                            without the written permission of RightlyHR.<br>
+                                            1..3 Any client or prospective clients of the Company to which you were
+                                            seeking to
+                                            provide services or products, including participating in the Company's sales
+                                            efforts, during the one (1)-year
+                                            period immediately prior to the Separation Date; unless:<br>
+                                            • Such services or products being provided to the clients or prospective
+                                            clients by
+                                            you or any third party with whom
+                                            you were then employed are wholly unrelated to Employer's then-current lines
+                                            of services or products on the
+                                            Separation Date; and/or<br>
+                                            1..4 During the Term and for one (1) year from the Separation Date, you
+                                            shall not
+                                            directly or indirectly, in any
+                                            capacity or function, on your own behalf or on behalf of any other person or
+                                            organization.<br>
+                                            1..5 Interfere or attempt to interfere in any way with the Company’s
+                                            relationships
+                                            with any of its clients, service
+                                            providers, employees, suppliers, experts. Key advisors or consultants,
+                                            including
+                                            without limitation, inducing or
+                                            attempting to induce any of the above-mentioned persons or organizations to
+                                            terminate or change the terms of his/her/its dealings with the Company", and
+                                            /or<br>
+                                            1..6 Undertake any acts, which may damage or disparage the Company’s
+                                            business
+                                            relationships with its clients, subcontractors or other business
+                                            partners.<br>
+                                            • During the Term and for one (1) year from the Separation Date, you shall
+                                            not
+                                            directly or indirectly, in any
+                                            capacity or function engage or participate in or be employed by in a
+                                            business
+                                            similar and same as the Company
+                                        </li>
+                                    </ol>
+                                    <p class="letter-headings mb-3">
+                                        DATA PROTECTION:
+                                    </p>
+                                    <ol class="paragraph">
+                                        <li class="mb-3">
+                                            Your consent to the Company holding and processing, both electronically and
+                                            manually, the data it collects in relation to you, during your trainee
+                                            period, for the purpose
+                                            of the Company’s administration and management of its trainees, employees,
+                                            its business
+                                            and for compliance with applicable procedures, laws and regulations.
+                                        </li>
+                                        <li class="mb-3">You also consent to the transfer, storage and processing of
+                                            such data by the Company
+                                            outside India, where the Company may have offices.</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+                        <!--page-4-->
+                        <div class="letter-page-content" id="pdfContent4">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
+                                    <p class="letter-headings">MISCELLANEOUS:</p>
+                                    <ol class="paragraph">
+                                        <li class="mb-3">
+                                            <b>Waiver:</b>
+                                            A waiver by the Company of a breach of any provision of this Agreement by
+                                            you shall
+                                            not operate or be construed as a waiver of any subsequent breach by you. No
+                                            waiver shall
+                                            be valid unless in writing and signed by an authorized officer of the
+                                            Company.
+                                        </li>
+                                        <li class="mb-3"><b>Training:</b>
+                                            If the Company intends to send you abroad for training, you will have to
+                                            sign a bond
+                                            for the period and amount which will be decided by the Company as per its
+                                            policy
+                                            depending on the period of training, travel and other expenses/ loss
+                                            incurred.
+                                        </li>
+                                        <li class="mb-3"><b>Indemnity:</b>
+                                            You shall keep the Company indemnified for any damages, which the Company or
+                                            its
+                                            client may suffer due to any act/acts by you including breach of any terms
+                                            of this
+                                            Agreement.
+                                        </li>
+                                        <li class="mb-3"><b>Governing law & Jurisdiction:</b>
+                                            This Agreement shall be governed by and construed in accordance with Indian
+                                            law. In
+                                            relation to any legal action or proceedings arising out of or in connection
+                                            with
+                                            this Agreement, both the parties irrevocably submit to the exclusive
+                                            jurisdiction of
+                                            the courts in [New Delhi].
+                                        </li>
+                                        <li class="mb-3"><b>Notices:</b>
+                                            All notices, requests, demands or other communication required or permitted
+                                            to be
+                                            given under this Agreement and the provisions contained herein shall be in
+                                            writing
+                                            in English language and are effective upon delivery to the applicable Party
+                                            (whether
+                                            by mail, fax, personal delivery or otherwise) at the address, and marked to
+                                            the
+                                            attention of the person, indicated below:
+                                        </li>
+                                    </ol>
+                                    <p class="paragraph mb-3">
+                                        If to the Company, at:<br />
+                                        RightlyHR<br />
+                                        Plot No.32, Opp. SBI<br />
+                                        Nizampet Village, Kukatpally<br />
+                                        Hyderabad, Telangana-500072-India.
+                                    </p>
+                                    <p class="paragraph mb-3">
+                                        If to you, at:<br />
+                                        <span>
+                                            <span *ngIf="!traineeAppointmentletterData.addressLine1; else addresspage6">
+                                                _________
+                                            </span>
+                                            <ng-template #addresspage6>
+                                                <b><span>{{ traineeAppointmentletterData.addressLine1 }}</span>,<br />
+                                                    <span>{{ traineeAppointmentletterData.addressLine2 }}</span>,<br />
+                                                    <span>{{ traineeAppointmentletterData.city }}, {{
+                                                        traineeAppointmentletterData.state }},</span><br />
+                                                    <span>{{ traineeAppointmentletterData.country }} <span> </span> -
+                                                        {{ traineeAppointmentletterData.zipCode }}.</span>
+                                                </b></ng-template>
+                                        </span>
+                                        <br />
+                                        E-mail:
+                                        <span>
+                                            <span *ngIf="!traineeAppointmentletterData.emailaddress; else email">
+                                                _________
+                                            </span>
+                                            <ng-template #email><b>{{ traineeAppointmentletterData.emailaddress
+                                                    }}</b></ng-template>
+                                        </span>
+                                        <br />
+                                        Mobile: + 91
+                                        <span>
+                                            <span *ngIf="!traineeAppointmentletterData.contactnumber; else mobileno">
+                                                _________</span>
+                                            <ng-template #mobileno><b>{{ traineeAppointmentletterData.contactnumber
+                                                    }}</b></ng-template>
+                                        </span>
+                                    </p>
+                                    <p class="letter-headings mb-3">OTHER PROVISIONS:</p>
+                                    <ol class="paragraph">
+                                        <li class="mb-3">
+                                            Your appointment as a Trainee is based on the information and particulars
+                                            furnished by you in your application during your interview and any
+                                            subsequent
+                                            discussions. You represent that the statements made by you are true. If it
+                                            transpires that you have made a false statement or omitted to disclose a
+                                            material fact that affect your appointment, the Company may take such action
+                                            as
+                                            it deems fit in its sole discretion.
+                                        </li>
+                                        <li class="mb-3">
+                                            This offer of trainee period and any subsequent employment relationship is
+                                            contingent upon satisfactory completion of reference and/or background
+                                            checks
+                                            that may include verification of your educational, employment or salary
+                                            history.
+                                            Any false information provided by you or at your request may result in
+                                            immediate
+                                            termination of trainee period with no compensation to you.
+                                        </li>
+                                        <li class="mb-3">
+                                            With the acceptance of this trainee period, you agree and confirm that
+                                            during
+                                            your trainee period, you will be governed by the Company's Policies, as
+                                            amended
+                                            from time to time. The policies are available on the public folder of all
+                                            systems and should be read and understood by you. In the event of any
+                                            clarification with respect to the same please contact the HR Department. In
+                                            the
+                                            event of any breach of the Company’s Policies, the Company's reserves the
+                                            right
+                                            to terminate your trainee period with immediate effect.
+                                        </li>
+                                    </ol>
+                                    <p class="paragraph mb-3">
+                                        We take this opportunity to welcome you to RightlyHR team and trust you will
+                                        find this a
+                                        stimulating environment that will offer you a challenging and rewarding career.
+                                        We look
+                                        forward to your contribution to building a Company of which we can all be proud.
+                                    </p>
+
+                                    <p class="paragraph mb-3">
+                                        Your signature below conforms that all information’s, written or oral, provided
+                                        to us by you
+                                        is accurate and complete. Please sign and return a duplicate copy of this letter
+                                        signifying
+                                        your acceptance.
+                                    </p>
+                                    <div class="row d-flex justify-content-evenly mt-2">
+                                        <div class="mt-3">
+                                            <p class="paragraph">Signature: ___________</p>
+                                        </div>
+                                        <div class="mt-4">
+                                            <p class="paragraph">Full Name of the Trainee:</p>
+                                        </div>
+                                        <p class="text-end paragraph">Date: _______________</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+                        <!--page-5-->
+                        <div class="letter-page-content" id="pdfContent5">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <h1 class="letter-heading">Exhibit B</h1>
+                                    </div>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <h1 class="letter-heading">Prevention of Sexual Harassment Policy</h1>
+                                    </div>
+                                    <p class="paragraph">
+                                        This Prevention of Sexual Harassment Policy (POSH) applies to all employees at
+                                        all
+                                        locations of RightlyHR. All employees become subject to this policy on their
+                                        first day of employment with RightlyHR and will be subject to discipline for
+                                        violations of this policy,
+                                        up to and including termination.
+                                        <br><br>
+                                        <span class="letter-headings">Sexual Harassment at RightlyHR is
+                                            Prohibited</span>
+                                        <br><br>
+                                        Any harassment by one employee of RightlyHR directed at another, both on and off
+                                        RightlyHR
+                                        premises, during and outside of work hours is expressly prohibited. Sexual
+                                        harassment is
+                                        any unwelcome conduct of a sexual nature that a person finds offensive and
+                                        results in a hostile or intimidating
+                                        work environment.
+                                        <br><br>
+                                        The Equal Employment Opportunity Commission (EEOC) describes
+                                        sexual harassment as “unwelcome sexual advances, requests for
+                                        sexual favours, and other verbal or physical harassment of a
+                                        sexual nature.” Furthermore, harassment does not have to be of a
+                                        sexual nature and can include offensive remarks about a person’s sex.<br>
+                                        <br>Examples of sexual harassment may include but are not
+                                        limited to:<br><br><span>
+                                            <ul>
+                                                <li>
+                                                    A supervisor requesting sexual acts, explicitly or implicitly, as a
+                                                    condition of a person’s employment</li>
+                                                <li>Ongoing remarks about a person’s sex made by a colleague</li>
+                                                <li>
+                                                    Harassment that has the effect of interfering with an employee’s
+                                                    ability to
+                                                    work or conduct that creates a hostile work environment
+                                                </li>
+                                                <li>
+                                                    Direct physical contact of a sexual or unwanted nature
+                                                </li>
+                                                <li>
+                                                    Preferential treatment of an employee who submits to sexual conduct
+                                                </li>
+                                                <li>
+                                                    Use of sexual publications, websites, or discussions or exposure to
+                                                    pornography
+                                                </li>
+                                                <li>
+                                                    Retaliation for sexual harassment complaints
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </p>
+                                    <p class="paragraph mb-3">
+                                        <span class="letter-headings">Sexual Harassment Investigation Procedure</span>
+                                        <br><br>
+                                        Any employee who has been the subject of sexual harassment may tell the harasser
+                                        to stop
+                                        immediately. If the harasser
+                                        continues or if the individual is afraid or uncomfortable with speaking directly
+                                        to the
+                                        harasser, then ICC (Internal
+                                        Complaints Committee) must be made aware of any inappropriate workplace
+                                        behaviour so
+                                        that action can be taken immediately.
+                                        <br><br>
+                                        Sexual harassment complaints should be submitted to ICC (email id:
+                                        hr&#64;rightlyhr.com the occurrence of the incident. A committee member may help
+                                        an employee complete a
+                                        written statement or, if the employee refuses to provide a written complaint,
+                                        the committee member may file a
+                                        complaint on behalf of the employee.
+                                        Confidentiality, to the extent possible, will be preserved, but it is not always
+                                        possible for the employee to remain
+                                        anonymous for the entire duration of a sexual harassment investigation. ICC
+                                        needs to
+                                        submit report to the Management.
+                                        <br><br>
+                                        <span class="letter-headings">Complaint</span><br><br>
+                                        A sexual harassment complaint must provide at least the following information:
+                                    </p>
+                                    <ul class="paragraph list-stylee">
+                                        <li>The complaining employee’s name and position</li>
+                                        <li>The name and position of the harasser</li>
+                                        <li>The date of the incident</li>
+                                        <li>The location of the incident</li>
+                                        <li>A detailed description of the incident</li>
+                                        <li>A description of any witnesses' present</li>
+                                        <li>The effect of the incident on the employee’s ability to perform their job
+                                        </li>
+                                        <li>Names and positions of other employees who may have been subjected to
+                                            similar harassment</li>
+                                        <li>What steps, if any, the employee has taken to try and stop the harassment
+                                        </li>
+                                        <li>Any other relevant information</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+                        <!--page-6-->
+                        <div class="letter-page-content" id="pdfContent6">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
+                                    <p class="paragraph">
+                                        <strong class="letter-headings">Investigation</strong>
+                                        <br><br>
+                                        Upon receipt of a complaint, ICC will begin an investigation of the incident
+                                        within one
+                                        business day. ICC will speak with the harasser and any witnesses. A member of
+                                        the ICC will also review any other
+                                        evidence available such as video footage or audio recordings, messages, etc.
+                                    </p>
+                                    <p class="paragraph">The employee/trainee who filed the complaint will not
+                                        participate in or
+                                        learn of discussions with other employees/trainees. Upon completion of the
+                                        investigation, ICC
+                                        will inform the employee/trainee of the result of the investigation. Unless
+                                        there are
+                                        circumstances requiring more time, determined solely by the HR Director, the
+                                        investigation shall be completed within 60 days of ICC receipt of the complaint.
+                                    </p>
+                                    <br>
+                                    <p class="paragraph">
+                                        <strong class="letter-headings">Confidentiality</strong><br><br>
+                                        During the investigation, HR and ICC will maintain confidentiality to the extent
+                                        possible.
+                                        Interviews with the harasser and witnesses may require HR to reveal the
+                                        complainant’s name but HR and ICC will take steps
+                                        to ensure the complainant is protected from retaliation during and after the
+                                        investigation. Any information relating
+                                        to a sexual harassment complaint and investigation shall be maintained in secure
+                                        and confidential files retained by HR.
+                                    </p>
+                                    <br>
+                                    <p class="paragraph">
+                                        <strong class="letter-headings">Discipline</strong><br><br> If an employee is
+                                        found to have sexually harassed another employee in violation of this policy,
+                                        the mandatory minimum discipline is a written
+                                        reprimand. This minimum discipline will only apply to first time offenders and
+                                        when the offense is determined to be
+                                        minor and isolated in nature. Discipline for repeat violations or for ongoing
+                                        offenses shall be immediate
+                                        termination of employment. Employees in violation of this policy may also be
+                                        subject to civil damages and criminal penalties.
+                                        <br><br>
+                                        By signing below, I acknowledge that I have read, understand, and will comply
+                                        with the
+                                        RightlyHR POSH policy. I understand that sexual harassment in the workplace will
+                                        not be tolerated and that I have a responsibility
+                                        to report any such behaviour. Additionally, I understand that I do not engage in
+                                        any such inappropriate behaviour.
+                                    </p><br>
+                                    <div class="row d-flex justify-content-evenly mt-2">
+                                        <div class="mt-5">
+                                            <p class="paragraph">Signature: ___________</p>
+                                        </div>
+                                        <div class="mt-5">
+                                            <p class="paragraph">Full Name of the Trainee:</p>
+                                        </div>
+                                        <p class="text-end paragraph">Date: _______________</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+                        <!--page-7-->
+                        <div class="letter-page-content" id="pdfContent7">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <h1 class="letter-heading">Exhibit C</h1>
+                                    </div>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <h1 class="letter-heading">Drug and Alcohol Policy statement</h1>
+                                    </div>
+
+                                    <p class="letter-headings mb-2">Introduction:</p>
+                                    <p class="paragraph mb-2">
+                                        The use of drugs and alcohol in IT offices can have serious consequences,
+                                        including decreased
+                                        productivity, increased accidents, and legal liabilities for the company. To
+                                        ensure a safe and healthy work
+                                        environment, it is important for employers to establish clear policies and
+                                        procedures regarding drug and alcohol use.
+                                        This template provides a framework for developing such policies specifically for
+                                        IT offices.
+                                    </p>
+
+                                    <p class="letter-headings mb-2">Policy Statement:</p>
+                                    <p class="paragraph mb-2">
+                                        RightlyHR has a zero-tolerance policy for drug and alcohol use in IT
+                                        offices. This policy applies to all employees and trainees, including full-time,
+                                        part-time, temporary, and contract workers. Employees/trainees are prohibited
+                                        from
+                                        using, possessing, selling, or distributing drugs or alcohol in IT offices or
+                                        during
+                                        work related activities.
+                                    </p>
+
+                                    <p class="letter-headings mb-2">Testing:</p>
+                                    <p class="paragraph mb-2">
+                                        To ensure compliance with this policy, RightlyHR reserves the right
+                                        to conduct drug and alcohol testing of employees/trainees in IT offices. Testing
+                                        may be
+                                        conducted pre trainee period, pre-employment, post-accident, or on a random
+                                        basis.
+                                        Refusal to submit to testing may result in disciplinary action, up to and
+                                        including
+                                        termination.
+                                    </p>
+
+                                    <p class="letter-headings mb-2">Consequences:</p>
+                                    <p class="paragraph mb-2">
+                                        Violation of this policy may result in disciplinary action, up to and including
+                                        termination. Employees/trainees who are found to be under the influence of drugs
+                                        or
+                                        alcohol while in IT offices may be immediately removed from the workplace for
+                                        the safety
+                                        of themselves and others. Employees/trainees who seek help for drug or alcohol
+                                        addiction
+                                        will be provided with support and resources, but continued drug or alcohol use
+                                        will not be tolerated.
+                                    </p>
+
+                                    <p class="letter-headings mb-2">Confidentiality:</p>
+                                    <p class="paragraph mb-2">
+                                        All drug and alcohol testing results will be kept confidential and will only be
+                                        disclosed on a need-to-know basis. Information about a trainee/employee's drug
+                                        or
+                                        alcohol use will not be shared with anyone who does not have a legitimate reason
+                                        to know.
+                                    </p>
+
+                                    <p class="letter-headings mb-2">Conclusion:</p>
+                                    <p class="paragraph mb-3">
+                                        The use of drugs and alcohol in IT offices poses a serious risk to trainees,
+                                        employees,
+                                        customers, and the company as a whole. By establishing clear policies and
+                                        procedures,
+                                        conducting drug and alcohol testing, and providing support and resources to
+                                        those who
+                                        need it, RightlyHR is committed to maintaining a safe and healthy work
+                                        environment for
+                                        all employees/trainees in IT offices.
+                                    </p>
+
+                                    <p class="paragraph mb-3">
+                                        I <span><span
+                                                *ngIf="!traineeAppointmentletterData.firstName; else empnames">________________</span>
+                                            <ng-template #empnames><b class="p-text-bold">{{
+                                                    traineeAppointmentletterData.firstName }}
+                                                    {{traineeAppointmentletterData.middleName}} {{
+                                                    traineeAppointmentletterData.lastName }} </b>
+                                            </ng-template></span>acknowledge that as a Trainee of RightlyHR working in
+                                        the IT offices, it is my
+                                        responsibility to maintain a safe and healthy work environment for myself and my
+                                        colleagues.
+                                    </p>
+
+                                    <p class="paragraph mb-3">
+                                        I understand that RightlyHR has a zero-tolerance policy for drug and alcohol use
+                                        in IT
+                                        offices, and I agree to abide by this policy. I will not use, possess, sell, or
+                                        distribute drugs or alcohol
+                                        in IT offices or during work-related activities.
+                                    </p>
+
+                                    <p class="paragraph mb-3">
+                                        I also understand that RightlyHR reserves the right to conduct drug and alcohol
+                                        testing
+                                        of trainees/employees in IT offices to ensure compliance with this policy. I
+                                        agree to
+                                        comply with any such testing that may be required of me.
+                                    </p>
+
+                                    <p class="paragraph mb-3">
+                                        I acknowledge that violating this policy may result in disciplinary action, up
+                                        to and
+                                        including termination, and that continued drug or alcohol use will not be
+                                        tolerated. I further understand that if I am
+                                        found to be under the influence of drugs or alcohol while in IT offices, I may
+                                        be immediately removed from the workplace
+                                        for the safety of myself and others.
+                                    </p>
+
+                                    <p class="paragraph mb-3">
+                                        Finally, I acknowledge that it is my responsibility to report any medication use
+                                        that
+                                        may affect my job performance to my supervisor, and that accommodations may be
+                                        made, as appropriate,
+                                        to ensure that I can continue to perform my job duties safely and effectively.
+                                    </p>
+
+                                    <p class="paragraph mb-3">
+                                        I understand the importance of maintaining a safe and healthy work environment
+                                        in IT
+                                        offices, and I am committed to upholding this oath and complying with all
+                                        related policies and procedures.
+
+                                    <div class="mt-4">
+                                        <p class="paragraph">Signature: _____________</p>
+                                        <p class="paragraph mt-2">
+                                            Full Name of the Trainee:
+                                            <span>
+                                                <span
+                                                    *ngIf="!traineeAppointmentletterData.firstName; else fullempname2"></span>
+                                                <ng-template #fullempname2><b>{{ traineeAppointmentletterData.firstName
+                                                        }}
+                                                        {{traineeAppointmentletterData.middleName}} {{
+                                                        traineeAppointmentletterData.lastName }}
+                                                    </b></ng-template>
+                                            </span>
+                                        </p>
+                                        <p class="paragraph mb-2">Date: __________</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+
+                        <!--page-8-->
+                        <div class="letter-page-content" id="pdfContent8">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <h1 class="letter-heading">Exhibit D</h1>
+                                    </div>
+                                    <div class="d-flex justify-content-center mb-4">
+                                        <h1 class="letter-heading">Office Laptop / Desktop Usage</h1>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <p class="paragraph">Trainee Full Name:<span>
+                                                    <span
+                                                        *ngIf="!traineeAppointmentletterData.firstName; else fullempname3">
+                                                        _________</span>
+                                                    <ng-template #fullempname3><b>{{
+                                                            traineeAppointmentletterData.firstName }}
+                                                            {{traineeAppointmentletterData.middleName}}
+                                                            {{ traineeAppointmentletterData.lastName
+                                                            }}</b></ng-template></span>
+                                                <br>
+                                                Job title:
+                                                <span>
+                                                    <span *ngIf="!traineeAppointmentletterData.jobRole; else title">
+                                                        _________</span>
+                                                    <ng-template #title><b>{{ traineeAppointmentletterData.jobRole
+                                                            }}</b></ng-template>
+                                                </span>
+                                                <br>
+                                                Department:
+                                                <span>
+                                                    <span
+                                                        *ngIf="!traineeAppointmentletterData.department; else Department">
+                                                        _________</span>
+                                                    <ng-template #Department><b>{{
+                                                            traineeAppointmentletterData.department }}</b></ng-template>
+                                                </span>
+                                                <br>
+                                                Location:
+                                                <span>
+                                                    <span
+                                                        *ngIf="!traineeAppointmentletterData.workLocation; else Location">
+                                                        _________</span>
+                                                    <ng-template #Location><b>{{
+                                                            traineeAppointmentletterData.workLocation
+                                                            }}</b></ng-template>
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <p class="paragraph">Laptop / Desktop Information
+                                                <br>Make:
+                                                <span>
+                                                    <span
+                                                        *ngIf="!traineeAppointmentletterData.asserttype; else Asset">_________</span>
+                                                    <ng-template #Asset><b>{{ traineeAppointmentletterData.asserttype
+                                                            }}</b></ng-template></span>
+                                                <br>
+                                                Model:
+                                                <span>
+                                                    <span
+                                                        *ngIf="!traineeAppointmentletterData.model; else Model">_________</span>
+                                                    <ng-template #Model><b>{{ traineeAppointmentletterData.model
+                                                            }}</b></ng-template></span>
+                                                <br>
+                                                <!-- Serial No:
+                                        <span>
+                                            <span *ngIf="!traineeAppointmentletterData.serial; else Serialno"> _________</span>
+                                              <ng-template #Serialno><b>{{ traineeAppointmentletterData.serial }}</b></ng-template>
+                                        </span> -->
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <p class="letter-headings my-3">Security:</p>
+                                    <p class="paragraph mb-3">
+                                        The laptop should be kept secure at all times, including the use of strong
+                                        passwords, locking the
+                                        device when not in use, and reporting any loss or theft to the appropriate
+                                        authorities.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Acceptable use:</p>
+                                    <p class="paragraph mb-3">
+                                        The laptop should only be used for work-related purposes, and the trainee should
+                                        not
+                                        use it for personal reasons or access inappropriate or unauthorized content.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Software and updates:</p>
+                                    <p class="paragraph mb-3">
+                                        The trainee should not install any unauthorized software or make changes to the
+                                        laptop's settings without approval from IT or the relevant department. Any
+                                        software
+                                        or security updates provided by the company should be installed promptly.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Data protection:</p>
+                                    <p class="paragraph mb-3">
+                                        The trainee should not store sensitive or confidential information on the laptop
+                                        unless it is necessary for their job, and such data should be encrypted and
+                                        backed
+                                        up regularly.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Reporting issues:</p>
+                                    <p class="paragraph mb-3">
+                                        Any problems or issues with the laptop should be reported promptly to IT or the
+                                        relevant department.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Return of laptop:</p>
+                                    <p class="paragraph mb-3">
+                                        The laptop should be returned to the company at the end of the trainee's trainee
+                                        period or when requested by the company if failed to so RightlyHR has all rights
+                                        reserved to collect Rs. 60,000 from his final payment or as per
+                                        court within the jurisdiction of State of Telangana.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Confidentiality:</p>
+                                    <p class="paragraph mb-3 ">
+                                        The trainee is responsible for protecting the confidentiality of any sensitive
+                                        or
+                                        confidential information stored on the laptop and ensuring that it is not
+                                        accessed
+                                        or shared by unauthorized parties.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Consequences for misuse:</p>
+                                    <p class="paragraph mb-3">
+                                        Any misuse of the laptop, including violation of these terms and conditions,
+                                        could
+                                        result in disciplinary action, legal action, or termination of trainee period.
+                                    </p>
+
+                                    <p class="paragraph mb-3">I
+                                        <span>
+                                            <span
+                                                *ngIf="!traineeAppointmentletterData.firstName; else Iempname">_________</span>
+                                            <ng-template #Iempname><b>{{ traineeAppointmentletterData.firstName }}
+                                                    {{traineeAppointmentletterData.middleName}}
+                                                    {{ traineeAppointmentletterData.lastName }}</b>
+                                            </ng-template>
+                                        </span>
+                                        read and understand these terms and conditions and I will
+                                        comply throughout the use of this device and ensuring the
+                                        security and confidentiality of the company's data and protect
+                                        against any legal or financial risks.
+                                    </p>
+                                    <div class="row mt-5">
+                                        <div class="col-md-7 mt-5">
+                                            <p class="paragraph margin15">
+                                                Name:<br>
+                                                Network Administration<br>
+                                                RightlyHR<br>
+                                                Hyderabad, India
+                                            </p>
+                                        </div>
+                                        <br>
+                                        <div class="col-md-5 mt-5 d-flex align-items-end">
+                                            <p>Trainee Name:
+                                                <span>
+                                                    <span
+                                                        *ngIf="!traineeAppointmentletterData.firstName; else fullempname4">_________</span>
+                                                    <ng-template #fullempname4>
+                                                        <b>{{ traineeAppointmentletterData.firstName }}
+                                                            {{traineeAppointmentletterData.middleName}}
+                                                            {{ traineeAppointmentletterData.lastName }}
+                                                        </b>
+                                                    </ng-template>
+                                                </span>
+                                                <br>
+                                                Date: ____________
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+                        <div class="letter-page-content" id="pdfContent9">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <h1 class="letter-heading">Exhibit E</h1>
+                                    </div>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <h1 class="letter-heading">Code of Conduct</h1>
+                                    </div>
+
+                                    <p class="letter-headings mb-3">Respect for Others</p>
+                                    <p class="paragraph mb-3">
+                                        All trainees are expected to treat each other and customers with respect and
+                                        dignity,
+                                        regardless of their race, ethnicity, gender, sexual orientation, religion, or
+                                        any other
+                                        personal characteristic. Discrimination, harassment, or any form of abusive
+                                        behaviour is
+                                        strictly prohibited.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Confidentiality</p>
+                                    <p class="paragraph mb-3">
+                                        All trainees must maintain the confidentiality of company information and any
+                                        other
+                                        information shared with them by customers or business partners. This includes
+                                        trade
+                                        secrets, financial information, and personal data. Breaching confidentiality is
+                                        a
+                                        serious violation of company policy and may lead to disciplinary action.
+                                    </p>
+                                    <p class="paragraph mb-3">
+                                        Trainee understands that they are joining RightlyHR which is in the
+                                        similar line of business as compared to their previous organization. Trainee
+                                        confirms
+                                        and accepts that RightlyHR will be free from any legal
+                                        obligations in the event if his/her previous employer poses any legal challenges
+                                        to
+                                        candidate and stop him/her from joining RightlyHR. RightlyHR will not engage and
+                                        it is
+                                        solely up to the trainee to resolve the dispute with his/her previous employer.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Professionalism</p>
+                                    <p class="paragraph mb-3">
+                                        All trainees are expected to conduct themselves in a professional and ethical
+                                        manner at
+                                        all times. This includes communicating effectively, being punctual, and
+                                        respecting the
+                                        company's policies and procedures. Trainees should avoid conflicts of interest
+                                        and
+                                        always act in the best interests of the company.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Compliance with Laws and Regulations</p>
+                                    <p class="paragraph mb-3">
+                                        All trainees are expected to comply with all applicable laws and regulations,
+                                        including
+                                        those related to discrimination, harassment, privacy, and safety. Any violation
+                                        of laws
+                                        or regulations is strictly prohibited and may lead to disciplinary action.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Use of Company Resources</p>
+                                    <p class="paragraph mb-3">
+                                        All trainees are expected to use company resources, including equipment and
+                                        software,
+                                        responsibly and for business purposes only. Personal use of company resources is
+                                        prohibited unless it is explicitly allowed by company policy.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Drug and Alcohol Policy</p>
+                                    <p class="paragraph mb-3">
+                                        The use of illegal drugs or the abuse of alcohol while on company premises or
+                                        while
+                                        conducting company business is strictly prohibited. Any trainee found to be
+                                        under the
+                                        influence of drugs or alcohol while on company premises or while conducting
+                                        company
+                                        business may be subject to disciplinary action. Please check Exhibit C.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Social Media Policy</p>
+                                    <p class="paragraph mb-3">
+                                        Trainees should use social media responsibly and in a way that does not harm the
+                                        company's reputation. Trainees should avoid making negative comments about the
+                                        company,
+                                        customers, or colleagues on social media, and should not disclose confidential
+                                        information on social media.
+                                    </p>
+
+                                    <p class="letter-headings mb-3">Consequences for Violations</p>
+                                    <p class="paragraph mb-3">
+                                        The company takes all violations of the code of conduct seriously and will take
+                                        appropriate action to address any violations. This may include disciplinary
+                                        action, up
+                                        to and including termination of trainee period
+                                    </p>
+
+                                    <div>
+                                        <p class="paragraph mt-5">Signature: _______________</p>
+                                        <p class="paragraph mt-2">Full Name of the Trainee:
+                                            <span>
+                                                <span
+                                                    *ngIf="!traineeAppointmentletterData.firstName; else lastfullempname">_________</span>
+                                                <ng-template #lastfullempname>
+                                                    <b>{{ traineeAppointmentletterData.firstName }}
+                                                        {{traineeAppointmentletterData.middleName}}
+                                                        {{ traineeAppointmentletterData.lastName }}
+                                                    </b>
+                                                </ng-template>
+                                            </span>
+                                        </p>
+                                        <p class="paragraph mt-2">Date: _______________</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #successhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+        <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
+    </div>
+</ng-template>
+
+<ng-template #errorhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+        <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
+    </div>
+</ng-template>

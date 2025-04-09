@@ -11,23 +11,25 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { IAddress, IaddressemployeeDetails } from '../offer-letter/offer-letter.model';
 import { Subscription } from 'rxjs';
+import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
+import { IaddressemployeeDetails, IAuthority } from '../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })
 export class AddressProofLetterComponent {
-  employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Full-Time' },
-    { id: 2, name: 'Part-Time' },
-    { id: 3, name: 'Contract' },
-    { id: 4, name: 'Internship' }
+  addressdata: { name: string, value: string }[] = [
+    { name: 'Current Address', value: 'C' },
+    { name: 'Permanent Address', value: 'P' },
   ];
-
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
+  ];
   designation: { id: number; name: string }[] = [
     { id: 1, name: 'Software Engineer' },
     { id: 2, name: 'Project Manager' },
@@ -101,24 +103,61 @@ export class AddressProofLetterComponent {
 
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
-    this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
+    this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.Employeeinfo);
+    this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
+      ...emp,
+      fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
+    }));
+    this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
+        }));
+    this.initializeForm();
     this.getEmployeeId();
     this.getAddressTemplate();
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
-  }
+    this.addressdata = this.employeeaddress?.employeeAddresses && Array.isArray(this.employeeaddress.employeeAddresses) 
+  ? this.employeeaddress.employeeAddresses.map((addr: { type: string }) => ({
+      label: addr.type === 'C' ? 'Current Address' : 'Permanent Address',
+      value: addr.type
+    })) 
+  : [];
 
+  
+  }
+  addressOptions = [
+    { label: 'Select Address', value: undefined },
+    { label: 'Current Address', value: 'C' },
+    { label: 'Permanent Address', value: 'P' }
+  ];
+  
   navigateDashboard() {
     this.router.navigate(['/admin/active-employees'])
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
-      searchEmployee: ['', Validators.required],
-      documentType: ['', Validators.required],
-      dateofbankloan: ['', Validators.required],
-      signatureAuthority: ['', Validators.required]
-     });
+      fusionEmpId: ['', Validators.required],
+      Documenttype: ['', Validators.required],
+     SelectDropDown: ['', Validators.required],
+      //SelectDropDown: [''],
+      authorityid: ['', Validators.required],
+      firstName: [''],
+      middleName: [''],
+      lastName: [''],
+      jobRole: [''],
+      dateOfJoining: [null],
+      addressLine1: [''],
+      addressLine2: [''],
+      city: [''],
+      state: [''],
+      country: [''],
+      zipCode: [''],
+      
+  authorityName: [''],                     // Name display
+  authorityDesignation: [''] 
+    });
   }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
@@ -162,20 +201,113 @@ export class AddressProofLetterComponent {
       }
      
     }
-  Onclick(fusionemployeeId: any) {
-    
-    this.fusionEmpId = fusionemployeeId;
-    console.log(fusionemployeeId);
-    this.addressLetterData = {}
-    this.addressLetterData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
-    );
-    this.disablebuttonforemployeeid=true
-    // this.getCompensationById(this.BankLoanLetterData)
-    this.getJobdetails(this.addressLetterData);
-    this.getEmployeeAddress(this.addressLetterData)
-    console.log(this.addressLetterData);
+    Onclick(selectedEmployee: any) {
+  
+      console.log("Selected Employee Object:", selectedEmployee);
+  
+      if (!selectedEmployee || typeof selectedEmployee !== 'object') {
+          console.warn("Invalid Employee Selection:", selectedEmployee);
+          return;
+      }
+  
+      if (!selectedEmployee.hasOwnProperty('employeeId')) {
+          console.warn("Missing employeeId in Selected Employee:", selectedEmployee);
+          return;
+      }
+  
+      this.fusionEmpId = selectedEmployee.employeeId;
+      console.log("Extracted Employee ID:", this.fusionEmpId);
+  
+      // Reset before updating
+      this.addressLetterData = {};
+  
+      // Find the selected employee
+      this.addressLetterData = this.employeeiddetails.find(
+          (c: any) => c.employeeId === this.fusionEmpId
+      );
+  
+      if (!this.addressLetterData) {
+          console.warn("No matching employee found for employeeId:", this.fusionEmpId);
+          return;
+      }
+  
+      console.log("Selected Employee Data After Find:", this.addressLetterData);
+  
+  
+      let selectedAddress = this.addressLetterData.address || {};
+  
+      if (!selectedAddress || Object.keys(selectedAddress).length === 0) {
+          console.warn("No address found for employee:", this.fusionEmpId);
+      }
+  
+      // Ensure form is updated with a placeholder job role
+      this.employeeForm.patchValue({
+          employeeId: this.addressLetterData.employeeId || '',
+          firstName: this.addressLetterData.firstName || '',
+          middleName: this.addressLetterData.middleName || '',
+          lastName: this.addressLetterData.lastName || '',
+          jobRole: 'Fetching...',
+          dateOfJoining: this.addressLetterData.dateOfJoining || '',
+          authorityDesignation: this.addressLetterData.authorityDesignation || '',
+          authorityName: this.addressLetterData.authorityName || '',
+          addressLine1: selectedAddress?.addressLine1 || '',
+          addressLine2: selectedAddress?.addressLine2 || '',
+          city: selectedAddress?.city || '',
+          state: selectedAddress?.state || '',
+          country: selectedAddress?.country || '',
+          zipCode: selectedAddress?.zipCode || ''
+      });
+  
+      // Fetch job and address details
+      if (this.addressLetterData.employeeId) {
+          console.log("Fetching Job and Address details for EmployeeId:", this.addressLetterData.employeeId);
+          this.getEmployeeAddress(this.addressLetterData);
+          this.getJobdetails(this.addressLetterData);
+      } else {
+          console.warn("Selected employee does not have a valid employeeId!");
+      }
+  
+      this.disablebuttonforemployeeid = true;
   }
+  
+  
+  
+  
+  
+  
+    // Onclick(fusionemployeeId: any) {
+     
+    //   this.fusionEmpId = fusionemployeeId;
+    //   console.log(fusionemployeeId);
+    
+    //   // Reset the addressLetterData to empty or default values
+    //   this.addressLetterData = {};
+      
+    //   // Find the selected employee from the employeeiddetails array
+    //   this.addressLetterData = this.employeeiddetails.find(
+    //     (c: any) => c.fusionEmpId == fusionemployeeId
+    //   );
+      
+    //   // Ensure the form is updated with the employee data
+    //   // this.employeeForm.patchValue({
+    //   //   fusionEmpId: this.addressLetterData.fusionEmpId,
+    //   //   firstName: this.addressLetterData.firstName,
+    //   //   middleName: this.addressLetterData.middleName,
+    //   //   lastName: this.addressLetterData.lastName,
+    //   //   jobRole: this.addressLetterData.jobRole,
+    //   //   dateOfJoining: this.addressLetterData.dateOfJoining,
+    //   //   authorityDesignation:this.addressLetterData.authorityDesignation,
+    //   //   authorityName:this.addressLetterData.authorityName,
+    //   // });
+    
+    //   // Fetch additional details like job and address if necessary
+    //   this.getJobdetails(this.addressLetterData);
+    //   this.getEmployeeAddress(this.addressLetterData);
+    
+    //   this.disablebuttonforemployeeid = true;
+    //   console.log(this.addressLetterData);
+    // }
+    
    //function to get the address 
    getEmployeeAddress(Value:any) {
     let EmployeeId = Value.employeeId
@@ -193,21 +325,39 @@ export class AddressProofLetterComponent {
   //function to select the current address 
   address = {} as IAddress;
   addressFlag = false;
-  onclickSelectAddress(Value:any){
-    this.addressFlag= true;
-    console.log(Value);
-    console.log(this.employeeaddress.employeeAddresses);
-     if(this.employeeaddress.employeeAddresses.length>0){
-           this.address = this.employeeaddress.employeeAddresses.find((address:IAddress)=>address.type.toLowerCase() == Value) 
-          }
-             console.log(this.address);
-              this.addressLetterData.addressLine1=this.address.addressLine1
-              this.addressLetterData.addressLine2=this.address.addressLine2
-              this.addressLetterData.city=this.address.city
-              this.addressLetterData.state=this.address.state
-              this.addressLetterData.country=this.address.country
-              this.addressLetterData.zipCode=this.address.zipCode
-  }
+  onclickSelectAddress(event: any) {
+    const selectedValue = event.value.value;  // ✅ Extract `value` ('P' or 'C')
+    console.log("Selected Address Type:", selectedValue);
+
+    const selectedAddress = this.employeeaddress?.employeeAddresses?.find(
+        (addr: { type: string }) => addr.type === selectedValue
+    );
+
+    if (selectedAddress) {
+        console.log("Selected Address Object:", selectedAddress);
+
+        this.employeeForm.patchValue({
+            addressLine1: selectedAddress.addressLine1 || '',
+            addressLine2: selectedAddress.addressLine2 || '',
+            city: selectedAddress.city || '',
+            state: selectedAddress.state || '',
+            country: selectedAddress.country || '',
+            zipCode: selectedAddress.zipCode || '',
+        });
+
+        this.addressFlag = true;  // ✅ Ensure UI updates
+    } else {
+        console.warn("No matching address found for type:", selectedValue);
+        this.addressFlag = false;
+    }
+}
+
+
+
+
+
+
+
   //toggledropdown to open and close the dropdown list
 toggleDropdown(dropcategory:any) {
 if (dropcategory == 'empid') {
@@ -264,33 +414,62 @@ if(authorityDesignationdata==undefined){
   console.log(this.authorityDesignation);
 }
 }
-onclickDesignation(){
+onclickDesignation(selectedAuthority: any) {
+  console.log("Selected Authority ID:", selectedAuthority);
+
+  if (!selectedAuthority) {
+    this.addressLetterData.authorityName = '';
+    this.authorityDesignation = '';
+    return;
+  }
+
   let signatureAuthorityDetails = this.authorityDetails.find(
-    (c: any) => (c.employeeId == this.addressLetterData.authorityid)
+    (c: any) => c.employeeId == selectedAuthority.employeeId
   );
-  console.log(signatureAuthorityDetails);
+
+  console.log("Selected Authority Details:", signatureAuthorityDetails);
+
   if (signatureAuthorityDetails) {
     this.authorityDesignation = signatureAuthorityDetails.designation;
-    if (signatureAuthorityDetails.middleName) {
-      this.addressLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
-    } else
-      this.addressLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
-  }
-  else{
-    this.addressLetterData.authorityName =''
-    this.authorityDesignation=''
+
+    // 🔹 Construct full name correctly
+    this.addressLetterData.authorityName = signatureAuthorityDetails.middleName
+      ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
+      : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+  } else {
+    this.addressLetterData.authorityName = '';
+    this.authorityDesignation = '';
   }
 }
+
+
 //get offer letter Authority list 
-getAuthorityDetails(){
-  let offertype='Address Proof Letter'
-  this.subscription=this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
-    next:(data:any)=>{
+// getAuthorityDetails(){
+//   let offertype='Address Proof Letter'
+//   this.subscription=this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+//     next:(data:any)=>{
+//       console.log(data);
+//       this.authorityDetails=data
+//     }
+//   })
+// }
+getAuthorityDetails() {
+  let offertype = 'Address Proof Letter';
+  this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+    next: (data: any) => {
       console.log(data);
-      this.authorityDetails=data
+      this.authorityDetails = data.map((authority: any) => ({
+        ...authority,
+        fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+      }));
+      console.log(this.authorityDetails); 
+    },
+    error: (error: any) => {
+      console.error(error);
     }
-  })
+  });
 }
+
 //hostlister to close the dropdown when we Click out side the box
 @HostListener('document:click', ['$event.target'])
 onClickOutside(target: any) {
@@ -310,35 +489,65 @@ getEmployeeId() {
     .subscribe({
       next: (data: any) => {
         console.log(data);
-        this.employeeiddetails = data as IaddressemployeeDetails[];
-       
-        console.log(this.employeeiddetails);
+        //this.employeeiddetails = data as IemployeeDetails[];
+        this.employeeiddetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${
+              employee.employeeId ? employee.employeeId + ' - ' : ''
+            }${employee.firstName} ${
+              employee.middleName ? employee.middleName + ' ' : ''
+            }${employee.lastName}`,
+          };
+        });
       },
       error: (reason: any) => {
-
         console.log(reason);
       },
     });
 }
   //get Job Details by empployeeid
   getJobdetails(Employee: any) {
-    this.subscription = this.http
-      .getData(`JobDetails/${Employee.employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          let res = data.reverse()[0];
-          this.employeeJobDetails = res;
-          Employee.jobRole = res.jobRole;
-          Employee.workLocation = res.lopcation;
+    if (!Employee || !Employee.employeeId) {
+        console.warn("Invalid employee for job details:", Employee);
+        return;
+    }
 
-          console.log(Employee.jobRole);
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+    this.subscription = this.http
+        .getData(`JobDetails/${Employee.employeeId}`)
+        .subscribe({
+            next: (data: any) => {
+                console.log("Job details fetched:", data);
+
+                if (data && data.length > 0) {
+                    let res = data.reverse()[0]; // Get the latest job details
+                    this.employeeJobDetails = res;
+
+                    Employee.jobRole = res.jobRole;
+                    Employee.workLocation = res.location; // Fix typo (was `lopcation`)
+
+                    console.log("Updated Employee Job Role:", Employee.jobRole);
+
+                    // ✅ Update form field dynamically
+                    this.employeeForm.patchValue({
+                        jobRole: Employee.jobRole || 'Not Available',
+                    });
+                } else {
+                    console.warn("No job details found for employeeId:", Employee.employeeId);
+                    this.employeeForm.patchValue({
+                        jobRole: 'Not Available', // If no job details exist, set as 'Not Available'
+                    });
+                }
+            },
+            error: (reason: any) => {
+                console.error("Error fetching job details:", reason);
+                this.employeeForm.patchValue({
+                    jobRole: 'Not Available', // Handle API failure
+                });
+            },
+        });
+}
+
   //to get address letter template
   async getAddressTemplate() {
     this.addressTemplate = await this.httpclient
@@ -348,7 +557,7 @@ getEmployeeId() {
       .toPromise();
   }
 
-  async postAddressLetterFormSubmit(f: NgForm) {
+  async postAddressLetterFormSubmit(f: FormGroup) {
     const data = await this.addressLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);

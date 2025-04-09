@@ -5,46 +5,55 @@
                 <span class="contact-sub-header">Contact Details</span>
             </div>
             <div *ngIf="!buttons">
-                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+                <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
             </div>
             <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
-                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
+                <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid" (click)="updateAddressInfo()" >Save</button>
             </div>
         </div>
 
-        <!--input content-->
+        <!-- Reactive Form -->
         <div class="myinfo-input-content">
-            <form action="">
+            <form [formGroup]="contactForm">
                 <div class="row">
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Work Number<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter work number ">
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="workNumber" class="form-label custom-label mb-2">Work Number<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="workNumber" formControlName="workNumber" placeholder="Please enter work number">
+                    <div class="error-msg" *ngIf="contactForm.get('workNumber')?.invalid && contactForm.get('workNumber')?.touched">
+                      <div *ngIf="contactForm.get('workNumber')?.errors?.['required']">Work number is required</div>
+                      <div *ngIf="contactForm.get('workNumber')?.errors?.['pattern']">Work number must be a valid 10-digit number</div>
                     </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Phone Number <span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter phone number ">
-
+                  </div>
+              
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" id="phoneNumber" formControlName="phoneNumber" placeholder="Please enter phone number">
+                    <div class="error-msg" *ngIf="contactForm.get('phoneNumber')?.invalid && contactForm.get('phoneNumber')?.touched">
+                      <div *ngIf="contactForm.get('phoneNumber')?.errors?.['required']">Phone number is required</div>
+                      <div *ngIf="contactForm.get('phoneNumber')?.errors?.['pattern']">Phone number must be a valid 10-digit number</div>
                     </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Work Mail<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter work mail">
+                  </div>
+              
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="workMail" class="form-label custom-label mb-2">Work Mail<span class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail" placeholder="Please enter work mail">
+                    <div class="error-msg" *ngIf="contactForm.get('workMail')?.invalid && contactForm.get('workMail')?.touched">
+                      <div *ngIf="contactForm.get('workMail')?.errors?.['required']">Work email is required</div>
+                      <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work email must be a valid email address</div>
                     </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Personal Email<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter personal email">
+                  </div>
+              
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail" placeholder="Please enter personal email">
+                    <div class="error-msg" *ngIf="contactForm.get('personalEmail')?.invalid && contactForm.get('personalEmail')?.touched">
+                      <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">Personal email is required</div>
+                      <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email address</div>
                     </div>
-                    
+                  </div>
                 </div>
-            </form>
+              </form>
         </div>
     </div>
 </div>

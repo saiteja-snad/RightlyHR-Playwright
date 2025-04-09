@@ -1,0 +1,59 @@
+
+  
+    .tdd {
+      height: 4rem;
+      border: 1px solid rgb(209, 209, 209);
+      color: #222b45;
+      font-size: 14px;
+    }
+  
+    .tabbg{
+      background-color: #f9f9f9;
+    }
+  
+  
+    .thh {
+      border: 1px solid rgb(209, 209, 209);
+      color: #222b45;
+      font-size: 14px;
+    }
+  
+    .accordion-button {
+      color: #555;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+  .custom-table-content {
+      width: 100%;
+      height: 10vh;
+      overflow: auto;
+      background-color: #FFFFFF;
+      border: 1px solid #E7E7ED;
+      border-radius: 1.2rem;
+  }
+
+
+    .accordion-button:not(.collapsed) {
+      color: #304ffd;
+      background-color: #f6f9ff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+ 
+ 
+  .hidescrool{
+    max-height: 65vh;
+    overflow: scroll;
+    scroll-behavior: smooth;
+    width: auto;
+    padding: 2px;
+  }
+  
+ 
+  .table-scroll {
+    overflow-y: scroll;
+    height: max-content;
+    max-height: 40vh;
+  }
+  

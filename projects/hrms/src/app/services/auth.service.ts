@@ -31,16 +31,16 @@ export class AuthService {
 
   }
   removeToken(){
-    localStorage.removeItem('fusionuser')
+    localStorage.removeItem('rightlyHrUser')
 
    }
   getToken(){
-    return JSON.parse(localStorage.getItem('fusionuser')||'{}')
+    return JSON.parse(localStorage.getItem('rightlyHrUser')||'{}')
   }
   isLoggedIn():boolean{
-    return!!localStorage.getItem('fusionuser')
+    return!!localStorage.getItem('rightlyHrUser')
   }
   getRoles(){
-    return JSON.parse(localStorage.getItem('fusionuserRoles')||'[]')
+    return JSON.parse(localStorage.getItem('rightlyHrUserRoles')||'[]')
   }
 }

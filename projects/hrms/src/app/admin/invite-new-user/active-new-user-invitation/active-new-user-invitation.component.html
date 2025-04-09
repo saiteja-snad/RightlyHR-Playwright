@@ -10,20 +10,50 @@
     <div class="my-4">
         <app-new-user-invitation-tabs />
     </div>
-
-    <!--content-->
-    <div class="card custom-content-data p-5">
-        <div class="input-content mb-4">
-            <label for="exampleFormControlInput1" class="form-label custom-label mb-3">Search Employee<span class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-                <p-select [options]="employees" optionLabel="name" [filter]="true" filterBy="name"
-                    [showClear]="true" placeholder="Please select employee" class="custom-select w-100">
-                    <!-- Template for selected item -->
-                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
-                    <!-- Template for dropdown items -->
-                    <ng-template let-employee #item>{{ employee.name }}</ng-template>
-                </p-select>
+    <form [formGroup]="inviteActiveEmployeeForm" (ngSubmit)="activeInviteEmployee()">
+        <div class="mb-4">
+          
+          <div class="card custom-content-data p-5">
+            <div class="input-content mb-4">
+                <label for="exampleFormControlInput1" class="form-label custom-label mb-3">Search Employee<span class="text-danger">*</span></label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="Activeemployeedata" optionLabel="name" optionValue="employeeId" [filter]="true" filterBy="name"
+                        [showClear]="true" placeholder="Please select employee" class="custom-select w-100" (onChange)="onChangePropesctiveEmployess($event)">
+                        <!-- Template for selected item -->
+                        <ng-template #selectedItem let-selectedOption>{{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }} - {{selectedOption.workEmail ?? 'NA'}}</ng-template>
+                        <!-- Template for dropdown items -->
+                        <ng-template let-employee #item>{{ employee.firstName }} {{ employee.middleName }} {{ employee.lastName }} - {{employee.workEmail ?? 'NA'}}</ng-template>
+                    </p-select>
+                </div>
             </div>
+            <div class="input-content mb-4">
+                <label class="form-label input-heading">Employee Name</label>
+                <input type="text"
+                       formControlName="fullname"
+                       class="form-control custom-input">
+              </div>
+            
+              <div  class="form-check input-field">
+                <input type="checkbox"
+                       class="form-check-input"
+                       id="flexCheckDefault"
+                       formControlName="agreement" (click)="onCheckValue()" >
+                <label class="form-check-label check-box-text" for="flexCheckDefault">
+                  <p style="font-size: 14px;">I Agree to invite <b><span class="email">{{ getName.workEmail }}</span></b> into organization</p>
+                </label>
+              </div>
+            
+              <div class="btn-div">
+                <button type="submit"
+                        class="custom-btn btn-primary"
+                        [disabled]=" !isCheckBoxChecked">
+                  Send Invite
+                </button>
+              </div>
         </div>
-    </div>
+        </div>
+      </form>
+      
+    <!--content-->
+    
 </div>

@@ -4,118 +4,188 @@
             <div>
                 <span class="myinfo-sub-header">Onboarding Details</span>
             </div>
-            <div *ngIf="!buttons">
+            <!-- <div *ngIf="!buttons">
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
             </div>
             <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
                 <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
-            </div>
+            </div> -->
         </div>
 
         <!--input content-->
         <div class="myinfo-input-content">
-            <form action="">
+            <form [formGroup]="onboardingForm" (ngSubmit)="onSubmit()">
                 <div class="row">
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Status<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter status">
+                        <label for="status" class="form-label custom-label mb-2">Status</label>
+                        <input type="text" class="form-control custom-input" id="status" formControlName="status">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('status')?.invalid && onboardingForm.get('status')?.touched">
+                            Status is required
+                        </div>
                     </div>
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Duration of
-                            Training<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter duration of training">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Training End
-                            Date<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter offer sent status">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Date Of Joining
 
-                            <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
-                    </div>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Branch Location /
-                            Code
-                            <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter branch location /code">
+                        <label for="trainingDuration" class="form-label custom-label mb-2">Duration of Training</label>
+                        <input type="text" class="form-control custom-input" id="trainingDuration"
+                            formControlName="trainingDuration" placeholder="Please enter duration of training">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('trainingDuration')?.invalid && onboardingForm.get('trainingDuration')?.touched">
+                            Duration of Training is required
+                        </div>
                     </div>
+
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="trainingEndDate" class="form-label custom-label mb-2">Training End Date</label>
+                        <input type="date" class="form-control custom-input" id="trainingEndDate"
+                            formControlName="trainingEndDate" placeholder="Please enter training end date">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('trainingEndDate')?.invalid && onboardingForm.get('trainingEndDate')?.touched">
+                            Training End Date is required
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="dateOfJoining" class="form-label custom-label mb-2">Date Of Joining</label>
+                        <input type="date" class="form-control custom-input" id="dateOfJoining"
+                            formControlName="dateOfJoining">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('dateOfJoining')?.invalid && onboardingForm.get('dateOfJoining')?.touched">
+                            Date Of Joining is required
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <label for="branchLocation" class="form-label custom-label mb-2">Branch Location / Code</label>
+                        <input type="text" class="form-control custom-input" id="branchLocation"
+                            formControlName="branchLocation" placeholder="Please enter branch location / code">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('branchLocation')?.invalid && onboardingForm.get('branchLocation')?.touched">
+                            Branch Location / Code is required
+                        </div>
+
+
+                    </div>
+
+
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Probation End Date
+                        <label for="probationEndDate" class="form-label custom-label mb-2">Probation End Date</label>
+                        <input type="date" class="form-control custom-input" id="probationEndDate"
+                            formControlName="probationEndDate" placeholder="Please enter probation end date">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('probationEndDate')?.invalid && onboardingForm.get('probationEndDate')?.touched">
+                            Probation End Date is required
+                        </div>
+                    </div>
 
-                            Status<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter probation end date">
-                    </div>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Probation Status
-                            <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+                        <label for="probationStatus" class="form-label custom-label mb-2">Probation Status</label>
+                        <input type="text" class="form-control custom-input" id="probationStatus"
+                            formControlName="probationStatus" placeholder="Please enter probation status">
+
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('probationStatus')?.invalid && onboardingForm.get('probationStatus')?.touched">
+                            Probation Status is required
+                        </div>
+
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Notice Period Status
-                            Sent By<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee offer sent by">
+                        <label for="noticePeriodStatus" class="form-label custom-label mb-2">Notice Period Status Sent
+                            By</label>
+                        <input type="text" class="form-control custom-input" id="noticePeriodStatus"
+                            formControlName="noticePeriodStatus" placeholder="Please enter trainee offer sent by">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('noticePeriodStatus')?.invalid && onboardingForm.get('noticePeriodStatus')?.touched">
+                            Notice Period Status is required
+                        </div>
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Background Check
-                            Status
-                            <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
+                        <label for="backgroundCheckStatus" class="form-label custom-label mb-2">Background Check
+                            Status</label>
+                        <input type="text" class="form-control custom-input" id="backgroundCheckStatus"
+                            formControlName="backgroundCheckStatus"
                             placeholder="Please enter trainee offer sent status">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('backgroundCheckStatus')?.invalid && onboardingForm.get('backgroundCheckStatus')?.touched">
+                            Background Check Status is required
+                        </div>
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salary Hold
-                            <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
+                        <label for="salaryHold" class="form-label custom-label mb-2">Salary Hold</label>
+                        <input type="date" class="form-control custom-input" id="salaryHold"
+                            formControlName="salaryHold">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('salaryHold')?.invalid && onboardingForm.get('salaryHold')?.touched">
+                            Salary Hold is required
+                        </div>
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">PF
-                            <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee offer sent by">
+                        <label for="pf" class="form-label custom-label mb-2">PF</label>
+                        <input type="text" class="form-control custom-input" id="pf" formControlName="pf"
+                            placeholder="Please enter PF details">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('pf')?.invalid && onboardingForm.get('pf')?.touched">
+                            PF is required
+                        </div>
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">ESIC
-                            <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee appointment sent status">
+                        <label for="esic" class="form-label custom-label mb-2">ESIC</label>
+                        <input type="text" class="form-control custom-input" id="esic" formControlName="esic"
+                            placeholder="Please enter ESIC details">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('esic')?.invalid && onboardingForm.get('esic')?.touched">
+                            ESIC is required
+                        </div>
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">PT
-                            <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee appointment sent status">
+                        <label for="pt" class="form-label custom-label mb-2">PT</label>
+                        <input type="text" class="form-control custom-input" id="pt" formControlName="pt"
+                            placeholder="Please enter PT details">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('pt')?.invalid && onboardingForm.get('pt')?.touched">
+                            PT is required
+                        </div>
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Total Previous Years
-                            Experience
-                            <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee appointment sent status">
+                        <label for="totalExperience" class="form-label custom-label mb-2">Total Previous Years
+                            Experience</label>
+                        <input type="text" class="form-control custom-input" id="totalExperience"
+                            formControlName="totalExperience" placeholder="Please enter total experience">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('totalExperience')?.invalid && onboardingForm.get('totalExperience')?.touched">
+                            Total Experience is required
+                        </div>
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Remote Login
-                            <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee appointment sent status">
+                        <label for="remoteLogin" class="form-label custom-label mb-2">Remote Login</label>
+                        <input type="text" class="form-control custom-input" id="remoteLogin"
+                            formControlName="remoteLogin" placeholder="Please enter remote login details">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('remoteLogin')?.invalid && onboardingForm.get('remoteLogin')?.touched">
+                            Remote Login is required
+                        </div>
                     </div>
+
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Work Location
-                            <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter trainee appointment sent status">
+                        <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
+                        <input type="text" class="form-control custom-input" id="workLocation"
+                            formControlName="workLocation" placeholder="Please enter work location">
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
+                            Work Location is required
+                        </div>
                     </div>
                 </div>
+
             </form>
         </div>
     </div>

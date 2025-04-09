@@ -1,1 +1,187 @@
-<p>onboarding-documents works!</p>
+<div class="custom-main-component-container">
+    <div class="main-content-heading my-4">
+        <span>Onboarding Documents</span>
+    </div>
+
+    <div>
+        <div class="custom-main-sub-content">
+            <div class="custom-table-content">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Document Type</th>
+                            <th>Document Number</th>
+                            <th>Submitted Date</th>
+                            <th>Verified By</th>
+                            <th>Verification Status</th>
+                            <th>Reason</th>
+                            <th>Attachment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of getDocumentsDetails">
+                            <td>{{ item.documentType ? item.documentType : '-' }}<span
+                                    [ngClass]="{'text-danger': item.isMandatory}" *ngIf="item.isMandatory">*</span></td>
+                            <td>{{ item.referenceNumber ? item.referenceNumber : '-' }}</td>
+                            <td>{{ item.submittedDate ? (item.submittedDate | dateFormat) : '-' }}</td>
+                            <td>{{ item.firstName ? item.firstName : '-' }} {{ item.middleName ? item.middleName : '' }} {{
+                                item.lastName ? item.lastName : '' }}</td>
+                            <td>{{ item.status ? item.status : '-' }}</td>
+                            <td>
+                                <span *ngIf="item.reason" [ngbTooltip]="tipContent"><i
+                                        class="bi bi-info-circle-fill"></i></span>
+                                <span *ngIf="!item.reason">-</span>
+                                <ng-template #tipContent>{{item.reason}}</ng-template>
+                            </td>
+                            <td class="text-nowrap">
+                                <span *ngIf="item.documentUrl == null || item.documentUrl == ''; else attachment">
+                                    <div class="centerhypen">-</div>
+                                </span>
+                                <ng-template #attachment>
+                                    <div *ngIf="item.documentUrl.endsWith('jpg') || item.documentUrl.endsWith('jpeg') || item.documentUrl.endsWith('png') ;else downloadView">
+                                        <a type="button" class="view-btn" (click)="onViewClick(item.documentUrl);onClickEditDocument(item)">
+                                            <i class="bi bi-paperclip me-1"></i>View
+                                        </a>
+                                    </div>
+                                    <ng-template #downloadView>
+                                        <a type="button" class="view-btn" (click)="onSelectDownload(item.documentUrl)"><i
+                                                class="bi bi-download me-2"></i>Download</a>
+                                    </ng-template>
+                                </ng-template>
+                            </td>
+                            <td class="text-nowrap" *ngIf="item.status!='Not Submitted'">
+                                <div *ngIf="item.status == null || item.status == 'Requested' || item.status =='Not Submitted'">
+                                    <button type="button" class="custom-btn btn-primary py-3" (click)="onClickEditDocument(item);openModal(item)"><i class="bi bi-upload me-3"></i>Upload</button>
+                                </div>
+                                <div *ngIf="item.status == 'Rejected' ||  item.status == 'Waiting for submission'">
+                                    <button type="button" class="custom-btn btn-primary py-3" (click)="onClickEditDocument(item);openModal(item)">
+                                        <i class="bi bi-upload me-3"></i>Re-Upload</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+        <div class="footer-btn-content d-flex justify-content-end pt-5">
+            <div class="d-flex">
+               <button class="custom-btn btn-primary py-3 px-5" (click)="navigatePrevious()">
+                            Personal Details </button>
+                @if(loadingcircle){
+                    <div class="spinner-border text-primary me-4" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                }
+                  @if(this.prosempdata?.substatus === 'Requested Documents' || this.prosempdata?.substatus === 'Documents Rejected'){
+                    <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="!aftersubmitbuttondisable||!submitbuttondisableforrejected" (click)="openConfirmation()">Submit</button>
+                  }
+                @if((this.prosempdata?.empstatus === 'Prospective') && ( this.prosempdata?.substatus === 'Offer Letter Generated' ||
+                this.prosempdata?.substatus === 'Offer Letter Released' || this.prosempdata?.substatus === 'Offer Letter Regenerated' ||
+                this.prosempdata?.substatus === 'Offer Letter Accepted') ){
+                <button type="button" class="custom-btn btn-primary py-3 px-5" routerLink="/offer-letter">Next</button>
+                }
+                @if((this.prosempdata?.empstatus === 'Trainee Prospective') && (this.prosempdata?.empType === 'Trainee') && (this.prosempdata?.substatus === 'Offer Letter Generated' || this.prosempdata?.substatus === 'Offer Letter Released' 
+                   || this.prosempdata?.substatus ==='Offer Letter Regenerated'|| this.prosempdata?.substatus === 'Offer Letter Accepted')){
+                   <button type="button" class="custom-btn btn-primary py-3 px-5" routerLink="/traineeofferletter">Next</button>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Documents upload popup-->
+<ng-template #uploadPopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <form [formGroup]="documentForm" (ngSubmit)="updateDocuments()">
+                <div class="d-flex justify-content-between popup-header-border p-4">
+                    <div class="pt-2">
+                        <p class="popup-heading mb-0">{{documentSelectFields.documentType}}</p>
+                    </div>
+                    <div>
+                        <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
+                    </div>
+                </div>
+                <div class="custom-main-popup-content p-4">
+                    <div>
+                        <div class="mb-3">
+                            <label for="documentType" class="form-label custom-label mb-2">Document Type<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input" id="documentType" formControlName="documentType"
+                                placeholder="document type">
+                        </div>
+                        <div class="mb-3">
+                            <label for="documentNumber" class="form-label custom-label mb-2">Document Number<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input" id="documentNumber" formControlName="documentNumber"
+                                placeholder="Please enter document number">
+                            <div class="error-msg my-1"
+                                *ngIf="documentForm.get('documentNumber')?.touched && documentForm.get('documentNumber')?.invalid">
+                                <!-- Required Error -->
+                                <div *ngIf="documentForm.get('documentNumber')?.hasError('required')">Document Number is required</div>
+                                <!-- Min Length Error -->
+                                <div *ngIf="documentForm.get('documentNumber')?.hasError('minlength')">Document Number must be at least
+                                     {{ IdentityMinNumber }} digits</div>
+                                <!-- Pattern Error -->
+                                <div *ngIf="documentForm.get('documentNumber')?.hasError('pattern')">{{ errorMsg }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="documentFile" class="form-label custom-label mb-2">Upload Document<span class="text-danger">*</span></label>
+                            <input type="file" class="form-control custom-input" (change)="onDocAttachmentSelected($event)"
+                            accept=".pdf,image/*,.png" (change)="onChanges($event)" id="documentFile" formControlName="docFile">
+                        </div>
+                        <div class="mb-5">
+                            <p class="note-text"><span class="note me-2">Note:</span>Only Pdf and image are allowed. The file size should be less than 25MB.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-3 mt-4">
+                        <button type="reset" class="custom-btn btn-secondary" (click)="close()">Close</button>
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="documentForm.invalid">Upload</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!--Image view popup-->
+<ng-template #viewpopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <div class="d-flex justify-content-between popup-header-border p-4">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{documentSelectFields.documentType}}</p>
+                </div>
+                <div>
+                    <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="text-center w-100 p-4">
+                <div *ngIf="!DocImageUrl; else imageView">
+                    <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+                </div>
+                <ng-template #imageView>
+                    <img [src]="DocImageUrl" alt="Image" class="view-image w-50" />
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Image view popup-->
+<ng-template #confirmationPopup let-modal>
+    <div class="modal-body p-5" ngbAutofocus>
+        <div class="custom-main-popup-container text-center w-100">
+            <div class="my-5">
+                <p class="confirmation-text">Are you sure want to submit the documents?</p>
+            </div>
+            <div class="d-flex justify-content-center gap-5 mb-5 w-100 px-5">
+                <button type="button" class="custom-btn btn-secondary py-3 w-100" (click)="close()">Close</button>
+                <button type="submit" class="custom-btn btn-primary py-3 w-100" (click)="submit()">Submit</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

@@ -12,15 +12,18 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { IemployeeDetails } from '../offer-letter/offer-letter.model';
+import { IemployeeDetails } from '../../Interfaces/letters-model';
+import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+
 
 @Component({
   selector: 'app-bank-loan-letter',
-  imports: [CommonModule,Select, CountryCodePhoneNumberComponent,ReactiveFormsModule,DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss'
 })
 export class BankLoanLetterComponent {
+  employeeFullname:any;
   subscription!: Subscription;
   employeeiddetails = {} as any;
   bankloanLetterData = {} as any;
@@ -49,14 +52,16 @@ export class BankLoanLetterComponent {
   disablebuttonforauthority: boolean = true; //variable to disable the fields
   @ViewChild('successhide') private readonly successhide!:NgbModal;
   @ViewChild('errorhide') private readonly errorhide!:NgbModal;
-  employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
-  ];
   employees = [{ name: 'John Doe', id: 1 }, { name: 'Jane Smith', id: 2 }];
   // employeementType = [{ name: 'Permanent' }, { name: 'Contract' }];
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
+  employeementType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false }
+  ];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
+  employeedatabank: any;
+  signaturedetails:any;
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
@@ -106,6 +111,14 @@ DateValidation() {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
     this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     console.log(this.Employeeinfo);
+    this.initializeForm();
+    this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
+      this.bankloanLetterData.dateofbankloan = newDate;
+      this.DateValidation();
+    });
+    this.employeeForm = this.fb.group({
+      Documenttype: [undefined, Validators.required] // Add any other validation as needed
+    });
     this.getEmployeeId();
     this.getBankLoanTemplate();
     this.getIssuedEmployeebyId();
@@ -117,10 +130,10 @@ DateValidation() {
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
-      searchEmployee: ['', Validators.required],
-      documentType: ['', Validators.required],
+      fusionEmpId: ['', Validators.required],
+      Documenttype: ['', Validators.required],
       dateofbankloan: ['', Validators.required],
-      signatureAuthority: ['', Validators.required]
+      authorityid: ['', Validators.required]
      });
   }
   //function for issuedby
@@ -137,13 +150,17 @@ Onclickemployeeid(Value:any){
     this.disablebuttonforemployeeid=false
   }
 }
-  Onclick(fusionemployeeId: any) {
-  
-    this.fusionEmpId = fusionemployeeId;
-    console.log(fusionemployeeId);
+  Onclick(event:any) {
+    this.employeedatabank = event.value;
+    console.log(this.employeedatabank);
+    const selectedEmployee = event.value;
+    console.log(selectedEmployee);
+    this.employeeFullname = selectedEmployee.firstName + ' ' + selectedEmployee.middleName + ' ' + selectedEmployee.lastName;
+    this.fusionEmpId = selectedEmployee.fusionemployeeId;
+    console.log(selectedEmployee.fusionemployeeId);
     this.bankloanLetterData = {}
     this.bankloanLetterData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
+      (c: any) => c.fusionEmpId === this.fusionEmpId
     );
     this.disablebuttonforemployeeid=true
     console.log(this.bankloanLetterData.gender);
@@ -161,9 +178,7 @@ Onclickemployeeid(Value:any){
    }
     // this.getCompensationById(this.BankLoanLetterData)
     this.getJobdetails(this.bankloanLetterData);
-    console.log(this.bankloanLetterData);
-    
-    
+    console.log(this.bankloanLetterData); 
   }
 //toggledropdown to open and close the dropdown list
 toggleDropdown(dropcategory:any) {
@@ -218,32 +233,86 @@ onclickauthority(ValueName:any){
     console.log(this.authorityDesignation);
   }
   }
-  onclickDesignation(){
-    let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
-    );
-    console.log(signatureAuthorityDetails);
-    if (signatureAuthorityDetails) {
-      this.authorityDesignation = signatureAuthorityDetails.designation;
-      if (signatureAuthorityDetails.middleName) {
-        this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
-      } else
-        this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
-    }
-    else if(signatureAuthorityDetails==undefined||signatureAuthorityDetails==null){
-      this.bankloanLetterData.authorityName =''
-      this.authorityDesignation=''
-    }
+  // onclickDesignation(){
+  //   let signatureAuthorityDetails = this.authorityDetails.find(
+  //     (c: any) => (c.employeeId == this.bankloanLetterData.authorityid)
+  //   );
+  //   console.log(signatureAuthorityDetails);
+  //   if (signatureAuthorityDetails) {
+  //     this.authorityDesignation = signatureAuthorityDetails.designation;
+  //     if (signatureAuthorityDetails.middleName) {
+  //       this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
+  //     } else
+  //       this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+  //   }
+  //   else if(signatureAuthorityDetails==undefined||signatureAuthorityDetails==null){
+  //     this.bankloanLetterData.authorityName =''
+  //     this.authorityDesignation=''
+  //   }
+  // }
+//   onclickDesignation() {
+//     let signatureAuthorityDetails = this.authorityDetails.find(
+//       (c: any) => c.employeeId == this.bankloanLetterData.authorityid
+//     );
+//     console.log(signatureAuthorityDetails);
+//     if (signatureAuthorityDetails) {
+//       this.authorityDesignation = signatureAuthorityDetails.designation;
+//       if (signatureAuthorityDetails.middleName) {
+//         this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`;
+//       } else {
+//         this.bankloanLetterData.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+//       }
+//     } else {
+//       this.bankloanLetterData.authorityName = '';
+//       this.authorityDesignation = '';
+//     }
+
+// }
+onclickDesignation(selectedAuthority: any) {
+  console.log("Selected Authority ID:", selectedAuthority);
+
+  if (!selectedAuthority) {
+    this.bankloanLetterData.authorityName = '';
+    this.authorityDesignation = '';
+    return;
   }
+
+  let signatureAuthorityDetails = this.authorityDetails.find(
+    (c: any) => c.employeeId == selectedAuthority.employeeId
+  );
+
+  console.log("Selected Authority Details:", signatureAuthorityDetails);
+
+  if (signatureAuthorityDetails) {
+    this.authorityDesignation = signatureAuthorityDetails.designation;
+
+    // 🔹 Construct full name correctly
+    this.bankloanLetterData.authorityName = signatureAuthorityDetails.middleName
+      ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
+      : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
+  } else {
+    this.bankloanLetterData.authorityName = '';
+    this.authorityDesignation = '';
+  }
+}
+
 //get offer letter Authority list 
-getAuthorityDetails(){
-  let offertype='Bank Loan Letter'
-  this.subscription=this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
-    next:(data:any)=>{
+getAuthorityDetails() {
+  let offertype = 'Bank Loan Letter';
+  this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+    next: (data: any) => {
       console.log(data);
-      this.authorityDetails=data
+      this.authorityDetails = data.map((authority: any) => ({
+        ...authority,
+        fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+      }));
+
+      console.log(this.authorityDetails);  // Check the transformed data
+    },
+    error: (error: any) => {
+      console.error(error);
     }
-  })
+  });
 }
 //hostlister to close the dropdown when we Click out side the box
 @HostListener('document:click', ['$event.target'])
@@ -264,12 +333,19 @@ onClickOutside(target: any) {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.employeeiddetails = data as IemployeeDetails[];
-
-          console.log(this.employeeiddetails);
+          //this.employeeiddetails = data as IemployeeDetails[];
+          this.employeeiddetails = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
         },
         error: (reason: any) => {
-
           console.log(reason);
         },
       });
@@ -302,7 +378,7 @@ onClickOutside(target: any) {
       .toPromise();
   }
   
-  async postBankLoanLetterFormSubmit(f: NgForm) {
+  async postBankLoanLetterFormSubmit(f: FormGroup) {
     const data = await this.bankloanLetterData;
     data.dateofbankloan = this.formatDate(data.dateofbankloan);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);

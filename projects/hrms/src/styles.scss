@@ -65,6 +65,7 @@
     --fontsize18: 1.8rem;
     --fontsize16: 1.6rem;
     --fontsize14: 1.4rem;
+    --fontsize13: 1.3rem;
     --fontsize12: 1.2rem;
     --fontsize10: 1rem;
 
@@ -116,21 +117,25 @@ a {
     color: var(--btn-color-tp);
 }
 
+.btn-primary-approve {
+    background-color: green;
+    color: var(--btn-color-tp);
+}
+
+.btn-primary-reject {
+    background-color: red;
+    color: var(--btn-color-tp);
+}
+
 .btn-secondary {
     background-color: var(--btn-secondary-color);
     color: var(--btn-color-ts);
 }
 
 // disable-btn
-.custom-btn-primary:disabled {
-    background-color: var(--btn-secondary-color);
-    color: var(--btn-color-ts);
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: none;
+.btn-primary:disabled {
+    opacity: 0.5;
 }
-
-
 
 /* width */
 ::-webkit-scrollbar {
@@ -144,7 +149,6 @@ a {
     background: #d9d9d9;
     border-radius: 10px;
 }
-
 
 //custom input stylings
 .custom-label {
@@ -184,6 +188,7 @@ a {
     background-color: #FFFFFF;
     border: 1px solid #E7E7ED;
     border-radius: 1.2rem;
+    position: relative;
 
     thead {
         top: 0%;
@@ -191,8 +196,7 @@ a {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -217,7 +221,6 @@ a {
 
     tr:nth-child(even) {
         background-color: var(--table-data-bg-even-color);
-        /* Light grey background */
     }
 
     .dropdown-item {
@@ -304,7 +307,7 @@ a {
             height: 380mm;
             width: 270mm;
             position: relative;
-            // background-image: url(src/assets/images/water-mark.png);
+            background-image: url('/images/water-mark.png');
             background-repeat: no-repeat;
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -312,13 +315,8 @@ a {
 
             .letter-page-sub-content {
                 padding: 2rem 8rem;
-                font-size: var(--fontsize14);
+                font-size: var(--fontsize16) !important;
                 color: #000000;
-            }
-
-            .letter-header {
-                font-weight: 500;
-                font-size: var(--fontsize18);
             }
 
             .letter-footer {
@@ -342,6 +340,77 @@ a {
         }
     }
 }
+
+// salary details table
+.salary-details-table {
+    table,th,td {
+        border: 1px solid #474747;
+        border-collapse: collapse;
+        color: #000;
+    }
+    
+    th,td {
+        padding: 0.5rem 1rem;
+        text-align: center;
+        font-size: var(--fontsize14) !important;
+    }
+    
+    th {
+        font-weight: bold;
+    }
+    
+    tr:nth-child(4),tr:nth-child(9) {
+        background: rgba(255, 255, 204, 255);
+    }
+
+    tr:nth-child(8) {
+        background: #fff2cc;
+    }
+}
+
+.hard-copy-letter{
+    margin-bottom: 7rem;
+}
+
+.soft-copy-letter{
+    margin-bottom: 4rem;
+}
+
+.list-style-none {
+    list-style: none;
+}
+
+.list-style-disc{
+  list-style: disc;
+}
+
+.box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1px solid black;
+    margin-right: 8px;
+}
+
+.letter-header {
+    font-weight: 600;
+    font-size: var(--fontsize20);
+}
+
+.letter-sub-header{
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.boldnone{
+    font-weight: 400 !important;
+}
+
+.letter-signature{
+    font-size: 3.2rem !important;
+    font-family: "autographsignatureFont" !important;
+}
+// letter stylings
 
 // custom search field
 .custom-search {
@@ -398,12 +467,6 @@ a {
         font-size: var(--fontsize14) !important;
         font-weight: 700;
     }
-}
-
-
-.authority-signature {
-    font-size: 3.2rem;
-    font-family: "autographsignatureFont";
 }
 
 //custom component naviagtion nav tabs
@@ -501,13 +564,10 @@ input[type="file"] {
 }
 
 //note-text
-
 .note-text {
     font-size: var(--fontsize12) !important;
     font-weight: 400;
     vertical-align: middle;
-
-
 }
 
 //time-offtabs
@@ -608,10 +668,7 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,
-        .p-paginator-prev,
-        .p-paginator-next,
-        .p-paginator-last {
+        .p-paginator-first,.p-paginator-prev,.p-paginator-next,.p-paginator-last {
             border-radius: 50%;
             width: 1.875rem;
             height: 1.875rem;
@@ -620,17 +677,13 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,
-        .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,
-        .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,.p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
-
 //pagenation stylings
 
 // login components stylings
@@ -706,27 +759,43 @@ input[type="file"] {
     }
 }
 
-    //ERROR MESSAGE
-    .error-msg {
-        font-size: var(--fontsize12);
+//ERROR MESSAGE
+.error-msg {
+    font-size: var(--fontsize12);
+    font-weight: 500;
+    color: var(--error-msg-color);
+    margin-top: 0.25rem;
+}
+
+//popup stylings
+.result-popup-content {
+    padding: 5rem;
+    text-align: center;
+
+    .confirmation-icon {
+        width: 9rem;
+    }
+
+    .confirmation-delete-icon {
+        width: 5rem;
+    }
+
+    .confirmation-text {
         font-weight: 500;
-        color: var(--error-msg-color);
-        margin-top: 0.25rem;
+        font-size: var(--fontsize20);
+        line-height: 30px;
+        color: #06274F;
     }
+}
 
-    //popup stylings
-    .result-popup-content {
-        padding: 5rem;
-        text-align: center;
-
-        .confirmation-icon {
-            width: 9rem;
-        }
-
-        .confirmation-text {
-            font-weight: 500;
-            font-size: var(--fontsize20);
-            line-height: 30px;
-            color: #06274F;
-        }
-    }
+// download text
+.dowload-text {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0%;
+    color: rgba(6, 39, 79, 1);
+}

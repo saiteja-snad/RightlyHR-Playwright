@@ -11,7 +11,6 @@
                 <tr>
                     <th>Employee ID</th>
                     <th>Employee Name</th>
-
                     <th>Designation</th>
                     <th>Requested Date</th>
                     <th>Training Start Day</th>
@@ -24,18 +23,54 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>9888</td>
-                    <td>Vamsi</td>
-                    <td>Q.A</td>
-                    <td>33/09/2025</td>
-                    <td>33/09/2025</td>
-                    <td>33/09/2025</td>
+                <tr *ngFor="let item of dynamicData | searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','emptrainingStartDate', 'status', 'emptrainingEndDate']" >
+                    <td class="center">{{ item.fusionEmpId }}</td>
+                    <td class="center">{{item.firstname}} {{item.middlename}} {{item.lastname}}</td>
+                    <td class="center">{{item.jobRole}}</td>
+                    <td class="center">{{ item.requestedDate ? (item.requestedDate | date: 'dd-MMM-yyyy') : '-' }}</td>
+                    <td class="center">{{ item.emptrainingStartDate ? (item.emptrainingStartDate | date: 'dd-MMM-yyyy') : '-' }}</td>
+                    <td class="center">{{ item.emptrainingEndDate ? (item.emptrainingEndDate | date: 'dd-MMM-yyyy') : '-' }}</td>
+                    <td class="center">{{ item.extendedDate ? (item.extendedDate | date: 'dd-MMM-yyyy') : '-' }}</td>
+                    <td class="center">{{ item.status }}</td>
+                    <td class="center">
+                        <span *ngIf="item.rejectedReason;else rejectComment">     
+                               <!-- <div *ngFor="let comments of dynamicData.feedbackComments"> -->
+                                    <div  data-bs-toggle="modal" data-bs-target="#CommentsPopup" (click)="fustiontostorefeedback(item.rejectedReason)" >
+                                        <i class="bi bi-info-circle-fill "></i></div>
+                                        <!-- </div> -->
+                        </span>
+                        <ng-template #rejectComment>-</ng-template>   
+                    </td>
+                    <td class="center">
+                        <span *ngIf="item.feedbackComments;else feedbackComment">     
+                               <!-- <div *ngFor="let comments of dynamicData.feedbackComments"> -->
+                                    <div  data-bs-toggle="modal" data-bs-target="#CommentsPopup" (click)="fustiontostorefeedback(item.feedbackComments)" >
+                                        <i class="bi bi-info-circle-fill "></i></div>
+                                        <!-- </div> -->
+                        </span>
+                        <ng-template #feedbackComment>-</ng-template>   
+                    </td>
+                    <td class="center" *ngIf="((shouldShowButton(item.emptrainingEndDate) && item.status!='Waiting for Approval'
+                    && item.status!='Approved' && item.status!='Processed' && item.status!='Rejected' && item.status!='Extended' ) 
+                    || shouldShowButtonWhenExtended(item.emptrainingEndDate, item.status, item.employeeid,item.extendedDate))">
+                        <!-- Three dots icon for options -->
+                        <div class="dots bot-m" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </div>
 
-                    <td>33/09/2025</td>
-                    <td>N/A</td>
+                        <!-- Dropdown menu with "Update" option -->
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2"
+                            style="cursor: pointer;">
+                            <a  
+                                class="dropdown-item"
+                                data-bs-toggle="modal"
+                                (click)="requestForOnboard(item)">Request for Onboard
+                            </a>
+                        </div>
+                    </td>
 
-                    <td>
+                    <!-- <td>
                         <div>
                             <span>
                                 <a type="button" placement="top" [ngbPopover]="reason">
@@ -48,8 +83,8 @@
                                 </ng-template>
                             </span>
                         </div>
-                    </td>
-                    <td>
+                    </td> -->
+                    <!-- <td>
                         <div>
                             <span>
                                 <a type="button" placement="top" [ngbPopover]="reason">
@@ -62,7 +97,7 @@
                                 </ng-template>
                             </span>
                         </div>
-                    </td>
+                    </td> -->
 
                 </tr>
             </tbody>

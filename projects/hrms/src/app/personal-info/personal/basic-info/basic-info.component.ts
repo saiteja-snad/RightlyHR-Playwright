@@ -1,0 +1,200 @@
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Select } from 'primeng/select';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { HttpService } from '../../../services/http.service';
+import { Subscription } from 'rxjs';
+import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { IJob } from '../../../Interfaces/letters-model';
+
+@Component({
+  selector: 'app-basic-info',
+  imports: [CommonModule, ReactiveFormsModule, Select],
+  templateUrl: './basic-info.component.html',
+  styleUrl: './basic-info.component.scss'
+})
+export class BasicInfoComponent {
+  basicInfoForm!: FormGroup;
+  subscription!: Subscription
+  empinfo = {} as IJob;
+  bloodGroups = [
+    { name: 'A+' },
+    { name: 'A-' },
+    { name: 'B+' },
+    { name: 'B-' },
+    { name: 'AB+' },
+    { name: 'AB-' },
+    { name: 'O+' },
+    { name: 'O-' }
+  ];
+  Gender: IGender[] = [];
+  Titledetails: ITitle[] = [];
+  Maritaldetails: IMarital[] = [];
+  empyployeedata={} as any;
+  buttons = false
+  
+  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
+
+  ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.initializeForm();
+    this.getEmployeeId();
+    this.getGender()
+    this.getMaritaldetails()
+    this.getTitle()
+    this.basicInfoForm.disable();
+  }
+
+  initializeForm(): void {
+    this.basicInfoForm = this.fb.group({
+      employeeId: ['', Validators.required],
+      salutation: [null, Validators.required],
+      firstName: ['', Validators.required],
+      middleName: [''],
+      lastName: ['', Validators.required],
+      gender: [null, Validators.required],
+      dob: ['', Validators.required],
+      bloodGroup: [null, Validators.required],
+      maritalStatus: [null, Validators.required],
+    });
+  }
+
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.empyployeedata = data;
+        this.patchForm(data);
+        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
+
+  patchForm(data: any): void {
+    const maritalStatus = this.Maritaldetails.find(
+      (item: any) => item.maritalstatus1 === data.maritalStatus
+    ) || null;
+
+    this.basicInfoForm.patchValue({
+      employeeId: data.employeeId,
+      salutation: data.title,
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      gender: this.Gender.find((item: any) => item.genderName === data.gender || this.empinfo.gender),
+      dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
+      bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
+      maritalStatus: maritalStatus,
+    });
+    console.log(this.basicInfoForm.value);
+
+  }
+
+  updateBasicInfo(): void {
+    const formValue = this.basicInfoForm.value;
+    console.log(formValue);
+
+    const updatePayload = {
+      employeeId: formValue.employeeId,
+      title: formValue.salutation || null,
+      firstName: formValue.firstName,
+      middleName: formValue.middleName,
+      lastName: formValue.lastName,
+      gender: formValue.gender.genderName || null,
+      dob: formValue.dob,
+      bloodGroup: formValue.bloodGroup.name || null,
+      maritalStatus: formValue.maritalStatus?.maritalstatus1,
+      empStatus: 'Active',
+      emailaddress: this.empinfo.emailaddress || null,
+      workEmail: this.empinfo.workEmail || null,
+      contactnumber: this.empinfo.contactnumber || null,
+      workPhone: this.empinfo.workPhone || null,
+      emergencyName: this.empinfo.emergencyName,
+      emailId: this.empinfo.emailId,
+      relationShip: this.empinfo.relationShip,
+      mobileNumber: this.empinfo.mobileNumber,
+      emergencyName1: this.empinfo.emergencyName1,
+      emergencyEmail1: this.empinfo.emergencyEmail1,
+      emergencyNumber1: this.empinfo.emergencyNumber1,
+      relationship1: this.empinfo.relationship1,
+      profileUrl: this.empinfo.profileUrl,
+      fusionEmpId: this.empinfo.fusionEmpId,
+      dateOfJoining: this.empinfo.dateOfJoining,
+      branchCode: this.empinfo.branchCode,
+      probationEndDate: this.empinfo.probationEndDate,
+      probationStatus: this.empinfo.probationStatus,
+      noticePeriod: this.empinfo.noticePeriod,
+      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
+      issalaryhold:this.empinfo.issalaryhold,
+      pf: this.empinfo.pf,
+      esic:this.empinfo.esic,
+      pt: this.empinfo.pt,
+      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
+      allowWFH: this.empinfo.allowWFH,
+      workLocation:this.empinfo.workLocation,
+      wfhManagerId: this.empinfo.wfhManagerId
+
+    };
+    console.log(updatePayload);
+
+    this.subscription = this.http
+      .postdata(`Employeedata/UPDATER`, updatePayload)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal('Basic Information Updated Successfully',);
+          this.getEmployeeId();
+          this.basicInfoForm.disable();
+          console.log('Data updated successfully:', data);
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Basic Info updated successfully')
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          this.conformationPopup.openErrorModal('Basic Info update failed')
+        },
+      });
+  }
+
+  getGender() {
+    this.subscription = this.http.getData('gender').subscribe({
+      next: (data: any) => {
+        this.Gender = data as IGender[];
+      },
+    });
+  }
+
+  getTitle() {
+    this.subscription = this.http.getData('Title').subscribe({
+      next: (data: any) => {
+        this.Titledetails = data as ITitle[];
+      },
+    });
+  }
+
+  getMaritaldetails() {
+    this.subscription = this.http.getData('Maritalstatus').subscribe({
+      next: (data: any) => {
+        this.Maritaldetails = data as IMarital[];
+      },
+    });
+  }
+
+  showButtons(): void {
+    this.buttons = !this.buttons;
+    if (this.buttons) {
+      this.basicInfoForm.enable();
+    } else {
+      this.basicInfoForm.disable();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+}

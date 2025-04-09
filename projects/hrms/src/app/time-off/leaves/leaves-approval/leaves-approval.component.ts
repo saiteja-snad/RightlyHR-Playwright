@@ -4,11 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Select } from 'primeng/select';
+import { Subscription } from 'rxjs';
+import { Ilpid } from '../../../Interfaces/timoff-model';
+import { HttpService } from '../../../services/http.service';
+import { AuthService } from '../../../services/auth.service';
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-leaves-approval',
-  imports: [ CommonModule,NgbNavModule,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,Select],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe],
   templateUrl: './leaves-approval.component.html',
   styleUrl: './leaves-approval.component.scss'
 })
@@ -16,6 +20,10 @@ export class LeavesApprovalComponent {
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
+  loggedinuser = {} as any;
+  empdata = {} as any;
+  subscription!: Subscription;
+  lpdata = [] as Ilpid[];
 
   options = [
     { label: 10, value: 10 },
@@ -24,13 +32,38 @@ export class LeavesApprovalComponent {
     { label: 25, value: 25 }
   ];
 
-  
-    onRowsChange() {
-      this.first = 0;
-  
-    }
-    onPageChange(event: PaginatorState) {
-      this.first = event.first;
-      this.rows = event.rows;
-    }
+
+  onRowsChange() {
+    this.first = 0;
+
+  }
+  onPageChange(event: PaginatorState) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
+
+  constructor(private http: HttpService, private authService: AuthService) {
+
+  }
+  ngOnInit(): void {
+    this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getDataByLPID();
+  }
+  getDataByLPID() {
+    let empid = this.empdata.employeeId;
+    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        if (Array.isArray(response)) {
+          this.lpdata = response.filter(item => item.status === 'Approved');
+          let pendingCount = this.lpdata.length;
+          console.log("Pending Records Count:", pendingCount);
+        } else {
+          console.error("Invalid response format");
+        }
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
 }

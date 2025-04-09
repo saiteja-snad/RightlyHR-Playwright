@@ -1,4 +1,20 @@
 export interface Ipersonal {
+  separationType: string;
+    bgc: any;
+    status: any;
+    remoteLogin: any;
+    totalExperience: any;
+    pt: any;
+    esic: any;
+    pf: any;
+    workLocation: any;
+    allowWFH: any;
+    issalaryhold: any;
+    isActive: any;
+    isDeleted: any;totalYearsOfExperience: any;
+    salaryHold: any;
+    branchLocation: any;
+    trainingDuration: any;
     firstName: string,
     lastName: string,
     middleName: string,
@@ -124,6 +140,11 @@ export interface IRelation {
     isdeleted: string
     isDependent?: boolean
 }
+export interface IDegre{
+    sno: number;
+    degreeName: string;
+    isdeleted: string;
+  }
 export interface Ieducation {
     id: number
     employeeId: any,

@@ -1,0 +1,23 @@
+.nav-tabs {
+    padding: 0.8rem;
+    border-radius: 8px;
+    background-color: #fff !important;
+}
+
+.custom-nav-btn {
+    font-weight: 700;
+    font-size: 14px !important;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: #06274F !important;
+}
+
+.custom-nav-btn:hover{
+    border: none !important;
+    outline: none !important;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom: 2px solid #06274F !important;
+}

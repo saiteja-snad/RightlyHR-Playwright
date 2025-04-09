@@ -1,11 +1,14 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <p class="main-content-heading mb-0">My Info</p>
+            <p class="main-content-heading mb-0" *ngIf="isActive('myinfo/personal/basic-info')">My Info</p>
         </div>
         <div>
             <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/job')">Inactive</button>
-            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button>
+            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">
+                Change RM
+            </button>
+            <!-- <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button> -->
         </div>
     </div>
 
@@ -14,15 +17,16 @@
         <div *ngIf="isActive('myinfo/personal')" class="mb-3">
             <app-my-info-personal-tabs></app-my-info-personal-tabs>
         </div>
-        <div *ngIf="isActive('myinfo/job')" class="mb-3">
+        <div *ngIf="isActive('myinfo/job' )" class="mb-3">
             <app-myinfo-job-tabs></app-myinfo-job-tabs>
         </div>
+     
     </div>
 
     <div class="myinfo-main-container d-flex gap-4">
         <!--User profile content-->
         <div class="card user-profile-content p-4">
-            <app-profile-info-details />
+           <app-myinfo-details></app-myinfo-details>
         </div>
 
         <!--main content-->
@@ -30,10 +34,6 @@
             <router-outlet />
         </div>
     </div>
-
-
-
-
     <ng-template #changermmodal let-modal>
         <div class="custom-main-popup-container">
             <div class="d-flex justify-content-between popup-header-border p-4">
@@ -45,32 +45,52 @@
                 </div>
             </div>
             <div class="custom-main-popup-content p-4">
-                <form action="">
+                <form [formGroup]="teamForm" (ngSubmit)="updateTeamRM()">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select Team Number
-                                <span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="rmData" optionLabel="name" placeholder=" Select Team Number"
-                                    class="form-select custom-select" />
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Select Reporting
-                                Manager<span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="rmData" optionLabel="name" placeholder=" Select Reporting Manager"
-                                    class="form-select custom-select" />
-                            </div>
-                        </div>
+                      
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">
+                          Select Team Member(s) <span class="text-danger">*</span>
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select formControlName="teamMembers"
+                            id="teamMembers"
+                            optionLabel="name"
+                            [options]="teamMembersdata"
+                            placeholder="Select Team Member(s)"
+                            class="form-select custom-select"
+                            multiple="true"
+                            (onChange)="onSelectManager($event, 'teamMembers')">
+                          </p-select>
+                          
 
+                        </div>
+                      </div>
+                  
+                     
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">
+                          Select Reporting Manager <span class="text-danger">*</span>
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select 
+                            formControlName="reportingManager" id="reportingManager"
+                            optionLabel="name" [options]="managers"
+                            placeholder="Select Reporting Manager" 
+                            class="form-select custom-select" 
+                            (onChange)="onSelectManager($event, 'reportingManager')">
+                          </p-select>
+                        </div>
+                      </div>
                     </div>
-    
+                  
+                    <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-3 mt-4">
-                        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                        <button type="submit" class="custom-btn btn-primary">Sumbit</button>
+                      <button type="reset" class="custom-btn btn-secondary">Close</button>
+                      <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid">Submit</button>
                     </div>
-                </form>
+                  </form>
+                  
             </div>
         </div>
     </ng-template>

@@ -1,1 +1,591 @@
-<p>offer-letter works!</p>
+<div class="custom-main-component-container">
+    <div class="main-content-heading my-4">
+        <span>Offer Letter</span>
+    </div>
+
+    <div class="card custom-main-sub-content p-5">
+        <div class="letter-data-content p-4">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="letter-page-content my-4" id="pdfContent1">
+                        <div class="letter-page-sub-content">
+                            <br />
+                            <div class="d-flex justify-content-end my-4">
+                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                            </div>
+                            <div class="w-100 mt-5 mb-4">
+                                <p class="letter-header text-center mb-0">OFFER LETTER</p>
+                            </div>
+                            <div class="d-flex justify-content-end my-4">
+                                <p class="mb-0">{{ offerLetterData.offerSentDate | dateFormat }}</p>
+                            </div>
+                            <div>
+                                <ul class="fw-bolder list-style-none ps-0">
+                                    <li>To</li>
+                                    <li *ngIf="! offerLetterData.firstName && !offerLetterData.middleName && !offerLetterData.lastName;else fullname">Name:</li>
+                                    <ng-template #fullname>
+                                        <li>{{ offerLetterData.firstName}} {{offerLetterData.middleName}} {{offerLetterData.lastName}},</li>
+                                    </ng-template>
+                                    <div *ngIf="! offerLetterData.addressLine1;else address">Address:</div>
+                                    <ng-template #address>
+                                        <li>{{ offerLetterData.addressLine1}},</li>
+                                        <li>{{ offerLetterData.addressLine2}},</li>
+                                        <li>{{ offerLetterData.city}}, {{ offerLetterData.state}},</li>
+                                        <li>{{ offerLetterData.country}} - {{ offerLetterData.zipCode}}.</li>
+                                    </ng-template>
+                                </ul>
+                            </div>
+                            <p class="mb-4"><b>Dear {{offerLetterData.firstName}} {{offerLetterData.middleName}} {{
+                                    offerLetterData.lastName}}</b>,</p>
+                            <div class="watermark">
+                                <p class="mb-4">Congratulations and Welcome to RightlyHR!!!</p>
+                                <p class="mb-4">Further to your application for employment with us, and the subsequent selection
+                                    process, we are delighted to offer you the role of <b>{{offerLetterData.jobRole}}</b> in our organization and
+                                    your <b>CTC</b> will be <b>INR {{(+offerLetterData.salary || 0) + (+offerLetterData.variablePayAmount || 0)}}</b> per
+                                    annum.
+                                </p>
+                                <p class="mb-4">RightlyHR is formed as an INDIAN Spin-off of RightlyHR., a US based organization for
+                                    providing \ Software Development and Services to various IT Organizations across the globe. We are a core team of engineers with
+                                    a mindset to excel as a family under the guidance of our superior leadership.</p>
+                                <p class="mb-4">Your reporting location will be <b> RightlyHR, Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, Hyderabad, Telangana - 500032, India. Your date of joining would be {{offerLetterData.dateOfJoining | dateFormat}}.</b></p>
+                                <p class="mb-4">Your respective <strong>Cost to Company</strong> as applicable has been detailed in Annexure 2
+                                    of this letter. On your joining, you are expected to enter into an agreement, which specifies the details of the scope, terms,
+                                    and conditions of your employment.
+                                </p>
+                                <ol class="liststylenumber">
+                                    <li class="mb-4"><b>Offer Letter Valid Period:</b> The currently issued offer letter will be
+                                        valid up to {{offerLetterData.offerExpiryDate | dateFormat}}.<b> </b> The accepted offer letter
+                                        along with the list of documents should be provided at least 30 days before the Joining Date for performing
+                                        the necessary Background verification and initial setup.
+                                    </li>
+                                    <li class="mb-4"><b>Working Hours:</b> Your normal hours of work are from 10:00 AM hrs. to 07:00
+                                        PM hrs. Monday to Friday. Staff of support departments may be required to work on Weekends. The normal working hours
+                                        are forty-five hours/week, Monday to Friday. Depending on project contingencies, working
+                                        hours for specific employees or groups of employees may be modified / altered from time to time.
+                                        <br><br>The working hours applicable to you will be observed depending upon your workplace
+                                        of posting and as amended from time to time. Further you should be prepared to work in any
+                                        shift, as may be warranted by the Company’s / Client’s work requirement. The employee may also be required to
+                                        attend duties on Public Holidays as per the exigencies of work.
+                                    </li>
+                                    <li class="mb-4"><strong>Annual Leave:</strong> You will be entitled to Paid Leave and
+                                        Public Holidays yearly as per your eligibility and the Company policies.</li>
+                                    <li class="mb-4">
+                                        <strong>Notice Period:</strong> Your services can be terminated by you by giving a notice of
+                                        90 days in writing or salary in lieu thereof, subject to the Company’s discretion. The Company may
+                                        terminate your employment by giving you salary for 30 days in lieu of the notice. Any employee who breaches the
+                                        Company’s terms and conditions under this offer would be terminated immediately without notice.
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="letter-footer text-center">
+                            <p class="company-name">RightlyHR</p>
+                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                        </div>
+                    </div>
+            
+                    <div class="letter-page-content my-4" id="pdfContent2">
+                        <div class="letter-page-sub-content">
+                            <br />
+                            <div class="d-flex justify-content-end py-4">
+                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                            </div>
+                            <ol style="list-style: decimal;" type="1" start="5" class="pt-5">
+                                <li class="mb-4"><b>Other Terms & Conditions of this Offer</b></li>
+                                <ul>
+                                    <li class="mb-4">During your service with the Company, you are expected to
+                                        dedicate your whole time and attention to the Company's affairs and abstain from directly or
+                                        indirectly engaging in any other business.</li>
+                                    <li class="mb-4">Information pertaining to RightlyHR operations and intellectual property is
+                                        confidential
+                                        and you will sign a non-disclosure agreement. If you are bound by a confidentiality
+                                        agreement with a
+                                        previous employer, you must notify the Company and indemnify the Company against any breach
+                                        thereof.</li>
+                                    <li class="mb-4">You may be required to travel on Company work, and you will be reimbursed
+                                        expenses as per Company policy.</li>
+                                    <li class="mb-4">Your Remuneration and the terms and conditions of this offer letter shall
+                                        remain confidential and
+                                        are not to be disclosed to any third party.</li>
+                                    <li class="mb-4">Upon acceptance of the offer letter, your official Employment ID will be
+                                        created with us and you will
+                                        entitled to the corporate benefits structure based on the category of work. Your
+                                        employment with the company as a FTE will stand confirmed subjected to the terms and
+                                        conditions as per rules, regulations, and policies of The Company. </li>
+                                    <li class="mb-4">On termination of employment, you will immediately give up to the Company all
+                                        correspondence,
+                                        specifications, formulae, books, documents, hardware, market data, cost data, literature,
+                                        drawings, effects or records,
+                                        backup copies of programs source / data, etc.
+                                        belonging to the Company and any other Company property or relating to its business and
+                                        shall not
+                                        make or retain any copies of the items. </li>
+                                    <li class="mb-4">If you are absent from work without prior notification & approval as per
+                                        Company policies,
+                                        you will be liable for disciplinary action depending on the severity of the effects caused
+                                        by the individual’s absence. </li>
+                                    <li class="mb-4">If you are absent for a continuous period of 7 days without leave or obtaining
+                                        your manager’s approval,
+                                        you will be deemed to have voluntarily terminated your service without notice. </li>
+                                    <li class="mb-4">All the terms and conditions of service may be modified or changed at the
+                                        Company’s discretion.
+                                        You will abide by all the rules and regulations of the Company which are in force from time
+                                        to time. </li>
+                                </ul>
+                            </ol>
+                            <p class="mb-4">To confirm please send your <b>acceptance</b> of the offer via reply to the same
+                                <b>email</b> on or before <b> {{offerLetterData.offerExpiryDate | dateFormat}}.</b> We request you
+                                to please carry
+                                a signed copy of the offer letter & other required documents (<b>Annexure 1</b>) on the day of your
+                                joining.
+                            </p>
+                            <p class="mb-4">We wish you a long, rewarding and fulfilling career experience and look
+                                forward to having you on board with us. Please visit our website <a>www.RightlyHR.com</a>
+                                for more information about our Company.</p>
+                            <p class="mb-4">All other detailed terms and conditions of your employment will be specified in the
+                                appointment letter,
+                                invention assignment and confidentiality agreement and the Company policies which will be provided
+                                to you separately.
+                                This Offer Letter along with the appointment letter, invention assignment and confidentiality
+                                agreement and the Company policies
+                                collectively form a part of your employment conditions.</p>
+                            <p class="mb-4">This Offer Letter is conditional upon you executing the appointment letter and/or any
+                                other agreement as may be
+                                requested by the Company at the time of joining. The Company may revoke this offer of employment
+                                anytime before execution of the appointment letter.
+                                Similarly, after accepting this offer, if you do not intend to join the Company, you shall have a
+                                right to inform
+                                your intentions any-time before your joining date.</p>
+                            <p class="mb-4">For any further information or clarification required, please feel free to
+                                reach us on our email at <a>hr&#64;rightlyhr.com</a></p>
+                        </div>
+                        <div class="letter-footer text-center">
+                            <p class="company-name">RightlyHR</p>
+                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD -
+                                500032</p>
+                        </div>
+                    </div>
+            
+                    <div class="letter-page-content my-4" id="pdfContent3">
+                        <div class="letter-page-sub-content">
+                            <br />
+                            <div class="d-flex justify-content-end py-4">
+                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                            </div>
+                            <div class="my-5 py-5">
+                                <p class="mb-4">Yours Sincerely,</p>
+                                <p class="mb-5"> For RightlyHR </p>
+                                <div class="stamp"></div>
+                                <p class="mb-3">{{offerLetterData.authorityName}} </p>
+                                <p class="mb-3"> Authorized Signatory, </p>
+                                <p class="mb-3">{{offerLetterData.authorityName}} </p>
+                                <p class="mb-3">{{authorityDesignation}} </p>
+                                <p class="mb-3">I accept this offer of employment.</p>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <p class="">______________________________</p>
+                                    </div>
+                                    <div>
+                                        <p class="">Date (DD/MM/YYYY)</p>
+                                    </div>
+                                </div>
+                                <p class="letter-heading my-5">Acceptance</p>
+                                <p class="mb-4">I accept this offer letter and will complete all the necessary documents as required.</p>
+                                <p class="mb-3 mt-4">Signature: _________________________</p>
+                                <p class="mb-3">Name: </p>
+                                <p class="mb-3">Date: </p>
+                                <p class="mb-4">Place: </p>
+                                <p class="mb-5">My Date of joining will be ________________________(If different from the joining Date above)</p>
+                            </div>
+                        </div>
+                        <div class="letter-footer text-center">
+                            <p class="company-name">RightlyHR</p>
+                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                        </div>
+                    </div>
+
+                    <div class="letter-page-content my-4" id="pdfContent4">
+                        <div class="letter-page-sub-content">
+                            <br />
+                            <div class="d-flex justify-content-end py-4">
+                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                            </div>
+                            <div class="">
+                                <div class="letter-header text-center w-100 my-5"><b>ANNEXURE - 1</b></div>
+                                <p><b>Documents / Infermation required to be submitted on the day of joining:</b></p>
+                                <p class="paragraph mb-3">On the day joining, you are requested to bring to the following original
+                                    documents and certificates (For verification purpose), along with 1 copy of each</p>
+                                <div class="paragraph mb-3">
+                                    <div class="box"></div> Acceptance copies of RightlyHR. duly signed offer Letter.
+                                </div>
+                                <div class="paragraph mb-3">
+                                    <div class="mb-3">
+                                        <div class="box "></div> Certificates' supporting your educational qualifications with marks
+                                        sheet
+                                    </div>
+                                    <ul class="list-style-none">
+                                        <li class="paragraph mb-3">
+                                            <div class="box"></div> X th certificate & marks sheet
+                                        </li>
+                                        <li class="paragraph mb-3">
+                                            <div class="box"></div> XII th certificate & marks sheet
+                                        </li>
+                                        <li class="paragraph mb-3">
+                                            <div class="box"></div> Graduation Degree certificate & Semester/Year-wise mark sheets
+                                        </li>
+                                        <li class="paragraph mb-3">
+                                            <div class="box"></div> Master's Degree certificate & Semester/Year-wise mark sheets (If
+                                            applicable)
+                                        </li>
+                                        <li class="paragraph mb-3">
+                                            <div class="box"></div> Diploma/PG Diploma certificate & Transcripts (If applicable)
+                                        </li>
+                                        <li class="paragraph mb-3">
+                                            <div class="box"></div> Any other Certificate with supporting documents
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="paragraph d-flex mb-2">
+                                    <p> <span class="box"></span> PAN Card (Mandatory)</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2">
+                                    <p> <span class="box"></span> AADHAR Card (Mandatory)</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2">
+                                    <p> <span class="box"></span> Passport size photographs 3 colored photos.</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2">
+                                    <p> <span class="box"></span> Fitness/Medical report with proper blood group certified by
+                                        medical practitioner.</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2">
+                                    <p><span class="box"></span> Offer Letter from your current employer and all previous employer’s
+                                        (If Applicable).</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2">
+                                    <p> <span class="box"></span> Experience letter from your current employer and all previous
+                                        employer’s
+                                        (If Applicable).</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2">
+                                    <p><span class="box"></span> Relieving letter from your current employer (If Applicable).</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2 ">
+                                    <p class="lh-base"><span class="box"></span> Valid Passport – Please submit a copy of the valid
+                                        Passport (inclusive of all blank pages). In case you have applied for it, please submit the
+                                        proof of
+                                        Passport Office submission ticket. Upon receipt of Passport from Passport Office, please
+                                        submit the documents to HCM Team. if
+                                        you do not have a passport, please apply ASAP, and submit the acknowledgement.</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2">
+                                    <span class="box"></span>
+                                    <p>Three last drawn salary pay slips of your previous employer (If Applicable).</p>
+                                </div>
+                                <div class="paragraph d-flex mb-2 ">
+                                    <p><span class="box"></span>Form 16 of last year if paying tax previously (If Applicable).</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="letter-footer text-center">
+                            <p class="company-name">RightlyHR</p>
+                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                        </div>
+                    </div>
+
+                    <div class="letter-page-content my-4" id="pdfContent5">
+                        <div class="letter-page-sub-content">
+                            <br />
+                            <div class="d-flex justify-content-end py-4">
+                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                            </div>
+                            <div class="my-5">
+                                <div class="letter-header text-center"><b>ANNEXURE - 2</b></div>
+                                <div class="letter-header text-center">STRICTLY PRIVATE & CONFIDENTIAL</div>
+                                <div class="d-flex my-5">
+                                    <div class="w-50">NAME: {{offerLetterData.firstName}} {{offerLetterData.middleName}} {{offerLetterData.lastName}}</div>
+                                    <div class="w-50">Designation: {{offerLetterData.jobRole}}</div>
+                                </div>
+                                <p class="text-center mb-4"><b>Compensation Details</b> <span class="text-font">(All figures in Rs.)</span></p>
+                                <!-- table start -->
+                                <div class="salary-details-table mb-4">
+                                    <table class="w-100">
+                                        <thead>
+                                            <tr>
+                                                <th>Components In Salary</th>
+                                                <th>Per Month</th>
+                                                <th>Per Annum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="p-0 pt-1  family text-center">Basic Salary</td>
+                                                <td class="text-center p-0 pt-1 "><span
+                                                        *ngIf="! offerLetterData.basicSalary; else basicpermonth"></span></td>
+                                                <ng-template #basicpermonth>{{ offerLetterData.basicSalary}}</ng-template>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.basicPerannum; else basicperannum"></span>
+                                                    <ng-template #basicperannum> {{ offerLetterData.basicPerannum }}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1  family text-center">HRA</td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.hraSalary; else hrapermonth"> </span>
+                                                    <ng-template #hrapermonth>{{ offerLetterData.hraSalary }}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.hraPerAnnum; else hraperannum"> </span>
+                                                    <ng-template #hraperannum>{{ offerLetterData.hraPerAnnum }}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1  family text-center">Other Allowances</td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.otherAllowances; else other"> </span>
+                                                    <ng-template #other>{{ offerLetterData.otherAllowances }}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.otherAllowancesPerAnnum; else otherper">
+                                                    </span>
+                                                    <ng-template #otherper>{{ offerLetterData.otherAllowancesPerAnnum
+                                                        }}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1  bold family text-center"><b class="family">Total Gross
+                                                        Salary</b></td>
+                                                <td class="text-center p-0 pt-1  bold family"><span
+                                                        *ngIf="! offerLetterData.totalGrossSalary; else totalgross ">
+                                                    </span>
+                                                    <ng-template #totalgross>{{ offerLetterData.totalGrossSalary }}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1  bold family"><span
+                                                        *ngIf=" ! offerLetterData.totalGrossPerAnnum;else totalgrossper ">
+                                                    </span>
+                                                    <ng-template #totalgrossper>{{ offerLetterData.totalGrossPerAnnum
+                                                        }}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1  family text-center">PF Contribution by Employee</td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.pfContribution; else pfpermonth"> </span>
+                                                    <ng-template #pfpermonth>{{ offerLetterData.pfContribution}}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.pfPreAnuum; else pfempper">
+                                                    </span>
+                                                    <ng-template #pfempper>{{ offerLetterData.pfPreAnuum }}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1  family text-center">ESI Contribution by Employee</td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.employeeEsi; else empresipermonth"> </span>
+                                                    <ng-template #empresipermonth>{{ offerLetterData.employeeEsi }}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1  family"> <span
+                                                        *ngIf="! offerLetterData.esiPerAnnumemployee; else empresicperannum"></span>
+                                                    <ng-template #empresicperannum>{{ offerLetterData.esiPerAnnumemployee
+                                                        }}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1  family text-center">Professional Tax (PT)</td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.professionalTax; else pftax"> </span>
+                                                    <ng-template #pftax>{{ offerLetterData.professionalTax }}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1  family"><span
+                                                        *ngIf="! offerLetterData.professionalPerAnnum;else pftaxper ">
+                                                    </span>
+                                                    <ng-template #pftaxper>{{offerLetterData.professionalPerAnnum}}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-2 pb-2 family text-center"><b class="family">Total Deductions
+                                                        (PF+ESI)</b></td>
+                                                <td class="text-center p-0 pt-1  bold family"><span
+                                                        *ngIf="! offerLetterData.totalDeduction; else totdec"> </span>
+                                                    <ng-template #totdec>{{offerLetterData.totalDeduction}}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1  bold family"><span
+                                                        *ngIf="! offerLetterData.totalDeductionsPerAnnum;else totdecper ">
+                                                    </span>
+                                                    <ng-template
+                                                        #totdecper>{{offerLetterData.totalDeductionsPerAnnum}}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1  family text-center"><b class="family">Net Salary</b></td>
+                                                <td class="text-center p-0 pt-1  bold family"><span
+                                                        *ngIf="! offerLetterData.netSalary; else net">
+                                                    </span>
+                                                    <ng-template #net>{{offerLetterData.netSalary}}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1  bold family"><span
+                                                        *ngIf="! offerLetterData.netSalaryPerAnnum; else netper">
+                                                    </span>
+                                                    <ng-template #netper>{{offerLetterData.netSalaryPerAnnum}}</ng-template>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+            
+                                <!-- second table -->
+                                <div class="secondtable mb-4">
+                                    <table class="w-100">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: center;" class="family" colspan="3">CTC Calculation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:63%;" class="p-0 pt-1  family text-center">Employer PF Contribution
+                                                </td>
+                                                <td style="width:18%;" class="text-center p-0 pt-1 family">
+                                                    <span *ngIf="! offerLetterData.pfContribution; else pfempr"> </span>
+                                                    <ng-template #pfempr>{{offerLetterData.pfContribution}}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1">
+                                                    <span *ngIf="! offerLetterData.pfPreAnuum; else pfempper"> </span>
+                                                    <ng-template #pfempper>{{offerLetterData.pfPreAnuum}}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1 family text-center">Employer ESI Contribution</td>
+                                                <td class="text-center p-0 pt-1 family">
+                                                    <span *ngIf="! offerLetterData.esicContribution; else esiempr"> </span>
+                                                    <ng-template #esiempr>{{ offerLetterData.esicContribution}}</ng-template>
+                                                </td>
+                                                <td class="text-center p-0 pt-1 family">
+                                                    <span *ngIf="! offerLetterData.esiPerAnnum; else esiempper"> </span>
+                                                    <ng-template #esiempper>{{offerLetterData.esiPerAnnum }}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-1  text-center"><b>Variable Amount</b></td>
+                                                <td colspan="2" class="text-center p-0 pt-1 bold">
+                                                    <span *ngIf="!offerLetterData.variablePayAmount; else vamount"> </span>
+                                                    <ng-template #vamount>{{offerLetterData.variablePayAmount }}</ng-template>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-0 pt-3 pb-3 text-center"><b>CTC = Gross Salary + (Employer PF+ESI+Variable Amount)</b></td>
+                                                <td class="text-center p-0 pt-1 bold family">
+                                                    <span *ngIf="! offerLetterData.grossSalary; else gross"> </span>
+                                                    <ng-template #gross>{{ offerLetterData.grossSalary }}</ng-template>
+                                                </td>
+                                                <td class="text-centerp-0 pt-1 bold family">
+                                                    <span *ngIf="! offerLetterData.salary; else grossper"></span>
+                                                    <ng-template #grossper>{{ (+offerLetterData.salary || 0) + (+offerLetterData.variablePayAmount || 0)}}</ng-template>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+            
+                                <p class="listtext mb-1 mt-2"><span class="fw-bold">Note:</span> {{offerLetterData.note}}</p>
+                                <p class="paragraph bold mb-1 mt-1">The Company presently has a Perfomance Award Program.Performance
+                                    Award Program will be made available to you upon joining RightlyHR. Please note: RightlyHR
+                                    reserves the right in
+                                    its sole discretion to amend, change, suspend, or terminate the Performance Award Program at any
+                                    time.
+                                </p>
+                                <p class="paragraph bold mb-1">Additional Details Related to Salary Structure: </p>
+                                <ol class="list-style-none mb-4">
+                                    <li>a) TDS will be deducted from the Gross Salary after statutory deductions.</li>
+                                    <li>b) Employees are responsible for their Tax Planning.</li>
+                                    <li>c) Employees may avail tax benefit by submitting bills against Leave Travel Allowance.</li>
+                                    <li>d) All eligible employees as per the respective policies of the Company will be covered under the Group Medical Coverage
+                                         Policy and Group Covid policy.</li>
+                                    <li>e) All the above benefits are as per the Company’s policies, which are subjective to change from time
+                                        to time. Further salary, allowances, any alteration in salary structure and other
+                                        payments/benefits will be governed by The Company’s rules as well as statutory provisions in force from time
+                                        to time and subject to deduction of appropriate taxes as applicable under government norms.</li>
+                                    <li>f) While the other terms and conditions of your appointment remain unchanged, please do take note
+                                        that as per the current Company’s Separation Policy, if you resign from the services of the
+                                        company, you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice Period.</li>
+                                    <li>g)Medical insurance amount will be calculated based on the number of dependents; the respective amount will be deducted 
+                                        from your monthly salary.</li>
+                                </ol>
+                                <p class="note"><i>Note: The above compensation package is strictly confidential between
+                                    you and the Company and should not be discussed with anyone nor divulged to anyone in any manner whatsoever.</i></p>
+                            </div>
+                        </div>
+                        <div class="letter-footer text-center">
+                            <p class="company-name">RightlyHR</p>
+                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
+            <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Onboarding Documents</button>
+        @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
+            <button class="custom-btn btn-secondary px-5" (click)="downloadoffer()">Download</button>
+        }
+        @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
+            <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
+        }
+        @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+            <button class="custom-btn accepted-btn px-5">Accepted</button>
+        } 
+        <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+        @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+        }
+    </div>
+</div>
+
+<!--Offer letter accept popup-->
+<ng-template #acceptpopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <div class="custom-main-popup-content text-center p-5">
+                <div class="py-5">
+                    <p class="confirmation-text">Are you sure you want to accept offer?</p>
+                </div>
+                <div class="d-flex gap-5 pt-4 w-100">
+                    <button class="custom-btn btn-secondary w-50 py-3" (click)="closeModal()">Close</button>
+                    <button class="custom-btn btn-primary w-50 py-3" (click)="acceptoffer()">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Documents upload popup-->
+<ng-template #rejectpopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <form [formGroup]="rejectForm " (ngSubmit)="submitRejectReason()">
+                <div class="custom-main-popup-content p-4">
+                    <div class="py-4 text-center">
+                        <p class="confirmation-text">Are you sure you want to reject offer?</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="documentType" class="form-label custom-label mb-2">Enter reason<span class="error-msg">*</span></label>
+                        <textarea type="note" name="rejectReason" class="form-control custom-input" formControlName="rejectReason"
+                            placeholder="Please enter reject reason" maxlength="250" id="rejectReason"
+                            (keypress)="blockNonAlphabetic($event)" autocomplete="off" required></textarea>
+                        <div class="error-msg py-1" *ngIf="rejectForm.get('rejectReason')?.touched && rejectForm.get('rejectReason')?.invalid">
+                            <div *ngIf="rejectForm.get('rejectReason')?.hasError('required')">Reject reason is required</div>
+                        </div>
+                        <div class="count-text text-end w-100 py-1"><span>{{ rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-3 pt-4">
+                        <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">Close</button>
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

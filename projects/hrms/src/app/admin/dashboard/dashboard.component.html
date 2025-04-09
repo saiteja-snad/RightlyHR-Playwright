@@ -10,23 +10,21 @@
     </div>
     <!--Employee Details card-->
     <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5">
-        @for (item of cardItems; track $index) {
-        <div class="col">
-            <div class="card employee-details-card cursor w-100 mb-4" [routerLink]="[item.link]">
-                <div class="d-flex align-items-center gap-4">
-                    <div class="card profile-card"  [ngStyle]="{'background-color': item.backgroundColor,'color': item.profileColor}">
-                        <i class="bi bi-person"></i>
-                    </div>
-                    <div>
-                        <p class="label text-nowrap mb-2">{{item.label}}</p>
-                        <p class="count mb-0">{{item.count}}</p>
-                    </div>
-                </div>
+        <div class="col" *ngFor="let item of cardItems; trackBy: trackByFn">
+          <div class="card employee-details-card cursor w-100 mb-4" [routerLink]="[item.link]">
+            <div class="d-flex align-items-center gap-4">
+              <div class="card profile-card" [ngStyle]="{'background-color': item.backgroundColor, 'color': item.profileColor}">
+                <i class="bi bi-person"></i>
+              </div>
+              <div>
+                <p class="label text-nowrap mb-2">{{ item.label }}</p>
+                <p class="count mb-0">{{ item.count }}</p>
+              </div>
             </div>
+          </div>
         </div>
-        }
-    </div>
-
+      </div>
+      
     <!--Document History-->
     <div class="my-4">
         <p class="main-content-heading mb-0">{{'Document History' | translate}}</p>

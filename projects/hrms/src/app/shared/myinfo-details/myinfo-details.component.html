@@ -1,0 +1,95 @@
+<div class="profile-info-main-card w-100">
+    <div class="d-flex justify-content-between">
+        <div class="image-content">
+            <img [src]="imageUrl ? imageUrl : 'images/profile-img.png'" alt="profile Image" class="profile-image">
+
+            <div class="edit-icon-content">
+                <label for="formFile" class="form-label"><img src="/icons/Edit.png" alt="edit-icon"
+                        class="edit-icon cursor"></label>
+                <input class="form-control d-none" type="file" id="formFile" (change)="chooseNewProfile($event)">
+            </div>
+        </div>
+        <div class="text-nowrap pt-3">
+            <p class="name mb-0">{{empinfo.firstName}} {{empinfo.middleName}} {{empinfo.lastName}}</p>
+            <p class="sub-text mb-0">{{jobRole}}</p>
+            <p class="sub-text mb-0">{{this.empinfo.fusionEmpId}}</p>
+        </div>
+        <div class="qr-content">
+            <img src="/icons/qr-code.png" alt="qr icon" class="qr-icon">
+        </div>
+    </div>
+
+    <!--user additional details-->
+    <div class="text-nowrap my-5">
+        <div class="align-middle mb-3">
+            <i class="bi bi-telephone profile-data-icon me-3"></i><span class="details-text">+91
+                {{this.empinfo?.workPhone || 'N/A'}} </span>
+        </div>
+        <div class="mb-3">
+            <i class="bi bi-geo-alt profile-data-icon me-3"></i><span class="details-text">{{jobdata?.locationName}},
+                {{jobdata?.sublocationName || 'N/A' }}</span>
+        </div>
+        <div class="mb-3">
+            <i class="bi bi-envelope profile-data-icon me-3"></i><span
+                class="details-text">{{this.empinfo?.workEmail}}</span>
+        </div>
+        <div class="mb-3">
+            <i class="bi bi-suitcase-lg profile-data-icon me-3"></i><span
+                class="details-text"><b>{{jobdata?.jobTypeName}}</b> ({{jobdata?.shiftName }})</span>
+        </div>
+        <div class="mb-3">
+            <i class="bi bi-person-circle profile-data-icon me-3"></i><span class="details-text"><b>Team Manager</b> :
+                {{reportesto?.fistname}} {{reportesto?.middlename}} {{reportesto?.lastname}}</span>
+        </div>
+        <div class="mb-3">
+            <i class="bi bi-person-circle profile-data-icon me-3"></i><span class="details-text"><b>Reporting Manager
+                </b> : {{Reportingmanager}}</span>
+        </div>
+    </div>
+
+
+    <!-- Confrmation popup start -->
+    <!-- <ng-template #qrCodePopup let-modal>
+        <div class="modal-body">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="header">Use Rightly Hr on your Mobile</p>
+                        <ol>
+                            <li>Open <strong>Rightly HR</strong> app on your Phone</li>
+                            <li>Tap <strong>Scan QR</strong> on your app</li>
+                            <li>Tap to <strong>link new device</strong> and then link a device</li>
+                            <li>Point your phone at this screen to capture the <strong>QR code</strong></li>
+                        </ol>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p>Device Available to link: 1</p>
+                            </div>
+                            <div>
+                                <p> Device Linked: 1</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="qr-section">
+                        <img src="MyInfo/qr-icon.png" alt="QR Code" class="qrCode-img">
+                    </div>
+                </div>
+                tutorial card
+                <div class="card tutorial-card mt-3">
+                    <div>
+                        <p class="modal-header-text text-center mt-2">Tutorial</p>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <div>
+                            <img src="MyInfo\MobilewithQRcode.png" alt="Tutorial Image" class="tutorial-img">
+                        </div>
+                        <div>
+                            <p class="mt-5 tutorial-text">Short tutorial on how to link your device</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template> -->
+    <!-- Confirmation popup end -->
+</div>

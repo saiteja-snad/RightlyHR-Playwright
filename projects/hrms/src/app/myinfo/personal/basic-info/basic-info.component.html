@@ -1,71 +1,124 @@
 <div class="custom-main-component-container">
-    <div class="card myinfo-content-card p-4">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <span class="myinfo-sub-header">Basic Details</span>
-            </div>
-            <div *ngIf="!buttons">
-                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-            </div>
-            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
-                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()">Save</button>
-            </div>
-        </div>
-
-        <!--input content-->
-        <div class="myinfo-input-content">
-            <form action="">
-                <div class="row">
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Employee ID<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter Employee Id">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salutation<span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="designation" optionValue="id" optionLabel="name" placeholder="Please select salutation" class="form-select custom-select" />
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">First Name<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter first name">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Middle Name<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1" placeholder="Please enter middle name">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Last Name<span
-                                class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter last name">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Gender<span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select gender" class="form-select custom-select" />
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Date Of Birth<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="exampleFormControlInput1">
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Blood Group<span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="location" optionLabel="name" placeholder="Please select blood group" class="form-select custom-select" />
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Martial Status<span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="sublocation" optionLabel="name" placeholder="Please select martial Status" class="form-select custom-select" />
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
+  <div class="card myinfo-content-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+      <div>
+        <span class="myinfo-sub-header">Basic Details</span>
+      </div>
+      <div *ngIf="!buttons">
+        <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+      </div>
+      <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+        <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="showButtons()"
+          (click)="updateBasicInfo()">Save</button>
+      </div>
     </div>
+
+    <!--input content-->
+    <div class="myinfo-input-content">
+      <form [formGroup]="basicInfoForm">
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="fusionEmpId" formControlName="fusionEmpId"
+              placeholder="Please enter Employee ID" />
+            <div *ngIf="basicInfoForm.get('fusionEmpId')?.invalid && basicInfoForm.get('fusionEmpId')?.touched"
+              class="error-msg">
+              Employee ID is required
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="salutation" class="form-label custom-label mb-2">Salutation<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="Titledetails" optionValue="titlename" optionLabel="titlename"
+                placeholder="Please select salutation" formControlName="salutation"
+                class="form-select custom-select"></p-select>
+            </div>
+            <div *ngIf="basicInfoForm.get('salutation')?.invalid && basicInfoForm.get('salutation')?.touched"
+              class="error-msg">
+              Salutation is required
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="firstName" class="form-label custom-label mb-2">First Name<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="firstName" formControlName="firstName"
+              placeholder="Please enter first name" (keypress)="formValidation.restrictInput($event)" />
+            <div *ngIf="basicInfoForm.get('firstName')?.invalid && basicInfoForm.get('firstName')?.touched"
+              class="error-msg">
+              First Name is required
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="middleName" class="form-label custom-label mb-2">Middle Name</label>
+            <input type="text" class="form-control custom-input" id="middleName" formControlName="middleName"
+              placeholder="Please enter middle name" (keypress)="formValidation.restrictInput($event)" />
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="lastName" class="form-label custom-label mb-2">Last Name<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="lastName" formControlName="lastName"
+              placeholder="Please enter last name" (keypress)="formValidation.restrictInput($event)" />
+            <div *ngIf="basicInfoForm.get('lastName')?.invalid && basicInfoForm.get('lastName')?.touched"
+              class="error-msg">
+              Last Name is required
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="gender" class="form-label custom-label mb-2">Gender<span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="Gender" optionLabel="genderName" placeholder="Please select gender"
+                formControlName="gender" class="form-select custom-select"></p-select>
+            </div>
+            <div *ngIf="basicInfoForm.get('gender')?.invalid && basicInfoForm.get('gender')?.touched" class="error-msg">
+              Gender is required
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="dob" class="form-label custom-label mb-2">Date Of Birth<span
+                class="text-danger">*</span></label>
+            <input type="date" class="form-control custom-input" id="dob" formControlName="dob" />
+            <div *ngIf="basicInfoForm.get('dob')?.invalid && basicInfoForm.get('dob')?.touched" class="error-msg">
+              Date of Birth is required
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="bloodGroups" optionLabel="name" placeholder="Please select blood group"
+                formControlName="bloodGroup" class="form-select custom-select"></p-select>
+            </div>
+            <div *ngIf="basicInfoForm.get('bloodGroup')?.invalid && basicInfoForm.get('bloodGroup')?.touched"
+              class="error-msg">
+              Blood Group is required
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="Maritaldetails" optionLabel="maritalstatus1" 
+                placeholder="Please select marital status" formControlName="maritalStatus"
+                class="form-select custom-select"></p-select>
+            </div>
+            <div *ngIf="basicInfoForm.get('maritalStatus')?.invalid && basicInfoForm.get('maritalStatus')?.touched"
+              class="error-msg">
+              Marital Status is required
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

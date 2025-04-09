@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -15,7 +15,7 @@ import { DateformatPipe } from "../../../pipes/dateformat.pipe";
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })
-export class JobDetailsComponent {
+export class JobDetailsComponent implements OnInit, OnDestroy{
   separationRequestForm!: FormGroup;
   jobDetailsupdateForm!: FormGroup;
   jobdetails = new BehaviorSubject<any[]>([]);
@@ -59,7 +59,7 @@ export class JobDetailsComponent {
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -664,4 +664,10 @@ export class JobDetailsComponent {
       },
     });
   }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  
 }

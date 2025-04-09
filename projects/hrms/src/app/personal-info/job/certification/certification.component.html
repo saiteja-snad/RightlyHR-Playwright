@@ -4,7 +4,7 @@
             </span></div>
         <div class="plus-button">
             <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
-                    (click)="openModal(addexperincemodal)" class="plus-text">Add
+                    (click)="openModal(addCertificationmodal)" class="plus-text">Add
                     New</span></span>
         </div>
     </div>
@@ -64,7 +64,9 @@
 
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
+                        <td>
+                            <app-no-data-found />
+                        </td>
                     </tr>
                 </ng-template>
             </tbody>
@@ -72,7 +74,7 @@
     </div>
 </div>
 
-<ng-template #addexperincemodal let-modal>
+<ng-template #addCertificationmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
@@ -160,6 +162,10 @@
                         <div class="error-msg"
                             *ngIf="certificationForm.get('attachment')?.invalid && certificationForm.get('attachment')?.touched">
                             Please choose a file
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+                                The file size should be less than 25MB.</p>
                         </div>
                         <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
                         <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
@@ -268,11 +274,18 @@
                         </div>
                         <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
                         <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
+                        <div *ngIf="displaycertification" class="mb-2 mt-2">
+                            <b>{{ displaycertification?.name || displaycertification }}</b>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+                                The file size should be less than 25MB.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="modal-footer d-flex justify-content-end">
-                    <button type="button" class="custom-btn btn-secondary" (click)="onReset()">Close</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="updateCertificationForm.invalid">update
                     </button>
                 </div>

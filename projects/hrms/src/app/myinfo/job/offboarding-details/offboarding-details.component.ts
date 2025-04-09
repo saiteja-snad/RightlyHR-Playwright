@@ -8,7 +8,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
-import { Select } from 'primeng/select';
+
 
 @Component({
   selector: 'app-offboarding-details',

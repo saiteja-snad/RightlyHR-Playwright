@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     ApiUrl: 'https://localhost:44374/api/',
-    viewUrl:'https://sasnadhrmsqa.blob.core.windows.net/fusiondocuments/',
+    viewUrl:'https://sasda001.blob.core.windows.net/fusionplusqa/',
     // clientId:'f3f3ce8d-f7ab-4e7a-887c-4b2b1f295a16',
     // authority:'https://login.microsoftonline.com/ebbf7c93-1418-4600-8bc5-e4bf957a40b2/',
     // redirectUrl:'/uservalidation',

@@ -1,10 +1,10 @@
 import { CommonModule, formatDate } from '@angular/common';
-import { ChangeDetectorRef, Component, effect, Input, OnInit, signal, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, effect, OnInit, signal, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { single, Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { IAddress, IGender, IJobdetails, Ipersonal, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
 import { BnNgIdleService } from 'bn-ng-idle';
@@ -38,7 +38,7 @@ export class PersonalDetailsComponent implements OnInit {
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   spinnerLoader = false;
-  selectedCountryCode = signal<string>('');
+  selectedCountryCode = signal<string>('IN');
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -271,7 +271,7 @@ export class PersonalDetailsComponent implements OnInit {
  
   onCountryChange(country: any) {
     console.log(country);
-    this.selectedDialCode = country.code;
+    this.selectedDialCode.set(country.code);
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
     this.employeeData.mobilePhoneCountryCode = country.code; 

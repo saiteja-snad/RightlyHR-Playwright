@@ -193,7 +193,7 @@
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span
                                     class="error-msg">*</span></label>
-                            <p-select [options]="JobroleDetails" optionValue="jobRole1" optionLabel="jobRole1"
+                            <p-select [options]="JobroleDetails" optionLabel="jobRole1"
                                 placeholder="Please select designation" formControlName="jobRoleDetails"
                                 class="form-select custom-select" (onChange)="onclickDesignation($event)"></p-select>
                             <div
@@ -242,7 +242,7 @@
                             <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerSentDate"
-                                placeholder="Please enter offer issued date"  (click)="pathValuesFuction()"/>
+                                placeholder="Please enter offer issued date" />
                             <div
                                 *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                                 <div class="error-msg">Offer Issued Date is required</div>
@@ -252,7 +252,7 @@
                             <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter expected start date" (click)="pathValuesFuction()"/>
+                                placeholder="Please enter expected start date" />
                             <div
                                 *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                 <div class="error-msg">Expected Start Date is required</div>
@@ -266,7 +266,7 @@
                             <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                                placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate" (click)="pathValuesFuction()"/>
+                                placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate"/>
                             <div
                                 *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                                 <div class="error-msg">Offer Expiry Date is required</div>
@@ -296,7 +296,7 @@
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="getAllEmployeeInfo" optionLabel="fullName" [filter]="true"
-                                    filterBy="name" [showClear]="true" placeholder="Please select reporting manager"
+                                    filterBy="firstName" [showClear]="true" placeholder="Please select reporting manager"
                                     formControlName="reportingmanagerId" class="custom-select w-100"(ngModelChange)="selectReportingname(traineeEmpData.reportingmanagerId)">
                                 </p-select>
                             </div>
@@ -320,7 +320,7 @@
                         <div class="col-xl-12 mb-4">
                             <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
                             <textarea class="form-control custom-input" formControlName="note"
-                                placeholder="Note" (click)="pathValuesFuction()"></textarea>
+                                placeholder="Note"></textarea>
                             <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                                 <div class="error-msg">Note is required</div>
                             </div>
@@ -510,7 +510,7 @@
                                     <div class="pt-3">
                                         <p class="m-0 family2">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
-                                        <p class="m-0 paragraph boldsize1" *ngIf="traineeEmpData.authorityName?.trim()" style="font-family: autographsignatureFont; font-size: xx-large;">{{traineeEmpData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1" *ngIf="traineeEmpData.authorityName?.trim()" style="font-family: Segoe script; font-size: large;">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0  paragraph boldsize1">{{authorityDesignation}} </p>
                                         <br>
                                         <hr>

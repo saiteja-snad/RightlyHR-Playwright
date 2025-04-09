@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <p class="main-content-heading mb-0" (click)="onBackSubmit()"><i
-                class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate}}/{{headerName}}</p>
+                class="bi bi-arrow-90deg-left me-2 cursor"></i>{{'Dashboard'| translate}}/{{headerName}}</p>
         </div>
         <div>
             <div>
@@ -15,9 +15,16 @@
             <!-- <div *ngIf="(empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') "> -->
                 <button class="custom-btn btn-primary"
                     *ngIf="isActive('personalinfo/personal/basic-info') "
-                    (click)="emailForRequestDoc()">
-                    {{'Request for Documents'|translate}}
+                    (click)="emailForRequestDoc()" [disabled]="isLoading">
+                    <span *ngIf="!isLoading">
+                        {{'Request for Documents'|translate}}
+                    </span>
+                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                        
+                    </div>
+                    
                 </button>
+                
             <!-- </div> -->
             <!-- <div *ngIf="getOfferDetails.status !== 'Released' || getTraineeOfferDetails.status!=='Released'"> -->
                 <button class="custom-btn btn-secondary me-3"

@@ -4,14 +4,18 @@
       <div>
         <span class="myinfo-sub-header">Basic Details</span>
       </div>
-      <div *ngIf="!buttons">
+      @if(!buttons && (empyployeedata.empstatus.toLowerCase() !== 'prospective' && empyployeedata.empstatus.toLowerCase() !== 'trainee prospective')){
         <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-      </div>
-      <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
-        <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" (click)="showButtons()"
-          (click)="updateBasicInfo()">Save</button>
-      </div>
+      }
+      
+      @if(buttons){
+        <div class="d-flex justify-content-end gap-3" >
+          <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
+          <button type="submit" class="custom-btn btn-primary" (click)="showButtons()"
+            (click)="updateBasicInfo()">Save</button>
+        </div>
+      }
+      
     </div>
 
     <!--input content-->

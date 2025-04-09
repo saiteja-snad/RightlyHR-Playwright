@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Iactive } from './active-model';
-import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
+import { ActiveEmployeePipe } from "../../pipes/active-employee.pipe";
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 @Component({
@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './active-employees.component.scss'
 })
 
-export class ActiveEmployeesComponent {
+export class ActiveEmployeesComponent implements OnInit,OnDestroy{
   subscription!: Subscription;
   Active=[] as Iactive[];
   searchValue: any;
@@ -37,14 +37,20 @@ empdata() {
   });
 
 }
+
 select(act: any) {
-  this.emp=localStorage.setItem("personaldata", JSON.stringify(act));
+  this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
   console.log(this.emp);
-
-  this.router.navigate(["/admin/personal"])
-
+  this.router.navigate(['/personalinfo']);
 }
-  navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+
+navigateDashboard() {
+  this.router.navigate(['/admin/dashboard'])
+}
+ngOnDestroy(): void {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
   }
+}
+
 }

@@ -5,9 +5,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Iinactive } from './inactive-model';
-import { InactiveEmployeePipe } from "../../Pipes/inactive-employee.pipe";
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
+import { InactiveEmployeePipe } from '../../Pipes/inactive-employee.pipe';
 @Component({
   selector: 'app-inactive-employees',
   imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule],
@@ -36,8 +36,9 @@ export class InactiveEmployeesComponent {
   }
 
   select(act: any) {
-    this.emp = localStorage.setItem("personaldata", JSON.stringify(act));
-    this.router.navigate(["/admin/personal"])
+    this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+    console.log(this.emp);
+    this.router.navigate(['/personalinfo']);
   }
 
   ngOnDestroy(): void {

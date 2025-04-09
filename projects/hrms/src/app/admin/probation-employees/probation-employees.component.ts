@@ -6,8 +6,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { IProbationEmployees } from './probation-emp-module';
-import { ProbationEmpPipe } from "../../Pipes/probation-emp.pipe";
-import { DataformatPipe } from "../../Pipes/dataformat.pipe";
+import { ProbationEmpPipe } from "../../pipes/probation-emp.pipe";
+import { DataformatPipe } from "../../pipes/dataformat.pipe";
 import { FormsModule } from '@angular/forms';
 // import * as moment from 'moment';
 @Component({

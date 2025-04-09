@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 
-
 @Component({
   selector: 'app-offboarding-details',
   imports: [CommonModule, ReactiveFormsModule],

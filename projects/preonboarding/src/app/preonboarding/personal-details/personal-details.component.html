@@ -65,8 +65,11 @@
                     <label for="location" class="form-label custom-label mb-2">Mobile Number<span
                             class="text-danger">*</span></label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"  [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig" class="country-input"
-                         (onCountryChange)="onCountryChange($event)"></lib-country-list>
+                        <lib-country-list class="country-input" [selectedCountryCode]="selectedCountryCode"
+                            [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
+                            (onCountryChange)="onCountryChange($event)">
+                        </lib-country-list>
+                         
                         <input type="text" class="form-control custom-input" formControlName="phonenumber"
                             placeholder="Please enter your mobile number" id="phonenumbers"
                             aria-describedby="phonenumbers"

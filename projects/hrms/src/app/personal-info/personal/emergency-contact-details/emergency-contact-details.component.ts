@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -18,7 +18,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss'
 })
-export class EmergencyContactDetailsComponent {
+export class EmergencyContactDetailsComponent implements OnInit,OnDestroy{
 
   subscription!: Subscription
   buttons = false;
@@ -39,6 +39,7 @@ export class EmergencyContactDetailsComponent {
     };
     mobileNumberData: IphoneNumberData | null = null;
   empinfo: any
+  employedata={} as any;
   constructor(private modalService: NgbModal, private fb: FormBuilder,   public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
@@ -48,7 +49,10 @@ export class EmergencyContactDetailsComponent {
     this.initializeForm();
     this.emergencyContactForm.disable(); // Disable the form initially
   }
-
+  showButtons() {
+    this.buttons = !this.buttons
+  }
+  
   initializeForm(): void {
     this.emergencyContactForm = this.fb.group({
       contact1Name: ['', Validators.required],
@@ -67,9 +71,7 @@ export class EmergencyContactDetailsComponent {
     this.selectedCountryCode1 = this.empinfo.emergencycode1;
     this.selectedDialCode1 = this.empinfo.emergencycode1;
   }
-  showButtons() {
-    this.buttons = !this.buttons
-  }
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -161,6 +163,22 @@ export class EmergencyContactDetailsComponent {
       emergencyEmail1: formValue.contact2Email || this.empinfo.emergencyEmail1,
       emergencyNumber1:contact2Phone ,
       relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.empinfo.relationship1,
+      profileUrl: this.empinfo.profileUrl,
+      fusionEmpId: this.empinfo.fusionEmpId,
+      dateOfJoining: this.empinfo.dateOfJoining,
+      branchCode: this.empinfo.branchCode,
+      probationEndDate: this.empinfo.probationEndDate,
+      probationStatus: this.empinfo.probationStatus,
+      noticePeriod: this.empinfo.noticePeriod,
+      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
+      issalaryhold:this.empinfo.issalaryhold,
+      pf: this.empinfo.pf,
+      esic:this.empinfo.esic,
+      pt: this.empinfo.pt,
+      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
+      allowWFH: this.empinfo.allowWFH,
+      workLocation:this.empinfo.workLocation,
+      wfhManagerId: this.empinfo.wfhManagerId
     };
 
 
@@ -239,5 +257,10 @@ export class EmergencyContactDetailsComponent {
       }
     };
   }
-    
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

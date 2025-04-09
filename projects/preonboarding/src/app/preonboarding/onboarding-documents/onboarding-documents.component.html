@@ -67,22 +67,26 @@
     
         <div class="footer-btn-content d-flex justify-content-end pt-5">
             <div class="d-flex">
-                <div *ngIf="loadingcircle" class="spinner-border text-primary me-4" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                  </div>
-                <div *ngIf="this.prosempdata?.substatus === 'Requested Documents' || this.prosempdata?.substatus === 'Documents Rejected'" class="mb-3 me-2">
-                    <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="!aftersubmitbuttondisable||!submitbuttondisableforrejected" (click)="openConfirmation()">Submit</button>  
-                </div> 
-                <div *ngIf="(this.prosempdata?.empstatus === 'Prospective') && ( this.prosempdata?.substatus === 'Offer Letter Generated' || 
-                 this.prosempdata?.substatus === 'Offer Letter Released' || this.prosempdata?.substatus === 'Offer Letter Regenerated' || 
-                 this.prosempdata?.substatus === 'Offer Letter Accepted') "class="mb-3 me-2">
-                    <button type="button" class="custom-btn btn-primary py-3 px-5" routerLink="/offer-letter">Next</button>
-                </div>
-                 <div *ngIf="(this.prosempdata?.empstatus === 'Trainee Prospective') && (this.prosempdata?.empType === 'Trainee') && (this.prosempdata?.substatus === 'Offer Letter Generated' || this.prosempdata?.substatus === 'Offer Letter Released' 
-                   || this.prosempdata?.substatus ==='Offer Letter Regenerated'|| this.prosempdata?.substatus === 'Offer Letter Accepted')
-                       "class="mb-3 me-2">
-                    <button type="button" class="custom-btn btn-primary py-3 px-5" routerLink="/traineeofferletter">Next</button>
-                </div>
+               <button class="custom-btn btn-primary py-3 px-5" (click)="navigatePrevious()">
+                            Personal Details </button>
+                @if(loadingcircle){
+                    <div class="spinner-border text-primary me-4" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                }
+                  @if(this.prosempdata?.substatus === 'Requested Documents' || this.prosempdata?.substatus === 'Documents Rejected'){
+                    <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="!aftersubmitbuttondisable||!submitbuttondisableforrejected" (click)="openConfirmation()">Submit</button>
+                  }
+                @if((this.prosempdata?.empstatus === 'Prospective') && ( this.prosempdata?.substatus === 'Offer Letter Generated' ||
+                this.prosempdata?.substatus === 'Offer Letter Released' || this.prosempdata?.substatus === 'Offer Letter Regenerated' ||
+                this.prosempdata?.substatus === 'Offer Letter Accepted') ){
+                <button type="button" class="custom-btn btn-primary py-3 px-5" routerLink="/offer-letter">Next</button>
+                }
+                @if((this.prosempdata?.empstatus === 'Trainee Prospective') && (this.prosempdata?.empType === 'Trainee') && (this.prosempdata?.substatus === 'Offer Letter Generated' || this.prosempdata?.substatus === 'Offer Letter Released' 
+                   || this.prosempdata?.substatus ==='Offer Letter Regenerated'|| this.prosempdata?.substatus === 'Offer Letter Accepted')){
+                   <button type="button" class="custom-btn btn-primary py-3 px-5" routerLink="/traineeofferletter">Next</button>
+                }
+
             </div>
         </div>
     </div>

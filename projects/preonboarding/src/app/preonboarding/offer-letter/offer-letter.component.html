@@ -41,7 +41,7 @@
                                 <p class="mb-4">Congratulations and Welcome to RightlyHR!!!</p>
                                 <p class="mb-4">Further to your application for employment with us, and the subsequent selection
                                     process, we are delighted to offer you the role of <b>{{offerLetterData.jobRole}}</b> in our organization and
-                                    your <b>CTC</b> will be <b>INR \{{(+offerLetterData.salary || 0) + (+offerLetterData.variablePayAmount || 0)}}</b> per
+                                    your <b>CTC</b> will be <b>INR {{(+offerLetterData.salary || 0) + (+offerLetterData.variablePayAmount || 0)}}</b> per
                                     annum.
                                 </p>
                                 <p class="mb-4">RightlyHR is formed as an INDIAN Spin-off of RightlyHR., a US based organization for
@@ -527,6 +527,7 @@
         </div>
     </div>
     <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
+            <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Onboarding Documents</button>
         @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
             <button class="custom-btn btn-secondary px-5" (click)="downloadoffer()">Download</button>
         }

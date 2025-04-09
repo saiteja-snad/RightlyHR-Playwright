@@ -4,14 +4,16 @@
         <div>
           <span class="emergency-contact-sub-header">Emergency Contact 1</span>
         </div>
-        <div *ngIf="!buttons">
+        @if(!buttons &&(empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective')){
+        <div>
           <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
-        </div>
-        <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+        </div>}
+        @if(buttons){
+        <div class="d-flex justify-content-end gap-3" >
           <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid"
             (click)="saveForm()">Save</button>
-        </div>
+        </div>}
       </div>
   
       <!-- Reactive Form -->
@@ -62,8 +64,6 @@
                 <div *ngIf="emergencyContactForm.get('contact1Phone')?.errors?.['pattern']">Invalid phone number
                   format</div>
                   <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('invalidPhoneNumber')">The phone number is not valid for the selected country.</div>
-  
-                 
               </div>
             </div>
   
@@ -89,14 +89,6 @@
         <div>
           <span class="emergency-contact-sub-header">Emergency Contact 2</span>
         </div>
-        <!-- <div *ngIf="!buttons2">
-          <a (click)="enableForm2()"><i class="bi bi-pencil-square"></i></a>
-        </div>
-        <div class="d-flex justify-content-end gap-3" *ngIf="buttons2">
-          <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid"
-            (click)="saveForm()">Save</button>
-        </div> -->
       </div>
   
       <!-- Reactive Form -->
@@ -146,11 +138,8 @@
                 <div *ngIf="emergencyContactForm.get('contact2Phone')?.errors?.['pattern']">Invalid phone number
                   format</div>
                   <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('invalidPhoneNumber')">The phone number is not valid for the selected country.</div>
-  
-                 
               </div>
             </div>
-  
   
             <div class="col-md-6 col-lg-4 mb-3">
               <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span

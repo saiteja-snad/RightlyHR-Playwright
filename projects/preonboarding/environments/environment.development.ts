@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     ApiUrl: 'https://localhost:44374/api/',
-    viewUrl:'https://sasnadhrmsqa.blob.core.windows.net/fusiondocuments/',
+    viewUrl:'https://sasda001.blob.core.windows.net/fusionplusqa/',
     // ApiUrl: 'http://20.235.102.201/api/',
     // ApiUrl: 'https://api.fusion.snadhr.com/api/',
 

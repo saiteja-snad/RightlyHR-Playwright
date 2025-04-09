@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect } from '@angular/core';
+import { Component, effect, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddEducationDetailsComponent } from './add-education-details/add-education-details.component';
@@ -11,9 +11,11 @@ import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { PopupService } from '../../common-services/popup.service';
 import { UpdateEducationDetailsComponent } from './update-education-details/update-education-details.component';
 import { DataService } from '../../common-services/data.service';
+import { environment } from '../../../../environments/environment.dev';
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, DateFormatPipe],
+  imports: [CommonModule, DateFormatPipe,NgxDocViewerModule],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
@@ -22,7 +24,9 @@ export class EducationDetailsComponent {
   subscription!: Subscription;
   getEducationData = [] as any;
   empinfo = {} as Ipersonal;
-
+  DocViewURL!: any;
+  DocImageUrl!: any;
+  @ViewChild('viewpopup') viewpopup: any;
   constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private openPopup: PopupService, private getData: DataService) {
     effect(() => {
       if (this.getData.getEducation()) {
@@ -77,7 +81,41 @@ export class EducationDetailsComponent {
   redirectToNextPage() {
     this.router.navigate(['/preonboarding/emergency-details'])
   }
+  close() {
+    this.modalService.dismissAll();
+  }
+  //function to view the doc
+  onViewClick(url: string) {
+    const isImage = url.match(/\.(jpg|jpeg|png)$/i);
+    const isPDF = url.toLowerCase().endsWith('pdf');
+    if (isImage) {
+      // Generate absolute URL for image
+      this.handleImage(url);
+    } else if (isPDF) {
+      // Generate absolute URL for PDF
+      this.handlePDF(url);
+    } else {
+      // Handle other document types
+      console.log(`Unsupported file type: ${url}`);
+    }
+    this.modalService.open(this.viewpopup, { centered: true, backdrop: 'static', size: 'lg' });
+  }
 
+  private handleImage(url: string) {
+    const baseUrl = '/';
+    const imageUrl = `${baseUrl}${url}`;
+    this.DocImageUrl = `${environment.viewUrl}${imageUrl}`;
+    console.log(`Image URL: ${this.DocImageUrl}`);
+  }
+
+  private handlePDF(url: string) {
+    // Assuming NgxDocViewerModule supports PDFs directly
+    const baseUrl = '/';
+    const pdfUrl = `${baseUrl}${url}`;
+    this.DocViewURL = `${environment.viewUrl}${pdfUrl}`;
+    // Log pdfUrl to console
+    console.log(`PDF URL: ${this.DocViewURL}`);
+  }
   //function to formate the data
   formatDate(date: Date): string {
     return moment(date).format('YYYY-MM-DD');

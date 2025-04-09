@@ -38,7 +38,8 @@ export class PersonalDetailsComponent implements OnInit {
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   spinnerLoader = false;
-  selectedCountryCode = signal<string>('IN');
+  selectedCountryCode = signal<string>('');
+  loading = true;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -74,15 +75,17 @@ export class PersonalDetailsComponent implements OnInit {
       }
     })
     this.prospectiveEmpData = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
-    this.getprospectivempdata()
-    this.initializePersonalForm();
-    this.getGender();;
     this.getJobDetails();
+    this.initializePersonalForm();
+    this.getprospectivempdata()
+    this.getGender();
     this.getTitle();
+   
   }
 
   // Prospective Employee Data
   getprospectivempdata() {
+    this.loading = true;
     let employeeId = parseInt(this.prospectiveEmpData.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
@@ -91,9 +94,11 @@ export class PersonalDetailsComponent implements OnInit {
       this.selectedCountryCode.set(this.employeeData?.mobilePhoneCountryCode);
       console.log(this.selectedCountryCode);
         this.patchForm();
+        this.loading = false;
       },
       error: (reason: any) => {
         console.log(reason);
+        this.loading = false;
         if (reason.status == 401) {
           localStorage.clear();
           this.router.navigate(['']);
@@ -223,6 +228,15 @@ export class PersonalDetailsComponent implements OnInit {
   onSubmit() {
     console.log(this.employeeData);
     if (!this.personalDetailsForm.invalid) {
+       this.employeeData.firstName=this.personalDetailsForm.get('firstName')?.value,
+      this.employeeData.middleName= this.personalDetailsForm.get('middleName')?.value,
+      this.employeeData.lastName= this.personalDetailsForm.get('lastName')?.value,
+      this.employeeData.gender=this.personalDetailsForm.get('gender')?.value,
+       this.employeeData.title=this.personalDetailsForm.get('salutation')?.value,
+      this.employeeData.contactnumber=this.personalDetailsForm.get('phonenumber')?.value,
+      this.employeeData.dateOfBirth=this.personalDetailsForm.get('dob')?.value,
+       this.employeeData.bloodGroup=this.personalDetailsForm.get('bloodGroup')?.value,
+      this.employeeData.emailaddress=this.personalDetailsForm.get('personalEmail')?.value,
       this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.employeeData).subscribe({
         next: (data: any) => {
           console.log(data);
@@ -271,7 +285,7 @@ export class PersonalDetailsComponent implements OnInit {
  
   onCountryChange(country: any) {
     console.log(country);
-    this.selectedDialCode.set(country.code);
+    this.selectedDialCode=country.code;
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
     this.employeeData.mobilePhoneCountryCode = country.code; 

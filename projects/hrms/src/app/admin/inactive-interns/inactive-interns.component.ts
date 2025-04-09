@@ -5,9 +5,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
 import { Iinactivetrainee } from './inactive-trainee-mod';
-import { ActiveEmployeePipe } from "../../pipes/active-employee.pipe";
+
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
+import { ActiveEmployeePipe } from '../../pipes/active-employee.pipe';
 
 @Component({
   selector: 'app-inactive-interns',

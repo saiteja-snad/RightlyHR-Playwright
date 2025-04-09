@@ -1,11 +1,13 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center">
         <div> <span class="identity-sub-header">Identity Details</span></div>
+        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
         <div class="plus-button">
             <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
                     (click)="openModal(addEducationmodal)" class="plus-text">Add
                     New</span></span>
         </div>
+        }
     </div>
     <div class="custom-table-content mt-2">
         <table class="w-100">
@@ -14,14 +16,16 @@
                     <th>Identity Type</th>
                     <th>Identity Number</th>
                     <th>Attachment</th>
-                    <th class="text-center">Actions</th>
+                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase()
+                    !== 'trainee prospective')){
+                    <th class="text-center">Actions</th>}
 
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let identityDetails of getIdentitydetails | async">
-                     
+
                         <td>{{ identityDetails.identityType }}</td>
                         <td>{{ identityDetails.identityNumber }}</td>
                         <td><span *ngIf="identityDetails.attachment;else noData" class="dowload-text"
@@ -29,8 +33,7 @@
                                 style="cursor: pointer;"><i
                                     class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
                                 #noData>-</ng-template></td>
-                   
-
+                        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
@@ -50,6 +53,7 @@
                                 </ul>
                             </div>
                         </td>
+                        }
                     </tr>
                 </ng-container>
             </tbody>
@@ -212,7 +216,8 @@
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="identityupdateForm.invalid">Update</button>
                 </div>
             </form>
         </div>

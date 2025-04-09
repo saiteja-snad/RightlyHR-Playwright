@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -17,7 +17,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
-export class EducationDetailsComponent {
+export class EducationDetailsComponent implements OnInit,OnDestroy{
   educationForm!: FormGroup;
   educationupdateForm!: FormGroup;
   selectedEducationId: any
@@ -35,7 +35,7 @@ export class EducationDetailsComponent {
   islistedItem = true;
   buttondisable = true;
   empinfo: any = {}
-
+  employedata={} as any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -43,6 +43,7 @@ export class EducationDetailsComponent {
     this.initializeupdateForm()
     this.getDegree()
     this.getEducationEmpid();
+    this.getEmployeeId();
   }
 
   openModal(content: any) {
@@ -77,7 +78,31 @@ export class EducationDetailsComponent {
 
   }
 
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employedata = data;
+        this.patchForm(data);
+        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
 
+  patchForm(data: any): void {
+    this.educationupdateForm.patchValue({
+      educationupdate: data.education || '',  
+      universityupdate: data.university || '',  
+      specializationupdate: data.specialization || '',  
+      gpaupdate: data.gpa || '',  
+      degreeStartDateupdate: data.degreeStartDate || '',  
+      degreeEndDateupdate: data.degreeEndDate || '',  
+      attachmentupdate: data.attachment || '', 
+    });
+  
+    console.log(this.educationupdateForm.value);  
+  }
 
   validations() {
     // Add validation for start and end dates
@@ -94,6 +119,7 @@ export class EducationDetailsComponent {
       this.issEndDateValid = new Date(endDate) > new Date(startDate);
     });
   }
+
   postEducation(): void {
     if (this.educationForm.valid) {
       const payload = this.createEducationPayload();
@@ -193,6 +219,7 @@ export class EducationDetailsComponent {
         error: (reason) => console.log(reason),
       });
   }
+
   getDegree() {
     this.subscription = this.http.getData('Degree').subscribe({
       next: (data: any) => {
@@ -212,7 +239,6 @@ export class EducationDetailsComponent {
       },
     });
   }
-
 
   //openupdate
   openModalupdate(content: any, educationDetails: any): void {
@@ -275,6 +301,7 @@ export class EducationDetailsComponent {
       this.educationupdateForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
     }
   }
+
   uploadUpdatedEducationAttachment(payload: any): void {
     const filePath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
     this.subscription = this.http
@@ -352,5 +379,9 @@ export class EducationDetailsComponent {
       }
     });
   }
-
+ ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

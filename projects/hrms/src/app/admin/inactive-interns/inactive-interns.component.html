@@ -52,7 +52,7 @@
                     </tr>
                 </tbody> -->
                 <tbody>
-                    <tr *ngFor="let act of InActiveTrainee | activeEmployee : searchValue" class="hover" (click)="select(act)">
+                    <tr *ngFor="let act of InActiveTrainee | activeEmployee : searchValue" class="cursor" (click)="select(act)" >
           
                       <td> <span *ngIf="act.fusionEmpId;else fusionid">{{act.fusionEmpId}} </span>
                         <ng-template #fusionid>

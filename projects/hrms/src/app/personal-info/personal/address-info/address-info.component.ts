@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -14,7 +14,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
   templateUrl: './address-info.component.html',
   styleUrl: './address-info.component.scss'
 })
-export class AddressInfoComponent {
+export class AddressInfoComponent implements OnInit,OnDestroy{
   buttons = false;
   buttons2 = false;
   addressForm!: FormGroup;
@@ -32,7 +32,7 @@ export class AddressInfoComponent {
     { name: 'O+' },
     { name: 'O-' }
   ];
-
+  employedata={} as any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public formValidation: FormValidationService) { }
 
@@ -42,8 +42,6 @@ export class AddressInfoComponent {
     this.getEmployeeId();
     ;
     this.addressForm.disable();
-
-
   }
 
   initializeForm(): void {
@@ -182,6 +180,22 @@ export class AddressInfoComponent {
     emergencyEmail1: this.empinfo.emergencyEmail1,
     emergencyNumber1: this.empinfo.emergencyNumber1,
     relationship1: this.empinfo.relationship1,
+    profileUrl: this.empinfo.profileUrl,
+    fusionEmpId: this.empinfo.fusionEmpId,
+    dateOfJoining: this.empinfo.dateOfJoining,
+    branchCode: this.empinfo.branchCode,
+    probationEndDate: this.empinfo.probationEndDate,
+    probationStatus: this.empinfo.probationStatus,
+    noticePeriod: this.empinfo.noticePeriod,
+    backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
+    issalaryhold:this.empinfo.issalaryhold,
+    pf: this.empinfo.pf,
+    esic:this.empinfo.esic,
+    pt: this.empinfo.pt,
+    totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
+    allowWFH: this.empinfo.allowWFH,
+    workLocation:this.empinfo.workLocation,
+    wfhManagerId: this.empinfo.wfhManagerId
   };
 
   // Send employee basic details update
@@ -254,7 +268,11 @@ export class AddressInfoComponent {
       this.disableForm();
     }
   }
-
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }
 
 

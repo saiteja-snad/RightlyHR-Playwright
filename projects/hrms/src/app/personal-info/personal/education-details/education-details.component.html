@@ -1,11 +1,14 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center">
     <div> <span class="education-sub-header">Education Details</span></div>
+    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
     <div class="plus-button">
       <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
           (click)="openModal(addEducationmodal)" class="plus-text">Add
           New</span></span>
     </div>
+    }
+
   </div>
   <div class="custom-table-content mt-2">
     <table class="w-100">
@@ -18,8 +21,9 @@
           <th>From Date</th>
           <th>To Date</th>
           <th>Document</th>
+          @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
           <th class="text-center">Actions</th>
-
+          }
         </tr>
       </thead>
       <tbody>
@@ -34,9 +38,8 @@
             <td><span *ngIf="edacationDetails.attachment;else noData" class="dowload-text"
                 (click)="onSelectIdentityAttachmentDownload(edacationDetails)" style="cursor: pointer;"><i
                   class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template></td>
-
-
-            <td class="text-center">
+            @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
+                  <td class="text-center">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -54,7 +57,7 @@
                   </li>
                 </ul>
               </div>
-            </td>
+            </td> }
           </tr>
         </ng-container>
         <!-- No Data Found Template -->
@@ -225,7 +228,8 @@
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization"
-              formControlName="specializationupdate" placeholder="Please enter specialization" (keypress)="formValidation.restrictInput($event)">
+              formControlName="specializationupdate" placeholder="Please enter specialization"
+              (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('specializationupdate')?.invalid && educationupdateForm.get('specializationupdate')?.touched">
               Specialization is required

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -15,7 +15,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
   templateUrl: './certification.component.html',
   styleUrl: './certification.component.scss'
 })
-export class CertificationComponent {
+export class CertificationComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   selectedCertification: any;
   empcertsdata = new BehaviorSubject<any>([]);
@@ -28,12 +28,12 @@ export class CertificationComponent {
   showError: boolean = false;
   showErrorr: boolean = false;
   selectedid: any;
-
+  displaycertification: any
 
   constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getEmpcertdata();
     this.initializeForm();
     this.initializeupdateForm();
@@ -72,7 +72,7 @@ export class CertificationComponent {
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
-      attachment: ['', ],
+      attachment: ['',],
     });
 
     // Disable "expiryDate" field if "isExpired" is checked
@@ -235,25 +235,29 @@ export class CertificationComponent {
 
 
   openModalupdate(content: any, data: any) {
-    this.selectedid= data.id; // Store the selected identityId
+    this.selectedid = data.id; // Store the selected identityId
     const startDate = data.issuedDate
-    ? new Date(data.issuedDate).toISOString().split('T')[0]
-    : null;
+      ? new Date(data.issuedDate).toISOString().split('T')[0]
+      : null;
 
-  const EndDate = data.expirationDate
-    ? new Date(data.expirationDate).toISOString().split('T')[0]
-    : null;
+    const EndDate = data.expirationDate
+      ? new Date(data.expirationDate).toISOString().split('T')[0]
+      : null;
 
     this.updateCertificationForm.patchValue({
       certificationName: data.certificationName,
       certificationId: data.certificationId,
-      issuedDate:startDate,
+      issuedDate: startDate,
       expiryDate: EndDate,
       isExpired: data.isExpired,
     });
-    this.certificationDocument=data.attachment; // Set the selected document for the update form
-    ;
-     // Reset the document for the update form
+    this.certificationDocument = data.attachment; // Set the selected document for the update form
+
+    this.displaycertification = data.attachment
+      ? data.attachment.split('/').pop()
+      : null;
+  
+    // Reset the document for the update form
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
@@ -327,9 +331,9 @@ export class CertificationComponent {
       isDeleted: false,
       isdeleted: false,
       attachment: attachmentPath || '',
-      createdAt: currentDate, 
-      updatedAt: currentDate, 
-  
+      createdAt: currentDate,
+      updatedAt: currentDate,
+
 
     };
   }
@@ -364,5 +368,12 @@ export class CertificationComponent {
       },
     });
   }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  
 }
 

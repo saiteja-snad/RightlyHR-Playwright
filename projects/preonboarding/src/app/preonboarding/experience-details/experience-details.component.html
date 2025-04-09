@@ -21,60 +21,84 @@
                 <button class="custom-btn btn-primary px-5" (click)="openExperience()">Add</button>
             </div>
         </div>
-    </div>
-    }
+</div>
+}
 
-    <!--Experience Details Table-->
-    @if (getempexpdata.length > 0) {
-    <div class="custom-main-sub-content">
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Company Name</th>
-                        <th>Employeement Type</th>
-                        <th>From Date</th>
-                        <th>To Date</th>
-                        <th>Job Role</th>
-                        <th>Currently Working</th>
-                        <th>Attachment</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let exp of getempexpdata">
-                        <td>{{exp.companyName}}</td>
-                        <td>{{exp.employmentType}}</td>
-                        <td>{{exp.fromDate | dateFormat}}</td>
-                        <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate | dateFormat}}</span>
-                            <ng-template #todate>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td>{{exp.jobTitle}}</td>
-                        <td>{{ exp.isPresent ? 'Yes' : 'No' }}</td>
-                        <td></td>
-                        <td>
-                            <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a class="dropdown-item" (click)="openUpdate(exp)"><i class="bi bi-pencil me-2"></i>Update</a></li>
-                                    <li><a class="dropdown-item" (click)="openDelete(exp)"><i class="bi bi-trash3 me-2"></i>Delete</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<!--Experience Details Table-->
+@if (getempexpdata.length > 0) {
+<div class="custom-main-sub-content">
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Employeement Type</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Job Role</th>
+                    <th>Currently Working</th>
+                    <th>Attachment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let exp of getempexpdata">
+                    <td>{{exp.companyName}}</td>
+                    <td>{{exp.employmentType}}</td>
+                    <td>{{exp.fromDate | dateFormat}}</td>
+                    <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate | dateFormat}}</span>
+                        <ng-template #todate>
+                            <div class="centerhypen">-</div>
+                        </ng-template>
+                    </td>
+                    <td>{{exp.jobTitle}}</td>
+                    <td>{{ exp.isPresent ? 'Yes' : 'No' }}</td>
+                    <td></td>
+                    <td>
+                        <div class="dropdown">
+                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li><a class="dropdown-item" (click)="openUpdate(exp)"><i
+                                            class="bi bi-pencil me-2"></i>Update</a></li>
+                                <li><a class="dropdown-item" (click)="openDelete(exp)"><i
+                                            class="bi bi-trash3 me-2"></i>Delete</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    }
-    <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
-        <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Emergency Contact Details</button>
-        <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
-    </div>
+</div>
+}
+<div class="footer-btn-content d-flex justify-content-between gap-3 pt-5">
+    <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigateemergency()"> Emergency Details</button>
+
+    <!-- <button class="btn  btn-outline-primary rounded-pill pt-2 pb-2 ps-5 pe-5"  (click)="navigatePrevious()">
+                Emergency Details
+            </button> -->
+
+
+    <button *ngIf="this.prosempdata.experienceType=='Trainee' && getempexpdata.length<=0 "
+        class="custom-btn btn-primary px-5" (click)=" navigateNext()">
+        Skip & continue
+    </button>
+    <button *ngIf="this.prosempdata.experienceType=='Trainee' && getempexpdata.length>0 "
+        class="custom-btn btn-primary px-5" (click)=" navigateNext()">
+        Next
+    </button>
+    <button *ngIf="this.prosempdata.experienceType=='Fresher' && getempexpdata.length<=0 "
+        class="custom-btn btn-primary px-5" (click)=" navigateNext()">
+        Skip & continue
+    </button>
+    <button *ngIf="this.prosempdata.experienceType=='Fresher' && getempexpdata.length>0 "
+        class="custom-btn btn-primary px-5" (click)=" navigateNext()">
+        Next
+    </button>
+</div>
+
 </div>
 
 <!--Offer letter accept popup-->
@@ -87,7 +111,8 @@
                 </div>
                 <div class="d-flex gap-5 pt-4 w-100">
                     <button class="custom-btn btn-secondary w-50 py-3" (click)="close()">No</button>
-                    <button class="custom-btn btn-primary w-50 py-3" (click)="deleteExperienceDetails(selectExperience)">yes</button>
+                    <button class="custom-btn btn-primary w-50 py-3"
+                        (click)="deleteExperienceDetails(selectExperience)">yes</button>
                 </div>
             </div>
         </div>

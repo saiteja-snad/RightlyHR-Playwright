@@ -99,6 +99,7 @@ export class AddEducationDetailsComponent {
 
   //function to post the Education Details
   postEducation() {
+    debugger
     if (this.educationForm.valid && this.educationAttachment) {
       this.postEducationdata = {
         ...this.educationForm.value,

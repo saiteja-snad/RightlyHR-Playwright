@@ -10,6 +10,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { Ipersonal } from '../../../Interfaces/members-model';
+import { IProbationEmployees } from '../../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-family-details',
@@ -27,9 +29,8 @@ export class FamilyDetailsComponent implements OnInit {
   familyDetailsupdateForm!: FormGroup
   selectedFamilyMemberid:any
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
-  educationtypes = [
-    { label: 'Select', value: null },]
-    employedata={} as any;
+ 
+    employedata={} as IProbationEmployees;
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -121,7 +122,7 @@ export class FamilyDetailsComponent implements OnInit {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.employedata = data;
+        this.employedata = data as IProbationEmployees;;
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
@@ -216,4 +217,10 @@ export class FamilyDetailsComponent implements OnInit {
       });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  
 }

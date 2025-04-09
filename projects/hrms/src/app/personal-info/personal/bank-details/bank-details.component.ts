@@ -8,6 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { IProbationEmployees } from '../../../admin/probation-employees/probation-emp-module';
 
 @Component({
   selector: 'app-bank-details',
@@ -26,7 +27,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
   proofValid: boolean = true;
   bankdocument: any
   displayblankdocument:any
-  employedata={} as any;
+  employedata={} as IProbationEmployees;
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');

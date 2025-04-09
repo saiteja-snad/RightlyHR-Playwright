@@ -7,7 +7,7 @@
             @if(!buttons &&(employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective')){
               <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
             }
-            @if(buttons && (empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective')){
+            @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective')){
               <div class="d-flex justify-content-end gap-3" >
                 <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid" (click)="updateAddressInfo()" >Save</button>

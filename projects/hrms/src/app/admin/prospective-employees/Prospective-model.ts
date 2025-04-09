@@ -1,4 +1,5 @@
 export interface Iprospective{
+    id: number,
     employeeId: number,
     firstName: string,
     lastName:string,

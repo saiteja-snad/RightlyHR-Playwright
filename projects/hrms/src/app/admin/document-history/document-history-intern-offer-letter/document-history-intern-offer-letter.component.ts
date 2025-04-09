@@ -13,6 +13,8 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { OfferletterdashboardpipePipe } from '../../../pipes/offerletterdashboardpipe.pipe';
 
 
+
+
 @Component({
   selector: 'app-document-history-intern-offer-letter',
   imports: [CommonModule,ReactiveFormsModule, TranslateModule, DateformatPipe, FormsModule, OfferletterdashboardpipePipe],

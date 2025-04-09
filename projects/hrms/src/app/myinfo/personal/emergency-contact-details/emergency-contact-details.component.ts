@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -39,7 +39,13 @@ export class EmergencyContactDetailsComponent {
     };
     mobileNumberData: IphoneNumberData | null = null;
   empinfo: any
-  constructor(private modalService: NgbModal, private fb: FormBuilder,   public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
+  selectedCountryCodeSignal = signal<any>('')
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private cd: ChangeDetectorRef,  public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { 
+    effect(() => {
+
+      this.selectedCountryCodeSignal.set(this.selectedCountryCode)
+    });
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -55,8 +61,7 @@ export class EmergencyContactDetailsComponent {
       contact1Email: ['', [Validators.required, Validators.email]],
       contact1Phone: ['', Validators.required],
       contact1Relationship: ['', Validators.required],
-      contact1CountryCode: ['', Validators.required],
-      contact2CountryCode: ['', Validators.required],
+  
       contact2Name: ['', Validators.required],
       contact2Email: ['', [Validators.required, Validators.email]],
       contact2Phone: ['', Validators.required],
@@ -75,6 +80,10 @@ export class EmergencyContactDetailsComponent {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empinfo = data;
+
+        this.selectedCountryCodeSignal.set(data.emergencycode || '');
+        this.cd.detectChanges();
+        console.log(this.selectedCountryCodeSignal)
         this.patchForm(data);
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
@@ -91,8 +100,7 @@ export class EmergencyContactDetailsComponent {
 
 
     this.emergencyContactForm.patchValue({
-       contact1CountryCode: data.emergencycode || '',
-      contact2CountryCode: data.emergencycode1 || '', // Bind first emergency contact country code
+      // Bind first emergency contact country code
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
       contact1Phone: data.mobileNumber || '', // Bind first emergency contact phone
@@ -212,9 +220,7 @@ export class EmergencyContactDetailsComponent {
     this.selectedCountryCode = country.dialling_code;
     this.selectedDialCode = country.code;
     // Update validators for both phone fields
-    this.emergencyContactForm.patchValue({
-      contact1CountryCode: this.selectedDialCode, // Update the form control for contact1CountryCode
-    });
+ 
     this.emergencyContactForm.get('contact1Phone')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.emergencyContactForm.get('contact1Phone')?.updateValueAndValidity();
   }
@@ -222,10 +228,7 @@ export class EmergencyContactDetailsComponent {
   onCountryChange1(country: any): void {
     this.selectedCountryCode1 = country.dialling_code;
     this.selectedDialCode1 = country.code;
-    // Update validators for both phone fields
-    this.emergencyContactForm.patchValue({
-      contact2CountryCode: this.selectedDialCode1, // Update the form control for contact2CountryCode
-    });
+ 
     this.emergencyContactForm.get('contact2Phone')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.emergencyContactForm.get('contact2Phone')?.updateValueAndValidity();
   }

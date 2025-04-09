@@ -4,7 +4,7 @@
       <div>
         <span class="myinfo-sub-header">Basic Details</span>
       </div>
-      @if(!buttons && (empyployeedata.empstatus.toLowerCase() !== 'prospective' && empyployeedata.empstatus.toLowerCase() !== 'trainee prospective')){
+      @if(!buttons && (empyployeedata?.empstatus?.toLowerCase() !== 'prospective' && empyployeedata?.empstatus?.toLowerCase() !== 'trainee prospective')){
         <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
       }
       

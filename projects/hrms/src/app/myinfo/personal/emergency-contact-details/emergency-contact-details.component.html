@@ -47,7 +47,7 @@
             <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
 
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                [selectedCountryCode]="emergencyContactForm.get('contact1CountryCode')?.value" [countryListConfig]="countryListConfig"
+                [selectedCountryCode]="selectedCountryCodeSignal().valueOf()" [countryListConfig]="countryListConfig"
                 class="country-input" (onCountryChange)="onCountryChange($event)">
               </lib-country-list>
               <input type="text"  class="form-control custom-input" formControlName="contact1Phone"

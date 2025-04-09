@@ -914,7 +914,7 @@ export class TraineeOfferLetterComponent {
 
     let postTraineeOfferDetails = {
       employeeId: employeeId,
-      offerSentDate: this.traineeEmpData.offerIssuedDate,
+      offerSentDate: this.employeeForm.get('offerSentDate')?.value,
       offerSentStatus: 'Offer Generated',
       offerSentBy: loggedInUser.employeeId,
       documentUrl: docurl,
@@ -925,12 +925,12 @@ export class TraineeOfferLetterComponent {
       approver: null,
       comments: null,
       requestedDate: new Date(),
-      offerExpiryDate: this.traineeEmpData.offerExpiryDate,
-      authoritySignature: this.SignatureAuthorityValue.employeeId,
-      addressType: this.addressType.toUpperCase(),
-      note: this.traineeEmpData.note,
-      offerStartDate: this.traineeEmpData.offerStartDate,
-      trainingEndDate: this.traineeEmpData.endDate,
+      offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
+      authoritySignature: this.employeeForm.get('authorityid')?.value.employeeId,
+      addressType: this.addressType,
+      note: this.employeeForm.get('note')?.value,
+      offerStartDate: this.employeeForm.get('dateOfJoining')?.value,
+      trainingEndDate: this.traineeEmpData.trainingEndDate,
       durationOfTraining: this.traineeEmpData.durationOfTrainee,
     };
     this.subscription = this.http

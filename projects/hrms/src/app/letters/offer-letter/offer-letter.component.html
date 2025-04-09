@@ -167,16 +167,20 @@
             </div>
 
             <div class="mb-4">
-              <label class="form-label custom-label mb-2">Mobile Number with Country Code<span
-                  class="error-msg">*</span></label>
-              <app-country-code-phone-number [selectedCountryConfig]="selectedCountryConfig"
-                [countryListConfig]="countryListConfig" (onPhoneChange)="handlePhoneChange($event)">
-              </app-country-code-phone-number>
-              <div *ngIf="employeeForm.get('phoneNumber')?.invalid && employeeForm.get('phoneNumber')?.touched">
-                <div class="error-msg">Mobile Number is required</div>
+              <label class="form-label custom-label mb-2">Mobile Number with Country Code<span class="error-msg">*</span></label>
+              <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                @if (!loadingCode) {
+                  <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
+                  class="country-input"></lib-country-list>
+                }
+                @else{
+                  <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
+                  class="country-input"></lib-country-list>
+                }
+                <input type="text" class="form-control custom-input" placeholder="Please enter mobile number"
+                  formControlName="phoneNumber"  />
               </div>
             </div>
-    
             <div class="mb-4">
               <label class="form-label custom-label mb-2">Designation <span class="error-msg">*</span></label>
               <input placeholder="Please select Designation" formControlName="jobRoleDetails"
@@ -342,10 +346,12 @@
             </div>
 
             <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
-              <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">{{buttonValue}}</button>
-              <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" (click)="emailSendingforApprover()">Request
+              <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid ||loading">{{buttonValue}}</button>
+              <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading" (click)="emailSendingforApprover()">Request
                 For Approval</button>
-              <div class="spinner-border text-primary" role="status"></div>
+                @if(loading){
+                  <div class="spinner-border text-primary" role="status"></div>
+                }
             </div>
           </div>
         </form>

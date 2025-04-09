@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
-import { CountryCodePhoneNumberComponent } from "../../shared/country-code-phone-number/country-code-phone-number.component";
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
@@ -17,10 +16,11 @@ import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader
 import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
+import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, LettersheaderComponent, DateformatPipe, LetterFooterComponent],
+  imports: [CommonModule, LettersTabComponent, Select, NgxCountriesDropdownModule, ReactiveFormsModule, LettersheaderComponent, DateformatPipe, LetterFooterComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
@@ -68,7 +68,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   authorityDetails = [] as any;
   buttonValue: string = 'Generate Offer Letter'; //variable to change the button value
   SelectDropDown: any;
-  loading: boolean = false;
+  loading = false;
   LocationDropDownData = [] as any;
   Locationdata = {} as any;
   subLocationsDropdown = [] as any;
@@ -78,6 +78,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   addressType: any;
   SignatureAuthorityValue: any;
   countryvalues = {} as any;
+  loadingCode= true;
+  selectedCountryCode: any;
   selectedCountryConfig = {
     hideCode: true,
     hideName: true
@@ -116,8 +118,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
    
     // this._userAcessService.checkRouteAccess('Dashboard.view');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
-    this.prospectiveEmpData.mobilePhoneCountryCode = 'India (+91)';
-    console.log(this.prospectiveEmpData.mobilePhoneCountryCode);
     this.initializeForm();
     this.getJobtype();
     this.getTitle();
@@ -174,11 +174,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     this.prospectiveEmpData.amount = Value;
     this.ctcCalculation();
   }
-  handlePhoneChange(event: any) {
-    this.employeeForm.patchValue({
-      phoneNumber: event
-    });
-  }
 
   //download document
   async downLoadDocument(EmpValue: any) {
@@ -227,7 +222,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     console.log(file);
     this.generatedfile = file;
     this.generatingEmployeeId=this.prospectiveEmpData.empId;
-
+    this.loading=false
+    this.conformationPopup.openSuccessModal(
+      'Offer Letter Generated Successfully'	);
   }
   //function to validate the offer expiry date and offer issued date
   offerExpiryDateValidator(): ValidatorFn {
@@ -475,12 +472,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     this.fusionEmpId = null;
     this.prospectiveEmpData.title = null;
   }
-  //to validate the email
-  isValidEmail(email: string): boolean {
-    // Here you can implement your email validation logic
-    // For example, a simple check for presence of "@" and "."
-    return email.includes('@') && email.includes('.com');
-  }
 //function to patch the values in the form to the template
 pathValuesFuction(){
   const formValues = this.employeeForm.value;
@@ -494,6 +485,7 @@ console.log(formValues);
 }
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
+    this.loadingCode= true;
     console.log(Empidvalue);
     if ( Empidvalue.value) {
       console.log(Empidvalue);
@@ -506,8 +498,6 @@ console.log(formValues);
           next: (data: any) => {
             console.log(data.checkofferletter);
             if (data.isEmployeevalid === true) {
-              // const userConfirmed = window.confirm("Data already exists. Do you want to regenerate?");
-              
               if (Empidvalue) {
                 this.prospectiveEmpData = data.checkofferletter;
                 this.employeeForm?.patchValue({
@@ -532,7 +522,10 @@ console.log(formValues);
                   offerExpiryDate: this.formatDate(this.prospectiveEmpData?.offerExpiryDate),
                   note:this.prospectiveEmpData?.note,
                   authorityid: this.prospectiveEmpData?.signatureAuthority,
+                  phoneNumber:this.prospectiveEmpData?.phoneNumber
                 })
+                this.selectedCountryCode=this.prospectiveEmpData?.mobilePhoneCountryCode;
+                this.loadingCode = false;
                 console.log(this.prospectiveEmpData.values);
                 this.getEmployeeAddress(data.checkofferletter.empId);
                 if (this.prospectiveEmpData.approver) {
@@ -573,7 +566,6 @@ console.log(formValues);
     console.log(f);
       this.updateOfferLetterFieldsDetails(f.value); 
   }
-
   //ctc Calculation in offer letter
   esicshouldbecometrue!: any;
   ctcCalculation() {
@@ -954,17 +946,6 @@ console.log(formValues);
       contactnumber: parseInt(data.phoneNumber),
       emergencyName: this.employeeaddress.emergencyName,
       emailId: this.employeeaddress.emailId,
-      emergencyNumber: this.employeeaddress.emergencynumber,
-      emergencyCode: this.employeeaddress.emergencycode,
-      relationShip: this.employeeaddress.relationShip,
-      emergencyName1: this.employeeaddress.emergencyName1,
-      emergencyEmail1: this.employeeaddress.emergencyEmail1,
-      emergencyNumber1: this.employeeaddress.emergencyNumber1,
-      emergencyCode1: this.employeeaddress.emergencycode1,
-      relationship1: this.employeeaddress.relationship1,
-      empType: data.empType,
-      durationOfTrainee: data.durationOfTrainee,
-      mobilePhoneCountryCode: data.mobilePhoneCountryCode,
       fusionEmpId: data.fusionPlusEmpId,
       insurance: this.employeeaddress.insurance,
       generateOffer: true,
@@ -1119,8 +1100,7 @@ console.log(formValues);
           } else {
             this.generatepostingtorepectivefields();
           }
-          this.conformationPopup.openSuccessModal(
-            'Offer Letter Generated Successfully'	);
+
         },
       });
 
@@ -1222,6 +1202,7 @@ console.log(formValues);
       });
   }
   emailSendingforApprover(){
+    this.loading=true;
     if (this.prospectiveEmpData.isEmployeevalid === true) {
       this.offerletterUpload(this.generatingEmployeeId, this.generatedfile);
     } else {
@@ -1233,24 +1214,15 @@ console.log(formValues);
     this.loading = true;
     let loggedInUser = this.authService.getToken();
     let emaildetails = {
-      personName: `${this.prospectiveEmpData.firstName} ${this.prospectiveEmpData.middleName} ${this.prospectiveEmpData.lastName}`,
+      personName: `${this.prospectiveEmpData.firstName ??''} ${this.prospectiveEmpData.middleName ??''} ${this.prospectiveEmpData.lastName??''}`,
       personEmail: this.prospectiveEmpData.personalEmail,
       personRole: this.jobRoleDetails,
       employeeId: loggedInUser.employeeId,
       documentUrl: this.documentUrl,
-      workLocation:
-        this.prospectiveEmpData.jobLocationName +
-        ', ' +
-        this.prospectiveEmpData.jobSubLocationName,
-      senderName: `${loggedInUser.firstName}  ${loggedInUser.middleName}  ${loggedInUser.lastName}`,
-
+      workLocation: this.prospectiveEmpData.jobLocationName +', ' +this.prospectiveEmpData.jobSubLocationName,
+      senderName: `${loggedInUser.firstName ??''}  ${loggedInUser.middleName??''}  ${loggedInUser.lastName??''}`,
       senderEmail: loggedInUser.workEmail,
-      approvedBy: null,
-      approvedByName: null,
-      firstName: null,
-      middleName: null,
-      lastName: null,
-      comments: null,
+
     };
     console.log(emaildetails);
 
@@ -1283,11 +1255,7 @@ console.log(formValues);
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${
-        loggedInUser?.middleName ?? ''
-      } ${
-        loggedInUser.lastName
-      }  requested you for the approval of the offer letter of employee
+      notificationType: `${loggedInUser?.firstName??''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName??''}  requested you for the approval of the offer letter of employee
          ${this.prospectiveEmpData?.firstName} ${
         this.prospectiveEmpData?.middleName ?? ''
       } ${this.prospectiveEmpData?.lastName} Offer Letter`,
@@ -1298,7 +1266,6 @@ console.log(formValues);
       .subscribe({
         next: (data: any) => {
           console.log(data);
-
           this.router.navigate(['/admin']);
         },
         error: (err: any) => {

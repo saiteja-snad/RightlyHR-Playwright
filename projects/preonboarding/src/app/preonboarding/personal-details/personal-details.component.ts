@@ -11,6 +11,7 @@ import { BnNgIdleService } from 'bn-ng-idle';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { IphoneNumberData } from '../../models/mobilenumber.model';
+import { PopupService } from '../../common-services/popup.service';
 @Component({
   selector: 'app-personal-details',
   imports: [CommonModule, Select, ReactiveFormsModule, NgxCountriesDropdownModule],
@@ -59,7 +60,7 @@ export class PersonalDetailsComponent implements OnInit {
     { name: 'O-', value: 'O-' }
   ];
 
-  constructor(private router: Router, private modalService: NgbModal, private readonly fb: FormBuilder,
+  constructor(private router: Router, private modalService: NgbModal,private openPopup: PopupService, private readonly fb: FormBuilder,
     private http: HttpService, private bnIdle: BnNgIdleService) {
       effect(() => {
        this.selectedCountryCode.set(this.selectedDialCode);
@@ -249,7 +250,7 @@ export class PersonalDetailsComponent implements OnInit {
         error: (errorReason: any) => {
           console.error(errorReason);
           if (errorReason.status === 400) {
-            alert(`${errorReason.error?.message || 'Bad request'}`);
+            this.openPopup.openError(`${errorReason.error?.message || 'Bad request'}`);
           }
         }
       });

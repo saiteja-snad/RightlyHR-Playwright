@@ -27,6 +27,9 @@ export class AddEducationDetailsComponent {
   showErrorforsize: boolean = false;
   subscription!: Subscription;
   degreeDetails = [] as any;
+  showError: boolean = false;
+  showErrorr: boolean = false;
+  
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService, private getData:DataService) { }
 

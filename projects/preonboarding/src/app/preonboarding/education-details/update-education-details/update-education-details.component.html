@@ -58,6 +58,9 @@
                     <div class="file-name my-1">
                         <span>File Name: {{getFileName(this.educationData.attachment)}}</span>
                     </div>
+                    <div class="error-msg" *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">Please choose a file</div>
+                    <div class="error-msg" *ngIf="showErrorforpdf">Only PDF and image files are allowed.</div>
+                    <div class="error-msg" *ngIf="showErrorforsize">The file size should be less than 25MB.</div>
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4">

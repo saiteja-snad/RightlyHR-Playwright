@@ -214,42 +214,35 @@ export class AddProspectiveInternComponent {
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
         console.log(res);
-          this.result = res.employeeData;
-          console.log(this.result);
-          if (res.statusCode == 201) {
-            const jobdata = {
-              employeeId: this.result.employeeId,
-              gradeId: this.gradeIdValue.gradeId,
-              locationid: this.postProspectiveEmpDetails.locationid,
-              sublocationid: parseInt(this.employeeForm.get('subLocation')?.value),
-              jobRole: this.gradeIdValue.designationName,
-            };
-            this.subscription = this.http
-              .postdata('JobDetails', jobdata)
-              .subscribe({
-                next: (data: any) => {
-                  console.log(data);
-                  this.conformationPopup.openSuccessModal('Trainee Prospective employee created successfully');
-                  this.empdata();
-                  this.modalService.dismissAll();
-                  this.select(this.result);
-                },
-                error: (Reason) => console.log(Reason),
-              });
-          } 
-          else if (res.statusCode == 409) {
-            this.conformationPopup.openErrorModal(res.message);
-          
-          }
-
+        this.result = res.employeeData;
+        console.log(this.result);
+        this.conformationPopup.openSuccessModal('Trainee Prospective employee created successfully');
         
+        const jobdata = {
+          employeeId: this.result.employeeId,
+          gradeId: this.gradeIdValue.gradeId,
+          locationid: this.postProspectiveEmpDetails.locationid,
+          sublocationid: parseInt(this.employeeForm.get('subLocation')?.value),
+          jobRole: this.gradeIdValue.designationName,
+        };
+        this.subscription = this.http
+          .postdata('JobDetails', jobdata)
+          .subscribe({
+            next: (data: any) => {
+              console.log(data);
+              this.conformationPopup.openSuccessModal('Trainee Prospective employee created successfully');
+              this.modalService.dismissAll();
+              this.select(this.result);
+            },
+            error: (Reason) => console.log(Reason),
+          });
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal(err.message);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
-        // f.reset();
+        setTimeout(() => {
+          this.modalService.dismissAll();
+        }, 3000);
+
       },
     });
   }

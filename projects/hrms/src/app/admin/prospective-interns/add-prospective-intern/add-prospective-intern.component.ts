@@ -37,6 +37,7 @@ export class AddProspectiveInternComponent {
   emailErrorweb = false;
   Prospective = [] as any;
   initialLocationId: any;
+  isLoading: boolean = false;
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   @ViewChild('success') success: any;
@@ -199,6 +200,7 @@ export class AddProspectiveInternComponent {
   }
 
   postTraineeData() {
+    this.isLoading = true;
     let loggedInUser = this.authService.getToken();
     let postdata = {
       firstName: this.employeeForm.get('firstName')?.value,
@@ -217,7 +219,7 @@ export class AddProspectiveInternComponent {
         this.result = res.employeeData;
         console.log(this.result);
         this.conformationPopup.openSuccessModal('Trainee Prospective employee created successfully');
-        
+        this.isLoading = false;
         const jobdata = {
           employeeId: this.result.employeeId,
           gradeId: this.gradeIdValue.gradeId,

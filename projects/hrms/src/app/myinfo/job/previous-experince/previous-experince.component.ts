@@ -1,16 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
 import { IJobtype } from '../../../Interfaces/job-model';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-previous-experince',
@@ -18,7 +17,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
-export class PreviousExperinceComponent {
+export class PreviousExperinceComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   selectedexpId: any
   JobtypeDetails: IJobtype[] = []
@@ -36,15 +35,16 @@ export class PreviousExperinceComponent {
   showErrorr = false;
   empinfo: any
   previousexperincedocument: any
+  displaypreviousexperincedocument:any
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
 
 
-  constructor(private modalService: NgbModal, private http: HttpService,public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
-    this.getJobtype();
+    this.getJobtypes()
     this.getexperiencedetailsbyemployeid()
     this.initializeupdateForm()
   }
@@ -125,6 +125,7 @@ export class PreviousExperinceComponent {
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    console.log(content)
   }
 
   currentDateValidation(): void {
@@ -219,7 +220,6 @@ export class PreviousExperinceComponent {
         this.conformationPopup.openSuccessModal('Experience details added successfully');
         console.log('Experience data saved successfully:', payload);
         this.getexperiencedetailsbyemployeid()
-
       },
       error: (err: any) => {
         console.error('Error saving experience data:', err);
@@ -244,15 +244,23 @@ export class PreviousExperinceComponent {
       attachment: attachmentPath || '',
     };
   }
-  //function to get jobtype dropdown
-  getJobtype() {
-    this.subscription = this.http.getData("Jobtype").subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.JobtypeDetails = data as IJobtype[]
-        console.log(this.JobtypeDetails)
+
+  getJobtypes() {
+    this.subscription= this.http.getData("Jobtype").subscribe({
+      next:(data: any) => {
+        this.JobtypeDetails = data as IJobtype[];
       }
     })
+    
+  }
+
+
+  getJobtype(): Observable<IJobtype[]> {
+    return this.http.getData("Jobtype").pipe(
+      tap((data: any) => {
+        this.JobtypeDetails = data as IJobtype[];
+      })
+    );
   }
 
   //function to get all experiences 
@@ -333,51 +341,61 @@ export class PreviousExperinceComponent {
     }
   }
 
+
+
   openModalupdate(content: any, experienceDetail: any): void {
-    this.selectedid = experienceDetail.id
-    this.getJobtype()
-    console.log('Experience Detail:', experienceDetail);
-    const employetype = this.JobtypeDetails.find(
-      (jobType) => jobType.jobType1 === experienceDetail.employmentType
-    )
+    this.selectedid = experienceDetail.id;
+  
+    this.getJobtype().subscribe(() => {
+      console.log('Experience Detail:', experienceDetail);
+  
+      const startDate = experienceDetail.fromDate
+        ? new Date(experienceDetail.fromDate).toISOString().split('T')[0]
+        : null;
+  
+      const endDate = experienceDetail.toDate
+        ? new Date(experienceDetail.toDate).toISOString().split('T')[0]
+        : null;
+  
+      const selectedJobType = this.JobtypeDetails.find(
+        (jobType) => jobType.jobType1 === experienceDetail.employmentType
+      );
+  
+      console.log('Matched Job Type:', selectedJobType);  // 🔍 Check what’s matched
+  
+      this.employeeExperienceupdateForm.patchValue({
+        jobTitleupdate: experienceDetail.jobTitle,
+        companyNameupdate: experienceDetail.companyName,
+        employmentTypeudate: selectedJobType,
+        fromDateupdate: startDate,
+        toDateupdate: endDate,
+        previousContactNameupdate: experienceDetail.previousContactName,
+        previousContactNumberupdate: experienceDetail.previousContactNumber,
+        previousContactEmailupdate: experienceDetail.previousContactEmail,
+        isPresentupdate: experienceDetail.isPresent,
+      });
+  
+      if (experienceDetail.isPresent) {
+        this.employeeExperienceupdateForm.get('toDateupdate')?.clearValidators();
+        this.employeeExperienceupdateForm.get('toDateupdate')?.disable();
+      } else {
+        this.employeeExperienceupdateForm.get('toDateupdate')?.enable();
+        this.employeeExperienceupdateForm.get('toDateupdate')?.setValidators([Validators.required]);
+      }
+  
+      this.employeeExperienceupdateForm.get('toDateupdate')?.updateValueAndValidity();
+      this.previousexperincedocument = experienceDetail.attachment;
 
-    const startDate = experienceDetail.fromDate
-      ? new Date(experienceDetail.fromDate).toISOString().split('T')[0]
-      : null;
-
-    const EndDate = experienceDetail.toDate
-      ? new Date(experienceDetail.toDate).toISOString().split('T')[0]
-      : null;
-    // Patch the values into the form
-    this.employeeExperienceupdateForm.patchValue({
-      jobTitleupdate: experienceDetail.jobTitle,
-      companyNameupdate: experienceDetail.companyName,
-      employmentTypeupdate: employetype,
-      fromDateupdate: startDate,
-      toDateupdate: EndDate,
-      previousContactNameupdate: experienceDetail.previousContactName,
-      previousContactNumberupdate: experienceDetail.previousContactNumber,
-      previousContactEmailupdate: experienceDetail.previousContactEmail,
-      isPresentupdate: experienceDetail.isPresent,
-
+      
+    this.displaypreviousexperincedocument=experienceDetail.attachment
+    ? experienceDetail.attachment.split('/').pop()
+    : null;
+   console.log(this.displaypreviousexperincedocument)
+  
+      this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     });
-
-    // Handle "isPresentupdate" checkbox logic
-    if (experienceDetail.isPresent) {
-      this.employeeExperienceupdateForm.get('toDateupdate')?.clearValidators();
-      this.employeeExperienceupdateForm.get('toDateupdate')?.disable();
-    } else {
-      this.employeeExperienceupdateForm.get('toDateupdate')?.enable();
-      this.employeeExperienceupdateForm.get('toDateupdate')?.setValidators([Validators.required]);
-    }
-    this.employeeExperienceupdateForm.get('toDateupdate')?.updateValueAndValidity();
-
-    // Set the attachment for upload
-    this.previousexperincedocument = experienceDetail.attachment;
-
-    // Open the modal
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+  
 
   saveUpdatedExperienceDetails(): void {
 
@@ -397,8 +415,8 @@ export class PreviousExperinceComponent {
         previousContactNumber: formData.previousContactNumberupdate,
         previousContactEmail: formData.previousContactEmailupdate,
         isPresent: formData.isPresentupdate,
-        createdAt: currentDate, 
-        updatedAt: currentDate, 
+        createdAt: currentDate,
+        updatedAt: currentDate,
         isDeleted: false,
       };
 
@@ -475,4 +493,17 @@ export class PreviousExperinceComponent {
         }
       });
   }
+
+  resetFrom() {
+    this.employeeExperienceForm.reset()
+    this.isInvalidToDate = false;
+    this.isFutureDate = false
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 }

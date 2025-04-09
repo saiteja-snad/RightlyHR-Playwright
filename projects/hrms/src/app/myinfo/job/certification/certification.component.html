@@ -161,6 +161,10 @@
                             *ngIf="certificationForm.get('attachment')?.invalid && certificationForm.get('attachment')?.touched">
                             Please choose a file
                         </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+                                The file size should be less than 25MB.</p>
+                        </div>
                         <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
                         <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
                     </div>
@@ -265,6 +269,13 @@
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('attachment')?.invalid && updateCertificationForm.get('attachment')?.touched">
                             Please choose a file
+                        </div>
+                        <div *ngIf="displaycertification" class="mb-2 mt-2">
+                            <b>{{ displaycertification?.name || displaycertification }}</b>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+                                The file size should be less than 25MB.</p>
                         </div>
                         <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
                         <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>

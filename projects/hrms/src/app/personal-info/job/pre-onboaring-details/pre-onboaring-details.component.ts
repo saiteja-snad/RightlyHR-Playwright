@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -14,7 +14,7 @@ import moment from 'moment';
   templateUrl: './pre-onboaring-details.component.html',
   styleUrl: './pre-onboaring-details.component.scss'
 })
-export class PreOnboaringDetailsComponent {
+export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   empinfo: any;
   preOnboardingForm!: FormGroup;
@@ -166,4 +166,11 @@ export class PreOnboaringDetailsComponent {
       }
     });
   }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  
 }

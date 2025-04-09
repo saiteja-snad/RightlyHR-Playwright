@@ -27,8 +27,8 @@ export class EmergencyContactDetailsComponent {
   contactForm!: FormGroup;
   // mobile number1
   selectedDialCode: any;
-  selectedCountryCode=signal<string>('IN');
-  selectedCountryCode1= signal<string>('IN');
+  selectedCountryCode=signal<string>('');
+  selectedCountryCode1= signal<string>('');
   // mobile number2
   selectedDialCode1: any;
  
@@ -64,19 +64,23 @@ export class EmergencyContactDetailsComponent {
   navigatePrevious(){
     this.router.navigate(['/education-details']);
   }
+  loading: boolean = true;
   getempdate() {
     let employeeId = parseInt(this.prosempdata.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empdata = data as Ipersonal;
-        this.selectedCountryCode?.set(this.empdata.emergencycode||'IN');
-        this.selectedCountryCode1?.set(this.empdata.emergencycode1||'IN');
-        console.log(this.selectedCountryCode,this.selectedCountryCode1);
+        this.selectedCountryCode?.set(this.empdata.emergencycode);
+        this.selectedCountryCode1?.set(this.empdata.emergencycode1);
         this.patchForm();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
       }
     })
   }
-
   getRelation() {
     this.subscription = this.http.getData("PreonboardingRelationShip").subscribe({
       next: (data: any) => {
@@ -204,13 +208,7 @@ export class EmergencyContactDetailsComponent {
     this.contactForm.get('contact2.mobile')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.contactForm.get('contact2.mobile')?.updateValueAndValidity();
   }
-  get selectedCountryCodeValue(): any {
-    return this.selectedCountryCode();
-  }
-  
-  get selectedCountryCode1Value(): any {
-    return this.selectedCountryCode1();
-  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

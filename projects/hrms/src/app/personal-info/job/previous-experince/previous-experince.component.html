@@ -3,7 +3,7 @@
         <div> <span class="education-sub-header">Previous Experience Details
             </span></div>
         <div class="plus-button">
-            <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
+            <span type="button" class="anchor"><i class="bi bi-plus plus-icon px-2"></i><span type="button"
                     (click)="openModal(addexperincemodal)" class="plus-text">Add
                     New</span></span>
         </div>
@@ -85,7 +85,8 @@
                 </p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();resetFrom()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -140,7 +141,8 @@
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"
-                                formControlName="fromDate" [min]="'1940-01-01'"  [max]="currentDate | date: 'yyyy-MM-dd'"  (change)="currentDateValidation()" />
+                                formControlName="fromDate" [min]="'1940-01-01'" [max]="currentDate | date: 'yyyy-MM-dd'"
+                                (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
                                 class="error-msg">
                                 From Date is required
@@ -242,7 +244,8 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="modal.dismiss();resetFrom()">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="employeeExperienceForm.invalid">Add</button>
                 </div>
@@ -259,7 +262,8 @@
                 <p class="popup-heading mb-0">Update Previous Experience Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();resetFrom()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -425,7 +429,8 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="modal.dismiss();resetFrom()">Close</button>
                     <button type="submit" class="custom-btn btn-primary">Update</button>
                 </div>
             </form>

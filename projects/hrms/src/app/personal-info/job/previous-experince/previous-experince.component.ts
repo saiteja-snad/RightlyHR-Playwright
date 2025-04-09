@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -17,7 +17,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
-export class PreviousExperinceComponent {
+export class PreviousExperinceComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   selectedexpId: any
   JobtypeDetails: IJobtype[] = []
@@ -38,7 +38,7 @@ export class PreviousExperinceComponent {
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
 
 
-  constructor(private modalService: NgbModal, private http: HttpService,public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -124,6 +124,7 @@ export class PreviousExperinceComponent {
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    console.log(content)
   }
 
   currentDateValidation(): void {
@@ -217,7 +218,7 @@ export class PreviousExperinceComponent {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Experience details added successfully');
         console.log('Experience data saved successfully:', payload);
-
+        this.getexperiencedetailsbyemployeid()
       },
       error: (err: any) => {
         console.error('Error saving experience data:', err);
@@ -331,6 +332,8 @@ export class PreviousExperinceComponent {
     }
   }
 
+
+
   openModalupdate(content: any, experienceDetail: any): void {
     this.selectedid = experienceDetail.id
     this.getJobtype()
@@ -395,8 +398,8 @@ export class PreviousExperinceComponent {
         previousContactNumber: formData.previousContactNumberupdate,
         previousContactEmail: formData.previousContactEmailupdate,
         isPresent: formData.isPresentupdate,
-        createdAt: currentDate, 
-        updatedAt: currentDate, 
+        createdAt: currentDate,
+        updatedAt: currentDate,
         isDeleted: false,
       };
 
@@ -473,4 +476,17 @@ export class PreviousExperinceComponent {
         }
       });
   }
+
+  resetFrom() {
+    this.employeeExperienceForm.reset()
+    this.isInvalidToDate = false;
+    this.isFutureDate = false
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 }

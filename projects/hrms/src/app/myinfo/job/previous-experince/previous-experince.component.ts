@@ -216,6 +216,7 @@ export class PreviousExperinceComponent {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Experience details added successfully');
         console.log('Experience data saved successfully:', payload);
+        this.getexperiencedetailsbyemployeid()
 
       },
       error: (err: any) => {

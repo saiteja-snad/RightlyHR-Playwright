@@ -6,13 +6,14 @@ import { AuthService } from '../../http-services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common'
-import { DateformatPipe } from "../../../../../hrms/src/app/pipes/dateformat.pipe";
+
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { environment } from '../../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DateFormatPipe } from "../../pipes/date-format.pipe";
 @Component({
   selector: 'app-review',
-  imports: [CommonModule, FormsModule, DateformatPipe,RouterModule,NgxDocViewerModule,],
+  imports: [CommonModule, FormsModule, RouterModule, NgxDocViewerModule, DateFormatPipe],
   templateUrl: './review.component.html',
   styleUrl: './review.component.scss'
 })

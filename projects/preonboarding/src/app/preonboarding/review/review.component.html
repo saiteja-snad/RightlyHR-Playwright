@@ -55,7 +55,7 @@
                                             </tr>
                                             <tr>
                                                 <th class="thh bg-white" scope="col">Date Of Birth</th>
-                                                <td class="tdd bg-white">{{empDetails?.dob | date:'dd-MM-yyyy' }}</td>
+                                                <td class="tdd bg-white">{{empDetails?.dob | dateFormat }}</td>
                                             </tr>
                                             <tr>
                                                 <th class="thh tabbg" scope="col">Blood Group</th>
@@ -107,8 +107,8 @@
                                             <td>{{ed.degree}}</td>
                                             <td>{{ed.university}}</td>
                                             <td>{{ed.specialization }}</td>
-                                            <td>{{ed.degreeStartDate | date:'dd-MM-yyyy' }}</td>
-                                            <td>{{ed.degreeEndDate | date:'dd-MM-yyyy'}}</td>
+                                            <td>{{ed.degreeStartDate | dateFormat }}</td>
+                                            <td>{{ed.degreeEndDate | dateFormat}}</td>
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
                                                 <a class="text-view"
@@ -149,14 +149,14 @@
                                             <th scope="col">ATTACHMENT</th>
                                         </tr>
                                     </thead>
-                                    <tbody class=" bg-white">
+                                    <tbody class="bg-white">
                                         <tr *ngFor="let exp of experiance">
                                             <td>{{exp.companyName}}</td>
                                             <td> {{exp.employmentType}}</td>
                                             <td>{{exp.jobTitle }}</td>
-                                            <td>{{exp.fromDate | dateformat}}</td>
-                                            <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate |
-                                                    dateformat}}</span>
+                                            <td>{{exp.fromDate | dateFormat}}</td>
+                                            <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate 
+                                                    | dateFormat}}</span>
                                                 <ng-template #todate>
                                                     <div class="centerhypen">-</div>
                                                 </ng-template>
@@ -219,8 +219,7 @@
 
 
 
-<!-- Modal -->
-
+<!--Submit Modal -->
 <ng-template #submitornot let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
@@ -238,7 +237,7 @@
 
 
 
-
+<!-- view modal -->
 
 <ng-template #myModall let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>

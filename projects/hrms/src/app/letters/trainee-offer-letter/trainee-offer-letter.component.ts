@@ -76,12 +76,28 @@ export class TraineeOfferLetterComponent {
   endDate: Date | undefined;
   employeedetails = [] as any;
   selectedReportingManager: any;
+  searchTerm: string = '';
+  filteredEmployees: any[] = [];
+  showDropdown = false;
+  selectedEmployee: string = '';
+  Drop: IEmployee[] = [];
+  employeeSelected: boolean = false;
+  selectedEmployees: number[] = [];
   serveDetails = [] as IServe[];
   servingPeriodDuration: number | undefined;
   getAllEmployeeInfo = [] as any;
   employeeForm!: FormGroup;
-  addresFlag= false;
+  addresFlag = false;
   address = {} as IAddress;
+  countryvalues = {} as any;
+  selectedCountryConfig = {
+    hideCode: true,
+    hideName: true
+  };
+  countryListConfig = {
+    hideCode: true
+  };
+  phoneNumber: string = '';
   employees = [{ name: 'John Doe', id: 1 }, { name: 'Jane Smith', id: 2 }];
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
@@ -100,32 +116,23 @@ export class TraineeOfferLetterComponent {
     { name: '4 ', value: '4' },
     { name: '5 ', value: '5' },
   ];
-  countryvalues = {} as any;
-  selectedCountryConfig = {
-    hideCode: true,
-    hideName: true
-  };
-  countryListConfig = {
-    hideCode: true
-  };
-  phoneNumber: string = '';
+  
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   constructor(
     private http: HttpService,
-    config: NgbModalConfig, private modalService: NgbModal, private fb: FormBuilder,
+    config: NgbModalConfig, private modalService: NgbModal,
+    private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    // private _userAcessService: UserAccessService,
-    private elementRef: ElementRef, private conformationPopup: OpenModalService,
+    private conformationPopup: OpenModalService,
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
     this.initializeForm();
-    // (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
   }
+
   ngOnInit(): void {
-    // this._userAcessService.checkRouteAccess('Dashboard.view');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
     this.traineeEmpData.mobilePhoneCountryCode = 'India (+91)';
     console.log(this.traineeEmpData.mobilePhoneCountryCode);
@@ -134,7 +141,6 @@ export class TraineeOfferLetterComponent {
     this.initializeForm();
     this.getservingperiod();
     this.getJobtype();
-    this.getOfferTemplate();
     this.getTitle();
     this.getgender();
     this.getCountry();
@@ -147,14 +153,6 @@ export class TraineeOfferLetterComponent {
 
   }
 
-  searchTerm: string = '';
-  filteredEmployees: any[] = [];
-  showDropdown = false;
-  selectedEmployee: string = '';
-  Drop: IEmployee[] = [];
-  employeeSelected: boolean = false;
-  selectedEmployees: number[] = [];
-
   initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmpId: [null, Validators.required],
@@ -164,24 +162,20 @@ export class TraineeOfferLetterComponent {
       middleName: [{ value: null, disabled: true }],
       lastName: [{ value: null, disabled: true }],
       gender: [{ value: null, disabled: true }],
-      salutation: [{ value: null, disabled: true }],
       SelectDropDown: [null, Validators.required],
       addressLine1: [{ value: null, disabled: true }],
       addressLine2: [{ value: null, disabled: true }],
       city: [{ value: null, disabled: true }],
       state: [{ value: null, disabled: true }],
       country: [{ value: null, disabled: true }],
-      pinCode: [{ value: null, disabled: true }], 
-      phoneNumber: [{ value: null, disabled: true }], 
+      pinCode: [{ value: null, disabled: true }],
+      phoneNumber: [{ value: null, disabled: true }],
       jobRoleDetails: [{ value: null, disabled: true }],
       amount: ['', Validators.required],
-      isVariablePay: [null, Validators.required],
-      variablePayAmount: ['', Validators.required],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerSentDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
-      Copys: [null, Validators.required],
       offerExpiryDate: ['', Validators.required],
       note: [''],
       authorityid: [null, Validators.required],
@@ -197,18 +191,6 @@ export class TraineeOfferLetterComponent {
     this.modalService.open(content, { centered: true })
   }
 
-  filterEmployees() {
-    console.log(this.employeedetails)
-    if (this.employeedetails) {
-
-      this.filteredEmployees = this.Drop.filter(emp =>
-        (emp.fusionEmpId + ' ' + emp.firstName + ' ' + emp.middleName + ' ' + emp.lastName).toLowerCase().includes(this.employeedetails.toLowerCase())
-      );
-      console.log('Filtered Employees:', this.filteredEmployees);
-    } else {
-      this.filteredEmployees = this.Drop;
-    }
-  }
   handlePhoneChange(event: any) {
     this.employeeForm.patchValue({
       phoneNumber: event
@@ -220,43 +202,6 @@ export class TraineeOfferLetterComponent {
       this.traineeofferletterUpload(this.generatingEmployeeId, this.generatedfile);
     } else {
       this.traineeofferletterUpload(this.generatingEmployeeId, this.generatedfile);
-    }
-  }
-
-  toggleDropdown1() {
-    this.showDropdown = !this.showDropdown;
-    if (this.showDropdown) {
-      this.filterEmployees();
-      console.log('Dropdown is now open');
-    }
-  }
-
-  onSelectEmployee(event: any, employee: IEmployee) {
-    if (event.target.checked) {
-      this.selectedEmployees.push(employee.employeeId);
-    } else {
-      this.selectedEmployees = this.selectedEmployees.filter(id => id !== employee.employeeId);
-    }
-    this.updateSelectedEmployeeDisplay();
-    console.log('Selected Employees:', this.selectedEmployees);
-  }
-
-  updateSelectedEmployeeDisplay() {
-    if (this.selectedEmployees.length > 0) {
-      let firstSelectedEmployee = this.filteredEmployees.find(emp => emp.employeeId === this.selectedEmployees[0]);
-      this.selectedEmployee = firstSelectedEmployee.firstName;
-      // Add middle name if it exists
-      if (firstSelectedEmployee.middleName) {
-        this.selectedEmployee += ' ' + firstSelectedEmployee.middleName;
-      }
-
-      // Add last name
-      this.selectedEmployee += ' ' + firstSelectedEmployee.lastName;
-      if (this.selectedEmployees.length > 1) {
-        this.selectedEmployee += ' +' + (this.selectedEmployees.length - 1).toString();
-      }
-    } else {
-      this.selectedEmployee = '';
     }
   }
 
@@ -275,7 +220,7 @@ export class TraineeOfferLetterComponent {
         this.traineeEmpData.durationOfTrainee = days;
       }
       const endDate = new Date(startDate.setMonth(startDate.getMonth() + months));
-      this.traineeEmpData.endDate = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      this.traineeEmpData.endDate = moment(endDate).format('YYYY-MM-DD') // Format as YYYY-MM-DD
     }
     console.log(this.traineeEmpData.endDate);
 
@@ -293,22 +238,6 @@ export class TraineeOfferLetterComponent {
     return end.diff(start, 'months', true); // 'true' gives exact months with decimals
   }
 
-  //  //to get offer letter template
-  async getOfferTemplate() {
-    this.offerLetterTemplate = await this.httpclient
-      .get('assets/offer.docx', {
-        responseType: 'arraybuffer',
-      })
-      .toPromise();
-  }
-
-  getEmployeeName(employeeId: number): string {
-    const employee = this.employeedetails.find((emp: any) => emp.employeeId === employeeId);
-    if (employee) {
-      return `${employee?.firstName ?? ''} ${employee?.middleName ?? ''} ${employee?.lastName ?? ''}`;
-    }
-    return '';
-  }
 
   getEmployeeIdforReporting() {
     this.subscription = this.http
@@ -369,17 +298,15 @@ export class TraineeOfferLetterComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.employeeiddetails = data .map((employee: any) => {
+          this.employeeiddetails = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${
-                employee.employeeId ? employee.employeeId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
 
             };
-          }); 
+          });
         },
         error: (reason: any) => {
           console.log(reason);
@@ -466,18 +393,17 @@ export class TraineeOfferLetterComponent {
   onTraineeOfferLetterFormSubmitForGenerateDoc(f: FormGroup) {
     this.loading = true;
     console.log(f);
-    this.updateTraineeOfferLetterFieldsDetails(f.value); 
-    //const data =  this.traineeEmpData;
-    // if (this.traineeEmpData.isEmployeevalid === true) {
-    //   this.updateTraineeOfferLetterFieldsDetails(f.value); //existing emp  offer lettr
-    // } else {
-    //   this.postTraineeOfferLetterFieldsDetails(f.value); //new offer lettr
-    // }
+    if (this.traineeEmpData.isEmployeevalid === true) {
+      this.updateTraineeOfferLetterFieldsDetails(f.value); //existing emp  offer lettr
+    } else {
+      this.postTraineeOfferLetterFieldsDetails(f); //new offer lettr
+    }
+
   }
 
   onclickDesignation(selectedAuthority: any) {
     console.log("Selected Authority ID:", selectedAuthority);
-  
+
     if (!selectedAuthority) {
       this.traineeEmpData.authorityName = '';
       this.authorityDesignation = '';
@@ -486,12 +412,12 @@ export class TraineeOfferLetterComponent {
     let signatureAuthorityDetails = this.authorityDetails.find(
       (c: any) => c.employeeId == selectedAuthority.employeeId
     );
-  
+
     console.log("Selected Authority Details:", signatureAuthorityDetails);
-  
+
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
-  
+
       // 🔹 Construct full name correctly
       this.traineeEmpData.authorityName = signatureAuthorityDetails.middleName
         ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
@@ -501,11 +427,11 @@ export class TraineeOfferLetterComponent {
       this.authorityDesignation = '';
     }
   }
-  onclickDesignations(data:any) {
+  onclickDesignations(data: any) {
     this.traineeEmpData.authorityName = data.value.firstName + ' ' + data.value.middleName + ' ' + data.value.lastName;
     this.authorityDesignation = data.value.designation;
-  
-}
+
+  }
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
     if (
@@ -575,37 +501,64 @@ export class TraineeOfferLetterComponent {
       this.buttonValue = 'Generate Offer Letter';
     }
   }
-  formatDate(date:any) {
-    return date?.split('T')[0]; 
-   }
-//function to patch the values in the form to the template
-pathValuesFuction(){
-  const formValues = this.employeeForm.value;
-console.log(formValues);
-this.traineeEmpData = {
-  personalEmail: formValues.personalEmail,
-  title: formValues.title,
-  firstName: formValues.firstName,
-  middleName: formValues.middleName,
-  lastName: formValues.lastName,
-  gender: formValues.gender,
-  jobRole: formValues.jobRoleDetails,
-  esic: formValues.esic,
-  pf: formValues.pf,
-  amount: formValues.amount,
-  isVariablePay: formValues.isVariablePay,
-  variablePayAmount: formValues.variablePayAmount,
-  locationId: formValues.locationId,
-  sublocationId: formValues.JobSubLocationName,
-  offerIssuedDate: formValues.offerIssuedDate,
-  dateOfJoining: formValues.dateOfJoining,
-  copys: formValues.Copys,
-  trainingEndDate:this.traineeEmpData.endDate,
-  note: formValues.note,
-  authorityid: formValues.authorityid,
-};
-}
-  //employeeid validation to check we have the mail already exist or not
+  formatDate(date: any) {
+    return date?.split('T')[0];
+  }
+  //function to patch the values in the form to the template
+  // pathValuesFuction() {
+  //   const formValues = this.employeeForm.value;
+  //   console.log(formValues);
+  //   this.traineeEmpData = {
+  //     personalEmail: formValues.personalEmail,
+  //     title: formValues.title,
+  //     firstName: formValues.firstName,
+  //     middleName: formValues.middleName,
+  //     lastName: formValues.lastName,
+  //     gender: formValues.gender,
+  //     jobRole: formValues.jobRoleDetails,
+  //     esic: formValues.esic,
+  //     pf: formValues.pf,
+  //     amount: formValues.amount,
+  //     isVariablePay: formValues.isVariablePay,
+  //     variablePayAmount: formValues.variablePayAmount,
+  //     locationId: formValues.locationId,
+  //     sublocationId: formValues.JobSubLocationName,
+  //     offerIssuedDate: formValues.offerIssuedDate,
+  //     dateOfJoining: formValues.dateOfJoining,
+  //     copys: formValues.Copys,
+  //     trainingEndDate: this.traineeEmpData.endDate,
+  //     note: formValues.note,
+  //     authorityid: formValues.authorityid,
+  //   };
+  // }
+
+  patchForm(data:any){
+    this.employeeForm?.patchValue({
+       personalEmail:data.personalEmail,
+       title:this.titleDetails.find((x: any) => x.titlename === data.title),
+       firstName:data?.firstName,
+       middleName:data?.middleName,
+       lastName:data?.lastName,
+       gender:this.genderDetails.find((x:any) => x.genderName === data.gender),
+       SelectDropDown: null,
+       jobRoleDetails: this.JobroleDetails.find((x:any) => x.jobRole1 === data.jobRole),
+       esic: data?.esic,
+       pf: data?.pf,
+       amount:data?.amount,
+       isVariablePay: data?.isVariablePay,
+       variablePayAmount:data?.variablePayAmount,
+       locationId: this.LocationDropDownData.find((x:any) => x.jobLocationName === data?.workLocation),
+       JobSubLocationName: data?.sublocationId,
+       offerIssuedDate:this.formatDate(data?.offerIssuedDate),
+       dateOfJoining: this.formatDate(data?.dateOfJoining),
+       Copys: data?.copys,
+       trainingEndDate:this.formatDate(data.endDate),
+       note:data?.note,
+       authorityid: data?.authorityid,
+     })
+  }
+
+
   onClickValidation(Empidvalue: any) {
     if (Empidvalue) {
       this.fusionEmpId = Empidvalue.value;
@@ -623,30 +576,7 @@ this.traineeEmpData = {
               if (Empidvalue) {
                 this.disableFields = false; // User clicked "OK," enable fields
                 this.traineeEmpData = data.checkofferletter;
-                this.employeeForm?.patchValue({
-                  personalEmail:this.traineeEmpData.personalEmail,
-                  title:this.traineeEmpData?.title,
-                   firstName:this.traineeEmpData?.firstName,
-                   middleName:this.traineeEmpData?.middleName,
-                   lastName:this.traineeEmpData?.lastName,
-                   gender:this.traineeEmpData?.gender,
-                   SelectDropDown: null,
-                   jobRoleDetails: this.traineeEmpData?.jobRole,
-                   esic: this.traineeEmpData?.esic,
-                   pf: this.traineeEmpData?.pf,
-                   amount:this.traineeEmpData?.amount,
-                   isVariablePay: this.traineeEmpData?.isVariablePay,
-                   variablePayAmount:this.traineeEmpData?.variablePayAmount,
-                   locationId: this.traineeEmpData?.locationId,
-                   JobSubLocationName: this.traineeEmpData?.sublocationId,
-                   offerIssuedDate:this.formatDate(this.traineeEmpData?.offerIssuedDate),
-                   dateOfJoining: this.formatDate(this.traineeEmpData?.dateOfJoining),
-                   Copys: this.traineeEmpData?.copys,
-                  //  offerExpiryDate: this.formatDate(this.traineeEmpData?.offerExpiryDate),
-                   trainingEndDate:this.formatDate(this.traineeEmpData.endDate),
-                   note:this.traineeEmpData?.note,
-                   authorityid: this.traineeEmpData?.authorityid,
-                 })
+                this.patchForm(this.traineeEmpData);
                 this.getTraineeEmployeeAddress(data.checkofferletter.empId);
                 this.traineeEmpData.CreateOffer =
                   this.traineeEmpData.CreateOffer;
@@ -698,20 +628,17 @@ this.traineeEmpData = {
                   this.traineeEmpData.internshipperiod = months;
                   this.calculateEndDate(this.traineeEmpData.internshipperiod)
                 }
-                // if(this.traineeEmpData.mobilePhoneCountryCode){
-                //   this.countryvalues =this.countryCodes.find((c:any)=>c.countryCodeId==this.traineeEmpData.mobilePhoneCountryCode);
-                //   this.traineeEmpData.mobilePhoneCountryCodewithname=this.countryvalues.countryName
-                //  }
-                // this.buttonValue = 'Regenerate Offer Letter';
                 this.traineeEmpData.jobLocationName =
                   data.checkofferletter.workLocation;
                 this.traineeEmpData.jobSubLocationName =
                   data.checkofferletter.subLocation;
                 console.log(this.traineeEmpData.jobLocationName);
                 console.log(this.traineeEmpData.jobSubLocationName);
-                this.getSubLocationByid(this.traineeEmpData?.locationId);
-                this.ctcCalculation();
-                 this.OnClickLocation();
+                console.log(this.traineeEmpData.locationId);
+                
+                this.getSubLocationByid(this.traineeEmpData.locationId);
+                // this.ctcCalculation();
+                this.OnClickLocation(this.traineeEmpData.locationId);
                 this.disablebuttonforemployeeid = true
               }
             }
@@ -724,10 +651,10 @@ this.traineeEmpData = {
   }
 
   //function to get sublocation by id
-  getSubLocationByid(ValuesForSublocation: any) {
+  getSubLocationByid(id: any) {
     this.subscription = this.http
       .getData(
-        `JobLocation/sub-location-by-joblocation/${ValuesForSublocation.id} `
+        `JobLocation/sub-location-by-joblocation/${id} `
       )
       .subscribe({
         next: (data: any) => {
@@ -751,294 +678,17 @@ this.traineeEmpData = {
   }
 
   //function to get SubLocation
-  OnClickLocation() {
-    let locationName = this.traineeEmpData.jobLocationName;
-    console.log(locationName);
-    let jobSubLocationDetails = this.LocationDropDownData.find(
-      (c: any) => c.jobLocationName === locationName
-    );
-    console.log(this.LocationDropDownData);
-
-    console.log(jobSubLocationDetails);
-    this.getSubLocationByid(jobSubLocationDetails);
+  OnClickLocation(id: any) {
+    this.getSubLocationByid(id);
   }
 
   onclickCTC(Value: any) {
     console.log(Value);
     this.traineeEmpData.amount = Value;
-    this.ctcCalculation();
+    // this.ctcCalculation();
   }
 
-  //ctc Calculation in offer letter
-  ctcCalculation() {
-    console.log(this.traineeEmpData.amount);
-    this.traineeEmpData.pf=this.employeeForm.get('pf')?.value.value;
-    this.traineeEmpData.esic=this.employeeForm.get('esic')?.value.value;
-    //CTC calculation stated
-    let Employee = this.traineeEmpData;
-    Employee.grossby = 12;
-    Employee.grossSalary = Math.round(
-      this.traineeEmpData.amount / Employee.grossby
-    );
-    console.log(Employee.grossby);
-    console.log(Employee.grossSalary);
 
-    //Calculation condition for pf contribution of an employee]
-    console.log(this.traineeEmpData.pf)
-    if (this.traineeEmpData.pf == true || this.traineeEmpData.pf == false) {
-      switch (this.traineeEmpData.pf) {
-
-        case true:
-          if (this.traineeEmpData.esic == false) {
-            Employee.pfContribution = Math.round((Employee.grossSalary * (6.719 / 100)));
-
-            if (Employee.pfContribution >= 1800) {
-              Employee.pfContribution = 1800;
-            }
-            console.log(Employee.pfContribution);
-          }
-          else if (Employee.grossSalary >= 23195) {
-
-            Employee.pfContribution = Math.round((Employee.grossSalary * (6.717 / 100)));
-
-
-            if (Employee.pfContribution >= 1800) {
-              Employee.pfContribution = 1800;
-            }
-            console.log(Employee.pfContribution);
-
-          }
-          else if (Employee.grossSalary <= 23194) {
-
-            Employee.pfContribution = Math.round((Employee.grossSalary * (6.519 / 100)));
-            if (Employee.pfContribution >= 1800) {
-              Employee.pfContribution = 1800;
-            }
-            console.log(Employee.pfContribution);
-
-          }
-          else {
-            if (Employee.grossSalary <= 15000) {
-              Employee.pfContribution = Math.round((Employee.grossSalary * (6.519 / 100)));
-              console.log(Employee.pfContribution);
-              if (Employee.pfContribution >= 1800) {
-                Employee.pfContribution = 1800;
-              }
-              console.log(Employee.pfContribution);
-            }
-            else if (Employee.grossSalary <= 23194) {
-
-              Employee.pfContribution = Math.round((Employee.grossSalary * (6.519 / 100)));
-              if (Employee.pfContribution >= 1800) {
-                Employee.pfContribution = 1800;
-              }
-              console.log(Employee.pfContribution);
-
-            }
-            else if (Employee.grossSalary >= 23195) {
-
-              Employee.pfContribution = Math.round((Employee.grossSalary * (6.717 / 100)));
-
-
-              if (Employee.pfContribution >= 1800) {
-                Employee.pfContribution = 1800;
-              }
-              console.log(Employee.pfContribution);
-
-            }
-          }
-
-          break;
-        case false:
-          Employee.pfContribution = 0;
-          console.log(Employee.pfContribution);
-
-          break;
-        default:
-      }
-
-    }
-    else {
-      Employee.pfContribution = 0;
-    }
-    //==============================================================================================================================
-    //Calculation conditions for esic contribution of an employeer
-    if (this.traineeEmpData.esic.toString() == 'true') {
-      let condition1 = Employee.grossSalary >= 23195;
-      if (!condition1) {
-        Employee.esicContribution = Math.round(
-          Employee.grossSalary * (2.94 / 100)
-        );
-        console.log(Employee.esicContribution);
-        this.traineeEmpData.esic = true;
-      } else {
-        Employee.esicContribution = 0;
-        this.traineeEmpData.esic = false;
-        console.log(Employee.esicContribution);
-      }
-
-    }
-    else {
-      Employee.esicContribution = 0;
-      this.traineeEmpData.esic = false;
-      console.log(Employee.esicContribution);
-    }
-    //===================================================================================================================================
-    //Calculation conditions for pt contrubution of an employee
-    if (Employee.grossSalary < 15000) {
-      Employee.professionalTax = 0;
-      this.traineeEmpData.pt = false;
-      console.log(Employee.professionalTax);
-    } else if (Employee.grossSalary > 15000 && Employee.grossSalary < 21000) {
-      Employee.professionalTax = 150;
-      this.traineeEmpData.pt = true;
-      console.log(Employee.professionalTax);
-    } else if (Employee.grossSalary >= 21000) {
-      Employee.professionalTax = 200;
-      console.log(Employee.professionalTax);
-      this.traineeEmpData.pt = true;
-    } else {
-      Employee.professionalTax = 0;
-      this.traineeEmpData.pt = false;
-      console.log(Employee.professionalTax);
-    }
-    //==============================================================================================================================
-    //Calculation conditions for totalgrosssalary of an employee
-    Employee.totalGrossSalary = Math.round(
-      Employee.grossSalary - Employee.pfContribution - Employee.esicContribution
-    );
-    console.log(Employee.totalGrossSalary);
-    //==============================================================================================================================
-    //Calculation conditions for esic contrubution of an employee
-    if (this.traineeEmpData.esic == true) {
-      if (Employee.totalGrossSalary <= 21000) {
-        Employee.employeeEsi = Math.round(
-          Employee.totalGrossSalary * (0.75 / 100)
-        );
-        console.log(Employee.employeeEsi);
-        this.traineeEmpData.esic = true;
-      } else {
-        Employee.employeeEsi = 0;
-        this.traineeEmpData.esic = false;
-      }
-    }
-    else {
-      Employee.employeeEsi = 0;
-      this.traineeEmpData.esic = false;
-    }
-
-    //==================================================================================================================================
-    //===========================================================================================================
-    // calculation for the basicsalary
-    Employee.basicSalary = Math.round(Employee.totalGrossSalary * (60 / 100));
-    console.log(Employee.basicSalary);
-
-    //calculation for the hraSalary
-    Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100));
-    console.log(Employee.hraSalary);
-
-    //calculation for the educationAllowances
-    Employee.educationAllowances = Math.round(
-      Employee.totalGrossSalary * (2 / 100)
-    );
-    console.log(Employee.educationAllowances);
-
-    //calculation for the conveyance
-    Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100));
-    console.log(Employee.Conveyance);
-
-    //total deductions per month
-    Employee.totalDeduction = Math.round(
-      Employee.pfContribution + Employee.employeeEsi + Employee.professionalTax
-    );
-    console.log(Employee.totalDeduction);
-
-    //total net salary  per month
-    Employee.netSalary = Math.round(
-      Employee.totalGrossSalary - Employee.totalDeduction
-    );
-    console.log(Employee.netSalary);
-
-    //calculation for the otherallowances
-    Employee.otherAllowances = Math.round(
-      Employee.totalGrossSalary * (10 / 100)
-    );
-    console.log(Employee.otherAllowances);
-
-    //pfcontribution per annum
-    Employee.pfPreAnuum = Math.round(
-      Employee.pfContribution * Employee.grossby
-    );
-    console.log(Employee.pfPreAnuum);
-
-    //totalGrossPerAnnum calculation
-    Employee.totalGrossPerAnnum = Math.round(
-      Employee.totalGrossSalary * Employee.grossby
-    );
-    console.log(Employee.totalGrossPerAnnum);
-
-    //basicsalaryperannum
-    Employee.basicPerannum = Math.round(
-      Employee.basicSalary * Employee.grossby
-    );
-    console.log(Employee.basicPerannum);
-
-    //HRA per annum
-    Employee.hraPerAnnum = Math.round(Employee.hraSalary * Employee.grossby);
-    console.log(Employee.hraPerAnnum);
-
-    //esiper anuum
-    Employee.esiPerAnnum = Math.round(
-      Employee.esicContribution * Employee.grossby
-    );
-    console.log(Employee.esiPerAnnum);
-    //esiper anuum for employee
-    Employee.esiPerAnnumemployee = Math.round(
-      Employee.employeeEsi * Employee.grossby
-    );
-    console.log(Employee.esiPerAnnumemployee);
-    //educationper annum
-    Employee.educationallowancesPerAnnum = Math.round(
-      Employee.educationAllowances * Employee.grossby
-    );
-    console.log(Employee.educationallowancesPerAnnum);
-    //conveyance per annum
-    Employee.conveyancePerAnnum = Math.round(
-      Employee.Conveyance * Employee.grossby
-    );
-    console.log(Employee.conveyancePerAnnum);
-
-    //otherAllowancesper annum
-    Employee.otherAllowancesPerAnnum = Math.round(
-      Employee.otherAllowances * Employee.grossby
-    );
-    console.log(Employee.otherAllowancesPerAnnum);
-
-    //professional per annum
-    Employee.professionalPerAnnum = Math.round(
-      Employee.professionalTax * Employee.grossby
-    );
-    console.log(Employee.professionalPerAnnum);
-
-    //salary deductions per annum
-    Employee.totalDeductionsPerAnnum = Math.round(
-      Employee.pfPreAnuum +
-      Employee.esiPerAnnumemployee +
-      Employee.professionalPerAnnum
-    );
-    console.log(Employee.totalDeductionsPerAnnum);
-
-    //net salary per annum
-    Employee.netSalaryPerAnnum = Math.round(
-      Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum
-    );
-    console.log(Employee.netSalaryPerAnnum);
-    //Ctc per annum
-    Employee.ctcperannum = Math.round(
-      Employee.totalGrossPerAnnum + Employee.pfPreAnuum + Employee.esiPerAnnum
-    );
-    console.log(Employee.ctcperannum);
-  }
 
   //coverting date time to the date formate
   formatDateForOfferIssedandExpiry(date: Date): string {
@@ -1056,7 +706,7 @@ this.traineeEmpData = {
       empstatus: 'Prospective',
       emptype: 'Trainee',
       emailaddress: data.personalEmail,
-      gender:data.gender,
+      gender: data.gender,
       contactnumber: parseInt(data.phoneNumber),
       addressLine1: data.addressLine1,
       addressLine2: data.addressLine2,
@@ -1070,7 +720,7 @@ this.traineeEmpData = {
       esic: data.esic,
       dateOfJoining: data.dateOfJoining,
       substatus: 'Offer Letter Generated',
-      trainingEndDate:this.traineeEmpData.endDate,
+      trainingEndDate: this.traineeEmpData.endDate,
     };
     console.log(sdata);
 
@@ -1159,8 +809,8 @@ this.traineeEmpData = {
       },
       complete: () => {
         this.conformationPopup.openSuccessModal(
-           'Trainee Offer Letter Generated Successfully');
-       }
+          'Trainee Offer Letter Generated Successfully');
+      }
     });
   }
   //download document
@@ -1228,16 +878,13 @@ this.traineeEmpData = {
       type: 'application/pdf',
     });
     console.log(file);
-    // this.uploadAddressLetter();
     this.generatedfile = file;
     this.generatingEmployeeId = EmpValue.empId;
     this.loading = false;
     this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully');
 
-    // });
-    // }
+  
   }
-  //to store file to the azure and return to the url
   private traineeofferletterUpload(empId: number, file: File) {
     let filePath = `/FusionDocuments/Employee Documents/Trainee Offer Letter/${empId}`;
     this.subscription = this.http
@@ -1267,7 +914,7 @@ this.traineeEmpData = {
 
     let postTraineeOfferDetails = {
       employeeId: employeeId,
-      offerSentDate: this.traineeEmpData.offerIssuedDate,
+      offerSentDate: this.employeeForm.get('offerSentDate')?.value,
       offerSentStatus: 'Offer Generated',
       offerSentBy: loggedInUser.employeeId,
       documentUrl: docurl,
@@ -1278,12 +925,12 @@ this.traineeEmpData = {
       approver: null,
       comments: null,
       requestedDate: new Date(),
-      offerExpiryDate: this.traineeEmpData.offerExpiryDate,
-      authoritySignature: this.SignatureAuthorityValue.employeeId,
-      addressType: this.addressType.toUpperCase(),
-      note: this.traineeEmpData.note,
-      offerStartDate: this.traineeEmpData.offerStartDate,
-      trainingEndDate: this.traineeEmpData.endDate,
+      offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
+      authoritySignature: this.employeeForm.get('authorityid')?.value.employeeId,
+      addressType: this.addressType,
+      note: this.employeeForm.get('note')?.value,
+      offerStartDate: this.employeeForm.get('dateOfJoining')?.value,
+      trainingEndDate: this.traineeEmpData.trainingEndDate,
       durationOfTraining: this.traineeEmpData.durationOfTrainee,
     };
     this.subscription = this.http
@@ -1463,8 +1110,6 @@ this.traineeEmpData = {
         next: (data: any) => {
           console.log(data);
           this.disableFieldsForApproval = false;
-          // alert("Employementtype coming successfully");
-          // this.router.navigate(['/admin']);
         },
         error: (Reason) => console.log(Reason),
       });
@@ -1573,90 +1218,56 @@ this.traineeEmpData = {
         next: (data: any) => {
           console.log(data);
 
-          this.Approvednotification();
+          //this.Approvednotification();
           if (data) {
-            this.openModal('Email Sent Successfully');
+            this.conformationPopup.openSuccessModal('Email sent successfully');
           }
-          // this.toaster.success({
-          //   detail: 'SUCCESS',
-          //   summary: 'Email Sent Successfully',
-          //   duration: 5000,
-          // });
           this.loading = false;
 
         },
         error: (err: any) => {
           console.log(err);
 
-          const modalElement = document.getElementById('successhide');
-          if (modalElement) {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-            this.Status = 'Email Sent Failed'
-
-            setTimeout(function () {
-              location.reload();
-            }, 3000);
-
-          }
-          // this.toaster.warning({
-          //   detail: 'SUCCESS',
-          //   summary: 'Email Sent Failed',
-          //   duration: 5000,
-          // });
+          this.conformationPopup.openErrorModal('Email sent failed');
+          this.loading = false;
         },
         complete: () => { },
       });
-
-    this.openModal('Email Sending.....');
-
-
-    // this.toaster.success({
-    //   detail: 'SUCCESS',
-    //   summary: 'Email Sending.....',
-    //   duration: 9000,
-    // });
   }
-  openModal(message: string) {
-    const modalRef = this.modalService.open(this.successhide, { backdrop: 'static', keyboard: false, centered: true });
-    this.Status = message;
-    setTimeout(() => {
-      modalRef.close();
-    }, 4000); // Close after 5 seconds
-  }
+
   //function for Manger to approve notification
-  Approvednotification() {
-    const currentDate = new Date();
-    this.traineeEmpData;
-    console.log(this.traineeEmpData.empid);
+  // Approvednotification() {
+  //   const currentDate = new Date();
+  //   this.traineeEmpData;
+  //   console.log(this.traineeEmpData.empid);
 
-    let loggedInUser = this.authService.getToken();
-    let senddata = {
-      message: `Offer Letter Approve Request`,
-      sentTo: this.traineeEmpData.OffersentbyEmailaddress,
-      isRead: false,
-      isDelete: false,
-      notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName}  requested you for the approval of the offer letter of employee
-         ${this.traineeEmpData?.firstName} ${this.traineeEmpData?.middleName ?? ''} ${this.traineeEmpData?.lastName} Offer Letter`,
-      empId: loggedInUser.employeeId,
-    };
-    this.subscription = this.http
-      .postdata(`Notification/Notify/Manager`, senddata)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.loading = false;
+  //   let loggedInUser = this.authService.getToken();
+  //   let senddata = {
+  //     message: `Offer Letter Approve Request`,
+  //     sentTo: this.traineeEmpData.OffersentbyEmailaddress,
+  //     isRead: false,
+  //     isDelete: false,
+  //     notificationDate: currentDate,
+  //     notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName}  requested you for the approval of the offer letter of employee
+  //        ${this.traineeEmpData?.firstName} ${this.traineeEmpData?.middleName ?? ''} ${this.traineeEmpData?.lastName} Offer Letter`,
+  //     empId: loggedInUser.employeeId,
+  //   };
+  //   this.subscription = this.http
+  //     .postdata(`Notification/Notify/Manager`, senddata)
+  //     .subscribe({
+  //       next: (data: any) => {
+  //         console.log(data);
+  //         this.loading = false;
 
-          setTimeout(() => {
-            this.router.navigate(['/admin']);
-          }, 3000);
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
-  }
+  //         setTimeout(() => {
+  //           this.router.navigate(['/admin']);
+  //         }, 3000);
+  //       },
+  //       error: (err: any) => {
+  //         console.log(err);
+  //       },
+  //     });
+  // }
 
 
   updateEmployeeData(employeeData: any) {
@@ -1751,15 +1362,6 @@ this.traineeEmpData = {
     } else {
       this.isExpiryDateValid = true;
     }
-
-    // if (
-    //   this.traineeEmpData.offerExpiryDate <
-    //   this.traineeEmpData.offerIssuedDate
-    // ) {
-    //   this.isExpiryDateValid = false;
-    // } else {
-    //   this.isExpiryDateValid = true;
-    // }
   }
 
   //function to validate the offer expected start date and offer issued date
@@ -1772,18 +1374,9 @@ this.traineeEmpData = {
     } else {
       this.isStartDateValid = true;
     }
-
-    // if (
-    //   this.traineeEmpData.dateOfJoining <
-    //   this.traineeEmpData.offerIssuedDate
-    // ) {
-    //   this.isStartDateValid = false;
-    // } else {
-    //   this.isStartDateValid = true;
-    // }
-
   }
-  //function to validate the offer expiry date and offer issued date and expected start date
+  
+  
   updateEndDateValidityupdate(): void {
     if (
       this.traineeEmpData.dateOfJoining >
@@ -1796,9 +1389,10 @@ this.traineeEmpData = {
 
   }
   shouldShowError(): boolean {
-    // Add your conditions here to determine whether to show the error message
-    return false; // Return true or false based on your conditions
+    
+    return false; 
   }
+
   optionsFound!: boolean;
   updateOptionsFound(found: boolean) {
     this.optionsFound = found;
@@ -1817,18 +1411,10 @@ this.traineeEmpData = {
     }
   }
 
-  numbers(event: KeyboardEvent): boolean {
-    const charCode = event.key.charCodeAt(0);
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false;
-    }
-    return true;
-  }
 
- 
   onclickSelectAddress(Value: any) {
     console.log(Value);
-    this.addresFlag= true;
+    this.addresFlag = true;
     this.addressType = Value.value;
     console.log(this.addressType);
 
@@ -1853,33 +1439,6 @@ this.traineeEmpData = {
       country: this.address.country,
       pinCode: this.address.zipCode,
     })
-
-  }
-  //onclick function to select the designation in the search dropdown
-  Onclick(jobdValues: any) {
-    this.jobRoleDetails = jobdValues;
-    console.log(this.jobRoleDetails);
-    if (this.jobRoleDetails == "") {
-      this.disablebuttonfordesignation = true
-    }
-    else {
-      this.disablebuttonfordesignation = false
-    }
-    let jobInfo = this.JobroleDetails.find((c) => c.jobRole1 == jobdValues);
-    console.log(jobInfo);
-    if (jobInfo) {
-      const jobRole1Value = jobInfo.jobRole1;
-      if (jobRole1Value === jobdValues) {
-        this.disablebuttonfordesignation = true
-      }
-      else {
-        this.disablebuttonfordesignation = false
-      }
-    }
-    this.jobDesignation = JSON.parse(JSON.stringify(this.jobRoleDetails));
-    if (jobInfo == undefined) {
-      this.jobDesignation = null;
-    }
 
   }
 
@@ -1913,47 +1472,6 @@ this.traineeEmpData = {
     })
   }
 
-
-
-  filteredEmployeedetails = this.employeedetails;
-  filteredEmployeesemp(event: any) {
-    let filterValue = '';
-
-    // Check if event.target is not null and is of type HTMLInputElement
-    if (event && event.target && event.target.value) {
-      filterValue = event.target.value.toLowerCase();
-    }
-
-    this.filteredEmployeedetails = this.employeedetails.filter((emp: { firstName: string; lastName: string; fusionEmpId: { toString: () => string | string[]; }; }) =>
-      (emp.firstName && emp.firstName.toLowerCase().includes(filterValue)) ||
-      (emp.lastName && emp.lastName.toLowerCase().includes(filterValue)) ||
-      (emp.fusionEmpId && emp.fusionEmpId.toString().includes(filterValue))
-    );
-
-    // Log the filtered results
-    console.log(this.filteredEmployeedetails);
-  }
-
-
-  toggleDropdownemp() {
-    this.showDropdown = !this.showDropdown;
-    // If the dropdown is opened, display the full list of employees
-    if (this.showDropdown) {
-      this.filteredEmployeedetails = this.employeedetails;
-    }
-  }
-
-  selectEmployeeemp(emp: any) {
-    console.log(emp);
-
-    this.selectedEmployee = ` ${emp.fusionEmpId ?? ''} ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`;
-    this.traineeEmpData.reportingmanager = emp; // Store the selected employee object
-    this.showDropdown = false;
-    this.traineeEmpData.reportingmanager = emp.employeeId;
-    // Log the selected option
-    console.log('Selected option:', this.selectedEmployee);
-  }
-
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
@@ -1963,24 +1481,6 @@ this.traineeEmpData = {
     this.traineeEmpData.documentType = Value.value
     console.log(this.traineeEmpData.documentType);
   }
-
-  onclickSignature(Value: any) {
-    console.log(Value);
-    this.traineeEmpData.documentType = Value.value
-    console.log(this.traineeEmpData.documentType);
-  }
-
-  onDataClick(value: any) {
-    this.traineeEmpData.offerSentDate = value;
-    console.log(this.traineeEmpData.offerSentDate);
-  }
- onExpecteddate() {
-  this.traineeEmpData.offerStartDate = this.traineeEmpData.dateOfJoining
-  console.log(this.traineeEmpData.offerStartDate);
- }
- onClickIntenship(Value: any) {
-    this.traineeEmpData.internshipperiod = Value;
- }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

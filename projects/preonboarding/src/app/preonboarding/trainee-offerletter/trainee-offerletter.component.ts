@@ -679,13 +679,13 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         console.log(data);
         this.loadingcircle = false;
         this.openPopup.openSuccess("Email Sent Successfully")
-        setTimeout(function () {
-          location.reload();
-        }, 7000);
+        location.reload();
+        
 
       },
       error: (err: any) => {
         console.log(err);
+        this.openPopup.openSuccess("Email Sent Failed")
       }
     })
   }

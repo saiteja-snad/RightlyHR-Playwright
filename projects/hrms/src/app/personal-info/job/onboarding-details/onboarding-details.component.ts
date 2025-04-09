@@ -308,7 +308,7 @@ export class OnboardingDetailsComponent {
       dateOfJoining: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.dateOfJoining,
       branchCode: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.branchCode,
       probationEndDate: this.onboardingForm.get('probationEndDate')?.value ?? this.empinfo.probationEndDate,
-      probationStatus: this.onboardingForm.get('probationStatus')?.value.probationstatus1 ?? this.empinfo.probationStatus,
+      probationStatus: this.empinfo.probationStatus ?? this.onboardingForm.get('probationStatus')?.value.probationstatus1,
       noticePeriod: this.onboardingForm.get('noticePeriodStatus')?.value.name ?? this.empinfo.noticePeriod,
       backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value.backgroundcheckstatus1 ?? this.empinfo.backgroundCheckStatus,
       issalaryhold: this.onboardingForm.get('salaryHold')?.value.value ?? this.empinfo.issalaryhold,
@@ -318,7 +318,8 @@ export class OnboardingDetailsComponent {
       totalYearsOfExperience: this.onboardingForm.get('totalExperience')?.value ?? this.empinfo.totalYearsOfExperience,
       allowWFH: this.onboardingForm.get('remoteLogin')?.value.value ?? this.empinfo.allowWFH,
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empinfo.workLocation,
-      wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empinfo.wfhManagerId
+      wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empinfo.wfhManagerId,
+      empType : this.empinfo.empType,
     };
     this.subscription = this.http
       .postdata(`Employeedata/UPDATER`, payload)

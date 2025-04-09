@@ -13,3 +13,19 @@ input:focus{
     font-family: "autographsignatureFont";
     font-size: 20px;
 }
+
+.letter-fields-content{
+    width: 42rem;
+}
+
+.letter-data-content{
+    flex: 1;
+}
+
+.stamp{
+    height: 5rem;
+}
+
+.spinner-border{
+    --bs-spinner-border-width: 0.35rem !important;
+}

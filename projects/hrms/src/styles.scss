@@ -314,13 +314,8 @@ a {
 
             .letter-page-sub-content {
                 padding: 2rem 8rem;
-                font-size: var(--fontsize14);
+                font-size: var(--fontsize16) !important;
                 color: #000000;
-            }
-
-            .letter-header {
-                font-weight: 500;
-                font-size: var(--fontsize18);
             }
 
             .letter-footer {
@@ -356,6 +351,7 @@ a {
     th,td {
         padding: 0.5rem 1rem;
         text-align: center;
+        font-size: var(--fontsize14) !important;
     }
     
     th {
@@ -372,7 +368,11 @@ a {
 }
 
 .hard-copy-letter{
-    margin-bottom: 8rem;
+    margin-bottom: 7rem;
+}
+
+.soft-copy-letter{
+    margin-bottom: 4rem;
 }
 
 .list-style-none {
@@ -391,6 +391,11 @@ a {
     margin-right: 8px;
 }
 
+.letter-header {
+    font-weight: 600;
+    font-size: var(--fontsize20);
+}
+
 .letter-sub-header{
     font-size: 15px;
     font-weight: 600;
@@ -398,6 +403,11 @@ a {
 
 .boldnone{
     font-weight: 400 !important;
+}
+
+.letter-signature{
+    font-size: 3.2rem !important;
+    font-family: "autographsignatureFont" !important;
 }
 // letter stylings
 
@@ -456,11 +466,6 @@ a {
         font-size: var(--fontsize14) !important;
         font-weight: 700;
     }
-}
-
-.authority-signature {
-    font-size: 3.2rem;
-    font-family: "autographsignatureFont";
 }
 
 //custom component naviagtion nav tabs

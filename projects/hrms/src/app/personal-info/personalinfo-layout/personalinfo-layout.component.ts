@@ -44,6 +44,7 @@ export class PersonalinfoLayoutComponent implements OnInit,OnDestroy{
   selectedManager: any = null;
   jobPostData: any;
   headerName!: string;
+  isLoading: boolean = false;
 
   constructor(private http: HttpService,private authService: AuthService,private router: Router, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService) { }
   
@@ -64,6 +65,7 @@ export class PersonalinfoLayoutComponent implements OnInit,OnDestroy{
   }
  
   emailForRequestDoc() {
+    this.isLoading = true;
     let loggedInUser = this.authService.getToken();
     if (this.emppersonalinfo.experienceType == 'Fresher') {
       this.postIsApplicable = 'Fresher';
@@ -88,6 +90,7 @@ export class PersonalinfoLayoutComponent implements OnInit,OnDestroy{
       .subscribe({
         next: (data: any) => {
           this.conformationPopup.openSuccessModal('Email Sent Successfully')
+          this.isLoading = false;
         },
         error: (err: any) => {
           console.log(err);
@@ -585,7 +588,7 @@ initialzerevoke() {
         this.router.navigate(['/admin/inactive-employees'])
         break;
       case 'Trainee Prospective':
-        this.router.navigate(['/admin/trainee'])
+        this.router.navigate(['/admin/prospective-interns'])
         break;
       case 'Trainee Active':
         this.router.navigate(['/admin/traineeactiveemployee'])

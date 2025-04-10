@@ -21,12 +21,12 @@ export class StatusComponent {
   model: any;
    
   
-  addrole={}as Istatus;
+  addrole={}as IStatus;
   statusForm!: FormGroup;
     submitted = false;
     status= {} as IStatus;
     subscription!: Subscription;
-    statusdetails = {} as Istatus[];
+    statusdetails = {} as IStatus[];
     @ViewChild('deletepopup') deletepopup: any;
     @ViewChild('updatepopup') updatepopup: any;
     rolesDeletedata={} as any;

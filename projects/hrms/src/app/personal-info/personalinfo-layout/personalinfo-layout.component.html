@@ -6,7 +6,7 @@
         </div>
         <div>
             <div>
-                <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/job')">Inactive</button>
+                <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType')" (click)="navigation()">Inactive</button>
             </div>
             <div><button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')"
                     (click)="openModal(changermmodal)">

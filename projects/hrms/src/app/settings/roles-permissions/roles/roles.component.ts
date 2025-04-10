@@ -82,6 +82,7 @@ getrole() {
       }
     })
    }
+   
     
       updateRole(modal: any): void {
         if (this.updateForm.valid) {

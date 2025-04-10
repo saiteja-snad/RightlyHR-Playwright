@@ -8,6 +8,9 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import moment from 'moment';
+import { AuthService } from '../../../services/auth.service';
+import { environment } from '../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-job-details',
@@ -31,7 +34,11 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
   employeinfo: any
   allempdata: any;
   allReportees: any;
-
+  
+  selectedJobRoleObj :any; // To store the selected job role object
+  teamManagerName: string = ''; // To store the team manager name
+  shiftDropdowns: any = []; // To store the dynamically fetched shifts
+  selectedData = {} as any; // To store the selected job details data for updating
   empdata: {
     id?: number;
     employeeId?: number;
@@ -42,7 +49,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
     lopcation?: string;
     jobRole?: string;
   } = {};
-
+  noticeperiodDuration: any;
   selectedEmployeeId: any
   selectedGradeName: string = '';
   getGradename: any
@@ -54,9 +61,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
 
   teammangerid: any;
   getGradeid: any;
-  selectedjobdetailesid: any;
-
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  selectedjobdetailesid={} as any;
+  postSeparationRequest={} as any;
+  constructor(private modalService: NgbModal,private authService:AuthService,private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -109,22 +116,51 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
 
   initializeForm(): void {
     this.separationRequestForm = this.fb.group({
-      appliedDate: ['', Validators.required],
-      jobRole: [{ value: '', disabled: true }],
+      appliedDate: [null, Validators.required],
+      jobRole: [{ value: null, disabled: true }],
       departmentName: [{ value: '', disabled: true }],
-      subdepartmentName: [{ value: '', disabled: true }],
-      teamManager: [{ value: '', disabled: true }],
+      team: [{ value: null, disabled: true }],
+      teamManager: [{ value: null, disabled: true }],
       reportingManager: [{ value: '', disabled: true }],
-      description: ['', [Validators.required, Validators.maxLength(400)]],
+      description: [null, [Validators.required, Validators.maxLength(400)]],
       isEarlyRelieving: [false],
-      earlyRelievingDate: ['', Validators.required],
-      reasonForEarlyRelieving: ['', [Validators.required, Validators.maxLength(400)]]
+      earlyRelievingDate: [null, Validators.required],
+      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400)]]
     });
 
     // Disable early relieving fields by default
     this.toggleEarlyRelievingFields(false);
   }
-
+ 
+    //function to send the web notification
+    webNotificationformanager() {
+      let currentDate = moment();
+      let loggedInUser = this.authService.getToken();
+      let webdata = {
+        message: `"Separation Request"`,
+        sentTo: loggedInUser.workEmail,
+        isRead: false,
+        isDelete: false,
+        notificationDate: currentDate,
+        notificationType: `${loggedInUser.firstName ?? ''} ${
+          loggedInUser.middleName ?? ''
+        } ${loggedInUser.lastName ?? ''}  has raised the separation`,
+        empId: loggedInUser.employeeId,
+      };
+      console.log(webdata);
+  
+      this.subscription = this.http
+        .postdata(`Notification/Notify/Manager`, webdata)
+        .subscribe({
+          next: (data: any) => {
+            console.log(data);
+          },
+          error: (err: any) => {
+            console.log(err);
+          },
+          complete: () => {},
+        });
+    }
   toggleEarlyRelievingFields(isEnabled: boolean): void {
     if (isEnabled) {
       this.separationRequestForm.get('earlyRelievingDate')?.enable();
@@ -461,11 +497,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
         },
       });
   }
-  
-  selectedJobRoleObj :any; // To store the selected job role object
-  teamManagerName: string = ''; // To store the team manager name
-  shiftDropdowns: any = []; // To store the dynamically fetched shifts
-  selectedData = {} as any; // To store the selected job details data for updating
+
   openModalupdate(content: any, data: any): void {
     const locationId = data.locationId; // Get the location ID from the selected job details
     const subLocationId = data.subLocationId; // Get the sub-location ID from the selected job details
@@ -574,8 +606,110 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
+  openModalforSeparationupdate(content: any, data: any): void {
+      // Open the modal
+      this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+      console.log('separation',data)
+    this.postSeparationRequest = data
+          this.separationRequestForm.patchValue({
+            jobRole: data.jobRole,
+            // location : data.locationName,
+            // subLocation:data.sublocationName,
+            departmentName: data.departmentName,
+            team: data.subdepartmentName,
+            shiftName: data.shiftName,
+            teamManager :  `${data?.firstName??''} ${ data?.middleName??''} ${ data?.lastName??''}`,
+            reportingManager : `${data?.fName??''} ${ data?.mName??''} ${ data?.lName??''}`,
+          });
+          let currentDate = moment();
+          console.log(currentDate);
+          this.postSeparationRequest.appliedDate = currentDate;
+      
+          this.onCheckNotiesperiod(this.postSeparationRequest.appliedDate);
+  
+  }
+    //function to check the noticeperiod valid upto
 
+    onCheckNotiesperiod(Value: any) {
+      console.log(Value);
+      if (Value) {
+        //this.lastworkingdayvalidation=true;
+        console.log(this.noticeperiodDuration);
+  
+        let noticePeriodValidupto = this.noticeperiodDuration;
+        let currentDate = moment(this.postSeparationRequest.appliedDate);
+        console.log(currentDate);
+        let futureDate = currentDate.add(noticePeriodValidupto, 'days');
+        console.log(futureDate);
+        let formatedate = this.formatDate(futureDate);
+        console.log(formatedate);
+        this.postSeparationRequest.lastworkingday = formatedate;
+      } 
+    }
+    formatDate(data: any): any {
+      if (data) {
+        return moment(data).format('YYYY-MM-DD');
+      }
+      return data;
+    }
+    //function to get the notice period duration
 
+    getnoticePeriodData() {
+      this.subscription = this.http.getData(`ServingPeriods`).subscribe({
+        next: (res: any) => {
+          console.log(res);
+  
+          let durationValue = res.find((ele: any) => {
+            return ele.servingPeriodType?.toLocaleLowerCase() == 'notice period';
+          });
+          console.log(durationValue);
+          this.noticeperiodDuration = durationValue.duration;
+        },
+      });
+    }
+    //function to post the separation request form
+  postSeparationRequestForm() {
+    if (this.postSeparationRequest.isEarlyRelieving !== true) {
+      (this.postSeparationRequest.reasonForEarlyRelieving = null),
+        (this.postSeparationRequest.earlyRelievingDate = null);
+    }
+    let postData = {
+      employeeId: this.postSeparationRequest.employeeId,
+      appliedDate: this.separationRequestForm.get('appliedDate')?.value,
+      description: this.separationRequestForm.get('description')?.value,
+      lastWorkingDate: this.postSeparationRequest.lastworkingday,
+      noticePeriodDuration: this.noticeperiodDuration,
+      reasonForEarlyRelieving:this.separationRequestForm.get('reasonForEarlyRelieving')?.value,
+      isEarlyRelieving: this.separationRequestForm.get('isEarlyRelieving')?.value,
+      earlyRelievingDate: this.separationRequestForm.get('earlyRelievingDate')?.value,
+      comments: null,
+      status: 'Waiting for Approval',
+      recallStatus: 'Separation',
+      requestType: 'Separation',
+      // recallStatus:'Request Raised',
+      jobId: this.postSeparationRequest.id,
+      moduleId: environment.SeparationrequestmoduleId,
+    };
+    console.log(postData);
+
+    this.subscription = this.http
+      .postdata(`SeparationRequests`, postData)
+      .subscribe({
+        next: (res: any) => {
+          console.log(res);
+          if (res) {
+            this.separationRequestForm.reset();
+            this.modalService.dismissAll(); // Close the modal
+            this.conformationPopup.openSuccessModal('Separation Request Raised Successfully')
+            this.webNotificationformanager();
+          }
+        },
+        error: (err: any) => {
+          console.log(err);
+          this.conformationPopup.openErrorModal(err.error.message);
+        },
+      });
+  }
   opendeletModal(content: any, empexperimentdata: any): void {
     // Store the selected job details data for deletion
     this.selectedjobdetailesid = empexperimentdata.id; // Store the job details ID

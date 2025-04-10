@@ -142,9 +142,9 @@ export class PersonalDetailsComponent implements OnInit {
   initializePersonalForm() {
     let loggedInUser = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     this.personalDetailsForm = this.fb.group({
-      firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
       middleName: [null],
-      lastName: [null, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+      lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
       gender: [null, Validators.required],
       salutation: [null, Validators.required],
       phonenumber: [null, [Validators.required, Validators.pattern('^[0-9]{10}$')]],

@@ -5,19 +5,20 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddProspectiveEmployeeComponent } from './add-prospective-employee/add-prospective-employee.component';
 import { FormsModule } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import {  Iprospective } from './Prospective-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProspectivePipe } from '../../Pipes/prospective.pipe';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-prospective-employees',
-  imports: [CommonModule, FormsModule, ProspectivePipe,TranslateModule],
+  imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent],
   templateUrl: './prospective-employees.component.html',
   styleUrl: './prospective-employees.component.scss'
 })
 
 export class ProspectiveEmployeesComponent implements OnInit {
-  Prospective = [] as any;
+  Prospective = new BehaviorSubject<Iprospective[]>([]);
   searchValue: any;
   subscription!: Subscription;
   jobLocationDropDownData = {} as any;
@@ -40,7 +41,7 @@ export class ProspectiveEmployeesComponent implements OnInit {
         next: (data: any) => {
           console.log(data);
         
-           this.Prospective = data as Iprospective[];
+           this.Prospective.next(data);
         },
 
         error: (reason: any) => console.log(reason),

@@ -10,7 +10,6 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { Ipersonal } from '../../../Interfaces/members-model';
 import { IProbationEmployees } from '../../../Interfaces/letters-model';
 import { IJob } from '../../../Interfaces/job-model';
 

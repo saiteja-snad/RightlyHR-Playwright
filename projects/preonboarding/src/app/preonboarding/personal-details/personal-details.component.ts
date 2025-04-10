@@ -11,6 +11,7 @@ import { BnNgIdleService } from 'bn-ng-idle';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { IphoneNumberData } from '../../models/mobilenumber.model';
+import { PopupService } from '../../common-services/popup.service';
 @Component({
   selector: 'app-personal-details',
   imports: [CommonModule, Select, ReactiveFormsModule, NgxCountriesDropdownModule],
@@ -39,6 +40,7 @@ export class PersonalDetailsComponent implements OnInit {
   placeholderPhoneNumber: string = '';
   spinnerLoader = false;
   selectedCountryCode = signal<string>('');
+  selectedCountryCodegflag:any;
   loading = true;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
@@ -59,8 +61,9 @@ export class PersonalDetailsComponent implements OnInit {
     { name: 'O-', value: 'O-' }
   ];
 
-  constructor(private router: Router, private modalService: NgbModal, private readonly fb: FormBuilder,
+  constructor(private router: Router, private modalService: NgbModal,private openPopup: PopupService, private readonly fb: FormBuilder,
     private http: HttpService, private bnIdle: BnNgIdleService) {
+      this.initializePersonalForm();
       effect(() => {
        this.selectedCountryCode.set(this.selectedDialCode);
       })
@@ -75,8 +78,7 @@ export class PersonalDetailsComponent implements OnInit {
       }
     })
     this.prospectiveEmpData = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
-    this.getJobDetails();
-    this.initializePersonalForm();
+
     this.getprospectivempdata()
     this.getGender();
     this.getTitle();
@@ -91,9 +93,10 @@ export class PersonalDetailsComponent implements OnInit {
       next: (data: any) => {
         console.log(data);
         this.employeeData = data as Ipersonal; 
-      this.selectedCountryCode.set(this.employeeData?.mobilePhoneCountryCode);
+      this.selectedCountryCode.set(this.employeeData?.contactnumbercountryflag);
       console.log(this.selectedCountryCode);
-        this.patchForm();
+      this.getJobDetails();
+        
         this.loading = false;
       },
       error: (reason: any) => {
@@ -113,6 +116,7 @@ export class PersonalDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingJobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.jobdetails = data[0] as IJobdetails[];
+        this.patchForm();
         console.log(this.jobdetails);
       }
     })
@@ -234,7 +238,7 @@ export class PersonalDetailsComponent implements OnInit {
       this.employeeData.gender=this.personalDetailsForm.get('gender')?.value,
        this.employeeData.title=this.personalDetailsForm.get('salutation')?.value,
       this.employeeData.contactnumber=this.personalDetailsForm.get('phonenumber')?.value,
-      this.employeeData.dateOfBirth=this.personalDetailsForm.get('dob')?.value,
+      this.employeeData.dob=this.personalDetailsForm.get('dob')?.value,
        this.employeeData.bloodGroup=this.personalDetailsForm.get('bloodGroup')?.value,
       this.employeeData.emailaddress=this.personalDetailsForm.get('personalEmail')?.value,
       this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.employeeData).subscribe({
@@ -249,7 +253,7 @@ export class PersonalDetailsComponent implements OnInit {
         error: (errorReason: any) => {
           console.error(errorReason);
           if (errorReason.status === 400) {
-            alert(`${errorReason.error?.message || 'Bad request'}`);
+            this.openPopup.openError(`${errorReason.error?.message || 'Bad request'}`);
           }
         }
       });
@@ -285,17 +289,19 @@ export class PersonalDetailsComponent implements OnInit {
  
   onCountryChange(country: any) {
     console.log(country);
-    this.selectedDialCode=country.code;
+    this.selectedDialCode=country.dialling_code;
+    this.selectedCountryCodegflag=country.code;
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
-    this.employeeData.mobilePhoneCountryCode = country.code; 
+    this.employeeData.mobilePhoneCountryCode = country.dialling_code; 
+    this.employeeData.contactnumbercountryflag=country.code;
     console.log(this.employeeData.mobilePhoneCountryCode);
   }
 
   formatPhoneNumber(value: any) {
-    if (!this.selectedDialCode || !value) return value;
+    if (!this.selectedCountryCodegflag || !value) return value;
     const stringValue = String(value); // Make sure it's a string
-    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedDialCode);
+    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedCountryCodegflag);
     if (phoneNumber && phoneNumber.isValid()) {
       this.formattedPhoneNumber = phoneNumber.formatInternational();
       return phoneNumber.formatNational();
@@ -306,10 +312,10 @@ export class PersonalDetailsComponent implements OnInit {
   phoneNumberValidator() {
     return (control: AbstractControl) => {
       const value = String(control.value);
-      if (!this.selectedDialCode || !value) {
+      if (!this.selectedCountryCodegflag || !value) {
         return null;
       }
-      const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
+      const phoneNumber = parsePhoneNumberFromString(value, this.selectedCountryCodegflag);
       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {

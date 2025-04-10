@@ -5,9 +5,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
 import { Iinactivetrainee } from './inactive-trainee-mod';
-import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
+
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
+import { ActiveEmployeePipe } from '../../pipes/active-employee.pipe';
 
 @Component({
   selector: 'app-inactive-interns',
@@ -25,28 +26,24 @@ export class InactiveInternsComponent {
   ngOnInit(): void {
     this.empdata('Trainee Inactive');
   }
+  
 //function for inactive employees
 empdata(status:string) {
   this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
     next: (data: any) => {
       console.log(data);
-
    this.InActiveTrainee = data as Iinactivetrainee[];
-
-
     },
-
     error: (reason: any) => console.log(reason)
   });
-
 }
-  select(act: any) {
-    this.emp=localStorage.setItem("personaldata", JSON.stringify(act));
-    console.log(this.emp);
 
-    this.router.navigate(["/admin/personal"])
+select(act: any) {
+  this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+  console.log(this.emp);
+  this.router.navigate(['/personalinfo']);
+}
 
-  }
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }

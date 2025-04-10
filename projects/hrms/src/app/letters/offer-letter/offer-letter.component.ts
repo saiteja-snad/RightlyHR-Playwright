@@ -1,26 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild,} from '@angular/core';
+import { Component, input, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
-import { CountryCodePhoneNumberComponent } from "../../shared/country-code-phone-number/country-code-phone-number.component";
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { count, last, Subscription } from 'rxjs';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import moment from 'moment';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
-import { IAddress, IAuthority, ICountry, IemployeeDetails, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
+import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
+import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
+import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, LettersTabComponent, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, LettersheaderComponent, DateformatPipe],
+  imports: [CommonModule, LettersTabComponent,TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, LettersheaderComponent, DateformatPipe, LetterFooterComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
@@ -68,7 +69,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   authorityDetails = [] as any;
   buttonValue: string = 'Generate Offer Letter'; //variable to change the button value
   SelectDropDown: any;
-  loading: boolean = false;
+  loading = false;
   LocationDropDownData = [] as any;
   Locationdata = {} as any;
   subLocationsDropdown = [] as any;
@@ -78,6 +79,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   addressType: any;
   SignatureAuthorityValue: any;
   countryvalues = {} as any;
+  loadingCode= true;
+  selectedCountryCode: any;
   selectedCountryConfig = {
     hideCode: true,
     hideName: true
@@ -90,9 +93,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },
   ];
-  employeementType: { name: string, value: boolean }[] = [
-    { name: 'Yes', value: true },
-    { name: 'No', value: false },
+ documentType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
   ];
   esic: { name: string, value: boolean }[] = [
     { name: 'Yes', value: true },
@@ -106,6 +109,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
+  @ViewChild('approveModal') approveModal: any;
+  @ViewChild('approveModal1') approveModal1: any;
+  confirmation_Msg: any;
+  data_Storing={} as any;
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder,private http: HttpService,
     private authService: AuthService,private conformationPopup: OpenModalService
     // private _userAcessService: UserAccessService,
@@ -115,8 +122,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
    
     // this._userAcessService.checkRouteAccess('Dashboard.view');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
-    this.prospectiveEmpData.mobilePhoneCountryCode = 'India (+91)';
-    console.log(this.prospectiveEmpData.mobilePhoneCountryCode);
     this.initializeForm();
     this.getJobtype();
     this.getTitle();
@@ -163,18 +168,15 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       offerExpiryDate: ['', Validators.required],
       note: [''],
       authorityid: [null, Validators.required]
-    });
+    },
+    { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
+  );
     
   }
   onclickCTC(Value: any) {
     console.log(Value);
     this.prospectiveEmpData.amount = Value;
     this.ctcCalculation();
-  }
-  handlePhoneChange(event: any) {
-    this.employeeForm.patchValue({
-      phoneNumber: event
-    });
   }
 
   //download document
@@ -185,7 +187,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3']; // IDs of the content elements to be converted to PDF
+    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3','pdfContent4','pdfContent5']; // IDs of the content elements to be converted to PDF
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;
@@ -224,42 +226,38 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     console.log(file);
     this.generatedfile = file;
     this.generatingEmployeeId=this.prospectiveEmpData.empId;
-
+    this.loading=false
+    this.conformationPopup.openSuccessModal(
+      'Offer Letter Generated Successfully'	);
   }
   //function to validate the offer expiry date and offer issued date
-  updateEndDateValidity(): void {
-    const offerExpiryDate = new Date(this.prospectiveEmpData.offerExpiryDate);
-    const offerIssuedDate = new Date(this.prospectiveEmpData.offerIssuedDate);
-
-    if (offerExpiryDate <= offerIssuedDate) {
-      this.isExpiryDateValid = false;
-    } else {
-      this.isExpiryDateValid = true;
-    }
-  }
-  //function to validate the offer expected start date and offer issued date
-  updateEndDateValidityForExpectedStartDate() {
-    if (this.employeeaddress.empstatus != 'Trainee Active') {
-      const dateOfJoining = new Date(this.prospectiveEmpData.dateOfJoining);
-      const offerIssuedDate = new Date(this.prospectiveEmpData.offerIssuedDate);
-
-      if (dateOfJoining <= offerIssuedDate) {
-        this.isStartDateValid = false;
-      } else {
-        this.isStartDateValid = true;
+  offerExpiryDateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const issuedDate = control.get('offerIssuedDate')?.value;
+      const expiryDate = control.get('offerExpiryDate')?.value;
+      if (!issuedDate || !expiryDate) {
+        return null; // Don’t validate if one of the dates is missing
       }
-    }
+      return new Date(expiryDate) < new Date(issuedDate)
+        ? { offerDateInvalid: true }
+        : null;
+    };
   }
-  //function to validate the offer expiry date and offer issued date and expected start date
-  updateEndDateValidityupdate(): void {
-    const dateOfJoining = new Date(this.prospectiveEmpData.dateOfJoining);
-    const offerExpiryDate = new Date(this.prospectiveEmpData.offerExpiryDate);
 
-    if (dateOfJoining <= offerExpiryDate) {
-      this.isStartDateValidofexpected = false;
-    } else {
-      this.isStartDateValidofexpected = true;
-    }
+  //function to validate the offer expected start date and offer issued date
+  offerDateofjoiningDateValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const issuedDate = control.get('offerIssuedDate')?.value;
+      const dateOfJoiningDate = control.get('dateOfJoining')?.value;
+  
+      if (!issuedDate || !dateOfJoiningDate) {
+        return null; // Don’t validate if one of the dates is missing
+      }
+  
+      return new Date(dateOfJoiningDate) < new Date(issuedDate)
+        ? { offerdateofjoiningDateInvalid: true }
+        : null;
+    };
   }
  
 
@@ -372,10 +370,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       });
   }
   //function to get the authority designation
-  onclickDesignation(Value: any) {
-    console.log(Value);
+  onclickDesignation() {
+    let empId=this.employeeForm?.get('authorityid')?.value;
     let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => c.employeeId == Value
+      (c: any) => c.employeeId == empId
     );
     console.log(signatureAuthorityDetails);
     this.SignatureAuthorityValue = signatureAuthorityDetails;
@@ -478,23 +476,20 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     this.fusionEmpId = null;
     this.prospectiveEmpData.title = null;
   }
-  //to validate the email
-  isValidEmail(email: string): boolean {
-    // Here you can implement your email validation logic
-    // For example, a simple check for presence of "@" and "."
-    return email.includes('@') && email.includes('.com');
-  }
 //function to patch the values in the form to the template
 pathValuesFuction(){
   const formValues = this.employeeForm.value;
 console.log(formValues);
   this.prospectiveEmpData.offerIssuedDate= formValues.offerIssuedDate,
   this.prospectiveEmpData.dateOfJoining= formValues.dateOfJoining,
-  this.prospectiveEmpData.copys=formValues.Copys,
+  this.prospectiveEmpData.Copys=formValues.Copys,
   this.prospectiveEmpData.offerExpiryDate= formValues.offerExpiryDate
+  this.prospectiveEmpData.note= formValues.note,
+  console.log(this.prospectiveEmpData.Copys);
 }
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
+    this.loadingCode= true;
     console.log(Empidvalue);
     if ( Empidvalue.value) {
       console.log(Empidvalue);
@@ -507,7 +502,6 @@ console.log(formValues);
           next: (data: any) => {
             console.log(data.checkofferletter);
             if (data.isEmployeevalid === true) {
-              // const userConfirmed = window.confirm("Data already exists. Do you want to regenerate?");
               if (Empidvalue) {
                 this.prospectiveEmpData = data.checkofferletter;
                 this.employeeForm?.patchValue({
@@ -531,18 +525,19 @@ console.log(formValues);
                   Copys: this.prospectiveEmpData?.copys,
                   offerExpiryDate: this.formatDate(this.prospectiveEmpData?.offerExpiryDate),
                   note:this.prospectiveEmpData?.note,
-                  authorityid: this.prospectiveEmpData?.authorityid,
+                  authorityid: this.prospectiveEmpData?.signatureAuthority,
+                  phoneNumber:this.prospectiveEmpData?.phoneNumber
                 })
+                this.selectedCountryCode=this.prospectiveEmpData?.selectedCountryCodegflag;
+                this.loadingCode = false;
                 console.log(this.prospectiveEmpData.values);
                 this.getEmployeeAddress(data.checkofferletter.empId);
                 if (this.prospectiveEmpData.approver) {
                   this.prospectiveEmpData.reportingmanagerId =
                     this.prospectiveEmpData.approver;
                 }
-                if (this.prospectiveEmpData.signatureAuthority) {
-                  this.prospectiveEmpData.authorityid =
-                    this.prospectiveEmpData.signatureAuthority;
-                  this.onclickDesignation(this.prospectiveEmpData.authorityid);
+                if(this.prospectiveEmpData.signatureAuthority){
+                  this.onclickDesignation();
                 }
                 this.prospectiveEmpData.jobLocationName =data.checkofferletter.workLocation;
                 this.prospectiveEmpData.jobSubLocationName =data.checkofferletter.subLocation;
@@ -575,7 +570,6 @@ console.log(formValues);
     console.log(f);
       this.updateOfferLetterFieldsDetails(f.value); 
   }
-
   //ctc Calculation in offer letter
   esicshouldbecometrue!: any;
   ctcCalculation() {
@@ -944,49 +938,30 @@ console.log(formValues);
   updateOfferLetterFieldsDetails(f: NgForm) {
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.loading = true;
-    let sdata = {
-      employeeId: this.prospectiveEmpData.empId,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      middleName: data.middleName,
-      empstatus: 'Prospective',
-      title: data.title,
-      emailaddress: data.personalEmail,
-      gender: data.gender,
-      contactnumber: parseInt(data.phoneNumber),
-      emergencyName: this.employeeaddress.emergencyName,
-      emailId: this.employeeaddress.emailId,
-      emergencyNumber: this.employeeaddress.emergencynumber,
-      emergencyCode: this.employeeaddress.emergencycode,
-      relationShip: this.employeeaddress.relationShip,
-      emergencyName1: this.employeeaddress.emergencyName1,
-      emergencyEmail1: this.employeeaddress.emergencyEmail1,
-      emergencyNumber1: this.employeeaddress.emergencyNumber1,
-      emergencyCode1: this.employeeaddress.emergencycode1,
-      relationship1: this.employeeaddress.relationship1,
-      empType: data.empType,
-      durationOfTrainee: data.durationOfTrainee,
-      mobilePhoneCountryCode: data.mobilePhoneCountryCode,
-      fusionEmpId: data.fusionPlusEmpId,
-      insurance: this.employeeaddress.insurance,
-      generateOffer: true,
-      pf: this.employeeForm.get('pf')?.value,
-      esic: this.employeeForm.get('esic')?.value,
-      dob: this.employeeaddress.dob,
-      bloodGroup: this.employeeaddress.bloodGroup,
-      trainingEndDate: data.trainingEndDate,
-      dateOfJoining: this.employeeForm.get('dateOfJoining')?.value,
-      substatus: 'Offer Letter Generated',
-      password: this.employeeaddress.password,
-    };
+    this.prospectiveEmpData.employeeId= this.prospectiveEmpData.empId,
+    this.prospectiveEmpData.empstatus= 'Prospective',
+    this.prospectiveEmpData.emailaddress= data.personalEmail,
+    this.prospectiveEmpData.contactnumber=parseInt(data.phoneNumber),
+    this.prospectiveEmpData. emailId= this.employeeaddress.emailId,
+    this.prospectiveEmpData.fusionEmpId= data.fusionPlusEmpId,
+    this.prospectiveEmpData.insurance=this.employeeaddress.insurance,
+    this.prospectiveEmpData.generateOffer= true,
+    this.prospectiveEmpData.pf=this.employeeForm.get('pf')?.value,
+    this.prospectiveEmpData.esic= this.employeeForm.get('esic')?.value,
+    this.prospectiveEmpData.dob=this.employeeaddress.dob,
+    this.prospectiveEmpData.bloodGroup= this.employeeaddress.bloodGroup,
+    this.prospectiveEmpData.trainingEndDate= data.trainingEndDate,
+    this.prospectiveEmpData.dateOfJoining= this.employeeForm.get('dateOfJoining')?.value,
+    this.prospectiveEmpData.substatus= 'Offer Letter Generated',
+    this.prospectiveEmpData.password= this.employeeaddress.password
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
-      sdata.substatus = 'Offer Letter Regenerated';
-    } else {sdata.substatus = 'Offer Letter Generated';}
-    console.log(sdata);
+      this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
+    } else {this.prospectiveEmpData.substatus = 'Offer Letter Generated';}
+    console.log(this.prospectiveEmpData);
     console.log(this.prospectiveEmpData.empId);
     this.subscription = this.http
-      .postdata('Employeedata/UPDATER', sdata)
+      .postdata('Employeedata/UPDATER', this.prospectiveEmpData)
       .subscribe({
         next: (res: any) => {
           console.log(res);
@@ -997,12 +972,13 @@ console.log(formValues);
             this.UpdateFieldsToRespectiveTables();
             this.downLoadDocument(this.prospectiveEmpData);
           } else if (res.statusCode == 1002) {
-            const acceptfield = window.confirm(res.message);
-            if (acceptfield) {
-              this.updateEmployeeData(sdata);
-            } else {
-              f.resetForm();
-            }
+            this.confirmation_Msg=res.message;
+            this.data_Storing = this.prospectiveEmpData;
+                this.modalService.open(this.approveModal1, {
+                  centered: true,
+                  backdrop: 'static',
+                  keyboard: false
+                });
           }
         },
         error: (err: any) => {
@@ -1010,7 +986,15 @@ console.log(formValues);
         },
       });
   }
-
+  confimationfuction1(yes:any){
+    if(yes){
+      this.modalService.dismissAll();
+      this.updateEmployeeData(this.data_Storing);
+    }
+    else{
+      this.employeeForm.reset();
+    }
+    }
   updateEmployeeData(employeeData: any) {
     if (employeeData.substatus == 'Offer Letter Rejected By Manager') {
       employeeData.substatus = 'Offer Letter Generated';
@@ -1028,11 +1012,12 @@ console.log(formValues);
               this.UpdateFieldsToRespectiveTables();
               this.downLoadDocument(this.prospectiveEmpData);
             } else if (res.statusCode == 1002) {
-              const acceptfield = window.confirm(res.message);
-              if (acceptfield) {
-                this.UpdateFieldsToRespectiveTables();
-                this.downLoadDocument(this.prospectiveEmpData);
-              }
+              this.confirmation_Msg=res.message;
+                this.modalService.open(this.approveModal, {
+                  centered: true,
+                  backdrop: 'static',
+                  keyboard: false
+                });
             }
           },
           error: (err: any) => {
@@ -1055,11 +1040,12 @@ console.log(formValues);
               this.UpdateFieldsToRespectiveTables();
               this.downLoadDocument(this.prospectiveEmpData);
             } else if (res.statusCode == 1002) {
-              const acceptfield = window.confirm(res.message);
-              if (acceptfield) {
-                this.UpdateFieldsToRespectiveTables();
-                this.downLoadDocument(this.prospectiveEmpData);
-              }
+              this.confirmation_Msg=res.message;
+                this.modalService.open(this.approveModal, {
+                  centered: true,
+                  backdrop: 'static',
+                  keyboard: false
+                });
             }
           },
           error: (err: any) => {
@@ -1067,6 +1053,13 @@ console.log(formValues);
           },
         });
     }
+  }
+  confimationfuction(yes:any){
+  if(yes){
+    this.modalService.dismissAll();
+    this.UpdateFieldsToRespectiveTables();
+    this.downLoadDocument(this.prospectiveEmpData);
+  }
   }
   JobtypeDetails = [] as IJobtype[];
   jobtypeId: any;
@@ -1121,8 +1114,7 @@ console.log(formValues);
           } else {
             this.generatepostingtorepectivefields();
           }
-          this.conformationPopup.openSuccessModal(
-            'Offer Letter Generated Successfully'	);
+
         },
       });
 
@@ -1224,6 +1216,7 @@ console.log(formValues);
       });
   }
   emailSendingforApprover(){
+    this.loading=true;
     if (this.prospectiveEmpData.isEmployeevalid === true) {
       this.offerletterUpload(this.generatingEmployeeId, this.generatedfile);
     } else {
@@ -1235,24 +1228,15 @@ console.log(formValues);
     this.loading = true;
     let loggedInUser = this.authService.getToken();
     let emaildetails = {
-      personName: `${this.prospectiveEmpData.firstName} ${this.prospectiveEmpData.middleName} ${this.prospectiveEmpData.lastName}`,
+      personName: `${this.prospectiveEmpData.firstName ??''} ${this.prospectiveEmpData.middleName ??''} ${this.prospectiveEmpData.lastName??''}`,
       personEmail: this.prospectiveEmpData.personalEmail,
       personRole: this.jobRoleDetails,
       employeeId: loggedInUser.employeeId,
       documentUrl: this.documentUrl,
-      workLocation:
-        this.prospectiveEmpData.jobLocationName +
-        ', ' +
-        this.prospectiveEmpData.jobSubLocationName,
-      senderName: `${loggedInUser.firstName}  ${loggedInUser.middleName}  ${loggedInUser.lastName}`,
-
+      workLocation: this.prospectiveEmpData.jobLocationName +', ' +this.prospectiveEmpData.jobSubLocationName,
+      senderName: `${loggedInUser.firstName ??''}  ${loggedInUser.middleName??''}  ${loggedInUser.lastName??''}`,
       senderEmail: loggedInUser.workEmail,
-      approvedBy: null,
-      approvedByName: null,
-      firstName: null,
-      middleName: null,
-      lastName: null,
-      comments: null,
+
     };
     console.log(emaildetails);
 
@@ -1285,11 +1269,7 @@ console.log(formValues);
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${
-        loggedInUser?.middleName ?? ''
-      } ${
-        loggedInUser.lastName
-      }  requested you for the approval of the offer letter of employee
+      notificationType: `${loggedInUser?.firstName??''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName??''}  requested you for the approval of the offer letter of employee
          ${this.prospectiveEmpData?.firstName} ${
         this.prospectiveEmpData?.middleName ?? ''
       } ${this.prospectiveEmpData?.lastName} Offer Letter`,
@@ -1300,7 +1280,6 @@ console.log(formValues);
       .subscribe({
         next: (data: any) => {
           console.log(data);
-
           this.router.navigate(['/admin']);
         },
         error: (err: any) => {

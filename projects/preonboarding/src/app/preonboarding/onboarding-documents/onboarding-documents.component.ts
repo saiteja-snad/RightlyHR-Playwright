@@ -12,6 +12,7 @@ import { Location } from '@angular/common';
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { PopupService } from '../../common-services/popup.service';
+import { Ipersonal } from '../../models/personal-details.model';
 @Component({
   selector: 'app-onboarding-documents',
   imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbTooltipModule, NgxDocViewerModule, RouterModule],
@@ -26,6 +27,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   loadingcircle: boolean = false;
   file: any;
   documentType: any;
+  employeeinfo= {} as any;
   prosempdata = {} as any;
   getDocumentsDetails = [] as any;
   submitbuttondisable: boolean = false;
@@ -48,17 +50,35 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
     private http: HttpService, private location: Location, private fb: FormBuilder , private openPopup:PopupService) { }
 
   ngOnInit(): void {
-    this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
+    this.employeeinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     console.log(this.prosempdata);
-    
-    this.getDocuments();
+    this.getprospectivempdata();
     this.initializeForm();
   }
-
+ // Prospective Employee Data
+  getprospectivempdata() {
+    let employeeId = parseInt(this.employeeinfo.employeeId);
+    this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.prosempdata = data as Ipersonal; 
+        this.getDocuments();
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        if (reason.status == 401) {
+          localStorage.clear();
+          this.router.navigate(['']);
+        }
+      }
+    });
+  }
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
-
+  navigatePrevious(){
+    this.router.navigate(['/personal-details']);
+  }
   initializeForm() {
     this.documentForm = this.fb.group({
       documentType: [{ value: '', disabled: true }, Validators.required],

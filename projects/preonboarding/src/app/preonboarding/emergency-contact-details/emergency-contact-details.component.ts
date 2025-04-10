@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect,Signal,signal} from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
@@ -27,10 +27,11 @@ export class EmergencyContactDetailsComponent {
   contactForm!: FormGroup;
   // mobile number1
   selectedDialCode: any;
-  selectedCountryCode: any;
+  selectedCountryCode=signal<string>('');
+  selectedCountryCode1= signal<string>('');
   // mobile number2
   selectedDialCode1: any;
-  selectedCountryCode1: any;
+ 
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   spinnerLoader = false;
@@ -44,7 +45,12 @@ export class EmergencyContactDetailsComponent {
   mobileNumberData: IphoneNumberData | null = null;
 
   constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private fb: FormBuilder,
-    private openPopup: PopupService) { }
+    private openPopup: PopupService) { 
+      effect(() => {
+        this.selectedCountryCode?.set(this.selectedDialCode);
+        this.selectedCountryCode1?.set(this.selectedDialCode1);
+      });
+    }
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -55,16 +61,26 @@ export class EmergencyContactDetailsComponent {
   navigateNext() {
     this.router.navigate(['/experience-details']);
   }
+  navigatePrevious(){
+    this.router.navigate(['/education-details']);
+  }
+  loading: boolean = true;
   getempdate() {
     let employeeId = parseInt(this.prosempdata.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empdata = data as Ipersonal;
+        this.selectedCountryCode?.set(this.empdata.emergencycode);
+        this.selectedCountryCode1?.set(this.empdata.emergencycode1);
         this.patchForm();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
       }
     })
   }
-
   getRelation() {
     this.subscription = this.http.getData("PreonboardingRelationShip").subscribe({
       next: (data: any) => {
@@ -88,10 +104,6 @@ export class EmergencyContactDetailsComponent {
         relationship: ['', Validators.required],
       })
     });
-    this.selectedCountryCode = this.empdata.emergencycode;
-    this.selectedDialCode = this.empdata.emergencycode;
-    this.selectedCountryCode1 = this.empdata.emergencycode1;
-    this.selectedDialCode1 = this.empdata.emergencycode1;
   }
 
   patchForm() {
@@ -114,50 +126,29 @@ export class EmergencyContactDetailsComponent {
   updateEmpDetails() {
     if (this.contactForm.valid) {
       let formEmployeeData = this.contactForm.value;
-      const payload = {
-        firstName: this.empdata.firstName,
-        lastName: this.empdata.lastName,
-        empstatus: this.empdata.empstatus,
-        emailaddress: this.empdata.emailaddress,
-        wfhManagerId: this.empdata.wfhManagerId,
-        password: this.empdata.password,
-        isManager: this.empdata.isManager,
-        employeeId: this.empdata.employeeId,
-        issalaryhold: this.empdata.issalaryhold,
-        pf: this.empdata.pf,
-        esic: this.empdata.esic,
-        pt: this.empdata.pt,
-        insurance: this.empdata.insurance,
-        expirationTime: this.empdata.expirationTime,
-        middleName: this.empdata.middleName,
-        substatus: this.empdata.substatus,
-        bgc: this.empdata.bgc,
-        allowWFH: this.empdata.allowWFH,
-        gender: this.empdata.gender,
-        dob: this.empdata.dob,
-        contactnumber: this.empdata.contactnumber,
-        title: this.empdata.title,
-        mobilePhoneCountryCode: this.empdata.mobilePhoneCountryCode,
-        bloodGroup: this.empdata.bloodGroup,
-        emergencyName: formEmployeeData.contact1.name,
-        emailId: formEmployeeData.contact1.email,
-        emergencycode: formEmployeeData.contact1.selectedDialCode,
-        emergencynumber: formEmployeeData.contact1.mobile,
-        relationShip: formEmployeeData.contact1.relationship,
-        emergencyName1: formEmployeeData.contact2.name,
-        emergencyEmail1: formEmployeeData.contact2.email,
-        emergencycode1: formEmployeeData.contact2.selectedDialCode1,
-        emergencyNumber1: formEmployeeData.contact2.mobile,
-        relationship1: formEmployeeData.contact2.relationship
-      }
-      console.log(payload);
-      this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, payload).subscribe({
+      this.empdata.emergencyName=formEmployeeData.contact1.name,
+      this.empdata.emailId= formEmployeeData.contact1.email,
+      this.empdata.emergencycode= this.selectedCountryCode(),
+      this.empdata.emergencynumber=formEmployeeData.contact1.mobile,
+      this.empdata.relationShip= formEmployeeData.contact1.relationship,
+      this.empdata.emergencyName1= formEmployeeData.contact2.name,
+      this.empdata.emergencyEmail1= formEmployeeData.contact2.email,
+      this.empdata.emergencycode1= this.selectedCountryCode1(),
+      this.empdata.emergencyNumber1= formEmployeeData.contact2.mobile,
+      this.empdata.relationship1= formEmployeeData.contact2.relationship
+      
+      console.log(this.empdata);
+      this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
           console.log(data);
           if (data.statusCode === 409) {
+           
             this.openPopup.openError(`${data.message}`);
+            
           }
-          else if (data.statusCode === 200) { }
+          else if (data.statusCode === 200) { 
+            this.navigateNext();
+          }
         },
         error: (eroorReason: any) => {
           console.log(eroorReason);
@@ -168,14 +159,20 @@ export class EmergencyContactDetailsComponent {
         complete: () => { }
       })
     }
+    else{
+      this.openPopup.openError("Please fill all the required fields")
+    }
   }
 
   // mobile number 1 functions
   onCountryChange(country: any) {
-    this.selectedCountryCode = country.dialling_code;
+    this.selectedCountryCode.set(country.code);
     this.selectedDialCode = country.code;
-    this.contactForm.get('contact1.mobile')?.setValidators([Validators.required, this.phoneNumberValidator()]);
-    this.contactForm.get('contact1.mobile')?.updateValueAndValidity();
+    if( this.selectedDialCode ){
+      this.contactForm.get('contact1.mobile')?.setValidators([Validators.required, this.phoneNumberValidator()]);
+      this.contactForm.get('contact1.mobile')?.updateValueAndValidity();
+    }
+   
   }
 
   formatPhoneNumber(value: string): string {
@@ -191,7 +188,7 @@ export class EmergencyContactDetailsComponent {
 
   phoneNumberValidator() {
     return (control: AbstractControl) => {
-      const value = control.value;
+      const value = String(control.value);
       if (!this.selectedDialCode || !value) {
         return null;
       }
@@ -206,8 +203,8 @@ export class EmergencyContactDetailsComponent {
 
   // mobile number 2 functions
   onCountryChange1(country: any) {
-    this.selectedCountryCode1 = country.dialling_code;
-    this.selectedDialCode1 = country.code;
+    this.selectedCountryCode1.set(country.code);
+    this.selectedDialCode1 = country.dialling_code;
     this.contactForm.get('contact2.mobile')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.contactForm.get('contact2.mobile')?.updateValueAndValidity();
   }

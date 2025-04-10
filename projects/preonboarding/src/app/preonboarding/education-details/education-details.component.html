@@ -47,7 +47,22 @@
                     <td>{{data.degreeStartDate | dateFormat}}</td>
                     <td>{{data.degreeEndDate | dateFormat}}</td>
                     <td>{{data.gpa}}</td>
-                    <td></td>
+                    <td class="text-nowrap">
+                        <span *ngIf="data.attachment == null || data.attachment == ''; else attachment">
+                            <div class="centerhypen">-</div>
+                        </span>
+                        <ng-template #attachment>
+                            <div *ngIf="data.attachment.endsWith('jpg') || data.attachment.endsWith('jpeg') || data.attachment.endsWith('png') ;else downloadView">
+                                <a type="button" class="view-btn" (click)="onViewClick(data.attachment)">
+                                    <i class="bi bi-paperclip me-1"></i>View
+                                </a>
+                            </div>
+                            <ng-template #downloadView>
+                                <a type="button" class="view-btn" (click)="onSelectDownload(data.attachment)"><i
+                                        class="bi bi-download me-2"></i>Download</a>
+                            </ng-template>
+                        </ng-template>
+                    </td>
                     <td>
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -67,8 +82,31 @@
     </div>
 </div>
 }
-
+<!--Image view popup-->
+<ng-template #viewpopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <div class="d-flex justify-content-between popup-header-border p-4">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">View</p>
+                </div>
+                <div>
+                    <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="text-center w-100 p-4">
+                <div *ngIf="!DocImageUrl; else imageView">
+                    <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+                </div>
+                <ng-template #imageView>
+                    <img [src]="DocImageUrl" alt="Image" class="view-image w-50" />
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</ng-template>
 <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
+    <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Offer Letter</button>
     <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
 </div>
 </div>

@@ -10,6 +10,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { IProbationEmployees } from '../../../Interfaces/letters-model';
+import { IJob } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-family-details',
@@ -21,15 +23,14 @@ export class FamilyDetailsComponent implements OnInit {
   subscription!: Subscription;
   familyRelations: IRelation[] = [];
   selectedFamilyMembername: any
-  empinfo: any = {};
+  empinfo = {} as IJob; 
   familyDetailsForm!: FormGroup;
   selectedFamilyMember: any
   familyDetailsupdateForm!: FormGroup
   selectedFamilyMemberid:any
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
-  educationtypes = [
-    { label: 'Select', value: null },]
-
+ 
+    employedata={} as IProbationEmployees;
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -37,6 +38,7 @@ export class FamilyDetailsComponent implements OnInit {
     this.initializeFamilyDetailsupdateForm();
     this.getFamilyRelations();
     this.getfamilyDetailsByEmployeid();
+    this.getEmployeeId();
   }
 
   initializeFamilyDetailsForm(): void {
@@ -116,7 +118,29 @@ export class FamilyDetailsComponent implements OnInit {
         },
       });
   }
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employedata = data as IProbationEmployees;;
+        this.patchForm(data);
+        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
 
+  patchForm(data: any): void {
+    this.familyDetailsForm.patchValue({
+      memberName: data.familyMemberName || '', 
+      dateOfBirth: data.familyMemberDOB || '', 
+      relationShipId: data.familyMemberRelation || '',  
+      isDependent: data.isDependent || false,  
+    });
+  
+    console.log(this.familyDetailsForm.value); 
+  }
+  
   openModalupdate(content: any, familyDetail: any): void {
     console.log(familyDetail)
     this.selectedFamilyMembername = familyDetail.relationShipName
@@ -193,4 +217,10 @@ export class FamilyDetailsComponent implements OnInit {
       });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  
 }

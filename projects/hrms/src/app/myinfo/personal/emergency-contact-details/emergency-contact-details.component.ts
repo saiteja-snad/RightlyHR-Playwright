@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -11,6 +11,7 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { IJob } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-emergency-contact-details',
@@ -38,8 +39,15 @@ export class EmergencyContactDetailsComponent {
       hideCode: true,
     };
     mobileNumberData: IphoneNumberData | null = null;
-  empinfo: any
-  constructor(private modalService: NgbModal, private fb: FormBuilder,   public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
+    empinfo = {} as IJob; 
+
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private cd: ChangeDetectorRef,  public formValidation: FormValidationService, private conformationPopup: OpenModalService, public http: HttpService) { 
+    effect(() => {
+
+      this.http.selectedCountryCodeSignal.set(this.selectedCountryCode)
+      this.http.selectedCountryCode2Signal.set(this.selectedCountryCode1)
+    });
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -53,13 +61,11 @@ export class EmergencyContactDetailsComponent {
     this.emergencyContactForm = this.fb.group({
       contact1Name: ['', Validators.required],
       contact1Email: ['', [Validators.required, Validators.email]],
-      contact1Phone: ['', Validators.required],
+      contact1Phone: ['', ],
       contact1Relationship: ['', Validators.required],
-      contact1CountryCode: ['', Validators.required],
-      contact2CountryCode: ['', Validators.required],
       contact2Name: ['', Validators.required],
       contact2Email: ['', [Validators.required, Validators.email]],
-      contact2Phone: ['', Validators.required],
+      contact2Phone: ['', ],
       contact2Relationship: ['', Validators.required],
     });
     this.selectedCountryCode = this.empinfo.emergencycode;
@@ -70,17 +76,25 @@ export class EmergencyContactDetailsComponent {
   showButtons() {
     this.buttons = !this.buttons
   }
+  //employedata
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empinfo = data;
+
+        this.http.selectedCountryCodeSignal.set(data.emergencycode || '');
+        this.http.selectedCountryCode2Signal.set(data.emergencycode1)
+        this.cd.detectChanges();
+      
         this.patchForm(data);
+       
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
   patchForm(data: any): void {
+  
     const contact1Relationship = this.familyRelations.find(
       (relation) => relation.relationship1 === data.relationShip
     ) || null;
@@ -91,8 +105,7 @@ export class EmergencyContactDetailsComponent {
 
 
     this.emergencyContactForm.patchValue({
-       contact1CountryCode: data.emergencycode || '',
-      contact2CountryCode: data.emergencycode1 || '', // Bind first emergency contact country code
+      // Bind first emergency contact country code
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
       contact1Phone: data.mobileNumber || '', // Bind first emergency contact phone
@@ -106,6 +119,13 @@ export class EmergencyContactDetailsComponent {
     console.log('Selected Dial Code 2:', this.selectedDialCode1);
   }
 
+  disableForm(): void {
+    this.buttons = false;
+    this.buttons2 = false;
+    this.emergencyContactForm.disable();
+    this.getEmployeeId()
+
+  }
   enableForm(): void {
     this.buttons = true;
     this.emergencyContactForm.get('contact1Name')?.enable();
@@ -119,19 +139,15 @@ export class EmergencyContactDetailsComponent {
     this.emergencyContactForm.get('contact2Relationship')?.enable();
   }
 
-  disableForm(): void {
-    this.buttons = false;
-    this.buttons2 = false;
-    this.emergencyContactForm.disable();
-  }
+ 
 
  
   saveForm(): void {
     const formValue = this.emergencyContactForm.value;
     // Clean and format phone numbers
     const cleanPhoneNumber = (phone: any): string => {
-      if (!phone) return ''; // Return an empty string if phone is null or undefined
-      return String(phone).replace(/\s+/g, '').replace(/-/g, ''); // Convert to string and remove spaces and dashes
+      if (!phone) return ''; 
+      return String(phone).replace(/\s+/g, '').replace(/-/g, ''); 
     };
 
   const contact1Phone = cleanPhoneNumber(formValue.contact1Phone || this.empinfo.mobileNumber || '');
@@ -161,7 +177,24 @@ export class EmergencyContactDetailsComponent {
       emergencyEmail1: formValue.contact2Email || this.empinfo.emergencyEmail1,
       emergencyNumber1:contact2Phone ,
       relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.empinfo.relationship1,
-      profileUrl : this.empinfo.profileUrl
+      profileUrl : this.empinfo.profileUrl,
+      fusionEmpId: this.empinfo.fusionEmpId,
+      dateOfJoining: this.empinfo.dateOfJoining,
+      branchCode: this.empinfo.branchCode,
+      probationEndDate: this.empinfo.probationEndDate,
+      probationStatus: this.empinfo.probationStatus,
+      noticePeriod: this.empinfo.noticePeriod,
+      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
+      issalaryhold:this.empinfo.issalaryhold,
+      pf: this.empinfo.pf,
+      esic:this.empinfo.esic,
+      pt: this.empinfo.pt,
+      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
+      allowWFH: this.empinfo.allowWFH,
+      workLocation:this.empinfo.workLocation,
+      wfhManagerId: this.empinfo.wfhManagerId,
+      mobilePhoneCountryCode:this.empinfo.mobilePhoneCountryCode,
+      workPhoneCountryCode: this.empinfo.workPhoneCountryCode
     };
 
 
@@ -170,8 +203,8 @@ export class EmergencyContactDetailsComponent {
         next: (data: any) => {
           console.log('Data updated successfully:', data);
           this.modalService.dismissAll();
-          this.buttons = false;
-          this.buttons2 = false;
+          this.getEmployeeId()
+         this.emergencyContactForm.disable()
           this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
         },
         error: (reason: any) => {
@@ -194,26 +227,45 @@ export class EmergencyContactDetailsComponent {
   }
 
   onCountryChange(country: any): void {
+    // Check if the selected country is actually changing
+    if (this.selectedDialCode === country.code) {
+      return; // No change, do not apply validators again
+    }
+  
+    // Country has changed - update values
     this.selectedCountryCode = country.dialling_code;
     this.selectedDialCode = country.code;
-    // Update validators for both phone fields
-    this.emergencyContactForm.patchValue({
-      contact1CountryCode: this.selectedDialCode, // Update the form control for contact1CountryCode
-    });
-    this.emergencyContactForm.get('contact1Phone')?.setValidators([Validators.required, this.phoneNumberValidator()]);
-    this.emergencyContactForm.get('contact1Phone')?.updateValueAndValidity();
+  
+    const contact1PhoneControl = this.emergencyContactForm.get('contact1Phone');
+  
+    if (country?.code) {
+      // Country selected: apply validator
+      contact1PhoneControl?.setValidators([this.phoneNumberValidator()]);
+    } else {
+      // No country selected: remove validators
+      contact1PhoneControl?.clearValidators();
+    }
+  
+    contact1PhoneControl?.updateValueAndValidity();
   }
+  
 
   onCountryChange1(country: any): void {
+    // Only apply validators if the user changes the country
+    if (this.selectedDialCode1 === country.code) {
+      return;
+    }
+  
+    // Country has changed - update values and apply validator
     this.selectedCountryCode1 = country.dialling_code;
     this.selectedDialCode1 = country.code;
-    // Update validators for both phone fields
-    this.emergencyContactForm.patchValue({
-      contact2CountryCode: this.selectedDialCode1, // Update the form control for contact2CountryCode
-    });
-    this.emergencyContactForm.get('contact2Phone')?.setValidators([Validators.required, this.phoneNumberValidator()]);
-    this.emergencyContactForm.get('contact2Phone')?.updateValueAndValidity();
+  
+    const control = this.emergencyContactForm.get('contact2Phone');
+  
+    control?.setValidators([this.phoneNumberValidator()]);
+    control?.updateValueAndValidity();
   }
+  
 
   formatPhoneNumber(value: any): string {
     if (!this.selectedDialCode || !value) return ''; // Return an empty string if value is null/undefined
@@ -232,7 +284,9 @@ export class EmergencyContactDetailsComponent {
       if (!this.selectedDialCode || !value) {
         return null;
       }
-      const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
+  
+      const phoneNumber = parsePhoneNumberFromString(String(value), this.selectedDialCode);
+  
       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {

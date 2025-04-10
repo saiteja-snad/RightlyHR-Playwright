@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { Ibank, Ibankdetails } from '../../../Interfaces/personal-modal';
@@ -8,6 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { IProbationEmployees } from '../../../admin/probation-employees/probation-emp-module';
 
 @Component({
   selector: 'app-bank-details',
@@ -15,7 +16,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
-export class BankDetailsComponent {
+export class BankDetailsComponent implements OnInit,OnDestroy{
   banknames: Ibank[] = [];
   bankDetailsForm!: FormGroup;
   bankid: any
@@ -26,6 +27,7 @@ export class BankDetailsComponent {
   proofValid: boolean = true;
   bankdocument: any
   displayblankdocument:any
+  employedata={} as IProbationEmployees;
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -33,7 +35,32 @@ export class BankDetailsComponent {
     this.initializeBankDetailsupdateForm()
     this.getbanknames()
     this.getbankempid()
+    this.getEmployeeId();
   }
+
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employedata = data;
+        this.patchForm(data);
+        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
+
+  patchForm(data: any): void {
+    this.bankDetailsForm.patchValue({
+      bankName: data.bankName || '',
+      accountName: data.accountName || '',
+      accountNo: data.accountNo || '',
+      ifscCode: data.ifscCode || '',
+      isPrimary: data.isPrimary || false, 
+      attachment: data.attachment || null,  
+    });
+  }
+
   initializeBankDetailsForm(): void {
     this.bankDetailsForm = this.fb.group({
       bankName: ['', Validators.required],
@@ -44,6 +71,7 @@ export class BankDetailsComponent {
       attachment: [null, Validators.required]
     });
   }
+
   initializeBankDetailsupdateForm(): void {
     this.bankDetailsUpdateForm = this.fb.group({
       bankNameupdate: ['', Validators.required],
@@ -55,11 +83,10 @@ export class BankDetailsComponent {
     });
   }
 
-
-
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
   //drop drown
   getbanknames(): void {
     this.subscription = this.http.getData(`Bank`).subscribe({
@@ -78,6 +105,7 @@ export class BankDetailsComponent {
       }
     });
   }
+
   //Bank Details
   getbankempid() {
     let EmpId = parseInt(this.empinfo.employeeId);
@@ -87,21 +115,6 @@ export class BankDetailsComponent {
       },
     });
   }
-
-  // onBankProofSelected(event: any): void {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const fileSizeInMB = file.size / (1024 * 1024);
-  //     const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
-  //     const fileExtension = file.name.split('.').pop()?.toLowerCase();
-
-  //     if (fileSizeInMB > 25 || !allowedExtensions.includes(fileExtension || '')) {
-  //       console.error('Invalid file. Only PDF and image files under 25MB are allowed.');
-  //       // this.proofValid = false;
-  //       // this.bankDetailsForm.get('attachment')?.setErrors({ invalidFile: true });
-  //     } 
-  //   }
-  // }
 
   onBankProofSelected(event: any): void {
     const file = event.target.files[0];
@@ -177,6 +190,7 @@ export class BankDetailsComponent {
      
     };
   }
+
   //download Functionality
   onSelectBankProofDownload(file: any) {
     this.subscription = this.http
@@ -207,8 +221,6 @@ export class BankDetailsComponent {
     if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
       return;
     }
-
-    // Prevent the first character from being a space
     if (key === ' ' && inputElement.selectionStart === 0) {
       event.preventDefault();
       return;
@@ -219,8 +231,6 @@ export class BankDetailsComponent {
       event.preventDefault();
     }
   }
-
-
 
   openModalupdate(content: any, bankDetail: any): void {
     console.log(bankDetail)
@@ -243,8 +253,6 @@ export class BankDetailsComponent {
     : null;
    
     this.bankdocument = bankDetail.docUrl
-   
-
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
@@ -252,7 +260,6 @@ export class BankDetailsComponent {
   updateBankDetails(): void {
     if (this.bankDetailsUpdateForm.valid) {
       const formData = this.bankDetailsUpdateForm.value;
-
       // Prepare the payload
       const payload = {
         bankId: this.bankid,
@@ -313,10 +320,12 @@ export class BankDetailsComponent {
       }
     });
   }
+
   opendeletModal(content: any, bankDetail: any): void {
     this.bankid = bankDetail.bankId; 
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
   bankDelete(): void {
     if (!this.bankid) {
       console.error('Bank ID is not set. Cannot delete bank details.');
@@ -338,5 +347,10 @@ export class BankDetailsComponent {
           this.conformationPopup.openErrorModal('Failed to delete bank details. Please try again.');
         }
       });
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

@@ -1,16 +1,17 @@
 import { CommonModule, formatDate } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, effect, OnInit, signal, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { IAddress, IGender, IJobdetails, Ipersonal, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
 import { BnNgIdleService } from 'bn-ng-idle';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { IphoneNumberData } from '../../models/mobilenumber.model';
+import { PopupService } from '../../common-services/popup.service';
 @Component({
   selector: 'app-personal-details',
   imports: [CommonModule, Select, ReactiveFormsModule, NgxCountriesDropdownModule],
@@ -37,8 +38,10 @@ export class PersonalDetailsComponent implements OnInit {
   selectedDialCode: any;
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
-  selectedCountryCode: any;
   spinnerLoader = false;
+  selectedCountryCode = signal<string>('');
+  selectedCountryCodegflag:any;
+  loading = true;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -58,8 +61,13 @@ export class PersonalDetailsComponent implements OnInit {
     { name: 'O-', value: 'O-' }
   ];
 
-  constructor(private router: Router, private modalService: NgbModal, private readonly fb: FormBuilder,
-    private http: HttpService, private bnIdle: BnNgIdleService) { }
+  constructor(private router: Router, private modalService: NgbModal,private openPopup: PopupService, private readonly fb: FormBuilder,
+    private http: HttpService, private bnIdle: BnNgIdleService) {
+      this.initializePersonalForm();
+      effect(() => {
+       this.selectedCountryCode.set(this.selectedDialCode);
+      })
+     }
 
   ngOnInit(): void {
     this.bnIdle.startWatching(1600).subscribe((isTimeOut: boolean) => {
@@ -70,24 +78,30 @@ export class PersonalDetailsComponent implements OnInit {
       }
     })
     this.prospectiveEmpData = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
-    this.initializePersonalForm();
-    this.getprospectivempdata();
+
+    this.getprospectivempdata()
     this.getGender();
-    this.getJobDetails();
     this.getTitle();
+   
   }
 
   // Prospective Employee Data
   getprospectivempdata() {
+    this.loading = true;
     let employeeId = parseInt(this.prospectiveEmpData.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.employeeData = data as Ipersonal;
-        this.patchForm();
+        this.employeeData = data as Ipersonal; 
+      this.selectedCountryCode.set(this.employeeData?.contactnumbercountryflag);
+      console.log(this.selectedCountryCode);
+      this.getJobDetails();
+        
+        this.loading = false;
       },
       error: (reason: any) => {
         console.log(reason);
+        this.loading = false;
         if (reason.status == 401) {
           localStorage.clear();
           this.router.navigate(['']);
@@ -102,8 +116,8 @@ export class PersonalDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingJobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.jobdetails = data[0] as IJobdetails[];
-        console.log(this.jobdetails);
         this.patchForm();
+        console.log(this.jobdetails);
       }
     })
   }
@@ -129,41 +143,41 @@ export class PersonalDetailsComponent implements OnInit {
   initializePersonalForm() {
     let loggedInUser = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     this.personalDetailsForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
-      middleName: [''],
-      lastName: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
-      gender: ['', Validators.required],
-      salutation: ['', Validators.required],
-      phonenumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      dob: ['', Validators.required],
-      bloodGroup: [''],
-      location: [{ value: '', disabled: true }, Validators.required],
-      subLocation: [{ value: '', disabled: true }, Validators.required],
-      designation: [{ value: '', disabled: true }, Validators.required],
-      personalEmail: [{ value: '', disabled: true }, Validators.required],
+      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+      middleName: [null],
+      lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+      gender: [null, Validators.required],
+      salutation: [null, Validators.required],
+      phonenumber: [null, [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      dob: [null, Validators.required],
+      bloodGroup: [null],
+      location: [{ value: null, disabled: true }, Validators.required],
+      subLocation: [{ value: null, disabled: true }, Validators.required],
+      designation: [{ value: null, disabled: true }, Validators.required],
+      personalEmail: [{ value: null, disabled: true }, Validators.required],
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
-        addressLine1: ['', Validators.required],
-        addressLine2: ['', Validators.required],
-        city: ['', Validators.required],
-        state: ['', Validators.required],
-        country: ['', Validators.required],
-        zipCode: ['', Validators.required],
+        addressLine1: [null, Validators.required],
+        addressLine2: [null, Validators.required],
+        city: [null, Validators.required],
+        state: [null, Validators.required],
+        country: [null, Validators.required],
+        zipCode: [null, Validators.required],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: ['', Validators.required],
-        addressLine2: ['', Validators.required],
-        city: ['', Validators.required],
-        state: ['', Validators.required],
-        country: ['', Validators.required],
-        zipCode: ['', Validators.required],
+        addressLine1: [null, Validators.required],
+        addressLine2: [null, Validators.required],
+        city: [null, Validators.required],
+        state: [null, Validators.required],
+        country: [null, Validators.required],
+        zipCode: [null, Validators.required],
       }),
     });
   }
-
+ 
   patchForm() {
     const dateOfBirth = this.employeeData.dob ? this.formatDate(this.employeeData.dob) : null;
     this.personalDetailsForm.patchValue({
@@ -179,24 +193,23 @@ export class PersonalDetailsComponent implements OnInit {
       subLocation: this.jobdetails.subLocation,
       designation: this.jobdetails.jobRole,
       personalEmail: this.employeeData.emailaddress,
-      currentAddress: this.employeeData.employeeAddresses.find((address:IAddress)=>address.type.toLowerCase() == 'c'),
-      permanentAddress: this.employeeData.employeeAddresses.find((address:IAddress)=>address.type.toLowerCase() == 'p')
-    });
-    this.selectedCountryCode = this.employeeData.mobilePhoneCountryCode;
-  }
+      currentAddress: this.employeeData?.employeeAddresses?.find((address:IAddress)=>address?.type?.toLowerCase() == 'c'),
+      permanentAddress: this.employeeData?.employeeAddresses?.find((address:IAddress)=>address?.type?.toLowerCase() == 'p')
+    }); 
 
+  }
   // Copy Current Address to Permanent Address
   copyCurrentAddress(event: any) {
     if (event.target.checked) {
       const currentAddress = this.personalDetailsForm.get('currentAddress')?.value;
       this.personalDetailsForm.patchValue({
         permanentAddress: {
-          addressLine1: currentAddress?.addressLine1 || '',
-          addressLine2: currentAddress?.addressLine2 || '',
-          city: currentAddress?.city || '',
-          state: currentAddress?.state || '',
-          country: currentAddress?.country || '',
-          zipCode: currentAddress?.zipCode || '',
+          addressLine1: currentAddress?.addressLine1 || null,
+          addressLine2: currentAddress?.addressLine2 || null,
+          city: currentAddress?.city || null,
+          state: currentAddress?.state || null,
+          country: currentAddress?.country || null,
+          zipCode: currentAddress?.zipCode || null,
         }
       });
     }
@@ -219,35 +232,16 @@ export class PersonalDetailsComponent implements OnInit {
   onSubmit() {
     console.log(this.employeeData);
     if (!this.personalDetailsForm.invalid) {
-      let formEmployeeData = this.personalDetailsForm.value;
-      const payload = {
-        firstName: formEmployeeData.firstName,
-        lastName: formEmployeeData.lastName,
-        empstatus: this.employeeData.empstatus,
-        emailaddress: this.employeeData.emailaddress,
-        wfhManagerId: this.employeeData.wfhManagerId,
-        password: this.employeeData.password,
-        isManager: this.employeeData.isManager,
-        employeeId: this.employeeData.employeeId,
-        issalaryhold: this.employeeData.issalaryhold,
-        pf: this.employeeData.pf,
-        esic: this.employeeData.esic,
-        pt: this.employeeData.pt,
-        insurance: this.employeeData.insurance,
-        expirationTime: this.employeeData.expirationTime,
-        middleName: formEmployeeData.middleName,
-        substatus: this.employeeData.substatus,
-        bgc: this.employeeData.bgc,
-        allowWFH: this.employeeData.allowWFH,
-        gender: formEmployeeData.gender,
-        dob: formEmployeeData.dob,
-        contactnumber: formEmployeeData.phonenumber,
-        title: formEmployeeData.salutation,
-        mobilePhoneCountryCode: this.selectedDialCode,
-        bloodGroup: formEmployeeData.bloodGroup,
-        generateOffer: false
-      }
-      this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, payload).subscribe({
+       this.employeeData.firstName=this.personalDetailsForm.get('firstName')?.value,
+      this.employeeData.middleName= this.personalDetailsForm.get('middleName')?.value,
+      this.employeeData.lastName= this.personalDetailsForm.get('lastName')?.value,
+      this.employeeData.gender=this.personalDetailsForm.get('gender')?.value,
+       this.employeeData.title=this.personalDetailsForm.get('salutation')?.value,
+      this.employeeData.contactnumber=this.personalDetailsForm.get('phonenumber')?.value,
+      this.employeeData.dob=this.personalDetailsForm.get('dob')?.value,
+       this.employeeData.bloodGroup=this.personalDetailsForm.get('bloodGroup')?.value,
+      this.employeeData.emailaddress=this.personalDetailsForm.get('personalEmail')?.value,
+      this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.employeeData).subscribe({
         next: (data: any) => {
           console.log(data);
           if (data.statusCode === 409) {
@@ -259,7 +253,7 @@ export class PersonalDetailsComponent implements OnInit {
         error: (errorReason: any) => {
           console.error(errorReason);
           if (errorReason.status === 400) {
-            alert(`${errorReason.error?.message || 'Bad request'}`);
+            this.openPopup.openError(`${errorReason.error?.message || 'Bad request'}`);
           }
         }
       });
@@ -292,17 +286,22 @@ export class PersonalDetailsComponent implements OnInit {
   }
 
   // mobile number functions
+ 
   onCountryChange(country: any) {
-    this.selectedCountryCode = country.dialling_code;
-    this.selectedDialCode = country.code;
+    console.log(country);
+    this.selectedDialCode=country.dialling_code;
+    this.selectedCountryCodegflag=country.code;
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
+    this.employeeData.mobilePhoneCountryCode = country.dialling_code; 
+    this.employeeData.contactnumbercountryflag=country.code;
+    console.log(this.employeeData.mobilePhoneCountryCode);
   }
 
-  formatPhoneNumber(value: string): string {
-    if (!this.selectedDialCode || !value) return value;
+  formatPhoneNumber(value: any) {
+    if (!this.selectedCountryCodegflag || !value) return value;
     const stringValue = String(value); // Make sure it's a string
-    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedDialCode);
+    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedCountryCodegflag);
     if (phoneNumber && phoneNumber.isValid()) {
       this.formattedPhoneNumber = phoneNumber.formatInternational();
       return phoneNumber.formatNational();
@@ -312,11 +311,11 @@ export class PersonalDetailsComponent implements OnInit {
 
   phoneNumberValidator() {
     return (control: AbstractControl) => {
-      const value = control.value;
-      if (!this.selectedDialCode || !value) {
+      const value = String(control.value);
+      if (!this.selectedCountryCodegflag || !value) {
         return null;
       }
-      const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
+      const phoneNumber = parsePhoneNumberFromString(value, this.selectedCountryCodegflag);
       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {

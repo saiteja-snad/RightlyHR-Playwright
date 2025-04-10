@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container">
     <div class="d-flex justify-content-between popup-header-border p-4">
         <div class="pt-2">
-            <p class="popup-heading mb-0">{{'Add  Prospective Trainee'| translate}}</p>
+            <p class="popup-heading mb-0">{{'Add Prospective Intern'| translate}}</p>
         </div>
         <div>
             <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -124,7 +124,14 @@
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Close'|translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" >{{'Add'|translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" >
+                    <span *ngIf="!isLoading">
+                        {{'Add'|translate}}
+                    </span>
+                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                        
+                    </div>
+                </button>
             </div>
         </form>
     </div>

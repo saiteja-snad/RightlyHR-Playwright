@@ -1,11 +1,12 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center">
         <div> <span class="family-sub-header">Bank Details</span></div>
+        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
         <div class="plus-button">
             <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
                     (click)="openModal(addBankModal)" class="plus-text">Add
                     New</span></span>
-        </div>
+        </div>}
     </div>
     <div class="custom-table-content mt-2">
         <table class="w-100">
@@ -17,7 +18,8 @@
                     <th>IFSC Code</th>
                     <th>Proof</th>
                     <th>Primary Bank</th>
-                    <th class="text-center">Actions</th>
+                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
+                    <th class="text-center">Actions</th>}
 
                 </tr>
             </thead>
@@ -58,7 +60,9 @@
 
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
+                        <td>
+                            <app-no-data-found />
+                        </td>
                     </tr>
                 </ng-template>
             </tbody>

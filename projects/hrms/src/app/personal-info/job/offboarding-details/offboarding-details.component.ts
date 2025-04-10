@@ -8,11 +8,10 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
-import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-offboarding-details',
-  imports: [CommonModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './offboarding-details.component.html',
   styleUrl: './offboarding-details.component.scss'
 })
@@ -35,7 +34,7 @@ export class OffboardingDetailsComponent {
     this.getRehire();
     this.getTermination();
     this.initializeForm();
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getEmployeeId();
   }
 

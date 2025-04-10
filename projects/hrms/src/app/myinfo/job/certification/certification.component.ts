@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -7,18 +7,19 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-certification',
-  imports: [CommonModule, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './certification.component.html',
   styleUrl: './certification.component.scss'
 })
-export class CertificationComponent {
+export class CertificationComponent  implements OnInit, OnDestroy{
   subscription!: Subscription;
   selectedCertification: any;
   empcertsdata = new BehaviorSubject<any>([]);
-  empinfo: any
+  empinfo:any
   certificationForm!: FormGroup;
   updateCertificationForm!: FormGroup;
   certificationDocument: any;
@@ -27,7 +28,7 @@ export class CertificationComponent {
   showError: boolean = false;
   showErrorr: boolean = false;
   selectedid: any;
-
+  displaycertification:any
 
   constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService) { }
 
@@ -250,8 +251,12 @@ export class CertificationComponent {
       expiryDate: EndDate,
       isExpired: data.isExpired,
     });
-    this.certificationDocument=data.attachment; // Set the selected document for the update form
-    ;
+    this.certificationDocument=data.attachment; 
+
+          
+    this.displaycertification=data.attachment
+    ? this.displaycertification.attachment.split('/').pop()
+    : null;
      // Reset the document for the update form
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
@@ -363,5 +368,12 @@ export class CertificationComponent {
       },
     });
   }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+  
 }
 

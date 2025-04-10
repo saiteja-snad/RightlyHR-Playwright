@@ -13,3 +13,9 @@
         font-size: var(--fontsize16);
     }
 }
+
+.country-input.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+    background-color: #e9ecef;
+  }

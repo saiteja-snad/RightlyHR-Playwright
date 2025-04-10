@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';
+import parsePhoneNumberFromString from 'libphonenumber-js';
+import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule,ReactiveFormsModule,NgxCountriesDropdownModule],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss'
 })
@@ -18,7 +21,27 @@ export class ContactDetailsComponent {
 subscription!:Subscription
   empinfo:any
   buttons= false;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+ 
+      selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
+        hideCode: true,
+        hideName: true
+      };
+      countryListConfig = {
+        hideCode: true,
+      };
+      mobileNumberData: IphoneNumberData | null = null;
+      selectedworkcountrtycode:any
+      selectedworkdialcaode:any
+      selectedpersonalcountrycode:any
+      selectedpersoanldialcode:any
+      formattedPhoneNumber: string = '';
+
+  constructor(private modalService: NgbModal,private cd: ChangeDetectorRef, private fb: FormBuilder, private conformationPopup: OpenModalService, public http: HttpService) { 
+    this.http.selectedworkcoutrycode.set(this.selectedworkcountrtycode  ?? '')
+    this.http.selectedpersonalnumbercode.set(this.selectedpersonalcountrycode ?? '')
+    console.log(this.http.selectedworkcoutrycode)
+
+  }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeId();
@@ -30,10 +53,16 @@ subscription!:Subscription
     this.contactForm = this.fb.group({
       personalEmail: ['', [Validators.required, Validators.email]], 
       workMail: ['', [Validators.required, Validators.email]], // Required and valid email format
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]], // Required and 10-digit phone number
-      workNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]], // Required and 10-digit phone number
+      phoneNumber: ['', [Validators.required, ]], // Required and 10-digit phone number
+      workNumber: ['', [Validators.required, ]], // Required and 10-digit phone number
   
     });
+    this.selectedworkcountrtycode=this.empinfo.workPhoneCountryCode;
+    this.selectedworkdialcaode= this.empinfo.workPhoneCountryCode;
+    this.selectedpersonalcountrycode=this.empinfo.mobilePhoneCountryCode;
+    this.selectedpersoanldialcode=this.empinfo.mobilePhoneCountryCode;
+    console.log(this.selectedworkcountrtycode)
+
   }
 
 
@@ -54,6 +83,10 @@ disableForm(): void {
       next: (data: any) => {
       this.empinfo = data;
       this.patchForm(data);
+      this.http.selectedworkcoutrycode.set(data.workPhoneCountryCode ?? '')
+        this.http.selectedpersonalnumbercode.set(data.mobilePhoneCountryCode ?? '')
+        this.cd.detectChanges();
+        console.log(this.http.selectedworkcoutrycode)
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -69,6 +102,15 @@ disableForm(): void {
   }
   updateAddressInfo(): void {
     const formValue = this.contactForm.value; 
+
+    const cleanPhoneNumber = (phone: any): string => {
+      if (!phone) return ''; 
+      return String(phone).replace(/\s+/g, '').replace(/-/g, ''); 
+    };
+
+    const contactnumber = cleanPhoneNumber(formValue.phoneNumber || this.empinfo.phoneNumber || '');
+    const worknumber = cleanPhoneNumber(formValue.workNumber || this.empinfo.workNumber || '');
+
   const updatePayload = {
     employeeId: this.empinfo.employeeId,
     title: this.empinfo.title || null,
@@ -82,8 +124,8 @@ disableForm(): void {
     empStatus: this.empinfo.empstatus,
     emailaddress: formValue.personalEmail || this.empinfo.personalEmail, 
     workEmail: formValue.workMail || this.empinfo.workMail, 
-    contactnumber: formValue.phoneNumber || this.empinfo.phoneNumber,
-    workPhone: formValue.workNumber || this.empinfo.workNumber,
+    contactnumber: contactnumber,
+    workPhone:worknumber,
     emergencyName: this.empinfo.emergencyName,
     emailId: this.empinfo.emailId,
     relationShip: this.empinfo.relationShip,
@@ -107,7 +149,9 @@ disableForm(): void {
     totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
     allowWFH: this.empinfo.allowWFH,
     workLocation:this.empinfo.workLocation,
-    wfhManagerId: this.empinfo.wfhManagerId
+    wfhManagerId: this.empinfo.wfhManagerId,
+    mobilePhoneCountryCode:  this.selectedpersoanldialcode || this.empinfo.mobilePhoneCountryCode ,
+  workPhoneCountryCode: this.selectedworkdialcaode ||  this.empinfo.workPhoneCountryCode 
   };
 
  
@@ -127,6 +171,78 @@ disableForm(): void {
       },
     });
   }
+
+  
+  onCountryChangeworknumber(country: any): void {
+    // Check if the selected country is actually changing
+    if (this.selectedworkdialcaode === country.code) {
+      return; // No change, do not apply validators again
+    }
+  
+    // Country has changed - update values
+    this.selectedworkcountrtycode = country.dialling_code;
+    this.selectedworkdialcaode = country.code;
+  
+    const contact1PhoneControl = this.contactForm.get('workNumber');
+  
+    if (country?.code) {
+      // Country selected: apply validator
+      contact1PhoneControl?.setValidators([this.phoneNumberValidator()]);
+    } else {
+      // No country selected: remove validators
+      contact1PhoneControl?.clearValidators();
+    }
+  
+    contact1PhoneControl?.updateValueAndValidity();
+  }
+  
+
+  onCountryChangepersonalcode(country: any): void {
+    // Only apply validators if the user changes the country
+    if (this.selectedpersoanldialcode === country.code) {
+      return;
+    }
+  
+    // Country has changed - update values and apply validator
+    this.selectedpersonalcountrycode = country.dialling_code;
+    this.selectedpersoanldialcode = country.code;
+  
+    const control = this.contactForm.get('phoneNumber');
+  
+    control?.setValidators([this.phoneNumberValidator()]);
+    control?.updateValueAndValidity();
+  }
+  
+
+  formatPhoneNumber(value: any): string {
+    if (!this.selectedworkdialcaode || !value) return ''; // Return an empty string if value is null/undefined
+    const stringValue = String(value); // Ensure the value is converted to a string
+    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedworkdialcaode);
+    if (phoneNumber && phoneNumber.isValid()) {
+      this.formattedPhoneNumber = phoneNumber.formatInternational();
+      return phoneNumber.formatNational();
+    }
+    return stringValue; // Return the original value if parsing fails
+  }
+
+  phoneNumberValidator() {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      if (!this.selectedworkdialcaode || !value) {
+        return null;
+      }
+  
+      const phoneNumber = parsePhoneNumberFromString(String(value), this.selectedworkdialcaode);
+  
+      if (phoneNumber && phoneNumber.isValid()) {
+        return null;
+      } else {
+        return { invalidPhoneNumber: true };
+      }
+    };
+  }
+
+
   showButtons() {
     this.buttons = !this.buttons
   }

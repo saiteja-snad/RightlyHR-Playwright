@@ -17,6 +17,7 @@ export interface Iprospective{
     sublocation?:string;
     lopcation: string,
     jobRole: string,
+    mobilePhoneCountryCode: string,
 }
 export interface IRole {
     sno: number,

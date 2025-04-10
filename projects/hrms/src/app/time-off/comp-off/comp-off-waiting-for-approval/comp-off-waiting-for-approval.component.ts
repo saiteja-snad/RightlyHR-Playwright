@@ -74,7 +74,7 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
         this.waitingForApprovalCompOffCount = this.waitingForApprovalCompOff.length;
       },
       error: (error) => {
-        console.error('Error fetching rides:', error);
+        console.error('Error fetching data:', error);
         this.waitingForApprovalCompOff = []; // Set to empty array on error
       },
     });

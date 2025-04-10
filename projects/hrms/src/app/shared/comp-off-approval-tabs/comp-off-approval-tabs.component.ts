@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ICompOff } from '../../Interfaces/compoff.modal';
 import { IJob } from '../../Interfaces/letters-model';
@@ -20,7 +20,20 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   processedCompOffRequestsCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  constructor(public readonly router: Router, private http: HttpService) {}
+
+  constructor(public readonly router: Router, private http: HttpService) {
+    effect(() =>{
+        if (this.http.tirggerCountSignal().compOff) {
+          this.getCompOffRequest();
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            compOff: false,
+          }));
+        }
+
+    })
+  }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getCompOffRequest();
@@ -55,7 +68,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
           ).length;
         },
         error: (error) => {
-          console.error('Error fetching rides:', error);
+          console.error('Error fetching data:', error);
           this.compOff = []; // Set to empty array on error
         },
       });

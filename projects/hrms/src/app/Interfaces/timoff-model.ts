@@ -54,32 +54,33 @@ export interface ICategoryDetails{
 }
 
 export interface Ileavesdatas {
-    requestedBy: any;
-    isNotVisible: boolean;
-    employeeId: any,
-    leaveType: any,
-    duration: any,
-    startdate: any,
-    enddate: any,
-    notes: any,
-    status: any,
-    id: any,
-    Time: number,
-    isDaytype: boolean,
-    leavesapplied: number,
-    remainingleaves: number,
-    leavePolicyId: number,
-    categoryId: any,
-    durationType: any,
-    date: any,
-    categoryName: string;
-    isdeleted: boolean;
-    requestType?: string,
-    refModule: string,
-    refEntityId: number,
-    leavesTaken: number,
-    requestedComments :string;
-
+  requestedBy: any;
+  isNotVisible: boolean;
+  employeeId: any;
+  leaveType: any;
+  duration: any;
+  startdate: any;
+  enddate: any;
+  notes: any;
+  status: any;
+  id: any;
+  Time: number;
+  isDaytype: boolean;
+  leavesapplied: number;
+  remainingleaves: number;
+  leavePolicyId: number;
+  categoryId: any;
+  durationType: any;
+  date: any;
+  categoryName: string;
+  isdeleted: boolean;
+  requestType?: string;
+  refModule: string;
+  refEntityId: number;
+  leavesTaken: number;
+  requestedComments: string;
+  endTimeProp: any;
+  startTimeProp: any;
 }
 
 
@@ -124,4 +125,11 @@ export interface ILeavesTaken {
     leavesTaken: number;
     remainingLeaves: number;
     totalleaves:number;
+  }
+
+  export interface IValidations {
+    isStartTimeShouldbelessthanEndTime: boolean;
+    StartTimeShouldbelessthanEndTimeErrorMessage?: string;
+    isdurationValidated: boolean;
+    DurationErrorMessage?: string;
   }

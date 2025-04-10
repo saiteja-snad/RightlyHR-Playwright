@@ -3,50 +3,42 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Leave Type</th>
-                    <th>Duration</th>
+                    <th>Worked Date</th>
                     <th>Availed</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Reason</th>
+                    <!-- <th>Reason</th> -->
+                    <th>Applied Date</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
+                @if (rejectedWFHs.length > 0) {
+                <ng-container *ngFor="let wfhRequest of rejectedWFHs; let i = index">
+                    <tr>
+                        <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}
+                        </td>
+                        <td >
+                            @if(wfhRequest.durationType == 1){
+                                <span>First Half</span>
+                            }@else if(wfhRequest.durationType == 3){
+                                <span>Second Half</span>
+                            }@else if(wfhRequest.durationType == 2){
+                                <span>Full Day</span>
+                            }@else {
+                                <span>-</span>
+                            }
+                        </td>
+                        <td>{{wfhRequest.requestedDate | dateformat}}</td>
+                        <td>{{wfhRequest.status}}</td>
+                    </tr>
+                </ng-container>}
+                @else {
                 <tr>
-                    <td>10410</td>
-                    <td>Jhon Doe</td>
-                    <td>Jhon&#64;gmail.com</td>
-                    <td>+91 9087654321</td>
-                    <td>Bengaluru</td>
-                    <td>Mysore IT park</td>
-                    <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">Feaver </p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div>
+                    <td class="text-center" colspan="5">
+                        <p>No data found</p>
                     </td>
-                    <td>Employee Created</td>
                 </tr>
-                <tr>
-                    <td>10410</td>
-                    <td>Jhon Doe</td>
-                    <td>Jhon&#64;gmail.com</td>
-                    <td>+91 9087654321</td>
-                    <td>Bengaluru</td>
-                    <td>Mysore IT park</td>
-                    <td>HR Administrator</td>
-                    <td>Employee Created</td>
-                </tr>
+                }
+
             </tbody>
         </table>
     </div>

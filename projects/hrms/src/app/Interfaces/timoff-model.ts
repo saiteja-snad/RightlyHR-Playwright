@@ -78,6 +78,7 @@ export interface Ileavesdatas {
     refModule: string,
     refEntityId: number,
     leavesTaken: number,
+    requestedComments :string;
 
 }
 

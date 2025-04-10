@@ -5,32 +5,39 @@
                 <tr>
                     <th>Worked Date</th>
                     <th>Availed</th>
-                    <th>Reason</th>
+                    <!-- <th>Reason</th> -->
                     <th>Applied Date</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
+                @if (waitingForApprovalCompOff.length > 0) {
+                <ng-container *ngFor="let comppOffRequest of waitingForApprovalCompOff; let i = index">
+                    <tr>
+                        <td>{{ comppOffRequest.startTime ? (comppOffRequest.startTime | dateformat) : ' -' }}
+                        </td>
+                        <td >
+                            @if(comppOffRequest.durationType == 1){
+                                <span>First Half</span>
+                            }@else if(comppOffRequest.durationType == 3){
+                                <span>Second Half</span>
+                            }@else if(comppOffRequest.durationType == 2){
+                                <span>Full Day</span>
+                            }@else {
+                                <span>-</span>
+                            }
+                        </td>
+                        <td>{{comppOffRequest.requestedDate | dateformat}}</td>
+                        <td>{{comppOffRequest.status}}</td>
+                    </tr>
+                </ng-container>}
+                @else {
                 <tr>
-                    <td>20/3/3023</td>
-                    <td>Full Day</td>
-                    <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">Feaver </p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div>
+                    <td class="text-center" colspan="5">
+                        <p>No data found</p>
                     </td>
-                    <td>20/9/2024</td>
-                    <td>Processed</td>
                 </tr>
+                }
 
             </tbody>
         </table>

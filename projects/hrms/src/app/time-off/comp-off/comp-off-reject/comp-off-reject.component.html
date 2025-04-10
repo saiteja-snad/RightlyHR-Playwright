@@ -1,1 +1,77 @@
-<p>comp-off-reject works!</p>
+<div>
+    <div class="custom-table-content ">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Worked Date</th>
+                    <th>Availed</th>
+                    <th>Reason</th>
+                    <th>Applied Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (rejectedCompOffRequests.length > 0) {
+                <ng-container *ngFor="let comppOffRequest of rejectedCompOffRequests; let i = index">
+                <tr>
+                    <td>{{comppOffRequest.startTime | dateformat}}</td>
+                    <td>
+                        @if(comppOffRequest.durationType == 1){
+                            <span>First Half</span>
+                        }@else if(comppOffRequest.durationType == 3){
+                            <span>Second Half</span>
+                        }@else if(comppOffRequest.durationType == 2){
+                            <span>Full Day</span>
+                        }@else {
+                            <span>-</span>
+                        }
+                    </td>
+                    <td>
+                        <div>
+                            <span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <div>
+                                        <p class="mb-0">{{comppOffRequest.reason}}</p>
+                                    </div>
+                                </ng-template>
+                            </span>
+                        </div>
+                    </td>
+                    <td>{{comppOffRequest.requestedDate | dateformat}}</td>
+                    <td>{{comppOffRequest.status}}</td>
+                </tr>
+            </ng-container>}
+            @else {
+                <tr>
+                    <td class="text-center" colspan="5">
+                        <p>No data found</p>
+                    </td>
+                </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-content pt-2 w-100">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <!-- Dropdown for Rows per Page -->
+            <div class="d-flex align-items-center gap-3 p-2">
+                <!-- Bootstrap Select -->
+                <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onRowsChange()">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                    </option>
+                </select>
+                <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                    totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+            </div>
+
+            <!-- Pagination -->
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+</div>

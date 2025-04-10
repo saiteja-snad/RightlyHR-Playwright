@@ -1,12 +1,14 @@
 <div class="card main-settings-layout p-4">
     <!-- Add Input-->
     <div>
+        <form [formGroup]="saluationForm" (ngSubmit)="onSubmit()" >
         <div class="custom-settings-add-input input-group mb-5">
             <input type="text" class="form-control custom-input" placeholder="Please enter salutation"
-                aria-label="salutation" aria-describedby="salutation">
-            <span class="input-group-text" id="salutation"><button type="button"
-                    class="custom-btn btn-primary">Add</button></span>
+                aria-label="salutation" aria-describedby="salutation" formControlName ="saluation">
+            <span class="input-group-text" id="salutation"><button type="submit"
+                    class="custom-btn btn-primary">{{'Add'|translate}}</button></span>
         </div>
+        </form>
     </div>
     <!--Data Content-->
     <div>
@@ -16,23 +18,26 @@
                     <th class="col-span-2"></th>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="w-75">MR</td>
+                    @for (sal of saluationdetails ; track sal.name) {
+
+                    <tr *ngFor="let sal of saluationdetails">
+                        <td class="w-75">{{sal.titlename}}</td>
                         <td class="w-25">
                             <div class="d-flex gap-4">
                                 <!--Update-->
                                 <div>
-                                    <a (click)="openupdate()"><img src="/settings-icon/edit.png" alt="edit icon"
+                                    <a (click)="openupdate(sal)"><img src="/settings-icon/edit.png" alt="edit icon"
                                             class="settings-common-icon"></a>
                                 </div>
                                 <!--Delete-->
                                 <div>
-                                    <a (click)="opendelete()"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                    <a (click)="opendelete(sal)"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                             class="settings-common-icon"></a>
                                 </div>
                             </div>
                         </td>
                     </tr>
+                }
                 </tbody>
             </table>
         </div>
@@ -41,27 +46,30 @@
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
+    <form [formGroup]="updateForm">
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Update</p>
+                <p class="popup-heading mb-0">{{'Update'|translate}}</p>
             </div>
             <div>
-                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-5">
             <div class="mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salutation<span class="error-msg">*</span></label>
+                <label for="exampleFormControlInput1" class="form-label custom-label mb-2"><span class="error-msg">*</span></label>
                 <input type="text" class="form-control custom-input" formControlName="firstName"
                     placeholder="Please enter Salutation">
             </div>
             <div class="d-flex gap-5 pt-4 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3">Close</button>
-                <button class="custom-btn btn-primary w-50 py-3">Update</button>
+                <button class="custom-btn btn-secondary w-50 py-3"(click)="close(modal)">{{'Close'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3" (click)="updateSal(saluationdetails)">{{'Update'|translate}}</button>
             </div>
         </div>
-    </div>
+   
+   </div>
+</form>
 </ng-template>
 
 <!--Delete Confirmation popup-->
@@ -70,11 +78,11 @@
         <div class="custom-main-popup-content text-center p-4">
             <div class="py-5">
                 <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
-                <p class="confirmation-text">Are you sure you want to Delete?</p>
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
             <div class="d-flex gap-5 pt-2 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3">No</button>
-                <button class="custom-btn btn-primary w-50 py-3">yes</button>
+                <button class="custom-btn btn-secondary w-50 py-3" (click)="modal.close()">{{'No'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3"(click)="deletesal(saluationdetails)">{{'yes'|translate}}</button>
             </div>
         </div>
     </div>

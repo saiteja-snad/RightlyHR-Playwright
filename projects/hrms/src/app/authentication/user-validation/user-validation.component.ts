@@ -68,12 +68,12 @@ export class UserValidationComponent {
           }, 2000);
   
         } else {
-          this.router.navigate(['/unauthorized']);
+          this.router.navigate(['/admin-dashboard']);
         }
       },
       error: (err) => {
         console.log(err);
-        this.router.navigate(['/unauthorized']);
+        this.router.navigate(['/myinfo']);
       },
     });
   }

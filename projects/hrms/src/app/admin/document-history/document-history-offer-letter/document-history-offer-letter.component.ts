@@ -18,7 +18,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-document-history-offer-letter',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, OfferletterdashboardpipePipe, DateformatPipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, DateformatPipe, OfferletterdashboardpipePipe],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss'
 })

@@ -1223,19 +1223,22 @@ export class TraineeOfferLetterComponent {
             this.conformationPopup.openSuccessModal('Email sent successfully');
           }
           this.loading = false;
-
+          setTimeout( () => {
+            this.router.navigate(['/admin/dashboard']);
+          }, 3000);
         },
         error: (err: any) => {
           console.log(err);
 
           this.conformationPopup.openErrorModal('Email sent failed');
           this.loading = false;
+          
         },
         complete: () => { },
       });
   }
 
-  //function for Manger to approve notification
+  // function for Manger to approve notification
   // Approvednotification() {
   //   const currentDate = new Date();
   //   this.traineeEmpData;
@@ -1260,7 +1263,7 @@ export class TraineeOfferLetterComponent {
   //         this.loading = false;
 
   //         setTimeout(() => {
-  //           this.router.navigate(['/admin']);
+  //           this.router.navigate(['/admin/dashboard']);
   //         }, 3000);
   //       },
   //       error: (err: any) => {

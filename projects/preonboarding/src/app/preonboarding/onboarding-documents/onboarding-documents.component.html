@@ -87,16 +87,14 @@
         </button>
             @if((this.prosempdata.empstatus.toLowerCase() == 'prospective') && ( this.prosempdata.substatus.toLowerCase() ==
             'offer letter generated' ||this.prosempdata.substatus.toLowerCase() == 'offer letter released'
-            || this.prosempdata.substatus.toLowerCase() == 'offer letter regenerated'|| this.prosempdata.substatus.toLowerCase()
-            == 'offer letter accepted')){
+            || this.prosempdata.substatus.toLowerCase() == 'offer letter regenerated'|| this.prosempdata.substatus.toLowerCase() 
+            == 'offer letter accepted' )){
             <button type="button" class="custom-btn btn-primary py-3 px-5" routerLink="/offer-letter">Next</button>
             }
-            @if((this.prosempdata?.empstatus .toLowerCase()== 'Trainee Prospective') && (this.prosempdata?.empType.toLowerCase()
-            == 'Trainee') &&
-            (this.prosempdata?.substatus.toLowerCase() == 'Offer Letter Generated' || this.prosempdata?.substatus.toLowerCase()
-            == 'Offer Letter Released'
-            || this.prosempdata?.substatus.toLowerCase() =='Offer Letter Regenerated'||
-            this.prosempdata?.substatus.toLowerCase() == 'Offer Letter Accepted')){
+            @if((this.prosempdata?.empstatus .toLowerCase() == 'trainee prospective') && (this.prosempdata?.empType.toLowerCase()  == 'trainee') &&
+            (this.prosempdata?.substatus.toLowerCase() == 'offer letter generated' || this.prosempdata?.substatus.toLowerCase() == 'offer letter released'
+            || this.prosempdata?.substatus.toLowerCase() =='offer letter regenerated'||
+            this.prosempdata?.substatus.toLowerCase() == 'offer letter accepted')){
             <button type="button" class="custom-btn btn-primary py-3 px-5" routerLink="/trainee-offerletter">Next</button>
             }
         

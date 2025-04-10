@@ -224,14 +224,11 @@ export class DocumentHistoryInternOfferLetterComponent {
     this.subscription = this.http.postdata(`CustomEmail/offerApproval`, emailData).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.conformationPopup.openErrorModal('Email Sent Successfully');
+        this.conformationPopup.openSuccessModal('Email Sent Successfully');
         this.getTraineeOfferLetters();
         this.ApprovedTaineenotification(datas);
         if (data) {
-          
-
         }
-          
       }
     })
 
@@ -293,7 +290,7 @@ export class DocumentHistoryInternOfferLetterComponent {
     this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.conformationPopup.openErrorModal('Email Sent Successfully');
+        this.conformationPopup.openSuccessModal('Email Sent Successfully');
         if (data) {
           this.getTraineeOfferLetters();
         }
@@ -435,7 +432,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       next: (data: any) => {
         console.log(data);
         if (data) {
-          this.conformationPopup.openErrorModal('Email Sent Successfully');
+          this.conformationPopup.openSuccessModal('Email Sent Successfully');
           this.getTraineeOfferLetters();
         }
         

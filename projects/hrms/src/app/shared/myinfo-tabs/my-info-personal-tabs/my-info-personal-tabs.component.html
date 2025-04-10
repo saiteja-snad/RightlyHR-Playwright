@@ -1,8 +1,10 @@
 <div class="card custom-nav-tab-card px-2">
     <ul class="nav-tabs-main-content ps-0 text-center mb-0">
-        <li class="nav-item" [routerLink]="['/myinfo/personal/basic-info']" routerLinkActive="nav-tab-active">
-            Basic Information
-        </li>
+        @if(rbac.allowedToAccess('Basic Information.view')){
+            <li class="nav-item" [routerLink]="['/myinfo/personal/basic-info']" routerLinkActive="nav-tab-active">
+                Basic Information
+            </li>
+        }
         <li class="nav-item" [routerLink]="['/myinfo/personal/address-info']" routerLinkActive="nav-tab-active">
             Address
         </li>

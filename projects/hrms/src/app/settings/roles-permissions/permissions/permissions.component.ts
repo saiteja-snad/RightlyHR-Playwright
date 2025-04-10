@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { SelectModule } from 'primeng/select';
 import { IRoles } from './permission.model';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { permissionsData } from './permissionsdata';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 @Component({
   selector: 'app-permissions',
-  imports: [CommonModule, SelectModule, FormsModule],
+  imports: [CommonModule, FormsModule, AutoCompleteModule],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss'
 })
@@ -21,11 +21,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   roles: IRoles[] = [];
   permissions!: any[];
   roleToFilter: any = null;
+  filteredRole: any | undefined;
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
   ngOnInit(): void {
-    this.getAllrole();
+    this.getAllroles();
     if (this.roleToFilter === null) {
       this.permissions = JSON.parse(JSON.stringify(permissionsData));
     }
@@ -36,7 +37,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
   ) { }
 
-  getAllrole(): void {
+  getAllroles(): void {
     this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -47,6 +48,17 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         console.log(error);
       }
     })
+  }
+
+  filterRoles(event: any) {
+    const filtered: any[] = [];
+    const query = event.query;
+    this.roles.forEach((t: any) => {
+      if (t.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(t);
+      }
+    });
+    this.filteredRole = filtered;
   }
 
   onRoleSelect(event: any) {
@@ -63,48 +75,55 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       this.roleId = id;
       this.getRolepermission(this.roleId);
     }
-    // this.updateSaveButtonState();
+    this.updateSaveButtonState();
   }
 
-  
-  getRolepermission(Value: any) {
-    this.http.getData(Value).subscribe((res) => {
-      this.permissionsReset(res);
+  updateSaveButtonState() {
+    this.noRoleSelected = !this.permissions.some(per =>
+      per.View || per.Create || per.Update || per.Delete
+    );
+    this.isSaveButtonEnabled = !(this.noRoleSelected);
+  }
+
+  getRolepermission(roleId: any) {
+    this.http.getData(`FusionRoleClaims/${roleId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next:(res: any) =>{
+        this.permissionsReset(res);
+      }, error: (error: any) => {
+        console.error('Error fetching role permissions:', error);
+        this.permissionsReset([]);
+      }
     });
   }
 
   permissionsReset(data: any) {
-    // Reset the tick marks in the checkboxes
     this.permissions.forEach((permission: any) => {
       permission.View = false;
       permission.Create = false;
       permission.Update = false;
       permission.Delete = false;
     });
-    // Set the tick marks based on the received claim values
-    if (data.data.claims?.length > 0) {
-      data.data.claims.forEach((claim: any) => {
-        const permission = this.permissions.find((p: any) => p.fields?.toLowerCase() === claim.claimType);
-        if (permission) {
-          if (claim.claimValue.includes('.view')) {
-            permission.View = true;
-          }
-          if (claim.claimValue.includes('.create')) {
-            permission.Create = true;
-          }
-          if (claim.claimValue.includes('.update')) {
-            permission.Update = true;
-          }
-          if (claim.claimValue.includes('.delete')) {
-            permission.Delete = true;
-          }
-        }
+  
+    if (data?.length > 0) {
+      data.forEach((role: any) => {
+        role.sections?.forEach((section: any) => {
+          section.permissions?.forEach((perm: any) => {
+            const match = this.permissions.find((p: any) =>
+              p.section === section.section && p.fields === perm.permission
+            );
+            if (match) {
+              match.View = perm.view;
+              match.Create = perm.create;
+              match.Update = perm.update;
+              match.Delete = perm.delete;
+            }
+          });
+        });
       });
     } else {
-      this.isSaveButtonEnabled = false
+      this.isSaveButtonEnabled = false;
     }
   }
-
 
   onCheckboxChange(permission: { [key: string]: any; View: boolean; Create: boolean; Update: boolean; Delete: boolean; }, action: string) {
     console.log(permission, action)
@@ -117,33 +136,62 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
   }
 
+  isCheckboxDisabled(field: string, action: string): boolean {
+    const disabledOptions = ['User Management', 'Employee Management', 'Dashboard'];
+    // Check if the field and action match the criteria to disable the checkbox
+    return disabledOptions.includes(field) && (action === 'create' || action === 'update' || action === 'delete');
+  }
+
+  changePermissions() {
+    console.log(this.roleToFilter?.id);
+    if (!this.roleToFilter?.id) {
+      this.permissions.forEach((permission: any) => {
+        permission.View = false;
+        permission.Create = false;
+        permission.Update = false;
+        permission.Delete = false;
+      });
+      this.isSaveButtonEnabled = false;
+    }
+  }
+
+  preparePayload(roleTypeId: string): any[] {
+    return this.permissions
+      .filter(p => p.View || p.Update || p.Create || p.Delete)
+      .map(p => ({
+        roleTypeId: roleTypeId,
+        section: p.section,
+        permission: p.fields,
+        view: p.View,
+        update: p.Update,
+        create: p.Create,
+        delete: p.Delete
+      }));
+  }
+  
   permissionsCreate() {
     this.modalService.open(this.stagingLoadingModal, { centered: true });
-    // const payload: IPermissions = { claims: [] };
-    // this.permissions.forEach((permission: any) => {
-    //   if (permission.View) {
-    //     payload.claims.push({ claimType: permission?.fields?.toLowerCase(), claimValue: `${permission?.fields?.toLowerCase()}.view` });
-    //   }
-    //   if (permission.Create) {
-    //     payload.claims.push({ claimType: permission?.fields?.toLowerCase(), claimValue: `${permission?.fields?.toLowerCase()}.create` });
-    //   }
-    //   if (permission.Update) {
-    //     payload.claims.push({ claimType: permission?.fields?.toLowerCase(), claimValue: `${permission?.fields?.toLowerCase()}.update` });
-    //   }
-    //   if (permission.Delete) {
-    //     payload.claims.push({ claimType: permission?.fields?.toLowerCase(), claimValue: `${permission?.fields?.toLowerCase()}.delete` });
-    //   }
-    // });
-    // this.http.createPermission(this.roleId, payload).subscribe({
-    //   next: (data) => {
-    //     this.modalService.dismissAll();
-    //     this.sharedService.openSuccessOffCanvas('Permissions Updated Successfully!');
-    //   },
-    //   error: (err) => {
-    //     console.log(err);
-    //   },
-    // });
+    const payload = this.preparePayload(this.roleId);
+  
+    this.http.postdata('FusionRoleClaims', payload).subscribe({
+      next: (data) => {
+        this.modalService.dismissAll();
+      },
+      error: (err) => {
+        console.error('Error posting permissions:', err);
+        this.modalService.dismissAll();
+      },
+      complete: () => {
+        // this.permissions.forEach((permission: any) => {
+        //   permission.View = false;
+        //   permission.Create = false;
+        //   permission.Update = false;
+        //   permission.Delete = false;
+        // });
+      }
+    });
   }
+  
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

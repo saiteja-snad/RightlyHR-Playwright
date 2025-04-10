@@ -2,8 +2,7 @@
     <div class="d-flex justify-content-end">
         <button
             *ngIf="isActive('personalinfo/personal/onboarding-verification') && (empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective')  && empdata.substatus=='Documents Rejected' "
-            class="custom-btn btn-primary mb-3 p-2" (click)="openModal(request)">{{'Re-Request
-            Documents'|translate}}</button>
+            class="custom-btn btn-primary mb-3 p-2" (click)="openModal(request)">{{'Re-Request Documents'|translate}}</button>
     </div>
     <!--Input search-->
     <div class="custom-table-content">
@@ -80,8 +79,8 @@
                 @else{
                 <tr>
                     <td>
-                            <app-no-data-found />
-                        </td>
+                        <app-no-data-found />
+                    </td>
                 </tr>
                 }
             </tbody>
@@ -147,15 +146,15 @@
 </ng-template>
 <!-- preonboard  approve documents popup -->
 <ng-template #approveModal let-modal>
-
-    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
-        <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
-        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
         <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Approve Document? </h4>
-        <div class="d-flex mb-4 mt-3 pb-2 mt-1 justify-content-around w-100">
+        <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
                 (click)="approvedocuments()">{{'Yes'|translate}}</button>
+        </div>
         </div>
     </div>
 

@@ -1,17 +1,17 @@
-<form [formGroup]="GenderForm" (ngSubmit)="addDepartment()">
+<form [formGroup]="VisaForm" (ngSubmit)="addVisa()">
     <div class="card main-settings-layout p-4">
         <!-- Add Input-->
         <div>
             <div class="custom-settings-add-input input-group mb-5">
-                <input type="text" class="form-control custom-input" placeholder="Please enter gender"
-                    formControlName="Gender" aria-label="gender" aria-describedby="gender"  (keypress)="blockNonAlphabets($event)" >
-                <span class="input-group-text" id="gender">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="GenderForm.invalid">{{'Add'|translate}}</button></span>
+                <input type="text" class="form-control custom-input" placeholder="Please enter visa type"
+                    formControlName="Visatype" aria-label="visa" aria-describedby="visa"  (keypress)="blockNonAlphabets($event)" >
+                <span class="input-group-text" id="visa">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="VisaForm.invalid">{{'Add'|translate}}</button></span>
             </div>
         </div>
-          <div *ngIf="GenderForm.get('Gender')?.touched && GenderForm.get('Gender')?.invalid">
-            <small style="color: red;font-size: 13px;" *ngIf="GenderForm.get('Gender')?.errors?.['required']">
-              {{'Gender is required'|translate}}
+          <div *ngIf="VisaForm.get('Visatype')?.touched && VisaForm.get('Visatype')?.invalid">
+            <small style="color: red;font-size: 13px;" *ngIf="VisaForm.get('Visatype')?.errors?.['required']">
+              {{'Visatype is required'|translate}}
             </small>
             <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
                {{'Only alphabets and spaces are allowed'|translate}}
@@ -30,20 +30,20 @@
 
                     </thead>
                     <tbody>
-                         @for (gender of GenderDetail; track gender.id) {
-                        <tr *ngFor="let dep of GenderDetail">
+                         @for (visa of VisaDetail; track visa.id) {
+                        <tr *ngFor="let dep of VisaDetail">
                              <tr>
-                            <td class="w-75">{{ gender.genderName}}</td>                           
+                            <td class="w-75">{{ visa.visatype1}}</td>                           
                             <td class="w-25">
                                 <div class="d-flex gap-4">
                                     <!--Update-->
                                      <div>
-                                        <a (click)="openupdate(gender)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                        <a (click)="openupdate(visa)"><img src="/settings-icon/edit.png" alt="edit icon"
                                                 class="settings-common-icon"></a>
                                     </div> 
                                     <!--Delete-->
                                     <div>
-                                        <a (click)="opendelete(gender)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                        <a (click)="opendelete(visa)"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                                 class="settings-common-icon"></a>
                                     </div>
                                 </div>
@@ -63,7 +63,7 @@
    <div class="custom-main-popup-container" ngbAutofocus>
        <div class="d-flex justify-content-between popup-header-border p-4">
            <div class="pt-2">
-               <p class="popup-heading mb-0">{{'Edit Gender'|translate}}</p>
+               <p class="popup-heading mb-0">{{'Edit Visa Type'|translate}}</p>
            </div>
            <div>
                <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -71,14 +71,14 @@
        </div>
        <div class="custom-main-popup-content p-5">
            <div class="mb-4">
-               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Gender'|translate}}<span
+               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Visatype'|translate}}<span
                        class="error-msg">*</span></label>
                <input type="text" class="form-control custom-input" formControlName="Gender"
-                   placeholder="Please enter gender"  (keypress)="blockNonAlphabets($event)">
+                   placeholder="Please enter visa type"  (keypress)="blockNonAlphabets($event)">
            </div>
-           <div *ngIf="updateForm.get('Gender')?.touched && updateForm.get('Gender')?.invalid">
-               <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('Gender')?.errors?.['required']">
-                {{'Gender is required'|translate}}
+           <div *ngIf="updateForm.get('Visatype')?.touched && updateForm.get('Visatype')?.invalid">
+               <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('Visatype')?.errors?.['required']">
+                {{'visa type is required'|translate}}
                </small>
                <!-- <small style="color: red;" *ngIf="updateForm.get('jobLocationName')?.errors?.['pattern']">
                 {{'Only alphabets and spaces are allowed'|translate}}

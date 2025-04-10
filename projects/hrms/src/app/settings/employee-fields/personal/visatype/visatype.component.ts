@@ -17,25 +17,25 @@ import { TranslateModule } from '@ngx-translate/core';
 export class VisatypeComponent {
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
-  GenderForm!: FormGroup;
+  VisaForm!: FormGroup;
   updateForm!: FormGroup;
-  GenderDetail: any[] = [];
+  VisaDetail: any[] = [];
   isEditMode = false;
   selectedId: number | null = null;
-  selectedDeleteGender: any = null;
+  selectedDeleteVisa: any = null;
   subscription!: Subscription;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
 
   }
   ngOnInit(): void {
-    this.GenderForm = this.fb.group({
-      Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+    this.VisaForm = this.fb.group({
+      Visatype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.updateForm = this.fb.group({
-      Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Visatype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
 
-    this.getGender();
+    this.getVisa();
   }
   // alphabet allowed only
   blockNonAlphabets(event: KeyboardEvent): void {
@@ -51,22 +51,22 @@ export class VisatypeComponent {
       event.preventDefault();
     }
   }
-  getGender() {
+  getVisa() {
     this.http.getData('Visatype').subscribe((data: any) => {
-      this.GenderDetail = data;
+      this.VisaDetail = data;
     });
   }
   //ADD
-  addDepartment() {
+  addVisa() {
     const request: IVisaType = {
-      visatype1: this.GenderForm.value.Gender.trim(),
+      visatype1: this.VisaForm.value.Visatype.trim(),
       isdeleted: "Active"
     };
 
     this.subscription = this.http.postdata('Visatype', request).subscribe({
       next: () => {
-        this.getGender();
-        this.conformationPopup.openSuccessModal('Gender Name added successfully');
+        this.getVisa();
+        this.conformationPopup.openSuccessModal('Visa type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -79,14 +79,14 @@ export class VisatypeComponent {
   updateDepartment(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: IVisaType = {
-        visatype1: this.updateForm.value.Gender.trim(),
+        visatype1: this.updateForm.value.Visatype.trim(),
         isdeleted: "Active",
         sno: this.selectedId
       };
 
       this.subscription = this.http.postdata(`Visatype/UPDATER`, request).subscribe({
         next: () => {
-          this.getGender();
+          this.getVisa();
           modal.close();
           this.updateForm.reset();
           this.conformationPopup.openSuccessModal('Gender Name updated successfully');
@@ -101,28 +101,28 @@ export class VisatypeComponent {
     modal.dismiss();
     this.updateForm.reset();
   }
-  openupdate(genderlist: any) {
-    this.selectedId = genderlist.sno;
-    this.updateForm.patchValue({ Gender: genderlist.genderName });
+  openupdate(visalist: any) {
+    this.selectedId = visalist.sno;
+    this.updateForm.patchValue({ Visatype: visalist.visatype1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
-  opendelete(genderlist: any) {
-    this.selectedDeleteGender = genderlist;
+  opendelete(visalist: any) {
+    this.selectedDeleteVisa = visalist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {
-    if (!this.selectedDeleteGender) return;
+    if (!this.selectedDeleteVisa) return;
 
     const deleteRequest: IVisaType = {
-      visatype1: this.selectedDeleteGender.genderName,
+      visatype1: this.selectedDeleteVisa.visatype1,
       isdeleted: "void",
-      sno: this.selectedDeleteGender.sno
+      sno: this.selectedDeleteVisa.sno
     };
 
     this.http.postdata('Visatype/UPDATER', deleteRequest).subscribe({
       next: () => {
-        this.getGender();
+        this.getVisa();
         modal.close();
         this.conformationPopup.openSuccessModal('Gender deleted successfully');
       },
@@ -134,11 +134,11 @@ export class VisatypeComponent {
 
   closeDelete(modal: any) {
     modal.dismiss();
-    this.selectedDeleteGender = null;
+    this.selectedDeleteVisa = null;
   }
 
   resetForm() {
-    this.GenderForm.reset();
+    this.VisaForm.reset();
     this.isEditMode = false;
     this.selectedId = null;
   }

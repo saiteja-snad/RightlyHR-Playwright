@@ -1,17 +1,17 @@
-<form [formGroup]="GenderForm" (ngSubmit)="addDepartment()">
+<form [formGroup]="RelationForm" (ngSubmit)="addRelationship()">
     <div class="card main-settings-layout p-4">
         <!-- Add Input-->
         <div>
             <div class="custom-settings-add-input input-group mb-5">
-                <input type="text" class="form-control custom-input" placeholder="Please enter gender"
-                    formControlName="Gender" aria-label="gender" aria-describedby="gender"  (keypress)="blockNonAlphabets($event)" >
-                <span class="input-group-text" id="gender">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="GenderForm.invalid">{{'Add'|translate}}</button></span>
+                <input type="text" class="form-control custom-input" placeholder="Please enter relationship"
+                    formControlName="Relationship" aria-label="relation" aria-describedby="relation"  (keypress)="blockNonAlphabets($event)" >
+                <span class="input-group-text" id="relation">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="RelationForm.invalid">{{'Add'|translate}}</button></span>
             </div>
         </div>
-          <div *ngIf="GenderForm.get('Gender')?.touched && GenderForm.get('Gender')?.invalid">
-            <small style="color: red;font-size: 13px;" *ngIf="GenderForm.get('Gender')?.errors?.['required']">
-              {{'Gender is required'|translate}}
+          <div *ngIf="RelationForm.get('Relationship')?.touched && RelationForm.get('Relationship')?.invalid">
+            <small style="color: red;font-size: 13px;" *ngIf="RelationForm.get('Relationship')?.errors?.['required']">
+              {{'Relationship is required'|translate}}
             </small>
             <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
                {{'Only alphabets and spaces are allowed'|translate}}
@@ -30,20 +30,20 @@
 
                     </thead>
                     <tbody>
-                         @for (gender of GenderDetail; track gender.id) {
-                        <tr *ngFor="let dep of GenderDetail">
+                         @for (rel of RelationshipDetail; track rel.id) {
+                        <tr *ngFor="let dep of RelationshipDetail">
                              <tr>
-                            <td class="w-75">{{ gender.genderName}}</td>                           
+                            <td class="w-75">{{ rel.relationship1}}</td>                           
                             <td class="w-25">
                                 <div class="d-flex gap-4">
                                     <!--Update-->
                                      <div>
-                                        <a (click)="openupdate(gender)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                        <a (click)="openupdate(rel)"><img src="/settings-icon/edit.png" alt="edit icon"
                                                 class="settings-common-icon"></a>
                                     </div> 
                                     <!--Delete-->
                                     <div>
-                                        <a (click)="opendelete(gender)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                        <a (click)="opendelete(rel)"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                                 class="settings-common-icon"></a>
                                     </div>
                                 </div>

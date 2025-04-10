@@ -22,7 +22,7 @@ export class IdentitytypeComponent {
   IdentityDetail: any[] = [];
   isEditMode = false;
   selectedId: number | null = null;
-  selectedDeleteGender: any = null;
+  selectedDeletetype: any = null;
   subscription!: Subscription;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
 
@@ -60,7 +60,7 @@ export class IdentitytypeComponent {
   addDepartment() {
     const request: IIdentityType = {
       identityType1: this.IdentityForm.value.IdentityType.trim(),
-      isdeleted: true
+      isdeleted: false
     };
 
     this.subscription = this.http.postdata('IdentityType', request).subscribe({
@@ -79,8 +79,8 @@ export class IdentitytypeComponent {
   updateIdentity(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: IIdentityType = {
-        identityType1: this.updateForm.value.Gender.trim(),
-        isdeleted: true,
+        identityType1: this.updateForm.value.IdentityType.trim(),
+        isdeleted: false,
         sno: this.selectedId
       };
 
@@ -103,21 +103,21 @@ export class IdentitytypeComponent {
   }
   openupdate(identitylist: any) {
     this.selectedId = identitylist.sno;
-    this.updateForm.patchValue({ Gender: identitylist.genderName });
+    this.updateForm.patchValue({ IdentityType: identitylist.identityType1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
   opendelete(identitylist: any) {
-    this.selectedDeleteGender = identitylist;
+    this.selectedDeletetype = identitylist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {
-    if (!this.selectedDeleteGender) return;
+    if (!this.selectedDeletetype) return;
 
     const deleteRequest: IIdentityType = {
-      identityType1: this.selectedDeleteGender.genderName,
-      isdeleted: false,
-      sno: this.selectedDeleteGender.sno
+      identityType1: this.selectedDeletetype.identityType1,
+      isdeleted: true,
+      sno: this.selectedDeletetype.sno
     };
 
     this.http.postdata('IdentityType/UPDATER', deleteRequest).subscribe({
@@ -134,7 +134,7 @@ export class IdentitytypeComponent {
 
   closeDelete(modal: any) {
     modal.dismiss();
-    this.selectedDeleteGender = null;
+    this.selectedDeletetype = null;
   }
 
   resetForm() {

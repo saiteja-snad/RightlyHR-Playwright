@@ -18,25 +18,25 @@ export class MaritalstatusComponent {
   
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
-  GenderForm!: FormGroup;
+  MaritalStatusForm!: FormGroup;
   updateForm!: FormGroup;
-  GenderDetail: any[] = [];
+  MaritalStatusDetail: any[] = [];
   isEditMode = false;
   selectedId: number | null = null;
-  selectedDeleteGender: any = null;
+  selectedDeletestatus: any = null;
   subscription!: Subscription;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
 
   }
   ngOnInit(): void {
-    this.GenderForm = this.fb.group({
-      Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+    this.MaritalStatusForm = this.fb.group({
+      MaritalStatus: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.updateForm = this.fb.group({
-      Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      MaritalStatus: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
 
-    this.getGender();
+    this.getMaritialStatus();
   }
   // alphabet allowed only
   blockNonAlphabets(event: KeyboardEvent): void {
@@ -52,22 +52,22 @@ export class MaritalstatusComponent {
       event.preventDefault();
     }
   }
-  getGender() {
+  getMaritialStatus() {
     this.http.getData('Maritalstatus').subscribe((data: any) => {
-      this.GenderDetail = data;
+      this.MaritalStatusDetail = data;
     });
   }
   //ADD
-  addDepartment() {
+  addMaritalStatus() {
     const request: IMaritialStatus = {
-      maritalstatus1: this.GenderForm.value.Gender.trim(),
+      maritalstatus1: this.MaritalStatusForm.value.MaritalStatus.trim(),
       isdeleted: "Active"
     };
 
     this.subscription = this.http.postdata('Maritalstatus', request).subscribe({
       next: () => {
-        this.getGender();
-        this.conformationPopup.openSuccessModal('Gender Name added successfully');
+        this.getMaritialStatus();
+        this.conformationPopup.openSuccessModal('Marital status added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -80,17 +80,17 @@ export class MaritalstatusComponent {
   updateDepartment(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: IMaritialStatus = {
-        maritalstatus1: this.updateForm.value.Gender.trim(),
+        maritalstatus1: this.updateForm.value.MaritalStatus.trim(),
         isdeleted: "Active",
         sno: this.selectedId
       };
 
       this.subscription = this.http.postdata(`Maritalstatus/UPDATER`, request).subscribe({
         next: () => {
-          this.getGender();
+          this.getMaritialStatus();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Gender Name updated successfully');
+          this.conformationPopup.openSuccessModal('Marital status updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -102,30 +102,30 @@ export class MaritalstatusComponent {
     modal.dismiss();
     this.updateForm.reset();
   }
-  openupdate(genderlist: any) {
-    this.selectedId = genderlist.sno;
-    this.updateForm.patchValue({ Gender: genderlist.genderName });
+  openupdate(maritalStatus: any) {
+    this.selectedId = maritalStatus.sno;
+    this.updateForm.patchValue({ MaritalStatus: maritalStatus.maritalstatus1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
-  opendelete(genderlist: any) {
-    this.selectedDeleteGender = genderlist;
+  opendelete(maritalStatus: any) {
+    this.selectedDeletestatus = maritalStatus;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {
-    if (!this.selectedDeleteGender) return;
+    if (!this.selectedDeletestatus) return;
 
     const deleteRequest: IMaritialStatus = {
-      maritalstatus1: this.selectedDeleteGender.genderName,
+      maritalstatus1: this.selectedDeletestatus.maritalstatus1,
       isdeleted: "void",
-      sno: this.selectedDeleteGender.sno
+      sno: this.selectedDeletestatus.sno
     };
 
     this.http.postdata('Maritalstatus/UPDATER', deleteRequest).subscribe({
       next: () => {
-        this.getGender();
+        this.getMaritialStatus();
         modal.close();
-        this.conformationPopup.openSuccessModal('Gender deleted successfully');
+        this.conformationPopup.openSuccessModal('Marital status deleted successfully');
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');
@@ -135,11 +135,11 @@ export class MaritalstatusComponent {
 
   closeDelete(modal: any) {
     modal.dismiss();
-    this.selectedDeleteGender = null;
+    this.selectedDeletestatus = null;
   }
 
   resetForm() {
-    this.GenderForm.reset();
+    this.MaritalStatusForm.reset();
     this.isEditMode = false;
     this.selectedId = null;
   }

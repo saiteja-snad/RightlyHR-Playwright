@@ -17,25 +17,25 @@ import { TranslateModule } from '@ngx-translate/core';
 export class RelationshipComponent {
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
-  GenderForm!: FormGroup;
+  RelationForm!: FormGroup;
   updateForm!: FormGroup;
-  GenderDetail: any[] = [];
+  RelationshipDetail: any[] = [];
   isEditMode = false;
   selectedId: number | null = null;
-  selectedDeleteGender: any = null;
+  selectedDeleterelation: any = null;
   subscription!: Subscription;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
 
   }
   ngOnInit(): void {
-    this.GenderForm = this.fb.group({
-      Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+    this.RelationForm = this.fb.group({
+      Relationship: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.updateForm = this.fb.group({
-      Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Relationship: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
 
-    this.getGender();
+    this.getRelationship();
   }
   // alphabet allowed only
   blockNonAlphabets(event: KeyboardEvent): void {
@@ -51,22 +51,22 @@ export class RelationshipComponent {
       event.preventDefault();
     }
   }
-  getGender() {
+  getRelationship() {
     this.http.getData('Relationship').subscribe((data: any) => {
-      this.GenderDetail = data;
+      this.RelationshipDetail = data;
     });
   }
   //ADD
-  addDepartment() {
+  addRelationship() {
     const request: IRelationShip = {
-      relationship1: this.GenderForm.value.Gender.trim(),
+      relationship1: this.RelationForm.value.Relationship.trim(),
       isdeleted: "Active"
     };
 
     this.subscription = this.http.postdata('Relationship', request).subscribe({
       next: () => {
-        this.getGender();
-        this.conformationPopup.openSuccessModal('Gender Name added successfully');
+        this.getRelationship();
+        this.conformationPopup.openSuccessModal('Relationship added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -79,14 +79,14 @@ export class RelationshipComponent {
   updateDepartment(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: IRelationShip = {
-        relationship1: this.updateForm.value.Gender.trim(),
+        relationship1: this.updateForm.value.Relationship.trim(),
         isdeleted: "Active",
         sno: this.selectedId
       };
 
       this.subscription = this.http.postdata(`Relationship/UPDATER`, request).subscribe({
         next: () => {
-          this.getGender();
+          this.getRelationship();
           modal.close();
           this.updateForm.reset();
           this.conformationPopup.openSuccessModal('Gender Name updated successfully');
@@ -101,30 +101,30 @@ export class RelationshipComponent {
     modal.dismiss();
     this.updateForm.reset();
   }
-  openupdate(genderlist: any) {
-    this.selectedId = genderlist.sno;
-    this.updateForm.patchValue({ Gender: genderlist.genderName });
+  openupdate(relationlist: any) {
+    this.selectedId = relationlist.sno;
+    this.updateForm.patchValue({ Relationship: relationlist.relationship1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
-  opendelete(genderlist: any) {
-    this.selectedDeleteGender = genderlist;
+  opendelete(relationlist: any) {
+    this.selectedDeleterelation = relationlist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {
-    if (!this.selectedDeleteGender) return;
+    if (!this.selectedDeleterelation) return;
 
     const deleteRequest: IRelationShip = {
-      relationship1: this.selectedDeleteGender.genderName,
+      relationship1: this.selectedDeleterelation.relationship1,
       isdeleted: "void",
-      sno: this.selectedDeleteGender.sno
+      sno: this.selectedDeleterelation.sno
     };
 
     this.http.postdata('Relationship/UPDATER', deleteRequest).subscribe({
       next: () => {
-        this.getGender();
+        this.getRelationship();
         modal.close();
-        this.conformationPopup.openSuccessModal('Gender deleted successfully');
+        this.conformationPopup.openSuccessModal('Relationship deleted successfully');
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');
@@ -134,11 +134,11 @@ export class RelationshipComponent {
 
   closeDelete(modal: any) {
     modal.dismiss();
-    this.selectedDeleteGender = null;
+    this.selectedDeleterelation = null;
   }
 
   resetForm() {
-    this.GenderForm.reset();
+    this.RelationForm.reset();
     this.isEditMode = false;
     this.selectedId = null;
   }

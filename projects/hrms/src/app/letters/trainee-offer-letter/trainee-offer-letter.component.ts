@@ -555,6 +555,7 @@ export class TraineeOfferLetterComponent {
        trainingEndDate:this.formatDate(data.endDate),
        note:data?.note,
        authorityid: data?.authorityid,
+       phoneNumber: data?.phoneNumber,
      })
   }
 

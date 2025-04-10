@@ -41,7 +41,7 @@
                       -
                     </ng-template>
                     <td>{{act.emailaddress?act.emailaddress:'-'}}</td>
-                    <td> +91 {{act.contactnumber?act.contactnumber:'-'}}
+                    <td> {{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}
                     </td>
                     <td>
                       @for(jobDetail of act?.jobDetails;track jobDetail.id){

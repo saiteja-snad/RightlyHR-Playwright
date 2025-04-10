@@ -528,7 +528,7 @@ console.log(formValues);
                   authorityid: this.prospectiveEmpData?.signatureAuthority,
                   phoneNumber:this.prospectiveEmpData?.phoneNumber
                 })
-                this.selectedCountryCode=this.prospectiveEmpData?.mobilePhoneCountryCode;
+                this.selectedCountryCode=this.prospectiveEmpData?.selectedCountryCodegflag;
                 this.loadingCode = false;
                 console.log(this.prospectiveEmpData.values);
                 this.getEmployeeAddress(data.checkofferletter.empId);

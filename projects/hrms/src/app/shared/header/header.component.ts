@@ -8,21 +8,19 @@ import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalin
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
-
-
-
 @Component({
   selector: 'app-header',
   imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
+
 export class HeaderComponent {
   empinfo: any;
   imageUrl: any;
-  subscription!:Subscription;
+  subscription!: Subscription;
 
-  constructor(public readonly router: Router,private http: HttpService,private sanitizer: DomSanitizer) {}
+  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer) { }
 
   events = [
     { name: "John Doe's (SD153462) Birthday", time: '1 hour ago', type: 'birthday' },
@@ -53,7 +51,7 @@ export class HeaderComponent {
         error: (reason) => console.log(reason),
       });
   }
-  
+
   // Define colors based on event types
   getEventClass(type: string): string {
     switch (type) {
@@ -67,7 +65,11 @@ export class HeaderComponent {
         return 'other-event'; // Custom class for Other events
     }
   }
-  
+
+  navigateSettings(){
+    this.router.navigate(['/settings'])
+  }
+
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }

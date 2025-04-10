@@ -169,6 +169,10 @@ a {
     background-color: #F8FBFF;
 }
 
+.custom-input:focus {
+    background-color: #F8FBFF !important;
+}
+
 .custom-input::placeholder {
     color: #A1A1A1;
 }

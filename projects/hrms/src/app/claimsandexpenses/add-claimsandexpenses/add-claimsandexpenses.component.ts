@@ -64,7 +64,7 @@ export class AddClaimsandexpensesComponent {
 
   createExpenseItem(): FormGroup {
     return this.fb.group({
-      item_expense: [null, Validators.required],
+      item_expense: [null,],
       item_Name: [null, [Validators.required, Validators.maxLength(50)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],

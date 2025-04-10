@@ -43,11 +43,11 @@
                 <div class="col-md-6 mb-3">
                     <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
                     <input type="number" class="form-control custom-input no-arrows" id="gpa" formControlName="gpa" placeholder="Please enter GPA" autocomplete="off">
-                    <div *ngIf="educationForm.get('gpa')?.invalid && educationForm.get('gpa')?.touched" class="text-danger">
+                    <div *ngIf="educationForm.get('gpa')?.hasError('required') && educationForm.get('gpa')?.touched" class="text-danger">
                         GPA is required
                     </div>
                     <div *ngIf="educationForm.get('gpa')?.hasError('pattern') && educationForm.get('gpa')?.touched" class="text-danger">
-                        GPA should be between 1 and 10 (with optional decimal points)
+                        GPA should be between 1 and 10 
                     </div>
                 </div>                
         

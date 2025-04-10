@@ -53,7 +53,10 @@ export class AddEducationDetailsComponent {
       university: ['', Validators.required],
       specialization: ['', [Validators.required,Validators.pattern(/^[A-Za-z ,._-]+$/)]],
      // specialization: ['', Validators.required,Validators.pattern('^[A-Za-z,.\-_\s]+$')],
-      gpa: ['', [Validators.required,Validators.pattern(/^([0-3](\.\d{1,2})?|4(\.00?)?)$/)]],
+     gpa: ['', [
+      Validators.required,
+      Validators.pattern(/^([1-9](\.\d{1,2})?|10(\.0{1,2})?)$/)
+    ]],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required]
     });

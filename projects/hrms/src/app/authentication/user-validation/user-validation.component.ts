@@ -61,19 +61,19 @@ export class UserValidationComponent {
             if (response.roles.length <= 0) {
               this.router.navigate(['/unauthorized']);
             } else if (response.roles.includes('ADMIN') || response.roles.includes('HR MANAGER')) {
-              this.router.navigate(['/admin-dashboard']);
+              this.router.navigate(['/admin/dashboard']);
             } else {
               this.router.navigate(['/myinfo']);
             }
           }, 2000);
   
         } else {
-          this.router.navigate(['/unauthorized']);
+          this.router.navigate(['/admin-dashboard']);
         }
       },
       error: (err) => {
         console.log(err);
-        this.router.navigate(['/unauthorized']);
+        this.router.navigate(['/myinfo']);
       },
     });
   }

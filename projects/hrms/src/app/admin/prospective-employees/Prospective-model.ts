@@ -1,4 +1,5 @@
 export interface Iprospective{
+    id: number,
     employeeId: number,
     firstName: string,
     lastName:string,
@@ -16,6 +17,7 @@ export interface Iprospective{
     sublocation?:string;
     lopcation: string,
     jobRole: string,
+    mobilePhoneCountryCode: string,
 }
 export interface IRole {
     sno: number,

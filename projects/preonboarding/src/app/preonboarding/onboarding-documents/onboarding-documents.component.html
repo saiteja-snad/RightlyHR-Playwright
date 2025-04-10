@@ -116,7 +116,7 @@
                             <label for="documentNumber" class="form-label custom-label mb-2">Document Number<span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="documentNumber" formControlName="documentNumber"
-                                placeholder="Please enter document number">
+                                placeholder="Please enter document number" autocomplete="off">
                             <div class="error-msg my-1"
                                 *ngIf="documentForm.get('documentNumber')?.touched && documentForm.get('documentNumber')?.invalid">
                                 <!-- Required Error -->

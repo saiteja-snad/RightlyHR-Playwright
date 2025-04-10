@@ -34,7 +34,7 @@ export class OffboardingDetailsComponent {
     this.getRehire();
     this.getTermination();
     this.initializeForm();
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getEmployeeId();
   }
 

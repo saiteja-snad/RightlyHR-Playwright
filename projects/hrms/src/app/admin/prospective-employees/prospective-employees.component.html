@@ -30,68 +30,45 @@
                       <th>{{'Sub Status'|translate}}</th>
                     </tr>
                 </thead>
-                <!-- <tbody>
-                    <tr>
-                        <td>10410</td>
-                        <td>Jhon Doe</td>
-                        <td>Jhon&#64;gmail.com</td>
-                        <td>+91 9087654321</td>
-                        <td>Bengaluru</td>
-                        <td>Mysore IT park</td>
-                        <td>HR Administrator</td>
-                        <td>Employee Created</td>
-                    </tr>
-                    <tr>
-                        <td>104120</td>
-                        <td>Jhon Doe</td>
-                        <td>Jhon&#64;gmail.com</td>
-                        <td>+91 9087654321</td>
-                        <td>Bengaluru</td>
-                        <td>Mysore IT park</td>
-                        <td>HR Administrator</td>
-                        <td>Employee Created</td>
-                    </tr>
-                </tbody> -->
 
                  <tbody>
-          <tr *ngFor="let act of Prospective | prospective : searchValue" class="hover" (click)="select(act)">
-            <td>{{act.employeeId}}</td>
-            <td ><span *ngIf="act.firstName ; else firstname">{{act.firstName}} {{act.middleName}} {{act.lastName}} </span></td>
-            <ng-template #firstname>
-              -
-          </ng-template>
-          <td>{{act.emailaddress}}</td>
-          <td> <span *ngIf="act.contactnumber;else contact">+91 {{act.contactnumber}}</span> 
-            <ng-template #contact>
-             <span class="d-inline-block">-</span>
-            </ng-template>
-          </td>
-            <td>
-              <div *ngFor="let jobDetail of act?.jobDetails">
-                <span *ngIf="jobDetail?.lopcation; else locationColumn" >
-                  {{ jobDetail?.lopcation }}
-                </span>
-                <ng-template #locationColumn>
-                  -
-                </ng-template>
-              </div>
-            </td>
-            <td > <div *ngFor="let jobDetail of act?.jobDetails">
-              <span *ngIf="jobDetail?.subLocation ; else sublocation">{{ jobDetail?.subLocation}} </span> </div> 
-              <ng-template #sublocation>
-                -
-            </ng-template>
-          </td>
-            <td > <div *ngFor="let jobDetail of act?.jobDetails">
-              <span *ngIf="jobDetail?.jobRole ; else jobrole">{{ jobDetail?.jobRole}} </span> </div> 
-              <ng-template #jobrole>
-                -
-            </ng-template>
-          </td>
-          <td ><span *ngIf="act.substatus; else substate">{{act.substatus}}</span>
-          <ng-template #substate>-</ng-template>
-        </td>
-          </tr>
+                  @if( ((Prospective | async) ?? []).length > 0){
+                  @for (act of ((Prospective | async) ?? []) | prospective : searchValue; track act.id) {
+                  <tr  >
+                    <td>{{act.employeeId}}</td>
+                    <td><span *ngIf="act.firstName ; else firstname"><a (click)="select(act)"><u>{{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}</u> </a>  </span></td>
+                    <ng-template #firstname>
+                      -
+                    </ng-template>
+                    <td>{{act.emailaddress?act.emailaddress:'-'}}</td>
+                    <td> {{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}
+                    </td>
+                    <td>
+                      @for(jobDetail of act?.jobDetails;track jobDetail.id){
+                        {{ jobDetail?.lopcation?jobDetail?.lopcation:'-' }}
+                      }
+                    </td>
+                    <td>
+                      @for(jobDetail of act?.jobDetails;track jobDetail.id){
+                        {{ jobDetail?.subLocation?jobDetail?.subLocation:'-'}}}
+                    </td>
+                    <td>
+                        @for(jobDetail of act?.jobDetails; track jobDetail.id){
+                          {{ jobDetail?.jobRole?jobDetail?.jobRole:'-'}} 
+                        }
+                    </td>
+                    <td>{{act.substatus?act.substatus:'-'}}
+                    </td>
+                  </tr>
+                  }
+                  }
+                  @else{
+                  <tr>
+                    <td>
+                      <app-no-data-found />
+                    </td>
+                  </tr>
+                  }
         </tbody>
             </table>
         </div>

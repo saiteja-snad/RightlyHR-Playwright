@@ -18,7 +18,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-document-history-offer-letter',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, OfferletterdashboardpipePipe, DateformatPipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, DateformatPipe, OfferletterdashboardpipePipe],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss'
 })
@@ -119,9 +119,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
     this.subscription = this.http
       .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
       .subscribe({
-        next: (data: any) => {
-          this.getOfferLetters();
-          this.conformationPopup.openSuccessModal('Offer Released Successfully ');
+        next: (data: any) => {       
           this.employeeEmail(Values);
          
         },
@@ -152,8 +150,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
 
     this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully ');
-        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Offer Released Successfully ');
+        this.getOfferLetters();
       },
       error: (err: any) => {
         console.log(err);
@@ -193,7 +191,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
             console.log(data);
             this.getOfferLetters();
             this.ApproveEmail(Values)
-            this.conformationPopup.openSuccessModal('Offer Approved Successfully ');
+            
 
           },
           error: (reason: any) => {
@@ -228,8 +226,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
         console.log(data);
         
         this.Approvednotification(datas);
-        this.conformationPopup.openSuccessModal('Approved Email Sent Successfully ');
-        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Offer Approved Successfully ');
       }
     })
 

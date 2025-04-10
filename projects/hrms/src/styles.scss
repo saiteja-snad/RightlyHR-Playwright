@@ -169,6 +169,10 @@ a {
     background-color: #F8FBFF;
 }
 
+.custom-input:focus {
+    background-color: #F8FBFF !important;
+}
+
 .custom-input::placeholder {
     color: #A1A1A1;
 }
@@ -196,7 +200,8 @@ a {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -209,6 +214,7 @@ a {
         background-color: var(--table-header-bg-color);
         color: var(--table-header-color);
         text-wrap: nowrap;
+        text-transform: uppercase;
     }
 
     th:first-child {
@@ -343,23 +349,27 @@ a {
 
 // salary details table
 .salary-details-table {
-    table,th,td {
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
-    
-    th,td {
+
+    th,
+    td {
         padding: 0.5rem 1rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
     }
-    
+
     th {
         font-weight: bold;
     }
-    
-    tr:nth-child(4),tr:nth-child(9) {
+
+    tr:nth-child(4),
+    tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -368,11 +378,11 @@ a {
     }
 }
 
-.hard-copy-letter{
+.hard-copy-letter {
     margin-bottom: 7rem;
 }
 
-.soft-copy-letter{
+.soft-copy-letter {
     margin-bottom: 4rem;
 }
 
@@ -380,8 +390,8 @@ a {
     list-style: none;
 }
 
-.list-style-disc{
-  list-style: disc;
+.list-style-disc {
+    list-style: disc;
 }
 
 .box {
@@ -397,19 +407,20 @@ a {
     font-size: var(--fontsize20);
 }
 
-.letter-sub-header{
+.letter-sub-header {
     font-size: 15px;
     font-weight: 600;
 }
 
-.boldnone{
+.boldnone {
     font-weight: 400 !important;
 }
 
-.letter-signature{
+.letter-signature {
     font-size: 3.2rem !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // custom search field
@@ -668,7 +679,10 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,.p-paginator-prev,.p-paginator-next,.p-paginator-last {
+        .p-paginator-first,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-last {
             border-radius: 50%;
             width: 1.875rem;
             height: 1.875rem;
@@ -677,13 +691,17 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,.p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,
+        .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,
+        .p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
+
 //pagenation stylings
 
 // login components stylings
@@ -798,4 +816,20 @@ input[type="file"] {
     text-decoration-style: solid;
     text-decoration-thickness: 0%;
     color: rgba(6, 39, 79, 1);
+}
+
+//plusbutton
+.plus-text {
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: rgba(48, 88, 137, 1);
+}
+
+// component header 
+.component-header{
+    font-weight: 600;
+    font-size: var(--fontsize16);
+    line-height: 16px;
 }

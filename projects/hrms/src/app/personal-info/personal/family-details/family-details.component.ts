@@ -10,8 +10,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { Ipersonal } from '../../../Interfaces/members-model';
 import { IProbationEmployees } from '../../../Interfaces/letters-model';
+import { IJob } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-family-details',
@@ -23,7 +23,7 @@ export class FamilyDetailsComponent implements OnInit {
   subscription!: Subscription;
   familyRelations: IRelation[] = [];
   selectedFamilyMembername: any
-  empinfo: any = {};
+  empinfo = {} as IJob; 
   familyDetailsForm!: FormGroup;
   selectedFamilyMember: any
   familyDetailsupdateForm!: FormGroup

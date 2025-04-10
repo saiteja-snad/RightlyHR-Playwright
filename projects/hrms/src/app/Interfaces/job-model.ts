@@ -1,4 +1,6 @@
 export interface IJob {
+    emergencycode1: any;
+    emergencycode: any;
     bloodGroup: any;
     personalEmail: any;
     workMail: any;

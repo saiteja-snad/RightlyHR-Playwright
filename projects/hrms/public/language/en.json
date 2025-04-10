@@ -56,5 +56,21 @@
    "DOCUMENT NAME":"DOCUMENT NAME",
    "SUBMITTED DATE":"SUBMITTED DATE",
    "DOCUMENT":"DOCUMENT",
-   "STATUS":"STATUS"
+   "STATUS":"STATUS",
+   "Only alphabets and spaces are allowed":"Only alphabets and spaces are allowed",
+   "Update":"Update",
+   "Are you sure you want to Delete?":"Are you sure you want to Delete?",
+   "Exit Reason is required":"Exit Reason is required",
+   "Exit Reason":"Exit Reason",
+   "Edit Location":"Edit Location",
+   "BussinesDetail is required":"BussinesDetail is required",
+   "Edit Business":"Edit Business",
+   "Business":"Business",
+   "DepartmentName is required":"DepartmentName is required",
+   "Edit Department":"Edit Department",
+   "Department":"Department",
+   "OvertimeDetail is required":"OvertimeDetail is required",
+   "Edit Overtime":"Edit Overtime",
+   "Overtime":"Overtime"
+
 }

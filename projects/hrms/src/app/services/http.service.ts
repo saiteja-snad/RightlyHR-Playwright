@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, catchError } from 'rxjs';
 import { environment } from '../../environments/environment.dev';
 
@@ -14,6 +14,11 @@ export class HttpService {
     private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
+
+  selectedCountryCodeSignal = signal<any>('');
+  selectedCountryCode2Signal = signal<any>('');
+  selectedworkcoutrycode=signal<any>('');
+  selectedpersonalnumbercode=signal<any>('');
 
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);

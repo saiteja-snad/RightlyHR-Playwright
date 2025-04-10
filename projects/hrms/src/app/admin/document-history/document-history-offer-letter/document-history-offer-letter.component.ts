@@ -9,8 +9,13 @@ import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
-import { OfferletterdashboardpipePipe } from "../../../pipes/offerletterdashboardpipe.pipe";
+import { OfferletterdashboardpipePipe } from '../../../pipes/offerletterdashboardpipe.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+
+
+
+
+
 @Component({
   selector: 'app-document-history-offer-letter',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, DateformatPipe, OfferletterdashboardpipePipe],
@@ -114,9 +119,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
     this.subscription = this.http
       .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
       .subscribe({
-        next: (data: any) => {
-          this.getOfferLetters();
-          this.conformationPopup.openSuccessModal('Offer Released Successfully ');
+        next: (data: any) => {       
           this.employeeEmail(Values);
          
         },
@@ -147,8 +150,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
 
     this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully ');
-        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Offer Released Successfully ');
+        this.getOfferLetters();
       },
       error: (err: any) => {
         console.log(err);
@@ -188,7 +191,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
             console.log(data);
             this.getOfferLetters();
             this.ApproveEmail(Values)
-            this.conformationPopup.openSuccessModal('Offer Approved Successfully ');
+            
 
           },
           error: (reason: any) => {
@@ -223,8 +226,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
         console.log(data);
         
         this.Approvednotification(datas);
-        this.conformationPopup.openSuccessModal('Approved Email Sent Successfully ');
-        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Offer Approved Successfully ');
       }
     })
 

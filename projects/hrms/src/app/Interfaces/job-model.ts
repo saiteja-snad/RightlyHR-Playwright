@@ -1,4 +1,6 @@
 export interface IJob {
+    emergencycode1: any;
+    emergencycode: any;
     bloodGroup: any;
     personalEmail: any;
     workMail: any;
@@ -74,7 +76,18 @@ export interface IJob {
     offerIssueddate: any,
     offerstatus: string,
     documentUrl: string,
-   
+    substatus: string,
+    branchCode: string,
+    empType: string,
+    issalaryhold: any,
+    pf : any,
+    esic : any,
+    pt : any,
+    wfhManagerId: any,
+    workLocation: any,
+    allowWFH : any,
+    totalYearsOfExperience: any,
+    profileUrl: any,
     fusionEmpId: any
     noduerequestpassed:any,
   }

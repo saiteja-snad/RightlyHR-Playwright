@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,12 +13,12 @@ import { IJob } from '../../../Interfaces/job-model';
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss'
 })
-export class ContactDetailsComponent {
+export class ContactDetailsComponent implements OnInit,OnDestroy{
 
   contactForm!: FormGroup;
 subscription!:Subscription
  empinfo = {} as IJob;
- employedata:any[]=[]
+ employedata={} as any;
   buttons= false;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
   ngOnInit(): void {
@@ -28,18 +28,6 @@ subscription!:Subscription
     this.contactForm.disable();
   }       
 
-  initializeForm(): void {
-    this.contactForm = this.fb.group({
-      personalEmail: ['', [Validators.required, Validators.email]], 
-      workMail: ['', [Validators.required, Validators.email]], // Required and valid email format
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]], // Required and 10-digit phone number
-      workNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]], // Required and 10-digit phone number
-  
-    });
-  }
-
-
-
 enableForm(): void {
   this.buttons = true;
   this.contactForm.enable();
@@ -47,28 +35,41 @@ enableForm(): void {
 
 disableForm(): void {
   this.buttons = false;
-
   this.contactForm.disable();
 }
-  getEmployeeId(): void {
-    const employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-      this.employedata = data;
-      this.patchForm(data);
-      },
-      error: (reason) => console.error('Error fetching employee data:', reason),
-    });
-  }
 
-  patchForm(data: any): void {   
-    this.contactForm.patchValue({
-      personalEmail: data.emailaddress || this.empinfo.emailaddress,
-      workMail: data.workEmail || this.empinfo.workMail,         // Bind work email
-      phoneNumber: data.contactnumber || this.empinfo.contactnumber,  // Bind personal phone number
-      workNumber: data.workPhone || this.empinfo.workPhone,       // Bind work phone number
-    });
-  }
+initializeForm(): void {
+  this.contactForm = this.fb.group({
+    personalEmail: ['', [Validators.required, Validators.email]],  
+    workMail: ['', [Validators.required, Validators.email]],  
+    phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]], 
+    workNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],  
+  });
+}
+
+getEmployeeId(): void {
+  const employeeId = parseInt(this.empinfo.employeeId, 10);  
+  this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+    next: (data: any) => {
+      this.employedata = data;  
+      this.patchForm(data);  
+    },
+    error: (reason) => console.error('Error fetching employee data:', reason), 
+  });
+}
+
+patchForm(data: any): void {
+  this.contactForm.patchValue({
+    personalEmail: data.emailaddress || this.empinfo.emailaddress,  
+    workMail: data.workEmail || this.empinfo.workMail,  
+    phoneNumber: data.contactnumber || this.empinfo.contactnumber,  
+    workNumber: data.workPhone || this.empinfo.workPhone, 
+  });
+
+  console.log(this.contactForm.value);  
+}
+
+
   updateAddressInfo(): void {
     const formValue = this.contactForm.value; 
   const updatePayload = {
@@ -94,6 +95,22 @@ disableForm(): void {
     emergencyEmail1: this.empinfo.emergencyEmail1,
     emergencyNumber1: this.empinfo.emergencyNumber1,
     relationship1: this.empinfo.relationship1,
+    profileUrl: this.empinfo.profileUrl,
+    fusionEmpId: this.empinfo.fusionEmpId,
+    dateOfJoining: this.empinfo.dateOfJoining,
+    branchCode: this.empinfo.branchCode,
+    probationEndDate: this.empinfo.probationEndDate,
+    probationStatus: this.empinfo.probationStatus,
+    noticePeriod: this.empinfo.noticePeriod,
+    backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
+    issalaryhold:this.empinfo.issalaryhold,
+    pf: this.empinfo.pf,
+    esic:this.empinfo.esic,
+    pt: this.empinfo.pt,
+    totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
+    allowWFH: this.empinfo.allowWFH,
+    workLocation:this.empinfo.workLocation,
+    wfhManagerId: this.empinfo.wfhManagerId
   };
 
  
@@ -116,4 +133,11 @@ disableForm(): void {
   showButtons() {
     this.buttons = !this.buttons
   }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
+
 }

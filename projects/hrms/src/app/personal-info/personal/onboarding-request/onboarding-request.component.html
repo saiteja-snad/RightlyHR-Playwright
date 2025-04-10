@@ -79,13 +79,16 @@
                 }
                 @else{
                 <tr>
-                    <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
+                    <td>
+                            <app-no-data-found />
+                        </td>
                 </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+
 <!-- View popup start -->
 <ng-template #viewmodel let-modal>
     <div class="modal-header">

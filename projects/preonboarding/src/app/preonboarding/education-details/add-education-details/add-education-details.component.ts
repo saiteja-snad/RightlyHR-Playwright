@@ -48,8 +48,8 @@ export class AddEducationDetailsComponent {
     this.educationForm = this.fb.group({
       education: ['', Validators.required],
       university: ['', Validators.required],
-      specialization: ['', Validators.required,Validators.pattern('^[A-Za-z,.\-_\s]+$')],
-      gpa: ['', Validators.required,Validators.pattern('^[0-4](\.\d{1,2})?$')],
+      specialization: ['', Validators.required],
+      gpa: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required]
     });
@@ -95,6 +95,7 @@ export class AddEducationDetailsComponent {
 
   //function to post the Education Details
   postEducation() {
+    
     if (this.educationForm.valid && this.educationAttachment) {
       this.postEducationdata = {
         ...this.educationForm.value,

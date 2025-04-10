@@ -8,10 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { IJob } from '../../../Interfaces/job-model';
-
-
-
+import { IJob } from '../../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-basic-info',
@@ -36,8 +33,9 @@ export class BasicInfoComponent {
   Gender: IGender[] = [];
   Titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
-  empyployeedata: any[] = []
+  empyployeedata={} as any;
   buttons = false
+  
   constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
@@ -123,6 +121,22 @@ export class BasicInfoComponent {
       emergencyEmail1: this.empinfo.emergencyEmail1,
       emergencyNumber1: this.empinfo.emergencyNumber1,
       relationship1: this.empinfo.relationship1,
+      profileUrl: this.empinfo.profileUrl,
+      fusionEmpId: this.empinfo.fusionEmpId,
+      dateOfJoining: this.empinfo.dateOfJoining,
+      branchCode: this.empinfo.branchCode,
+      probationEndDate: this.empinfo.probationEndDate,
+      probationStatus: this.empinfo.probationStatus,
+      noticePeriod: this.empinfo.noticePeriod,
+      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
+      issalaryhold:this.empinfo.issalaryhold,
+      pf: this.empinfo.pf,
+      esic:this.empinfo.esic,
+      pt: this.empinfo.pt,
+      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
+      allowWFH: this.empinfo.allowWFH,
+      workLocation:this.empinfo.workLocation,
+      wfhManagerId: this.empinfo.wfhManagerId
 
     };
     console.log(updatePayload);
@@ -141,7 +155,6 @@ export class BasicInfoComponent {
         error: (reason: any) => {
           console.log(reason);
           this.conformationPopup.openErrorModal('Basic Info update failed')
-
         },
       });
   }
@@ -153,6 +166,7 @@ export class BasicInfoComponent {
       },
     });
   }
+
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
@@ -160,6 +174,7 @@ export class BasicInfoComponent {
       },
     });
   }
+
   getMaritaldetails() {
     this.subscription = this.http.getData('Maritalstatus').subscribe({
       next: (data: any) => {
@@ -170,12 +185,9 @@ export class BasicInfoComponent {
 
   showButtons(): void {
     this.buttons = !this.buttons;
-
     if (this.buttons) {
-      // Enable the form when the user clicks "Edit"
       this.basicInfoForm.enable();
     } else {
-      // Disable the form when the user clicks "Close"
       this.basicInfoForm.disable();
     }
   }
@@ -185,7 +197,4 @@ export class BasicInfoComponent {
       this.subscription.unsubscribe();
     }
   }
-
-
-
 }

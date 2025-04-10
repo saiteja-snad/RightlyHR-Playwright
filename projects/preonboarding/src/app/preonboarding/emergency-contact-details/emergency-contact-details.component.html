@@ -44,10 +44,20 @@
                         <label class="form-label custom-label mb-2">Mobile Number<span
                                 class="text-danger">*</span></label>
                         <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                            <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                                [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig"
-                                class="country-input" (onCountryChange)="onCountryChange($event)">
-                            </lib-country-list>
+                            <div *ngIf="!loading; else loadingTemplate">
+                                <lib-country-list 
+                                  [selectedCountryConfig]="selectedCountryConfig"
+                                  [selectedCountryCode]="selectedCountryCode()" 
+                                  [countryListConfig]="countryListConfig"
+                                  class="country-input" 
+                                  (onCountryChange)="onCountryChange($event)">
+                                </lib-country-list>
+                              </div>
+                              
+                              <ng-template #loadingTemplate>
+                                <p>Loading...</p>
+                              </ng-template>
+                             
                             <input type="text" class="form-control custom-input" formControlName="mobile"
                                 placeholder="Please enter mobile number" id="phonenumbers"
                                 aria-describedby="phonenumbers"
@@ -118,10 +128,20 @@
                         <label class="form-label custom-label mb-2">Mobile Number<span
                                 class="text-danger">*</span></label>
                         <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                            <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                                [selectedCountryCode]="selectedCountryCode1" [countryListConfig]="countryListConfig"
-                                class="country-input" (onCountryChange)="onCountryChange1($event)">
-                            </lib-country-list>
+                            <div *ngIf="!loading; else loadingTemplate">
+                                <lib-country-list 
+                                  [selectedCountryConfig]="selectedCountryConfig"
+                                  [selectedCountryCode]="selectedCountryCode1()" 
+                                  [countryListConfig]="countryListConfig"
+                                  class="country-input" 
+                                  (onCountryChange)="onCountryChange1($event)">
+                                </lib-country-list>
+                              </div>
+                              
+                              <ng-template #loadingTemplate>
+                                <p>Loading...</p> <!-- Replace this with a spinner or loading indicator -->
+                              </ng-template>
+                        
                             <input type="text" class="form-control custom-input" formControlName="mobile"
                                 placeholder="Please enter mobile number" id="phonenumbers"
                                 aria-describedby="phonenumbers"
@@ -157,11 +177,12 @@
                     </div>
                 </div>
             </div>
+            <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
+                <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Education Details</button>
+                <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="contactForm.invalid" >Next</button>
+            </div>
         </form>
 
-        <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
-            <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Education Details</button>
-            <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="contactForm.invalid" (click)="navigateNext()">Next</button>
-        </div>
+       
     </div>
 </div>

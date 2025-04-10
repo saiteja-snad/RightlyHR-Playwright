@@ -4,13 +4,15 @@
             <div>
                 <span class="contact-sub-header">Contact Details</span>
             </div>
-            <div *ngIf="!buttons">
-                <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
-            </div>
-            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+            @if(!buttons &&(employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective')){
+              <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+            }
+            @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective')){
+              <div class="d-flex justify-content-end gap-3" >
                 <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid" (click)="updateAddressInfo()" >Save</button>
             </div>
+            }   
         </div>
 
         <!-- Reactive Form -->
@@ -36,8 +38,8 @@
                   </div>
               
                   <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="workMail" class="form-label custom-label mb-2">Work Mail<span class="text-danger">*</span></label>
-                    <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail" placeholder="Please enter work mail">
+                    <label for="workMail" class="form-label custom-label mb-2">Work Email ID<span class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail" placeholder="Please enter work email ID">
                     <div class="error-msg" *ngIf="contactForm.get('workMail')?.invalid && contactForm.get('workMail')?.touched">
                       <div *ngIf="contactForm.get('workMail')?.errors?.['required']">Work email is required</div>
                       <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work email must be a valid email address</div>
@@ -45,11 +47,11 @@
                   </div>
               
                   <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span class="text-danger">*</span></label>
-                    <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail" placeholder="Please enter personal email">
+                    <label for="personalEmail" class="form-label custom-label mb-2">Personal Email ID<span class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail" placeholder="Please enter personal email ID">
                     <div class="error-msg" *ngIf="contactForm.get('personalEmail')?.invalid && contactForm.get('personalEmail')?.touched">
-                      <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">Personal email is required</div>
-                      <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email address</div>
+                      <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">Personal email ID is required</div>
+                      <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email ID</div>
                     </div>
                   </div>
                 </div>

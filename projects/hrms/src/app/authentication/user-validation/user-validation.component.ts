@@ -61,7 +61,7 @@ export class UserValidationComponent {
             if (response.roles.length <= 0) {
               this.router.navigate(['/unauthorized']);
             } else if (response.roles.includes('ADMIN') || response.roles.includes('HR MANAGER')) {
-              this.router.navigate(['/admin-dashboard']);
+              this.router.navigate(['/admin/dashboard']);
             } else {
               this.router.navigate(['/myinfo']);
             }

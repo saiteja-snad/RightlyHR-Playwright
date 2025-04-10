@@ -47,8 +47,8 @@
             <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
 
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                [selectedCountryCode]="emergencyContactForm.get('contact1CountryCode')?.value" [countryListConfig]="countryListConfig"
-                class="country-input" (onCountryChange)="onCountryChange($event)">
+                [selectedCountryCode]="http.selectedCountryCodeSignal()" [countryListConfig]="countryListConfig"
+                class="country-input" (onCountryChange)="onCountryChange($event)"   [ngClass]="{ 'disabled': !buttons }">
               </lib-country-list>
               <input type="text"  class="form-control custom-input" formControlName="contact1Phone"
               autocomplete="off" placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
@@ -59,8 +59,7 @@
               *ngIf="emergencyContactForm.get('contact1Phone')?.invalid && emergencyContactForm.get('contact1Phone')?.touched">
               <div *ngIf="emergencyContactForm.get('contact1Phone')?.errors?.['required']">Phone number is
                 required</div>
-              <div *ngIf="emergencyContactForm.get('contact1Phone')?.errors?.['pattern']">Invalid phone number
-                format</div>
+            
                 <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('invalidPhoneNumber')">The phone number is not valid for the selected country.</div>
 
                
@@ -131,8 +130,8 @@
             <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
 
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                [selectedCountryCode]="emergencyContactForm.get('contact2CountryCode')?.value" [countryListConfig]="countryListConfig"
-                class="country-input" (onCountryChange)="onCountryChange1($event)">
+                [selectedCountryCode]="http.selectedCountryCode2Signal()" [countryListConfig]="countryListConfig"
+                class="country-input"  [ngClass]="{ 'disabled': !buttons2 }"   (onCountryChange)="onCountryChange1($event)">
               </lib-country-list>
               <input type="text"  class="form-control custom-input" formControlName="contact2Phone"
               autocomplete="off" placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"

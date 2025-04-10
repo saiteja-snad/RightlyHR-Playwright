@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Subscription } from 'rxjs';
@@ -22,7 +22,7 @@ import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss'
 })
-export class PersonalinfoLayoutComponent implements OnInit{
+export class PersonalinfoLayoutComponent implements OnInit,OnDestroy{
   teamForm!: FormGroup;
   managers: any[] = [];
   teamMembersdata: any[] = [];
@@ -43,6 +43,8 @@ export class PersonalinfoLayoutComponent implements OnInit{
   pouptext1: any
   selectedManager: any = null;
   jobPostData: any;
+  headerName!: string;
+  isLoading: boolean = false;
 
   constructor(private http: HttpService,private authService: AuthService,private router: Router, private modalService: NgbModal,private fb: FormBuilder,private conformationPopup: OpenModalService) { }
   
@@ -59,9 +61,11 @@ export class PersonalinfoLayoutComponent implements OnInit{
     this.getEmployee();
     this.emppersonalinfo=JSON.parse(localStorage.getItem("personaldata") || '{}')
     this.getTraineeofferdetails();
+    this.assignHeading();
   }
-
+ 
   emailForRequestDoc() {
+    this.isLoading = true;
     let loggedInUser = this.authService.getToken();
     if (this.emppersonalinfo.experienceType == 'Fresher') {
       this.postIsApplicable = 'Fresher';
@@ -86,6 +90,7 @@ export class PersonalinfoLayoutComponent implements OnInit{
       .subscribe({
         next: (data: any) => {
           this.conformationPopup.openSuccessModal('Email Sent Successfully')
+          this.isLoading = false;
         },
         error: (err: any) => {
           console.log(err);
@@ -566,5 +571,86 @@ initialzerevoke() {
         console.log(err);
       },
     });
+  }
+  onBackSubmit() {
+    let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    switch (routestatus.empstatus) {
+      case 'Prospective':
+        this.router.navigate(['/admin/prospective-employees'])
+        break;
+      case 'Active':
+        this.router.navigate(['/admin/active-employees'])
+        break;
+      case 'Probation':
+        this.router.navigate(['/admin/probationemployees'])
+        break;
+      case 'Inactive':
+        this.router.navigate(['/admin/inactive-employees'])
+        break;
+      case 'Trainee Prospective':
+        this.router.navigate(['/admin/prospective-interns'])
+        break;
+      case 'Trainee Active':
+        this.router.navigate(['/admin/traineeactiveemployee'])
+        break;
+      case 'Trainee Inactive':
+        this.router.navigate(['admin/inactive-interns'])
+        break;
+      case 'External Prospective':
+        this.router.navigate(['/admin/externalprospective-employee'])
+        break;
+      case 'External Active':
+        this.router.navigate(['/admin/externalactive-employee'])
+        break;
+      case 'External Inactive':
+        this.router.navigate(['/admin/externalinactive-employee'])
+        break;
+      default:
+        this.router.navigate(['/admin'])
+    }
+  }
+
+  assignHeading() {
+    let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    switch (routestatus.empstatus) {
+      case 'Prospective':
+        this.headerName = "Prospective Employees"
+        break;
+      case 'Active':
+        this.headerName = "Active Employees"
+        break;
+      case 'Probation':
+        this.headerName = "Probation Employees"
+        break;
+      case 'Inactive':
+        this.headerName = "Inactive Employees"
+        break;
+      case 'Trainee Prospective':
+        this.headerName = "Prospective Trainees"
+        break;
+      case 'Trainee Active':
+        this.headerName = "Active Trainees"
+        break;
+      case 'Trainee Inactive':
+        this.headerName = "Inactive Trainees"
+        break;
+      case 'External Prospective':
+        this.headerName = "External Prospective "
+        break;
+      case 'External Active':
+        this.headerName = "External Active "
+        break;
+      case 'External Inactive':
+        this.headerName = "External Inactive"
+        break;
+      default:
+        this.headerName = "Employees"
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

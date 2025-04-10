@@ -1,67 +1,98 @@
-<div class="card main-settings-layout p-4">
-    <!-- Add Input-->
-    <div>
-        <div class="custom-settings-add-input input-group mb-5">
-            <input type="text" class="form-control custom-input" placeholder="Please enter location"
-                aria-label="location" aria-describedby="location">
-            <span class="input-group-text" id="location"><button type="button"
-                    class="custom-btn btn-primary">Add</button></span>
+<form [formGroup]="locationForm" (ngSubmit)="addLocation()">
+    <div class="card main-settings-layout p-4">
+        <!-- Add Input-->
+        <div>
+            <div class="custom-settings-add-input input-group mb-5">
+                <input type="text" class="form-control custom-input" placeholder="Please enter location"
+                    formControlName="jobLocationName" aria-label="location" aria-describedby="location"  (keypress)="blockNonAlphabets($event)" >
+                <span class="input-group-text" id="location">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="locationForm.invalid">{{'Add'|translate}}</button></span>
+            </div>
         </div>
-    </div>
-    <!--Data Content-->
-    <div>
-        <div class="custom-settings-data-table">
-            <table class="w-100">
-                <thead>
-                    <th class="col-span-2"></th>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="w-75">Hyderabad</td>
-                        <td class="w-25">
-                            <div class="d-flex gap-4">
-                                <!--Update-->
-                                <div>
-                                    <a (click)="openupdate()"><img src="/settings-icon/edit.png" alt="edit icon"
-                                            class="settings-common-icon"></a>
+          <div *ngIf="locationForm.get('jobLocationName')?.touched && locationForm.get('jobLocationName')?.invalid">
+            <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['required']">
+              {{'Location is required'|translate}}
+            </small>
+            <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
+               {{'Only alphabets and spaces are allowed'|translate}}
+            </small> -->
+          </div>
+          
+          
+        <!--Data Content-->
+         <div>
+            <div class="custom-settings-data-table">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th class="col-span-2"></th>                            
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                         @for (loc of locationDetail; track loc.id) {
+                        <tr *ngFor="let loc of locationDetail">
+                             <tr>
+                            <td class="w-75">{{ loc.jobLocationName }}</td>                           
+                            <td class="w-25">
+                                <div class="d-flex gap-4">
+                                    <!--Update-->
+                                     <div>
+                                        <a (click)="openupdate(loc)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                                class="settings-common-icon"></a>
+                                    </div> 
+                                    <!--Delete-->
+                                    <div>
+                                        <a (click)="opendelete(loc)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                                class="settings-common-icon"></a>
+                                    </div>
                                 </div>
-                                <!--Delete-->
-                                <div>
-                                    <a (click)="opendelete()"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                            class="settings-common-icon"></a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+          
     </div>
-</div>
+</form>
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
+     <form [formGroup]="updateForm">
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Update</p>
+                <p class="popup-heading mb-0">{{'Edit Location'|translate}}</p>
             </div>
             <div>
-                <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-5">
             <div class="mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">location<span class="error-msg">*</span></label>
-                <input type="text" class="form-control custom-input" formControlName="firstName"
-                    placeholder="Please enter location">
+                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Location'|translate}}<span
+                        class="error-msg">*</span></label>
+                <input type="text" class="form-control custom-input" formControlName="jobLocationName"
+                    placeholder="Please enter location"  (keypress)="blockNonAlphabets($event)">
             </div>
+            <div *ngIf="updateForm.get('jobLocationName')?.touched && updateForm.get('jobLocationName')?.invalid">
+                <small style="color: red;" *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">
+                 {{'Location is required'|translate}}
+                </small>
+                <!-- <small style="color: red;" *ngIf="updateForm.get('jobLocationName')?.errors?.['pattern']">
+                 {{'Only alphabets and spaces are allowed'|translate}}
+                  </small> -->
+              </div>
             <div class="d-flex gap-5 pt-4 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3">Close</button>
-                <button class="custom-btn btn-primary w-50 py-3">Update</button>
+                <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3" (click)="updateLocation(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
             </div>
+          
         </div>
     </div>
+    </form>
 </ng-template>
 
 <!--Delete Confirmation popup-->
@@ -70,11 +101,11 @@
         <div class="custom-main-popup-content text-center p-4">
             <div class="py-5">
                 <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
-                <p class="confirmation-text">Are you sure you want to Delete?</p>
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
             <div class="d-flex gap-5 pt-2 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3">No</button>
-                <button class="custom-btn btn-primary w-50 py-3">yes</button>
+                <button class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'yes'|translate}}</button>
             </div>
         </div>
     </div>

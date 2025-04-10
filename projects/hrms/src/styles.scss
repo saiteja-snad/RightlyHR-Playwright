@@ -214,6 +214,7 @@ a {
         background-color: var(--table-header-bg-color);
         color: var(--table-header-color);
         text-wrap: nowrap;
+        text-transform: uppercase;
     }
 
     th:first-child {
@@ -348,7 +349,6 @@ a {
 
 // salary details table
 .salary-details-table {
-
     table,
     th,
     td {
@@ -825,5 +825,11 @@ input[type="file"] {
     line-height: 100%;
     letter-spacing: 0%;
     color: rgba(48, 88, 137, 1);
+}
 
+// component header 
+.component-header{
+    font-weight: 600;
+    font-size: var(--fontsize16);
+    line-height: 16px;
 }

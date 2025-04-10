@@ -27,6 +27,9 @@ export class AddEducationDetailsComponent {
   showErrorforsize: boolean = false;
   subscription!: Subscription;
   degreeDetails = [] as any;
+  showError: boolean = false;
+  showErrorr: boolean = false;
+  
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService, private getData:DataService) { }
 
@@ -48,8 +51,9 @@ export class AddEducationDetailsComponent {
     this.educationForm = this.fb.group({
       education: ['', Validators.required],
       university: ['', Validators.required],
-      specialization: ['', Validators.required],
-      gpa: ['', Validators.required,Validators.pattern('^(10(\.0)?|([1-9](\.[0-9])?))$')],
+      specialization: ['', [Validators.required,Validators.pattern(/^[A-Za-z ,._-]+$/)]],
+     // specialization: ['', Validators.required,Validators.pattern('^[A-Za-z,.\-_\s]+$')],
+      gpa: ['', [Validators.required,Validators.pattern(/^([0-3](\.\d{1,2})?|4(\.00?)?)$/)]],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required]
     });

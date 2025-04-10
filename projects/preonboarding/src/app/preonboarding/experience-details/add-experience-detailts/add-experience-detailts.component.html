@@ -20,6 +20,9 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Company Name<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="companyName">
+                    <div *ngIf="experienceForm.get('companyName')?.invalid && experienceForm.get('companyName')?.touched" class="text-danger">
+                        Company Name is required
+                    </div>
                 </div>
         
                 <div class="col-md-6 mb-3">
@@ -29,27 +32,42 @@
                             formControlName="employmentType" placeholder="Please select employment type" class="form-select custom-select">
                         </p-select>
                     </div>
+                    <div *ngIf="experienceForm.get('employmentType')?.invalid && experienceForm.get('employmentType')?.touched" class="text-danger">
+                        Employment Type is required
+                    </div>
                 </div>
         
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">From Date<span class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="fromDate">
+                    <div *ngIf="experienceForm.get('fromDate')?.invalid && experienceForm.get('fromDate')?.touched" class="text-danger">
+                        From Date is required
+                    </div>
                 </div>
         
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">To Date<span class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="toDate" [disabled]="isDisabletoDate">
+                    <!-- <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched" class="text-danger">
+                        To Date is required
+                    </div> -->
                 </div>
         
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Job Role<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="jobTitle">
+                    <div *ngIf="experienceForm.get('jobTitle')?.invalid && experienceForm.get('jobTitle')?.touched" class="text-danger">
+                        Job Role is required
+                    </div>
                 </div>
         
                 <div class="col-md-12 mb-3">
                     <label class="form-label custom-label mb-2">Roles & Responsibilities<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" formControlName="description"></textarea>
+                    <div *ngIf="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched" class="text-danger">
+                        Roles & Responsibilities is required
+                    </div>
                 </div>
         
                 <div class="mb-3">
@@ -59,6 +77,9 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Name<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="previousContactName">
+                    <div *ngIf="experienceForm.get('previousContactName')?.invalid && experienceForm.get('previousContactName')?.touched" class="text-danger">
+                        Contact Name is required
+                    </div>
                 </div>
         
                 <div class="col-md-6 mb-3">
@@ -85,12 +106,21 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Work Email<span class="text-danger">*</span></label>
                     <input type="email" class="form-control custom-input" formControlName="previousContactEmail">
+                    <div *ngIf="experienceForm.get('previousContactEmail')?.invalid && experienceForm.get('previousContactEmail')?.touched" class="text-danger">
+                        Work Email is required
+                    </div>
+                    
                 </div>
         
                 <div class="col-md-12 mb-3">
                     <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span class="text-danger">*</span></label>
                     <input type="file" class="form-control custom-input" (change)="onChangeexperience($event);onChange($event)">
-                    
+                    <div class="error-msg"
+                            *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">
+                            Please choose a file
+                    </div>
+                        <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
+                        <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
                 </div>
             </div>
         

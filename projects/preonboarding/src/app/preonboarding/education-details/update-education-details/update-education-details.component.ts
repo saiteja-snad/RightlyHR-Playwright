@@ -46,8 +46,10 @@ export class UpdateEducationDetailsComponent {
     this.educationForm = this.fb.group({
       education: [this.educationData?.degree || '', Validators.required],
       university: [this.educationData?.university || '', Validators.required],
-      specialization: [this.educationData?.specialization || '', Validators.required],
-      gpa: [this.educationData?.gpa || '', Validators.required],
+      // specialization: [this.educationData?.specialization || '', Validators.required],
+      // gpa: [this.educationData?.gpa || '', Validators.required],
+      specialization: [this.educationData?.specialization || '', [Validators.required,Validators.pattern(/^[A-Za-z ,._-]+$/)]],
+      gpa: [this.educationData?.gpa || '', [Validators.required,Validators.pattern(/^([0-3](\.\d{1,2})?|4(\.00?)?)$/)]],
       startDate: [this.formatDate(this.educationData?.degreeStartDate) || '', Validators.required],
       endDate: [this.formatDate(this.educationData?.degreeEndDate) || '', Validators.required],
     });

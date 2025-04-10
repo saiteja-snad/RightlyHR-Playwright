@@ -66,10 +66,17 @@
                         End date is required
                     </div>
                 </div>
+                
         
                 <div class="col-md-12 mb-3">
                     <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span class="text-danger">*</span></label>
-                    <input type="file" class="form-control custom-input" id="attachment" (change)="fileAttachment($event);fileChange($event)" autoComplete="off" >
+                    <input type="file" class="form-control custom-input" id="attachment" (change)="fileAttachment($event);fileChange($event)" autoComplete="off">
+                    <div class="error-msg"
+                            *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">
+                            Please choose a file
+                    </div>
+                        <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
+                        <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
                 </div>
             </div>
         

@@ -18,25 +18,36 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Food</td>
-                    <td>33/09/2025</td>
-                    <td>888</td>
-                    <td>Draft</td>
-                    <td class="text-center">
-                        <div class="dropdown">
-                            <a type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu py-0">
-                                <li (click)="openModal(viewDetailsModal)"><a class="dropdown-item"><i
-                                            class="bi bi-paperclip me-2"></i>View Details</a>
-                                </li>
-
-                            </ul>
-                        </div>
+                <tr *ngFor="let exp of flitredDrafts | async">
+                    <td class="text-center">{{ exp.expenses_Title }}</td>
+                    <td class="text-center">{{ exp.applied_date | dateformat }}</td>
+                    <td class="text-center">{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+                    <td class="text-center" [ngClass]="{
+                        'rejected-draft': exp.status === 'Draft',
+                        'pending-status': exp.status === 'Pending'
+                      }">
+                      <span style="font-size: 18px" class="pe-2">●</span><span [ngClass]="{
+                          'rejected-draft': exp.status === 'Draft',
+                          'pending-status': exp.status === 'Pending'
+                        }">{{ exp.status }}</span>
                     </td>
-                </tr>
+                    <td></td>
+                    <!-- <td class="text-center">
+                      <div ngbDropdown>
+                        <div type="button" id="dropdownMenu2" ngbDropdownToggle aria-expanded="false">
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </div>
+                        <ul ngbDropdownMenu aria-labelledby="dropdownMenu2">
+                          <li>
+                            <button ngbDropdownItem
+                              (click)="onEditClick(exp); openModal(myexpenseSummary, 'xl'); viewItem(exp.expenses_ID, 'Draft')">
+                              <i class="bi bi-paperclip"></i>Update
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    </td> -->
+                  </tr>               >
             </tbody>
         </table>
     </div>
@@ -67,23 +78,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Food</td>
-                            <td>33/09/2025</td>
-                            <td>888</td>
-                            <td>Rejected</td>
+                        <tr *ngFor="let item of expenseheaderiteams">
+                            <td>{{ item.expenses_Title }}</td>
+                            <td>{{ item.applied_date | dateformat }}</td>
+                            <td>{{ item.expenses_Title }}</td>
+                            
                             <td>
-                                <div class="row ">
-                                    <div class="col d-flex align-items-center">
-                                        <a type="button" class="me-2 dowload-text"><i
-                                                class="bi bi-download  me-2"></i>Download</a>
-
-                                        <a type="button" class="view-text  "><i class="bi bi-paperclip"></i>View
-                                        </a>
-                                    </div>
+                              <div class="row">
+                                <div class="col d-flex align-items-center">
+                                  <a type="button" class="me-2 dowload-text" (click)="onSelectDownload(item)">
+                                    <i class="bi bi-download me-2"></i>Download
+                                  </a>
+                                  <a type="button" class="view-text" (click)="onViewClickPending(item)">
+                                    <i class="bi bi-paperclip"></i>View
+                                  </a>
                                 </div>
+                              </div>
                             </td>
-                        </tr>
+                          </tr>
 
                     </tbody>
                 </table>

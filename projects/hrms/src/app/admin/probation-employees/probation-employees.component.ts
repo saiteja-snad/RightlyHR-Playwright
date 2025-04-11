@@ -6,13 +6,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { IProbationEmployees } from './probation-emp-module';
-import { ProbationEmpPipe } from "../../pipes/probation-emp.pipe";
-import { DataformatPipe } from "../../pipes/dataformat.pipe";
 import { FormsModule } from '@angular/forms';
 // import * as moment from 'moment';
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, ProbationEmpPipe, DataformatPipe,FormsModule],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
   templateUrl: './probation-employees.component.html',
   styleUrl: './probation-employees.component.scss'
 })
@@ -24,6 +22,7 @@ export class ProbationEmployeesComponent {
   empinfo = {} as IProbationEmployees;
   StatusMsg : any;
   probationDuration:any;
+  
   constructor(private router: Router,private http: HttpService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
@@ -34,9 +33,7 @@ export class ProbationEmployeesComponent {
       next:(data:any) =>{
         console.log(data);
         this.probationemp = data as IProbationEmployees[]
-        // this.getprobationPeriodData();
         this.probationemp.probationEndDate=this.formatDate(this.probationemp.probationEndDate);
-
       }
     })
   }

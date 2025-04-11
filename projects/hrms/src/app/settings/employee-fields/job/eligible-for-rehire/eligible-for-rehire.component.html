@@ -1,0 +1,111 @@
+<form [formGroup]="EligibilityForm" (ngSubmit)="addIdentityType()">
+    <div class="card main-settings-layout p-4">
+        <!-- Add Input-->
+        <div>
+            <div class="custom-settings-add-input input-group mb-5">
+                <input type="text" class="form-control custom-input" placeholder="Please enter eligible for rehire"
+                    formControlName="Rehire" aria-label="rehire" aria-describedby="rehire" (keypress)="blockNonAlphabets($event)">
+                <span class="input-group-text" id="rehire">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="EligibilityForm.invalid">{{'Add'|translate}}</button></span>
+            </div>
+        </div>
+          <div *ngIf="EligibilityForm.get('Rehire')?.touched && EligibilityForm.get('Rehire')?.invalid">
+            <small style="color: red;font-size: 13px;" *ngIf="EligibilityForm.get('Rehire')?.errors?.['required']">
+              {{'Eligible for rehire is required'|translate}}
+            </small>
+            <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
+               {{'Only alphabets and spaces are allowed'|translate}}
+            </small> -->
+          </div>
+          
+          
+        <!--Data Content-->
+         <div>
+            <div class="custom-settings-data-table">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th class="col-span-2"></th>                            
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                         @for (e of EligibilityDetail; track e.id) {
+                        <tr *ngFor="let e of EligibilityDetail">
+                             <tr>
+                            <td class="w-75">{{ e.eligibleforrehire1}}</td>                           
+                            <td class="w-25">
+                                <div class="d-flex gap-4">
+                                    <!--Update-->
+                                     <div>
+                                        <a (click)="openupdate(e)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                                class="settings-common-icon"></a>
+                                    </div> 
+                                    <!--Delete-->
+                                    <div>
+                                        <a (click)="opendelete(e)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                                class="settings-common-icon"></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+          
+    </div>
+</form>
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form [formGroup]="updateForm">
+   <div class="custom-main-popup-container" ngbAutofocus>
+       <div class="d-flex justify-content-between popup-header-border p-4">
+           <div class="pt-2">
+               <p class="popup-heading mb-0">{{'Edit Paytype'|translate}}</p>
+           </div>
+           <div>
+               <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+           </div>
+       </div>
+       <div class="custom-main-popup-content p-5">
+           <div class="mb-4">
+               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Rehire'|translate}}<span
+                       class="error-msg">*</span></label>
+               <input type="text" class="form-control custom-input" formControlName="Rehire"
+                   placeholder="Please enter eligible for rehire" (keypress)="blockNonAlphabets($event)">
+           </div>
+           <div *ngIf="updateForm.get('v')?.touched && updateForm.get('Rehire')?.invalid">
+               <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('Rehire')?.errors?.['required']">
+                {{'Eligibility for rehire is required'|translate}}
+               </small>
+               <!-- <small style="color: red;" *ngIf="updateForm.get('jobLocationName')?.errors?.['pattern']">
+                {{'Only alphabets and spaces are allowed'|translate}}
+                 </small> -->
+             </div>
+           <div class="d-flex gap-5 pt-4 w-100">
+               <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close'|translate}}</button>
+               <button class="custom-btn btn-primary w-50 py-3" (click)="updateEligibility(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+           </div>
+         
+       </div>
+   </div>
+   </form>
+</ng-template>
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-content text-center p-4">
+            <div class="py-5">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            </div>
+            <div class="d-flex gap-5 pt-2 w-100">
+                <button class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+

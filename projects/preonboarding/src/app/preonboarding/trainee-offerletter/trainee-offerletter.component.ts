@@ -685,7 +685,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.log(err);
-        this.openPopup.openSuccess("Email Sent Failed")
+        this.openPopup.openError("Email Sent Failed")
       }
     })
   }
@@ -704,7 +704,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
 
   navigatefirst() {
     localStorage.clear();
-    this.router.navigate(['/login']);
+    this.router.navigate(['']);
   }
   ngOnDestroy(): void {
     if (this.subscription) {

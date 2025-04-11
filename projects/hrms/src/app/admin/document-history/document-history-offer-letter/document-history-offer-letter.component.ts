@@ -9,12 +9,8 @@ import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
-import { OfferletterdashboardpipePipe } from '../../../pipes/offerletterdashboardpipe.pipe';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-
-
-
-
+import { OfferletterdashboardpipePipe } from '../../../pipes/offerletterdashboardpipe.pipe';
 
 @Component({
   selector: 'app-document-history-offer-letter',

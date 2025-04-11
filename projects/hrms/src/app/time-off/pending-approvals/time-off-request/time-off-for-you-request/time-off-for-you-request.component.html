@@ -61,10 +61,10 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu py-0">
-                                    <li><a class="dropdown-item" (click)="checkLeaveBalance(item,checkbalancepopup)"><i class="bi bi-calendar-check me-2"></i>Check Balance</a></li>
-                                    <li><a class="dropdown-item" (click)="approveleave(approverPopup,item)"><i class="bi bi-check-circle me-2"></i>Approve</a></li>
-                                    <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"><i class="bi bi-x-circle me-2"></i>Reject</a></li>
-                                    <li><a class="dropdown-item" (click)="processleave(item)"><i class="bi bi-check-circle me-2"></i>Process</a></li>
+                                    <li><a class="dropdown-item" *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage" (click)="checkLeaveBalance(item,checkbalancepopup)" ><i class="bi bi-calendar-check me-2"></i>Check Balance</a></li>
+                                    <li><a class="dropdown-item" (click)="approveleave(approverPopup,item)" *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"><i class="bi bi-check-circle me-2"></i>Approve</a></li>
+                                    <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)" *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"><i class="bi bi-x-circle me-2"></i>Reject</a></li>
+                                    <li><a class="dropdown-item" (click)="processleave(item)" *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage"><i class="bi bi-check-circle me-2"></i>Process</a></li>
                                 </ul>
                             </div>
                         </td>

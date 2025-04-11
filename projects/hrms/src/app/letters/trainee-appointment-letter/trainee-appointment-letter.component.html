@@ -44,7 +44,7 @@
                             <label class="form-label custom-label mb-2">Appointment Sent Date<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="appointmentdate"  (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
-                                placeholder="Please enter appointment sent date" />
+                                placeholder="Please enter appointment sent date" onkeydown="return false;"/>
                             <div
                                 *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
                                 <div class="error-msg">Appointment Sent Date is required</div>
@@ -71,7 +71,7 @@
                             <label class="form-label custom-label mb-2">Joining Date<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter joining date" />
+                                placeholder="Please enter joining date" onkeydown="return false;"/>
                             <div
                                 *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                 <div class="error-msg">Joining Date is required</div>
@@ -505,14 +505,7 @@
                                                 any Intellectual Property.
                                             </li>
                                             <!-- 2 -->
-                                            <li class="mb-3">
-                                                As far as the Company is not already by law, the owner of the
-                                                intellectual property rights arising in respect of any and all works
-                                                created, you hereby assign to the Company and/or its affiliates all
-                                                intellectual property rights arising in respect of any and all works
-                                                created, compiled and/or devised by you in the course and scope of your
-                                                trainee period with the Company pursuant to this Agreement.
-                                            </li>
+                                            
                                         </ol>
                                     </div>
                                 </div>
@@ -535,7 +528,14 @@
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
                                     <ul style="list-style: none;">
-                                        <!-- 2 -->
+                                        <li class="mb-3">
+                                            As far as the Company is not already by law, the owner of the
+                                            intellectual property rights arising in respect of any and all works
+                                            created, you hereby assign to the Company and/or its affiliates all
+                                            intellectual property rights arising in respect of any and all works
+                                            created, compiled and/or devised by you in the course and scope of your
+                                            trainee period with the Company pursuant to this Agreement.
+                                        </li>
                                         <li class="mb-3 paragraph">
                                             By virtue of this Agreement, any intellectual property rights which come
                                             into existence
@@ -634,43 +634,10 @@
                                             directly or indirectly, in any
                                             capacity or function, on your own behalf or on behalf of any other person or
                                             organization.<br>
-                                            1..5 Interfere or attempt to interfere in any way with the Company’s
-                                            relationships
-                                            with any of its clients, service
-                                            providers, employees, suppliers, experts. Key advisors or consultants,
-                                            including
-                                            without limitation, inducing or
-                                            attempting to induce any of the above-mentioned persons or organizations to
-                                            terminate or change the terms of his/her/its dealings with the Company", and
-                                            /or<br>
-                                            1..6 Undertake any acts, which may damage or disparage the Company’s
-                                            business
-                                            relationships with its clients, subcontractors or other business
-                                            partners.<br>
-                                            • During the Term and for one (1) year from the Separation Date, you shall
-                                            not
-                                            directly or indirectly, in any
-                                            capacity or function engage or participate in or be employed by in a
-                                            business
-                                            similar and same as the Company
+                                            
                                         </li>
                                     </ol>
-                                    <p class="letter-headings mb-3">
-                                        DATA PROTECTION:
-                                    </p>
-                                    <ol class="paragraph">
-                                        <li class="mb-3">
-                                            Your consent to the Company holding and processing, both electronically and
-                                            manually, the data it collects in relation to you, during your trainee
-                                            period, for the purpose
-                                            of the Company’s administration and management of its trainees, employees,
-                                            its business
-                                            and for compliance with applicable procedures, laws and regulations.
-                                        </li>
-                                        <li class="mb-3">You also consent to the transfer, storage and processing of
-                                            such data by the Company
-                                            outside India, where the Company may have offices.</li>
-                                    </ol>
+                                    
                                 </div>
                             </div>
                             <div class="letter-footer text-center">
@@ -690,6 +657,42 @@
                                     <ng-template #doc>
                                         <div style="margin-bottom: 1rem;"></div>
                                     </ng-template>
+                                    <li> 1..5 Interfere or attempt to interfere in any way with the Company’s
+                                        relationships
+                                        with any of its clients, service
+                                        providers, employees, suppliers, experts. Key advisors or consultants,
+                                        including
+                                        without limitation, inducing or
+                                        attempting to induce any of the above-mentioned persons or organizations to
+                                        terminate or change the terms of his/her/its dealings with the Company", and
+                                        /or<br>
+                                        1..6 Undertake any acts, which may damage or disparage the Company’s
+                                        business
+                                        relationships with its clients, subcontractors or other business
+                                        partners.<br>
+                                        • During the Term and for one (1) year from the Separation Date, you shall
+                                        not
+                                        directly or indirectly, in any
+                                        capacity or function engage or participate in or be employed by in a
+                                        business
+                                        similar and same<p class="letter-headings mb-3">
+                                            DATA PROTECTION:
+                                        </p>
+                                        <ol class="paragraph">
+                                            <li></li>
+                                            <li class="mb-3">
+                                                Your consent to the Company holding and processing, both electronically and
+                                                manually, the data it collects in relation to you, during your trainee
+                                                period, for the purpose
+                                                of the Company’s administration and management of its trainees, employees,
+                                                its business
+                                                and for compliance with applicable procedures, laws and regulations.
+                                            </li>
+                                            <li class="mb-3">You also consent to the transfer, storage and processing of
+                                                such data by the Company
+                                                outside India, where the Company may have offices.</li>
+                                        </ol> as the Company</li>
+
                                     <p class="letter-headings">MISCELLANEOUS:</p>
                                     <ol class="paragraph">
                                         <li class="mb-3">
@@ -777,6 +780,26 @@
                                                     }}</b></ng-template>
                                         </span>
                                     </p>
+                                    
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD -
+                                    500032</p>
+                            </div>
+                        </div>
+                        <!--page-5-->
+                        <div class="letter-page-content" id="pdfContent5">
+                            <div class="letter-page-sub-content">
+                                <div class="pt-2">
+                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
+                                        <app-lettersheader></app-lettersheader>
+                                      </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 1rem;"></div>
+                                    </ng-template>
                                     <p class="letter-headings mb-3">OTHER PROVISIONS:</p>
                                     <ol class="paragraph">
                                         <li class="mb-3">
@@ -837,25 +860,6 @@
                                         </div>
                                         <p class="text-end paragraph">Date: _______________</p>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="letter-footer text-center">
-                                <p class="company-name">RightlyHR</p>
-                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                    Gachibowli, HYD -
-                                    500032</p>
-                            </div>
-                        </div>
-                        <!--page-5-->
-                        <div class="letter-page-content" id="pdfContent5">
-                            <div class="letter-page-sub-content">
-                                <div class="pt-2">
-                                    <div *ngIf="this.traineeAppointmentletterData.documentType === true" class="mb-5">
-                                        <app-lettersheader></app-lettersheader>
-                                      </div>
-                                    <ng-template #doc>
-                                        <div style="margin-bottom: 1rem;"></div>
-                                    </ng-template>
                                     <div class="d-flex justify-content-center mb-3">
                                         <h1 class="letter-heading">Exhibit B</h1>
                                     </div>

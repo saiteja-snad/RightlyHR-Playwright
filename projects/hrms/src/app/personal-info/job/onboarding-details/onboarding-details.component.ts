@@ -308,15 +308,15 @@ export class OnboardingDetailsComponent {
       dateOfJoining: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.dateOfJoining,
       branchCode: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.branchCode,
       probationEndDate: this.onboardingForm.get('probationEndDate')?.value ?? this.empinfo.probationEndDate,
-      probationStatus: this.empinfo.probationStatus ?? this.onboardingForm.get('probationStatus')?.value.probationstatus1,
-      noticePeriod: this.onboardingForm.get('noticePeriodStatus')?.value.name ?? this.empinfo.noticePeriod,
-      backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value.backgroundcheckstatus1 ?? this.empinfo.backgroundCheckStatus,
-      issalaryhold: this.onboardingForm.get('salaryHold')?.value.value ?? this.empinfo.issalaryhold,
+      probationStatus: this.empinfo.probationStatus ?? this.onboardingForm.get('probationStatus')?.value?.probationstatus1,
+      noticePeriod: this.onboardingForm.get('noticePeriodStatus')?.value?.name ?? this.empinfo.noticePeriod,
+      backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value?.backgroundcheckstatus1 ?? this.empinfo.backgroundCheckStatus,
+      issalaryhold: this.onboardingForm.get('salaryHold')?.value?.value ?? this.empinfo.issalaryhold,
       pf: this.onboardingForm.get('pf')?.value.value ?? this.empinfo.pf,
       esic: this.onboardingForm.get('esic')?.value.value ?? this.empinfo.esic,
       pt: this.onboardingForm.get('pt')?.value.value ?? this.empinfo.pt,
       totalYearsOfExperience: this.onboardingForm.get('totalExperience')?.value ?? this.empinfo.totalYearsOfExperience,
-      allowWFH: this.onboardingForm.get('remoteLogin')?.value.value ?? this.empinfo.allowWFH,
+      allowWFH: this.onboardingForm.get('remoteLogin')?.value?.value ?? this.empinfo.allowWFH,
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empinfo.workLocation,
       wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empinfo.wfhManagerId,
       empType : this.empinfo.empType,
@@ -341,7 +341,6 @@ export class OnboardingDetailsComponent {
 
   }
 
-
   showButtons(): void {
     this.buttons = !this.buttons;
 
@@ -353,10 +352,6 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.disable();
     }
   }
-
-
-
-
 
 }
 

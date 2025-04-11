@@ -147,7 +147,7 @@
                         <div class="d-flex gap-3">
                             <div id="halfDayCheck">
                                 <div class="form-check form-check-inline" [class.no-pointer-events]="!enableHalfDayOptions">
-                                    <label class="form-check-label" for="halfday">
+                                    <label class="form-check-label" for="halfday" style="font-size: 14px;">
                                         <input 
                                             class="form-check-input"
                                             type="radio" 
@@ -160,7 +160,7 @@
                                     </label>
                                 </div>
                             
-                                <ul class="select-ul">
+                                <!-- <ul class="select-ul"> -->
                                     <li class="list-content" *ngIf="enableButton">
                                         <label class="form-check-label" for="flexRadioDefault1">
                                             <input 
@@ -189,21 +189,23 @@
                                             Second Half
                                         </label>
                                     </li>
-                                </ul>
+                                <!-- </ul> -->
                             
                                 <!-- Error Message for Half Day Selection -->
                                 
                                 
                             </div>
                             <div class="form-check">
+                                <label class="form-check-label custom-label" for="fullDay" style="font-size: 14px;">
                                 <input type="radio" class="form-check-input" id="fullDay" formControlName="availing" value="2" (change)="chooseDayType('full')">
-                                <label class="form-check-label custom-label" for="fullDay">Full Day</label>
+                                Full Day</label>
                             </div>
-                            <small class="text-danger" *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
-                                Please select any of the option
-                            </small>
+                            
                         </div>
                     </div>
+                    <small class="text-danger" *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
+                        Please select any of the option
+                    </small>
                 </div>
                 <div class="row">
                     <div class="col-md-12 mb-3">

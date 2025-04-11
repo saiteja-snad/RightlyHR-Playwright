@@ -179,8 +179,7 @@ export class LeavesComponent {
     } else {
       this.leaveForm.get('halfDay')?.disable();
       this.leaveForm.get('availing')?.disable();
-      this.leaveForm.get('halfDay')?.setValue('');
-      this.leaveForm.get('halfDayType')?.disable();
+     
     }
   }
 
@@ -1345,8 +1344,9 @@ export class LeavesComponent {
               console.log('End date:', this.endDate);
               this.conformationPopup.openSuccessModal(
                 'Leave submitted successfully');
-              setTimeout(function () {
-                location.reload();
+              setTimeout( () => {
+                this.modalService.dismissAll();
+                this.leaveForm.reset();
               }, 2000);
             }
           },

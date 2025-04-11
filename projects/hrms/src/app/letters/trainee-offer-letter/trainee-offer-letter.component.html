@@ -21,7 +21,7 @@
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"  [filter]="true" filterBy="name"
-                                    [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
+                                    [showClear]="true" placeholder="Please select employee" (onChange)="onclickcheckempidnull($event)"
                                     formControlName="fusionEmpId" class="custom-select w-100" >
                                 </p-select>
                             </div>
@@ -178,17 +178,21 @@
                                 <div class="error-msg">Pincode is required</div>
                             </div>
                         </div>
-                        <div class="col-xl-12 mb-4">
-                            <label class="form-label custom-label mb-2">{{'Mobile Number with Country Code'|translate}}<span
-                                    class="error-msg">*</span></label>
-                            <app-country-code-phone-number [selectedCountryConfig]="selectedCountryConfig"
-                                [countryListConfig]="countryListConfig"  formControlName="phoneNumber">
-                            </app-country-code-phone-number>
-                            <div
-                                *ngIf="employeeForm.get('phoneNumber')?.invalid && employeeForm.get('phoneNumber')?.touched">
-                                <div class="error-msg">Mobile Number is required</div>
+                        <div class="col-xl-6 col-lg-12 mb-4">
+                            <label class="form-label custom-label mb-2">Mobile Number with Country Code<span class="error-msg">*</span></label>
+                            <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                              @if (!loadingCode) {
+                                <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
+                                class="country-input"></lib-country-list>
+                              }
+                              @else{
+                                <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
+                                class="country-input"></lib-country-list>
+                              }
+                              <input type="text" class="form-control custom-input" placeholder="  Please enter mobile number"
+                                formControlName="phoneNumber"/>
                             </div>
-                        </div>
+                          </div>
 
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span
@@ -297,7 +301,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="getAllEmployeeInfo" optionLabel="fullName" [filter]="true"
                                     filterBy="firstName" [showClear]="true" placeholder="Please select reporting manager"
-                                    formControlName="reportingmanagerId" class="custom-select w-100"(ngModelChange)="selectReportingname(traineeEmpData.reportingmanagerId)">
+                                    formControlName="reportingmanagerId" class="custom-select w-100"(ngModelChange)="selectReportingname($event)">
                                 </p-select>
                             </div>
                             <div

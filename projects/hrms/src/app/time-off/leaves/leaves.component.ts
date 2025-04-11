@@ -14,10 +14,11 @@ import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { environment } from '../../../environments/environment.dev';
 import { OpenModalService } from '../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-leaves',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, LeavesApprovaltabsComponent,RouterModule,ReactiveFormsModule],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, LeavesApprovaltabsComponent,RouterModule,ReactiveFormsModule,TranslateModule],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss'
 })

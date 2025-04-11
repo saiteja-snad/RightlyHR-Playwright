@@ -7,6 +7,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IPendingApprovals } from '../../../Interfaces/pendingapprovalsmodel';
 import { AttendanceRequest } from '../../../Interfaces/timoff-model';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-wfh-request-tabs',
@@ -18,11 +19,12 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   empinfo = {} as IJob;
   workFromHome = [] as AttendanceRequest[];
   roleWfh: AttendanceRequest[] = [];
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
 
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
   }
   
 
@@ -62,6 +64,7 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
 
 
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

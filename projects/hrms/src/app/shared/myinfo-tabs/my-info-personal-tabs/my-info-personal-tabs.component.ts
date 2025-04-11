@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-my-info-personal-tabs',
@@ -9,4 +10,7 @@ import { RouterModule } from '@angular/router';
 })
 export class MyInfoPersonalTabsComponent {
 
+  constructor(
+    public rbac: RbacService
+  ){}
 }

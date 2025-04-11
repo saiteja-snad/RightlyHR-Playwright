@@ -112,7 +112,7 @@
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
                                                 <a class="text-view"
-                                                    *ngIf="ed.attachment.endsWith('jpg')||ed.attachment.toLowerCase().endsWith('jpeg')||ed.attachment.toLowerCase().endsWith('png') ;else downloadView"
+                                                   
                                                     (click)="onViewClick(ed.attachment);openModal(myModall)"><i
                                                         class="bi bi-paperclip"></i>View</a>
                                                 <ng-template #downloadView>

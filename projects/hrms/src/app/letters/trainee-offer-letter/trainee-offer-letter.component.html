@@ -172,7 +172,7 @@
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">{{'Pincode'|translate}}<span class="error-msg">*</span></label>
-                            <input type="text" class="form-control custom-input" formControlName="pincode"
+                            <input type="text" class="form-control custom-input" formControlName="pinCode"
                                 placeholder="Please enter pincode" />
                             <div *ngIf="employeeForm.get('pincode')?.invalid && employeeForm.get('pincode')?.touched">
                                 <div class="error-msg">Pincode is required</div>
@@ -182,7 +182,7 @@
                             <label class="form-label custom-label mb-2">{{'Mobile Number with Country Code'|translate}}<span
                                     class="error-msg">*</span></label>
                             <app-country-code-phone-number [selectedCountryConfig]="selectedCountryConfig"
-                                [countryListConfig]="countryListConfig" (onPhoneChange)="handlePhoneChange($event)">
+                                [countryListConfig]="countryListConfig"  formControlName="phoneNumber">
                             </app-country-code-phone-number>
                             <div
                                 *ngIf="employeeForm.get('phoneNumber')?.invalid && employeeForm.get('phoneNumber')?.touched">
@@ -242,7 +242,7 @@
                             <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="offerSentDate"
-                                placeholder="Please enter offer issued date" />
+                                placeholder="Please enter offer issued date" (change)="isDataPopulated()"/>
                             <div
                                 *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                                 <div class="error-msg">Offer Issued Date is required</div>
@@ -284,7 +284,7 @@
                                 optionLabel="name"
                                 placeholder="Please select internship period" 
                                 formControlName="internshipperiod"
-                                class="form-select custom-select">
+                                class="form-select custom-select" (change)="isDataPopulated1()">
                               </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">

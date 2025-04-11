@@ -84,3 +84,27 @@ export interface LeaveApproval {
     currentApprover: string;
     request: any;
 }
+
+export interface Iprobationapproval{
+  entity?:IEntity;
+  module?:IModule;
+  approvalHeader:IApprovalHeader
+}
+export interface IModule {
+  id: number,
+  moduleName:string,
+  approvalflowRequired: boolean,
+  categoryType:string,
+  normalizedName: string
+
+}
+export interface IEntity {
+  employeeId:number;
+  fusionEmployeeId: string,
+  employeeName: string,
+  probationEndDate: any,
+  probationExtendedDate : any,
+  probationStartDate:any
+  comments:any,
+  prApproverComments:any
+}

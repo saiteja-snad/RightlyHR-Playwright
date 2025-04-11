@@ -1,4 +1,5 @@
 export interface Iexpensetype {
+    expenseId: any;
     expensesCode: number;
     expenseType: string;
     id: number;
@@ -184,4 +185,26 @@ attachment_url: any;
   
 
   
+  export interface IExpenseItems {
+    expenseitem_id: number;
+    expenses_ID: number;
+    item_Name: string;
+    expense_Date: string; // or Date if you will convert
+    expense_Amount: number;
+    receipt_Number: string;
+    status: string;
+    attachment_url: string;
+  }
+  
+  export interface IExpenseHeaders {
+    expenses_ID: number;
+    applied_date: string; // or Date
+    expenses_Title: string;
+    status: string;
+    employeeId: number;
+    submissionDate: string; // or Date
+    expense_Amount: number;
+    approverEmail: string;
+    expenseitem: IExpenseItems[];
+  }
   

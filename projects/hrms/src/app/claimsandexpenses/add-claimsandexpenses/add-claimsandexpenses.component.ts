@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, NgModel, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
-import { IExpense, IExpenseHeader, Iexpensetype, Inewexpense, INewExpense } from '../../Interfaces/claimsandexpenses.model';
+import { IExpense, IExpenseHeader, IExpenseItem, Iexpensetype, Inewexpense, INewExpense } from '../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -374,7 +374,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
             if (data) {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              this.conformationPopup.openSuccessModal(' Expenses save as draft successfully ');
               // this.filterAllExpenses()
       
               this.getexpensesheaderbyid(this.empinfo.employeeId);
@@ -391,7 +391,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              this.conformationPopup.openSuccessModal('Expenses save as draft successfully');
               //this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

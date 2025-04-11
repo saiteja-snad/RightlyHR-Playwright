@@ -45,6 +45,6 @@ select(act: any) {
 }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/admin/active-interns'])
   }
 }

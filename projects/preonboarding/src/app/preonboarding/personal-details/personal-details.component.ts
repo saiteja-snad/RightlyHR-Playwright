@@ -98,7 +98,12 @@ export class PersonalDetailsComponent implements OnInit {
       this.getJobDetails();
         
         this.loading = false;
+        if (this.employeeData.dob) {
+          this.employeeData.dob = this.formatDate(this.employeeData.dob);
+  
+        }
       },
+      
       error: (reason: any) => {
         console.log(reason);
         this.loading = false;
@@ -163,7 +168,7 @@ export class PersonalDetailsComponent implements OnInit {
         city: [null, Validators.required],
         state: [null, Validators.required],
         country: [null, Validators.required],
-        zipCode: [null, Validators.required],
+        zipCode: [null, Validators.required,],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
@@ -173,7 +178,7 @@ export class PersonalDetailsComponent implements OnInit {
         city: [null, Validators.required],
         state: [null, Validators.required],
         country: [null, Validators.required],
-        zipCode: [null, Validators.required],
+        zipCode: [null, Validators.required,],
       }),
     });
   }
@@ -187,7 +192,7 @@ export class PersonalDetailsComponent implements OnInit {
       gender: this.employeeData.gender,
       salutation: this.employeeData.title,
       phonenumber: this.employeeData.contactnumber,
-      dob: dateOfBirth,
+      dob: this.employeeData.dob,
       bloodGroup: this.employeeData.bloodGroup,
       location: this.jobdetails.lopcation,
       subLocation: this.jobdetails.subLocation,
@@ -327,8 +332,66 @@ export class PersonalDetailsComponent implements OnInit {
   close() {
     this.modalService.dismissAll();
   }
+  
+  disableValidationDob: boolean = false;
+
+  validateAge(dob: any): boolean {
+    if (dob) {
+      const currentDate = new Date();
+      const birthDate = new Date(dob);
+  
+      let age = currentDate.getFullYear() - birthDate.getFullYear();
+      const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+      const dayDiff = currentDate.getDate() - birthDate.getDate();
+  
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+  
+      const isValidAge = age >= 18 && age <= 75;
+      this.disableValidationDob = !isValidAge;
+      return isValidAge;
+    }
+  
+    this.disableValidationDob = false;
+    return true;
+  }
+
+  salutationValidationcheck:boolean=false
+  onsalutationvalidation() {
+    const gender = this.personalDetailsForm.get('gender')?.value?.toLowerCase();
+    const title = this.personalDetailsForm.get('salutation')?.value?.toLowerCase();
+  
+    console.log('Gender:', gender);
+    console.log('Salutation:', title);
+  
+    if (
+      (gender === 'male' && title === 'mr.') ||
+      (gender === 'female' && ['ms.', 'miss.', 'mrs.'].includes(title)) ||
+      ((gender === 'other' || gender === 'others') && (title === 'other' || title === 'others')) ||
+      ((gender === 'male' || gender === 'female') && (title == null || title === ''))
+    ) {
+      this.salutationValidationcheck = false;
+    } else {
+      this.salutationValidationcheck = true;
+    }
+  }
+  
 
   navigateDocumentUpload() {
     this.router.navigate(['/document']);
+  }
+
+  blockNumberPaste(event: ClipboardEvent): void {
+    const pastedInput: string = event.clipboardData?.getData('text') || '';
+    if (/\d/.test(pastedInput)) {
+      event.preventDefault();
+    }
+  }
+  blockNumbers(event: KeyboardEvent): void {
+    const forbiddenKeys = ['0','1','2','3','4','5','6','7','8','9'];
+    if (forbiddenKeys.includes(event.key)) {
+      event.preventDefault();
+    }
   }
 }

@@ -184,7 +184,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-
+  
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),
     });
@@ -603,7 +603,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
       });
       
   
-    // Debugging: Log the form value after patching
+
     console.log('Form Value After Patching:', this.jobDetailsupdateForm.value);
   
     // Open the modal
@@ -744,14 +744,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
   }
   opendeletModal(content: any, empexperimentdata: any): void {
     // Store the selected job details data for deletion
-    this.selectedjobdetailesid = empexperimentdata.id; // Store the job details ID
+    this.selectedjobdetailesid = empexperimentdata.id; 
     this.empdata = {
       id: empexperimentdata.id,
       employeeId: empexperimentdata.employeeId,
       effectiveDate: empexperimentdata.effectiveDate,
       reportsto: empexperimentdata.reportsto,
       department: empexperimentdata.departmentName,
-      bussinessArea: empexperimentdata.bussinessArea || '', // Optional field
+      bussinessArea: empexperimentdata.bussinessArea || '', 
       lopcation: empexperimentdata.lopcation,
       jobRole: empexperimentdata.jobRole,
     };
@@ -760,25 +760,25 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
   
-  formData: any; // To store the form data for updating job details
+
   updateJobDetails(): void {
-    this.formData = this.jobDetailsupdateForm.value;
+   const formData = this.jobDetailsupdateForm.value;
     const sdata = {
       id: this.selectedData.id,
       employeeId: this.selectedData.employeeId,
-      effectiveDate: this.formData.effectiveDate ?? this.selectedData.effectiveDate,
-      reportsto: this.formData.reportingManager.id ?? this.selectedData.reportsto,
-      jobRole: this.formData.jobRole.designationName ?? this.selectedData.jobRole,
-      subdeptId : this.formData.team.subdepartmentId ?? this.selectedData.subdeptId,
+      effectiveDate: formData.effectiveDate ?? this.selectedData.effectiveDate,
+      reportsto:formData.reportingManager.id ?? this.selectedData.reportsto,
+      jobRole: formData.jobRole.designationName ?? this.selectedData.jobRole,
+      subdeptId :formData.team.subdepartmentId ?? this.selectedData.subdeptId,
       status: "Active",
-      shiftId : this.formData.shiftName.id ?? this.selectedData.shiftId,
-      locationid : this.formData.location.id ?? this.selectedData.locationid,
-      sublocationid : this.formData.subLocation.id ?? this.selectedData.sublocationid,
+      shiftId : formData.shiftName.id ?? this.selectedData.shiftId,
+      locationid :formData.location.id ?? this.selectedData.locationid,
+      sublocationid : formData.subLocation.id ?? this.selectedData.sublocationid,
       gradeId : this.selectedData.gradeId,
-      teamManagerId : this.formData.team.reportingmanagerId ?? this.selectedData.teamManagerId,
+      teamManagerId :formData.team.reportingmanagerId ?? this.selectedData.teamManagerId,
       updateddate : this.selectedData.updateddate,
       createddate : this.selectedData.createddate,
-      jobTypeId : this.formData.jobType.sno ?? this.selectedData.jobTypeId,
+      jobTypeId :formData.jobType.sno ?? this.selectedData.jobTypeId,
     };
   
     // Make the POST request to delete the job details

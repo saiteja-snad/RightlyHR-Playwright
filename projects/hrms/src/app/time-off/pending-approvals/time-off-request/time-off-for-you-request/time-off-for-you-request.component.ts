@@ -10,6 +10,7 @@ import { IPendingApprovals, LeaveApproval, LeaveApproverComment } from '../../..
 import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
 import moment from 'moment';
 import { ICategoryDetails } from '../../../../Interfaces/timoff-model';
+import { OpenModalService } from '../../../../services/open-modal.service';
 
 @Component({
   selector: 'app-time-off-for-you-request',
@@ -44,7 +45,7 @@ export class TimeOffForYouRequestComponent {
     this.rows = event.rows;
 
   }
-  constructor(private http: HttpService,private modalService: NgbModal) {  
+  constructor(private http: HttpService,private modalService: NgbModal,private conformationPopup: OpenModalService,) {  
   }
   
   ngOnInit(): void {
@@ -193,11 +194,17 @@ export class TimeOffForYouRequestComponent {
     this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
         console.log(respone);
-        console.log(alert("Success"));
+        this.conformationPopup.openSuccessModal(
+          'Request Accepted Successfully');
+          setTimeout( () => {
+            this.modalService.dismissAll();
+            window.location.reload();
+          }, 2000);
       },
       error: (reason: any) => {
         console.log(reason);
-        console.log(alert(reason));
+        this.conformationPopup.openErrorModal(
+          'Request Accepted Failed');
       },
       complete: () => {
 
@@ -218,11 +225,17 @@ export class TimeOffForYouRequestComponent {
     this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
         console.log(respone);
-        console.log(alert("Success"));
+        this.conformationPopup.openSuccessModal(
+          'Request Rejected Successfully');
+          setTimeout( () => {
+            this.modalService.dismissAll();
+            window.location.reload();
+          }, 2000);
       },
       error: (reason: any) => {
         console.log(reason);
-        console.log(alert(reason));
+        this.conformationPopup.openErrorModal(
+          'Request Rejected Failed');
       },
       complete: () => {
 
@@ -243,11 +256,17 @@ export class TimeOffForYouRequestComponent {
     this.subscription =  this.http.putData(`PendingApproval/process/${data.approvalHeader.id}`,requestBody).subscribe({
       next:(respone:any)=>{
         console.log(respone);
-        console.log(alert('Success'));
+        this.conformationPopup.openSuccessModal(
+          'Request Processed Successfully');
+          setTimeout( () => {
+            this.modalService.dismissAll();
+            window.location.reload();
+          }, 2000);
       },
       error:(reason:any)=>{
         console.log(reason);
-        console.log(alert('Success'));
+        this.conformationPopup.openSuccessModal(
+          'Request Processed Failed');
       },
       complete:()=>{
        },

@@ -28,7 +28,7 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="((jobdetails | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let item of jobdetails | async">
+                    <tr *ngFor="let item of jobdetails | async ;let first = first ">
 
                         <td><span *ngIf="item.effectiveDate;else effectivedate"> {{item.effectiveDate|
                                 dateformat}}</span>
@@ -92,21 +92,29 @@
                         </td>
 
                         <td class="text-center">
-                            <div class="dropdown">
+                            <div class="dropdown"  >
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <!-- <li (click)="openModalupdate(updatejobmodal, item)">
+                                     <!-- <li (click)="openModalupdate(updatejobmodal, item)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li> -->
+                                    @if (first && showSaperationDots ) {
+                                        <li (click)="openModalforSeparationupdate(seprationModal, item)">
+                                            <a class="dropdown-item">
+                                                Separation Request
+                                            </a>
+                                        </li>
+                                    }
+                                    
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
-                                    </li>
+                                    </li> 
                                 </ul>
                             </div>
                         </td>
@@ -122,7 +130,145 @@
         </table>
     </div>
 </div>
+<ng-template #seprationModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Separation Request</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="applieddate" class="form-label custom-label mb-2">Raised Date <span
+                                    class="text-danger">*</span></label>
+                            <input type="date" class="form-control custom-input" id="applieddate"
+                                formControlName="appliedDate" />
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('appliedDate')?.invalid && separationRequestForm.get('appliedDate')?.touched">
+                                Raised Date is required
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jobrole" class="form-label custom-label mb-2">Job Role <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="jobrole" formControlName="jobRole" />
+                        </div>
+                    </div>
 
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="department" class="form-label custom-label mb-2">Department <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="department" formControlName="departmentName" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="subDepartmentUpdate" class="form-label custom-label mb-2">Team <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="team"
+                                formControlName="team" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="teamManager" class="form-label custom-label mb-2">Team Manager <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="teamManager" formControlName="teamManager" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="reportingManager" class="form-label custom-label mb-2">Reporting Manager <span
+                                    class="text-danger"></span></label>
+                            <input class="form-control custom-input" id="reportingManager"
+                                formControlName="reportingManager" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label for="description" class="form-label custom-label mb-2">Reason for Separation <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control custom-input" id="description" formControlName="description"
+                                rows="3" placeholder="Please provide separation reason..."></textarea>
+                            <div>
+                                <span class="color">{{ separationRequestForm.get('description')?.value?.length || 0 }} /
+                                    400</span>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('description')?.invalid && separationRequestForm.get('description')?.touched">
+                                Reason for Separation is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <input class="form-check-input me-2" type="checkbox" id="check1"
+                            formControlName="isEarlyRelieving" (change)="onCheckEarlyRelieving()" />
+                        <label class="form-check-label custom-label mb-2">
+                            <span>Request For Early Relieving?</span>
+                        </label>
+                    </div>
+
+                    <div class="col-md-6" *ngIf="separationRequestForm.get('isEarlyRelieving')?.value">
+                        <div class="mb-3">
+                            <label for="earlyRelievingDate" class="form-label custom-label mb-2">Expected Relieving Date
+                                <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control custom-input" id="earlyRelievingDate"
+                                formControlName="earlyRelievingDate" />
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('earlyRelievingDate')?.invalid && separationRequestForm.get('earlyRelievingDate')?.touched">
+                                Expected Relieving Date is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" *ngIf="separationRequestForm.get('isEarlyRelieving')?.value">
+                        <div class="mb-3">
+                            <label for="reasonForEarlyRelieving" class="form-label custom-label mb-2">Reason for Early
+                                Relieving <span class="text-danger">*</span></label>
+                            <textarea class="form-control custom-input" id="reasonForEarlyRelieving"
+                                formControlName="reasonForEarlyRelieving" rows="3"
+                                placeholder="Please provide early relieving reason..."></textarea>
+                            <div>
+                                <span class="color">{{
+                                    separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }} /
+                                    400</span>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.invalid && separationRequestForm.get('reasonForEarlyRelieving')?.touched">
+                                Reason for Early Relieving is required
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid||isLoading">
+                        @if(!isLoading){
+                              {{'Submit'|translate}}
+                        }
+                        @else {
+                          <div class="d-flex">
+                            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                            </div>
+                            <div> {{'Submitting'|translate}}</div>
+                          </div>
+                        }
+                      </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
 <ng-template #addEducationmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">

@@ -609,7 +609,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
-
+//function to open the separation popup
   openModalforSeparationupdate(content: any, data: any): void {
       // Open the modal
       this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -730,7 +730,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
           if (res) {
             this.separationRequestForm.reset();
             this.modalService.dismissAll(); // Close the modal
-            this.conformationPopup.openSuccessModal('Separation Request Raised Successfully')
+            this.conformationPopup.openSuccessModal('Separation Request Raised Successfully');
+            this.getSeparationRequest();
             this.webNotificationformanager();
           }
         },

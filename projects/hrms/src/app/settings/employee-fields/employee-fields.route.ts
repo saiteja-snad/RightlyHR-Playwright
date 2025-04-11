@@ -8,6 +8,9 @@ export default [
             { path: '', redirectTo: 'salutation', pathMatch: 'full' },
             { path: 'salutation', component: SalutationComponent },
             { path: 'gender', loadComponent: () => import('./personal/gender/gender.component').then(m => m.GenderComponent) },
+            { path: 'bankname', loadComponent: () => import('./personal/bank-name/bank-name.component').then(m => m.BankNameComponent) },
+            { path: 'degree', loadComponent: () => import('./personal/degree/degree.component').then(m => m.DegreeComponent) },
+            { path: 'status', loadComponent: () => import('./personal/status/status.component').then(m => m.StatusComponent) },
         ]
     },
     {

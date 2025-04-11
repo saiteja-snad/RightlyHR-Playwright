@@ -84,12 +84,12 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openupdateDialog()">
+                                    <li (click)="openupdateDialog(subloc)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
-                                    <li (click)="opendelete()">
+                                    <li (click)="opendelete(subloc)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
@@ -99,24 +99,18 @@
                         </td>
                     </tr>
                 </ng-container>
-                <!-- No Data Found Template -->
-                <!-- <ng-template #noDataTemplate>
-            <tr>
-              <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
-            </tr>
-          </ng-template> -->
             </tbody>
         </table>
     </div>
 
 </div>
 <!--Update popup-->
-<!-- <ng-template #updatepopup let-modal>
+<ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="d-flex justify-content-between popup-header-border p-4">
                 <div class="pt-2">
-                    <p class="popup-heading mb-0">{{'Sub Location' | translate}}</p>
+                    <p class="popup-heading mb-0">{{'Edit Sub Location' | translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)">
@@ -125,37 +119,44 @@
                 </div>
             </div>
             <div class="custom-main-popup-content p-5">
+                     <!-- Location  Name Field -->
+                     <div class="mb-4">
+                        <label for="UpdateSubLocation" class="form-label custom-label mb-2">
+                            {{'Location' | translate}} <span class="error-msg">*</span>
+                        </label>
+    
+                        <div class="custom-p-select-content">
+                            <select class="form-control custom-input" formControlName="updateLocation">
+                                <option value="" disabled selected>Please select designation</option>
+                                <option *ngFor="let subloc of SubLocationdetails" [value]="subloc.jobLocationId">
+                                    {{ subloc.jobLocationName }}
+                                </option>
+                            </select>
+                        </div>
+                        <div *ngIf="updateForm.get('updateLocation')?.touched && updateForm.get('updateLocation')?.invalid">
+                            <small style="color: red; font-size: 13px;" *ngIf="updateForm.get('updateLocation')?.errors?.['required']">
+                                {{'Location is required' | translate}}
+                            </small>
+                        </div>
+                    </div>
+                  <!--Sub Location  Name Field -->
                 <div class="mb-4">       
-                    <label for="Updatejobrole" class="form-label custom-label mb-2">
+                    <label for="UpdateSubLocation" class="form-label custom-label mb-2">
                         {{ 'Sub Location' | translate }} <span class="error-msg">*</span>
                     </label>
-                    <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
-                        placeholder="Please Enter JobRole" (keypress)="blockNonAlphabets($event)">
-                    <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched"
+                    <input type="text" class="form-control custom-input" formControlName="UpdateSubLocation"
+                        placeholder="Please Enter Sub Location" (keypress)="blockNonAlphabets($event)">
+                    <div *ngIf="updateForm.get('UpdateSubLocation')?.invalid && updateForm.get('UpdateSubLocation')?.touched"
                         class="error-msg">
                         {{ 'Sub Location is required' | translate }}.
                     </div>
                 </div>
-                <div class="mb-4">
-
-                    <label for="Updatejobrole" class="form-label custom-label mb-2">
-                        {{'Job Grade' | translate}} <span class="error-msg">*</span>
-                    </label>
-
-                    <div class="custom-p-select-content">
-                        <input type="text"class="form-control custom-input" formControlName="updategraderole" placeholder="Please Enter JobGrade" (keypress)="blockNonAlphabets($event)" />
-                    </div>
-
-                </div>
-                <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid">
-                    <small style="color: red; font-size: 13px;" *ngIf="updateForm.get('updategraderole')?.errors?.['required']">
-                        {{'Job Grade is required' | translate}}
-                    </small>
-                </div>
+             
+               
                 <div class="d-flex gap-5 pt-4 w-100">
                     <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
                         translate}}</button>
-                    <button class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
+                    <button class="custom-btn btn-primary w-50 py-3" (click)="updateSublocation(modal)"
                         [disabled]="updateForm.invalid">
                         {{'Update' | translate}}
                     </button>
@@ -163,5 +164,19 @@
             </div>
         </div>
     </form>
-</ng-template> -->
-  
+</ng-template> 
+  <!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-content text-center p-4">
+            <div class="py-5">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            </div>
+            <div class="d-flex gap-5 pt-2 w-100">
+                <button class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

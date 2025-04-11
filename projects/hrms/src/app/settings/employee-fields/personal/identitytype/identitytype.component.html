@@ -1,17 +1,17 @@
-<form [formGroup]="IdentityForm" (ngSubmit)="addDepartment()">
+<form [formGroup]="IdentityForm" (ngSubmit)="addIdentityType()">
     <div class="card main-settings-layout p-4">
         <!-- Add Input-->
         <div>
             <div class="custom-settings-add-input input-group mb-5">
                 <input type="text" class="form-control custom-input" placeholder="Please enter identity type"
-                    formControlName="IdentityType" aria-label="identitytype" aria-describedby="identitytype"  (keypress)="blockNonAlphabets($event)" >
+                    formControlName="IdentityType" aria-label="identitytype" aria-describedby="identitytype" >
                 <span class="input-group-text" id="identitytype">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="IdentityForm.invalid">{{'Add'|translate}}</button></span>
             </div>
         </div>
-          <div *ngIf="IdentityForm.get('Gender')?.touched && IdentityForm.get('Gender')?.invalid">
-            <small style="color: red;font-size: 13px;" *ngIf="IdentityForm.get('Gender')?.errors?.['required']">
-              {{'Gender is required'|translate}}
+          <div *ngIf="IdentityForm.get('IdentityType')?.touched && IdentityForm.get('IdentityType')?.invalid">
+            <small style="color: red;font-size: 13px;" *ngIf="IdentityForm.get('IdentityType')?.errors?.['required']">
+              {{'Identity type is required'|translate}}
             </small>
             <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
                {{'Only alphabets and spaces are allowed'|translate}}
@@ -31,7 +31,7 @@
                     </thead>
                     <tbody>
                          @for (type of IdentityDetail; track type.id) {
-                        <tr *ngFor="let dep of IdentityDetail">
+                        <tr *ngFor="let type of IdentityDetail">
                              <tr>
                             <td class="w-75">{{ type.identityType1}}</td>                           
                             <td class="w-25">
@@ -74,7 +74,7 @@
                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'IdentityType'|translate}}<span
                        class="error-msg">*</span></label>
                <input type="text" class="form-control custom-input" formControlName="IdentityType"
-                   placeholder="Please enter identity type"  (keypress)="blockNonAlphabets($event)">
+                   placeholder="Please enter identity type">
            </div>
            <div *ngIf="updateForm.get('IdentityType')?.touched && updateForm.get('IdentityType')?.invalid">
                <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('IdentityType')?.errors?.['required']">

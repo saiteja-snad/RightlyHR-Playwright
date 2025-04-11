@@ -29,35 +29,35 @@ export class IdentitytypeComponent {
   }
   ngOnInit(): void {
     this.IdentityForm = this.fb.group({
-      IdentityType: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      IdentityType: ['', [Validators.required]]
     });
     this.updateForm = this.fb.group({
-      IdentityType: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      IdentityType: ['', [Validators.required]]
     });
 
     this.getIdentityType();
   }
   // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    // if (!pattern.test(inputChar)) {
-    //   event.preventDefault(); // blocks numbers or symbols
-    // }
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+  // blockNonAlphabets(event: KeyboardEvent): void {
+  //   const inputChar = String.fromCharCode(event.keyCode);
+  //   const char = String.fromCharCode(event.keyCode);
+  //   // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
+  //   const pattern = /^[a-zA-Z ]$/;
+  //   const input = (event.target as HTMLInputElement).value;
+  //   // if (!pattern.test(inputChar)) {
+  //   //   event.preventDefault(); // blocks numbers or symbols
+  //   // }
+  //   if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
+  //     event.preventDefault();
+  //   }
+  // }
   getIdentityType() {
     this.http.getData('IdentityType').subscribe((data: any) => {
       this.IdentityDetail = data;
     });
   }
   //ADD
-  addDepartment() {
+  addIdentityType() {
     const request: IIdentityType = {
       identityType1: this.IdentityForm.value.IdentityType.trim(),
       isdeleted: false
@@ -66,7 +66,7 @@ export class IdentitytypeComponent {
     this.subscription = this.http.postdata('IdentityType', request).subscribe({
       next: () => {
         this.getIdentityType();
-        this.conformationPopup.openSuccessModal('Gender Name added successfully');
+        this.conformationPopup.openSuccessModal('Identity type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -124,7 +124,7 @@ export class IdentitytypeComponent {
       next: () => {
         this.getIdentityType();
         modal.close();
-        this.conformationPopup.openSuccessModal('Gender deleted successfully');
+        this.conformationPopup.openSuccessModal('Identity type deleted successfully');
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

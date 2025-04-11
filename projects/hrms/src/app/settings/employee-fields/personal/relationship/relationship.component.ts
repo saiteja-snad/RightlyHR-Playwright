@@ -76,7 +76,7 @@ export class RelationshipComponent {
     });
   }
   // UPDATE
-  updateDepartment(modal: any) {
+  updateRelation(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: IRelationShip = {
         relationship1: this.updateForm.value.Relationship.trim(),
@@ -89,7 +89,7 @@ export class RelationshipComponent {
           this.getRelationship();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Gender Name updated successfully');
+          this.conformationPopup.openSuccessModal('Relationship updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');

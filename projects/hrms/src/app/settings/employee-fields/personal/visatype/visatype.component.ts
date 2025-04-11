@@ -29,28 +29,28 @@ export class VisatypeComponent {
   }
   ngOnInit(): void {
     this.VisaForm = this.fb.group({
-      Visatype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Visatype: ['', [Validators.required]]
     });
     this.updateForm = this.fb.group({
-      Visatype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Visatype: ['', [Validators.required]]
     });
 
     this.getVisa();
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    // if (!pattern.test(inputChar)) {
-    //   event.preventDefault(); // blocks numbers or symbols
-    // }
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+  // // alphabet allowed only
+  // blockNonAlphabets(event: KeyboardEvent): void {
+  //   const inputChar = String.fromCharCode(event.keyCode);
+  //   const char = String.fromCharCode(event.keyCode);
+  //   // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
+  //   const pattern = /^[a-zA-Z ]$/;
+  //   const input = (event.target as HTMLInputElement).value;
+  //   // if (!pattern.test(inputChar)) {
+  //   //   event.preventDefault(); // blocks numbers or symbols
+  //   // }
+  //   if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
+  //     event.preventDefault();
+  //   }
+  // }
   getVisa() {
     this.http.getData('Visatype').subscribe((data: any) => {
       this.VisaDetail = data;
@@ -76,12 +76,12 @@ export class VisatypeComponent {
     });
   }
   // UPDATE
-  updateDepartment(modal: any) {
+  updateVisa(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: IVisaType = {
         visatype1: this.updateForm.value.Visatype.trim(),
         isdeleted: "Active",
-        sno: this.selectedId
+        id: this.selectedId
       };
 
       this.subscription = this.http.postdata(`Visatype/UPDATER`, request).subscribe({
@@ -89,7 +89,7 @@ export class VisatypeComponent {
           this.getVisa();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Gender Name updated successfully');
+          this.conformationPopup.openSuccessModal('Visa type updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -102,7 +102,7 @@ export class VisatypeComponent {
     this.updateForm.reset();
   }
   openupdate(visalist: any) {
-    this.selectedId = visalist.sno;
+    this.selectedId = visalist.id;
     this.updateForm.patchValue({ Visatype: visalist.visatype1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
@@ -117,14 +117,14 @@ export class VisatypeComponent {
     const deleteRequest: IVisaType = {
       visatype1: this.selectedDeleteVisa.visatype1,
       isdeleted: "void",
-      sno: this.selectedDeleteVisa.sno
+      id: this.selectedDeleteVisa.id
     };
 
     this.http.postdata('Visatype/UPDATER', deleteRequest).subscribe({
       next: () => {
         this.getVisa();
         modal.close();
-        this.conformationPopup.openSuccessModal('Gender deleted successfully');
+        this.conformationPopup.openSuccessModal('Visa deleted successfully');
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

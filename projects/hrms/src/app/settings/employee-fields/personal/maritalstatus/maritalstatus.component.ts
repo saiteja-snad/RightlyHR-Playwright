@@ -77,7 +77,7 @@ export class MaritalstatusComponent {
     });
   }
   // UPDATE
-  updateDepartment(modal: any) {
+  updateMaritalStatus(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: IMaritialStatus = {
         maritalstatus1: this.updateForm.value.MaritalStatus.trim(),

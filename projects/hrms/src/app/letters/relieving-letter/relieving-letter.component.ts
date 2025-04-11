@@ -149,7 +149,6 @@ private conformationPopup: OpenModalService,
     if (dropcategory == 'empid') {
       this.isDropdownOpen = !this.isDropdownOpen;
       if (this.isDropdownOpen) {
-            // this.isDropdownOpen=false;
       } else {
         this.filteredOptions = [];
       }
@@ -163,6 +162,7 @@ private conformationPopup: OpenModalService,
       }
     }
   }
+
     //function to select authority name 
     onclickauthority(ValueName: any) {
       this.authorityName = ValueName
@@ -195,10 +195,8 @@ private conformationPopup: OpenModalService,
         console.log(this.authorityDesignation);
       }
     }
+
     onclickDesignation() {
-      //console.log(this.authorityDetails);
-      //console.log(this.prospectiveEmpData.authorityid);
-  
       let signatureAuthorityDetails = this.authorityDetails.find(
         (c: any) => (c.employeeId == this.relievingLetterData.authorityid)
       );
@@ -215,6 +213,7 @@ private conformationPopup: OpenModalService,
         this.authorityDesignation = ''
       }
     }
+
     //get offer letter Authority list 
     getAuthorityDetails() {
       let offertype = 'Releving Letter';
@@ -232,6 +231,7 @@ private conformationPopup: OpenModalService,
         }
       });
     }
+
     //hostlister to close the dropdown when we Click out side the box
     @HostListener('document:click', ['$event.target'])
     onClickOutside(target: any) {
@@ -242,8 +242,9 @@ private conformationPopup: OpenModalService,
         this.isDropdownOpen = false;
         this.filteredOptions = [];
       }
-  
+
     }
+
     //formatedate with date
     private formatDatewithDate(date: Date): string | void {
       if (date) {
@@ -252,6 +253,7 @@ private conformationPopup: OpenModalService,
       }
   
     }
+
     //get Job Details by empployeeid
     getJobdetails(Employee: any) {
       this.subscription = this.http
@@ -271,6 +273,7 @@ private conformationPopup: OpenModalService,
           },
         });
     }
+
     //get employee ids for dropdown
     getEmployeeInactive() {
       this.subscription = this.http.getData('Employeedata/InactiveEmployees').subscribe({
@@ -289,14 +292,13 @@ private conformationPopup: OpenModalService,
         },
       });
     }
+
     async postRelievingLetterFormSubmit(f: FormGroup) {
       const data = await this.relievingLetterData;
       data.dateofRelieving = data.dateofRelieving;
       data.dateOfJoining = data.dateOfJoining;
       data.lastworkingday = data.lastworkingday;
-  
       console.log(data);
-  
       const pdfContent = document.getElementById('pdfContent');
       if (pdfContent) {
         html2canvas(pdfContent, { scale: 3 }).then(canvas => {
@@ -325,6 +327,7 @@ private conformationPopup: OpenModalService,
         });
       }
     }
+
     //to get appraisal letter template
     async getRelievingTemplate() {
       this.relievingTemplate = await this.httpclient
@@ -333,7 +336,6 @@ private conformationPopup: OpenModalService,
         })
         .toPromise();
     }
-  
   
     //to Upload Appraisal letter
     uploadRelievingLetter() {
@@ -363,6 +365,7 @@ private conformationPopup: OpenModalService,
           },
         });
     }
+
     //function to send the relieving letter email
     relievingemail() {
       let loggedInUser = this.authService.getToken();
@@ -396,8 +399,6 @@ private conformationPopup: OpenModalService,
         },
         error: (err: any) => {
           console.log(err);
-  
-  
         },
         
       })
@@ -428,7 +429,14 @@ private conformationPopup: OpenModalService,
         }`
       );
     }
+
     closeDropdown() {
       this.isDropdownOpen = false;
+  }
+  
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

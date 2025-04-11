@@ -13,18 +13,17 @@
                     {{'Change RM'|translate}}
                 </button></div>
             <!-- <div *ngIf="(empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') "> -->
+               @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') ){
                 <button class="custom-btn btn-primary"
-                    *ngIf="isActive('personalinfo/personal/basic-info') "
-                    (click)="emailForRequestDoc()" [disabled]="isLoading">
-                    <span *ngIf="!isLoading">
-                        {{'Request for Documents'|translate}}
-                    </span>
-                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-                        
-                    </div>
-                    
-                </button>
-                
+                *ngIf="isActive('personalinfo/personal/basic-info') "
+                (click)="emailForRequestDoc()" [disabled]="isLoading">
+                <span *ngIf="!isLoading">
+                    {{'Request for Documents'|translate}}
+                </span>
+                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">  
+                </div>  
+            </button>  }
+
             <!-- </div> -->
             <!-- <div *ngIf="getOfferDetails.status !== 'Released' || getTraineeOfferDetails.status!=='Released'"> -->
                 <button class="custom-btn btn-secondary me-3"

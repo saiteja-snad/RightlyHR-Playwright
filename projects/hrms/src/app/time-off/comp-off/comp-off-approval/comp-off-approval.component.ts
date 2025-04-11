@@ -9,10 +9,11 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-comp-off-approval',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './comp-off-approval.component.html',
   styleUrl: './comp-off-approval.component.scss'
 })

@@ -224,8 +224,8 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         startTime: formData.workedDate,
         endTime: formData.workedDate,
         requestedComments: this.workFromHomedata.requestedComments,
-        durationType: +formData.halfType,
-        duration: this.duration,
+        durationType: +formData.availing,
+        duration:+formData.availing == 2 ? 1 : 0.5,
         status: 'Waiting for Approval',
         reason: formData.reason,
         requestedCategory: 2,
@@ -253,10 +253,11 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       });
     }
 
-    throw new Error('Method not implemented.');
+  
   }
 
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

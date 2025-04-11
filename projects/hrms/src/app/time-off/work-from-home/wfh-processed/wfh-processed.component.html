@@ -5,41 +5,48 @@
                 <tr>
                     <th>Worked Date</th>
                     <th>Availed</th>
-                    <!-- <th>Reason</th> -->
+                    <th>Reason</th>
                     <th>Applied Date</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                @if (processedWFHs.length > 0) {
-                <ng-container *ngFor="let wfhRequest of processedWFHs; let i = index">
-                    <tr>
-                        <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}
-                        </td>
-                        <td >
-                            @if(wfhRequest.durationType == 1){
-                                <span>First Half</span>
-                            }@else if(wfhRequest.durationType == 3){
-                                <span>Second Half</span>
-                            }@else if(wfhRequest.durationType == 2){
-                                <span>Full Day</span>
-                            }@else {
-                                <span>-</span>
-                            }
-                        </td>
-                        <td>{{wfhRequest.requestedDate | dateformat}}</td>
-                        <td>{{wfhRequest.status}}</td>
-                    </tr>
-                </ng-container>}
-                @else {
-                <tr>
-                    <td class="text-center" colspan="5">
-                        <p>No data found</p>
+                <ng-container *ngIf="processedWFHs!.length > 0; else noDataTemplate">
+                  <tr *ngFor="let wfhRequest of processedWFHs; let i = index">
+                    <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
+                    <td [ngSwitch]="wfhRequest.durationType">
+                      <span *ngSwitchCase="1">First Half</span>
+                      <span *ngSwitchCase="3">Second Half</span>
+                      <span *ngSwitchCase="2">Full Day</span>
+                      <span *ngSwitchDefault>-</span>
                     </td>
-                </tr>
-                }
-
-            </tbody>
+                    <td>
+                        <div>
+                            <span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <div>
+                                        <p class="mb-0">{{wfhRequest.reason}}</p>
+                                    </div>
+                                </ng-template>
+                            </span>
+                        </div>
+                    </td>
+                    <td>{{ wfhRequest.requestedDate | dateformat }}</td>
+                    <td>{{ wfhRequest.status }}</td>
+                  </tr>
+                </ng-container>
+              
+                <ng-template #noDataTemplate>
+                  <tr>
+                    <td colspan="4">
+                      <app-no-data-found></app-no-data-found>
+                    </td>
+                  </tr>
+                </ng-template>
+              </tbody>
         </table>
     </div>
     <div class="pagination-content pt-2 w-100">

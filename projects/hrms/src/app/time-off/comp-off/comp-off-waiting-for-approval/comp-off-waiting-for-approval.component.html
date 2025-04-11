@@ -11,35 +11,30 @@
                 </tr>
             </thead>
             <tbody>
-                @if (waitingForApprovalCompOff.length > 0) {
-                <ng-container *ngFor="let comppOffRequest of waitingForApprovalCompOff; let i = index">
-                    <tr>
-                        <td>{{ comppOffRequest.startTime ? (comppOffRequest.startTime | dateformat) : ' -' }}
+                <tbody>
+                    <ng-container *ngIf="waitingForApprovalCompOff!.length > 0; else noDataTemplate">
+                      <tr *ngFor="let compOffRequest of waitingForApprovalCompOff; let i = index">
+                        <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
+                        <td [ngSwitch]="compOffRequest.durationType">
+                          <span *ngSwitchCase="1">First Half</span>
+                          <span *ngSwitchCase="3">Second Half</span>
+                          <span *ngSwitchCase="2">Full Day</span>
+                          <span *ngSwitchDefault>-</span>
                         </td>
-                        <td >
-                            @if(comppOffRequest.durationType == 1){
-                                <span>First Half</span>
-                            }@else if(comppOffRequest.durationType == 3){
-                                <span>Second Half</span>
-                            }@else if(comppOffRequest.durationType == 2){
-                                <span>Full Day</span>
-                            }@else {
-                                <span>-</span>
-                            }
+                        <td>{{ compOffRequest.requestedDate | dateformat }}</td>
+                        <td>{{ compOffRequest.status }}</td>
+                      </tr>
+                    </ng-container>
+                  
+                    <ng-template #noDataTemplate>
+                      <tr>
+                        <td colspan="4">
+                          <app-no-data-found></app-no-data-found>
                         </td>
-                        <td>{{comppOffRequest.requestedDate | dateformat}}</td>
-                        <td>{{comppOffRequest.status}}</td>
-                    </tr>
-                </ng-container>}
-                @else {
-                <tr>
-                    <td class="text-center" colspan="5">
-                        <p>No data found</p>
-                    </td>
-                </tr>
-                }
-
-            </tbody>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                  
         </table>
     </div>
     <div class="pagination-content pt-2 w-100">

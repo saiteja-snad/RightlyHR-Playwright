@@ -1,7 +1,7 @@
  import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import {  FormsModule } from '@angular/forms';
+import {  NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
@@ -9,10 +9,11 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
 import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-wfh-waiting-for-approval',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './wfh-waiting-for-approval.component.html',
   styleUrl: './wfh-waiting-for-approval.component.scss'
 })
@@ -37,8 +38,6 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
 
 
   constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
     private http: HttpService
   ) {}
 

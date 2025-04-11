@@ -9,6 +9,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
 import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-wfh-approved',
   imports: [
@@ -18,7 +19,8 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
-  ],
+    NoDataFoundComponent
+],
   templateUrl: './wfh-approved.component.html',
   styleUrl: './wfh-approved.component.scss',
 })

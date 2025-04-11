@@ -15,6 +15,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IemployeeDetails } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-relieving-letter',
@@ -52,21 +53,21 @@ export class RelievingLetterComponent {
   gender: any;
   gender2: any;
   gender3: any
+  allinactiveemployes:any
   comparisioncheck: any;
   employeeForm!: FormGroup;
-  @ViewChild('success') success: any;
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
+
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false }
   ];
-  constructor(private router: Router, private modalService: NgbModal,private fb: FormBuilder,private http: HttpService,
+  constructor(private router: Router,private fb: FormBuilder,private http: HttpService,
     private httpclient: HttpClient,
     private authService: AuthService,
+private conformationPopup: OpenModalService,
     // private _userAcessService: UserAccessService,
     private elementRef: ElementRef,
-    config: NgbModalConfig,) { }
+  ) { }
 
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
@@ -74,7 +75,7 @@ export class RelievingLetterComponent {
     console.log(this.Employeeinfo);
     
     this.initializeForm();
-    this.getEmployeeId();
+    this.getEmployeeInactive();
     this.getRelievingTemplate();
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
@@ -98,27 +99,9 @@ export class RelievingLetterComponent {
       this.isdateofRelieving = true;
     }
   }
-  openmodel(content: any) {
-    this.modalService.open(content, { centered: true })
-  }
-
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-
-  }
 
 
-  dataFailureMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.errorhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
+
   getIssuedEmployeebyId() {
     this.employeedata = this.Employeeinfo.firstName + " " + this.Employeeinfo.middleName + " " + this.Employeeinfo.lastName
     console.log(this.employeedata);
@@ -148,32 +131,24 @@ export class RelievingLetterComponent {
     this.gender = '';
     this.relievingLetterData = [];
   }
-
-  Onclick(event:any) {
-    const selectedEmployee = event.value;
-    console.log(selectedEmployee);
-    this.fusionEmpId = selectedEmployee.fusionemployeeId;
-    this.comparisioncheck = selectedEmployee.fusionemployeeId;
-    console.log(selectedEmployee.fusionemployeeId);
-    this.relievingLetterData = {}
-    this.relievingLetterData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == this.fusionEmpId
-    );
-    this.disablebuttonforemployeeid = false
-    this.getJobdetails(this.relievingLetterData);
-    console.log(this.relievingLetterData);
-
-    if (this.relievingLetterData.gender == 'Male') {
-      return this.gender = "his", this.gender2 = 'he', this.gender3 = 'Mr.';
-    } else {
-      return this.gender = "her", this.gender2 = 'she', this.gender3 = 'Ms.';
-    }
+  Onclick(event: any) {
+    const selectedEmployee = event.value; 
+    console.log('Selected employee:', selectedEmployee);
+  
+    const employeeId = selectedEmployee?.id; 
+    
+    this.fusionEmpId = employeeId; 
+    this.getJobdetails(this.fusionEmpId);
+    
+  
+   
   }
+
+
   toggleDropdown(dropcategory: any) {
     if (dropcategory == 'empid') {
       this.isDropdownOpen = !this.isDropdownOpen;
       if (this.isDropdownOpen) {
-            // this.isDropdownOpen=false;
       } else {
         this.filteredOptions = [];
       }
@@ -187,6 +162,7 @@ export class RelievingLetterComponent {
       }
     }
   }
+
     //function to select authority name 
     onclickauthority(ValueName: any) {
       this.authorityName = ValueName
@@ -219,10 +195,8 @@ export class RelievingLetterComponent {
         console.log(this.authorityDesignation);
       }
     }
+
     onclickDesignation() {
-      //console.log(this.authorityDetails);
-      //console.log(this.prospectiveEmpData.authorityid);
-  
       let signatureAuthorityDetails = this.authorityDetails.find(
         (c: any) => (c.employeeId == this.relievingLetterData.authorityid)
       );
@@ -239,6 +213,7 @@ export class RelievingLetterComponent {
         this.authorityDesignation = ''
       }
     }
+
     //get offer letter Authority list 
     getAuthorityDetails() {
       let offertype = 'Releving Letter';
@@ -256,6 +231,7 @@ export class RelievingLetterComponent {
         }
       });
     }
+
     //hostlister to close the dropdown when we Click out side the box
     @HostListener('document:click', ['$event.target'])
     onClickOutside(target: any) {
@@ -266,8 +242,9 @@ export class RelievingLetterComponent {
         this.isDropdownOpen = false;
         this.filteredOptions = [];
       }
-  
+
     }
+
     //formatedate with date
     private formatDatewithDate(date: Date): string | void {
       if (date) {
@@ -276,10 +253,11 @@ export class RelievingLetterComponent {
       }
   
     }
+
     //get Job Details by empployeeid
     getJobdetails(Employee: any) {
       this.subscription = this.http
-        .getData(`JobDetails/${Employee.employeeId}`)
+        .getData(`JobDetails/${Employee}`)
         .subscribe({
           next: (data: any) => {
             console.log(data);
@@ -295,31 +273,32 @@ export class RelievingLetterComponent {
           },
         });
     }
+
     //get employee ids for dropdown
-    getEmployeeId() {
-      this.subscription = this.http
-        .getData('Employeedata/InactiveEmployees')
-        .subscribe({
-          next: (data: any) => {
-            console.log(data);
-            this.employeeiddetails = data as IemployeeDetails[];
-  
-            console.log(this.employeeiddetails);
-          },
-          error: (reason: any) => {
-  
-            console.log(reason);
-          },
-        });
+    getEmployeeInactive() {
+      this.subscription = this.http.getData('Employeedata/InactiveEmployees').subscribe({
+        next: (data: any) => {
+          console.log('API Response:', data);
+    
+          this.allinactiveemployes = data.map((employee: any) => ({
+            id: employee.employeeId,
+            employee: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.lastName ?? ''}`,
+          }));
+    
+          console.log('Dropdown Options:', this.allinactiveemployes);
+        },
+        error: (reason: any) => {
+          console.log('API Error:', reason);
+        },
+      });
     }
-    async postRelievingLetterFormSubmit(f: NgForm) {
+
+    async postRelievingLetterFormSubmit(f: FormGroup) {
       const data = await this.relievingLetterData;
       data.dateofRelieving = data.dateofRelieving;
       data.dateOfJoining = data.dateOfJoining;
       data.lastworkingday = data.lastworkingday;
-  
       console.log(data);
-  
       const pdfContent = document.getElementById('pdfContent');
       if (pdfContent) {
         html2canvas(pdfContent, { scale: 3 }).then(canvas => {
@@ -343,11 +322,12 @@ export class RelievingLetterComponent {
               type: 'application/pdf',
             }
           );
-          // this.relievingemail();
+           this.relievingemail();
           this.uploadRelievingLetter();
         });
       }
     }
+
     //to get appraisal letter template
     async getRelievingTemplate() {
       this.relievingTemplate = await this.httpclient
@@ -356,7 +336,6 @@ export class RelievingLetterComponent {
         })
         .toPromise();
     }
-  
   
     //to Upload Appraisal letter
     uploadRelievingLetter() {
@@ -372,7 +351,7 @@ export class RelievingLetterComponent {
           next: (data: any) => {
             if (data) {
               this.result.documentUrl = data.path;
-              this.dataSuccessMsg('Relieving Letter Generated Successfully')
+              this.conformationPopup.openSuccessModal('Relieving Letter Generated Successfully')
              
               this.relievingemail();
               // this.router.navigate(['/admin/Inactive']);
@@ -382,10 +361,11 @@ export class RelievingLetterComponent {
           error: (reason: any) => {
             console.log(reason);
             //  this.relievingemail();
-            this.dataFailureMsg('File upload  is failed');
+            this.conformationPopup.openErrorModal('File upload  is failed');
           },
         });
     }
+
     //function to send the relieving letter email
     relievingemail() {
       let loggedInUser = this.authService.getToken();
@@ -413,18 +393,14 @@ export class RelievingLetterComponent {
       this.subscription = this.http.postdata(`CustomEmail/relievingLetter`, emaildetails).subscribe({
         next: (data: any) => {
           console.log(data);
-          this.dataFailureMsg('Email Sent Successfully')
+          this.conformationPopup.openSuccessModal('Email Sent Successfully')
          
-          this.router.navigate(['/admin/Inactive']);
+          this.router.navigate(['/admin/inactive-employees']);
         },
         error: (err: any) => {
           console.log(err);
-  
-  
         },
-        complete: () => {
-  
-        }
+        
       })
     }
   
@@ -453,7 +429,14 @@ export class RelievingLetterComponent {
         }`
       );
     }
+
     closeDropdown() {
       this.isDropdownOpen = false;
+  }
+  
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

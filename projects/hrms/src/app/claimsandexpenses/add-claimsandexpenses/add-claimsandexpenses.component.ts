@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, NgModel, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
@@ -15,7 +15,7 @@ import { OpenModalService } from '../../services/open-modal.service';
   styleUrl: './add-claimsandexpenses.component.scss',
   providers: [DatePipe]
 })
-export class AddClaimsandexpensesComponent {
+export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   empinfo: any;
   Myexpense: any;
   totalexpensesamount = 0;
@@ -30,7 +30,7 @@ export class AddClaimsandexpensesComponent {
   istimeoffValid = true;
   currentDate = new Date();
   expensetype = [] as Iexpensetype[];
-  expenseheader: IExpense[] = [];
+  expenseemployeedata: IExpense[] = [];
 
 
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
@@ -72,6 +72,7 @@ export class AddClaimsandexpensesComponent {
 
   addExpenseItem(): void {
     this.expenseItems.push(this.createExpenseItem());
+    this.calculateTotalExpensesAmount();
 
   }
 
@@ -88,6 +89,8 @@ export class AddClaimsandexpensesComponent {
       return total + parseFloat(item.get('expense_Amount')?.value || null);
     }, 0);
   }
+
+
   setDate() {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -203,6 +206,7 @@ export class AddClaimsandexpensesComponent {
       });
     }
   }
+
   onchangeexpnes(event: any, index: number) {
     const selectedId = event.value; // <-- PrimeNG sends the selected value in `event.value`
   
@@ -316,6 +320,96 @@ export class AddClaimsandexpensesComponent {
   }
 
 
+
+  saveasDraft(form: FormGroup): void {
+    if (form.valid) {
+      const payload: INewExpense = {
+        applied_date: new Date().toISOString(),
+        expenses_Title: form.value.expensesTitle,
+        expenseId: this.selectedexpensesid,
+        approverEmail: form.value.approvalemail.value,
+        additional_details: form.value.additional_details,
+        status: 'Draft',
+        employeeId: this.empinfo.employeeId,
+        expenseItem: form.value.expenseItems.map((item: any) => ({
+          expenseId: item.item_expense,
+          item_Name: item.item_Name,
+          item_Description: item.item_Description,
+          expense_Date: item.expense_Date,
+          expense_Amount: item.expense_Amount,
+          receipt_Number: item.receipt_Number,
+          status: 'Draft',
+          attachment_url: item.attachment_url,
+        })),
+        attachment_url: undefined
+      };
+
+
+
+      const filepath = `/Expenses/${this.empinfo.employeeId}`;
+
+      // Check if there is any file to upload
+      if (this.Myexpense) {
+        const fileUpload$ = this.http.uploadFileWithQuery(
+          'FileSystem/uploadfiletodirectory',
+          filepath,
+          this.Myexpense
+        );
+
+        fileUpload$.pipe(
+          switchMap((data: any) => {
+            // Update the payload with the uploaded file path
+            payload.expenseItem.forEach((item) => {
+
+              if (item.attachment_url === this.Myexpense.name) {
+                item.attachment_url = data.path;
+              }
+            });
+
+            // Now post the updated payload
+            return this.http.postdata(`Expenses_Header`, payload);
+          })
+        ).subscribe({
+          next: (data: any) => {
+            if (data) {
+              this.newExpenseForm.reset();
+              (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              // this.filterAllExpenses()
+      
+              this.getexpensesheaderbyid(this.empinfo.employeeId);
+              // Call the get function after posting
+            }
+          },
+          error: (error: any) => {
+            console.log('errror' + error)
+            this.conformationPopup.openErrorModal(error.error.message)
+          }
+        });
+      } else {
+        // No file to upload, directly post the payload
+        this.http.postdata(`Expenses_Header`, payload).subscribe({
+          next: (data: any) => {
+            if (data) {
+              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              //this.filterAllExpenses()
+              this.newExpenseForm.reset();
+              (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+              this.getexpensesheaderbyid(this.empinfo.employeeId);
+            }
+          },
+          error: (error: any) => {
+            console.log("error" + error)
+            this.conformationPopup.openErrorModal(error.error.message)
+
+          }
+        });
+      }
+    } else {
+      console.log('Form is invalid');
+    }
+  }
+
   validateDate(expensedate: NgModel) {
     const inputDate = new Date(expensedate.value);
     if (inputDate > this.currentDate) {
@@ -366,12 +460,18 @@ export class AddClaimsandexpensesComponent {
     this.subscription = this.http
       .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
         next: (data: any) => {
-          this.expenseheader = data as IExpense[];
+          this.expenseemployeedata = data as IExpense[];
           //this.filterAllExpenses();
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
+  }
+  
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 
 }

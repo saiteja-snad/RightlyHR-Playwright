@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -16,7 +16,7 @@ import { IJob } from '../../../Interfaces/letters-model';
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
-export class BasicInfoComponent {
+export class BasicInfoComponent  implements OnInit,OnDestroy{
   basicInfoForm!: FormGroup;
   subscription!: Subscription
   empinfo = {} as IJob;

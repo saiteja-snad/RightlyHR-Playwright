@@ -193,14 +193,21 @@
                                 <div class="col-md-4">
                                     <label class="form-label custom-label">Proof (Image and PDF only)<span
                                             class="text-danger">*</span></label>
-                                    <input type="file" class="form-control custom-input"     accept=".pdf, image/*" (change)="fileupload($event, i)" />
+                                    <input type="file" class="form-control custom-input" accept=".pdf, image/*" (change)="fileupload($event, i)" />
                                  
                                 </div>
                             </div>
+                          
                         </div>
+
+                        <div class="text-center"   *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''" >
+                                
+                            <b>Total Amount : </b>{{
+                             totalexpensesamount > 0 ? totalexpensesamount : '' }}
+                         </div>
                     </div>
                     <div class=" d-flex justify-content-end gap-3 p-3" *ngIf="expenseItems.length > 0">
-                        <button type="button" class="custom-btn btn-secondary" [disabled]="newExpenseForm.invalid">Save as draft</button>
+                        <button type="button" class="custom-btn btn-secondary" [disabled]="newExpenseForm.invalid"  (click)="saveasDraft(newExpenseForm)">Save as draft</button>
                         <button type="submit" class="custom-btn btn-primary" >Submit</button>
                     </div>
                 </form>

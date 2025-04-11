@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -17,7 +17,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
-export class EducationDetailsComponent {
+export class EducationDetailsComponent implements OnInit,OnDestroy {
   educationForm!: FormGroup;
   educationupdateForm!: FormGroup;
   selectedEducationId: any
@@ -352,5 +352,9 @@ export class EducationDetailsComponent {
       }
     });
   }
-
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

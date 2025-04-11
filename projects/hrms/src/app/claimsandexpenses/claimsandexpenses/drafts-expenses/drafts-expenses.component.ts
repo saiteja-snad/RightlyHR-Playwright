@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IExpensedatabyid, IExpenseHeader, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
+import { IExpense, IExpensedatabyid, IExpenseHeader, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscribable, Subscription } from 'rxjs';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class DraftsExpensesComponent {
   empinfo: any
+  subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
   flitredDrafts = new BehaviorSubject<any[]>([]);
@@ -27,12 +28,12 @@ export class DraftsExpensesComponent {
   updataid!: number;
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
-  subscription!: Subscription;
-  expenesdata: IExpensedatabyid[] = [];
+ 
+  expenesEmplyeedata: IExpense[] = [];
   draftsCount: number = 0;
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getMyExpensesGetexpbyid();
+    this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
   }
 
 
@@ -43,19 +44,21 @@ export class DraftsExpensesComponent {
 
 
 
-  getMyExpensesGetexpbyid() {
-    const employeeId = parseInt(this.empinfo.employeeId);
+  getexpensesheaderbyemployeeid(_employeeId: number): void {
+    //params
+    const params = this.empinfo.employeeId;
+
     this.subscription = this.http
-      .getData(`MyExpenses/Getexpbyid/${employeeId}`)
-      .subscribe({
+      .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
         next: (data: any) => {
-          this.expenesdata = data as IExpensedatabyid[];
-          this.filterDraftsExpenses()
+          this.expenesEmplyeedata = data as IExpense[];
+          //this.filterAllExpenses();
         }, error(err) {
-          console.log("error", err)
+          console.log("expensesheadererror", err)
         },
       });
   }
+  
 
   viewItem(expid: number,) {
     console.log(expid);

@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../http-services/http.service';
 import { CommonModule } from '@angular/common';
+import { JobNameComponent } from "../../shared/job-name/job-name.component";
 
 @Component({
   selector: 'app-application-submit',
-  imports: [CommonModule],
+  imports: [CommonModule, JobNameComponent],
   templateUrl: './application-submit.component.html',
   styleUrl: './application-submit.component.scss'
 })

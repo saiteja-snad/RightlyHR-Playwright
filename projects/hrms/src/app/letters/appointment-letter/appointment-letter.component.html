@@ -17,51 +17,44 @@
         <form [formGroup]="employeeForm">
           <div class="row">
             <div class="col-xl-6 col-lg-12 mb-4">
-              <label class="form-label custom-label mb-2">Search Employee<span
-                      class="error-msg">*</span></label>
+              <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="employeeiddetails"
-                [filter]="true"
-                filterBy="firstName"
-                [showClear]="true"
-                optionLabel="fullName"
-                optionValue="fusionEmpId"
-                placeholder="Please select employee"
-                formControlName="fusionEmployeeId"
-                class="custom-select w-100"
-                [dataKey]="'fusionEmpId'"
-                (onChange)="Onclick($event)"> 
-        
-        <ng-template let-emp pTemplate="item">
-          {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
-        </ng-template>
-      
-        <ng-template let-emp pTemplate="selectedItem">
-          {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
-        </ng-template>
-      
-      </p-select>
-      
+                <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                  optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                  formControlName="fusionEmployeeId" class="custom-select w-100" [dataKey]="'fusionEmpId'"
+                  (onChange)="Onclick($event)">
+
+                  <ng-template let-emp pTemplate="item">
+                    {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
+                  </ng-template>
+
+                  <ng-template let-emp pTemplate="selectedItem">
+                    {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
+                  </ng-template>
+                </p-select>
               </div>
-              <div *ngIf="employeeForm.get('fusionEmployeeId')?.invalid && employeeForm.get('fusionEmployeeId')?.touched">
-                  <div class="error-msg">Employee is required</div>
-              </div>
-          </div>
-            <div class="col-xl-6 col-lg-12 mb-4">
-              <label class="form-label custom-label mb-2">Appointment Sent Date<span class="error-msg">*</span></label>
-              <input type="date" class="form-control custom-input" formControlName="appointmentdate" (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
-                placeholder="Please enter appointment sent date" />
-              <div *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
-                <div class="error-msg">Appointment Sent Date is required</div>
+              <div
+                *ngIf="employeeForm.get('fusionEmployeeId')?.invalid && employeeForm.get('fusionEmployeeId')?.touched">
+                <div class="error-msg">Employee is required</div>
               </div>
             </div>
+            <div class="col-xl-6 col-lg-12 mb-4">
+              <label class="form-label custom-label mb-2">Appointment Sent Date<span
+                      class="error-msg">*</span></label>
+              <input type="date" class="form-control custom-input" formControlName="appointmentdate"  (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
+                  placeholder="Please enter appointment sent date" onkeydown="return false;"/>
+              <div
+                  *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
+                  <div class="error-msg">Appointment Sent Date is required</div>
+              </div>
+          </div>
 
             <div class="col-xl-12 mb-4">
               <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="SelectDropDown" optionLabel="name" optionValue="code" placeholder="Please select address"
-                  formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
-                  class="form-select custom-select">
+                <p-select [options]="SelectDropDown" optionLabel="name" optionValue="code"
+                  placeholder="Please select address" formControlName="SelectDropDown"
+                  (onChange)="onclickSelectAddress($event)" class="form-select custom-select">
                 </p-select>
               </div>
               <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
@@ -70,18 +63,21 @@
             </div>
 
             <div class="col-xl-6 col-lg-12 mb-4">
-              <label class="form-label custom-label mb-2">Joining Date<span class="error-msg">*</span></label>
+              <label class="form-label custom-label mb-2">Joining Date<span
+                      class="error-msg">*</span></label>
               <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                placeholder="Please enter joining date" />
-              <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
-                <div class="error-msg">Joining Date is required</div>
+                  placeholder="Please enter joining date" onkeydown="return false;"/>
+              <div
+                  *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
+                  <div class="error-msg">Joining Date is required</div>
               </div>
-            </div>
+          </div>
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Department<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="departmentDetails" optionLabel="departmentName" placeholder="Please select department"
-                  formControlName="department" class="form-select custom-select"></p-select>
+                <p-select [options]="departmentDetails" optionLabel="departmentName"
+                  placeholder="Please select department" formControlName="department"
+                  class="form-select custom-select"></p-select>
               </div>
               <div *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
                 <div class="error-msg">Department is required</div>
@@ -90,8 +86,9 @@
             <div class="col-xl-6 col-lg-12 mb-4">
               <label class="form-label custom-label mb-2">Branch Location/Code<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="issueLocationdata" optionLabel="branchLocation1" placeholder="Please select branch location"
-                  formControlName="branchCode" class="form-select custom-select"></p-select>
+                <p-select [options]="issueLocationdata" optionLabel="branchLocation1"
+                  placeholder="Please select branch location" formControlName="branchCode"
+                  class="form-select custom-select"></p-select>
               </div>
               <div *ngIf="employeeForm.get('branchCode')?.invalid && employeeForm.get('branchCode')?.touched">
                 <div class="error-msg">Branch Location/Code is required</div>
@@ -101,8 +98,9 @@
               <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                 <p-select [options]="documentType" optionLabel="name" placeholder="Please select document type"
-                  formControlName="documentType" class="form-select custom-select" (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
-                 
+                  formControlName="documentType" class="form-select custom-select"
+                  (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
+
                 </p-select>
               </div>
               <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
@@ -112,7 +110,8 @@
             <div class="col-xl-12 mb-4">
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note
               </label>
-              <textarea class="form-control custom-input" placeholder="Leave a comment here" formControlName="notes"></textarea>
+              <textarea class="form-control custom-input" placeholder="Leave a comment here"
+                formControlName="notes"></textarea>
               <div *ngIf="employeeForm.get('notes')?.invalid && employeeForm.get('notes')?.touched">
                 <div class="error-msg">Note is required</div>
               </div>
@@ -121,12 +120,13 @@
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                 Authority Name<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location" (onChange)="onclickDesignation($event)"
-                  class="form-select custom-select" formControlName="authorityid"> 
+                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                  (onChange)="onclickDesignation($event)" class="form-select custom-select"
+                  formControlName="authorityid">
                   <ng-template let-emp pTemplate="item">
                     {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
                   </ng-template>
-                
+
                   <ng-template let-emp pTemplate="selectedItem">
                     {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
                   </ng-template>
@@ -137,11 +137,13 @@
               </div>
             </div>
             <div>
-              <p class="note-text"><span class="note me-2">Note:</span>Please Update Updated Salary, Compensation Effective Date in
+              <p class="note-text"><span class="note me-2">Note:</span>Please Update Updated Salary, Compensation
+                Effective Date in
                 Job Tab Before Generating the Document.</p>
             </div>
             <div class="d-flex flex-wrap gap-3 pt-4">
-              <button type="button" class="custom-btn btn-primary" (click)="onAppointmentLetterSubmit()">Generate Document</button>
+              <button type="button" class="custom-btn btn-primary" (click)="onAppointmentLetterSubmit()">Generate
+                Document</button>
               <!-- <button type="button" class="custom-btn btn-primary">Request For Approval</button> -->
             </div>
           </div>
@@ -380,25 +382,8 @@
                   employment. Compensation change in such situations, if any, will be at the discretion of the Company.
                 </p>
 
-                <p class="paragraph mb-3">
-                  <span class="letter-heading">b)</span> You agree to use all tools provided by the Company for
-                  professional purposes only. Internet and email access are provided to you as business communication
-                  tools for appropriate internal and external business uses. Generation, transmission, or storage of
-                  potentially offensive information is not allowed. You also agree to always act in the interest of the
-                  Company.
-                </p>
-
-                <p class="letter-heading ">
-                  12. No Dual Employment:
-                </p>
-
-                <p class="paragraph mb-3">
-                  You shall devote your full time and attention to the performance of your duties incidental to your
-                  position with the Company. During your employment with the Company, you are refrained from taking up
-                  any
-                  other employment, consultancy, or any other job (with or without remuneration), without the prior
-                  written consent of the Company.
-                </p>
+                
+                
 
               </div>
               <div class="letter-footer text-center">
@@ -416,6 +401,24 @@
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
                 </ng-template>
+                <p class="paragraph mb-3">
+                  <span class="letter-heading">b)</span> You agree to use all tools provided by the Company for
+                  professional purposes only. Internet and email access are provided to you as business communication
+                  tools for appropriate internal and external business uses. Generation, transmission, or storage of
+                  potentially offensive information is not allowed. You also agree to always act in the interest of the
+                  Company.
+                </p>
+
+                <p class="letter-heading ">
+                  12. No Dual Employment:
+                </p>
+                <p class="paragraph mb-3">
+                  You shall devote your full time and attention to the performance of your duties incidental to your
+                  position with the Company. During your employment with the Company, you are refrained from taking up
+                  any
+                  other employment, consultancy, or any other job (with or without remuneration), without the prior
+                  written consent of the Company.
+                </p>
                 <p class="letter-heading mb-3">13. Prior Service:</p>
                 <p class="paragraph mb-3">Your start date of employment will be used for the purpose of calculating your
                   years of service and vacation entitlement. Any prior service with any previous employer will not be
@@ -493,14 +496,6 @@
                   regarding the subject.
                 </p>
 
-                <p class="letter-heading mb-3">16. Changes in Personal Details:</p>
-
-                <p class="paragraph mb-3">Any change in your residential address, telephone numbers, marital status, and
-                  academic qualifications should be notified in writing to the Company with three (3) days of such
-                  change.
-                </p>
-                <p class="paragraph mb-3">communication will be addressed to you on the last address notified by you and
-                  it will be presumed that you have received such communication addressed to you. </p>
               </div>
               <div class="letter-footer text-center">
                 <p class="company-name">RightlyHR</p>
@@ -518,6 +513,15 @@
                   <div style="margin-bottom: 3rem;"></div>
                 </ng-template>
                 <div>
+                  
+                <p class="letter-heading mb-3">16. Changes in Personal Details:</p>
+
+                <p class="paragraph mb-3">Any change in your residential address, telephone numbers, marital status, and
+                  academic qualifications should be notified in writing to the Company with three (3) days of such
+                  change.
+                </p>
+                <p class="paragraph mb-3">communication will be addressed to you on the last address notified by you and
+                  it will be presumed that you have received such communication addressed to you. </p>
                   <p class="letter-heading mb-3">
                     17. Retirement:
                   </p>
@@ -577,29 +581,16 @@
                   <ol style="list-style: upper-roman;" class=" ol">
                     <li> <span class="paragraph">Breach any confidentiality or IP related obligations:</span> </li>
                     <li><span class="paragraph">Commit any serious or persistent breach of any of the terms and
-                        conditions of this
-                        Appointment
-                        Letter or any of the provisions of the employee handbook or other documents incorporated by
-                        reference
+                        conditions of this Appointment Letter or any of the provisions of the employee handbook or other documents incorporated by reference
                         in this document;</span> </li>
                     <li><span class="paragraph">Do or cause to be done any act, deed, matter or thing adverse to the
-                        Company’s
-                        interests;</span> </li>
+                        Company’s interests;</span> </li>
                     <li> <span class="paragraph">Are guilty of any misconduct or neglect in the discharge of your duties
-                        or exercise
-                        of
-                        your
-                        powers hereunder or otherwise vested in you from time to time;</span> </li>
+                        or exercise of your powers hereunder or otherwise vested in you from time to time;</span> </li>
                     <li> <span class="paragraph">Fail to or neglect in observing and complying fully with all
-                        resolutions,
-                        regulations,
-                        instructions
-                        and directions from time to time made or given to you by the Company</span> </li>
+                        resolutions, regulations,instructions and directions from time to time made or given to you by the Company</span> </li>
                     <li><span class="paragraph">If any information furnished by you or representation made by you is
-                        found to be
-                        incorrect
-                        or if any material information is detected by the Company to have been suppressed by you or any
-                        action
+                        found to be incorrect or if any material information is detected by the Company to have been suppressed by you or any action
                         on your part is found to be in contravention to the terms and conditions herein:</span> </li>
                     <li><span class="paragraph">Become of unsound mind;</span> </li>
                     <li><span class="paragraph">Are accused or convicted of any criminal offense:</span> </li>
@@ -622,93 +613,93 @@
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
                 </ng-template>
-                <div>
-                  <p class="letter-heading mb-3">
-                    17. Retirement:
-                  </p>
-                  <p class="paragraph mb-3">The age of retirement from the Company shall be on attainment of fifty-eight
-                    (58) years of age.
-                    For this purpose, the date of birth considered will be as per the certificate of proof of age
-                    submitted
-                    by you at the date of joining the Company. In case the last day of your employment falls on a
-                    non-working day, your last day of employment shall be the immediately the preceding working day.
-                  </p>
-                </div>
-                <div class="letter-heading mb-3">
-                  18. Notice Period: :
-                </div>
-                <p class="letter-heading mb-3">
-                  a) Resignation by the Employee:
-                </p>
-                <p class="paragraph mb-3">During the probation period, you may resign from your services by providing a
-                  prior written notice of Thirty (30) days or payment of gross salary in lieu thereof. After completion
-                  of your probation
-                  period, if you voluntarily resign from the services of the Company, you will be required to give
-                  ninety (90)
-                  days of written notice or gross salary in lieu of the notice period Three Months (90 days), subject to
-                  the Company’s discretion. Any shortfall in the Notice Period shall be recovered from your full and
-                  final settlement. In case of resignation, the Company reserves the right to:</p>
-
-                <ol style="list-style: upper-roman;" class="ol">
-                  <li><span class="paragraph">Relieve you earlier than the Notice Period</span> </li>
-                  <li><span class="paragraph">Extend your Notice Period for a satisfactory handover of charge and
-                      completing the
-                      pending assignments</span></li>
-                  <li> <span class="paragraph">Decide whether the Notice Period shall run concurrently with the period
-                      of any leave
-                      which may be granted to you;</span> </li>
-                  <li> <span class="paragraph ">Direct you not to perform any of your duties and to remain away from the
-                      Company
-                      premises and/or not to contact clients or other employees of the Company for all or part of the
-                      Notice Period.</span></li>
+                <ol style="list-style: upper-roman;" class="ol mb-3" start="9">
+                  <li><span class="paragraph">Are reported to be on an unauthorized absence for more than ten (10) days.</span></li>
+                  <li><span class="paragraph">In case the last day of your employment falls on a non-working day, your last day of
+                      employment shall be the immediate previous working day.</span></li>
                 </ol>
-
-                <p class="letter-heading mb-3">
-                  b) Termination by Company:
-                </p>
-                <p class="paragraph mb-3">During the probation period, the Company may terminate your employment for
-                  convenience by giving you fifteen (15) days prior written notice or payment of gross salary in lieu
-                  thereof 15 days. After completion of your probation period, the Company may terminate your employment
-                  by giving you 15 days’ notice or payment of gross salary in lieu thereof 15 days. Such termination
-                  does
-                  not amount to ‘Retrenchment’ under any law and does not entitle you to any severance pay.</p>
                 <div>
                   <p class="letter-heading mb-3">
-                    c) Termination for Cause:
+                    19. Subsistence Allowance:
                   </p>
-                  <p class="paragraph mb-3">Notwithstanding anything contained above, the Company can terminate your
-                    service
-                    without any notice period or without any salary in lieu thereof, if you: </p>
-                  <ol style="list-style: upper-roman;" class=" ol">
-                    <li> <span class="paragraph">Breach any confidentiality or IP related obligations:</span> </li>
-                    <li><span class="paragraph">Commit any serious or persistent breach of any of the terms and
-                        conditions of this
-                        Appointment
-                        Letter or any of the provisions of the employee handbook or other documents incorporated by
-                        reference
-                        in this document;</span> </li>
-                    <li><span class="paragraph">Do or cause to be done any act, deed, matter or thing adverse to the
-                        Company’s
-                        interests;</span> </li>
-                    <li> <span class="paragraph">Are guilty of any misconduct or neglect in the discharge of your duties
-                        or exercise
-                        of
-                        your
-                        powers hereunder or otherwise vested in you from time to time;</span> </li>
-                    <li> <span class="paragraph">Fail to or neglect in observing and complying fully with all
-                        resolutions,
-                        regulations,
-                        instructions
-                        and directions from time to time made or given to you by the Company</span> </li>
-                    <li><span class="paragraph">If any information furnished by you or representation made by you is
-                        found to be
-                        incorrect
-                        or if any material information is detected by the Company to have been suppressed by you or any
-                        action
-                        on your part is found to be in contravention to the terms and conditions herein:</span> </li>
-                    <li><span class="paragraph">Become of unsound mind;</span> </li>
-                    <li><span class="paragraph">Are accused or convicted of any criminal offense:</span> </li>
-                  </ol>
+                  <p class="paragraph mb-3">If your services are suspended by the Company during the pendency of any
+                    inquiry proceeding or as a result of any disciplinary action taken against you, your regular salary
+                    shall be suspended and for such suspension period and you will be eligible to receive only a
+                    subsistence allowance which will be calculated in accordance with the existing statutory requirements
+                    of the government of Telangana or the relevant policies of the Company" </p>
+                </div>
+                <p class="letter-heading mb-3">
+                  20. Effect of Termination:
+                </p>
+                <p class="paragraph">Upon termination of your employment: </p>
+                <p class="paragraph mb-3">
+                  <span class="letter-heading">a)</span> Return of Property: You shall deliver to the Company,
+                  any and all work product, confidential
+                  information, records, manuals, training materials, keys, equipment (including, without limitation, any
+                  laptop computer, mobile phone or other wireless telecommunication device) and other property belonging
+                  to the Company or its client, which is your possession or control, without retaining any copies thereof.
+                </p>
+                <p class="paragraph mb-3">
+                  <span class="letter-heading">b)</span> You must not make any statements (whether oral or
+                  written) or do anything which might damage the reputation of the Company or interfere with the Company’s
+                  relationship with its clients and customers.
+                </p>
+                <p class="paragraph mb-3">
+                  <span class="letter-heading">c)</span> Without prejudice to Company’s other rights and
+                  remedies, the Company shall be entitled to deduct from your emoluments, the amount of any claims which
+                  the Company may have against you either under the terms of your employment or otherwise.
+                </p>
+                <p class="paragraph mb-3">
+                  <span class="letter-heading">d)</span> You understand that the Service and Experience
+                  Certificate will be issued only if you have served the entire Notice Period or have paid compensation to
+                  the Company in lieu of the Notice Period.
+                </p>
+                <p class="letter-heading mb-3">
+                  21. Company Policies:
+                </p>
+                <p class="paragraph mb-3">
+                  In addition to the terms and conditions of this Agreement, your employment
+                  with the Company shall be subject to the policies and procedures set forth in the Company and/or the
+                  client's Policy (the "Policies"), the current version of which will be electronically accessible by you at all
+                  times during your employment.You agree that the Policies may be modified by the Company at any time,
+                  and that any such modifications shall apply to all the employees, including yourself. Violation of the
+                  Policies could lead to disciplinary actions up to and including termination of your employment.
+                  Additionally, while performing onsite work duties for any client of the Company, you are expected to
+                  adhere to the specific workplace policies of those clients and to familiarize yourself with those
+                  policies.
+                </p>
+                <div>
+                  <p class="letter-heading mb-3">
+                    22. Indemnification:
+                  </p>
+                  <p class="paragraph mb-3">
+                    You shall, at all times, indemnify and keep indemnified the Company against all sums whether by way of
+                    claims, demands, damages, costs, charges or expenses paid or incurred by the Company in or in connection
+                    with any action, claim proceedings or demand instituted or made against the Company caused or occasioned
+                    by your breach, failure, default or neglect.
+                  </p>
+                </div>
+                <div>
+                  <p class="letter-heading mb-3">
+                    23. Governing Laws and Arbitration:
+                  </p>
+                  <p class="paragraph mb-3">
+                    This Appointment Letter shall be governed under the laws of India and subject to the exclusive
+                    jurisdiction of courts in Hyderabad, India. Any dispute between you and the Company shall be settled by
+                    a sole arbitrator to be appointed by the Company, the place of arbitration shall be Hyderabad and the
+                    language of the arbitration shall be English. The arbitration shall be conducted in accordance with the
+                    Arbitration and Conciliation Act, 1996".
+                  </p>
+                </div>
+                <div>
+                  <p class="letter-heading mb-3">
+                    24. Invention Assignment and Confidentiality Agreement:
+                  </p>
+                  <p class="paragraph mb-3">
+                    You shall also be required to execute the Invention Assignment and Confidentiality Agreement (NDA) with
+                    the Company in Annexure A. The terms and conditions of this NDA shall survive perpetually even after the
+                    termination of your employment.
+                  </p>
                 </div>
               </div>
               <div class="letter-footer text-center">
@@ -833,7 +824,7 @@
                 <p class="letter-heading">
                   For RightlyHR
                 </p>
-                
+
                 <p class="family2" style="font-family: Segoe script; font-size: large;">
                   {{appointmentletter.authorityName}}
                 </p>
@@ -1251,11 +1242,7 @@
                   employees, successors and assigns due to any breach of the terms of this Agreement.
                 </p>
 
-                <p class="letter-heading mb-3">6. Survival: </p>
-                <p class="paragraph mb-3">
-                  This Agreement shall survive any termination of the Engagement or this Agreement and all other
-                  obligations which are meant to survive shall survive by its nature on termination of this Agreement.
-                </p>
+                
               </div>
               <div class="letter-footer text-center">
                 <p class="company-name">RightlyHR</p>
@@ -1272,7 +1259,11 @@
                 <ng-template #doc>
                   <div style="margin-bottom: 3rem;"></div>
                 </ng-template>
-
+                <p class="letter-heading mb-3">6. Survival: </p>
+                <p class="paragraph mb-3">
+                  This Agreement shall survive any termination of the Engagement or this Agreement and all other
+                  obligations which are meant to survive shall survive by its nature on termination of this Agreement.
+                </p>
                 <p class="letter-heading mb-3">7. Warranty: </p>
                 <p class="paragraph mb-2">
                   The Receiving Party understands and acknowledges that the Company is not obligated to supply any
@@ -1336,7 +1327,8 @@
 
                 <div class="img-space mb-3"></div>
 
-                <p class="family2" style="font-family: Segoe script; font-size: large;">{{appointmentletter.authorityName}}</p>
+                <p class="family2" style="font-family: Segoe script; font-size: large;">
+                  {{appointmentletter.authorityName}}</p>
 
                 <p class="letter-heading unerlineo d-black">Authorized Signatory</p>
                 <p class="letter-heading unerlineo d-black">{{appointmentletter.authorityName}}</p>

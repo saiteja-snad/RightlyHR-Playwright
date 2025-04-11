@@ -44,7 +44,7 @@
                             <label class="form-label custom-label mb-2">Appointment Sent Date<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="appointmentdate"  (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
-                                placeholder="Please enter appointment sent date" />
+                                placeholder="Please enter appointment sent date" onkeydown="return false;"/>
                             <div
                                 *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
                                 <div class="error-msg">Appointment Sent Date is required</div>
@@ -71,7 +71,7 @@
                             <label class="form-label custom-label mb-2">Joining Date<span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter joining date" />
+                                placeholder="Please enter joining date" onkeydown="return false;"/>
                             <div
                                 *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                 <div class="error-msg">Joining Date is required</div>

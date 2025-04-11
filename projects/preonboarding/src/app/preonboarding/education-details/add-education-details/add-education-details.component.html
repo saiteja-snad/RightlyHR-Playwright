@@ -25,7 +25,7 @@
                     <label for="university" class="form-label custom-label mb-2">University<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="university" formControlName="university" placeholder="Please enter university name" autoComplete="off">
                     <div *ngIf="educationForm.get('university')?.hasError('required') && educationForm.get('university')?.touched" class="text-danger">
-                        University is required.
+                        University is required
                     </div>
                 </div>
                 
@@ -33,25 +33,27 @@
                     <label for="specialization" class="form-label custom-label mb-2">Specialization<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization" placeholder="Please enter specialization" autoComplete="off">
                     <div *ngIf="educationForm.get('specialization')?.hasError('required') && educationForm.get('specialization')?.touched" class="text-danger">
-                        Specialization is required.
+                        Specialization is required
                     </div>
                     <div *ngIf="educationForm.get('specialization')?.hasError('pattern') && educationForm.get('specialization')?.touched" class="text-danger">
                         Specialization should contain only alphabets and special characters
                     </div>
                 </div>
                 
-        
                 <div class="col-md-6 mb-3">
                     <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="gpa" formControlName="gpa" placeholder="Please enter GPA" autoComplete="off">
-                    <div *ngIf="educationForm.get('gpa')?.invalid && educationForm.get('gpa')?.touched" class="text-danger">
-                        GPA is required and should be between 1 and 10
+                    <input type="number" class="form-control custom-input no-arrows" id="gpa" formControlName="gpa" placeholder="Please enter GPA" autocomplete="off">
+                    <div *ngIf="educationForm.get('gpa')?.hasError('required') && educationForm.get('gpa')?.touched" class="text-danger">
+                        GPA is required
                     </div>
-                </div>
+                    <div *ngIf="educationForm.get('gpa')?.hasError('pattern') && educationForm.get('gpa')?.touched" class="text-danger">
+                        GPA should be between 1 and 10 
+                    </div>
+                </div>                
         
                 <div class="col-md-6 mb-3">
                     <label for="startDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="startDate" formControlName="startDate" placeholder="Select start date" autoComplete="off">
+                    <input type="date" class="form-control custom-input" id="startDate" formControlName="startDate" placeholder="Select start date" autoComplete="off" onkeydown="return false;">
                     <div *ngIf="educationForm.get('startDate')?.invalid && educationForm.get('startDate')?.touched" class="text-danger">
                         Start date is required
                     </div>
@@ -59,15 +61,22 @@
         
                 <div class="col-md-6 mb-3">
                     <label for="endDate" class="form-label custom-label mb-2">To Date<span class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="endDate" formControlName="endDate" placeholder="Select end date" autoComplete="off">
+                    <input type="date" class="form-control custom-input" id="endDate" formControlName="endDate" placeholder="Select end date" autoComplete="off" onkeydown="return false;">
                     <div *ngIf="educationForm.get('endDate')?.invalid && educationForm.get('endDate')?.touched" class="text-danger">
                         End date is required
                     </div>
                 </div>
+                
         
                 <div class="col-md-12 mb-3">
                     <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span class="text-danger">*</span></label>
                     <input type="file" class="form-control custom-input" id="attachment" (change)="fileAttachment($event);fileChange($event)" autoComplete="off">
+                    <div class="error-msg"
+                            *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">
+                            Please choose a file
+                    </div>
+                        <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
+                        <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
                 </div>
             </div>
         

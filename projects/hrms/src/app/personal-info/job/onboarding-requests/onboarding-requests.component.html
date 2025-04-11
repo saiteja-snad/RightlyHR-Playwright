@@ -1,0 +1,122 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center">
+        <div> <span class="education-sub-header">Onboarding Request</span></div>
+        <div class="plus-button">
+            <!-- @if((!isStatusAllowed() && isTrainingEndDateComplete()) || (buttonviewwhenExtended && !isStatusAllowed())){ -->
+            <a class="anchor " (click)="requestForOnboard()"><i class="bi bi-plus plus-icon "></i> <span
+                    class="plus-text">Request For Onboard</span>
+            </a>
+            <!-- } -->
+        </div>
+    </div>
+    <div class="custom-table-content mt-2">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>REQUEST DATE</th>
+                    <th>INTERNSHIP START DAY</th>
+                    <th>INTERNSHIP END DAY</th>
+                    <th class="text-center">INTERNSHIP EXTENDED DATE</th>
+                    <th class="text-center">STATUS</th>
+                    <th class="text-center">INTERNSHIP FEEDBACK</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of dynamicData">
+                    <td>{{ item.requestedDate | dateformat }}</td>
+                    <td>{{ item.trainingStartDate | dateformat }}</td>
+                    <td>{{ item.trainingEndDate | dateformat }}</td>
+                    <td class="text-center">{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}
+                    </td>
+                    <td class="text-center">{{ item.status }}</td>
+                    <td class="text-center">
+                        <span *ngIf="item.feedbackComments;else feedbackComment">
+                            <div class="text-center" data-bs-toggle="modal" data-bs-target="#CommentsPopup"
+                                (click)="fustiontostorefeedback(item.feedbackComments)">
+                                <i class="bi bi-info-circle-fill "></i>
+                            </div>
+                        </span>
+                        <ng-template #feedbackComment>-</ng-template>
+                    </td>
+
+                    <td><span *ngIf="item.reason"> {{ item.reason }}</span>
+                        <ng-template #reason>-</ng-template>
+                    </td>
+                    <td *ngIf=" item.status=='Processed'&& Readyforonboardbutton "
+                        [ngClass]="{ 'disabled-button': isEditing }">
+
+                        <a class="nav-link" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical change"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications menu-card">
+                            <a style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#offerLetterModal"
+                                (click)="onboardstatuschange() ">Ready for Onboard</a>
+
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="CommentsPopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="min-width: 40vw;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">View Comments</h1>
+                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                <p class="m-0 p-2  rounded popupcomments border">{{selecteddata}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="spcommentspopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="min-width: 40vw;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">View Comments</h1>
+                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="card mb-3">
+
+                    <div class="cardd">
+                        <div class=" row w-100 m-0 p-0">
+                            <div class="p-0">
+                                <p class="m-0 popupcomments">Comments: {{myApproverCommentss}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #offerLetterModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img ">
+        </div>
+        <div class=" text-center mb-3">
+            Are you sure you want to Onboard?
+        </div>
+        <div class="text-center mb-4">
+            <!-- <button type="button" class="btn btn-primary" (click)="jobtab(job)">Yes</button> -->
+            <button type="button" class="btn btn-secondary ms-2" (click)="closeonBoard()">No</button>
+        </div>
+    </div>
+</ng-template>

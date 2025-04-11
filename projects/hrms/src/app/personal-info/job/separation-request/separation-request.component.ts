@@ -41,6 +41,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   appover_comments = {} as any;
   recallreason!:FormGroup;
   earlyReleivingform!:FormGroup;
+  isLoading=false;
   constructor(private authService: AuthService,private fb: FormBuilder,private http: HttpService,private router: Router,
     private conformationPopup: OpenModalService,private modalService: NgbModal,) {
     // Initialize any required services or dependencies here
@@ -170,6 +171,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     }
      //function to recall the request
    postRecallRequest() {
+    this.isLoading=true;
     let currentDate = new Date();
     let payLoad = {
       // id: this.selectRecallrequest.id,
@@ -200,6 +202,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           console.log(res);
           if (res) {
+            this.isLoading=false;
             this.modalService.dismissAll();
             this.recallreason.reset();
             this.conformationPopup.openSuccessModal('Recalled Request Raised successfully');
@@ -207,6 +210,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
+          this.isLoading=false;
           console.log(err);
           this.conformationPopup.openErrorModal(err.error.message)
         },
@@ -229,6 +233,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
   //function to raise the early relieving request
   postEarlyrelieving() {
+    this.isLoading=true;
     let currentDate =moment()
     let payLoad = {
       // id: this.selectRecallrequest.id,
@@ -257,6 +262,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         console.log(res);
         if (res) {
+          this.isLoading=false;
           this.modalService.dismissAll();
           this.earlyReleivingform.reset();
         this.conformationPopup.openSuccessModal('Early Relieving Request Raised successfully');
@@ -264,6 +270,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         }
       },
       error: (err: any) => {
+        this.isLoading=false;
         this.conformationPopup.openErrorModal(err.error.message);
       }
     })

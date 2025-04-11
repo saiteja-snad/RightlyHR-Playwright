@@ -603,7 +603,19 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid||isLoading">
+                        @if(!isLoading){
+                              {{'Submit'|translate}}
+                        }
+                        @else {
+                          <div class="d-flex">
+                            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                            </div>
+                            <div> {{'Submitting'|translate}}</div>
+                          </div>
+                        }
+                      </button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid">Submit</button>
                 </div>
             </form>

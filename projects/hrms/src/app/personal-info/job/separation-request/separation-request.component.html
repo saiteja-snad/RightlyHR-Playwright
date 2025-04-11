@@ -303,10 +303,19 @@
 
       <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-          Cancel
+          {{'Cancle'|translate}}
         </button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid">
-          Submit
+        <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
+          @if(!isLoading){
+                {{'Submit'|translate}}
+          }
+          @else {
+            <div class="d-flex">
+              <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+              </div>
+              <div> {{'Submitting'|translate}}</div>
+            </div>
+          }
         </button>
       </div>
     </form>
@@ -360,10 +369,19 @@
     </div>
       <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-          Cancel
+        {{'Cancle'|translate}}
         </button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid">
-          Submit
+        <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
+          @if(!isLoading){
+                {{'Submit'|translate}}
+          }
+          @else {
+            <div class="d-flex">
+              <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+              </div>
+              <div> {{'Submitting'|translate}}</div>
+            </div>
+          }
         </button>
       </div>
     </form>

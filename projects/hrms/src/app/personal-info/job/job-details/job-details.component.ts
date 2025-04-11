@@ -11,10 +11,11 @@ import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import moment from 'moment';
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environments/environment.dev';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule,TranslateModule, Select, ReactiveFormsModule, DateformatPipe],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })
@@ -65,6 +66,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
   postSeparationRequest={} as any;
   status: any
   substatus: any
+  isLoading=false;
   constructor(private modalService: NgbModal,private authService:AuthService,private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
@@ -695,6 +697,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
     }
     //function to post the separation request form
   postSeparationRequestForm() {
+    this.isLoading=true;
     if (this.postSeparationRequest.isEarlyRelieving !== true) {
       (this.postSeparationRequest.reasonForEarlyRelieving = null),
         (this.postSeparationRequest.earlyRelievingDate = null);
@@ -722,6 +725,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
       .postdata(`SeparationRequests`, postData)
       .subscribe({
         next: (res: any) => {
+          this.isLoading=false;
           console.log(res);
           if (res) {
             this.separationRequestForm.reset();
@@ -731,6 +735,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
           }
         },
         error: (err: any) => {
+          this.isLoading=false;
           console.log(err);
           this.conformationPopup.openErrorModal(err.error.message);
         },

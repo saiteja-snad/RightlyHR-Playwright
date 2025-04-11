@@ -27,9 +27,8 @@
                     <th class="col-span-2"></th>
                 </thead>
                 <tbody>
-                    @for (role of rolesdetails ; track role.name) {
-
-                    <tr *ngFor="let role of rolesdetails">
+                    @for(role of rolesdetails ; track role) {
+                    <tr>
                         <td class="w-75">{{role.name}}</td>
                         <td class="w-25">
                             <div class="d-flex gap-4">

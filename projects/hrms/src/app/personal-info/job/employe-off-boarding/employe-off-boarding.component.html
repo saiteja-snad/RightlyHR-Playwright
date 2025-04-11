@@ -1,0 +1,84 @@
+<div class="custom-main-component-container">
+    <div class="custom-card">
+        <div class="card shadow mx-auto">
+
+            <div class="off-heading-div pt-0">
+                <span class="offBoarding-header pt-0">
+                    Off Boarding Details
+                </span>
+            </div>
+            <!--heading ends-->
+            <form [formGroup]="offBoardingForm" (ngSubmit)="postOffBoardingDetails()">
+
+                <!-- Exit Reason -->
+                <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Exit Reason</label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="terminationDetails" optionLabel="reason" formControlName="exit"
+                            placeholder="Please select exit reason" class="form-select custom-select"></p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="offBoardingForm.get('exit')?.touched && offBoardingForm.get('exit')?.invalid">
+                        Exit Reason is Required
+                    </div>
+                </div>
+
+                <!-- Eligible for Rehire -->
+                <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Eligible For Rehire <span
+                            class="error-msg">*</span></label>
+
+                    <div class="custom-p-select-content">
+                        <p-select [options]="rehireDetails" optionLabel="eligibleforrehire1"
+                            formControlName="eligiblefor" placeholder="Please select eligible for rehire"
+                            class="form-select custom-select"></p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="offBoardingForm.get('eligiblefor')?.touched && offBoardingForm.get('eligiblefor')?.invalid">
+                        Eligible for rehire is required
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Status</label>
+
+                    <div class="custom-p-select-content">
+                        <p-select [options]="Statusdetails" optionLabel="statusname" formControlName="status"
+                            placeholder="Please select status" class="form-select custom-select"></p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="offBoardingForm.get('status')?.touched && offBoardingForm.get('status')?.invalid">
+                        Status is Required
+                    </div>
+                </div>
+
+                <!-- Last Working Day -->
+                <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Last Working Day</label>
+
+
+                    <input type="date" formControlName="lastdate" class="form-control custom-input" [max]="currentDate">
+                    <div class="error-msg"
+                        *ngIf="offBoardingForm.get('lastdate')?.touched && offBoardingForm.get('lastdate')?.invalid">
+                        Last Working Day is required
+                    </div>
+                    <div class="error-msg" *ngIf="islastworking">Last working day should be after date of
+                        joining</div>
+
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="offBoardingForm.invalid || islastworking">Submit</button>
+                </div>
+
+            </form>
+
+
+        </div>
+    </div>
+
+</div>

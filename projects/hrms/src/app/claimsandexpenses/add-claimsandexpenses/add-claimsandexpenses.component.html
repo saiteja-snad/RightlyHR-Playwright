@@ -44,7 +44,7 @@
                             <label class="form-label custom-label mb-2">Approval Email<span
                                     class="text-danger">*</span></label>
                                     <div class="custom-p-select-content">
-                                        <p-select [options]="expenestype" optionValue="id" optionLabel="name"
+                                        <p-select [options]="emails" optionLabel="label"
                                         placeholder="Please select approval email" formControlName="approvalemail"
                                         class="form-select custom-select"></p-select>
 
@@ -75,7 +75,7 @@
                                     <label class="form-label custom-label">Expense Type<span
                                             class="text-danger">*</span></label>
                                     <div class="custom-p-select-content">
-                                        <p-select [options]="expenestype" optionValue="id" optionLabel="name"
+                                        <p-select [options]="expensetype"    optionValue="expenseId" optionLabel="expenseType" (onChange)="onchangeexpnes($event, i)"
                                         placeholder="Please select expense item" formControlName="item_expense"
                                         class="form-select custom-select"></p-select>
 
@@ -193,7 +193,8 @@
                                 <div class="col-md-4">
                                     <label class="form-label custom-label">Proof (Image and PDF only)<span
                                             class="text-danger">*</span></label>
-                                    <input type="file" class="form-control custom-input"  formControlName="attachment_url"   accept=".pdf, image/*" (change)="fileupload($event, i)" />
+                                    <input type="file" class="form-control custom-input"     accept=".pdf, image/*" (change)="fileupload($event, i)" />
+                                 
                                 </div>
                             </div>
                         </div>

@@ -1,5 +1,6 @@
 import { Route, } from '@angular/router';
 import { SalutationComponent } from './personal/salutation/salutation.component';
+import { ExpensesConfigurationComponent } from './employee-fields-layout/expenses-configuration/expenses-configuration.component';
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal/salutation', pathMatch: 'full' },
@@ -22,4 +23,7 @@ export default [
             { path: 'jobtype', loadComponent: () => import('./job/jobtype/jobtype.component').then((m) => m.JobtypeComponent) }
         ]   
     },
+    {
+        path:'expenes-configuartion',component:ExpensesConfigurationComponent
+    }
 ] as Route[];

@@ -25,17 +25,13 @@ export class AddClaimsandexpensesComponent {
   subscription!: Subscription
   minDate!: string;
   maxDate!: string;
-  emails = new BehaviorSubject<string[]>([]);
+  emails =[];
   timeoffValid = false;
   istimeoffValid = true;
   currentDate = new Date();
   expensetype = [] as Iexpensetype[];
   expenseheader: IExpense[] = [];
-  expenestype = [
-    { name: 'Travel', value: 'travel' },
-    { name: 'Food', value: 'food' },
-    { name: 'Miscellaneous', value: 'miscellaneous' }
-  ]
+
 
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
     private http: HttpService) { }
@@ -70,7 +66,7 @@ export class AddClaimsandexpensesComponent {
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [null, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [null, Validators.required]
+      attachment_url: [null, ]
     });
   }
 
@@ -160,19 +156,28 @@ export class AddClaimsandexpensesComponent {
   }
 
   getdatabyentriy() {
-    const params = 'Expense'
-    const param = 'approverEmails'
+    const params = 'Expense';
+    const param = 'approverEmails';
     this.subscription = this.http
-      .getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
+      .getDatabyentriyvalue('entityAttributeValues', params, param)
+      .subscribe({
         next: (data: any) => {
           if (data.length > 0) {
-            this.emails.next(data[0].value.split(','));
+            // Split the string and map into { value: email, label: email } objects
+            const emailArray = data[0].value.split(',');
+            this.emails = emailArray.map((email: string) => ({
+              value: email.trim(), // remove extra spaces
+              label: email.trim()
+            }));
           }
-        }, error(err) {
-          console.log("errors", err)
+        },
+        error: (err) => {
+          console.log("errors", err);
         },
       });
   }
+  
+   
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
     if (file) {
@@ -198,6 +203,28 @@ export class AddClaimsandexpensesComponent {
       });
     }
   }
+  onchangeexpnes(event: any, index: number) {
+    const selectedId = event.value; // <-- PrimeNG sends the selected value in `event.value`
+  
+    console.log('Selected Expense ID:', selectedId);
+  
+    this.onExpenseChanged(selectedId, index);
+  }
+  
+  onExpenseChanged(selectedId: number, index: number) {
+    this.selectedexpensesid = selectedId;
+  
+    this.http.getData(`Expense/getbyid/${this.selectedexpensesid}`).subscribe({
+      next: (data: any) => {
+        console.log('Fetched expense data:', data);
+        // You can patch this.expenseItems.at(index).patchValue({...})
+      },
+      error: (err) => {
+        console.error('Error fetching expense by ID:', err);
+      }
+    });
+  }
+    
 
   fromdata(form: FormGroup): void {
     if (form.valid) {
@@ -205,7 +232,7 @@ export class AddClaimsandexpensesComponent {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
-        approverEmail: form.value.approvalemail,
+        approverEmail: form.value.approvalemail.value,
         additional_details: form.value.additional_details,
         status: 'Waiting for Approval',
         employeeId: this.empinfo.employeeId,
@@ -250,10 +277,11 @@ export class AddClaimsandexpensesComponent {
         ).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
-              // this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              // this.filterAllExpenses()
+      
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               // Call the get function after posting
             }

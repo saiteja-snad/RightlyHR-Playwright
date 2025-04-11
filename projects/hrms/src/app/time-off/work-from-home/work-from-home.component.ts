@@ -32,6 +32,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   minutes!: any;
   hours!: any;
   duration!: any;
+  spinnerLoader = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -219,13 +220,16 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
     if (addForm.valid) {
       const formData = addForm.value;
+
+      const isFullDay = +formData.availing === 2;
+  
       const payload = {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
         requestedComments: this.workFromHomedata.requestedComments,
-        durationType: +formData.availing,
-        duration:+formData.availing == 2 ? 1 : 0.5,
+        durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
+        duration: isFullDay ? 1 : 0.5,
         status: 'Waiting for Approval',
         reason: formData.reason,
         requestedCategory: 2,
@@ -233,7 +237,8 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         requestedDate: new Date(),
       };
       console.log(payload);
-
+      
+      this.spinnerLoader = true;
       this.http.postdata('AttendanceRequests', payload).subscribe({
         next: (res: any) => {
           // this.getCompOffRequest();
@@ -248,8 +253,13 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
           //write a signal to trigger the get all count in the side bar
         },
-        error: (err: any) => {},
-        complete: () => {},
+        error: (err: any) => {
+          this.spinnerLoader = false;
+        },
+        complete: () => {
+          this.addWFHForm.reset();
+          this.spinnerLoader = false;
+        },
       });
     }
 

@@ -157,3 +157,64 @@ export interface RegularizationRequest {
   approverHeaderId: number;
   regularizationApproverComments: RegularizationApproverComment[];
 }
+
+
+export interface LeaveType {
+  id: number;
+  name: string;
+  isDeleted: boolean;
+  type: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+
+export interface IEAV {
+  id: number;
+  entity: string;
+  attribute: string;
+  value: string;
+  meta: string;
+}
+
+
+export interface AttendanceRequest {
+  entity: AttendanceEntity;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+}
+
+export interface AttendanceEntity {
+  attendanceRequestId: number;
+  attendanceRequestEmployeeId: number;
+  attendanceRequestFusionEmployeeId: string;
+  attendanceRequestStartTime: string; 
+  attendanceRequestEndTime: string;
+  attendanceRequesterName: string;
+  attendanceRequestDuration?: number;
+  attendanceRequestAppliedDate: string; 
+  attendanceRequestDescription: string;
+  attendanceRequestDurationType: string;
+  spheaderId: number;
+  attendanceApprovalcomments: any[]; 
+}
+
+export interface ApprovalHeader {
+  id: number;
+  moduleId: number;
+  referenceEntityId: number;
+  status: string;
+  currentapprovalStage: string;
+  currentApproverId: string;
+  finalapprovalStage: string;
+  approvedType: string;
+  requestedBy: number;
+}
+
+export interface Module {
+  id: number;
+  moduleName: string;
+  approvalflowRequired: boolean;
+  categoryType: string;
+}

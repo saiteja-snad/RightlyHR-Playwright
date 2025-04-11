@@ -7,16 +7,17 @@
                     <th>Permission Date</th>
                     <th>Duration(In Hours)</th>
                     <th>Reason</th>
-                    <th>Rejected Reason</th>
+                    <!-- <th>Rejected Reason</th> -->
                     <th>Permission Type</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>20/3/3023</td>
-                    <td>20/3/3023</td>
-                    <td>Full Day</td>
+                <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
+                <tr *ngFor="let permissionRequest of waitingForApprovalPerimisions; let i = index">
+                    <td>{{permissionRequest.createdDate | dateformat}}</td>
+                    <td>{{permissionRequest.requestedDate | dateformat}}</td>
+                    <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
                     <td>
                         <div>
                             <span>
@@ -25,30 +26,23 @@
                                 </a>
                                 <ng-template #reason>
                                     <div>
-                                        <p class="mb-0">Feaver </p>
+                                        <p class="mb-0">{{permissionRequest.notes}} </p>
                                     </div>
                                 </ng-template>
                             </span>
                         </div>
                     </td>
-                    <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">Feaver </p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div>
-                    </td>
-                    <td>Late logout</td>
-                    <td>Processed</td>
+                    <td>{{permissionRequest.type}}</td>
+                    <td>{{permissionRequest.status}}</td>
                 </tr>
-
+            </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                      <td colspan="6">
+                        <app-no-data-found></app-no-data-found>
+                      </td>
+                    </tr>
+                  </ng-template>
             </tbody>
         </table>
     </div>

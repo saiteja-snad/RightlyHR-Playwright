@@ -8,10 +8,12 @@ import { HttpService } from '../../../services/http.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
 import { RegularizationRequest } from '../../../Interfaces/timoff-model';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-premissions-waiting-for-approval',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe],
   templateUrl: './premissions-waiting-for-approval.component.html',
   styleUrl: './premissions-waiting-for-approval.component.scss'
 })
@@ -40,6 +42,7 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.getDataPermissions()
   }
   onRowsChange() {
     this.first = 0;
@@ -66,6 +69,7 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
       },
     });
   }
+
 
 
   ngOnDestroy(): void {

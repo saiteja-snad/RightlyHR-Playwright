@@ -44,6 +44,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
   hours!: any;
   duration!: any;
   wfhValidations = {} as IValidations;
+  spinnerLoader = false;
 
   constructor(
     private modalService: NgbModal,
@@ -113,7 +114,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
         requestedDate: new Date(),
       };
       console.log(payload);
-      
+      this.spinnerLoader = true;
       this.http.postdata('AttendanceRequests', payload).subscribe({
         next: (res: any) => {
           // this.getCompOffRequest();
@@ -128,8 +129,12 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
           //write a signal to trigger the get all count in the side bar
         },
-        error: (err: any) => {},
-        complete: () => {},
+        error: (err: any) => {
+          this.spinnerLoader = false;
+        },
+        complete: () => {
+          this.addCompOffForm.reset();
+          this.spinnerLoader = false;},
       });
     }
 

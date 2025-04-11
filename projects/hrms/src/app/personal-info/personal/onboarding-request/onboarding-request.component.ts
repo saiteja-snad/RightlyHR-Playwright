@@ -209,9 +209,9 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
       .postdata('OnBoardingDocuments/Update', this.doumentsapprovedata)
       .subscribe({
         next: (data: any) => {
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Document Approved Successfully');
           setTimeout(() => {
-            this.modalService.dismissAll();
             this.getdocumentdeatilsbyempid();
             this.getEmployeeId();
           }, 2000);
@@ -255,7 +255,11 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
         },
       });
   }
-
+  closeModal(modal: any) {
+    modal.dismiss();
+    this.rejectDocument.reset();
+  }
+  
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

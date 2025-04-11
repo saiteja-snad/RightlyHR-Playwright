@@ -40,6 +40,8 @@ import { LeavesWaitingForApprovalComponent } from "./leaves/leaves-waiting-for-a
 import { LeavesApprovalComponent } from "./leaves/leaves-approval/leaves-approval.component";
 import { LeavesProcessedComponent } from "./leaves/leaves-processed/leaves-processed.component";
 import { LeavesRejectedComponent } from "./leaves/leaves-rejected/leaves-rejected.component";
+import { ProbationPendingApprovalsComponent } from "./pending-approvals/probation-pending-approvals/probation-pending-approvals.component";
+import { AssessmentformComponent } from "./pending-approvals/assessmentform/assessmentform.component";
 
 
 export default [
@@ -151,6 +153,19 @@ export default [
         { path: 'for-your-role', component: AttendanceRegularizationForYouRequestComponent },
         { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
       ],
+    },
+    {
+      path: 'probation-request',
+      component: ProbationPendingApprovalsComponent,
+      children: [
+        { path: 'assessmentform', component: AssessmentformComponent },
+        { path: '', redirectTo: 'for-you', pathMatch: 'full' }
+      ],
+    },
+    {
+      path: 'assessmentform',
+      component: AssessmentformComponent,
+      
     },
 
     { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section

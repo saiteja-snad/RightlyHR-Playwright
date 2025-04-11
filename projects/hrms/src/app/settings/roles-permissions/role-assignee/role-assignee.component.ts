@@ -1,11 +1,179 @@
-import { Component } from '@angular/core';
+import { Component, model, OnDestroy, OnInit, TemplateRef, ViewChild, viewChild } from '@angular/core';
+import { IRoles } from '../permissions/permission.model';
+import { Subject, takeUntil } from 'rxjs';
+import { HttpService } from '../../../services/http.service';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IUserRoleInfo } from './assigne-users.model';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { IActiveEmployee } from './active-employees.model';
+import { SelectModule } from 'primeng/select';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-role-assignee',
-  imports: [],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss'
 })
-export class RoleAssigneeComponent {
+export class RoleAssigneeComponent implements OnInit, OnDestroy {
+  roleId: string | undefined;
+  userId: number | undefined;
+  selectedUsersCount!: number;;
+  customLabelTemplate: string | undefined;
+  selectedRole: IRoles | undefined;
+  usersList: IActiveEmployee[] = [];
+  createAssigneeForm!: FormGroup;
+  roleAssigneeUsers: IUserRoleInfo[] = [];
+  roles: IRoles[] = [];
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  @ViewChild('confirmationModal') confirmationModal: TemplateRef<any> | undefined;
+  @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
+  constructor(
+    private http: HttpService,
+    private fb: FormBuilder,
+     private modal: OpenModalService,
+     private modalService: NgbModal,
+  ) { }
+
+  ngOnInit(): void {
+    this.getAllroles();
+    this.getUsers();
+    this.intializeForm();
+  }
+
+  intializeForm() {
+    this.createAssigneeForm = this.fb.group({
+      selected_user: [null, [Validators.required]],
+    });
+  }
+
+  getAllroles(): void {
+    this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.roles = data as IRoles[]
+        if (this.roles.length > 0) {
+          this.onRoleClick(this.roles[0]);
+        }
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    })
+  }
+
+  getUsers() {
+    const payload = {
+      status: 'Active'
+    };
+    
+    this.http.getData(`Employeedata/getAll?status=${payload.status}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.usersList = res.map((user: any) => ({
+          ...user,
+          fullName: `${user.firstName} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName}`
+        }));
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    });
+  }
+
+  selectedUserDetails(event: any) {
+    this.selectedUsersCount = event.length;
+    if (this.selectedUsersCount > 0) {
+      this.customLabelTemplate = `${this.selectedUsersCount} ${this.selectedUsersCount === 1 ? 'user' : 'users'} selected`;
+    } else {
+      this.customLabelTemplate = 'Select Users';
+    }
+  }
+
+  onRoleClick(role: IRoles) {
+    this.createAssigneeForm.get('selected_user')?.reset();
+    this.roleId = role.id;
+    this.getUsersByRoleId(role.id);
+    this.selectedRole = role;
+  }
+
+  getUsersByRoleId(id: any) {
+    // this.modalService.open(this.stagingLoadingModal, { centered: true });
+    this.http.getData(`FusionRole/roleAssigneeByRoleId/${id}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.roleAssigneeUsers = response;
+        },
+        error: (error: any) => {
+          this.modalService.dismissAll();
+          console.log(error);
+          this.modal.openErrorModal(error.error.message? error.error.message : 'Failed to load users');
+        },
+        complete: () => {
+          this.modalService.dismissAll();
+        }
+
+      });
+  }
+
+  createAssignee(form: FormGroup) {
+    if (form.invalid) {
+      return;
+    }
+    const payload = {
+      employeeId: form.value.selected_user.employeeId,
+      roleId: this.roleId,
+    };
+    this.http.postdata('FusionRole/roleAssignees', payload).subscribe({
+      next: (data: any) => {
+        this.modal.openSuccessModal('Role Assigned Successfully');
+      },
+      error: (err) => {
+        this.modal.openErrorModal('Role Assignment Failed');
+      },
+      complete: () => {
+        this.createAssigneeForm.reset();
+        this.getUsersByRoleId(this.roleId);
+      }
+    });
+  }
+
+  onUserClick(user: IUserRoleInfo) {
+    console.log(user);
+    this.userId = user.employeeId;
+    this.modalService.open(this.confirmationModal, { centered: true, backdrop: 'static', keyboard: false });
+  }
+
+  removeAssignee() {
+    const payload = {
+      employeeId: this.userId,
+      roleId: this.roleId,
+    };
+    this.http.postdata('FusionUser/deleteFusionUserRolesByEmployeeId&RoleId', payload).subscribe({
+      next: (res: any) => {
+        this.modalService.dismissAll();
+        this.modal.openSuccessModal('Role Removed Successfully');
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.modalService.dismissAll();
+        this.modal.openErrorModal('Role Removal Failed');
+      },
+      complete: () => {
+        this.getUsersByRoleId(this.roleId);
+        this.userId = undefined;
+      }
+    });
+  }
+
+  close(){
+    this.modalService.dismissAll();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

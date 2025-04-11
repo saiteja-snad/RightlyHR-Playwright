@@ -17,10 +17,11 @@ import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 
 @Component({
   selector: 'app-trainee-offer-letter',
-  imports: [LettersTabComponent, CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
+  imports: [LettersTabComponent, CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule, NgxCountriesDropdownModule],
   templateUrl: './trainee-offer-letter.component.html',
   styleUrl: './trainee-offer-letter.component.scss'
 })
@@ -90,6 +91,7 @@ export class TraineeOfferLetterComponent {
   addresFlag = false;
   address = {} as IAddress;
   countryvalues = {} as any;
+  selectedCountryCode: any;
   selectedCountryConfig = {
     hideCode: true,
     hideName: true
@@ -187,6 +189,21 @@ export class TraineeOfferLetterComponent {
       this.calculateEndDate(value);
     });
   }
+
+  onclickcheckempidnull(empidValue: any) {
+    if(empidValue==""){
+      this.disablebuttonforemployeeid=true
+    }
+    else{
+      this.disablebuttonforemployeeid=false
+    }
+    this.fusionEmpId = empidValue.value;
+    if (this.fusionEmpId) {
+      this.onClickValidation(this.fusionEmpId);
+    } else {
+      this.resetInputFields();
+    }
+  }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -212,7 +229,7 @@ export class TraineeOfferLetterComponent {
   calculateEndDate(value: any) {
     if (this.traineeEmpData.dateOfJoining && value) {
       const startDate = new Date(this.traineeEmpData.dateOfJoining);
-      const months = parseInt(value, 10);
+      const months = parseInt(value.value, 10);
       console.log(months)
       const days = this.getDaysFromMonths(months);
       console.log(days)
@@ -278,7 +295,7 @@ export class TraineeOfferLetterComponent {
   selectReportingname(Value: any) {
     if (Value) {
       const details = this.getAllEmployeeInfo.find(
-        (ele: any) => ele.employeeId == Value
+        (ele: any) => ele.employeeId == Value.employeeId
       );
       console.log(details);
       this.traineeEmpData.reportingmanagerName = `${details.firstName} ${details.middleName ? details.middleName + ' ' : ''
@@ -504,34 +521,7 @@ export class TraineeOfferLetterComponent {
   formatDate(date: any) {
     return date?.split('T')[0];
   }
-  //function to patch the values in the form to the template
-  // pathValuesFuction() {
-  //   const formValues = this.employeeForm.value;
-  //   console.log(formValues);
-  //   this.traineeEmpData = {
-  //     personalEmail: formValues.personalEmail,
-  //     title: formValues.title,
-  //     firstName: formValues.firstName,
-  //     middleName: formValues.middleName,
-  //     lastName: formValues.lastName,
-  //     gender: formValues.gender,
-  //     jobRole: formValues.jobRoleDetails,
-  //     esic: formValues.esic,
-  //     pf: formValues.pf,
-  //     amount: formValues.amount,
-  //     isVariablePay: formValues.isVariablePay,
-  //     variablePayAmount: formValues.variablePayAmount,
-  //     locationId: formValues.locationId,
-  //     sublocationId: formValues.JobSubLocationName,
-  //     offerIssuedDate: formValues.offerIssuedDate,
-  //     dateOfJoining: formValues.dateOfJoining,
-  //     copys: formValues.Copys,
-  //     trainingEndDate: this.traineeEmpData.endDate,
-  //     note: formValues.note,
-  //     authorityid: formValues.authorityid,
-  //   };
-  // }
-
+  
   patchForm(data:any){
     this.employeeForm?.patchValue({
        personalEmail:data.personalEmail,
@@ -555,16 +545,21 @@ export class TraineeOfferLetterComponent {
        trainingEndDate:this.formatDate(data.endDate),
        note:data?.note,
        authorityid: data?.authorityid,
+       phoneNumber: data?.phoneNumber,
      })
+
+     console.log(this.employeeForm);
+     
   }
 
-
+  loadingCode= false;
   onClickValidation(Empidvalue: any) {
+    this.loadingCode= true;
     if (Empidvalue) {
-      this.fusionEmpId = Empidvalue.value;
+      this.fusionEmpId = Empidvalue;
       this.subscription = this.http
         .getData(
-          `OfferLetter/getEmployeeByEmailAddressAndStatus?EmpId=${Empidvalue.value}`
+          `OfferLetter/getEmployeeByEmailAddressAndStatus?EmpId=${Empidvalue}`
         )
         .subscribe({
           next: (data: any) => {
@@ -650,6 +645,16 @@ export class TraineeOfferLetterComponent {
     }
   }
 
+  isDataPopulated(){
+    this.traineeEmpData.offerIssuedDate = this.employeeForm.get('offerSentDate')?.value;
+    console.log(this.traineeEmpData.offerIssuedDate);
+  }
+
+  isDataPopulated1(){
+    this.traineeEmpData.internshipperiod = this.employeeForm.get('internshipperiod')?.value.value;
+    console.log(this.traineeEmpData.internshipperiod);  
+  }
+
   //function to get sublocation by id
   getSubLocationByid(id: any) {
     this.subscription = this.http
@@ -687,8 +692,6 @@ export class TraineeOfferLetterComponent {
     this.traineeEmpData.amount = Value;
     // this.ctcCalculation();
   }
-
-
 
   //coverting date time to the date formate
   formatDateForOfferIssedandExpiry(date: Date): string {
@@ -809,7 +812,7 @@ export class TraineeOfferLetterComponent {
       },
       complete: () => {
         this.conformationPopup.openSuccessModal(
-          'Trainee Offer Letter Generated Successfully');
+          'Intern Offer Letter Generated Successfully');
       }
     });
   }
@@ -881,7 +884,7 @@ export class TraineeOfferLetterComponent {
     this.generatedfile = file;
     this.generatingEmployeeId = EmpValue.empId;
     this.loading = false;
-    this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully');
+    this.conformationPopup.openSuccessModal('Intern Offer Letter Generated Successfully');
 
   
   }
@@ -1223,19 +1226,22 @@ export class TraineeOfferLetterComponent {
             this.conformationPopup.openSuccessModal('Email sent successfully');
           }
           this.loading = false;
-
+          setTimeout( () => {
+            this.router.navigate(['/admin/dashboard']);
+          }, 3000);
         },
         error: (err: any) => {
           console.log(err);
 
           this.conformationPopup.openErrorModal('Email sent failed');
           this.loading = false;
+          
         },
         complete: () => { },
       });
   }
 
-  //function for Manger to approve notification
+  // function for Manger to approve notification
   // Approvednotification() {
   //   const currentDate = new Date();
   //   this.traineeEmpData;
@@ -1260,7 +1266,7 @@ export class TraineeOfferLetterComponent {
   //         this.loading = false;
 
   //         setTimeout(() => {
-  //           this.router.navigate(['/admin']);
+  //           this.router.navigate(['/admin/dashboard']);
   //         }, 3000);
   //       },
   //       error: (err: any) => {
@@ -1462,7 +1468,7 @@ export class TraineeOfferLetterComponent {
         if (this.employeeaddress.substatus == 'Documents Verified') {
           this.buttonValue = 'Generate Offer Letter';
         }
-        else if (this.employeeaddress.substatus == 'Offer Letter Rejected' || this.employeeaddress.substatus == 'Offer Letter Accepted' || this.employeeaddress.substatus == 'Offer Letter Rejected By Manager') {
+        else if(this.employeeaddress.substatus=='Offer Letter Rejected' ||this.employeeaddress.substatus=='Offer Letter Accepted' ||this.employeeaddress.substatus=='Offer Letter Rejected By Manager'){
           this.buttonValue = 'Regenerate Offer Letter';
         }
         console.log(this.buttonValue);

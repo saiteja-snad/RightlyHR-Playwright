@@ -240,6 +240,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
         next: (respone: any) => {
         this.isLoading=false;
+        this.modalService.dismissAll();
           if(this.requestType==='Separation Request')
             {
              this.conformationPopup.openSuccessModal('Separation Request Approved Successfully')
@@ -258,7 +259,6 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.isLoading=false;
-          this.modalService.dismissAll();
         }
       })
    
@@ -295,12 +295,10 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       
       error: (reason: any) => {
         this.isLoading=false;
-       this.modalService.dismissAll();
        this.conformationPopup.openErrorModal(reason.error.message)
       },
       complete: () => {
         this.isLoading=false;
-       this.modalService.dismissAll();
       }
     });
   }
@@ -354,6 +352,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     this.subscription =  this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,requestBody).subscribe({
       next:(respone:any)=>{
         this.isLoading=false
+        this.modalService.dismissAll();
          this.getseparationforyourequests();
          this.conformationPopup.openSuccessModal('Separation Request Processed Successfully')
       },

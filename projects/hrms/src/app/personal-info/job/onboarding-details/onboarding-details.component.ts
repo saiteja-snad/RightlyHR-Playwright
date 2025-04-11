@@ -341,7 +341,6 @@ export class OnboardingDetailsComponent {
 
   }
 
-
   showButtons(): void {
     this.buttons = !this.buttons;
 
@@ -353,10 +352,6 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.disable();
     }
   }
-
-
-
-
 
 }
 

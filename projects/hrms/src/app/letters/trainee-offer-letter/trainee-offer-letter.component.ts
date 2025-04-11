@@ -212,7 +212,7 @@ export class TraineeOfferLetterComponent {
   calculateEndDate(value: any) {
     if (this.traineeEmpData.dateOfJoining && value) {
       const startDate = new Date(this.traineeEmpData.dateOfJoining);
-      const months = parseInt(value, 10);
+      const months = parseInt(value.value, 10);
       console.log(months)
       const days = this.getDaysFromMonths(months);
       console.log(days)
@@ -555,6 +555,7 @@ export class TraineeOfferLetterComponent {
        trainingEndDate:this.formatDate(data.endDate),
        note:data?.note,
        authorityid: data?.authorityid,
+       phoneNumber: data?.phoneNumber,
      })
   }
 
@@ -650,6 +651,20 @@ export class TraineeOfferLetterComponent {
     }
   }
 
+  isDataPopulated(){
+    this.traineeEmpData.offerIssuedDate = this.employeeForm.get('offerSentDate')?.value;
+    console.log(this.traineeEmpData.offerIssuedDate);
+    
+    
+
+  }
+
+  isDataPopulated1(){
+    this.traineeEmpData.internshipperiod = this.employeeForm.get('internshipperiod')?.value.value;
+    console.log(this.traineeEmpData.internshipperiod);
+    
+
+  }
   //function to get sublocation by id
   getSubLocationByid(id: any) {
     this.subscription = this.http

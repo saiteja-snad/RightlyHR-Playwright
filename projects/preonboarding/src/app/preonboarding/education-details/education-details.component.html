@@ -108,11 +108,11 @@
 <div class="footer-btn-content d-flex justify-content-between gap-2 pt-5">
     @if((this.empinfo.empstatus.toLowerCase() == 'prospective') && (this.empinfo.substatus.toLowerCase() == 'offer letter generated' ||this.empinfo.substatus.toLowerCase() == 'offer letter released' 
         || this.empinfo.substatus.toLowerCase() == 'offer letter regenerated'|| this.empinfo.substatus.toLowerCase() == 'offer letter accepted')){
-        <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Offer Letter</button>
+        <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Offer Letter</button>
     }
   @if((this.empinfo.empstatus.toLowerCase() == 'trainee prospective') && (this.empinfo.empType.toLowerCase() == 'trainee') && (this.empinfo.substatus.toLowerCase() == 'offer letter generated' ||this.empinfo.substatus.toLowerCase() == 'offer letter released' 
         || this.empinfo.substatus.toLowerCase() == 'offer letter regenerated'|| this.empinfo.substatus.toLowerCase() == 'offer letter accepted')){
-    <button class="custom-btn btn-primary px-5" (click)="navigatePrevioustoTranineeofferletter()">Offer Letter</button>
+    <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevioustoTranineeofferletter()">Offer Letter</button>
   }
    
     <button class="custom-btn btn-primary px-5" [disabled]="disablebutton" (click)="navigateNext()">Next</button>

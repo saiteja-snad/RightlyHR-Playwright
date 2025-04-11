@@ -168,7 +168,7 @@ export class PersonalDetailsComponent implements OnInit {
         city: [null, Validators.required],
         state: [null, Validators.required],
         country: [null, Validators.required],
-        zipCode: [null, Validators.required],
+        zipCode: [null, Validators.required,],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
@@ -178,7 +178,7 @@ export class PersonalDetailsComponent implements OnInit {
         city: [null, Validators.required],
         state: [null, Validators.required],
         country: [null, Validators.required],
-        zipCode: [null, Validators.required],
+        zipCode: [null, Validators.required,],
       }),
     });
   }
@@ -380,5 +380,18 @@ export class PersonalDetailsComponent implements OnInit {
 
   navigateDocumentUpload() {
     this.router.navigate(['/document']);
+  }
+
+  blockNumberPaste(event: ClipboardEvent): void {
+    const pastedInput: string = event.clipboardData?.getData('text') || '';
+    if (/\d/.test(pastedInput)) {
+      event.preventDefault();
+    }
+  }
+  blockNumbers(event: KeyboardEvent): void {
+    const forbiddenKeys = ['0','1','2','3','4','5','6','7','8','9'];
+    if (forbiddenKeys.includes(event.key)) {
+      event.preventDefault();
+    }
   }
 }

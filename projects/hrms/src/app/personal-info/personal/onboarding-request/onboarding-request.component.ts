@@ -255,7 +255,11 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy{
         },
       });
   }
-
+  closeModal(modal: any) {
+    modal.dismiss();
+    this.rejectDocument.reset();
+  }
+  
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

@@ -130,7 +130,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.conformationPopup.openSuccessModal('Released Successfully');
+          this.conformationPopup.openSuccessModal('Intern Offer Released Successfully');
           this.getTraineeOfferLetters();
           this.employeeEmailTrainee(Values)
           if (data) {
@@ -177,7 +177,7 @@ export class DocumentHistoryInternOfferLetterComponent {
          next: (data: any) => {
            console.log(data);
         
-           this.conformationPopup.openSuccessModal('Updated Successfully');
+           this.conformationPopup.openSuccessModal('Intern Offer Approved Successfully');
            this.getTraineeOfferLetters();
            this.ApproveEmailTrainee(Values)
            if (data) {
@@ -366,34 +366,6 @@ export class DocumentHistoryInternOfferLetterComponent {
       });
   }
 
-// RejectTraineenotification() {
-//     const currentDate = new Date();
-//     this.appointmentDetails
-//     console.log(this.appointmentDetails.empid);
-
-//     let loggedInUser = this.authService.getToken();
-//     let senddata = {
-//       message: `Offer Letter Rejected`,
-//       sentTo: this.selectedValuestrainee.workEmail,
-//       isRead: false,
-//       isDelete: false,
-//       notificationDate: currentDate,
-//       notificationType: `${loggedInUser?.firstName} ${loggedInUser.middleName ?? ''} ${loggedInUser?.lastName} Rejected 
-//          ${this.selectedValuestrainee.employeeName} Offer Letter`,
-//       empId: this.selectedValuestrainee.offerSentBy
-//     }
-//     this.subscription = this.http.postdata(`Notification`, senddata).subscribe({
-//       next: (data: any) => {
-//         console.log(data);
-       
-//         // window.location.reload();
-//       },
-//       error:(err:any)=>{
-//         console.log(err);
-        
-//       }
-//     })
-//   }
   //function to update the employee substatus
   updatetraineeemployeestatus(Value:any){
     console.log(Value.employeeId);
@@ -408,6 +380,7 @@ export class DocumentHistoryInternOfferLetterComponent {
          }
       })
     }
+
   //Function for Reject Email
   rejectTraineeEmail() {
     let loggedInUser = this.authService.getToken();
@@ -444,6 +417,7 @@ export class DocumentHistoryInternOfferLetterComponent {
     })
 
   }
+
   //function for reject notification
   Rejectnotification() {
     const currentDate = new Date();

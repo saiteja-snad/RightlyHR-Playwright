@@ -210,7 +210,8 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentCity" class="form-label custom-label mb-2">City<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="currentCity" formControlName="city"
+                        <input type="text" class="form-control custom-input" id="currentCity" formControlName="city" 
+                        
                             placeholder="Please enter city" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('currentAddress.city')?.invalid && personalDetailsForm.get('currentAddress.city')?.touched"
                             class="error-msg">
@@ -221,7 +222,8 @@
                         <label for="currentstate" class="form-label custom-label mb-2">State<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="currentState"
-                            placeholder="Please enter state" formControlName="state" autocomplete="off">
+                            placeholder="Please enter state" formControlName="state" autocomplete="off" 
+                            >
                         <div *ngIf="personalDetailsForm.get('currentAddress.state')?.invalid && personalDetailsForm.get('currentAddress.state')?.touched"
                             class="error-msg">
                             State is required
@@ -231,7 +233,8 @@
                         <label for="currentCountry" class="form-label custom-label mb-2">Country<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="currentCountry"
-                            placeholder="Please enter country" formControlName="country" autocomplete="off">
+                            placeholder="Please enter country" formControlName="country" autocomplete="off" 
+                            >
                         <div *ngIf="personalDetailsForm.get('currentAddress.country')?.invalid && personalDetailsForm.get('currentAddress.country')?.touched"
                             class="error-msg">
                             Country is required
@@ -240,12 +243,19 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentzipCode" class="form-label custom-label mb-2">Zip Code<span
                                 class="text-danger">*</span></label>
-                        <input type="number" class="form-control custom-input no-arrows" id="currentzipCode"
-                            placeholder="Please enter zip code" formControlName="zipCode" autocomplete="off">
-                        <div *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.invalid && personalDetailsForm.get('currentAddress.zipCode')?.touched"
-                            class="error-msg">
-                            Zip Code is required
-                        </div>
+                        <input type="text" class="form-control custom-input no-arrows" id="currentzipCode"
+                            placeholder="Please enter zip code" formControlName="zipCode" autocomplete="off" minlength="2"  maxlength="6">
+                            <div *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.touched && personalDetailsForm.get('currentAddress.zipCode')?.errors">
+                                <div class="error-msg" *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.hasError('required')">
+                                  Zip Code is required
+                                </div>
+                                <div class="error-msg" *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.hasError('minlength')">
+                                  Zip Code must be at least 2 digits
+                                </div>
+                                <div class="error-msg" *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.hasError('maxlength')">
+                                  Zip Code cannot exceed 6 digits
+                                </div>
+                              </div>
                     </div>
                 </ng-container>
 
@@ -288,7 +298,8 @@
                         <label for="permanentCity" class="form-label custom-label mb-2">City<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
-                            placeholder="Please enter city" autocomplete="off" />
+                            placeholder="Please enter city" autocomplete="off" 
+                            />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.city')?.invalid && personalDetailsForm.get('permanentAddress.city')?.touched"
                             class="error-msg">
                             City is required
@@ -298,7 +309,8 @@
                         <label for="permanentstate" class="form-label custom-label mb-2">State<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="permanentState"
-                            placeholder="Please enter state" formControlName="state" autocomplete="off">
+                            placeholder="Please enter state" formControlName="state" autocomplete="off" 
+                            >
                         <div *ngIf="personalDetailsForm.get('permanentAddress.state')?.invalid && personalDetailsForm.get('permanentAddress.state')?.touched"
                             class="error-msg">
                             State is required
@@ -308,7 +320,8 @@
                         <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="permanentCountry"
-                            placeholder="Please enter country" formControlName="country" autocomplete="off">
+                            placeholder="Please enter country" formControlName="country" autocomplete="off" 
+                            >
                         <div *ngIf="personalDetailsForm.get('permanentAddress.country')?.invalid && personalDetailsForm.get('permanentAddress.country')?.touched"
                             class="error-msg">
                             Country is required
@@ -317,12 +330,19 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentzipCode" class="form-label custom-label mb-2">Zip Code<span
                                 class="text-danger">*</span></label>
-                        <input type="number" class="form-control custom-input no-arrows" id="permanentzipCode"
-                            placeholder="Please enter zip code" formControlName="zipCode" autocomplete="off">
-                        <div *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.invalid && personalDetailsForm.get('permanentAddress.zipCode')?.touched"
-                            class="error-msg">
-                            Zip Code is required
-                        </div>
+                        <input type="text" class="form-control custom-input no-arrows" id="permanentzipCode"
+                            placeholder="Please enter zip code" formControlName="zipCode" autocomplete="off" minlength="2"  maxlength="6">
+                            <div *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.touched && personalDetailsForm.get('permanentAddress.zipCode')?.errors">
+                                <div class="error-msg" *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.hasError('required')">
+                                  Zip Code is required
+                                </div>
+                                <div class="error-msg" *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.hasError('minlength')">
+                                  Zip Code must be at least 2 digits
+                                </div>
+                                <div class="error-msg" *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.hasError('maxlength')">
+                                  Zip Code cannot exceed 6 digits
+                                </div>
+                              </div>
                     </div>
                 </ng-container>
             </div>

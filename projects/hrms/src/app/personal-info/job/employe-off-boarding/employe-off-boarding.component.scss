@@ -1,0 +1,29 @@
+.offBoarding-header{
+    font-size: 25px;
+    font-weight: 500;
+    text-align: center;  
+    color: #3f434a;
+  }
+  .off-heading-div{
+    justify-content: center;
+    text-align: center;
+    padding: 50px 0px;
+  }
+  .custom-card{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 100%;
+  }
+  
+  .card {
+    background-color: #fff; 
+    border: none; 
+    border-radius: 15px; 
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); 
+    padding: 80px 100px 24px;
+    width: 600px; 
+    max-width: 100%; 
+    
+    }

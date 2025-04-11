@@ -1,16 +1,10 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <p class="dashboard-text" (click)="navigateDashboard()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate}}
-                    <!-- <span class="dashboard-text"><i class="bi bi-reply-fill fa-1x me-2"></i>Dashboard -->
-                        <span
-                        class="ms-2">>></span> <span class="component-heading px-2">{{'Active Employees'|translate}}</span>
-                    </p>
-                    <!-- </span> -->
-                   <div>
-                  
-        </div>
+          <p class="dashboard-text" (click)="navigateDashboard()"><i class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'|
+            translate}}
+            <span class="ms-2">>></span> <span class="component-heading px-2">{{'Active Employees'|translate}}</span>
+          </p>
         </div>
         <div class="dropdown">
             <button type="button" class="custom-btn btn-primary"  aria-expanded="false">
@@ -58,10 +52,6 @@
                         <ng-template #fistname>
                           -
                         </ng-template></td>
-                      <!-- <td> <span *ngIf="act.emailaddress; else emailaddress"> {{act.emailaddress}}</span>
-                        <ng-template #emailaddress>
-                          -
-                        </ng-template></td> -->
                       <td><span *ngIf="act.workEmail;else workemail"> {{act.workEmail}}</span>
                         <ng-template #workemail>
                           -
@@ -70,7 +60,6 @@
                         <ng-template #contactnumb>
                           -
                         </ng-template></td>
-                     
                       <td>
                         <ng-container *ngIf="act?.jobDetails ; else noData">
                           <div *ngFor="let jobDetail of act.jobDetails; let first = first">

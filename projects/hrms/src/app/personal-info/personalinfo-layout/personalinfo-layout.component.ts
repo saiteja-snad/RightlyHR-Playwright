@@ -647,7 +647,12 @@ initialzerevoke() {
         this.headerName = "Employees"
     }
   }
+  navigation() {
+    localStorage.setItem("offBoardingemplist", JSON.stringify(this.emppersonalinfo));
 
+    this.router.navigate(['/personalinfo/job/employee-off-boarding']);
+
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

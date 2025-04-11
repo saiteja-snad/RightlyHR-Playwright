@@ -68,7 +68,7 @@
                             }
                         </td>
                         <td>
-                            {{ item.requestType?item.requestType:'NA' }}
+                            {{ item.requestType?item.requestType:item.recallStatus }}
                         </td>
                         <td>
                             {{item.status?item.status:'NA'}} 
@@ -88,10 +88,10 @@
                                   <i class="bi bi-repeat me-2 fs-5"></i>Recall
                                 </a>
                               </li>
-                              @if( item.recallStatus?.toLowerCase() !=
+                              @if( item.recallStatus.toLowerCase() !=
                               'earlyrelieving' &&
                             !recallandearlyrelievingbuttonConditions){
-                                       <li (click)="earlyReleivingdata(item)">
+                                       <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
                                     <a class="dropdown-item">
                                     <i class="bi bi-trash3 me-2"></i>Early relieving
                                        </a>
@@ -312,3 +312,61 @@
     </form>
   </div>
 </ng-template>
+
+<!-- modal strat to open the early relieving popup -->
+<ng-template #earlyrequestpopup let-modal>
+  <div class="p-5">
+    <div class="mt-4 mb-3">
+      <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img" />
+    </div>
+    <h4 class="text-center">
+      Request For Early Relieving
+    </h4>
+    <form [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
+      <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="Effective Date ">Early relieving date <span
+                        class="error-msg">*</span></label>
+                <input type="date" class="form-control custom-input" placeholder=""
+                    formControlName="earlyReleivingDate" id="Effective Date" (click)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)"  />
+                <small class="error-msg"
+                *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
+                    Early relieving Date
+                    is required </small>
+            </div>
+        </div>
+        <div class="col-md-12">
+          <div class="mb-3">
+            <label class="form-label custom-label mb-2">Reason for
+              early Relieving <span class="error-msg">*</span></label>
+            <textarea class="form-control custom-input" placeholder="Please provide early relieving reason...." name="Reason"
+              formControlName="earlyReleivingReason"></textarea>
+  
+            <div>
+              <span class="color">
+                {{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }} / 250
+              </span>
+              <div>
+                <small class="error-msg"
+                *ngIf="earlyReleivingform.get('earlyReleivingReason')?.invalid && recallreason.get('earlyReleivingReason')?.touched">
+                Reason for early relieving is required
+              </small>
+              </div>
+            
+          </div>
+        </div>
+        </div>
+    </div>
+      <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
+          Cancel
+        </button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+ <!-- modal end to open the early relieving popup -->

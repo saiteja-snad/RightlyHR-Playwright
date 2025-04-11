@@ -40,6 +40,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   postEarlyRelievingRequest={} as any;
   appover_comments = {} as any;
   recallreason!:FormGroup;
+  earlyReleivingform!:FormGroup;
   constructor(private authService: AuthService,private fb: FormBuilder,private http: HttpService,private router: Router,
     private conformationPopup: OpenModalService,private modalService: NgbModal,) {
     // Initialize any required services or dependencies here
@@ -53,6 +54,10 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   formInitialization(){
     this.recallreason = this.fb.group({
       recallReason: [null,[Validators.required,Validators.maxLength(250)]],
+    });
+    this.earlyReleivingform = this.fb.group({
+      earlyReleivingDate: [null,[Validators.required]],
+      earlyReleivingReason: [null,[Validators.required,Validators.maxLength(250)]],
     });
   }
   //function to get employee by id
@@ -158,7 +163,8 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       console.log(this.selectRecallrequest);
     }
     //function to select the data of early relieving request
-    earlyReleivingdata(data: any) {
+    earlyReleivingdata(data: any,content: any) {
+      this.modalService.open(content, { centered: true });
       this.postEarlyRelievingRequest = data;
       console.log(this.postEarlyRelievingRequest);
     }
@@ -169,7 +175,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       // id: this.selectRecallrequest.id,
       employeeId: this.selectRecallrequest.employeeId,
       appliedDate: currentDate,
-      description: this.selectRecallrequest.recallReason,
+      description: this.recallreason.get('recallReason')?.value,
       lastWorkingDate: this.selectRecallrequest.lastWorkingDate,
       noticePeriodDuration: 0,
       status: 'Recalled',
@@ -195,6 +201,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           console.log(res);
           if (res) {
             this.modalService.dismissAll();
+            this.recallreason.reset();
             this.conformationPopup.openSuccessModal('Recalled Request Raised successfully');
             this.fetchSeparationDetails();
           }
@@ -204,6 +211,62 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.conformationPopup.openErrorModal(err.error.message)
         },
       });
+  }
+  difference = 0
+  getBlockedFutureDate(lastWorkingDate: string): string {
+    let earlyrelievingdate=this.earlyReleivingform.get('earlyReleivingDate')?.value;
+    if (earlyrelievingdate && this.postEarlyRelievingRequest.appliedDate) {
+      const d1 = moment(this.postEarlyRelievingRequest.appliedDate);
+      const d2 = moment(earlyrelievingdate);
+      this.difference = d2.diff(d1, 'days') + 1;
+    } else {
+      this.difference = 0;
+    }
+  console.log('Difference in days:', this.difference);
+    const formattedDate = moment(lastWorkingDate).startOf('day').format('YYYY-MM-DD');
+    console.log('Formatted date:', formattedDate);
+    return formattedDate;
+  }
+  //function to raise the early relieving request
+  postEarlyrelieving() {
+    let currentDate =moment()
+    let payLoad = {
+      // id: this.selectRecallrequest.id,
+      employeeId: this.postEarlyRelievingRequest.employeeId,
+      appliedDate: currentDate,
+      description: this.earlyReleivingform.get('earlyReleivingReason')?.value,
+      lastWorkingDate: this.earlyReleivingform.get('earlyReleivingDate')?.value,
+      noticePeriodDuration: Math.round(this.difference),
+      status: 'Waiting for Approval',
+      recallStatus: 'EarlyRelieving',
+      comments: this.postEarlyRelievingRequest.comments,
+      recallReason: this.postEarlyRelievingRequest.recallReason,
+      isDeleted: false,
+      jobId: this.postEarlyRelievingRequest.jobId,
+      currentApprover: this.postEarlyRelievingRequest.currentApprover,
+      isEarlyRelieving: true,
+      isAcceptEarlyRelieving: this.postEarlyRelievingRequest.isAcceptEarlyRelieving,
+      earlyRelievingDate: this.earlyReleivingform.get('earlyReleivingDate')?.value,
+      parentId: this.postEarlyRelievingRequest.id,
+      reasonForEarlyRelieving: this.postEarlyRelievingRequest.reason,
+      moduleId: environment.SeparationrequestmoduleId
+    }
+    console.log(payLoad);
+
+    this.subscription = this.http.postdata(`SeparationRequests`, payLoad).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        if (res) {
+          this.modalService.dismissAll();
+          this.earlyReleivingform.reset();
+        this.conformationPopup.openSuccessModal('Early Relieving Request Raised successfully');
+          this.fetchSeparationDetails();
+        }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.message);
+      }
+    })
   }
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources

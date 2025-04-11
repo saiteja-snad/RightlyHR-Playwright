@@ -58,11 +58,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
   subdeparmentSingleobj: any;
   jobLocationDropDownData: any = [];
   JobroleDesignation = [] as IRole[];
-
+  showSaperationDots = true;
   teammangerid: any;
   getGradeid: any;
   selectedjobdetailesid={} as any;
   postSeparationRequest={} as any;
+  status: any
+  substatus: any
   constructor(private modalService: NgbModal,private authService:AuthService,private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
@@ -77,8 +79,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
     this.getjobLocationList();
     this.getJobDetails();
     this.getJobDesignation();
-   
-
+   this.getnoticePeriodData();
+   this.getSeparationRequest();
   }
 
   initializejobForm(): void {
@@ -651,6 +653,30 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
         return moment(data).format('YYYY-MM-DD');
       }
       return data;
+    }
+    //function to get the separation request details
+    getSeparationRequest() {
+      let EmployeeId = parseInt(this.empinfo.employeeId)
+      this.subscription = this.http.getData(`SeparationRequests/getbyemployeeId?Id=${EmployeeId}`).subscribe({
+        next: (data: any) => {
+          console.log(data);
+  
+          this.substatus = data.map((application: { status: any; }) => application.status.toLowerCase());
+          console.log(this.substatus);
+          const seperationStatus1 = [
+            'waiting for approval', 'approved', 'processed', 'early relieving processed', 'extended'
+          ];
+          this.status = seperationStatus1.some((value) =>
+            this.substatus.includes(value),
+          );
+          this.checkStatus();
+        }
+      })
+    }
+    checkStatus() {
+      if (this.status) {
+        this.showSaperationDots = false;
+      }
     }
     //function to get the notice period duration
 

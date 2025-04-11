@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -15,7 +15,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
-export class BasicInfoComponent {
+export class BasicInfoComponent implements OnInit,OnDestroy{
   basicInfoForm!: FormGroup;
   subscription!: Subscription
   emsployedata: any
@@ -192,6 +192,12 @@ export class BasicInfoComponent {
     } else {
       // Disable the form when the user clicks "Close"
       this.basicInfoForm.disable();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
     }
   }
 }

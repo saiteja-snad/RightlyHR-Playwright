@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { HttpService } from '../../../services/http.service';
@@ -16,7 +16,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })
-export class IdentityDetailsComponent implements OnInit {
+export class IdentityDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   unmatchedIdentityDetails: any = [];
   displayidentiydocument:any
@@ -313,5 +313,9 @@ export class IdentityDetailsComponent implements OnInit {
         }
       });
   }
-  
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

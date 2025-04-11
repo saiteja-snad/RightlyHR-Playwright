@@ -833,3 +833,127 @@ input[type="file"] {
     font-size: var(--fontsize16);
     line-height: 16px;
 }
+
+
+//text-area count
+.textarea-container {
+    position: relative;
+    margin-bottom: 1rem;
+    .character-count {
+        font-size: 0.875rem;
+        color: #6c757d;
+        text-align: right;
+      } 
+  }
+  
+  .main-settings-layout {
+    border: 1px solid #CCDAEC;
+    border-radius: 0.8rem;
+}
+
+.custom-settings-add-input {
+    max-width: 40rem;
+    border-radius: 0.8rem;
+    border: 0.5px solid #CCDAEC;
+
+    .custom-input {
+        border: none !important;
+    }
+
+    .input-group-text {
+        padding: 0px !important;
+        border: none;
+    }
+}
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.settings-common-icon {
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+}
+
+.custom-settings-data-table {
+    width: 50rem;
+
+    td {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        padding: 1rem;
+        color: #305889;
+        border-bottom: 1px solid #E8E8E8;
+    }
+}
+
+.confirmation-icon {
+    width: 5rem;
+}
+
+.confirmation-text {
+    font-weight: 500;
+    font-size: var(--fontsize20);
+    line-height: 30px;
+    color: #06274F;
+}
+
+//stylesfor expenses
+.custom-table {
+    width: 100%;
+    overflow: auto;
+    background-color: #FFFFFF;
+    border: 1px solid #E7E7ED;
+    border-radius: 1.2rem;
+    position: relative;
+
+ 
+    thead {
+        top: 0%;
+        position: sticky;
+        z-index: 1;
+    }
+
+    th,
+    td {
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        padding: 1.6rem;
+    }
+
+    th {
+        background-color: var(--table-header-bg-color);
+        color: var(--table-header-color);
+        text-wrap: nowrap;
+        text-transform: uppercase;
+    }
+
+    th:first-child {
+        border-top-left-radius: 1.2rem;
+    }
+
+    th:last-child {
+        border-top-right-radius: 1.2rem;
+    }
+
+    tr:nth-child(even) {
+        background-color: var(--table-data-bg-even-color);
+    }
+
+}
+
+.expenses-title-text {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: #222B45;
+}

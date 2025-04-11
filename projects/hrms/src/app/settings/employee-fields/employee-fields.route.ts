@@ -1,5 +1,8 @@
 import { Route, } from '@angular/router';
 import { SalutationComponent } from './personal/salutation/salutation.component';
+import { ExpensesConfigurationComponent } from './employee-fields-layout/expenses-configuration/expenses-configuration.component';
+import { Component } from '@angular/core';
+import { ExpensesAllowedDaysComponent } from './employee-fields-layout/expenses-configuration/expenses-allowed-days/expenses-allowed-days.component';
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal/salutation', pathMatch: 'full' },
@@ -36,4 +39,21 @@ export default [
             { path: 'serving-period', loadComponent: () => import('./job/serving-period/serving-period.component').then((m) => m.ServingPeriodComponent)},
         ]   
     },
+    {
+        path: 'expenes-configuartion',
+        children: [
+            { path: '', redirectTo: 'expenes-configuartion', pathMatch: 'full' },
+            {
+                path: 'expenes-configuartion',
+                component: ExpensesConfigurationComponent
+            },
+            {
+                path: 'expenes-allowed-days',
+                loadComponent: () =>
+                    import('./employee-fields-layout/expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then(
+                        (m) => m.ExpensesAllowedDaysComponent
+                    )
+            }
+        ]
+    }
 ] as Route[];

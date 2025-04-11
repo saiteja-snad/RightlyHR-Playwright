@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +15,7 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss'
 })
-export class ContactDetailsComponent {
+export class ContactDetailsComponent implements OnInit,OnDestroy {
 
   contactForm!: FormGroup;
 subscription!:Subscription
@@ -245,5 +245,10 @@ disableForm(): void {
 
   showButtons() {
     this.buttons = !this.buttons
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

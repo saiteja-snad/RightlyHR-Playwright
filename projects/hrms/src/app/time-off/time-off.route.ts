@@ -45,6 +45,9 @@ import { AssessmentformComponent } from './pending-approvals/assessmentform/asse
 import { SeparationForYouRequestComponent } from './pending-approvals/separation-for-you-request/separation-for-you-request.component';
 import { SeparationRequestComponent } from './separation-request/separation-request.component';
 import { SeparationForYourRoleRequestComponent } from './pending-approvals/separation-for-your-role-request/separation-for-your-role-request.component';
+import { RecallForYouRequestComponent } from './pending-approvals/recall-for-you-request/recall-for-you-request.component';
+import { RecallForYourRoleRequestComponent } from './pending-approvals/recall-for-your-role-request/recall-for-your-role-request.component';
+import { RecallRequestsComponent } from './pending-approvals/recall-requests/recall-requests.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -165,6 +168,15 @@ export default [
            { path: 'separation-for-you',component: SeparationForYouRequestComponent, },
           { path: 'separation-for-role', component: SeparationForYourRoleRequestComponent,},
           { path: '', redirectTo: 'separation-for-you', pathMatch: 'full' },
+        ],
+      },
+      {
+        path: 'recall-request',
+        component: RecallRequestsComponent,
+        children: [
+           { path: 'recall-for-you',component: RecallForYouRequestComponent, },
+          { path: 'recall-for-role', component: RecallForYourRoleRequestComponent,},
+          { path: '', redirectTo: 'recall-for-you', pathMatch: 'full' },
         ],
       },
       { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section

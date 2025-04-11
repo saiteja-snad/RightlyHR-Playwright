@@ -13,10 +13,12 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { environment } from '../../../environments/environment.dev';
+import { OpenModalService } from '../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-leaves',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, LeavesApprovaltabsComponent,RouterModule,ReactiveFormsModule],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, LeavesApprovaltabsComponent,RouterModule,ReactiveFormsModule,TranslateModule],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss'
 })
@@ -151,7 +153,7 @@ export class LeavesComponent {
       this.mm = false;
     }
   }
-  constructor(private http: HttpService,private modalService: NgbModal,private authService: AuthService,private fb: FormBuilder) {}
+  constructor(private http: HttpService, private conformationPopup: OpenModalService,private modalService: NgbModal,private authService: AuthService,private fb: FormBuilder) {}
 
   openModal(content: any) {
     this.modalService.open(content, {centered: true,backdrop: 'static'});
@@ -162,7 +164,7 @@ export class LeavesComponent {
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
       availing: [{value : '',disabled: true}, Validators.required, ], 
-      reason: ['', [Validators.required, Validators.minLength(150)]]
+      reason: ['', [Validators.required]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
@@ -178,8 +180,7 @@ export class LeavesComponent {
     } else {
       this.leaveForm.get('halfDay')?.disable();
       this.leaveForm.get('availing')?.disable();
-      this.leaveForm.get('halfDay')?.setValue('');
-      this.leaveForm.get('halfDayType')?.disable();
+     
     }
   }
 
@@ -1185,7 +1186,7 @@ export class LeavesComponent {
   onSubmit() {
       console.log('Starting leave submission process...');
       this.isSubmitted = true;
-      if (this.leaveForm.invalid) {
+      if (!this.leaveForm.invalid) {
         this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
         let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
         this.leaveFormData.status = "Waiting for Approval";
@@ -1342,29 +1343,23 @@ export class LeavesComponent {
               console.log('Leave submitted successfully.');
               console.log('Start date:', this.startDate);
               console.log('End date:', this.endDate);
-              const modalElement = document.getElementById('successhide');
-              if (modalElement) {
-                modalElement.classList.add('show');
-                modalElement.style.display = 'block';
-                this.Status = 'Leave submitted successfully';
-              }
-              setTimeout(function () {
-                location.reload();
+              this.conformationPopup.openSuccessModal(
+                'Leave submitted successfully');
+              setTimeout( () => {
+                this.modalService.dismissAll();
+                this.leaveForm.reset();
               }, 2000);
             }
           },
           error: (err: any) => {
             console.error('Error occurred while submitting leave:', err);
-            const modalElement = document.getElementById('successhide1');
-            if (modalElement) {
-              modalElement.classList.add('show');
-              modalElement.style.display = 'block';
-              this.Status = err.error.message;
-            }
+            this.conformationPopup.openErrorModal(
+              err.error.message);
             this.isSubmitted = false;
           }
         });
-      } else {
+      } 
+      else {
         console.warn('Maximum leave limit reached for this category.');
         const modalElement = document.getElementById('successhide1');
         if (modalElement) {

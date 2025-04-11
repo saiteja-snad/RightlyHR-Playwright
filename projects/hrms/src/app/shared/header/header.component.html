@@ -1,29 +1,32 @@
 <div class="header-main-container">
-    <div class="d-flex justify-content-between ">
-        <div class="d-flex justify-content-center align-items-center">
-            <div *ngIf="isActive('time-off')">
-                <app-time-off-tabs/>
-            </div>
-            <div *ngIf="isActive('claimsandexpenses/expenses')">
-                <app-my-expenses-tab/>
-            </div>
-            <div *ngIf="isActive('myinfo')">
-                <app-myinfo-header-tabs/>
-            </div>
-            <div *ngIf="isActive('personalinfo')">
-                <app-personalinfo-header-tabs/>
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="left-content">
+            <div>
+                <div *ngIf="isActive('time-off')">
+                    <app-time-off-tabs />
+                </div>
+                <div *ngIf="isActive('claimsandexpenses/expenses')">
+                    <app-my-expenses-tab />
+                </div>
+                <div *ngIf="isActive('myinfo')">
+                    <app-myinfo-header-tabs />
+                </div>
+                <div *ngIf="isActive('personalinfo')">
+                    <app-personalinfo-header-tabs />
+                </div>
             </div>
         </div>
-        <div class="d-flex gap-5">
+
+        <div class="d-flex right-content">
             <div class="dropdown cursor">
                 <a class="custom-notification-btn position-relative" data-bs-toggle="dropdown">
                     <i class="bi bi-bell header-icon"></i>
                     <span class="position-absolute translate-middle badge rounded-pill bg-danger">99+</span>
                 </a>
-                <ul class="dropdown-menu custom-notification-menu p-4">
+                <ul class="dropdown-menu custom-notification-menu p-3">
                     <!--No notification Data-->
                     <div class="">
-                        <div class="d-flex justify-content-between notification-details-header mb-5">
+                        <div class="d-flex justify-content-between notification-details-header mb-4">
                             <div>
                                 <p class="mb-0"><i class="bi bi-dot me-1"></i>All</p>
                             </div>
@@ -31,9 +34,9 @@
                                 <a><u>Clear All</u></a>
                             </div>
                         </div>
-                        <div *ngFor="let event of events" class="d-flex gap-4 px-4 mb-4">
+                        <div *ngFor="let event of events" class="d-flex align-items-center gap-3 px-3 mb-3">
                             <!-- Circle Icon with Color -->
-                            <div class="pt-3">
+                            <div>
                                 <i class="bi bi-circle-fill" [ngClass]="getEventClass(event.type)"></i>
                             </div>
                             <!-- Event Details -->
@@ -57,11 +60,12 @@
 
             <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image" class="profile-img cursor">
+                    <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
+                        class="profile-img cursor">
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                    <li><a class="dropdown-item" [routerLink]="['/admin/active-new-user']"
-                            routerLinkActive="active"><i class="bi bi-envelope-plus me-2"></i>Invite New User</a>
+                    <li><a class="dropdown-item" [routerLink]="['/admin/active-new-user']" routerLinkActive="active"><i
+                                class="bi bi-envelope-plus me-2"></i>Invite New User</a>
                     </li>
                     <li><a class="dropdown-item" [routerLink]="['/admin/letters/bank-loan-letterr']"
                             routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>View Profile</a>

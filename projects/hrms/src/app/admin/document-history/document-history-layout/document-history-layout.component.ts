@@ -4,6 +4,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { DocumentHistoryOfferLetterComponent } from "../document-history-offer-letter/document-history-offer-letter.component";
 import { DocumentHistoryInternOfferLetterComponent } from "../document-history-intern-offer-letter/document-history-intern-offer-letter.component";
 import { DocumentHistoryAppointmentLetterComponent } from "../document-history-appointment-letter/document-history-appointment-letter.component";
+
 @Component({
   selector: 'app-document-history-layout',
   imports: [CommonModule, NgbNavModule, DocumentHistoryOfferLetterComponent, DocumentHistoryInternOfferLetterComponent, DocumentHistoryAppointmentLetterComponent],

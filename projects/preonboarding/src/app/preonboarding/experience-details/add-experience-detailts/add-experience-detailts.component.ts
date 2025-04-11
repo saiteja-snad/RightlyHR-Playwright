@@ -145,7 +145,7 @@ export class AddExperienceDetailtsComponent {
       this.subscription = this.http.postData("PreonboardingExperience", finalPayload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.openPopup.openSuccess("Data Added Successfully!");
+          this.openPopup.openSuccess("Data Added Successfully");
           this.getData.getExperience.set(true);
           this.experienceForm.reset();
         },

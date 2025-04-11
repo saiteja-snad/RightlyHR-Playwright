@@ -67,7 +67,8 @@ export class AppointmentLetterComponent {
   employeeaddress = [] as any;
   panDetails: any;
   address = {} as IAddress;
-  
+  Status: any;
+  employeeForm!: FormGroup;
   SelectDropDown = [
     { name: 'Current Address', code: 'C' },
     { name: 'Permanent Address', code: 'P' }
@@ -76,12 +77,11 @@ export class AppointmentLetterComponent {
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-  @ViewChild('success') success: any;
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
-  @HostListener('document:click', ['$event.target'])
-  Status: any;
-  employeeForm!: FormGroup;
+  // @ViewChild('success') success: any;
+  // @ViewChild('successhide') private readonly successhide!: NgbModal;
+  // @ViewChild('errorhide') private readonly errorhide!: NgbModal;
+  // @HostListener('document:click', ['$event.target'])
+  
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
@@ -132,22 +132,22 @@ export class AppointmentLetterComponent {
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
+  // dataSuccessMsg(msg: string) {
+  //   this.Status = msg;
+  //   this.openmodel(this.successhide);
+  //   setTimeout(() => {
+  //     this.modalService.dismissAll();
+  //   }, 2000);
 
-  }
+  // }
 
-  dataFailureMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.errorhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
+  // dataFailureMsg(msg: string) {
+  //   this.Status = msg;
+  //   this.openmodel(this.errorhide);
+  //   setTimeout(() => {
+  //     this.modalService.dismissAll();
+  //   }, 2000);
+  // }
   
   getAssertType() {
     this.subscription = this.http.getData(`AssetType`).subscribe({
@@ -185,7 +185,7 @@ export class AppointmentLetterComponent {
 
 
   Onclick(fusionemployeeId: any) {
-    this.fusionEmployeeId = fusionemployeeId;
+    this.fusionEmployeeId = fusionemployeeId.value;
     console.log(fusionemployeeId);
     this.appointmentletter = {}
     this.appointmentletter = this.employeeiddetails.find(
@@ -403,7 +403,7 @@ export class AppointmentLetterComponent {
           this.employeeJobDetails = res;
           console.log(this.employeeJobDetails);
 
-          Employee.jobRole = res.jobRole;
+          Employee.jobRole = res?.jobRole;
 
           Employee.workLocation = res.lopcation;
           Employee.subLocation = res.subLocation;

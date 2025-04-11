@@ -71,6 +71,11 @@
    "Department":"Department",
    "OvertimeDetail is required":"OvertimeDetail is required",
    "Edit Overtime":"Edit Overtime",
-   "Overtime":"Overtime"
+   "Overtime":"Overtime",
+   "Edit Jobtype":"Edit Jobtype",
+   "Jobtype":"Jobtype",
+   "Grade Name":"Grade Name",
+   "Jobrole Name is required":"Jobrole Name is required",
+   "Edit Frequency":"Edit Frequency"
 
 }

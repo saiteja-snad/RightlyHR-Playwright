@@ -49,6 +49,14 @@ attachment_url: any;
 
     ExpenseApproverComment: ExpenseApproverComment[];
   }
+  export interface IExpenses{
+    item_expense: any;
+        expenseId: number;
+        Selectedfield: any;
+        expensesCode:string;
+        expenseType:string;
+        isdeleted:string;
+    }
   
   export interface ExpenseApproverComment {
     id: number;

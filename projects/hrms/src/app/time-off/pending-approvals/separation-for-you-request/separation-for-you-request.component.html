@@ -12,74 +12,119 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Employee Name</th>
-                        <th>Employee ID</th>
-                        <th>Department</th>
-                        <th>Team</th>
-                        <th>Designation</th>
-                        <th class="nowrap">Raised Date</th>
-                        <th>Last Working Day</th>
-                        <th>Early Relieving Day</th>
-                        <th>Separation Reason</th>
-                        <th>Early Relieving Reason</th>
-                        <th>Request Type</th>
-                        <th>Approver History</th>
-                        <th>Action(s)</th>
+                        <th class="text-nowrap">Employee Name</th>
+                        <th class="text-nowrap">Employee ID</th>
+                        <th class="text-nowrap">Department</th>
+                        <th class="text-nowrap">Team</th>
+                        <th class="text-nowrap">Designation</th>
+                        <th class="text-nowrap">Raised Date</th>
+                        <th class="text-nowrap">Last Working Day</th>
+                        <th class="text-nowrap">Early Relieving Day</th>
+                        <th class="text-nowrap">Separation Reason</th>
+                        <th class="text-nowrap">Early Relieving Reason</th>
+                        <th class="text-nowrap">Request Type</th>
+                        <th class="text-nowrap">Approver History</th>
+                        <th class="text-nowrap">Action(s)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>10410</td>
-                        <td>Jhon Doe</td>
-                        <td>Levae</td>
-                        <td>1</td>
-                        <td>Full Day</td>
-                        <td>20/3/2027</td>
-                        <td>20/3/2027</td>
-                        <td>20/3/2027</td>
-                        <td>
-                            <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">Feaver </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">Feaver </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu py-0">
-                                    <li (click)="openModal(approval)"><a class="dropdown-item"><i
-                                                class="bi bi-check-circle me-2"></i>Approve</a></li>
-                                    <li   (click)="openModal(rejectmodal)"><a class="dropdown-item"><i class="bi bi-x-circle me-2"
-                                              ></i>Reject</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
+                    @if(((separation_For_You_Details | async) ?? []).length > 0) {
+                    
+                                <tr *ngFor="let item of separation_For_You_Details|async">
+                            @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval' ||item.approvalHeader?.status?.toLowerCase() =='approved'){
 
+                                    <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
+                                    <td> {{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
+                                    <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
+                                    <td> {{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
+                                    <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
+                                    <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}</td>
+                                    <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}</td>
+                                    <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
+                                    <td>
+                                        @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
+                                            <div>
+                                                <span>
+                                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                                    </a>
+                                                    <ng-template #reason>
+                                                        <div>
+                                                            <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
+                                                        </div>
+                                                    </ng-template>
+                                                </span>
+                                            </div>
+                                        }
+                                       @else {
+                                        -
+                                       }
+                                    </td>
+                                    <td>
+
+                                        @if(item.entity?.spEarlyRelievingReason){
+                                            <div>
+                                                <span>
+                                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                                    </a>
+                                                    <ng-template #reason>
+                                                        <div>
+                                                            <p class="mb-0">{{item.entity?.spEarlyRelievingReason}} </p>
+                                                        </div>
+                                                    </ng-template>
+                                                </span>
+                                            </div>
+                                        }
+                                       @else {-}
+                                    </td>
+                                    <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
+                                    <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
+                                        <div>
+                                            <span>
+                                                <a type="button" (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
+                                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                                </a>
+                                            
+                                            </span>
+                                        </div>
+                                    }
+                                    @else{-}
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <a type="button" data-bs-toggle="dropdown">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </a>
+                                            <ul class="dropdown-menu py-0">
+                                                @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
+                                                    <li (click)="openModal(approval);handleRequest(item)"><a class="dropdown-item"><i
+                                                        class="bi bi-check-circle me-2"></i>Approve</a></li>
+                                                }
+                                               
+                                                            @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage)||(item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
+                                                                <li   (click)="openModal(rejectmodal);handleRequest(item)"><a class="dropdown-item"><i class="bi bi-x-circle me-2"
+                                                                    ></i>Reject</a></li>
+                                                            }
+                                               
+                                                          @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
+                                                            <li (click)="openModal(processmodal);handleRequest(item)"><a class="dropdown-item"><i
+                                                                class="bi bi-check-circle me-2"></i>Process</a></li>
+                                                          }
+                                                         
+                                            </ul>
+                                        </div>
+                                    </td>
+                                }
+                                </tr>
+                }
+                @else{
+                    <tr>
+                      <td>
+                        <app-no-data-found />
+                      </td>
+                    </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -116,30 +161,180 @@
             <div class="d-flex justify-content-center align-items-center mt-3">
                 <h4 class="text-center">Are you sure you want to approve this request?</h4>
             </div>
-            <form action="">
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reason
-                            <span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter reason"></textarea>
-                    </div>
+            <form name="acceptForm" class="ps-5 mb-3 w-100" #acceptForm="ngForm"
+            (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
+                <div class="col-11">
+                    @if(selectedSpRequestData.spIsEarlyRelieveing){
+                        <div class="mb-3 mt-3 text-center">
+                            <label class="text-center"><b>The employee has opted for an early Relieving!</b></label>
+                          </div>
+                    }
+                      @if(selectedSpRequestData.spearlyReliveingDate){
+                        <div class="mb-3 ps-3">
+                            <label>Are you willing to accept an early Relieving?</label>
+                            <div class="form-check">
+                                <input type="hidden"
+                                    [value]="selectedSpRequestData.spMangerEarlyreliveingDate ? 'true' : 'false'"
+                                    name="isreliving">
+                                <input class="form-check-input " type="checkbox" id="earlyrelieving" name="earlyrelieving"
+                                    [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" #isaccept="ngModel"
+                                    (click)="toggleEarly()"
+                                    (ngModelChange)="extendCondition(selectedSpRequestData.spIsAcceptEarlyrelievingcheck)">
+                                <label class="form-check-label me-2" for="relieving">
+                                    Yes
+                                </label>
+                            </div>
+                          </div>
+                      }
+                      @if(!selectedSpRequestData.spIsAcceptEarlyrelievingcheck){
+                        <div class="form-outline p-2 mb-1 ps-3 d-flex align-items-center">
+                            <div class="form-check form-check-inline ">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
+                                    (click)="toggleRegular()">
+                                <label class="form-check-label ms-2" for="flexRadioDiscontinue">Regular</label>
+                            </div>
+                            <div class="form-check form-check-inline ms-3">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioEarly"
+                                    [checked]="selectedRadio === 'early'" (click)="toggleEarly()">
+                                <label class="form-check-label ms-2" for="flexRadioEarly">Early Relieving</label>
+                            </div>
+                            <div class="form-check form-check-inline ms-3">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
+                                    (click)="toggleExtend()">
+                                <label class="form-check-label ms-2" for="flexRadioExtend">Extend</label>
+                            </div>
+                          </div>
+                          
+                      }
+                    
+                  <!-- Early Relieving Section -->
+                   @if(early){
+                    <div class="mb-3">
+                        <label>Early Relieving Date <span class="error-msg">*</span></label>
+                        <input type="date" class="form-control custom-input" id="Earlyreleiving" name="Earlyreleiving"
+                        [min]="getBlockedPastDate(selectedSpRequestData.spRequestAppliedDate)"
+                        #Earlyreleiving="ngModel" autocomplete="off" (keypress)="letters($event)"
+                        [max]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"
+                        [(ngModel)]="this.selectedSpRequestData.spMangerEarlyreliveingDate"
+                        (change)="earlyRelievingValidationCheck()">
+                      </div>
+                   }
+                
+              @if(early){
+                <div class="mb-3 mt-2">
+                    <label>Comments <span class="error-msg">*</span></label>
+                    <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
+                    placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
+                    #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
+                    required></textarea>
+                <div>
+                    <span
+                        class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
+                        /250</span>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2"> Approval
-                            Comments<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter approval comments"></textarea>
+                <small class="error-msg"
+                    *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptForm.submitted) ">
+                    Comments is required</small>
+                  </div>
+              }
+                  <!-- Extend Section -->
+                   @if(extend){
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Extend Date<span
+                                class="error-msg">*</span>
+                        </label>
+                        <input class="form-control custom-input" type="date" aria-label="Default select example" id="extenddate"
+                            placeholder="" name="extenddate" #extenddate="ngModel"
+                            [min]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"
+                            (keypress)="letters($event)" [(ngModel)]="selectedSpRequestData.extenddate" required
+                            [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
+                        <small class="error-msg"
+                            *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && acceptForm.submitted)">Extend
+                            date is required
+                        </small>
+                        <small class="error-msg" *ngIf="!isempeffectivevaild">Extend Date
+                            cannot be
+                            less than Training End date</small>
+                    </div>
+                   }
+                @if(extend){
+                    <div class="mb-3 mt-2" >
+                        <label>Feedback for Extend <span class="error-msg">*</span></label>
+                        <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
+                        placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
+                        [(ngModel)]="selectedSpRequestData.comments" maxlength="250"
+                        required rows="3"></textarea>
+                    <div>
+                        <span
+                            class="color">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}
+                            /250</span>
+                    </div>
+
+                    <small class="error-msg"
+                        *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted) || (Extendreason.errors?.['pattern']) ">
+                        Feedback for Extend is required</small>
+                      </div>
+                }
+              
+                 
+              
+                  <!-- Regular Section -->
+               @if(regular){
+                <div class="col-md-11">
+                    <div class="mb-3" >
+                        <label for="Effective Date ">Last Working Date <span class="redstar"></span></label>
+                        <div class="form-control  custom-input"> {{
+                            selectedSpRequestData?.spRequestLastWorkingDate | dateformat }}
+                        </div>
+                        <small class="error-msg" *ngIf="!islastworking">Last working day should be after the
+                            date of joining</small>
+                        <div>
+                            <small class="error-msg" *ngIf="!lastworkingValidation">Last working day should be after the
+                                current date</small>
+                        </div>
+
+                    </div>
+                    <div class="mb-3" >
+                        <label for="Descriptiondetails" type="Notes">Comments <span class="redstar">*</span></label>
+                        <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
+                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
+                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
+                         required></textarea>
+                    <div>
+                        <span
+                            class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
+                            /250</span>
+                    </div>
+
+                    <small class="error-msg"
+                        *ngIf="(comments.touched && comments.invalid) || (comments.invalid && acceptForm.submitted)">
+                        Comments is required </small>
                     </div>
 
                 </div>
-                <div class="d-flex justify-content-center gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-                    <button type="submit" class="custom-btn btn-primary">Yes</button>
+                 }
+                  
                 </div>
-            </form>
+              
+                <!-- Buttons -->
+                <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+                  <button type="button" class="custom-btn btn-secondary" (click)="resetForm();modal.dismiss()" >{{'Cancel'|translate}}</button>
+                  <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid||isLoading">
+                    @if(!isLoading){
+                    {{'Approve'|translate}}
+                    }
+                    @else {
+                    <div class="d-flex">
+                      <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                      </div>
+                      <div> {{'Submitting'|translate}}</div>
+                    </div>
+                    }
+                  </button>
+                
+                </div>
+              </form>
         </div>
     </div>
 </ng-template>
@@ -157,30 +352,344 @@
             <div class="d-flex justify-content-center align-items-center mt-3">
                 <h4 class="text-center">Are you sure you want to reject this request?</h4>
             </div>
-            <form action="">
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reason
-                            <span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter reason"></textarea>
+            <form name="Separationrequestrejected" class="ps-5 w-100" #Separationrequestrejected="ngForm"
+            (ngSubmit)="Separationrequestrejected.valid && handleReject(Separationrequestrejected)">
+            <div class="col-11 ">
+                <div class="mb-3 mt-2">
+                    <label for="exampleFormControlTextarea1" class="form-label labell">Enter reason<span
+                            class="error-msg">*</span></label>
+                    <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
+                        placeholder="Please enter reason" name="notes" #notes="ngModel" [maxLength]="250"
+                        [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
+                    <div>
+                        <span  class="color">{{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250</span>
                     </div>
+                    <small class="error-msg"
+                        *ngIf="(notes.touched && notes.invalid) || (notes.invalid && Separationrequestrejected.submitted) || (notes.errors?.['pattern']) ">
+                        Reason is required</small>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2"> Approval
-                            Comments<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter approval comments"></textarea>
-                    </div>
-
-                </div>
-                <div class="d-flex justify-content-center gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-                    <button type="submit" class="custom-btn btn-primary">Yes</button>
-                </div>
-            </form>
+            </div>
+            <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    type="reset"> {{'Cancel'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="Separationrequestrejected.invalid||isLoading">
+                        @if(!isLoading){
+                        {{'Approve'|translate}}
+                        }
+                        @else {
+                        <div class="d-flex">
+                          <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                          </div>
+                          <div> {{'Submitting'|translate}}</div>
+                        </div>
+                        }
+                      </button>
+            </div>
+        </form>
         </div>
     </div>
+</ng-template>
+
+<ng-template #processmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+
+        <div class="custom-main-popup-content p-5">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="icons\succes.png" alt="succues" class="succes-icon">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <h4 class="text-center">Are you sure you want to approve this request?</h4>
+            </div>
+            <form name="acceptFormforprocess" class="ps-5 mb-3 w-100" #acceptFormforprocess="ngForm"
+            (ngSubmit)="acceptFormforprocess.valid && handleProcess(acceptFormforprocess)">
+            <div class="col-11">
+                <div class="mb-3 mt-3 text-center" *ngIf="selectedSpRequestData.spIsEarlyRelieveing">
+                    <label class="text-center "><b>The employee has opted for an early Relieving!</b></label>
+                </div>
+                <div class="mb-3 ps-3" *ngIf="selectedSpRequestData.spIsEarlyRelieveing">
+                    <label for="Effective Date ">Are you willing to accept an early Relieving? <span
+                            class="redstar"></span></label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="relieving" name="isreliving"
+                            [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck"
+                            (click)="toggleEarly()">
+                        <label class="form-check-label me-2" for="relieving">Yes</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="Effective Date ">Salary Hold <span class="error-msg">*</span></label>
+                    <select class="form-select custom-input" aria-label="Default select example" id="holdsalary"
+                        #issalaryhold="ngModel" [(ngModel)]="selectedSpRequestData.spsalaryhold" name="holdsalary"
+                        required>
+                        <option [ngValue]="undefined" disabled>Select</option>
+                        <option [ngValue]="true">Yes</option>
+                        <option [ngValue]="false">No</option>
+                    </select>
+                    <small class="error-msg"
+                        *ngIf="(issalaryhold.touched && issalaryhold.invalid) || (issalaryhold.invalid && acceptFormforprocess.submitted)">
+                        <span *ngIf="issalaryhold.errors?.['required']">Salary Hold is required</span>
+
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <label for="notice Type">Notice Period type <span class="error-msg"></span></label>
+                    <select class="form-select custom-input" aria-label="Default select example" id="noticetype"
+                        name="noticetype" #noticetype="ngModel" [(ngModel)]="selectedSpRequestData.noticperiodType">
+                        <option [ngValue]="null">Select</option>
+                        <option [ngValue]="'Notice Period Recovery'">Notice Period Recovery</option>
+                        <option [ngValue]="'Notice Period Payable'">Notice Period Payable</option>
+                    </select>
+                </div>
+                <div class="mb-3"
+                    *ngIf="selectedSpRequestData.noticperiodType=='Notice Period Recovery' ||selectedSpRequestData.noticperiodType=='Notice Period Payable' ">
+                    <label for="noticperioddays">{{selectedSpRequestData.noticperiodType}} Days<span
+                            class="error-msg">*</span></label>
+                    <input type="number" class="form-control custom-input" id="noticperioddays" name="noticperioddays"
+                        #noticperioddays="ngModel" autocomplete="off" min="0" max="365" placeholder="Notice Days"
+                        [(ngModel)]="selectedSpRequestData.noticperioddays" required>
+                    <small class="error-msg"
+                        *ngIf="(noticperioddays.touched && noticperioddays.invalid) || (noticperioddays.invalid && acceptFormforprocess.submitted)">
+                        <span *ngIf="noticperioddays.errors?.['required']">Notice Period Days is required</span>
+                        <span *ngIf="noticperioddays.errors?.['min']">Notice Period Days Minimum value should be
+                            0</span>
+                        <span *ngIf="noticperioddays.errors?.['max']">Notice Period Days Maximum value should be
+                            365</span>
+                    </small>
+                </div>
+            </div>
+            <div class="form-outline p-2 mb-1 d-flex align-items-center"
+                *ngIf="selectedSpRequestData.spIsAcceptEarlyrelievingcheck!=true">
+                <div class="form-check form-check-inline ">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
+                        (click)="toggleRegular()">
+                    <label class="form-check-label ms-2" for="flexRadioDiscontinue">Regular</label>
+                </div>
+                <div class="form-check form-check-inline ms-3">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioEarly"
+                        [checked]="selectedRadio === 'early'" (click)="toggleEarly()">
+                    <label class="form-check-label ms-2" for="flexRadioEarly">Early Relieving</label>
+                </div>
+                <div class="form-check form-check-inline ms-3">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
+                        (click)="toggleExtend()">
+                    <label class="form-check-label ms-2" for="flexRadioExtend">Extend</label>
+                </div>
+
+            </div>
+            <div class="col-11">
+                <div class="mb-3" *ngIf="early">
+                    <label for="exampleFormControlInput1" class="form-label">Early Relieving Date<span
+                            class="error-msg">*</span>
+                    </label>
+                    <input type="date" class="form-control custom-input" id="Earlyreleiving" name="Earlyreleiving"
+                        [min]="getBlockedPastDate(selectedSpRequestData.spRequestAppliedDate)"
+                        #Earlyreleiving="ngModel" autocomplete="off" (keypress)="letters($event)"
+                        [max]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"
+                        [(ngModel)]="this.selectedSpRequestData.spMangerEarlyreliveingDate"
+                        (change)="earlyRelievingValidationCheck()">
+                </div>
+                <div class="mb-3 mt-2" *ngIf="early">
+                    <label for="exampleFormControlTextarea1" class="form-label ">Reason for Early Relieving<span
+                            class="error-msg">*</span></label>
+                    <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
+                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
+                        #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
+                         required></textarea>
+                    <div>
+                        <span class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
+                            /250</span>
+                    </div>
+
+                    <small class="error-msg"
+                        *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptFormforprocess.submitted) ">
+                        Reason for Early Relieving is required</small>
+                </div>
+            </div>
+            <div class="col-11">
+                <div class="mb-3" *ngIf="extend">
+                    <label for="exampleFormControlInput1" class="form-label">Extend Date<span
+                            class="error-msg">*</span>
+                    </label>
+                    <input class="form-control custom-input" type="date" aria-label="Default select example" id="extenddate"
+                        placeholder="" name="extenddate" #extenddate="ngModel"
+                        [min]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"
+                        (keypress)="letters($event)" [(ngModel)]="selectedSpRequestData.extenddate" required
+                        [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
+                    <small class="error-msg"
+                        *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && acceptFormforprocess.submitted)">Extend
+                        date is required
+                    </small>
+                    <small class="error-msg" *ngIf="!isempeffectivevaild">Extend Date
+                        cannot be
+                        less than Training End date</small>
+                </div>
+
+                <div class="mb-3 mt-2" *ngIf="extend">
+                    <label for="exampleFormControlTextarea1" class="form-label ">Feedback for Extend<span
+                            class="error-msg">*</span></label>
+                    <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
+                        placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
+                        [(ngModel)]="selectedSpRequestData.comments" maxlength="250"
+                        required rows="3"></textarea>
+                    <div>
+                        <span
+                            class="color">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}
+                            /250</span>
+                    </div>
+
+                    <small class="error-msg"
+                        *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptFormforprocess.submitted) || (Extendreason.errors?.['pattern']) ">
+                        Feedback for Extend is required</small>
+                </div>
+            </div>
+            <div class="col-md-11">
+                <div class="mb-3" *ngIf="regular">
+                    <label for="Effective Date ">Last Working Date <span class="redstar"></span></label>
+                    <div class="form-control custom-input"> {{
+                        selectedSpRequestData.spRequestLastWorkingDate | dateformat }}
+                    </div>
+                    <small class="error-msg" *ngIf="!islastworking">Last working day should be after the
+                        date of joining</small>
+                    <div>
+                        <small class="error-msg" *ngIf="!lastworkingValidation">Last working day should be after the
+                            current date</small>
+                    </div>
+
+                </div>
+                <div class="mb-3" *ngIf="regular">
+                    <label for="Descriptiondetails" type="Notes">Comments <span class="redstar">*</span></label>
+                    <textarea class="form-control custome-input" id="exampleFormControlTextarea1"
+                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
+                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
+                         required></textarea>
+                    <div>
+                        <span  class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
+                            /250</span>
+                    </div>
+
+                    <small class="error-msg"
+                        *ngIf="(comments.touched && comments.invalid) || (comments.invalid && acceptFormforprocess.submitted)">
+                        Comments is required </small>
+                </div>
+
+            </div>
+            <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+                <button type="button" class="custom-btn btn-secondary" (click)="resetForm();modal.dismiss()" >{{'Cancel'|translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="acceptFormforprocess.invalid||isLoading">
+                  @if(!isLoading){
+                  {{'Approve'|translate}}
+                  }
+                  @else {
+                  <div class="d-flex">
+                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                    </div>
+                    <div> {{'Submitting'|translate}}</div>
+                  </div>
+                  }
+                </button>
+            </div>
+        </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #approverComments let-modal>
+
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Approver History Details</h1>
+                <button type="button" class="btn-close me-2" (click)="modal.dismiss()"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="custom-table-content">
+                    <table >
+                        <thead>
+                            <tr>
+                                <th class="text-nowrap">Approver Role</th>
+                                <th class="text-nowrap">Approved Date</th>
+                                <th class="text-nowrap">Approved by</th>
+                                <th class="text-nowrap">Comments </th>
+                                <th class="text-nowrap">Last Working Date</th>
+                                <th class="text-nowrap">Early Relieving Date</th>
+                                <th class="text-nowrap">Extended Date</th>
+                                <th class="text-nowrap">AcceptEarlyRelieving</th>
+                                <th class="text-nowrap">Status</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let comment of myApproverComments">
+
+                                <td>
+                                    <span
+                                        *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
+                                    <ng-template #approverrole>NA</ng-template>
+                                </td>
+                                <td><span *ngIf="comment.addedDate;else addeddate">
+                                        {{comment.addedDate |dateformat}}</span>
+                                    <ng-template #addeddate>NA</ng-template>
+                                </td>
+
+                                <td><span *ngIf="comment.addedName;else addedname">
+                                        {{comment.addedName}} ({{comment.addedByFusionEmpId}})</span>
+                                    <ng-template #addedname>NA</ng-template>
+                                </td>
+                                <td>
+                                    <div class="text-center" *ngIf="comment?.comments;else popupcomments">
+                                        <div>
+                                            <span>
+                                                <a type="button" placement="top" [ngbPopover]="reason">
+                                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                                </a>
+                                                <ng-template #reason>
+                                                    <div>
+                                                        <p class="mb-0">{{comment?.comments}} </p>
+                                                    </div>
+                                                </ng-template>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <ng-template #popupcomments>NA</ng-template>
+
+                                </td>
+                                <td>
+                                    <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
+                                        {{comment.metadata.splastworkingDate |dateformat}}</span>
+                                    <ng-template #lastworkingdate>NA</ng-template>
+                                </td>
+                                <td>
+                                    <span *ngIf="comment?.metadata?.spearlyReliveingDate;else earlydate">
+                                        {{comment.metadata.spearlyReliveingDate |dateformat}}</span>
+                                    <ng-template #earlydate>NA</ng-template>
+                                </td>
+                                <td>
+                                    <span *ngIf="comment?.metadata?.spExtendedDate;else extenddate">
+                                        {{comment.metadata.spExtendedDate |dateformat}}</span>
+                                    <ng-template #extenddate>NA</ng-template>
+                                </td>
+                                <td>
+                                    <span
+                                        *ngIf="comment?.metadata?.isAcceptEarlyRequest;else isaccept">{{comment.metadata.isAcceptEarlyRequest}}</span>
+                                    <ng-template #isaccept>NA</ng-template>
+                                </td>
+                                <td>
+                                    <span
+                                        *ngIf="comment?.metadata?.status;else isaccept">{{comment.metadata.status}}</span>
+                                    <ng-template #isaccept>NA</ng-template>
+                                </td>
+
+
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()" >Close</button>
+            </div>
+
 </ng-template>

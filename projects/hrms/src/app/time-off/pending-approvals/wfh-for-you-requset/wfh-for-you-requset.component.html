@@ -14,27 +14,21 @@
                     <tr>
                         <th>Employee ID </th>
                         <th>Employee Name</th>
-                        <th>Leave Type </th>
-                        <th>Duration</th>
+                        <th>Worked Date</th>
                         <th>Availed</th>
-                        <th>Applied Date</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
                         <th>Reason</th>
-                        <th>Comments</th>
-                        <th class="text-center">Actions</th>
+                        <th>Approver Comments</th>
+                        <th>Applied Date</th>
+                        <th>Action(s)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>10410</td>
-                        <td>Jhon Doe</td>
-                        <td>Levae</td>
-                        <td>1</td>
-                        <td>Full Day</td>
-                        <td>20/3/2027</td>
-                        <td>20/3/2027</td>
-                        <td>20/3/2027</td>
+                    <ng-container *ngIf="leaves!.length > 0; else noDataTemplate">
+                    <tr *ngFor="let leave of leaves; let i = index">
+                        <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
+                        <td>{{leave.entity.attendanceRequesterName}}</td>
+                        <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
+                        <td>{{leave.entity.attendanceRequestDurationType}}</td>
                         <td>
                             <div>
                                 <span>
@@ -43,27 +37,23 @@
                                     </a>
                                     <ng-template #reason>
                                         <div>
-                                            <p class="mb-0">Feaver </p>
+                                            <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
                                         </div>
                                     </ng-template>
                                 </span>
                             </div>
                         </td>
+                        <td>  <div>
+                            <span>
+                                <a type="button" placement="top" >
+                                    <img src="images\info-fill.png" alt="info icon" (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)" class="info-icon">
+                                </a>
+                                
+                            </span>
+                        </div></td>
+                        <td>{{leave.entity.attendanceRequestAppliedDate
+                                            | dateformat}}</td>
                         <td>
-                            <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">Feaver </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
-                            </div>
-                        </td>
-                        <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -77,6 +67,14 @@
                             </div>
                         </td>
                     </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                      <td colspan="4">
+                        <app-no-data-found></app-no-data-found>
+                      </td>
+                    </tr>
+                  </ng-template>
 
                 </tbody>
             </table>
@@ -179,6 +177,44 @@
                     <button type="submit" class="custom-btn btn-primary">Yes</button>
                 </div>
             </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- commentspopup -->
+<ng-template #commentspopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Comments</p>
+            </div>
+            <div>
+                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+            </div>
+        </div>
+        
+        <div class="custom-main-component-container">
+            <div class="custom-table-content mt-2">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Comments</th>
+                            <th>Commented By</th>
+                            <th>Date</th>
+                            <th>Commented By ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let comment of approverComments">
+                            <td>{{ comment.comments }}</td>
+                            <td>{{ comment.addedName }}</td>
+                            <td>{{ comment.addedDate | dateformat }}</td>
+                            <td>{{ comment.addedByFusionEmpId }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </ng-template>

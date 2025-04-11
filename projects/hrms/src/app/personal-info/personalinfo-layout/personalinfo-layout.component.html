@@ -6,41 +6,43 @@
         </div>
         <div>
             <div>
-                <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/job')">Inactive</button>
+                <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType')" (click)="navigation()">Inactive</button>
             </div>
             <div><button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')"
                     (click)="openModal(changermmodal)">
                     {{'Change RM'|translate}}
                 </button></div>
-            <!-- <div *ngIf="(empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') "> -->
+           
+               @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') ){
                 <button class="custom-btn btn-primary"
-                    *ngIf="isActive('personalinfo/personal/basic-info') "
-                    (click)="emailForRequestDoc()" [disabled]="isLoading">
-                    <span *ngIf="!isLoading">
-                        {{'Request for Documents'|translate}}
-                    </span>
-                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-                        
-                    </div>
-                    
-                </button>
-                
-            <!-- </div> -->
-            <!-- <div *ngIf="getOfferDetails.status !== 'Released' || getTraineeOfferDetails.status!=='Released'"> -->
-                <button class="custom-btn btn-secondary me-3"
+                *ngIf="isActive('personalinfo/personal/basic-info') "
+                (click)="emailForRequestDoc()" [disabled]="isLoading">
+                <span *ngIf="!isLoading">
+                    {{'Request for Documents'|translate}}
+                </span>
+                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">  
+                </div>  
+            </button>  }
+
+                @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
+                    <button class="custom-btn btn-secondary me-3"
                     *ngIf="isActive('personalinfo/personal/basic-info') && (empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus=='Employee Created'
                                  ||empdata?.substatus=='Requested Documents' ||empdata?.substatus=='Documents Submitted'||empdata?.substatus=='Documents Rejected'||empdata?.substatus=='Documents Accepted' ||empdata?.substatus=='Documents Verified' )"
                     (click)="openModal(archivedbtn)">
                     {{'Archive'|translate}}
                 </button>
+                }
+                
             <!-- </div> -->
-            <!-- <div *ngIf="getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'"> -->
-                <button class="custom-btn btn-secondary me-3"
+            <!-- <div *ngIf=""> -->
+                @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
+                    <button class="custom-btn btn-secondary me-3"
                     *ngIf="isActive('personalinfo/personal/basic-info')  && (empdata.empstatus=='Prospective' || empdata.empstatus =='Trainee Prospective')  && (empdata?.substatus!='Employee Created')"
                     (click)="openModal(revokeoffer)">
                     {{' Revoke Offer'|translate}}
                 </button>
-            <!-- </div> -->
+                }
+
             <div>
                 <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info')"
                     [hidden]="!empdata?.isCredentialExpired" (click)="updatePassword()">
@@ -204,7 +206,7 @@
     <ng-template #archivedbtn let-modal>
         <div class="result-popup-content" ngbAutofocus>
           <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
             <p class="confirmation-text mb-4">Are you sure you want to Archive?</p>
           </div>
           <div class="d-flex justify-content-center gap-3 mt-4">

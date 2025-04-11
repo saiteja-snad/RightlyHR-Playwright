@@ -34,7 +34,11 @@ export default [
             { path: 'compensation-details', loadComponent: () => import('./job/compensation/compensation.component').then((m) => m.CompensationComponent ) },
             { path: 'no-due-clearance-details', loadComponent: () => import('./job/no-due-clearance/no-due-clearance.component').then((m) => m.NoDueClearanceComponent ) },
             { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent ) },
-            { path: 'separation-details', loadComponent: () => import('./job/separation-details/separation-details.component').then((m) => m.SeparationDetailsComponent ) },
+            { path: 'separation-details', loadComponent: () => import('./job/separation-request/separation-request.component').then((m) => m.SeparationRequestComponent ) },
+            { path: 'employee-off-boarding', loadComponent: () => import('./job/employe-off-boarding/employe-off-boarding.component').then((m) => m.EmployeOffBoardingComponent ) },
+            { path: 'onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent ) },
+
+
         ]   
     },
     {

@@ -1,11 +1,155 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { HttpService } from '../../../../services/http.service';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { Subscription } from 'rxjs';
+import {JobtypeData } from './jobtype-module';
 
 @Component({
   selector: 'app-jobtype',
-  imports: [],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './jobtype.component.html',
   styleUrl: './jobtype.component.scss'
 })
 export class JobtypeComponent {
+  @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('updatepopup') updatepopup: any;
+  JobtypeForm!: FormGroup;
+  updateForm!: FormGroup;
+  JobtypeDetail: any[] = [];
+  isEditMode = false;
+  selectedId: number | null = null;
+  selectedDeleteDep: any = null;
+  subscription!: Subscription;
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
 
+  }
+  ngOnInit(): void {
+    this.JobtypeForm = this.fb.group({
+      jobtype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+    });
+    this.updateForm = this.fb.group({
+      jobtype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+    });
+
+    this.getJobtype();
+  }
+  // alphabet allowed only
+  blockNonAlphabets(event: KeyboardEvent): void {
+    const inputChar = String.fromCharCode(event.keyCode);
+    const char = String.fromCharCode(event.keyCode);
+    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
+    const pattern = /^[a-zA-Z ]$/;
+    const input = (event.target as HTMLInputElement).value;
+    // if (!pattern.test(inputChar)) {
+    //   event.preventDefault(); // blocks numbers or symbols
+    // }
+    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
+      event.preventDefault();
+    }
+  }
+  getJobtype() {
+    this.subscription = this.http.getData('Jobtype').subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.JobtypeDetail = data;
+      },
+    });
+  }
+ 
+  //ADD
+  addjobType() {
+    const request: JobtypeData = {
+      jobType1: this.JobtypeForm.value.jobtype.trim(),
+      isdeleted: "Active"
+    };
+
+    this.subscription = this.http.postdata('Jobtype', request).subscribe({
+      next: () => {
+        this.getJobtype();
+        this.conformationPopup.openSuccessModal('Jobtype Name added successfully');
+        this.resetForm();
+      },
+      error: (error: any) => {
+        this.conformationPopup.openErrorModal('Insertion of data failed');
+        this.resetForm();
+      }
+    });
+  }
+  // UPDATE
+    updatejobtype(modal: any) {
+      if (this.updateForm.valid && this.selectedId) {
+        const request: JobtypeData = {
+          jobType1: this.updateForm.value.jobtype,
+          isdeleted: "Active",
+          sno: this.selectedId
+        };
+  
+        this.subscription = this.http.postdata('Jobtype/UPDATER', request).subscribe({
+          next: () => {
+            this.getJobtype();
+            modal.close();
+            this.updateForm.reset();
+            this.conformationPopup.openSuccessModal('Jobtype Name updated successfully');
+          },
+          error: (err: any) => {
+            this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          }
+        });
+      }
+    }
+    close(modal: any) {
+      modal.dismiss();
+      this.updateForm.reset();
+    }
+    openupdate(jobtypelist: any) {
+      this.selectedId = jobtypelist.sno;
+      this.updateForm.patchValue({ jobtype: jobtypelist.jobType1 });
+      this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+    }
+    // DELETE
+    opendelete(jobtypelist: any) {
+      this.selectedDeleteDep = jobtypelist;
+      this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+    }
+    onDelete(modal: any) {
+      if (!this.selectedDeleteDep) return;
+  
+      const deleteRequest: JobtypeData = {
+        jobType1: this.selectedDeleteDep.jobType1,
+        isdeleted: "void",
+        sno: this.selectedDeleteDep.sno
+      };
+  
+      this.http.postdata('Jobtype/UPDATER', deleteRequest).subscribe({
+        next: () => {
+          this.getJobtype();
+          modal.close();
+          this.conformationPopup.openSuccessModal('JobType Name deleted successfully');
+        },
+        error: (err: any) => {
+          this.conformationPopup.openErrorModal('Failed to delete the location');
+        }
+      });
+    }
+  
+    closeDelete(modal: any) {
+      modal.dismiss();
+      this.selectedDeleteDep = null;
+    }
+  
+  resetForm() {
+    this.JobtypeForm.reset();
+    this.isEditMode = false;
+    this.selectedId = null;
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 }

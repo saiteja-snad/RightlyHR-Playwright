@@ -3,24 +3,23 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Leave Type</th>
-                    <th>Duration</th>
+                    <th>Worked Date</th>
                     <th>Availed</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
                     <th>Reason</th>
+                    <th>Applied Date</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>10410</td>
-                    <td>Jhon Doe</td>
-                    <td>Jhon&#64;gmail.com</td>
-                    <td>+91 9087654321</td>
-                    <td>Bengaluru</td>
-                    <td>Mysore IT park</td>
+                <ng-container *ngIf="rejectedWFHs!.length > 0; else noDataTemplate">
+                  <tr *ngFor="let wfhRequest of rejectedWFHs; let i = index">
+                    <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
+                    <td [ngSwitch]="wfhRequest.durationType">
+                      <span *ngSwitchCase="1">First Half</span>
+                      <span *ngSwitchCase="3">Second Half</span>
+                      <span *ngSwitchCase="2">Full Day</span>
+                      <span *ngSwitchDefault>-</span>
+                    </td>
                     <td>
                         <div>
                             <span>
@@ -29,25 +28,25 @@
                                 </a>
                                 <ng-template #reason>
                                     <div>
-                                        <p class="mb-0">Feaver </p>
+                                        <p class="mb-0">{{wfhRequest.reason}}</p>
                                     </div>
                                 </ng-template>
                             </span>
                         </div>
                     </td>
-                    <td>Employee Created</td>
-                </tr>
-                <tr>
-                    <td>10410</td>
-                    <td>Jhon Doe</td>
-                    <td>Jhon&#64;gmail.com</td>
-                    <td>+91 9087654321</td>
-                    <td>Bengaluru</td>
-                    <td>Mysore IT park</td>
-                    <td>HR Administrator</td>
-                    <td>Employee Created</td>
-                </tr>
-            </tbody>
+                    <td>{{ wfhRequest.requestedDate | dateformat }}</td>
+                    <td>{{ wfhRequest.status }}</td>
+                  </tr>
+                </ng-container>
+              
+                <ng-template #noDataTemplate>
+                  <tr>
+                    <td colspan="4">
+                      <app-no-data-found></app-no-data-found>
+                    </td>
+                  </tr>
+                </ng-template>
+              </tbody>
         </table>
     </div>
     <div class="pagination-content pt-2 w-100">

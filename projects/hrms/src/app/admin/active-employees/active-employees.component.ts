@@ -47,6 +47,7 @@ select(act: any) {
 navigateDashboard() {
   this.router.navigate(['/admin/dashboard'])
 }
+
 ngOnDestroy(): void {
   if (this.subscription) {
     this.subscription.unsubscribe();

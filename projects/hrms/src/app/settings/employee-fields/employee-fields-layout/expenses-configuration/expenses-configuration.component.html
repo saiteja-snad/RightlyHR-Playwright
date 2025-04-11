@@ -1,0 +1,172 @@
+<div class="card main-settings-layout p-4">
+    <!-- Add Input-->
+
+    <span id="salutation"><button type="submit" class="custom-btn btn-primary"
+            (click)="openModal(addExpensesmodal)">{{'Add'|translate}}</button></span>
+    <div class="custom-settings-data-table">
+        <table class="w-100">
+      
+                <thead>
+                    <th class="col-span-2">Expense Type</th>
+                    <th class="col-span-2">Actions</th>
+
+                </thead>
+           
+            <tbody>
+
+
+                <tr *ngFor="let exp of expense">
+                    <td class="w-75">{{exp.expenseType}}</td>
+                    <td class="w-25">
+                        <div class="d-flex gap-4">
+                            <!--Update-->
+                            <div>
+                                <a type="button" (click)="openupdate(updateexpeses, exp)"><img
+                                        src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
+                            </div>
+                            <!--Delete-->
+                            <div>
+                                        <a (click)="opendelete(deleteconformation,exp)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                                class="settings-common-icon"></a>
+                                    </div>
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+
+
+</div>
+
+
+
+<ng-template #addExpensesmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Add Expense Type</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="expenseForm" (ngSubmit)="postExpenses(expenseForm)">
+                <div class="mb-2">
+                    <label for="expenseType" class="form-label custom-label mb-2">
+                        Expense Type <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" id="expenseType" formControlName="expenseType"
+                        autocomplete="off" placeholder="New Expense Type" maxlength="50" />
+                    <div class="error-msg"
+                        *ngIf="expenseForm.get('expenseType')?.hasError('required') && (expenseForm.get('expenseType')?.touched || expenseForm.touched)">
+                        Expense Type is required
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="expenseForm.get('expenseType')?.hasError('maxlength') && expenseForm.get('expenseType')?.touched">
+                        Expense Type cannot exceed 50 characters
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <label for="expensecode" class="form-label custom-label mb-2">
+                        Expense Code <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" id="expensecode" formControlName="expensesCode"
+                        autocomplete="off" placeholder="Expense code" maxlength="50"
+                        (keyup)="expenseForm.get('expensesCode')?.setValue(expenseForm.get('expensesCode')?.value.toUpperCase())" />
+                    <div class="error-msg"
+                        *ngIf="expenseForm.get('expensesCode')?.invalid && (expenseForm.get('expensesCode')?.touched || expenseForm.touched)">
+                        Expense Code is required
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="expenseForm.reset();modal.dismiss()">Close</button>
+
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="expenseForm.invalid">
+                        Submit
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #updateexpeses let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Update Expense Type</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="expenseupdateForm" (ngSubmit)="onUpdateSubmit()">
+                <div class="mb-2">
+                    <label for="expenseType" class="form-label custom-label mb-2">
+                        Expense Type <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" id="expenseType"
+                        formControlName="expenseTypeupdate" autocomplete="off" placeholder="New Expense Type"
+                        maxlength="50" />
+                    <div class="error-msg"
+                        *ngIf="expenseupdateForm.get('expenseTypeupdate')?.hasError('required') && (expenseupdateForm.get('expenseTypeupdate')?.touched || expenseupdateForm.touched)">
+                        Expense Type is required
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="expenseupdateForm.get('expenseTypeupdate')?.hasError('maxlength') && expenseupdateForm.get('expenseTypeupdate')?.touched">
+                        Expense Type cannot exceed 50 characters
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <label for="expensecode" class="form-label custom-label mb-2">
+                        Expense Code <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" id="expensecode"
+                        formControlName="expensesCodeupade" autocomplete="off" placeholder="Expense code" maxlength="50"
+                        (keyup)="expenseupdateForm.get('expensesCodeupade')?.setValue(expenseupdateForm.get('expensesCodeupade')?.value.toUpperCase())" />
+                    <div class="error-msg"
+                        *ngIf="expenseupdateForm.get('expensesCodeupade')?.invalid && (expenseupdateForm.get('expensesCodeupade')?.touched || expenseupdateForm.touched)">
+                        Expense Code is required
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="expenseupdateForm.reset();modal.dismiss()">Close</button>
+
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="expenseupdateForm.invalid">
+                        Update
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</ng-template>
+
+
+
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+        <p class="confirmation-text mb-4">Are you sure you want to delete the Expenses Type?</p>
+      </div>
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="expemsesDelete()">Yes</button>
+      </div>
+    </div>
+  
+  </ng-template>

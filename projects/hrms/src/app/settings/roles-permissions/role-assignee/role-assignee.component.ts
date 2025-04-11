@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, model, OnDestroy, OnInit, TemplateRef, ViewChild, viewChild } from '@angular/core';
 import { IRoles } from '../permissions/permission.model';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -6,26 +6,36 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IUserRoleInfo } from './assigne-users.model';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { IActiveEmployee } from './active-employees.model';
+import { SelectModule } from 'primeng/select';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-role-assignee',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss'
 })
 export class RoleAssigneeComponent implements OnInit, OnDestroy {
-  selectedRole: IRoles | undefined;
-  usersList!: any;
   roleId: string | undefined;
   userId: number | undefined;
+  selectedUsersCount!: number;;
+  customLabelTemplate: string | undefined;
+  selectedRole: IRoles | undefined;
+  usersList: IActiveEmployee[] = [];
   createAssigneeForm!: FormGroup;
   roleAssigneeUsers: IUserRoleInfo[] = [];
   roles: IRoles[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
+  @ViewChild('confirmationModal') confirmationModal: TemplateRef<any> | undefined;
+  @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
   constructor(
     private http: HttpService,
     private fb: FormBuilder,
+     private modal: OpenModalService,
+     private modalService: NgbModal,
   ) { }
 
   ngOnInit(): void {
@@ -43,9 +53,10 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   getAllroles(): void {
     this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.roles = data as IRoles[]
-        console.log(this.roles)
+        if (this.roles.length > 0) {
+          this.onRoleClick(this.roles[0]);
+        }
       },
       error: (error: any) => {
         console.log(error);
@@ -70,10 +81,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
-  selectedUsersCount!: any;
-  customLabelTemplate!: string;
   selectedUserDetails(event: any) {
     this.selectedUsersCount = event.length;
     if (this.selectedUsersCount > 0) {
@@ -90,16 +98,23 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     this.selectedRole = role;
   }
 
-  getUsersByRoleId(id: any, page?: number, pageSize?: number, searchTerm?: string) {
-    this.http.getData(`FusionRole/roleAssigneeByRoleId/${this.roleId}`)
+  getUsersByRoleId(id: any) {
+    // this.modalService.open(this.stagingLoadingModal, { centered: true });
+    this.http.getData(`FusionRole/roleAssigneeByRoleId/${id}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.roleAssigneeUsers = response;
         },
         error: (error: any) => {
+          this.modalService.dismissAll();
           console.log(error);
+          this.modal.openErrorModal(error.error.message? error.error.message : 'Failed to load users');
+        },
+        complete: () => {
+          this.modalService.dismissAll();
         }
+
       });
   }
 
@@ -107,20 +122,16 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     if (form.invalid) {
       return;
     }
-    const datalist: any = form.value.selected_user;
-    const user_ids: any = [];
-    datalist.forEach((t: any) => {
-      user_ids.push(t.employeeId);
-    });
     const payload = {
-      employeeId: user_ids,
+      employeeId: form.value.selected_user.employeeId,
       roleId: this.roleId,
     };
     this.http.postdata('FusionRole/roleAssignees', payload).subscribe({
       next: (data: any) => {
+        this.modal.openSuccessModal('Role Assigned Successfully');
       },
       error: (err) => {
-        this.createAssigneeForm.reset();
+        this.modal.openErrorModal('Role Assignment Failed');
       },
       complete: () => {
         this.createAssigneeForm.reset();
@@ -132,8 +143,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   onUserClick(user: IUserRoleInfo) {
     console.log(user);
     this.userId = user.employeeId;
-    console.log(this.userId);
-    this.removeAssignee();
+    this.modalService.open(this.confirmationModal, { centered: true, backdrop: 'static', keyboard: false });
   }
 
   removeAssignee() {
@@ -141,19 +151,25 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
       employeeId: this.userId,
       roleId: this.roleId,
     };
-    this.http.postdata('FusionRole/roleAssignees', payload).subscribe({
+    this.http.postdata('FusionUser/deleteFusionUserRolesByEmployeeId&RoleId', payload).subscribe({
       next: (res: any) => {
-        console.log(res);
+        this.modalService.dismissAll();
+        this.modal.openSuccessModal('Role Removed Successfully');
       },
       error: (err: any) => {
         console.log(err);
+        this.modalService.dismissAll();
+        this.modal.openErrorModal('Role Removal Failed');
       },
       complete: () => {
         this.getUsersByRoleId(this.roleId);
         this.userId = undefined;
-        this.roleId = undefined;
       }
     });
+  }
+
+  close(){
+    this.modalService.dismissAll();
   }
 
   ngOnDestroy(): void {

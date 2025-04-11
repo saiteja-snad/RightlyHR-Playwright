@@ -1,24 +1,36 @@
-<table class="w-100 ">
-    <tbody>
-        <tr *ngFor="let role of roles">
-            <td (click)="onRoleClick(role)" class="no-border ">{{ role.name }}
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div class="custom-table-content">
+    <table class="w-100 ">
+        <tbody>
+            <tr *ngFor="let role of roles">
+                <td [ngClass]="{'selected-row': role === selectedRole}" (click)="onRoleClick(role)" class="no-border ">{{ role.name }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 <div>
     <form [formGroup]="createAssigneeForm" autocomplete="off" (ngSubmit)="createAssignee(createAssigneeForm)">
         <div class="d-flex  align-items-center gap-2 justify-content-end  p-3">
             <div class="w-25">
-                <p-multiSelect formControlName="selected_user" [options]="usersList" name="user" id="user"
+                <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
+                    optionLabel="fullName" placeholder="Search User" class="w-100" [filter]="true" filterBy="fullName"
+                    [showClear]="true">
+                    <ng-template let-selectedOption #selectedItem>
+                        {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+                    </ng-template>
+                    <ng-template let-user #item>
+                        {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
+                    </ng-template>
+                </p-select>
+
+                <!-- <p-multiSelect formControlName="selected_user" [options]="usersList" name="user" id="user"
                     optionLabel="fullName" placeholder="Search User" field="selectedUser" class="w-100"
                     [selectedItemsLabel]="customLabelTemplate" (ngModelChange)="selectedUserDetails($event)">
                     <ng-template let-user pTemplate="item">
                         <div>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</div>
                     </ng-template>
-                </p-multiSelect>
-
+                </p-multiSelect> -->
             </div>
             <div>
                 <button type="submit" class="main-custom-btn custom-btn-primary py-2 px-3"
@@ -29,9 +41,13 @@
     </form>
 </div>
 
-<div>
+<div class="custom-table-content">
     <table class="w-100">
         <tbody>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
             <tr *ngFor="let user of roleAssigneeUsers">
                 <td>
                     {{ user.firstName }}
@@ -45,3 +61,27 @@
         </tbody>
     </table>
 </div>
+
+
+<ng-template #confirmationModal let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-container">
+            <div class="custom-main-popup-content text-center p-5">
+                <div class="py-5">
+                    <p class="confirmation-text">Are you sure you want to Delete?</p>
+                </div>
+                <div class="d-flex gap-5 pt-4 w-100">
+                    <button class="custom-btn btn-secondary w-50 py-3" (click)="close()">No</button>
+                    <button class="custom-btn btn-primary w-50 py-3" (click)="removeAssignee()">yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #stagingLoadingModal let-modal>
+    <div class="modal-body text-center p-5" ngbAutofocus>
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="heading4 pt-4">Update in progress...</p>
+    </div>
+</ng-template>

@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { permissionsData } from './permissionsdata';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-permissions',
@@ -35,6 +36,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   constructor(
     private http: HttpService,
     private modalService: NgbModal,
+    private modal: OpenModalService
   ) { }
 
   getAllroles(): void {
@@ -176,18 +178,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     this.http.postdata('FusionRoleClaims', payload).subscribe({
       next: (data) => {
         this.modalService.dismissAll();
+        this.modal.openSuccessModal('Permissions updated successfully!');
       },
       error: (err) => {
         console.error('Error posting permissions:', err);
         this.modalService.dismissAll();
+        this.modal.openErrorModal('Failed to update permissions!');
       },
       complete: () => {
-        // this.permissions.forEach((permission: any) => {
-        //   permission.View = false;
-        //   permission.Create = false;
-        //   permission.Update = false;
-        //   permission.Delete = false;
-        // });
       }
     });
   }

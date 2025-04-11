@@ -17,10 +17,11 @@ import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 
 @Component({
   selector: 'app-trainee-offer-letter',
-  imports: [LettersTabComponent, CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
+  imports: [LettersTabComponent, CommonModule, Select, CountryCodePhoneNumberComponent, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule, NgxCountriesDropdownModule],
   templateUrl: './trainee-offer-letter.component.html',
   styleUrl: './trainee-offer-letter.component.scss'
 })
@@ -90,6 +91,7 @@ export class TraineeOfferLetterComponent {
   addresFlag = false;
   address = {} as IAddress;
   countryvalues = {} as any;
+  selectedCountryCode: any;
   selectedCountryConfig = {
     hideCode: true,
     hideName: true
@@ -187,6 +189,21 @@ export class TraineeOfferLetterComponent {
       this.calculateEndDate(value);
     });
   }
+
+  onclickcheckempidnull(empidValue: any) {
+    if(empidValue==""){
+      this.disablebuttonforemployeeid=true
+    }
+    else{
+      this.disablebuttonforemployeeid=false
+    }
+    this.fusionEmpId = empidValue.value;
+    if (this.fusionEmpId) {
+      this.onClickValidation(this.fusionEmpId);
+    } else {
+      this.resetInputFields();
+    }
+  }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -278,7 +295,7 @@ export class TraineeOfferLetterComponent {
   selectReportingname(Value: any) {
     if (Value) {
       const details = this.getAllEmployeeInfo.find(
-        (ele: any) => ele.employeeId == Value
+        (ele: any) => ele.employeeId == Value.employeeId
       );
       console.log(details);
       this.traineeEmpData.reportingmanagerName = `${details.firstName} ${details.middleName ? details.middleName + ' ' : ''
@@ -530,15 +547,19 @@ export class TraineeOfferLetterComponent {
        authorityid: data?.authorityid,
        phoneNumber: data?.phoneNumber,
      })
+
+     console.log(this.employeeForm);
+     
   }
 
-
+  loadingCode= false;
   onClickValidation(Empidvalue: any) {
+    this.loadingCode= true;
     if (Empidvalue) {
-      this.fusionEmpId = Empidvalue.value;
+      this.fusionEmpId = Empidvalue;
       this.subscription = this.http
         .getData(
-          `OfferLetter/getEmployeeByEmailAddressAndStatus?EmpId=${Empidvalue.value}`
+          `OfferLetter/getEmployeeByEmailAddressAndStatus?EmpId=${Empidvalue}`
         )
         .subscribe({
           next: (data: any) => {

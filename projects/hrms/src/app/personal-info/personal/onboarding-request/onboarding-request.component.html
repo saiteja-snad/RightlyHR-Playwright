@@ -79,8 +79,8 @@
                 @else{
                 <tr>
                     <td>
-                            <app-no-data-found />
-                        </td>
+                        <app-no-data-found />
+                    </td>
                 </tr>
                 }
             </tbody>
@@ -109,52 +109,59 @@
 </ng-template>
 <!-- View popup end -->
 <ng-template #rejectModal let-modal>
-    <div class="modal-header">
-        <h5 class="modal-title" id="rejectModalLabel">Reject Reason </h5>
-        <button type="button" class="btn-close" (click)="modal.dismiss()" (click)="reload()"
-            aria-label="Close"></button>
-    </div>
-    <form [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs()">
-        <div class="modal-body">
-            <div class="mb-3">
-                <label for="rejectReason">Reject Reason
-                    <span class="error-msg">*</span></label>
-                <textarea type="text" name="rejectReason" class="form-control"
-                    placeholder="Please provide reason for rejection" rows="3" maxlength="250"
-                    formControlName="comments"></textarea>
-                <div class="mt-2">
-                    <span class="color">
-                        {{ rejectDocument.get('comments')?.value?.length || 0 }} / 250
-                    </span>
-                </div>
-                <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
-                    class="text-danger">
-                    {{'Reason'| translate}}.
-                </div>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Reject Reason</p>
             </div>
-
-        </div>
-        <div class="modal-footer">
             <div>
-                <button type="button" class="custom-btn btn-secondary"
-                    (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                <a (click)="closeModal(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
-            <button type="submit" class="custom-btn btn-primary"
-                [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
         </div>
-    </form>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs()">
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label for="rejectReason" class="form-label custom-label mb-2">Reject Reason
+                            <span class="error-msg">*</span></label>
+                        <textarea type="text" name="rejectReason" class="form-control custom-input"
+                            placeholder="Please provide reason for rejection" rows="3" maxlength="250"
+                            formControlName="comments"></textarea>
+                        <div class="mt-2">
+                            <span class="color">
+                                {{ rejectDocument.get('comments')?.value?.length || 0 }}/250
+                            </span>
+                        </div>
+                        <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
+                           class="error-msg">
+                            {{'Reason'| translate}}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="reset" class="custom-btn btn-secondary"
+                            (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                    </div>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </ng-template>
 <!-- preonboard  approve documents popup -->
 <ng-template #approveModal let-modal>
-
-    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
-        <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
-        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+        <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon mb-4">
         <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Approve Document? </h4>
-        <div class="d-flex mb-4 mt-3 pb-2 mt-1 justify-content-around w-100">
+        <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
                 (click)="approvedocuments()">{{'Yes'|translate}}</button>
+        </div>
         </div>
     </div>
 

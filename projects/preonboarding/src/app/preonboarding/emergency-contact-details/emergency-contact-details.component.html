@@ -58,7 +58,7 @@
                                 <p>Loading...</p>
                               </ng-template>
                              
-                            <input type="text" class="form-control custom-input" formControlName="mobile"
+                            <input type="number" class="form-control custom-input no-arrows" formControlName="mobile"
                                 placeholder="Please enter mobile number" id="phonenumbers"
                                 aria-describedby="phonenumbers"
                                 [value]="contactForm.get('contact1.mobile')?.value ? formatPhoneNumber(contactForm.get('contact1.mobile')?.value) : ''"
@@ -142,7 +142,7 @@
                                 <p>Loading...</p> <!-- Replace this with a spinner or loading indicator -->
                               </ng-template>
                         
-                            <input type="text" class="form-control custom-input" formControlName="mobile"
+                            <input type="number" class="form-control custom-input no-arrows" formControlName="mobile"
                                 placeholder="Please enter mobile number" id="phonenumbers"
                                 aria-describedby="phonenumbers"
                                 [value]="contactForm.get('contact2.mobile')?.value ? formatPhoneNumber(contactForm.get('contact2.mobile')?.value) : ''"
@@ -177,7 +177,7 @@
                     </div>
                 </div>
             </div>
-            <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
+            <div class="footer-btn-content d-flex justify-content-between gap-3 pt-5">
                 <button class="custom-btn btn-primary px-5" (click)="navigatePrevious()">Education Details</button>
                 <button type="submit" class="custom-btn btn-primary py-3 px-5" [disabled]="contactForm.invalid" >Next</button>
             </div>

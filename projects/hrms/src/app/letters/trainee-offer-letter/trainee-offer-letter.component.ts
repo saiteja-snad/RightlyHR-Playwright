@@ -504,34 +504,7 @@ export class TraineeOfferLetterComponent {
   formatDate(date: any) {
     return date?.split('T')[0];
   }
-  //function to patch the values in the form to the template
-  // pathValuesFuction() {
-  //   const formValues = this.employeeForm.value;
-  //   console.log(formValues);
-  //   this.traineeEmpData = {
-  //     personalEmail: formValues.personalEmail,
-  //     title: formValues.title,
-  //     firstName: formValues.firstName,
-  //     middleName: formValues.middleName,
-  //     lastName: formValues.lastName,
-  //     gender: formValues.gender,
-  //     jobRole: formValues.jobRoleDetails,
-  //     esic: formValues.esic,
-  //     pf: formValues.pf,
-  //     amount: formValues.amount,
-  //     isVariablePay: formValues.isVariablePay,
-  //     variablePayAmount: formValues.variablePayAmount,
-  //     locationId: formValues.locationId,
-  //     sublocationId: formValues.JobSubLocationName,
-  //     offerIssuedDate: formValues.offerIssuedDate,
-  //     dateOfJoining: formValues.dateOfJoining,
-  //     copys: formValues.Copys,
-  //     trainingEndDate: this.traineeEmpData.endDate,
-  //     note: formValues.note,
-  //     authorityid: formValues.authorityid,
-  //   };
-  // }
-
+  
   patchForm(data:any){
     this.employeeForm?.patchValue({
        personalEmail:data.personalEmail,
@@ -654,17 +627,13 @@ export class TraineeOfferLetterComponent {
   isDataPopulated(){
     this.traineeEmpData.offerIssuedDate = this.employeeForm.get('offerSentDate')?.value;
     console.log(this.traineeEmpData.offerIssuedDate);
-    
-    
-
   }
 
   isDataPopulated1(){
     this.traineeEmpData.internshipperiod = this.employeeForm.get('internshipperiod')?.value.value;
-    console.log(this.traineeEmpData.internshipperiod);
-    
-
+    console.log(this.traineeEmpData.internshipperiod);  
   }
+
   //function to get sublocation by id
   getSubLocationByid(id: any) {
     this.subscription = this.http
@@ -702,8 +671,6 @@ export class TraineeOfferLetterComponent {
     this.traineeEmpData.amount = Value;
     // this.ctcCalculation();
   }
-
-
 
   //coverting date time to the date formate
   formatDateForOfferIssedandExpiry(date: Date): string {
@@ -824,7 +791,7 @@ export class TraineeOfferLetterComponent {
       },
       complete: () => {
         this.conformationPopup.openSuccessModal(
-          'Trainee Offer Letter Generated Successfully');
+          'Intern Offer Letter Generated Successfully');
       }
     });
   }
@@ -896,7 +863,7 @@ export class TraineeOfferLetterComponent {
     this.generatedfile = file;
     this.generatingEmployeeId = EmpValue.empId;
     this.loading = false;
-    this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully');
+    this.conformationPopup.openSuccessModal('Intern Offer Letter Generated Successfully');
 
   
   }
@@ -1238,19 +1205,22 @@ export class TraineeOfferLetterComponent {
             this.conformationPopup.openSuccessModal('Email sent successfully');
           }
           this.loading = false;
-
+          setTimeout( () => {
+            this.router.navigate(['/admin/dashboard']);
+          }, 3000);
         },
         error: (err: any) => {
           console.log(err);
 
           this.conformationPopup.openErrorModal('Email sent failed');
           this.loading = false;
+          
         },
         complete: () => { },
       });
   }
 
-  //function for Manger to approve notification
+  // function for Manger to approve notification
   // Approvednotification() {
   //   const currentDate = new Date();
   //   this.traineeEmpData;
@@ -1275,7 +1245,7 @@ export class TraineeOfferLetterComponent {
   //         this.loading = false;
 
   //         setTimeout(() => {
-  //           this.router.navigate(['/admin']);
+  //           this.router.navigate(['/admin/dashboard']);
   //         }, 3000);
   //       },
   //       error: (err: any) => {
@@ -1477,7 +1447,7 @@ export class TraineeOfferLetterComponent {
         if (this.employeeaddress.substatus == 'Documents Verified') {
           this.buttonValue = 'Generate Offer Letter';
         }
-        else if (this.employeeaddress.substatus == 'Offer Letter Rejected' || this.employeeaddress.substatus == 'Offer Letter Accepted' || this.employeeaddress.substatus == 'Offer Letter Rejected By Manager') {
+        else if(this.employeeaddress.substatus=='Offer Letter Rejected' ||this.employeeaddress.substatus=='Offer Letter Accepted' ||this.employeeaddress.substatus=='Offer Letter Rejected By Manager'){
           this.buttonValue = 'Regenerate Offer Letter';
         }
         console.log(this.buttonValue);

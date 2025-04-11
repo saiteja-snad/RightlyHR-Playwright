@@ -69,13 +69,13 @@ export class EducationDetailsComponent {
     // const storedstep = 1;
     // localStorage.setItem('currentStep', storedstep.toString());
     // this.router.navigate(['offer-letter']);
-    this.router.navigate(['/document']);
+    this.router.navigate(['/offer-letter']);
   }
 
   navigatePrevioustoTranineeofferletter() {
-    const storedstep = 1;
-    localStorage.setItem('currentStep', storedstep.toString());
-    this.router.navigate(['/preonboarding/traineeofferletter']);
+    // const storedstep = 1;
+    // localStorage.setItem('currentStep', storedstep.toString());
+    this.router.navigate(['/trainee-offerletter']);
   }
 
   redirectToNextPage() {
@@ -132,6 +132,12 @@ export class EducationDetailsComponent {
         this.getEducationData = data as Ieducation;
         this.getEducationData.degreeStartDate = this.formatDate(this.getEducationData.degreeStartDate);
         this.getEducationData.degreeEndDate = this.formatDate(this.getEducationData.degreeEndDate)
+        if (data.length <= 0) {
+          this.disablebutton = true
+        }
+        else {
+          this.disablebutton = false
+        }
       },
       error: (err: any) => {
         console.log(err);

@@ -43,6 +43,8 @@ export class AddExperienceDetailtsComponent {
     hideCode: true,
   };
   mobileNumberData: IphoneNumberData | null = null;
+  showError: boolean = false;
+  showErrorr: boolean = false;
 
   constructor(private http: HttpService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { }
 

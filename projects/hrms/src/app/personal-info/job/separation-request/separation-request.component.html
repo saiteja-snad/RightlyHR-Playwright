@@ -275,7 +275,7 @@
 <ng-template #recallrequestpopup let-modal>
   <div class="p-5">
     <div class="mt-4 mb-3">
-      <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img" />
+      <!-- <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img" /> -->
     </div>
     <h4 class="text-center">
       Are you sure you want to recall the {{this.selectRecallrequest?.requestType?.toLowerCase() ?? 'early relieving'}}
@@ -326,7 +326,7 @@
 <ng-template #earlyrequestpopup let-modal>
   <div class="p-5">
     <div class="mt-4 mb-3">
-      <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img" />
+      <!-- <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img" /> -->
     </div>
     <h4 class="text-center">
       Request For Early Relieving
@@ -338,7 +338,7 @@
                 <label for="Effective Date ">Early relieving date <span
                         class="error-msg">*</span></label>
                 <input type="date" class="form-control custom-input" placeholder=""
-                    formControlName="earlyReleivingDate" id="Effective Date" (click)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)"  />
+                    formControlName="earlyReleivingDate" id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)"  />
                 <small class="error-msg"
                 *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
                     Early relieving Date

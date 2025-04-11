@@ -83,7 +83,7 @@ export class JobtypeComponent {
     updatejobtype(modal: any) {
       if (this.updateForm.valid && this.selectedId) {
         const request: JobtypeData = {
-          jobType1: this.updateForm.value.Jobtype.trim(),
+          jobType1: this.updateForm.value.jobtype,
           isdeleted: "Active",
           sno: this.selectedId
         };
@@ -128,7 +128,7 @@ export class JobtypeComponent {
         next: () => {
           this.getJobtype();
           modal.close();
-          this.conformationPopup.openSuccessModal('jobType Name deleted successfully');
+          this.conformationPopup.openSuccessModal('JobType Name deleted successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Failed to delete the location');

@@ -63,7 +63,7 @@
    <div class="custom-main-popup-container" ngbAutofocus>
        <div class="d-flex justify-content-between popup-header-border p-4">
            <div class="pt-2">
-               <p class="popup-heading mb-0">{{'Edit Department'|translate}}</p>
+               <p class="popup-heading mb-0">{{'Edit Jobtype'|translate}}</p>
            </div>
            <div>
                <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -71,14 +71,14 @@
        </div>
        <div class="custom-main-popup-content p-5">
            <div class="mb-4">
-               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Department'|translate}}<span
+               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Jobtype'|translate}}<span
                        class="error-msg">*</span></label>
                <input type="text" class="form-control custom-input" formControlName="jobtype"
-                   placeholder="Please Enter Department"  (keypress)="blockNonAlphabets($event)">
+                   placeholder="Please Enter Jobtype"  (keypress)="blockNonAlphabets($event)">
            </div>
-           <div *ngIf="updateForm.get('Department')?.touched && updateForm.get('Department')?.invalid">
-               <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('Department')?.errors?.['required']">
-                {{'DepartmentName is required'|translate}}
+           <div *ngIf="updateForm.get('Jobtype')?.touched && updateForm.get('Jobtype')?.invalid">
+               <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('Jobtype')?.errors?.['required']">
+                {{'JobtypeName is required'|translate}}
                </small>
                <!-- <small style="color: red;" *ngIf="updateForm.get('jobLocationName')?.errors?.['pattern']">
                 {{'Only alphabets and spaces are allowed'|translate}}

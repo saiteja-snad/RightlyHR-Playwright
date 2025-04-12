@@ -44,7 +44,13 @@ export class OnboardingRequestsComponent {
   constructor(private authService: AuthService, private router: Router, private http: HttpService, private conformationPopup: OpenModalService,) {
 
   }
-
+  ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+    this.loggedinuser = this.authService.getToken();
+    console.log(this.empinfo);
+    this.getEmployeeId();
+    this.getOnboardrequest();
+  }
   isStatusAllowed(): boolean {
     const allowedStatuses = ['waiting for approval', 'approved', 'processed'];
     const hasAllowedStatus = this.dynamicData.some((ele: any) => allowedStatuses.includes(ele.status?.toLowerCase()));
@@ -102,24 +108,17 @@ export class OnboardingRequestsComponent {
     this.http.postdata('onboardRequest', requestBody).subscribe({
       next: (response: any) => {
         this.conformationPopup.openSuccessModal("Onboard Request submitted successfully")
-        setTimeout(() => {
-          localStorage.setItem("ReadyforOnboard", 'true');
-          this.redirectTo(this.router.url)
-        }, 2000);
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message)
-        setTimeout(() => {
-          this.redirectTo(this.router.url)
-        }, 3000);
       }
     });
   }
+
   requestforOnboard() {
     const trainee = {
       RequestedBy: this.empdata.employeeId,
       moduleId: 15
-
     };
     this.subscription = this.http.postdata("TraineeAppointmentLetter/OnBoardingPendingApprovals", trainee).subscribe({
       next: (data: any) => {
@@ -132,6 +131,7 @@ export class OnboardingRequestsComponent {
       },
     })
   }
+
   redirectTo(uri: string) {
     document.querySelectorAll('.modal-backdrop.show').forEach((element: any) => {
       element.style.display = 'none';
@@ -266,19 +266,11 @@ export class OnboardingRequestsComponent {
         if (data.statusCode === 409) {
           const modalElement = document.getElementById('successhide');
           this.conformationPopup.openSuccessModal(data.message)
-          setTimeout(function () {
-            location.reload();
-          }, 2000);
           window.location.reload();
         }
         else if (data.statusCode === 200) {
           if (data.employeeData.empstatus == 'Active') {
             this.updateOnboardingStatustoOnboard(data);
-          }
-          const modalElement1 = document.getElementById('offerLetterModal');
-          if (modalElement1) {
-            modalElement1.classList.remove('show');
-            modalElement1.style.display = 'none';
           }
           this.conformationPopup.openSuccessModal(data.message)
         }
@@ -289,7 +281,7 @@ export class OnboardingRequestsComponent {
         this.WebNotificationForOffboarding();
         setTimeout(() => {
           if (this.previousEmpData.empstatus != data.employeeData.empstatus) {
-            this.router.navigate(["/admin/traineeactiveemployee"]);
+            this.router.navigate(["/admin/active-interns"]);
           }
           else {
             window.location.reload();
@@ -497,38 +489,65 @@ export class OnboardingRequestsComponent {
     }
   }
 
-  getEmployeeId() {
+  // getEmployeeId() {
 
-    let employeeId = parseInt(this.empinfo.employeeId);
+  //   let employeeId = parseInt(this.empinfo.employeeId);
+  //   console.log(this.empinfo);
+
+  //   this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+  //     next: (data: any) => {
+  //       console.log(data);
+  //       this.previousEmpData = JSON.parse(JSON.stringify(data))
+  //       this.empdata = data as Ipersonal
+  //       this.previousEmpData.lastworkingday = this.formatDate(this.previousEmpData.lastworkingday);
+  //       this.previousEmpData.dateOfJoining = this.formatDate(this.previousEmpData.dateOfJoining);
+  //       this.previousEmpData.probationEndDate = this.formatDate(this.previousEmpData.probationEndDate);
+  //       this.previousEmpData.offerIssueddate = this.formatDate(this.previousEmpData.offerIssueddate);
+  //       this.empdata.lastworkingday = this.formatDate(this.empdata.lastworkingday);
+  //       this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
+  //       this.empdata.probationEndDate = this.formatDate(this.empdata.probationEndDate);
+  //       this.empdata.offerIssueddate = this.formatDate(this.empdata.offerIssueddate);
+  //       this.empdata.trainingEndDate = this.formatDate(this.empdata.trainingEndDate)
+
+  //       console.log(this.empdata);
+  //       this.imgurl = this.empdata.profilePic;
+  //       console.log(this.imgurl);
+
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //       this.conformationPopup.openErrorModal("Insertion of data failed")
+  //       setTimeout(function () {
+  //         location.reload();
+  //       }, 2000);
+
+  //     }
+  //   });
+
+  //   if (employeeId) {
+  //     this.subscription = this.http.getData(`JobApplicantsData/getByEmployeeId/${employeeId}`).subscribe({
+  //       next: (data: any) => {
+  //         if (data) {
+  //           this.jobPostData = data;
+  //           console.log(this.jobPostData);
+  //         }
+  //       }
+  //     })
+  //   }
+  // }
+
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
     console.log(this.empinfo);
 
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.previousEmpData = JSON.parse(JSON.stringify(data))
-        this.empdata = data as Ipersonal
-        this.previousEmpData.lastworkingday = this.formatDate(this.previousEmpData.lastworkingday);
-        this.previousEmpData.dateOfJoining = this.formatDate(this.previousEmpData.dateOfJoining);
-        this.previousEmpData.probationEndDate = this.formatDate(this.previousEmpData.probationEndDate);
-        this.previousEmpData.offerIssueddate = this.formatDate(this.previousEmpData.offerIssueddate);
-        this.empdata.lastworkingday = this.formatDate(this.empdata.lastworkingday);
-        this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
-        this.empdata.probationEndDate = this.formatDate(this.empdata.probationEndDate);
-        this.empdata.offerIssueddate = this.formatDate(this.empdata.offerIssueddate);
-        this.empdata.trainingEndDate = this.formatDate(this.empdata.trainingEndDate)
-
-        console.log(this.empdata);
-        this.imgurl = this.empdata.profilePic;
-        console.log(this.imgurl);
-
+        this.empdata = data;
+        // this.patchForm(data);
       },
       error: (err: any) => {
         console.log(err);
-        this.conformationPopup.openErrorModal("Insertion of data failed")
-        setTimeout(function () {
-          location.reload();
-        }, 2000);
-
       }
     });
 

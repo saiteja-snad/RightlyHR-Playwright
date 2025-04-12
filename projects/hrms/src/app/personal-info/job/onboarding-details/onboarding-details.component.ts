@@ -11,11 +11,10 @@ import { IBackground, INotice, IProbation } from '../../../Interfaces/job-model'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe],
+  imports: [CommonModule,ReactiveFormsModule,Select],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss'
 })
@@ -86,6 +85,7 @@ export class OnboardingDetailsComponent {
     this.getprobation();
     this.remoteLoginChange();
     this.getWorkfromhomeManager();
+    this.initializeTrainee();
     this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
   }
 
@@ -108,17 +108,13 @@ export class OnboardingDetailsComponent {
       wfhmanger: [{ value: "", disabled: true }],
     });
   }
-  initaializeTrainee(){
+  
+  initializeTrainee(){
     this.traineeForm = this.fb.group({
       empType: [this.empdata.empType],
       dateOfJoining: [this.empdata.dateOfJoining],
       durationOfTrainee: [this.empdata.durationOfTrainee],
       trainingEndDate: [this.empdata.trainingEndDate]
-    });
-  
-    // Sync with your model if needed
-    this.traineeForm.valueChanges.subscribe((val) => {
-      this.empdata = { ...this.empdata, ...val };
     });
   }
   
@@ -158,6 +154,7 @@ export class OnboardingDetailsComponent {
   }
   
   patchForm(data: any): void {
+    // Patching values for onboardingForm
     this.onboardingForm.patchValue({
       status: this.Statusdetails.find((item: any) => item.statusname === data.empstatus),
       dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
@@ -174,13 +171,24 @@ export class OnboardingDetailsComponent {
       remoteLogin: this.remoteLogin.find((item: any) => item.value === data.allowWFH),
       workLocation: this.worklocation.find((item: any) => item.value === data.workLocation),
       wfhmanger: this.Manager.find((item: any) => item.value === data.wfhManagerId),
-      trainingEndDate:moment(data.trainingEndDate).format('yyyy-MM-DD'),
-      empType:data.empType,
-      durationOfTrainee:moment(data.durationOfTrainee).format('yyyy-MM-DD')
+      trainingEndDate: moment(data.trainingEndDate).format('yyyy-MM-DD'),
+      empType: data.empType,
+      durationOfTrainee: data.durationOfTrainee
     });
-    console.log(this.onboardingForm.value);
-
+    
+    console.log(this.onboardingForm.value); // Check values in the onboardingForm
+  
+    // Patching values for traineeForm
+    this.traineeForm.patchValue({
+      empType: data.empType,
+      dateOfJoining: moment(data.dateOfJoining).isValid() ? moment(data.dateOfJoining).format('yyyy-MM-DD') : null,
+      durationOfTrainee: data.durationOfTrainee,
+      trainingEndDate: moment(data.trainingEndDate).isValid() ? moment(data.trainingEndDate).format('yyyy-MM-DD') : null
+    });
+    
+    console.log(this.traineeForm.value); // Check values in the traineeForm
   }
+  
 
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({

@@ -7,9 +7,10 @@ import { Itraineeapproval } from '../../../Interfaces/traineedetails.model';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators,NgForm, FormControl } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-trainee-approvals',
@@ -37,11 +38,20 @@ export class TraineeApprovalsComponent {
   extend: any;
   isempeffectivevaild: boolean = true;
   rejectForm!: FormGroup
+  rejectSeparationForm!:FormGroup
+  Status!:any;
+  comments=[] as any;
+  Trainees = [] as any [];
+  noRecalllength=[] as any;
 
-  constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal) {
+  constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,private authService: AuthService,) {
     this.customsetup = environment.dateformat;
     this.datePipe = new DatePipe('en-US');
   }
+  ngOnInit(): void {
+    this.getAllPendingApprovals();
+   }
+
   iniializationForm() {
     this.acceptForm = this.fb.group({
       trcomments: [this.selectedLeaveData.trcomments || '', Validators.required]
@@ -114,7 +124,7 @@ export class TraineeApprovalsComponent {
     this.getEmployeedatabyid(this.selectedLeaveData);
   }
 
-  handleAccept(f: FormGroup) {
+  handleAccept(f:NgForm) {
     let requestBody = {
       status: 'Approved',
       comments: this.selectedLeaveData.trcomments,
@@ -142,7 +152,7 @@ export class TraineeApprovalsComponent {
   }
 
   //function to send the rejected status and comments
-  handleReject(f: NgForm) {
+  handleReject(f:NgForm) {
     let requestBody = {
       status: 'Rejected',
       comments: this.selectedLeaveData.rejectedReason,
@@ -229,7 +239,7 @@ export class TraineeApprovalsComponent {
   }
 
   //function for extend
-  handleExtend(f: NgForm) {
+  handleExtend(f:NgForm) {
     let requestBody = {
       status: 'Processed',
       comments: this.selectedLeaveData.trcomments,
@@ -254,5 +264,36 @@ export class TraineeApprovalsComponent {
         },
       });
   }
-
+  initializeForm(): void {
+    this.rejectSeparationForm = this.fb.group({
+      // extenddate: [this.selectedLeaveData.extenddate, [Validators.required, this.extendDateValidator.bind(this)]],
+      trcomments: [this.selectedLeaveData.trcomments, [Validators.required, Validators.pattern(/^[a-zA-Z0-9 ]+$/)]]
+    });
+  }
+  getAllPendingApprovals() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId
+    console.log(EmployeeId);
+    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=15&approvedType=EMP`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+         this.Trainees = data.data
+         this.noRecalllength=this.Trainees;
+         console.log(this.Trainees)
+      },
+      error: (reason) => console.log(reason),
+    });
+  }
+  initializationrejectForm(){
+    this.rejectForm = new FormGroup({
+      flexRadioDefault: new FormControl('', Validators.required), // for the radio button selection
+      extenddate: new FormControl({ value: '', disabled: !this.extend }, [
+        Validators.required, 
+        // this.dateValidator.bind(this),
+      ]),
+      Extendreason: new FormControl('', Validators.required),
+      Descriptiondetails: new FormControl('', Validators.required),
+    });
+  }
+  
 }

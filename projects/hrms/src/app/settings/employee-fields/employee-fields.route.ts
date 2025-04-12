@@ -20,6 +20,7 @@ export default [
             { path: 'relationship', loadComponent: () => import('./personal/relationship/relationship.component').then(m => m.RelationshipComponent)},
             { path: 'visatype', loadComponent: () => import('./personal/visatype/visatype.component').then(m => m.VisatypeComponent)},
             { path: 'status', loadComponent: () => import('./personal/status/status.component').then(m => m.StatusComponent)}
+      
         ]
     },
     {
@@ -43,6 +44,7 @@ export default [
             { path: 'grade', loadComponent: () => import('./job/grade/grade.component').then((m) => m.GradeComponent) },
             { path: 'serving-period', loadComponent: () => import('./job/serving-period/serving-period.component').then((m) => m.ServingPeriodComponent)},
             { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => (m.ProbationDetailsComponent))},
+            { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent) },
         ]   
     },
     {

@@ -18,22 +18,23 @@ import { OfferletterdashboardpipePipe } from '../../../pipes/offerletterdashboar
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss'
 })
-export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
+
+export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   searchValue: any;
-  rejectDocument!:FormGroup;
+  rejectDocument!: FormGroup;
   offerLetters = [] as IOfferLetterDetails[];
-  loginuserdata={} as any;
-  selectedValuesOfOffer = {} as any//variable gto store the values 
-  employeedata={} as any
-  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder,private http: HttpService,
-    // public _userAcessService: UserAccessService,
-    private authService: AuthService,private conformationPopup: OpenModalService
-    // private _userAcessService: UserAccessService,
-   ) {  this.initializeForm();}
+  loginuserdata = {} as any;
+  selectedValuesOfOffer = {} as any;
+  employeedata = {} as any;
+
+  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
+    private authService: AuthService, private conformationPopup: OpenModalService
+  ) { this.initializeForm(); }
+
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
-    this.loginuserdata=this.authService.getToken()
+    this.loginuserdata = this.authService.getToken()
     this.initializeForm();
     this.getOfferLetters();
   }
@@ -47,12 +48,12 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
   }
   //functio to inialize the form
   initializeForm() {
-    this.rejectDocument =this.fb.group({
-      comments: ['', [Validators.required,Validators.maxLength(250)]],
-        });     
-    }
-   //to get all offer Letters
-   getOfferLetters() {
+    this.rejectDocument = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+  }
+  //to get all offer Letters
+  getOfferLetters() {
     this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames').subscribe({
       next: (data: any) => {
         console.log(data);
@@ -74,7 +75,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
             ?.split(':')[1]
             .split('=')[1];
           let blob: Blob = res.body as Blob;
-         // console.log(fileName);
+          // console.log(fileName);
 
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
@@ -104,44 +105,44 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
       approver: Values.approver,
       comments: null,
       requestedDate: null,
-      offerExpiryDate:Values.offerExpiryDate,
-      offerStartDate:Values.offerStartDate,
+      offerExpiryDate: Values.offerExpiryDate,
+      offerStartDate: Values.offerStartDate,
       authoritySignature: Values.authoritySignature,
       addressType: Values.addressType,
-      note:Values.note
+      note: Values.note
     };
     console.log(updateOfferLetterDetails);
 
     this.subscription = this.http
       .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
       .subscribe({
-        next: (data: any) => {       
+        next: (data: any) => {
           this.employeeEmail(Values);
-         
+
         },
         error: (reason: any) => {
           console.log(reason);
         },
       });
   }
-  employeeEmail(Values:any) {
+  employeeEmail(Values: any) {
     const loggedInUser = this.authService.getToken();
     //console.log(loggedInUser.middleName);
-    
+
     let emaildetails = {
-      personEmail:Values.emailaddress,
-      senderEmail:loggedInUser.workEmail,
-      senderName:"",
-      personName:Values.employeeName,
-      personRole:Values.jobRole,
-      employeeId:Values.empId,
-      documentUrl:Values.documentUrl,
-      workLocation:Values.workLocation,
-      offerStartDat:Values.offerStartDate,
-      offerExpiryDate:Values.offerExpiryDate
+      personEmail: Values.emailaddress,
+      senderEmail: loggedInUser.workEmail,
+      senderName: "",
+      personName: Values.employeeName,
+      personRole: Values.jobRole,
+      employeeId: Values.empId,
+      documentUrl: Values.documentUrl,
+      workLocation: Values.workLocation,
+      offerStartDat: Values.offerStartDate,
+      offerExpiryDate: Values.offerExpiryDate
     }
-    if(loggedInUser.middleName){
-      emaildetails.senderName =`${loggedInUser.firstName ??''} ${loggedInUser.middleName??''} ${loggedInUser.lastName??''}`
+    if (loggedInUser.middleName) {
+      emaildetails.senderName = `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''} ${loggedInUser.lastName ?? ''}`
     }
 
     this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
@@ -154,52 +155,49 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
       }
     })
   }
-    //function to update OfferLetter Details When Approve
-    updateOfferDetails(Values: any) {
-      let loggedInUser = this.authService.getToken();
-      console.log(loggedInUser);
-      let updateOfferLetterDetails = {
-        id: Values.id,
-        empId: Values.empId,
-        offerSentDate: Values.offerSentDate,
-        offerSentStatus: Values.offerSentStatus,
-        offerSentBy: Values.offerSentBy,
-        documentUrl: Values.documentUrl,
-        isdeleted: false,
-        status: "Approved",
-        approvedDate: new Date,
-        approvedBy: loggedInUser.employeeId,
-        approver: Values.approver,
-        comments: null,
-        requestedDate: null,
-        offerExpiryDate:Values.offerExpiryDate,
-        offerStartDate:Values.offerStartDate,
-        authoritySignature: Values.authoritySignature,
-        addressType: Values.addressType,
-        note:Values.note
-      };
-      console.log(updateOfferLetterDetails);
-  
-      this.subscription = this.http
-        .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
-        .subscribe({
-          next: (data: any) => {
-            console.log(data);
-            this.getOfferLetters();
-            this.ApproveEmail(Values)
-            
+  //function to update OfferLetter Details When Approve
+  updateOfferDetails(Values: any) {
+    let loggedInUser = this.authService.getToken();
+    console.log(loggedInUser);
+    let updateOfferLetterDetails = {
+      id: Values.id,
+      empId: Values.empId,
+      offerSentDate: Values.offerSentDate,
+      offerSentStatus: Values.offerSentStatus,
+      offerSentBy: Values.offerSentBy,
+      documentUrl: Values.documentUrl,
+      isdeleted: false,
+      status: "Approved",
+      approvedDate: new Date,
+      approvedBy: loggedInUser.employeeId,
+      approver: Values.approver,
+      comments: null,
+      requestedDate: null,
+      offerExpiryDate: Values.offerExpiryDate,
+      offerStartDate: Values.offerStartDate,
+      authoritySignature: Values.authoritySignature,
+      addressType: Values.addressType,
+      note: Values.note
+    };
+    console.log(updateOfferLetterDetails);
+    this.subscription = this.http
+      .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.getOfferLetters();
+          this.ApproveEmail(Values);
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+  }
 
-          },
-          error: (reason: any) => {
-            console.log(reason);
-          },
-        });
-    }
-       //function for Approve email
-   ApproveEmail(personValues: any) {
+  //function for Approve email
+  ApproveEmail(personValues: any) {
     let datas = personValues
     console.log(datas);
-
     let loggedInUser = this.authService.getToken();
     let emailData = {
       personName: datas.offerSentByName,
@@ -208,27 +206,26 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
       employeeId: datas.offerSentBy,
       documentUrl: personValues.documentUrl,
       workLocation: datas.workLocation,
-      senderName: `${loggedInUser.firstName ??''} ${loggedInUser.middleName??''}  ${loggedInUser.lastName??''}`,
+      senderName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''}  ${loggedInUser.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: loggedInUser.employeeId,
-      approvedByName: `${loggedInUser.firstName ??''} ${loggedInUser.middleName??''} ${loggedInUser.lastName??''}`,
+      approvedByName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''} ${loggedInUser.lastName ?? ''}`,
       firstName: datas.employeeName,
       comments: null
     }
     console.log(emailData);
-
     this.subscription = this.http.postdata(`CustomEmail/offerApproval`, emailData).subscribe({
       next: (data: any) => {
         console.log(data);
-        
+
         this.Approvednotification(datas);
         this.conformationPopup.openSuccessModal('Offer Approved Successfully ');
       }
     })
-
   }
-   //function for approved notification
-   Approvednotification(personname: any) {
+
+  //function for approved notification
+  Approvednotification(personname: any) {
     const currentDate = new Date();
     let loggedInUser = this.authService.getToken();
     let senddata = {
@@ -246,32 +243,33 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
         console.log(data);
         this.getOfferLetters();
       },
-      error:(err:any)=>{
+      error: (err: any) => {
         console.log(err);
-        
       }
     })
   }
-    //function to get the data of selected
-    SelectData(value: any) {
-      this.selectedValuesOfOffer = value
-      console.log(this.selectedValuesOfOffer);
-      this.getEmployeeId(value.empId)
-    }
+
+  //function to get the data of selected
+  SelectData(value: any) {
+    this.selectedValuesOfOffer = value
+    console.log(this.selectedValuesOfOffer);
+    this.getEmployeeId(value.empId)
+  }
+
   //function to get the employee details based on the employee id
-    getEmployeeId(Values:any) {
-  
-     let employeeId = Values
-      this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.employeedata=data
-         
-        },
-        error: reason => console.log(reason)
-      });
-    }
-      //post reason to offerletter table 
+  getEmployeeId(Values: any) {
+    let employeeId = Values
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.employeedata = data
+
+      },
+      error: reason => console.log(reason)
+    });
+  }
+
+  //post reason to offerletter table 
   PostReasonandUpdateOfferDetails() {
     let currentDate = new Date
     let loggedInUser = this.authService.getToken();
@@ -290,14 +288,13 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
       approver: this.selectedValuesOfOffer.approver,
       comments: this.rejectDocument.value.reason,
       requestedDate: null,
-      offerExpiryDate:this.selectedValuesOfOffer.offerExpiryDate,
-      offerStartDate:this.selectedValuesOfOffer.offerStartDate,
+      offerExpiryDate: this.selectedValuesOfOffer.offerExpiryDate,
+      offerStartDate: this.selectedValuesOfOffer.offerStartDate,
       authoritySignature: this.selectedValuesOfOffer.authoritySignature,
       addressType: this.selectedValuesOfOffer.addressType,
-      note:this.selectedValuesOfOffer.note
+      note: this.selectedValuesOfOffer.note
     };
     console.log(updateOfferLetterDetails);
-
     this.subscription = this.http
       .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
       .subscribe({
@@ -314,21 +311,21 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
         },
       });
   }
-    //function to update the employee substatus
-    updateemployeestatus(Value:any){
-      console.log(Value.empId);
-      
-        this.employeedata.employeeId=Value.empId,
-        this.employeedata.empstatus= 'Prospective'
-        this.employeedata.substatus="Offer Letter Rejected By Manager"
-        this.subscription=this.http.postdata('Employeedata/UPDATER',this.employeedata).subscribe({
-           next:(data:any)=>{
-            console.log(data);
-            
-           }
-        })
+
+  //function to update the employee substatus
+  updateemployeestatus(Value: any) {
+    console.log(Value.empId);
+    this.employeedata.employeeId = Value.empId,
+    this.employeedata.empstatus = 'Prospective'
+    this.employeedata.substatus = "Offer Letter Rejected By Manager"
+    this.subscription = this.http.postdata('Employeedata/UPDATER', this.employeedata).subscribe({
+      next: (data: any) => {
+        console.log(data);
       }
-        //Function for Reject Email
+    })
+  }
+
+  //Function for Reject Email
   rejectEmail() {
     let loggedInUser = this.authService.getToken();
     let emaildate = {
@@ -346,7 +343,6 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
       // lastName: string,
       comments: this.rejectDocument.value.comments,
     }
-    
     this.subscription = this.http.postdata(`CustomEmail/OfferRejection`, emaildate).subscribe({
       next: (data: any) => {
         if (data) {
@@ -360,31 +356,31 @@ export class DocumentHistoryOfferLetterComponent implements OnInit,OnDestroy{
       }
     })
   }
-    //function for reject notification
-    Rejectnotification() {
-      const currentDate = new Date();
-  
-      const loggedInUser = this.authService.getToken();
-      const senddata = {
-        message: `Offer Letter Rejected`,
-        sentTo: this.selectedValuesOfOffer.workEmail,
-        isRead: false,
-        isDelete: false,
-        notificationDate: currentDate,
-        notificationType: `${loggedInUser?.firstName} ${loggedInUser.middleName ?? ''} ${loggedInUser?.lastName} Rejected 
+
+  //function for reject notification
+  Rejectnotification() {
+    const currentDate = new Date();
+    const loggedInUser = this.authService.getToken();
+    const senddata = {
+      message: `Offer Letter Rejected`,
+      sentTo: this.selectedValuesOfOffer.workEmail,
+      isRead: false,
+      isDelete: false,
+      notificationDate: currentDate,
+      notificationType: `${loggedInUser?.firstName} ${loggedInUser.middleName ?? ''} ${loggedInUser?.lastName} Rejected 
            ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
-        empId: this.selectedValuesOfOffer.offerSentBy
-      }
-      this.subscription = this.http.postdata(`Notification`, senddata).subscribe({
-        next: (data: any) => {
-          console.log(data);
-        },
-        error:(err:any)=>{
-          console.log(err);
-          
-        }
-      })
+      empId: this.selectedValuesOfOffer.offerSentBy
     }
+    this.subscription = this.http.postdata(`Notification`, senddata).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: (err: any) => {
+        console.log(err);
+      }
+    })
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

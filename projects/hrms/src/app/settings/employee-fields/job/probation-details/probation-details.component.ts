@@ -122,7 +122,8 @@ export class ProbationDetailsComponent {
 
   // Method to open the update modal dialog
   openupdateDialog(probationDetailslist: any) {
-    this.selectedId = probationDetailslist.configValueId;
+    this.selectedId = probationDetailslist.id;
+    console.log("update details:" + probationDetailslist.value);
     this.updateForm.patchValue({ Type: probationDetailslist.value });
     this.updateForm.patchValue({ Duration: probationDetailslist.noOfDays });
     this.modalService.open(this.updatepopup, {
@@ -135,7 +136,7 @@ export class ProbationDetailsComponent {
     if (this.updateForm.valid && this.selectedId) {
       const request: IProbation = {
         value: this.updateForm.value.Type.trim(),
-        noOfDays: this.updateForm.value.AddSubLocation,
+        noOfDays: this.updateForm.value.Duration,
         configValueId: this.selectedId,
         isDeleted : false
       };

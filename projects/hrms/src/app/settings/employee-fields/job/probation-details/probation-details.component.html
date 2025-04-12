@@ -7,7 +7,7 @@
       <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
           <div class="pt-2">
-            <p class="popup-heading mb-0">{{ 'Job Role' | translate }}</p>
+            <p class="popup-heading mb-0">{{ 'Probation Details' | translate }}</p>
           </div>
           <div>
             <a (click)="close(modal)">
@@ -40,7 +40,7 @@
           <!-- Duration -->
           <div class="mb-4">
             <label for="Duration" class="form-label custom-label mb-2">
-              {{ 'Job Role' | translate }} <span class="error-msg">*</span>
+              {{ 'Duration' | translate }} <span class="error-msg">*</span>
             </label>
             <input
               type="text"
@@ -146,12 +146,12 @@
             <div class="custom-p-select-content">
               <select class="form-control custom-input" formControlName="Type">
                 <option value="" disabled selected>Please select gradename</option>
-                <option *ngFor="let pro of getProbationconfigValues" [value]="pro.configValueId">
-                  {{ pro.value }}
-                </option>
+                <option *ngFor="let pro of getProbationconfigValues" [value]="pro.id">
+                    {{ pro.value  }}
+                  </option>
               </select>
             </div>
-            <div *ngIf="AddForm.get('Type')?.touched && AddForm.get('Type')?.invalid">
+            <div *ngIf="updateForm.get('Type')?.touched && updateForm.get('Type')?.invalid">
               <small style="color: red; font-size: 13px;">
                 {{ 'Type is required' | translate }}
               </small>
@@ -168,7 +168,7 @@
               formControlName="Duration"
               placeholder="Please enter duration"
             />
-            <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg">
+            <div *ngIf="updateForm.get('Duration')?.touched && updateForm.get('Duration')?.invalid" class="error-msg">
               {{ 'Duration is required' | translate }}.
             </div>
           </div>

@@ -3,6 +3,10 @@ import { SalutationComponent } from './personal/salutation/salutation.component'
 import { ExpensesConfigurationComponent } from './employee-fields-layout/expenses-configuration/expenses-configuration.component';
 import { Component } from '@angular/core';
 import { ExpensesAllowedDaysComponent } from './employee-fields-layout/expenses-configuration/expenses-allowed-days/expenses-allowed-days.component';
+import { ShitsComponent } from './shits/shits.component';
+import { PendingshitsComponent } from './shits/pendingshits/pendingshits.component';
+import { PulishedShitsComponent } from './shits/pulished-shits/pulished-shits.component';
+import { AddShitsComponent } from './shits/add-shits/add-shits.component';
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal/salutation', pathMatch: 'full' },
@@ -19,7 +23,7 @@ export default [
     },
     {
         path: 'job', children: [
-            { path: '', redirectTo: 'job', pathMatch: 'full' },
+            { path: '', redirectTo: 'jobrole', pathMatch: 'full' },
             { path: 'location', loadComponent: () => import('./job/location/location.component').then((m) => m.LocationComponent) },
             { path: 'sub-location', loadComponent: () => import('./job/sub-location/sub-location.component').then((m) => m.SubLocationComponent) },
             { path: 'termination', loadComponent: () => import('./job/termination/termination.component').then((m) => m.TerminationComponent) },
@@ -30,7 +34,7 @@ export default [
             { path: 'compensation-reason', loadComponent: () => import('./job/compensation-reason/compensation-reason.component').then((m) => m.CompensationReasonComponent)},
             { path: 'eligible-for-rehire',loadComponent: () => import('./job/eligible-for-rehire/eligible-for-rehire.component').then((m) => m.EligibleForRehireComponent)},
             { path: 'paytype', loadComponent: () => import('./job/paytype/paytype.component').then((m) => m.PaytypeComponent)},
-            { path: 'Jobrole', loadComponent: () => import('./job/jobrole/jobrole.component').then((m) => m.JobroleComponent) },
+            { path: 'jobrole', loadComponent: () => import('./job/jobrole/jobrole.component').then((m) => m.JobroleComponent) },
             { path: 'probation', loadComponent: () => import('./job/probationstatus/probationstatus.component').then((m) => m.ProbationstatusComponent) },
             { path: 'background', loadComponent: () => import('./job/backgroundcheck/backgroundcheck.component').then((m) => m.BackgroundcheckComponent) },
             { path: 'frequency', loadComponent: () => import('./job/frequency/frequency.component').then((m) => m.FrequencyComponent) },
@@ -55,5 +59,16 @@ export default [
                     )
             }
         ]
-    }
+    },
+    { path: 'addshits', loadComponent: () => import('./shits/add-shits/add-shits.component').then((m) => m.AddShitsComponent)  },
+    {
+        path: 'shits', component: ShitsComponent,
+        children: [
+          { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent)  },
+        
+          { path: 'published-shits',  loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent)  },  
+          { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' }
+        ]
+      },
+
 ] as Route[];

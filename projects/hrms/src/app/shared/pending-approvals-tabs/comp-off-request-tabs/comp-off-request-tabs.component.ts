@@ -7,10 +7,11 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../Interfaces/timoff-model';
 import { Subject } from 'rxjs';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-comp-off-request-tabs',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,TabsModule],
   templateUrl: './comp-off-request-tabs.component.html',
   styleUrl: './comp-off-request-tabs.component.scss'
 })
@@ -53,7 +54,11 @@ export class CompOffRequestTabsComponent implements OnInit,OnDestroy{
     });
   }
 
-
+  navTabs: any[] = [
+    { label: 'For You ', link: 'for-you', count: 9 },
+    { label: 'For Your Role', link: 'for-your-role', count: 9 },
+   
+  ];
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

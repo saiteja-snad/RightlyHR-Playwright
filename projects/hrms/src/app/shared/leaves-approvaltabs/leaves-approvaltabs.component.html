@@ -1,4 +1,4 @@
-<div class="tabs-header">
+<!-- <div class="tabs-header">
   <ul class="nav">
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }" aria-current="page">Waiting For Approval ({{waitingForApprovalCount}})</a>
@@ -13,4 +13,18 @@
       <a class="nav-link" [routerLink]="['rejected']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Rejected ({{rejectedCount}})</a>
     </li>
   </ul>
+</div> -->
+
+<div class="component-nav-tabs-container card px-2">
+  <p-tabs value="0" scrollable>
+      <p-tablist>
+          <ng-container *ngFor="let tab of statusTabs;">
+              <p-tab [value]="tab.link">
+                  <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                      {{ tab.label }}
+                  </a>
+              </p-tab>
+          </ng-container>
+      </p-tablist>
+  </p-tabs>
 </div>

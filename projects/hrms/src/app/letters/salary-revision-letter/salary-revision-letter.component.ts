@@ -51,6 +51,7 @@ export class SalaryRevisionLetterComponent {
   signatureAuthorityName!: string | null;
   authorityDesignation!: string | null;
   authorityDetails = [] as any;
+  authoritydetails = [] as any;
   Status: any;
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
@@ -145,7 +146,7 @@ export class SalaryRevisionLetterComponent {
     this.fusionEmpId = fusionemployeeId;
     console.log(fusionemployeeId);
     this.appraisalData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
+      (c: any) => c.fusionEmpId == fusionemployeeId?.fusionEmpId
     );
     this.disablebuttonforemployeeid = true;
     this.getCompensationById(this.appraisalData);
@@ -212,7 +213,7 @@ export class SalaryRevisionLetterComponent {
     //console.log(this.authorityDetails);
     //console.log(this.prospectiveEmpData.authorityid);
 
-    let signatureAuthorityDetails = this.authorityDetails.find(
+    let signatureAuthorityDetails = this.authoritydetails.find(
       (c: any) => c.employeeId == this.appraisalData.authorityid
     );
     console.log(signatureAuthorityDetails);
@@ -236,6 +237,7 @@ export class SalaryRevisionLetterComponent {
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.authoritydetails = data;
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
@@ -562,7 +564,7 @@ export class SalaryRevisionLetterComponent {
         },
       });
   }
-  async postAppraisalLetterFormSubmit(f: NgForm) {
+  async postAppraisalLetterFormSubmit(f: FormGroup) {
     const data = await this.appraisalData;
     data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
     data.compeffectivedate = this.formatDate(data.compeffectivedate);

@@ -46,6 +46,7 @@ export class PromotionLetterComponent {
   signatureAuthorityName!:string |null
   authorityDesignation!:string|null;
   authorityDetails=[] as any;
+  authoritydetails=[] as any;
   disablebuttonforemployeeid: boolean = true; //variable to disable the fields
   disablebuttonforauthority: boolean = true; //variable to disable the fields
   @ViewChild('successhide') private readonly successhide!:NgbModal;
@@ -149,7 +150,7 @@ Onclickemployeeid(Value:any){
     console.log(fusionemployeeId);
     this.promotiondata = {}
     this.promotiondata = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
+      (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
     );
    this.disablebuttonforemployeeid=true
     this.getCompensationById(this.promotiondata);
@@ -163,7 +164,7 @@ Onclickemployeeid(Value:any){
     let EmployeeId = parseInt(this.promotiondata.employeeId)
     console.log(EmployeeId);
 
-    this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
+    this.subscription = this.http.getData(`JobDetails/Empname/${Employee.employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
         ///let jobdetails = data.reverse();
@@ -226,7 +227,7 @@ onclickauthority(ValueName:any){
     //console.log(this.authorityDetails);
     //console.log(this.prospectiveEmpData.authorityid);
   
-    let signatureAuthorityDetails = this.authorityDetails.find(
+    let signatureAuthorityDetails = this.authoritydetails.find(
       (c: any) => (c.employeeId == this.promotiondata.authorityid)
     );
     console.log(signatureAuthorityDetails);
@@ -249,6 +250,7 @@ getAuthorityDetails() {
   this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
     next: (data: any) => {
       console.log(data);
+      this.authoritydetails = data;
       this.authorityDetails = data.map((authority: any) => ({
         ...authority,
         fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
@@ -531,6 +533,16 @@ onClickOutside(target: any) {
           this.employeeiddetails = data;
 
           console.log(this.employeeiddetails);
+          this.employeeiddetails = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
         },
         error: (reason: any) => {
 
@@ -539,15 +551,15 @@ onClickOutside(target: any) {
       });
   }
 
-  async postPromotionLetterFormSubmit(f: NgForm) {
+  async postPromotionLetterFormSubmit(f: FormGroup) {
     const data = await this.promotiondata;
     console.log(data);
 
-    data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
+    data.dateofAppraisal = this.formatDate(data.dateofpromotion);
     data.compeffectivedate = this.formatDate(data.compeffectivedate);
     console.log(data);
 
-    const pdfContent = document.getElementById('pdfContent');
+    const pdfContent = document.getElementById('pdfContent1');
     if (pdfContent) {
       html2canvas(pdfContent, { scale: 3 }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
@@ -618,7 +630,10 @@ onClickOutside(target: any) {
             middleName:this.promotiondata.middleName,
             jobRole:this.promotiondata.jobRole,
             documentUrl:this.result.documentUrl,
-            compeffectivedate:this.formatDatebyDatestring(this.promotiondata.compeffectivedate),
+            // compeffectivedate:this.formatDatebyDatestring(this.promotiondata.compeffectivedate),
+            compeffectivedate: `${
+              this.promotiondata.compeffectivedate ?? 'N/A'
+            }`,
             employeeId:this.promotiondata.employeeId,
             compensationamount:this.promotiondata.salary
           }

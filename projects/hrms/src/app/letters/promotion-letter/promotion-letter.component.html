@@ -15,7 +15,7 @@
     <div class="main-letter-content row">
         <div class="col-sm-12 col-md-3">
             <div class="card letter-fields-content p-4">
-                <form [formGroup]="employeeForm">
+                <form [formGroup]="employeeForm" (ngSubmit)="postPromotionLetterFormSubmit(employeeForm)">
                     <div class="row">
                         <div class="col-md-12 mb-4">
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search
@@ -23,7 +23,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name" [showClear]="true"
                                     placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (change)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+                                    (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
                                 </p-select>
                                 <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                                     <div class="error-msg">Date is required</div>
@@ -33,22 +33,48 @@
                         <div class="col-md-12 mb-4">
                             <label class="form-label custom-label mb-2">Date <span
                                     class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="dateofpromotion"
+                            <!-- <input type="date" class="form-control custom-input" formControlName="dateofpromotion"
                                 placeholder="Please enter Date" />
                                 <div *ngIf="employeeForm.get('dateofpromotion')?.invalid && employeeForm.get('dateofpromotion')?.touched">
                                     <div class="error-msg">Date is required</div>
                                 </div>
                         </div>
                         <div class="col-md-12 mb-4">
+                            <label class="form-label custom-label mb-2">
+                                Date <span class="error-msg">*</span>
+                            </label> -->
+
+                            <input type="date" class="form-control custom-input" id="relievingDate"
+                                formControlName="dateofpromotion" [(ngModel)]="promotiondata.dateofpromotion"
+                                placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false"
+                                [ngClass]="{ 'is-invalid': employeeForm.get('dateofpromotion')?.invalid && employeeForm.get('dateofpromotion')?.touched || !isdateofpromotion }" />
+
+                            <!-- Error block shows for both required and custom logic -->
+                            <div *ngIf="employeeForm.get('dateofpromotion')?.touched">
+                                <div *ngIf="employeeForm.get('dateofpromotion')?.hasError('required')"
+                                    class="error-msg">
+                                    Date is required
+                                </div>
+                                <small *ngIf="!isdateofpromotion" class="error-msg">
+                                    Date should be after the date of joining
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
                             <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="employeementType" optionLabel="name"
+                                <!-- <p-select [options]="employeementType" optionLabel="name"
                                     placeholder="Please select document type" formControlName="Documenttype"
                                     class="form-select custom-select" >
                                     <option disabled [ngValue]="undefined">Select</option>
                                     <option Value="true">Yes</option>
                                     <option Value="false">No</option>
-                                </p-select>
+                                </p-select> -->
+                                <p-select [options]="employeementType" optionLabel="name" optionValue="value"
+                                placeholder="Please select document type" [showClear]="true"
+                                [(ngModel)]="promotiondata.Documenttype" formControlName="Documenttype"
+                                inputId="documenttype" class="form-select custom-select">
+                            </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
                                 <div class="error-msg">Document Type is required</div>
@@ -56,18 +82,20 @@
                         </div>
                         <div class="col-xl-12 mb-4">
                             <label class="form-label custom-label mb-2">Note</label>
-                            <textarea class="form-control custom-input" formControlName="note"
+                            <textarea class="form-control custom-input" formControlName="note"  [(ngModel)]="promotiondata.notes"
                                 placeholder="Leave a comment here"></textarea>
+                                <span>{{promotiondata.notes?.length?promotiondata.notes?.length:0}} /250</span>
                                 <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                                   <div class="error-msg">Note is required</div>
                               </div>
                         </div>
+
                         <div class="col-md-12 mb-4">
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                               Authority Name<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                              <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" />
+                              <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId" placeholder="Please select sub location"
+                                class="form-select custom-select" [(ngModel)]="promotiondata.authorityid" formControlName="authorityid" (onChange)="onclickDesignation()" />
                             </div>
                             <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                               <div class="error-msg">Signature Authority Name is required</div>
@@ -81,7 +109,7 @@
                             Salary in Personal and Job Tabs Before Generating the Document.</p>
                     </div>
                     <div class="d-flex flex-wrap gap-3 pt-4">
-                        <button type="button" class="custom-btn btn-primary">Generate Document</button>
+                        <button type="submit" class="custom-btn btn-primary">Generate Document</button>
                     </div>
                 </form>
             </div>
@@ -95,7 +123,7 @@
                         <div class="letter-page-content" id="pdfContent1">
                             <div class="letter-page-sub-content">
                                 <div *ngIf="promotiondata.Documenttype; else doc">
-                                   <app-lettersheader></app-lettersheader>>
+                                    <app-lettersheader></app-lettersheader>
                                 </div>
                                 <ng-template #doc>
                                     <div style="margin-bottom: 6.5rem;"></div>
@@ -126,7 +154,7 @@
                                         inform you that you will be receiving a salary increase. Your new salary shall be
                                         effective from
                                         <span *ngIf="!promotiondata.compeffectivedate;else effectivedate">_______________________</span>
-                                        <ng-template #effectivedate><b>{{promotiondata.compeffectivedate |dateformat}}
+                                        <ng-template #effectivedate><b>{{promotiondata.compeffectivedate | dateformat}}
                                             </b></ng-template> & with revised annual CTC of<b><span
                                                 *ngIf="!promotiondata.salary;else grossperanum"> </span>
                                         <ng-template #grossperanum> &#8377;{{promotiondata.salary }} /-.</ng-template></b>

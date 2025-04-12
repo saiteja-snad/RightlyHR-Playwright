@@ -7,35 +7,31 @@ export class RbacService {
 
   constructor() { }
 
-  allowedToAccess(section: string, permission: string, action: 'view' | 'create' | 'update' | 'delete'): boolean {
+  allowedToAccess(permission: string): boolean {
     const claimsString = localStorage.getItem('rightlyHrRoleClaims');
-
+  
     if (!claimsString || claimsString === 'undefined') {
-      return false;
+      return false; 
     }
-
+  
     try {
-      const claims = JSON.parse(claimsString);
-
-      if (!Array.isArray(claims)) {
-        console.warn("user-claims is not an array:", claims);
+      const permissions = JSON.parse(claimsString);
+  
+      if (Array.isArray(permissions)) { 
+        const lowerCasePermissions = permissions.map((perm: string) => perm.toLowerCase());
+        if (lowerCasePermissions.indexOf(permission.toLowerCase()) !== -1) {
+          return true;
+        }
+      } else {
+        console.warn("claims in local storage is not an array:", permissions);
         return false;
       }
-
-      const matchedPermission = claims.find((claim: any) =>
-        claim.section?.toLowerCase() === section.toLowerCase() &&
-        claim.permission?.toLowerCase() === permission.toLowerCase()
-      );
-
-      if (matchedPermission && typeof matchedPermission[action] === 'boolean') {
-        return matchedPermission[action];
-      }
-
+  
     } catch (error) {
-      console.error("Error parsing user-claims:", error);
-      return false;
+      console.error("Error parsing claims from local storage:", error);
+      return false; 
     }
-
+  
     return false;
   }
 }

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SettingSideNavComponent } from './setting-side-nav.component';
+import { TimeOffLayoutComponent } from './time-off-layout.component';
 
-describe('SettingSideNavComponent', () => {
-  let component: SettingSideNavComponent;
-  let fixture: ComponentFixture<SettingSideNavComponent>;
+describe('TimeOffLayoutComponent', () => {
+  let component: TimeOffLayoutComponent;
+  let fixture: ComponentFixture<TimeOffLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SettingSideNavComponent]
+      imports: [TimeOffLayoutComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SettingSideNavComponent);
+    fixture = TestBed.createComponent(TimeOffLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

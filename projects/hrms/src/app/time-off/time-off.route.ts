@@ -167,11 +167,7 @@ export default [
       },
       {
         path: 'probation-request',
-        component: ProbationPendingApprovalsComponent,
-        children: [
-          { path: 'assessmentform', component: AssessmentformComponent },
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
-        ],
+        component: ProbationPendingApprovalsComponent
       },
       {
         path: 'assessmentform', component: AssessmentformComponent,

@@ -1,12 +1,16 @@
 <div class="custom-table-content">
-    <div class="input-group custom-search mb-4">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+    <div class="p-3">
+        <div class="input-group custom-search">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
     </div>
+
     <table class="w-100">
         <thead>
             <tr>
-                <th>{{'DATE'|translate}}</th>
+                <th class="text-nowrap">{{'DATE'|translate}}</th>
                 <th>{{'NAME'|translate}}</th>
                 <th>{{'LOCATION'|translate}}</th>
                 <th>{{'SUB LOCATION'|translate}}</th>
@@ -14,89 +18,91 @@
                 <th>{{'DURATION OF TRAINING'|translate}}</th>
                 <th>{{'STATUS'|translate}}</th>
                 <th>{{'SUB STATUS'|translate}}</th>
-                <th >{{'ACTION'|translate}}</th>
+                <th class="text-center">{{'ACTION'|translate}}</th>
             </tr>
         </thead>
         <tbody>
             @if(traineeofferletters.length > 0){
-                @for (traineeofferLetter of traineeofferletters | offerletterdashboardpipe : searchValue; track traineeofferLetter.id){
-                    <tr  class="hover">
-                    <td>{{traineeofferLetter.offerSentDate | dateformat }}</td>
-                    <td>{{traineeofferLetter.employeeName ?traineeofferLetter.employeeName:'-'}}</td>
-                    <td>{{traineeofferLetter.workLocation?traineeofferLetter?.workLocation:'-' }}</td>
-                    <td>{{traineeofferLetter.subLocation?traineeofferLetter.subLocation:'-' }} </td>
-                    <td>{{traineeofferLetter.jobRole?traineeofferLetter.jobRole:'-'}}</td>
-                    <td>{{traineeofferLetter.durationOfTraining?traineeofferLetter.durationOfTraining:'-'}}</td>
-                    <td>{{traineeofferLetter.status?traineeofferLetter.status:'-'}} </td>
-                    <td>{{traineeofferLetter.empSubstatus?traineeofferLetter.empSubstatus:'-'}}  </td>
-                    <td style="text-align: center;">
-                        <div>
-                            <button class="custom-btn btn-primary me-3 mb-3"
-                                (click)="onSelectDownload(traineeofferLetter)">Download</button>
-                             @if(traineeofferLetter.status=='Approved'){
-                                <button class="custom-btn btn-primary me-3 mb-3"
-                                (click)="releaseTraineeOfferLetter(traineeofferLetter)">Release Offer</button>
-                             }
-    
-                            @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !== 'Rejected' && traineeofferLetter?.status !== 'Released') {
-                                <button class="custom-btn btn-primary-approve me-3 mb-3"
-                                (click)="updateTraineeOfferDetails(traineeofferLetter)">Approve</button>
-                              }     
-                               
-                           @if((traineeofferLetter.status!='Approved'&& traineeofferLetter.status!='Rejected'&&traineeofferLetter.status!='Released' ) ){
-                            <button class="custom-btn btn-primary-reject me-3 mb-3"  (click)="SelectData(traineeofferLetter);openModal(rejectpopup)"
+            @for (traineeofferLetter of traineeofferletters | offerletterdashboardpipe : searchValue; track
+            traineeofferLetter.id){
+            <tr>
+                <td class="text-nowrap">{{traineeofferLetter.offerSentDate | dateformat }}</td>
+                <td>{{traineeofferLetter.employeeName ?traineeofferLetter.employeeName:'-'}}</td>
+                <td>{{traineeofferLetter.workLocation?traineeofferLetter?.workLocation:'-' }}</td>
+                <td>{{traineeofferLetter.subLocation?traineeofferLetter.subLocation:'-' }} </td>
+                <td>{{traineeofferLetter.jobRole?traineeofferLetter.jobRole:'-'}}</td>
+                <td>{{traineeofferLetter.durationOfTraining?traineeofferLetter.durationOfTraining:'-'}}</td>
+                <td>{{traineeofferLetter.status?traineeofferLetter.status:'-'}} </td>
+                <td>{{traineeofferLetter.empSubstatus?traineeofferLetter.empSubstatus:'-'}} </td>
+                <td class="text-center">
+                    <div class="d-flex gap-2">
+                        <button class="custom-btn btn-primary"
+                            (click)="onSelectDownload(traineeofferLetter)">Download</button>
+                        @if(traineeofferLetter.status=='Approved'){
+                        <button class="custom-btn btn-primary"
+                            (click)="releaseTraineeOfferLetter(traineeofferLetter)">Release Offer</button>
+                        }
+
+                        @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !== 'Rejected' &&
+                        traineeofferLetter?.status !== 'Released') {
+                        <button class="custom-btn btn-primary-approve"
+                            (click)="updateTraineeOfferDetails(traineeofferLetter)">Approve</button>
+                        }
+
+                        @if((traineeofferLetter.status!='Approved'&&
+                        traineeofferLetter.status!='Rejected'&&traineeofferLetter.status!='Released' ) ){
+                        <button class="custom-btn btn-primary-reject"
+                            (click)="SelectData(traineeofferLetter);openModal(rejectpopup)"
                             data-bs-target="#rejectmodel">Reject</button>
-                           }
-                    
-                                </div>
-                    </td>
-                </tr>
-                }
-            
+                        }
+                    </div>
+                </td>
+            </tr>
+            }
             }
             @else {
-                <tr>
-                    <td colspan="8" style="text-align: center;">No Data Found</td>
-                </tr>
+            <tr>
+                <td colspan="8">No Data Found</td>
+            </tr>
             }
         </tbody>
     </table>
 </div>
+
+<!--reject popup-->
 <ng-template #rejectpopup let-modal>
     <div class="modal-header">
         <h5 class="modal-title" id="rejectModalLabel">Reject Reason </h5>
-        <button type="button" class="btn-close" (click)="rejectDocument.reset();modal.dismiss()" 
+        <button type="button" class="btn-close" (click)="rejectDocument.reset();modal.dismiss()"
             aria-label="Close"></button>
     </div>
     <form [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateTraineeOfferDetails()">
         <div class="modal-body">
             <div class="mb-3">
-                <label for="rejectReason" >Reject Reason
+                <label for="rejectReason">Reject Reason
                     <span class="error-msg">*</span></label>
                 <textarea type="text" name="rejectReason" class="form-control"
                     placeholder="Please provide reason for rejection" rows="3" maxlength="250"
-                    formControlName="comments"
-                    ></textarea>
-                    <div class="mt-2">
-                        <span class="color">
-                          {{ rejectDocument.get('comments')?.value?.length || 0 }} / 250
-                        </span>
-                      </div>
+                    formControlName="comments"></textarea>
+                <div class="mt-2">
+                    <span class="color">
+                        {{ rejectDocument.get('comments')?.value?.length || 0 }} / 250
+                    </span>
+                </div>
                 <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
-                class="text-danger">
-                {{'Reason'| translate}}.
-            </div>
+                    class="text-danger">
+                    {{'Reason'| translate}}.
+                </div>
             </div>
 
         </div>
         <div class="modal-footer">
             <div>
-                <button type="button"  class="custom-btn btn-secondary" 
-                (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                <button type="button" class="custom-btn btn-secondary"
+                    (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
             </div>
             <button type="submit" class="custom-btn btn-primary"
                 [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
         </div>
     </form>
-
 </ng-template>

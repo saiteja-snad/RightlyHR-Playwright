@@ -1,21 +1,5 @@
-.emergency-contact-content-card {
-    background-color: #F0F4F8;
-    border: none;
-    border-radius: 0.8rem;
-
-    .emergency-contact-sub-header {
-        font-weight: 600;
-        font-size: var(--fontsize16);
-        line-height: 16px;
-    }
-
-    .bi-pencil-square{
-        font-size: var(--fontsize16);
-    }
-}
-
 .country-input.disabled {
     pointer-events: none;
     opacity: 0.6;
     background-color: #e9ecef;
-  }
+}

@@ -10,48 +10,48 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-active-employees',
-  imports: [CommonModule, RouterModule, ActiveEmployeePipe,TranslateModule,FormsModule],
+  imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule],
   templateUrl: './active-employees.component.html',
   styleUrl: './active-employees.component.scss'
 })
 
-export class ActiveEmployeesComponent implements OnInit,OnDestroy{
+export class ActiveEmployeesComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
-  Active=[] as Iactive[];
+  Active = [] as Iactive[];
   searchValue: any;
-  emp={} as any;
-  constructor(private router: Router,private http:HttpService, private modalService: NgbModal) { }
+  emp = {} as any;
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-this.empdata();
+    this.empdata();
   }
-//function for active Employees
-empdata() {
-  this.subscription = this.http.getData(`Employeedata/ActiveEmployeeswithJobDetails`).subscribe({
-    next: (data: any) => {
-      console.log(data);
-   this.Active = data as Iactive[];
-    },
+  //function for active Employees
+  empdata() {
+    this.subscription = this.http.getData(`Employeedata/ActiveEmployeeswithJobDetails`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.Active = data as Iactive[];
+      },
 
-    error: (reason: any) => console.log(reason)
-  });
+      error: (reason: any) => console.log(reason)
+    });
 
-}
-
-select(act: any) {
-  this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-  console.log(this.emp);
-  this.router.navigate(['/personalinfo']);
-}
-
-navigateDashboard() {
-  this.router.navigate(['/admin/dashboard'])
-}
-
-ngOnDestroy(): void {
-  if (this.subscription) {
-    this.subscription.unsubscribe();
   }
-}
+
+  select(act: any) {
+    this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+    console.log(this.emp);
+    this.router.navigate(['/personalinfo']);
+  }
+
+  navigateDashboard() {
+    this.router.navigate(['/admin/dashboard'])
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 
 }

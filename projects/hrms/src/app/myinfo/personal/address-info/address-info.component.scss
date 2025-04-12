@@ -1,38 +1,21 @@
-.address-content-card {
-    background-color: #F0F4F8;
-    border: none;
-    border-radius: 0.8rem;
+.form-check-input:checked {
+    background-color: #1A1D1F;
+    border-color: rgba(6, 39, 79, 1);
+}
 
-    .address-sub-header {
-        font-weight: 600;
-        font-size: var(--fontsize16);
-        line-height: 16px;
-    }
+.custom-check {
+    padding: 0.5rem;
+}
 
-    .bi-pencil-square {
-        font-size: var(--fontsize16);
-    }
+input:focus, select:focus,.form-check-input {
+    box-shadow: none !important;
+    outline: none !important;
+}
 
-    .form-check-input:checked {
-        background-color: #1A1D1F;
-        border-color: rgba(6, 39, 79, 1);
-    }
-    .custom-check{
-        padding: 0.5rem;
-    }
+.custom-check-label {
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: -0%;
+    color: rgba(6, 39, 79, 1);
 
-    input:focus,
-    select:focus,
-    .form-check-input {
-        box-shadow: none !important;
-        outline: none !important;
-    }
-
-    .custom-check-label {
-        font-weight: 500;
-        font-size: 14px;
-        letter-spacing: -0%;
-        color: rgba(6, 39, 79, 1);
-
-    }
 }

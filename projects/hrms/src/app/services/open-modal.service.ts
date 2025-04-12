@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { SuccessContentPopupComponent } from '../shared/success-content-popup/success-content-popup.component';
 import { ErrorContentPopupComponent } from '../shared/error-content-popup/error-content-popup.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { LoaderPopupComponent } from '../shared/loader-popup/loader-popup.component';
 @Injectable({
   providedIn: 'root'
 })
+
 export class OpenModalService {
 
   constructor(private modalService: NgbModal) { }
@@ -24,5 +25,10 @@ export class OpenModalService {
     setTimeout(() => {
       errorModal.dismiss();
     }, 2000);
+  }
+
+  openLoaderModal(status: string){
+    const errorModal = this.modalService.open(LoaderPopupComponent,{centered:true , backdrop: 'static' });
+    errorModal.componentInstance.status = status;
   }
 }

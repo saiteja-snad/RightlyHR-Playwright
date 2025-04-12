@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -10,14 +10,14 @@ import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-
 @Component({
   selector: 'app-education-details',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
-export class EducationDetailsComponent {
+
+export class EducationDetailsComponent implements OnInit,OnDestroy {
   educationForm!: FormGroup;
   educationupdateForm!: FormGroup;
   selectedEducationId: any
@@ -60,7 +60,6 @@ export class EducationDetailsComponent {
       attachment: [null, Validators.required],
     });
     this.validations()
-
   }
 
   initializeupdateForm(): void {
@@ -74,10 +73,7 @@ export class EducationDetailsComponent {
       attachmentupdate: ['',],
     });
     this.validations()
-
   }
-
-
 
   validations() {
     // Add validation for start and end dates
@@ -88,16 +84,15 @@ export class EducationDetailsComponent {
         this.issEndDateValid = new Date(endDate) > new Date(startDate);
       }
     });
-
     this.educationForm.get('degreeEndDate')?.valueChanges.subscribe((endDate) => {
       const startDate = this.educationForm.get('degreeStartDate')?.value;
       this.issEndDateValid = new Date(endDate) > new Date(startDate);
     });
   }
+
   postEducation(): void {
     if (this.educationForm.valid) {
       const payload = this.createEducationPayload();
-
       if (this.educationAttachment) {
         this.uploadEducationAttachment(payload);
       } else {
@@ -131,7 +126,6 @@ export class EducationDetailsComponent {
         this.educationForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Education details added successfully');
-        console.log('Education data saved successfully:', payload);
         this.getEducationEmpid();
       },
       error: (err: any) => {
@@ -160,8 +154,7 @@ export class EducationDetailsComponent {
     const file = event.target.files[0];
     const timestamp = new Date().getTime();
     this.educationAttachment = this.renameFileAttachment(
-      file,
-      `${this.empinfo.employeeId}_${timestamp}_${file.name}`
+      file,`${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
     console.log('Identity attachment:', this.educationAttachment);
   }
@@ -193,11 +186,11 @@ export class EducationDetailsComponent {
         error: (reason) => console.log(reason),
       });
   }
+
   getDegree() {
     this.subscription = this.http.getData('Degree').subscribe({
       next: (data: any) => {
         this.degreeDetails = data as IDegre[];
-
       },
     });
   }
@@ -208,11 +201,9 @@ export class EducationDetailsComponent {
       next: (data: any) => {
         localStorage.setItem('educationinfodata', JSON.stringify(data));
         this.educationData.next(data);
-
       },
     });
   }
-
 
   //openupdate
   openModalupdate(content: any, educationDetails: any): void {
@@ -221,13 +212,8 @@ export class EducationDetailsComponent {
       (item) => item.degreeName === educationDetails.degree
     );
     // Convert dates to 'YYYY-MM-DD' format
-    const degreeStartDate = educationDetails.degreeStartDate
-      ? new Date(educationDetails.degreeStartDate).toISOString().split('T')[0]
-      : null;
-
-    const degreeEndDate = educationDetails.degreeEndDate
-      ? new Date(educationDetails.degreeEndDate).toISOString().split('T')[0]
-      : null;
+    const degreeStartDate = educationDetails.degreeStartDate ? new Date(educationDetails.degreeStartDate).toISOString().split('T')[0] : null;
+    const degreeEndDate = educationDetails.degreeEndDate ?  new Date(educationDetails.degreeEndDate).toISOString().split('T')[0] : null;
     this.educationupdateForm.patchValue({
       educationupdate: selectedEducationType,
       universityupdate: educationDetails.university,
@@ -235,23 +221,15 @@ export class EducationDetailsComponent {
       gpaupdate: educationDetails.gpa,
       degreeStartDateupdate: degreeStartDate,
       degreeEndDateupdate: degreeEndDate,
-
     });
-
     this.educationAttachment = educationDetails.attachment
-    
-     this.displalyeducationattachment=educationDetails.attachment
-     ? educationDetails.attachment.split('/').pop()
-      : null;
-
+    this.displalyeducationattachment=educationDetails.attachment ? educationDetails.attachment.split('/').pop() : null;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
   updateEducation(): void {
     if (this.educationupdateForm.valid) {
       const formData = this.educationupdateForm.value;
-
-     
       const payload = {
         id:this.selectedEducationId,
         university:formData.universityupdate,
@@ -275,6 +253,7 @@ export class EducationDetailsComponent {
       this.educationupdateForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
     }
   }
+
   uploadUpdatedEducationAttachment(payload: any): void {
     const filePath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
     this.subscription = this.http
@@ -301,7 +280,6 @@ export class EducationDetailsComponent {
         this.educationupdateForm.reset()
         this.modalService.dismissAll()
         this.conformationPopup.openSuccessModal('Education updated successfully')
-
       },
       error: (reason: any) => {
         console.error('Error updating education:', reason);
@@ -325,7 +303,6 @@ export class EducationDetailsComponent {
       console.error('No education record selected for deletion');
       return;
     }
-
     const payload = {
       status: 'Void',
       id: this.selectedEducationDetails.id,
@@ -337,7 +314,6 @@ export class EducationDetailsComponent {
       degreeStartDate: this.selectedEducationDetails.degreeStartDate,
       degreeEndDate: this.selectedEducationDetails.degreeEndDate,
     };
-
     // Send the delete request
     this.subscription = this.http.postdata('Education/UPDATER', payload).subscribe({
       next: (data: any) => {
@@ -353,4 +329,9 @@ export class EducationDetailsComponent {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

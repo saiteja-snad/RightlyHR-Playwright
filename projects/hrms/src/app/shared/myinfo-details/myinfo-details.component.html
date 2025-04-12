@@ -1,5 +1,5 @@
-<div class="profile-info-main-card w-100">
-    <div class="d-flex justify-content-between">
+<div class="profile-info-card-main-container w-100">
+    <div class="d-flex justify-content-between mb-3">
         <div class="image-content">
             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
 
@@ -9,47 +9,47 @@
                 <input class="form-control d-none" type="file" id="formFile" (change)="chooseNewProfile($event)">
             </div>
         </div>
-        <div class="text-nowrap pt-3">
+        <div class="text-nowrap pt-2">
             <p class="name mb-0">{{empinfo.firstName}} {{empinfo.middleName}} {{empinfo.lastName}}</p>
             <p class="sub-text mb-0">{{jobRole}}</p>
             <p class="sub-text mb-0">{{this.empinfo.fusionEmpId}}</p>
         </div>
-        <div class="qr-content">
-            <img src="/icons/qr-code.png" alt="qr icon" class="qr-icon">
+        <div class="qr-content pt-5 ps-2">
+            <img src="/icons/qr-code.png" alt="qr icon" class="qr-icon cursor">
         </div>
     </div>
 
     <!--user additional details-->
-    <div class="text-nowrap my-5">
-        <div class="align-middle mb-3">
-            <i class="bi bi-telephone profile-data-icon me-3"></i><span class="details-text">+91
+    <div class="text-nowrap py-4">
+        <div class="align-middle text-truncate mb-3">
+            <i class="bi bi-telephone profile-data-icon me-2"></i><span class="details-text">+91
                 {{this.empinfo?.workPhone || 'N/A'}} </span>
         </div>
-        <div class="mb-3">
-            <i class="bi bi-geo-alt profile-data-icon me-3"></i><span class="details-text">{{jobdata?.locationName}},
+        <div class="mb-3 text-truncate">
+            <i class="bi bi-geo-alt profile-data-icon me-2"></i><span class="details-text">{{jobdata?.locationName}},
                 {{jobdata?.sublocationName || 'N/A' }}</span>
         </div>
-        <div class="mb-3">
-            <i class="bi bi-envelope profile-data-icon me-3"></i><span
+        <div class="mb-3 text-truncate">
+            <i class="bi bi-envelope profile-data-icon me-2"></i><span
                 class="details-text">{{this.empinfo?.workEmail}}</span>
         </div>
-        <div class="mb-3">
-            <i class="bi bi-suitcase-lg profile-data-icon me-3"></i><span
+        <div class="mb-3 text-truncate">
+            <i class="bi bi-suitcase-lg profile-data-icon me-2"></i><span
                 class="details-text"><b>{{jobdata?.jobTypeName}}</b> ({{jobdata?.shiftName }})</span>
         </div>
-        <div class="mb-3">
-            <i class="bi bi-person-circle profile-data-icon me-3"></i><span class="details-text"><b>Team Manager</b> :
+        <div class="mb-3 text-truncate">
+            <i class="bi bi-person-circle profile-data-icon me-2"></i><span class="details-text"><b>Team Manager</b> :
                 {{reportesto?.fistname}} {{reportesto?.middlename}} {{reportesto?.lastname}}</span>
         </div>
-        <div class="mb-3">
-            <i class="bi bi-person-circle profile-data-icon me-3"></i><span class="details-text"><b>Reporting Manager
+        <div class="mb-3 text-truncate">
+            <i class="bi bi-person-circle profile-data-icon me-2"></i><span class="details-text"><b>Reporting Manager
                 </b> : {{Reportingmanager}}</span>
         </div>
     </div>
+</div>
 
-
-    <!-- Confrmation popup start -->
-    <!-- <ng-template #qrCodePopup let-modal>
+<!-- Confrmation popup start -->
+<!-- <ng-template #qrCodePopup let-modal>
         <div class="modal-body">
             <div class="card p-4">
                 <div class="d-flex justify-content-between">
@@ -91,5 +91,4 @@
             </div>
         </div>
     </ng-template> -->
-    <!-- Confirmation popup end -->
-</div>
+<!-- Confirmation popup end -->

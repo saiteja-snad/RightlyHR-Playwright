@@ -16,7 +16,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
   styleUrl: './permissions.component.scss'
 })
 export class PermissionsComponent implements OnInit, OnDestroy {
-  roleId!: any;
+  roleId!: string;
   noRoleSelected = true;
   isSaveButtonEnabled = false;
   roles: IRoles[] = [];
@@ -42,9 +42,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   getAllroles(): void {
     this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.roles = data as IRoles[]
-        console.log(this.roles)
       },
       error: (error: any) => {
         console.log(error);
@@ -65,7 +63,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 
   onRoleSelect(event: any) {
     const selectedRoleId = event?.value?.id;
-    console.log(selectedRoleId);
     this.onCategoryName(selectedRoleId);
   }
 
@@ -89,7 +86,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 
   getRolepermission(roleId: any) {
     this.http.getData(`FusionRoleClaims/${roleId}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next:(res: any) =>{
+      next: (res: any) => {
         this.permissionsReset(res);
       }, error: (error: any) => {
         console.error('Error fetching role permissions:', error);
@@ -105,7 +102,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       permission.Update = false;
       permission.Delete = false;
     });
-  
+
     if (data?.length > 0) {
       data.forEach((role: any) => {
         role.sections?.forEach((section: any) => {
@@ -128,7 +125,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   onCheckboxChange(permission: { [key: string]: any; View: boolean; Create: boolean; Update: boolean; Delete: boolean; }, action: string) {
-    console.log(permission, action)
     if (action === 'View' && !permission.View) {
       permission.Update = false;
       permission.Create = false;
@@ -145,7 +141,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   changePermissions() {
-    console.log(this.roleToFilter?.id);
     if (!this.roleToFilter?.id) {
       this.permissions.forEach((permission: any) => {
         permission.View = false;
@@ -170,11 +165,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         delete: p.Delete
       }));
   }
-  
+
   permissionsCreate() {
     this.modalService.open(this.stagingLoadingModal, { centered: true });
     const payload = this.preparePayload(this.roleId);
-  
+
     this.http.postdata('FusionRoleClaims', payload).subscribe({
       next: (data) => {
         this.modalService.dismissAll();
@@ -189,7 +184,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

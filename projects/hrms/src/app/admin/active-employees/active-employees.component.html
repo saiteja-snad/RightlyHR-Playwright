@@ -1,13 +1,12 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <p class="dashboard-text" (click)="navigateDashboard()"><i class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'|
-            translate}}
-            <span class="ms-2">>></span> <span class="component-heading px-2">{{'Active Employees'|translate}}</span>
+          <p class="component-header mb-0" (click)="navigateDashboard()">
+            <i class="bi bi-arrow-90deg-left me-2"></i>{{'Active Employees'|translate}}
           </p>
         </div>
         <div class="dropdown">
-            <button type="button" class="custom-btn btn-primary"  aria-expanded="false">
+            <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-plus me-2"></i>{{'Generate Documents'|translate}}
             </button>
             <ul class="dropdown-menu custom-dropdown-menu">
@@ -41,7 +40,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let act of Active | activeEmployee : searchValue" class="hover" (click)="select(act)">
+                    <tr *ngFor="let act of Active | activeEmployee : searchValue" (click)="select(act)">
           
                       <td>
                         <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span> 

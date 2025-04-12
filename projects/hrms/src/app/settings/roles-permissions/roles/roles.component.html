@@ -1,23 +1,23 @@
 <div class="card main-settings-layout p-4">
     <!-- Add Input-->
     <div>
-        <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" >
-        <div class="custom-settings-add-input input-group mb-5">
-            <input type="text" class="form-control custom-input" placeholder="Please enter role"
-                aria-label="role" aria-describedby="role"  formControlName="role" >
-                
-            <span class="input-group-text" id="role">
-                <button type="submit" class="custom-btn btn-primary">{{'Add'| translate}}</button>
+        <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+            <div class="custom-settings-add-input input-group mb-5">
+                <input type="text" class="form-control custom-input" placeholder="Please enter role" aria-label="role"
+                    aria-describedby="role" formControlName="role">
+
+                <span class="input-group-text" id="role">
+                    <button type="submit" class="custom-btn btn-primary">{{'Add'| translate}}</button>
                 </span>
+            </div>
+            <div *ngIf="roleForm.get('role')?.touched || roleForm.get('role')?.dirty">
+                <!-- Required validation message -->
+                <div *ngIf="roleForm.get('role')?.hasError('required')" style="color: red; font-size: 16px;">
+                    Please add this role.
                 </div>
-                <div *ngIf="roleForm.get('role')?.touched || roleForm.get('role')?.dirty">
-                    <!-- Required validation message -->
-                    <div *ngIf="roleForm.get('role')?.hasError('required')" style="color: red; font-size: 16px;">
-                      Please add this role.
-                    </div>
-                  </div>
-       </form>
-   </div>
+            </div>
+        </form>
+    </div>
 
     <!--Data Content-->
     <div>
@@ -34,11 +34,9 @@
                             <div class="d-flex gap-4">
                                 <!--Update-->
                                 <div>
-                                    
                                     <a (click)="openupdate(role)"><img src="/settings-icon/edit.png" alt="edit icon"
                                             class="settings-common-icon">
-                                        </a>
-                                        
+                                    </a>
                                 </div>
                                 <!--Delete-->
                                 <div>
@@ -48,7 +46,7 @@
                             </div>
                         </td>
                     </tr>
-                }
+                    }
                 </tbody>
             </table>
         </div>
@@ -58,27 +56,31 @@
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Update'|translate}}</p>
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-4">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Update'|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
             </div>
-            <div>
-                <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            <div class="custom-main-popup-content p-5">
+                <div class="mb-4">
+                    <label for="exampleFormControlInput1"
+                        class="form-label custom-label mb-2">{{'roles'|translate}}<span
+                            class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="firstName"
+                        placeholder="Please enter role">
+                </div>
+                <div class="d-flex gap-5 pt-4 w-100">
+                    <button class="custom-btn btn-secondary w-50 py-3"
+                        (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button class="custom-btn btn-primary w-50 py-3"
+                        (click)="updateRole(rolesDeletedata)">{{'Update'|translate}}</button>
+                </div>
             </div>
         </div>
-        <div class="custom-main-popup-content p-5">
-            <div class="mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'roles'|translate}}<span class="error-msg">*</span></label>
-                <input type="text" class="form-control custom-input" formControlName="firstName" 
-                    placeholder="Please enter role">
-            </div>
-            <div class="d-flex gap-5 pt-4 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3"(click)="close(modal)">{{'Close'|translate}}</button>
-                <button class="custom-btn btn-primary w-50 py-3"  (click)="updateRole(rolesDeletedata)">{{'Update'|translate}}</button>
-            </div>
-        </div>
-    </div>
     </form>
 </ng-template>
 
@@ -92,7 +94,8 @@
             </div>
             <div class="d-flex gap-5 pt-2 w-100">
                 <button class="custom-btn btn-secondary w-50 py-3" (click)="modal.close()">{{'No'|translate}}</button>
-                <button class="custom-btn btn-primary w-50 py-3"(click)="deleteRole(rolesDeletedata)">{{'yes'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3"
+                    (click)="deleteRole(rolesDeletedata)">{{'yes'|translate}}</button>
             </div>
         </div>
     </div>

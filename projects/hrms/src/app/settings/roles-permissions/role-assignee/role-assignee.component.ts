@@ -1,4 +1,4 @@
-import { Component, model, OnDestroy, OnInit, TemplateRef, ViewChild, viewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { IRoles } from '../permissions/permission.model';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -28,14 +28,15 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   roleAssigneeUsers: IUserRoleInfo[] = [];
   roles: IRoles[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
+
   @ViewChild('confirmationModal') confirmationModal: TemplateRef<any> | undefined;
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
   constructor(
     private http: HttpService,
     private fb: FormBuilder,
-     private modal: OpenModalService,
-     private modalService: NgbModal,
+    private modal: OpenModalService,
+    private modalService: NgbModal,
   ) { }
 
   ngOnInit(): void {
@@ -53,7 +54,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   getAllroles(): void {
     this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        this.roles = data as IRoles[]
+        this.roles = data as IRoles[];
         if (this.roles.length > 0) {
           this.onRoleClick(this.roles[0]);
         }
@@ -68,7 +69,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     const payload = {
       status: 'Active'
     };
-    
+
     this.http.getData(`Employeedata/getAll?status=${payload.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.usersList = res.map((user: any) => ({
@@ -107,14 +108,12 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
           this.roleAssigneeUsers = response;
         },
         error: (error: any) => {
-          this.modalService.dismissAll();
-          console.log(error);
-          this.modal.openErrorModal(error.error.message? error.error.message : 'Failed to load users');
+          // this.modalService.dismissAll();
+          this.modal.openErrorModal(error.error.message ? error.error.message : 'Failed to load users');
         },
         complete: () => {
-          this.modalService.dismissAll();
+          // this.modalService.dismissAll();
         }
-
       });
   }
 
@@ -141,7 +140,6 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   }
 
   onUserClick(user: IUserRoleInfo) {
-    console.log(user);
     this.userId = user.employeeId;
     this.modalService.open(this.confirmationModal, { centered: true, backdrop: 'static', keyboard: false });
   }
@@ -157,7 +155,6 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
         this.modal.openSuccessModal('Role Removed Successfully');
       },
       error: (err: any) => {
-        console.log(err);
         this.modalService.dismissAll();
         this.modal.openErrorModal('Role Removal Failed');
       },
@@ -168,7 +165,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     });
   }
 
-  close(){
+  close() {
     this.modalService.dismissAll();
   }
 

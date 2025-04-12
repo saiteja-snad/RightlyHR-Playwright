@@ -1,0 +1,60 @@
+th:not(:first-child) {
+    text-align: center;
+}
+
+td:not(:first-child) {
+    text-align: center;
+}
+
+.custom-header {
+    background-color: #F0F4F8 !important;
+    font-weight: 600 !important;
+    color: #06274F !important;
+}
+
+.custom-table-content th:last-child {
+    border-top-right-radius: 0rem;
+}
+
+.custom-table-content th:first-child {
+    border-top-left-radius: 0rem;
+}
+
+tr:nth-child(even) {
+    background-color: #FFFFFF !important;
+}
+
+input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+.custom-auto-select-dropdown {
+    .p-autocomplete {
+        width: 20rem;
+    }
+
+    .p-inputtext {
+        border: 1px solid #DEE8F3;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        vertical-align: middle;
+        color: #222222;
+    }
+
+    .p-inputtext:enabled:focus {
+        border: 1px solid #DEE8F3 !important;
+    }
+
+    .p-autocomplete-option {
+        font-size: var(--fontsize14);
+    }
+
+    .p-autocomplete-option-selected {
+        background: #06274F !important;
+        color: #FFFFFF !important;
+    }
+}

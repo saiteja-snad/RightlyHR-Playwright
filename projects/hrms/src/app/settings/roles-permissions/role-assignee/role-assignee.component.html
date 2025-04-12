@@ -1,63 +1,70 @@
-<div class="custom-table-content">
-    <table class="w-100 ">
-        <tbody>
-            <tr *ngFor="let role of roles">
-                <td [ngClass]="{'selected-row': role === selectedRole}" (click)="onRoleClick(role)" class="no-border ">
-                    {{ role.name }}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div>
-    <form [formGroup]="createAssigneeForm" autocomplete="off" (ngSubmit)="createAssignee(createAssigneeForm)">
-        <div class="d-flex  align-items-center gap-2 justify-content-end  p-3">
-            <div class="w-25">
-                <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
-                    optionLabel="fullName" placeholder="Search User" class="w-100" [filter]="true" filterBy="fullName"
-                    [showClear]="true">
-                    <ng-template let-selectedOption #selectedItem>
-                        {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
-                    </ng-template>
-                    <ng-template let-user #item>
-                        {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
-                    </ng-template>
-                </p-select>
-                <!-- <p-multiSelect formControlName="selected_user" [options]="usersList" name="user" id="user"
-                    optionLabel="fullName" placeholder="Search User" field="selectedUser" class="w-100"
-                    [selectedItemsLabel]="customLabelTemplate" (ngModelChange)="selectedUserDetails($event)">
-                    <ng-template let-user pTemplate="item">
-                        <div>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</div>
-                    </ng-template>
-                </p-multiSelect> -->
-            </div>
-            <div>
-                <button type="submit" class="main-custom-btn custom-btn-primary py-2 px-3"
-                    [disabled]="createAssigneeForm.invalid">Add</button>
+<div class="custom-main-component-container">
+    <div class="d-flex gap-3 w-100">
+        <!--sub tabs Content-->
+        <div class="custom-component-left-content">
+            <div class="component-side-nav-tabs-container py-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item" *ngFor="let role of roles">
+                        <a class="nav-link" [ngClass]="{'selected-row': role === selectedRole}" (click)="onRoleClick(role)">
+                            {{ role.name }}
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </form>
-</div>
 
-<div class="custom-table-content">
-    <table class="w-100">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <th>Actions</th>
-            </tr>
-            <tr *ngFor="let user of roleAssigneeUsers">
-                <td>
-                    {{ user.firstName }}
-                    <span *ngIf="user.middleName"> {{ user.middleName }} </span>
-                    {{ user.lastName }}
-                </td>
-                <td class="text-end delete-icon" (click)="onUserClick(user)"><b><i class="bi bi-trash3"></i></b>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="custom-setting-right-content p-3">
+            <form [formGroup]="createAssigneeForm" autocomplete="off" (ngSubmit)="createAssignee(createAssigneeForm)" class="mb-4">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
+                            optionLabel="fullName" placeholder="Search User" class="w-100" [filter]="true" filterBy="fullName"
+                            [showClear]="true">
+                            <ng-template let-selectedOption #selectedItem>
+                                {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+                            </ng-template>
+                            <ng-template let-user #item>
+                                {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
+                            </ng-template>
+                        </p-select>
+                        <!-- <p-multiSelect formControlName="selected_user" [options]="usersList" name="user" id="user"
+                            optionLabel="fullName" placeholder="Search User" field="selectedUser" class="w-100"
+                            [selectedItemsLabel]="customLabelTemplate" (ngModelChange)="selectedUserDetails($event)">
+                            <ng-template let-user pTemplate="item">
+                                <div>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</div>
+                            </ng-template>
+                        </p-multiSelect> -->
+                    </div>
+                    <div>
+                        <button type="submit" class="custom-btn btn-primary py-2 px-4" [disabled]="createAssigneeForm.invalid">Add</button>
+                    </div>
+                </div>
+            </form>
+            
+            <!--Table content-->
+            <div class="custom-table-content">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of roleAssigneeUsers">
+                            <td>{{ user.firstName }}
+                                <span *ngIf="user.middleName"> {{ user.middleName }} </span>
+                                {{ user.lastName }}
+                            </td>
+                            <td (click)="onUserClick(user)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                    class="settings-common-icon">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-template #confirmationModal let-modal>

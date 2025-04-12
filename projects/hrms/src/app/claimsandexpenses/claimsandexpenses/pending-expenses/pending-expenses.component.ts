@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { IExpense, IExpenseHeaders, IExpenseItem, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
+import { IExpense, IExpenseHeaders, IExpenseItem, INewExpense } from '../../../interfaces/claimsandexpenses.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../../../services/http.service';

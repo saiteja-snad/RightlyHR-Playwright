@@ -13,7 +13,7 @@ import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle } from '../../Interfaces/letters-model';
+import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle } from '../../interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';

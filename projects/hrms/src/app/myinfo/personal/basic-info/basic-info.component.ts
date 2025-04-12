@@ -6,7 +6,7 @@ import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
-import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
+import { IGender, IMarital, ITitle } from '../../../interfaces/personal-modal';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({

@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 import { SearchfilterPipe } from "../../pipes/searchfilter.pipe";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
-import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
+import { Ipersonal, Iteammembers } from '../../interfaces/members-model';
 //import { Iteammembers } from '../../models/teammembers';
 
 

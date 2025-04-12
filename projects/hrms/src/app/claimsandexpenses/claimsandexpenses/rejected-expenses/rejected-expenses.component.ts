@@ -3,7 +3,7 @@ import { environment } from '../../../../environments/environment';
 import { HttpService } from '../../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IExpense, IExpenseHeaders } from '../../../Interfaces/claimsandexpenses.model';
+import { IExpense, IExpenseHeaders } from '../../../interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';

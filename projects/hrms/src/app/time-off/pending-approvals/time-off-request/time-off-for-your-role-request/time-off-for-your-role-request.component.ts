@@ -6,7 +6,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-import { IPendingApprovals, LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
+import { IPendingApprovals, LeaveApproval, LeaveApproverComment } from '../../../../interfaces/pendingapprovalsmodel';
 import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../../../services/open-modal.service';
 

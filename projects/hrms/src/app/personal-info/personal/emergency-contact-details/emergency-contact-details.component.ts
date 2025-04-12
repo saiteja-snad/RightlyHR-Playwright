@@ -5,7 +5,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IRelation } from '../../../Interfaces/personal-modal';
+import { IRelation } from '../../../interfaces/personal-modal';
 import { Select } from 'primeng/select';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';

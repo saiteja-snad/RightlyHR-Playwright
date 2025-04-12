@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { IEntity, Iprobationapproval } from '../Interfaces/pendingapprovalsmodel';
+import { IEntity, Iprobationapproval } from '../interfaces/pendingapprovalsmodel';
 
 @Pipe({
   name: 'probationdetails'

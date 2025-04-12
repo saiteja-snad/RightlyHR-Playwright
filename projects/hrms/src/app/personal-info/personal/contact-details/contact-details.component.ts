@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { IJob } from '../../../Interfaces/job-model';
+import { IJob } from '../../../interfaces/job-model';
 
 @Component({
   selector: 'app-contact-details',

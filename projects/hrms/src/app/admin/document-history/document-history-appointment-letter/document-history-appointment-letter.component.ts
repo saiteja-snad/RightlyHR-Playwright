@@ -3,7 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { IAppointmentLetterDetails } from '../../../Interfaces/documentsHistory';
+import { IAppointmentLetterDetails } from '../../../interfaces/documentsHistory';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { AppointmentletterpipePipe } from '../../../pipes/appointmentletterpipe.pipe';

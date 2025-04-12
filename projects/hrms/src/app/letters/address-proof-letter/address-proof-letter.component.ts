@@ -13,7 +13,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
 import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
-import { IaddressemployeeDetails, IAuthority } from '../../Interfaces/letters-model';
+import { IaddressemployeeDetails, IAuthority } from '../../interfaces/letters-model';
 
 @Component({
   selector: 'app-address-proof-letter',

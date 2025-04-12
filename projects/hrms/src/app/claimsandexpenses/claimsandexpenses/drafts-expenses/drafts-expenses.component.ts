@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IExpense, IExpensedatabyid, IExpenseHeader, IExpenses, Iexpensetype, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
+import { IExpense, IExpensedatabyid, IExpenseHeader, IExpenses, Iexpensetype, INewExpense } from '../../../interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscribable, Subscription, switchMap } from 'rxjs';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';

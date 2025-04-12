@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IJob } from '../../../Interfaces/job-model';
+import { IJob } from '../../../interfaces/job-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";

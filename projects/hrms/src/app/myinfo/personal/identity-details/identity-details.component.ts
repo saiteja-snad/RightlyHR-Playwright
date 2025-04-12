@@ -6,7 +6,7 @@ import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
+import { Iidentity, Iidentitydrop } from '../../../interfaces/personal-modal';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 

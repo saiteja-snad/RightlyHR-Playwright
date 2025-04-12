@@ -8,7 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
-import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
+import { IOfferLetterDetails } from '../../../interfaces/documentsHistory';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { OfferletterdashboardpipePipe } from '../../../pipes/offerletterdashboardpipe.pipe';
 

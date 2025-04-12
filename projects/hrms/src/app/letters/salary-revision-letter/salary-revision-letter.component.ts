@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
-import { IemployeeDetails } from '../../Interfaces/letters-model';
+import { IemployeeDetails } from '../../interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({

@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { IRehiredata, ITermination } from '../../../Interfaces/job-model';
+import { IRehiredata, ITermination } from '../../../interfaces/job-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
-import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { Ipersonal } from '../../../interfaces/personal-modal';
 import moment from 'moment';
 
 @Component({

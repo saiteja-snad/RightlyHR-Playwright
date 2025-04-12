@@ -16,7 +16,7 @@ import {
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { Ipersonal } from '../../../interfaces/personal-modal';
 import moment from 'moment';
 
 @Component({

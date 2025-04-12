@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { LeaveApproval } from '../../Interfaces/pendingapprovalsmodel';
+import { LeaveApproval } from '../../interfaces/pendingapprovalsmodel';
 import { HttpService } from '../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 

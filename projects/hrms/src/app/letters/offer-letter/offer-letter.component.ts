@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
-import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
+import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';

@@ -7,9 +7,9 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { Ipersonal } from '../../../Interfaces/members-model';
+import { Ipersonal } from '../../../interfaces/members-model';
 import { CommonModule } from '@angular/common';
-import { IJob } from '../../../Interfaces/onboarding-documents';
+import { IJob } from '../../../interfaces/onboarding-documents';
 
 @Component({
   selector: 'app-onboarding-requests',

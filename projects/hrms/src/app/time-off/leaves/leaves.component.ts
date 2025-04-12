@@ -7,7 +7,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
 import { LeavesApprovaltabsComponent } from "../../shared/leaves-approvaltabs/leaves-approvaltabs.component";
 import { RouterModule } from '@angular/router';
-import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
+import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';

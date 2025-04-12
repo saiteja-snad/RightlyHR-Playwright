@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { ITrainee } from './Prospective-interns-modules';
 import { FormsModule } from '@angular/forms';
-import { IServe } from '../../Interfaces/letters-model';
+import { IServe } from '../../interfaces/letters-model';
 import { ActiveEmployeePipe } from '../../pipes/active-employee.pipe';
 
 @Component({

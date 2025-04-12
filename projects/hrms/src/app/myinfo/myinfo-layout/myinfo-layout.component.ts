@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 
-import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
+import { Ipersonal, Iteammembers } from '../../interfaces/members-model';
 import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-details.component";
 
 @Component({

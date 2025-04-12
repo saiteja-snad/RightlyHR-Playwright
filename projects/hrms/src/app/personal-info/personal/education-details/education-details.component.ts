@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
+import { IDegre, Ieducation } from '../../../interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";

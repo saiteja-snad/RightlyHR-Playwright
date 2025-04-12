@@ -16,7 +16,7 @@ import {
   ISeparation,
   ISeparationRequest,
 } from '../separation-for-you-request/separation-for-you-request';
-import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { Ipersonal } from '../../../interfaces/personal-modal';
 
 @Component({
   selector: 'app-recall-for-you-request',

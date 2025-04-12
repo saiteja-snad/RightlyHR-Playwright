@@ -7,7 +7,7 @@ import { PaginatorModule, } from 'primeng/paginator';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { Idocsdetail, Ipersonal } from '../../../Interfaces/personal-modal';
+import { Idocsdetail, Ipersonal } from '../../../interfaces/personal-modal';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';

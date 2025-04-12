@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { IJob } from '../../../Interfaces/letters-model';
+import { IJob } from '../../../interfaces/letters-model';
 import { FormBuilder } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { IPendingApprovals } from '../../../Interfaces/pendingapprovalsmodel';
-import { AttendanceRequest } from '../../../Interfaces/timoff-model';
+import { IPendingApprovals } from '../../../interfaces/pendingapprovalsmodel';
+import { AttendanceRequest } from '../../../interfaces/timoff-model';
 import { Subject } from 'rxjs';
 
 @Component({

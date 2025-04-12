@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { IDepartment, IGrade, IJob, IJobdetails, IJobtype, IRole } from '../../../Interfaces/job-model';
+import { IDepartment, IGrade, IJob, IJobdetails, IJobtype, IRole } from '../../../interfaces/job-model';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';

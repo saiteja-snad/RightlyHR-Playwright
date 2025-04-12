@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { IExpense, IExpenseHeaders, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
+import { IExpense, IExpenseHeaders, INewExpense } from '../../../interfaces/claimsandexpenses.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';

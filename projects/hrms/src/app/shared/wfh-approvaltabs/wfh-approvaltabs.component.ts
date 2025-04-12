@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { ICompOff } from '../../Interfaces/compoff.modal';
-import { IJob } from '../../Interfaces/letters-model';
+import { ICompOff } from '../../interfaces/compoff.modal';
+import { IJob } from '../../interfaces/letters-model';
 import { HttpService } from '../../services/http.service';
 import { Subject, takeUntil } from 'rxjs';
 

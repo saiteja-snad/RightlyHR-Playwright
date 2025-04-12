@@ -14,7 +14,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
-import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { Ipersonal } from '../../../interfaces/personal-modal';
 
 @Component({
   selector: 'app-separation-for-you-request',

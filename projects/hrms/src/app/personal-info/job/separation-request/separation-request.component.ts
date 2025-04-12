@@ -10,7 +10,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { Ipersonal,} from '../../../Interfaces/personal-modal';
+import { Ipersonal,} from '../../../interfaces/personal-modal';
 import moment from 'moment';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';

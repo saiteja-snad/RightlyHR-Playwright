@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ICompOff } from '../../../Interfaces/compoff.modal';
-import { IJob } from '../../../Interfaces/letters-model';
+import { ICompOff } from '../../../interfaces/compoff.modal';
+import { IJob } from '../../../interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormsModule } from '@angular/forms';

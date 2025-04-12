@@ -13,7 +13,7 @@ import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/p
 import { PersonalPersonalTabsComponent } from '../../shared/personalinfo-tabs/personal-personal-tabs/personal-personal-tabs.component';
 import { PersonalJobTabsComponent } from '../../shared/personalinfo-tabs/personal-job-tabs/personal-job-tabs.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
+import { Ipersonal, Iteammembers } from '../../interfaces/members-model';
 
 
 @Component({

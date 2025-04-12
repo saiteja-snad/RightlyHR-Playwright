@@ -7,7 +7,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
-import { Ilpid } from '../../../Interfaces/timoff-model';
+import { Ilpid } from '../../../interfaces/timoff-model';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({

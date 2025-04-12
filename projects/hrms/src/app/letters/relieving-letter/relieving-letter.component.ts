@@ -13,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { IemployeeDetails } from '../../Interfaces/letters-model';
+import { IemployeeDetails } from '../../interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
 

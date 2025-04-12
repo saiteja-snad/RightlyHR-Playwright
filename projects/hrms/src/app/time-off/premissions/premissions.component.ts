@@ -3,13 +3,13 @@ import { PremissionsTabsComponent } from "../../shared/premissions-tabs/premissi
 import { RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IJob } from '../../Interfaces/letters-model';
+import { IJob } from '../../interfaces/letters-model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
 import { Subject, takeUntil } from 'rxjs';
-import { IEAV, LeaveType } from '../../Interfaces/timoff-model';
+import { IEAV, LeaveType } from '../../interfaces/timoff-model';
 import { CommonModule } from '@angular/common';
 
 @Component({

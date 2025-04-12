@@ -5,12 +5,12 @@ import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Iprobationapproval } from '../../../Interfaces/pendingapprovalsmodel';
+import { Iprobationapproval } from '../../../interfaces/pendingapprovalsmodel';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { HttpService } from '../../../services/http.service';
 import { ProbationdetailsPipe } from "../../../pipes/probationdetails.pipe";
-import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { Ipersonal } from '../../../interfaces/personal-modal';
 
 @Component({
   selector: 'app-probation-pending-approvals',

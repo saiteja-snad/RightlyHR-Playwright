@@ -7,7 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { IExpenses } from '../../../../Interfaces/claimsandexpenses.model';
+import { IExpenses } from '../../../../interfaces/claimsandexpenses.model';
 
 @Component({
   selector: 'app-expenses-configuration',

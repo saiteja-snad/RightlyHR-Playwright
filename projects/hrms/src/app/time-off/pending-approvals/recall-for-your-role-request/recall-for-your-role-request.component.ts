@@ -11,7 +11,7 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, NgForm } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
-import { Ipersonal } from '../../../Interfaces/members-model';
+import { Ipersonal } from '../../../interfaces/members-model';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';

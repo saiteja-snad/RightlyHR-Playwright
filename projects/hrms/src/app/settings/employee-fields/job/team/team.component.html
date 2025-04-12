@@ -14,7 +14,7 @@
           </a>
         </div>
       </div>
-<div class="custom-main-popup-content p-5">
+<!-- <div class="custom-main-popup-content p-5"> -->
         <div class="mb-4">
           <label for="DepartmentName" class="form-label custom-label mb-2">
             {{ 'Department Names ' | translate }} <span class="error-msg">*</span>
@@ -82,7 +82,7 @@
         </div>
 
       </div>
-    </div>
+    
   </form>
 </ng-template>
 
@@ -169,17 +169,17 @@
         </label>
 
         <div class="custom-p-select-content">
-          <select class="form-control custom-input" formControlName="updatedDepartmentName"  (change)="onDepartmentChange($event)">
+          <!-- <select class="form-control custom-input" formControlName="updatedDepartmentName"  (change)="onDepartmentChange($event)">
             <option [ngValue]="null" disabled>{{ 'Please select department name' | translate }}</option>
             <option *ngFor="let dept of departments" [ngValue]="dept.DepartmentName">
               {{ dept.DepartmentName }}
             </option>
-          </select>
-          <!-- <p-select formControlName="updatedDepartmentName" optionValue="departmentId" [options]="departments" name="user" id="user"
+          </select> -->
+          <p-select formControlName="updatedDepartmentName" optionValue="departmentId" [options]="departments" name="user" id="user"
           optionLabel="DepartmentName" placeholder="Search Team Manager" class="w-100" [filter]="true" filterBy="DepartmentName"
           [showClear]="true">
       
-      </p-select> -->
+      </p-select>
 
         </div>
         <div *ngIf="AddForm.get('updatedDepartmentName')?.touched && AddForm.get('updatedDepartmentName')?.invalid">
@@ -210,12 +210,12 @@
           </label>
 
           <div class="custom-p-select-content">
-            <select class="form-control custom-input" formControlName="updatedteamManager" (change)="onDepartmentChange($event)">
+            <!-- <select class="form-control custom-input" formControlName="updatedteamManager" (change)="onDepartmentChange($event)">
               <option [ngValue]="null" disabled>{{ 'Please select Team Manager' | translate }}</option>
               <option *ngFor="let manager of teamManagerDetails" [ngValue]="manager.teamManagerDetails">
                 {{ manager.TeamName }}
               </option>
-            </select>
+            </select> -->
           </div>
 
           <div *ngIf="AddForm.get('updatedteamManager')?.touched && AddForm.get('updatedteamManager')?.invalid">

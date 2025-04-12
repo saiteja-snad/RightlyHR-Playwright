@@ -63,7 +63,6 @@ export class HttpService {
   getData(url: string, deleteRequest: { isdeleted: string; }) {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
-
   postletters(url: string) {
     return this.http.post(`${this.ApiUrl}${url}`, {});
   }

@@ -89,7 +89,7 @@
                 children: [
                     { path: 'pending-for-submit', loadComponent: () => import('./manage-holidays/published-holidays/published-holidays.component').then((m) => m.PublishedHolidaysComponent) },
 
-                    { path: 'published-policies', loadComponent: () => import('./manage-holidays/pending-holidays/pending-holidays.component').then((m) => m.PendingHolidaysComponent) },
+                    { path: 'published-holidays', loadComponent: () => import('./manage-holidays/pending-holidays/pending-holidays.component').then((m) => m.PendingHolidaysComponent) },
                     { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' }
                 ]
             },

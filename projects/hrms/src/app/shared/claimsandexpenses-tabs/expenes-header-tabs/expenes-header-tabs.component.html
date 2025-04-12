@@ -1,14 +1,15 @@
-<div class="card custom-nav-tab-card px-2">
-    <ul class="nav-tabs-main-content ps-0 text-center mb-0">
-        <li class="nav-item" [routerLink]="['/claimsandexpenses/expenses/draft']" routerLinkActive="nav-tab-active">
-            Draft (9)</li>
-        <li class="nav-item" [routerLink]="['/claimsandexpenses/expenses/approved']" routerLinkActive="nav-tab-active">
-            Approved (9)</li>
-        <li class="nav-item" [routerLink]="['/claimsandexpenses/expenses/pending']" routerLinkActive="nav-tab-active">
-            Pending (4)</li>
-        <li class="nav-item" [routerLink]="['/claimsandexpenses/expenses/processed']" routerLinkActive="nav-tab-active">
-            Processed (9)</li>
-        <li class="nav-item" [routerLink]="['/claimsandexpenses/expenses/rejected']" routerLinkActive="nav-tab-active">
-            Rejected (9)</li>
-    </ul>
+
+<div class="component-nav-tabs-container card px-2">
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of navTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                        {{ tab.label }}
+                    </a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
 </div>
+

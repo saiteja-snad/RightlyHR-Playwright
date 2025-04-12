@@ -1,28 +1,14 @@
-<div class="tabs-header">
-  <ul class="nav">
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/leaves/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }" aria-current="page">Time-Off</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/wfh/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">WFH</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Comp-Off</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/premissions/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Permissions</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/time-off-request/for-you']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Pending Approvals</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/attendance']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">Attendance</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/on-behalf-of/waiting-for-approval']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">On Behalf Of</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/user/assignee']" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: false }">On Behalf Of Approvals</a>
-    </li>
-  </ul>
+
+<div class="header-module-tabs-container">
+  <p-tabs value="0" scrollable>
+      <p-tablist>
+          <ng-container *ngFor="let tab of navTabs;">
+              <p-tab [value]="tab.link">
+                  <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                      {{ tab.label   }}
+                  </a>
+              </p-tab>
+          </ng-container>
+      </p-tablist>
+  </p-tabs>
 </div>

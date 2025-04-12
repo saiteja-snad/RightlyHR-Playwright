@@ -1,171 +1,152 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex py-3">
-        <div>
-            <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
-        </div>
-        <div>
-            <span class="heading"><span class="px-2">>></span>Probation Confirmation Letter</span>
-        </div>
+            <div>
+                <p class="main-content-heading cursor mb-0" (click)="naviagte()"><i class="bi bi-arrow-90deg-left me-2"></i>Probation Confirmation Letter</p>
+            </div>
         </div>
     </div>
 
-    <!--letter content-->
-    <div class="main-letter-content row">
-        <div class="col-sm-12 col-md-3">
-            <div class="card letter-fields-content p-4">
-                <form [formGroup]="employeeForm" (ngSubmit)="postProbationLetterFormSubmit(employeeForm)">
-                    <div class="row">
-                        <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
-                                    placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (onChange)="Onclick($event.value)">
-                                </p-select>
-                            </div>
-                            <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
-                                <div class="error-msg">Employee is required</div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Issued Date <span class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date"
-                                (change)="DateValidation()" />
-                            <div *ngIf="employeeForm.get('issuedDate')?.invalid && employeeForm.get('issuedDate')?.touched">
-                                <div class="error-msg">Issued Date is required</div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Effective Date <span class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="effectiveDate" placeholder="Please enter Date"
-                                (change)="DateValidation()" />
-                            <div *ngIf="employeeForm.get('effectiveDate')?.invalid && employeeForm.get('effectiveDate')?.touched">
-                                <div class="error-msg">Effective Date is required</div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">
-                              <p-select [options]="employeementType" optionLabel="name"
-                                placeholder="Please select document type" formControlName="Documenttype"
-                                class="form-select custom-select">
-                                <option disabled [ngValue]="undefined">Select</option>
-                              </p-select>
-                            </div>
-                            <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
-                              <div class="error-msg">Document Type is required</div>
-                            </div>
-                          </div>
-                        <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                              Authority Name<span class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">
-                              <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" />
-                            </div>
-                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                              <div class="error-msg">Signature Authority Name is required</div>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name, Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
-                        </div>
-                      </div>
-                    <div class="d-flex flex-wrap gap-3 pt-4">
-                        <button type="button" class="custom-btn btn-primary">Generate Document</button>
+    <!--letter main container-->
+    <div class="main-letter-content d-flex">
+        <!-- letter content-->
+        <div class="card letter-fields-content p-4">
+             <form [formGroup]="probationConfirmationForm" (ngSubmit)="postProbationLetterFormSubmit()">
+                 <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            [showClear]="true" placeholder="Please select employee"  formControlName="employeeId" (onChange)="getProbationEmployees()"
+                            class="custom-select w-100">
+                        </p-select>
                     </div>
-                </form>
-            </div>
+                    <div *ngIf="probationConfirmationForm.get('employeeId')?.invalid && probationConfirmationForm.get('employeeId')?.touched">
+                        <div class="error-msg">Employee is required</div>
+                    </div>
+                 </div>
+
+                <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
+                    <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date"
+                        [min]="todayDate" (change)="pathValuesFuction();DateValidation()" />
+                    <div class="error-msg">
+                        <div *ngIf="probationConfirmationForm.get('issuedDate')?.invalid && probationConfirmationForm.get('issuedDate')?.touched">
+                            Issued Date is required
+                        </div>
+                        <!-- Custom validation error from DateValidation -->
+                        <div *ngIf="!isdateofprobation">Issued Date should not be after Probation End Date</div>
+                    </div>
+                </div>
+
+                 <div class="col-md-12 mb-4">
+                    <label class="form-label custom-label mb-2">Effective Date <span class="error-msg">*</span></label>
+                    <input type="date" class="form-control custom-input" formControlName="effectiveDate" placeholder="Please enter Date" (change)="pathValuesFuction();DateValidation()" />
+                    <div >
+                        <div *ngIf="probationConfirmationForm.get('effectiveDate')?.invalid && probationConfirmationForm.get('effectiveDate')?.touched" class="error-msg">Effective Date is required</div>
+                        <!-- Custom validation error from DateValidation -->
+                        <div *ngIf="!isdateofprobation">Effective Date should not be after Probation End Date</div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                    <div class="custom-p-select-content">
+                      <p-select [options]="documentType" optionValue="value" optionLabel="name" (onChange)="pathValuesFuction()"
+                        placeholder="Please select document type" formControlName="Documenttype" class="form-select custom-select">
+                      </p-select>
+                    </div>
+                    <div *ngIf="probationConfirmationForm.get('Documenttype')?.invalid && probationConfirmationForm.get('Documenttype')?.touched" class="error-msg">
+                      Document Type is required
+                    </div>
+                  </div>
+
+                 <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            [showClear]="true" placeholder="Please select authoruty"  formControlName="authorityid" (onChange)="pathValuesFuction()"
+                            class="custom-select w-100">
+                        </p-select>
+                    </div>
+                    <div *ngIf="probationConfirmationForm.get('authorityid')?.invalid && probationConfirmationForm.get('authorityid')?.touched">
+                        <div class="error-msg">Authority is required</div>
+                    </div>
+                 </div>
+
+                 <div class="d-flex flex-wrap gap-3 pt-4">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationConfirmationForm.invalid">Generate Document</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="probationConfirmationemail()" [disabled]="disableFieldsForApproval">Release Letter</button>
+                </div>
+             </form>
         </div>
 
-        <div class="col-sm-12 col-md-9">
-            <div class="card letter-data-content p-4">
-                <div class="d-flex justify-content-center">
-                    <div class="letter-page-content" id="pdfContent">
+        <!--Letter Content-->
+        <div class="card letter-data-content p-4">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="letter-page-content" id="pdfContent1">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="probationLetterData.Copys; else doc" class="mb-5">
-                                <app-lettersheader></app-lettersheader>
-                             </div>
-                             <ng-template #doc>
-                                <div style="margin-bottom: 6.5rem;"></div>
-                             </ng-template>
-                            <div class="letter-div ">
-                                <div class="d-flex justify-content-between">
+                            <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
+                                <app-lettersheader />
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
+                            <div class="letter-div">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <ul class="list-style-none ps-0">
+                                        <li>To</li>
+                                        <li *ngIf="!probationLetterData.firstName && !probationLetterData.middleName && !probationLetterData.lastName;else fullname">
+                                            Name:</li>
+                                        <ng-template #fullname>
+                                            <li>{{probationLetterData.firstName}} {{probationLetterData.middleName}} 
+                                                {{probationLetterData.lastName}},</li>
+                                        </ng-template>
+                                        <li>{{probationLetterData.fusionEmpId}}</li>
+                                        <li>{{probationLetterData.jobRole}}</li>
+                                        <li>{{probationLetterData.department}}</li>
+                                        <li>{{probationLetterData.workLocation}}</li>
+                                    </ul>
                                     <div>
-                                        <ul style="padding-left: 0px;">
-                                            <li class="letter-text">To</li>
-                                            <li class="letter-text"
-                                                *ngIf="!probationLetterData.firstName && !probationLetterData.middleName && !probationLetterData.lastName;else fullname">
-                                                Name:</li>
-                                            <ng-template #fullname>
-                                                <li class="letter-text">{{probationLetterData.firstName}}
-                                                    {{probationLetterData.middleName}}
-                                                    {{probationLetterData.lastName}},
-                                                </li>
-                                            </ng-template>
-                                            <li class="letter-text">{{probationLetterData.fusionEmpId}}</li>
-                                            <li class="letter-text">{{probationLetterData.jobRole}}</li>
-                                            <li class="letter-text">{{probationLetterData.department}}</li>
-                                            <li class="letter-text">{{probationLetterData.workLocation}}</li>
-                                        </ul>
-                                    </div>
-                                    <div>
-                                        <p class="letter-text text-end p-0">Issued Date: {{probationLetterData.issuedDate | dateformat }}</p>
+                                        <p class="text-end p-0">Issued Date: {{probationLetterData.issuedDate | dateformat }}</p>
                                     </div>
                                 </div>
-                            </div>
-                        
-                            <div class="letter-heading-div" style="margin-bottom: 5px;">
-                                <p class="letter-text"><strong>Dear </strong> <strong> {{probationLetterData.firstName}}
-                                        {{probationLetterData.middleName}}
-                                        {{probationLetterData.lastName}}</strong>,</p>
-                            </div>
-                        
-                            <div class="mb-2 mt-2 letter-heading-div">
-                                <p class="letter-text">We are pleased to inform you that, following a comprehensive
-                                    assessment of your
-                                    performance during the probationary period, you have successfully completed your
-                                    probationary period with RightlyHR. </p>
-                        
-                                <p class="letter-text">
+        
+                                <p class="letter-sub-header mb-4">Dear {{probationLetterData.firstName}}
+                                    {{probationLetterData.middleName}} {{probationLetterData.lastName}},</p>
+        
+                                <p class="mb-4">We are pleased to inform you that, following a comprehensive
+                                    assessment of your performance during the probationary period, you have successfully
+                                    completed your probationary period with RightlyHR. </p>
+        
+                                <p class="mb-4">
                                     Effective {{probationLetterData.effectiveDate|dateformat}}, your position as
-                                    <b>{{probationLetterData.jobRole}}</b> within our organization is officially confirmed, 
+                                    <b>{{probationLetterData.jobRole}}</b> within our organization is officially confirmed,
                                     and your terms and conditions of employment will remain unchanged.
                                 </p>
-                        
-                                <p class="letter-text">
+        
+                                <p class="mb-4">
                                     We believe that your continued presence at RightlyHR will
                                     further contribute to our success, and we look forward to seeing your continued
                                     growth and contributions to the organization.
                                 </p>
-                        
-                                <p class="letter-text">
+        
+                                <p class="mb-4">
                                     Congratulations on this milestone in your career, and we look forward to a
                                     successful and rewarding journey together.
                                 </p>
-                        
-                                <p class="letter-text"> Sincerely,</p>
-                                <p class="letter-headings"> <strong>for RightlyHR</strong></p>
-                                <div style="font-family: autographsignatureFont; font-size: xx-large;">
-                                    {{probationLetterData.authorityName}}</div>
-                                <div class="row">
-                                    <div class="col-md-7">
-                                        <div>
-                                            <div class="stamp-img">
-                                                <p class="stamp-text"><span>
-                                                        <b>{{probationLetterData.authorityName}}</b></span></p>
-                                                <p class="stamp-text1"><span class="letter-text"><b>{{authorityDesignation}}</b></span></p>
-                                                <br>
-                                            </div>
-                                        </div>
-                                    </div>
+        
+                                <p class="mb-2">Sincerely,</p>
+                                <p class="letter-sub-header"><b>for RightlyHR</b></p>
+                                <div class="letter-signature">{{probationLetterData.authorityName}}</div>
+                                <div>
+                                    <p class="stamp-text"><b>{{probationLetterData.authorityName}}</b></p>
+                                    <p class="stamp-text1"><b>{{probationLetterData.authorityDesignation}}</b></p>
                                 </div>
                             </div>
-                        <div class="letter-footer text-center">
-                            <p class="company-name">RightlyHR</p>
-                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                        </div>
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
                 </div>

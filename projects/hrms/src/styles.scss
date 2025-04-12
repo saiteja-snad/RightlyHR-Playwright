@@ -552,18 +552,14 @@ a {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table, th, td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
-        padding: 0.25rem 0.625rem;
+    th, td {
+        padding: 0.5rem 1rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
     }

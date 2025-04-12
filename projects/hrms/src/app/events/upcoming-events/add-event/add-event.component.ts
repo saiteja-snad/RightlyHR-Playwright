@@ -7,36 +7,38 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-event',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,TranslateModule],
   templateUrl: './add-event.component.html',
   styleUrl: './add-event.component.scss'
 })
 
-export class AddEventComponent implements OnInit{
-  @ViewChild('success') success: any;
-  subscription!:Subscription
-  customEventForm!:FormGroup
+export class AddEventComponent implements OnInit {
+
+  subscription!: Subscription
+  customEventForm!: FormGroup
   Employeeinfo = {} as any;
   selectedCustomEventField: any;
+  spinnerLoader=false
   constructor(public router: Router, private fb: FormBuilder,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal,) { }
 
-    ngOnInit(): void {
-      this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") ?? '{}');
+  ngOnInit(): void {
+    this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.initiateForm()
-    }
-  
+  }
+
 
 
   close() {
     this.modalService.dismissAll();
   }
-  initiateForm(){
+  initiateForm() {
     this.customEventForm = this.fb.group({
-      eventDate: ['', [Validators.required,this.futureDateValidator()]],
+      eventDate: ['', [Validators.required, this.futureDateValidator()]],
       eventTitle: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
       eventMessage: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/), Validators.maxLength(250)]],
       imageUrl: [null]
@@ -89,8 +91,9 @@ export class AddEventComponent implements OnInit{
 
   postevents(customEventForm: FormGroup): void {
     if (customEventForm.valid) {
+      this.spinnerLoader=true
       const formdata = customEventForm.value;
-  
+
       const data = {
         eventDate: formdata.eventDate,
         eventMessage: formdata.eventMessage,
@@ -99,15 +102,16 @@ export class AddEventComponent implements OnInit{
         eventTitle: formdata.eventTitle,
         attachmentUrl: formdata.imageUrl // this should be base64 from your file input
       };
-  
+
       this.subscription = this.http.postdata(`CustomEvents`, data).subscribe({
         next: (response: any) => {
           if (response) {
+            this.spinnerLoader=false
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Event added successfully');
             // Optionally send custom emails or reset the form
-            // this.CustomEmail();
-            this.customEventForm.reset();
+            this.CustomEmail();
+
           }
         },
         error: (err: any) => {
@@ -125,10 +129,32 @@ export class AddEventComponent implements OnInit{
     return (control: AbstractControl): { [key: string]: any } | null => {
       const selectedDate = moment(control.value).format('YYYY-MM-DD');
       const today = moment().format('YYYY-MM-DD');
-  
+
       return selectedDate < today ? { pastDate: true } : null;
     };
   }
 
- 
+
+  CustomEmail() {
+    const formdata = this.customEventForm.value
+    const Emaildata = {
+      eventDate: formdata.eventDate,
+      eventMessage: formdata.eventMessage,
+      empId: this.Employeeinfo.employeeId,
+      eventTitle: formdata.eventTitle,
+      senderName: this.Employeeinfo.firstName + " " + this.Employeeinfo.lastName
+    }
+    if (this.Employeeinfo.middleName) {
+      Emaildata.senderName = `${this.Employeeinfo.firstName} ${this.Employeeinfo.middleName} ${this.Employeeinfo.lastName}`
+    } else {
+      Emaildata.senderName = `${this.Employeeinfo.firstName} ${this.Employeeinfo.lastName}`
+    }
+    this.subscription = this.http.postdata(`CustomEmail/Events`, Emaildata).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.customEventForm.reset()
+      }
+    })
+  }
+
 }

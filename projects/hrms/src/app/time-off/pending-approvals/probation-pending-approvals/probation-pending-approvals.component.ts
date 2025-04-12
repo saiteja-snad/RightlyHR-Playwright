@@ -9,8 +9,9 @@ import { Iprobationapproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { HttpService } from '../../../services/http.service';
-import { ProbationdetailsPipe } from "../../../pipes/probationdetails.pipe";
+
 import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { ProbationdetailsPipe } from '../../../Pipes/probationdetails.pipe';
 
 @Component({
   selector: 'app-probation-pending-approvals',
@@ -20,7 +21,7 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 })
 export class ProbationPendingApprovalsComponent {
     subscription!: Subscription;
-    probationDetails = new BehaviorSubject<Iprobationapproval[]>([]);
+    probationDetails = [] as any;
     probationExtensionDuration!: number;
     searchValue: any;
     LOGIN: any;
@@ -71,6 +72,8 @@ export class ProbationPendingApprovalsComponent {
                 item.approvalHeader.status != 'Processed' &&
                 item.approvalHeader.status != 'Rejected'
             );
+            console.log(this.probationDetails);
+            
             // this.filterPendingApprovalsByModule();
           },
           error: (reason) => console.log(reason),

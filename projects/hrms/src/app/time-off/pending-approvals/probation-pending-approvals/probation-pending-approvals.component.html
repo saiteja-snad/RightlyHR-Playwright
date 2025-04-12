@@ -22,13 +22,13 @@
                 </thead>
                 <tbody>
 
-                    @if (((probationDetails | async) ?? []).length > 0) {
-                        @for (item of ((probationDetails | async) ?? []) | probationdetails : searchValue; track item.approvalHeader.id){
+                    @if ((probationDetails).length > 0) {
+                        @for (item of ((probationDetails ) ?? []) | probationdetails : searchValue; track item.approvalHeader.id){
                             <tr>
                                 <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
                                 <td>{{item.entity?.employeeName ?? '-'}}</td>
-                                <td>{{item.entity?.probationStartDate ?? '-'}}</td>
-                                <td>{{item.entity?.probationEndDate ?? '-'}}</td>
+                                <td>{{item.entity?.probationStartDate ?? '-' | date}}</td>
+                                <td>{{item.entity?.probationEndDate ?? '-' | date}}</td>
                                 <td class="text-center">
                                     <div class="mt-2">
                                         <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
@@ -53,7 +53,7 @@
                                             data-bs-target="#ProbationProcess">Process</button>
                                         <button class="resend-btn me-3 mb-3"
                                             *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                            [routerLink]="['/timeoffleaves/assessmetform']"
+                                            [routerLink]="['/time-off/pending-approvals/assessmentform']"
                                             (click)="setData(item)">Assessment form</button>
                                         <!-- <button class="Approve-btn me-3 mb-3" data-bs-toggle="modal"*ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
                                              (click)="handleRequests(item)" data-bs-target="#ProbationApprove" 

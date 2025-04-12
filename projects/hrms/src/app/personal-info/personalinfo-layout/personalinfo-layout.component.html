@@ -13,7 +13,7 @@
                     {{'Change RM'|translate}}
                 </button></div>
            
-               @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') ){
+               @if((emppersonalinfo.empstatus==='Prospective' || emppersonalinfo.empstatus==='Trainee Prospective') && (emppersonalinfo?.substatus ==='Employee Created' || emppersonalinfo?.substatus==='Requested Documents') ){
                 <button class="custom-btn btn-primary"
                 *ngIf="isActive('personalinfo/personal/basic-info') "
                 (click)="emailForRequestDoc()" [disabled]="isLoading">
@@ -24,10 +24,10 @@
                 </div>  
             </button>  }
 
-                @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
+                @if(getOfferDetails.status === 'Released' || getTraineeOfferDetails.status==='Released'){
                     <button class="custom-btn btn-secondary me-3"
-                    *ngIf="isActive('personalinfo/personal/basic-info') && (empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus=='Employee Created'
-                                 ||empdata?.substatus=='Requested Documents' ||empdata?.substatus=='Documents Submitted'||empdata?.substatus=='Documents Rejected'||empdata?.substatus=='Documents Accepted' ||empdata?.substatus=='Documents Verified' )"
+                    *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus=='Trainee Prospective') && (emppersonalinfo?.substatus=='Employee Created'
+                                 ||emppersonalinfo?.substatus=='Requested Documents' ||emppersonalinfo?.substatus=='Documents Submitted'||emppersonalinfo?.substatus=='Documents Rejected'||emppersonalinfo?.substatus=='Documents Accepted' ||emppersonalinfo?.substatus=='Documents Verified' )"
                     (click)="openModal(archivedbtn)">
                     {{'Archive'|translate}}
                 </button>
@@ -37,7 +37,7 @@
             <!-- <div *ngIf=""> -->
                 @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
                     <button class="custom-btn btn-secondary me-3"
-                    *ngIf="isActive('personalinfo/personal/basic-info')  && (empdata.empstatus=='Prospective' || empdata.empstatus =='Trainee Prospective')  && (empdata?.substatus!='Employee Created')"
+                    *ngIf="isActive('personalinfo/personal/basic-info')  && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
                     (click)="openModal(revokeoffer)">
                     {{' Revoke Offer'|translate}}
                 </button>
@@ -45,7 +45,7 @@
 
             <div>
                 <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info')"
-                    [hidden]="!empdata?.isCredentialExpired" (click)="updatePassword()">
+                    [hidden]="!emppersonalinfo.isCredentialExpired" (click)="updatePassword()">
                     {{'Generate Credentials'|translate}}
                 </button>
             </div>

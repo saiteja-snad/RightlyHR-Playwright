@@ -3,9 +3,9 @@
         <p-tablist>
             <ng-container *ngFor="let tab of navTabs;">
                 <p-tab [value]="tab.link">
-                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                    <div [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
                         {{ tab.label }}
-                    </a>
+                    </div>
                 </p-tab>
             </ng-container>
         </p-tablist>

@@ -11,27 +11,26 @@ export class RbacService {
     const claimsString = localStorage.getItem('rightlyHrRoleClaims');
   
     if (!claimsString || claimsString === 'undefined') {
-      return false; 
+      return false;
     }
   
     try {
       const permissions = JSON.parse(claimsString);
   
-      if (Array.isArray(permissions)) { 
-        const lowerCasePermissions = permissions.map((perm: string) => perm.toLowerCase());
-        if (lowerCasePermissions.indexOf(permission.toLowerCase()) !== -1) {
-          return true;
-        }
+      if (Array.isArray(permissions)) {
+        const lowerCasePermissions = permissions
+          .filter((perm: any) => typeof perm === 'string')
+          .map((perm: string) => perm.toLowerCase());
+  
+        return lowerCasePermissions.includes(permission.toLowerCase());
       } else {
-        console.warn("claims in local storage is not an array:", permissions);
+        console.warn("Claims in local storage is not an array:", permissions);
         return false;
       }
   
     } catch (error) {
       console.error("Error parsing claims from local storage:", error);
-      return false; 
+      return false;
     }
-  
-    return false;
   }
 }

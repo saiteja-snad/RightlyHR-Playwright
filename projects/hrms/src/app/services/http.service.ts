@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, catchError } from 'rxjs';
 import { environment } from '../../environments/environment.dev';
+import { ApprovalStatusCount } from '../Interfaces/timoff-model';
 
 
 @Injectable({
@@ -12,6 +13,11 @@ export class HttpService {
   tirggerCountSignal = signal<{ compOff: boolean; wfh: boolean }>({
     compOff: false,
     wfh: false,
+  });
+  tirggerPendingApprovalCountSignal = signal<{ compOff: boolean; wfh: boolean;permission:boolean }>({
+    compOff: false,
+    wfh: false,
+    permission:false,
   });
 
   constructor(private http: HttpClient) {
@@ -303,4 +309,11 @@ export class HttpService {
       )}?employeeId=${employeeId}`
     );
   }
+
+  getAllPendingApprovalsCount(moduleId: number, employeeId: number): Observable<ApprovalStatusCount[]> {
+    return this.http.get<ApprovalStatusCount[]>(
+      `${this.ApiUrl}PendingApproval/getApprovalStatusCounts?moduleId=${moduleId}&EmployeeId=${employeeId}`
+    );
+  }
+  
 }

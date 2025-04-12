@@ -9,14 +9,16 @@
                 Permission</button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-4">
+    <div class="d-flex gap-3 w-100">
+        <div class="custom-component-left-content">
             <app-premissions-tabs></app-premissions-tabs>
         </div>
-        <div class=" col-8">
+        <div class="custom-component-right-content">
             <router-outlet></router-outlet>
         </div>
     </div>
+
+
 </div>
 
 <ng-template #addpremission let-modal>

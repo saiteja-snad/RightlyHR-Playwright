@@ -385,6 +385,20 @@ body {
     vertical-align: middle;
 }
 
+.component-sub-header {
+    font-family: var(--font-family);
+    font-weight: 600;
+    font-size: var(--fontsize16);
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+}
+
+.custom-background-card{
+    border: none;
+    background-color: var(--body-bg-color);
+}
+
 .bi-arrow-90deg-left {
     cursor: pointer;
 }
@@ -714,17 +728,13 @@ a {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table, th, td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
+    th, td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -734,8 +744,7 @@ a {
         font-weight: bold;
     }
 
-    tr:nth-child(4),
-    tr:nth-child(9) {
+    tr:nth-child(4), tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -786,7 +795,6 @@ a {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
-
 // letter stylings
 
 // custom search field
@@ -799,6 +807,7 @@ a {
         border: none;
         padding: 0.625rem 1rem;
         font-size: var(--fontsize14);
+        background-color: transparent;
     }
 
     .custom-search-input {

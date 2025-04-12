@@ -177,7 +177,6 @@ body {
         border-radius: 50%;
     }
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -331,29 +330,37 @@ body {
 
 }
 
-//custom component naviagtion nav tabs
-.custom-nav-tab-card {
-    border-radius: 0.5rem;
-    border: none !important;
-
-    .nav-tabs-main-content {
-        display: flex;
-        gap: 0.625rem;
-        list-style: none;
+// Component Side Nav tabs stylings
+.component-side-nav-tabs-container {
+    .nav-item{
+        border-bottom: 1px solid #efefef !important;
     }
 
-    .nav-item {
-        cursor: pointer;
-        
-        font-weight: 700;
-        font-size: var(--fontsize14);
+    .nav-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 400;
+        font-size: var(--fontsize15);
+        line-height: 100%;
+        letter-spacing: 0%;
         vertical-align: middle;
+        padding: 1.25rem 1rem;
+    }
+
+    .active-nav-link{
+        color:var(--primary-color);
+        font-weight: 700;
+        background-color: var(--body-bg-color);
+        border-right: 0.25rem solid var(--primary-color);
     }
 
     .nav-tab-active {
-        border-bottom: 3px solid var(--navtab-item-color);
+        border-bottom: 0.25rem solid rgba(6, 39, 79, 1);
+        font-weight: 700;
     }
 }
+
+
 
 // Component stylings
 .component-header {
@@ -364,9 +371,6 @@ body {
     letter-spacing: 0%;
     vertical-align: middle;
 }
-
-
-
 
 .bi-arrow-90deg-left {
     cursor: pointer;

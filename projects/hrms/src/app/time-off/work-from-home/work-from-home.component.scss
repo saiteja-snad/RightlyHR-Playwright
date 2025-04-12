@@ -1,0 +1,14 @@
+.custom-component-left-content{
+    width: 25rem;
+    height: calc(100dvh - 12rem);
+    border-radius: 0.5rem;
+    overflow-y: auto;
+    background-color: var(--white-color);
+}
+
+.custom-component-right-content{
+    width: 100%;
+    height: calc(100dvh - 12rem);
+    overflow-y: auto;
+    border-radius: 0.5rem;
+}

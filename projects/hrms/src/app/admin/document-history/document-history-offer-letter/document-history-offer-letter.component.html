@@ -24,15 +24,15 @@
         <tbody>
             @if(offerLetters.length > 0){
             @for (offerLetter of offerLetters | offerletterdashboardpipe : searchValue; track offerLetter.id){
-            <tr class="hover">
-                <td>{{offerLetter.offerSentDate | dateformat }}</td>
+            <tr>
+                <td class="text-nowrap">{{offerLetter.offerSentDate | dateformat }}</td>
                 <td>{{offerLetter.employeeName ?offerLetter.employeeName:'-'}}</td>
                 <td>{{offerLetter.workLocation?offerLetter.workLocation:'-' }}</td>
                 <td>{{offerLetter.subLocation?offerLetter.subLocation:'-' }} </td>
                 <td>{{offerLetter.jobRole?offerLetter.jobRole:'-'}}</td>
                 <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
                 <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
-                <td style="text-align: center;">
+                <td class="text-center">
                     <div>
                         <button class="custom-btn btn-primary" (click)="onSelectDownload(offerLetter)">Download</button>
                         @if(offerLetter.status=='Approved'){

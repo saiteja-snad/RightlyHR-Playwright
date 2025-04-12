@@ -13,7 +13,7 @@
                     {{'Change RM'|translate}}
                 </button></div>
            
-               @if((emppersonalinfo.empstatus==='Prospective' || emppersonalinfo.empstatus==='Trainee Prospective') && (emppersonalinfo?.substatus ==='Employee Created' || emppersonalinfo?.substatus==='Requested Documents') ){
+               <!-- @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') ){ -->
                 <button class="custom-btn btn-primary"
                 *ngIf="isActive('personalinfo/personal/basic-info') "
                 (click)="emailForRequestDoc()" [disabled]="isLoading">

@@ -7,6 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-degree',
   imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
@@ -22,7 +23,7 @@ export class DegreeComponent implements OnInit {
   subscription!: Subscription;
   degree= {} as any;
 
-constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder) { }
+constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder, public formValidations:FormValidationsService) { }
   
 degreeFrom!: FormGroup;
   updateForm!: FormGroup;
@@ -46,7 +47,6 @@ this.degreeFrom = this.fb.group({
        },
        error: (reason: any) => {
          console.log(reason);
-         alert("Insertion of data is failed")
        }
      })
    }
@@ -101,7 +101,7 @@ updateDegree(): void {
       next: (data: any) => {
         this.updateForm.reset(); 
         this.modalService.dismissAll(); 
-        this.conformationPopup.openSuccessModal('degree updated successfully');
+        this.conformationPopup.openSuccessModal('Degree updated successfully');
       },
       error: (err: any) => {
         console.error('Update failed:', err);
@@ -124,7 +124,7 @@ deleteDegree(degree: any): void {
       next: (data:any) => {
         this. getdegree();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('degree data deleted successfully');
+        this.conformationPopup.openSuccessModal('Degree deleted successfully');
       },
       error: (err: any) => {
         console.error('Delete degree failed:', err);

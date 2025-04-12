@@ -16,9 +16,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class ProbationEmployeesComponent {
   searchValue: any;
-  subscription!:Subscription
-  probationemp=[] as any
-  emp={} as any;
+  subscription!: Subscription
+  probationemp = [] as any
+  emp = {} as any;
   empinfo = {} as IProbationEmployees;
   StatusMsg : any;
   probationDuration:any;
@@ -28,9 +28,9 @@ export class ProbationEmployeesComponent {
   ngOnInit(): void {
     this.getProbationEmployees()
   }
-  getProbationEmployees(){
+  getProbationEmployees() {
     this.subscription = this.http.getData(`ProbationFlow/getProbationEmployeesStatus`).subscribe({
-      next:(data:any) =>{
+      next: (data: any) => {
         console.log(data);
         this.probationemp = data as IProbationEmployees[]
         this.probationemp.probationEndDate=this.formatDate(this.probationemp.probationEndDate);
@@ -38,19 +38,19 @@ export class ProbationEmployeesComponent {
     })
   }
   select(act: any) {
-    this.emp=localStorage.setItem("personaldata", JSON.stringify(act));
+    this.emp = localStorage.setItem("personaldata", JSON.stringify(act));
     console.log(this.emp);
-    localStorage.setItem("routestatus",'Probation');
+    localStorage.setItem("routestatus", 'Probation');
     this.router.navigate(["/admin/personal"]);
 
   }
   formatDate(data: any): any {
     if (data) {
- 
       // return moment(data).format('YYYY-MM-DD');
     }
     return data
   }
+
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }

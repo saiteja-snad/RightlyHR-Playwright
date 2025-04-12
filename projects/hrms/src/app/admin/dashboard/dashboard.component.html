@@ -1,36 +1,39 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-       <div>
-          <p class="main-content-heading mb-0">{{'Dashboard'| translate}}</p>
-       </div>
-       <div class="d-flex gap-3">
-           <button type="button" class="custom-btn btn-secondary">Current Openings</button>
-           <button type="button" class="custom-btn btn-primary" (click)="generateDocument()">Generate Documents</button>
-       </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <p class="component-header mb-0">{{'Dashboard'| translate}}</p>
     </div>
-    <!--Employee Details card-->
-    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5">
-        <div class="col" *ngFor="let item of cardItems; trackBy: trackByFn">
-          <div class="card employee-details-card cursor w-100 mb-4" [routerLink]="[item.link]">
-            <div class="d-flex align-items-center gap-4">
-              <div class="card profile-card" [ngStyle]="{'background-color': item.backgroundColor, 'color': item.profileColor}">
-                <i class="bi bi-person"></i>
-              </div>
-              <div>
-                <p class="label text-nowrap mb-2">{{ item.label }}</p>
-                <p class="count mb-0">{{ item.count }}</p>
-              </div>
-            </div>
+    <div class="d-flex gap-3">
+      <button type="button" class="custom-btn btn-secondary">Current Openings</button>
+      <button type="button" class="custom-btn btn-primary" (click)="generateDocument()">Generate Documents</button>
+    </div>
+  </div>
+
+  <!--Employee Details card-->
+  <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5">
+    <div class="col" *ngFor="let item of cardItems; trackBy: trackByFn">
+      <div class="card employee-details-card cursor w-100 mb-3" [routerLink]="[item.link]">
+        <div class="d-flex align-items-center gap-3">
+          <div class="card profile-card"
+            [ngStyle]="{'background-color': item.backgroundColor, 'color': item.profileColor}">
+            <i class="bi bi-person"></i>
+          </div>
+          <div>
+            <p class="label text-nowrap mb-2">{{ item.label }}</p>
+            <p class="count mb-0">{{ item.count }}</p>
           </div>
         </div>
       </div>
-      
-    <!--Document History-->
-    <div class="my-4">
-        <p class="main-content-heading mb-0">{{'Document History' | translate}}</p>
     </div>
+  </div>
 
-    <div class="Document-history-content">
-        <app-document-history-layout/>
-    </div>
+  <!--Document History-->
+  <div class="my-3">
+    <p class="component-header mb-0">{{'Document History' | translate}}</p>
+  </div>
+  
+  <!--Document History Content-->
+  <div class="Document-history-content">
+    <app-document-history-layout />
+  </div>
 </div>

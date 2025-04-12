@@ -1,144 +1,122 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <!-- <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p> -->
-                    <p class="dashboard-text" (click)="navigateDashboard()"><i
-                        class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate}}
-                        <span
-                        class="ms-2">>></span> <span class="component-heading px-2">{{'Inactive Interns'| translate}}</span>
-                    </p>
-        </div>
-    </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-4">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search"  #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
+      <p class="component-header mb-0" (click)="navigateDashboard()">
+        <i class="bi bi-arrow-90deg-left me-2"></i>{{'Inactive Interns'| translate}}
+      </p>
+    </div>
+  </div>
 
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                  <th>{{'ID'|translate}}</th>
-                  <th>{{'EmployeeName'|translate}}</th>
-                  <th>{{'Personal Email'|translate}}</th>
-                  <th>{{'Phone Number'|translate}}</th>
-                  <th>{{'Location'|translate}}</th>
-                  <th>{{'Sub Location'|translate}}</th>
-                  <th>{{'Designation'|translate}}</th>
-                  <th>{{'Sub Status'|translate}}</th>
-                </thead>
-                <!-- <tbody>
-                    <tr>
-                        <td>10410</td>
-                        <td>Jhon Doe</td>
-                        <td>Jhon&#64;gmail.com</td>
-                        <td>+91 9087654321</td>
-                        <td>Bengaluru</td>
-                        <td>Mysore IT park</td>
-                        <td>HR Administrator</td>
-                        <td>Employee Created</td>
-                    </tr>
-                    <tr>
-                        <td>10410</td>
-                        <td>Jhon Doe</td>
-                        <td>Jhon&#64;gmail.com</td>
-                        <td>+91 9087654321</td>
-                        <td>Bengaluru</td>
-                        <td>Mysore IT park</td>
-                        <td>HR Administrator</td>
-                        <td>Employee Created</td>
-                    </tr>
-                </tbody> -->
-                <tbody>
-                    <tr *ngFor="let act of InActiveTrainee | activeEmployee : searchValue" class="cursor" (click)="select(act)" >
-          
-                      <td> <span *ngIf="act.fusionEmpId;else fusionid">{{act.fusionEmpId}} </span>
-                        <ng-template #fusionid>
-                          -
-                        </ng-template></td>
-                      <td ><span *ngIf="act.firstName;else firstname"> {{act.firstName}} {{act.middleName}} {{act.lastName}}</span>
-                        <ng-template #firstname>
-                          -
-                        </ng-template></td>
-                      <!-- <td><span *ngIf="act.emailaddress;else emailaddress"> {{act.emailaddress}}</span> 
+  <div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-4">
+      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+      <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+        placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
+
+    <div class="custom-table-content">
+      <table class="w-100">
+        <thead>
+          <th>{{'ID'|translate}}</th>
+          <th>{{'EmployeeName'|translate}}</th>
+          <th>{{'Personal Email'|translate}}</th>
+          <th>{{'Phone Number'|translate}}</th>
+          <th>{{'Location'|translate}}</th>
+          <th>{{'Sub Location'|translate}}</th>
+          <th>{{'Designation'|translate}}</th>
+          <th>{{'Sub Status'|translate}}</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let act of InActiveTrainee | activeEmployee : searchValue" class="cursor" (click)="select(act)">
+
+            <td> <span *ngIf="act.fusionEmpId;else fusionid">{{act.fusionEmpId}} </span>
+              <ng-template #fusionid>
+                -
+              </ng-template>
+            </td>
+            <td><span *ngIf="act.firstName;else firstname"> {{act.firstName}} {{act.middleName}} {{act.lastName}}</span>
+              <ng-template #firstname>
+                -
+              </ng-template>
+            </td>
+            <!-- <td><span *ngIf="act.emailaddress;else emailaddress"> {{act.emailaddress}}</span> 
                         <ng-template #emailaddress>
                           -
                         </ng-template></td> -->
-                      <td><span *ngIf="act.workEmail;else workemail" >{{act.workEmail}} </span>
-                        <ng-template #workemail>
-                          -
-                        </ng-template> </td>
-                      <td> <span *ngIf="act.contactnumber;else contactnum">+91 {{act.contactnumber}}</span> 
-                        <ng-template #contactnum>
-                          -
-                        </ng-template></td>
-                        <td>
-                          <ng-container *ngIf="act?.jobDetails ; else noData">
-                            <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                              <span *ngIf="first"><span *ngIf="jobDetail.lopcation;else location">{{ jobDetail.lopcation }} </span>
-                              <ng-template #location>
-                                -
-                              </ng-template>
-                            </span>
-                            </div>
-                          </ng-container>
-                          <ng-template #noData>
-                            <div>-</div>
-                          </ng-template>
-                        </td>
-        
-                        <td>
-                      <ng-container *ngIf="act?.jobDetails; else noData">
-                        <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                          <span *ngIf="first">
-                             <span *ngIf="jobDetail.subLocation;else subloaction">{{ jobDetail.subLocation }} </span>
-                          <ng-template #subloaction>
-                            <div>-</div>
-                          </ng-template>
-                        </span>
-                        </div>
-                      </ng-container>
-                      <ng-template #noData>
-                        <div>-</div>
-                      </ng-template>
-                    </td>
-                    <td>
-                      <ng-container *ngIf="act?.jobDetails ; else noData">
-                        <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                          <span *ngIf="first">
-                             <span *ngIf="jobDetail.shiftName;else shift">{{ jobDetail.shiftName}} </span>
-                          <ng-template #shift>
-                            <div>-</div>
-                          </ng-template>
-                        </span>
-                        </div>
-                      </ng-container>
-                      <ng-template #noData>
-                        <div>-</div>
-                      </ng-template>
-                    </td>
-                       <td>
-                      <ng-container *ngIf="act?.jobDetails ; else noData">
-                        <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                          <span *ngIf="first"><span *ngIf="jobDetail.jobRole;else jobrole">{{ jobDetail.jobRole }} </span>
-                          <ng-template #jobrole>
-                            -
-                          </ng-template>
-                         </span>
-                        </div>
-                      </ng-container>
-                      
-                      <ng-template #noData>
-                        <div>-</div>
-                      </ng-template>
-                    </td>
-                      <!-- <td>{{act.effectivedate| date:'dd/MM/yyyy'}}</td> -->
-          
-                    </tr>
-                  </tbody>
-            </table>
-        </div>
+            <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}} </span>
+              <ng-template #workemail>
+                -
+              </ng-template>
+            </td>
+            <td> <span *ngIf="act.contactnumber;else contactnum">+91 {{act.contactnumber}}</span>
+              <ng-template #contactnum>
+                -
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="act?.jobDetails ; else noData">
+                <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                  <span *ngIf="first"><span *ngIf="jobDetail.lopcation;else location">{{ jobDetail.lopcation }} </span>
+                    <ng-template #location>
+                      -
+                    </ng-template>
+                  </span>
+                </div>
+              </ng-container>
+              <ng-template #noData>
+                <div>-</div>
+              </ng-template>
+            </td>
+
+            <td>
+              <ng-container *ngIf="act?.jobDetails; else noData">
+                <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                  <span *ngIf="first">
+                    <span *ngIf="jobDetail.subLocation;else subloaction">{{ jobDetail.subLocation }} </span>
+                    <ng-template #subloaction>
+                      <div>-</div>
+                    </ng-template>
+                  </span>
+                </div>
+              </ng-container>
+              <ng-template #noData>
+                <div>-</div>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="act?.jobDetails ; else noData">
+                <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                  <span *ngIf="first">
+                    <span *ngIf="jobDetail.shiftName;else shift">{{ jobDetail.shiftName}} </span>
+                    <ng-template #shift>
+                      <div>-</div>
+                    </ng-template>
+                  </span>
+                </div>
+              </ng-container>
+              <ng-template #noData>
+                <div>-</div>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="act?.jobDetails ; else noData">
+                <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                  <span *ngIf="first"><span *ngIf="jobDetail.jobRole;else jobrole">{{ jobDetail.jobRole }} </span>
+                    <ng-template #jobrole>
+                      -
+                    </ng-template>
+                  </span>
+                </div>
+              </ng-container>
+
+              <ng-template #noData>
+                <div>-</div>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>

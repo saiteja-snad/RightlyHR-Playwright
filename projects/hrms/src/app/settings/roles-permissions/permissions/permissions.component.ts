@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IRoles } from './permission.model';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -8,13 +8,14 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { permissionsData } from './permissionsdata';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { OpenModalService } from '../../../services/open-modal.service';
-
 @Component({
   selector: 'app-permissions',
   imports: [CommonModule, FormsModule, AutoCompleteModule],
   templateUrl: './permissions.component.html',
-  styleUrl: './permissions.component.scss'
+  styleUrl: './permissions.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
+
 export class PermissionsComponent implements OnInit, OnDestroy {
   roleId!: string;
   noRoleSelected = true;
@@ -26,18 +27,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
+  constructor(private http: HttpService, private modalService: NgbModal, private modal: OpenModalService) { }
+
   ngOnInit(): void {
     this.getAllroles();
     if (this.roleToFilter === null) {
       this.permissions = JSON.parse(JSON.stringify(permissionsData));
     }
   }
-
-  constructor(
-    private http: HttpService,
-    private modalService: NgbModal,
-    private modal: OpenModalService
-  ) { }
 
   getAllroles(): void {
     this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
@@ -78,9 +75,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   updateSaveButtonState() {
-    this.noRoleSelected = !this.permissions.some(per =>
-      per.View || per.Create || per.Update || per.Delete
-    );
+    this.noRoleSelected = !this.permissions.some(per => per.View || per.Create || per.Update || per.Delete);
     this.isSaveButtonEnabled = !(this.noRoleSelected);
   }
 
@@ -102,7 +97,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       permission.Update = false;
       permission.Delete = false;
     });
-
     if (data?.length > 0) {
       data.forEach((role: any) => {
         role.sections?.forEach((section: any) => {
@@ -153,8 +147,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   preparePayload(roleTypeId: string): any[] {
-    return this.permissions
-      .filter(p => p.View || p.Update || p.Create || p.Delete)
+    return this.permissions.filter(p => p.View || p.Update || p.Create || p.Delete)
       .map(p => ({
         roleTypeId: roleTypeId,
         section: p.section,
@@ -163,13 +156,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         update: p.Update,
         create: p.Create,
         delete: p.Delete
-      }));
+    }));
   }
 
   permissionsCreate() {
     this.modalService.open(this.stagingLoadingModal, { centered: true });
     const payload = this.preparePayload(this.roleId);
-
     this.http.postdata('FusionRoleClaims', payload).subscribe({
       next: (data) => {
         this.modalService.dismissAll();
@@ -185,10 +177,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     });
   }
 
-
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

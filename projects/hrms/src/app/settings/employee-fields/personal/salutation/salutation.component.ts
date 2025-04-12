@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { FormGroup,ReactiveFormsModule,FormsModule, Validators, } from '@angular/forms';
+import { FormGroup,ReactiveFormsModule,FormsModule, Validators, FormBuilder, } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Iroles } from '../../../roles-permissions/roles/roles.model';
 import { HttpService } from '../../../../services/http.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-salutation',
@@ -16,34 +17,30 @@ import { HttpService } from '../../../../services/http.service';
 export class SalutationComponent implements OnInit {
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
-  fb: any;
-  saluationdetails:any;
-  sal:any;
-  subscription: any;
-updateSaluation: any;
-  rolesDeletedata: any;
-salDeletedata: any;
+  saluationdetails=[]as any[];
+  updatesalutation={} as any;
+  deletesalutation={} as any;
+  subscription!: Subscription;
+  
 
+// salDeletedata: any;
+constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder) { }
   
-  
-  constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService) { }
-  
-  saluationForm!: FormGroup<any>;
-  updateForm!: FormGroup<any>;
+  saluationForm!: FormGroup;
+  updateForm!: FormGroup;
   
   ngOnInit(): void {
-    this.getsaluation();
     this.saluationForm = this.fb.group({
-    saluation: [null, [Validators.required, Validators.minLength(3),Validators.maxLength(50)]]
-    });
-    this.updateForm = this.fb.group({
-      titName: ['', Validators.required] // Replace with your actual field name if needed
-    });
+     
+      saluation: [null, [Validators.required]]
+      });
+      this.updateForm = this.fb.group({
+        titlename: ["", Validators.required] 
+      });
+    this.getsaluation();
+  
       
     }
-  
-
-
   getsaluation() {
     this.subscription = this.http.getData("Title").subscribe({
        next: (data: any) => {
@@ -57,10 +54,10 @@ salDeletedata: any;
        }
      })
    }
-
-   onSubmit() {
+onSubmit() {
     const request = {
-      titlename: this.saluationForm.get('saluation')?.value
+      titlename: this.saluationForm?.get('saluation')?.value,
+      isdeleted: "Active"
     };
   
     console.log('Sending request:', request); 
@@ -69,6 +66,7 @@ salDeletedata: any;
       next: (data: any) => {
         console.log('Response:', data);
         this.modalService.dismissAll();
+        this.saluationForm.reset();
         this.getsaluation(); 
         this.conformationPopup.openSuccessModal('Salutation added successfully');
       },
@@ -84,25 +82,23 @@ salDeletedata: any;
     this.updateForm.reset();
   }
   openupdate(sal:any) {
+    this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
     console.log(sal)
-    this.saluationdetails=sal;
-this.updateForm?.patchValue({titlename:sal.titlename});
-this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
+    this.updatesalutation=sal;
+    this.updateForm?.patchValue({titlename : sal.titlename});
+
 }
 opendelete(sal:any) {
 console.log(sal)
-this.saluationdetails=sal;
+this.updatesalutation=sal;
 this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
 }
-  updateSal(modal: any): void {
+  updateSal(): void {
     if (this.updateForm.valid) {
       
-      this.saluationdetails.titlename = this.updateForm.value.firstName;
-      this.updateSaluation.isdeleted = 'Active'; 
-  
-      this.subscription = this.http.postdata(`Title/UPDATE`, this.rolesDeletedata).subscribe({
+      this.updatesalutation.titlename = this.updateForm.get('titlename')?.value;
+      this.subscription = this.http.postdata(`Title/UPDATER`, this.updatesalutation).subscribe({
         next: (data: any) => {
-          this.sal(); 
           this.updateForm.reset(); 
           this.modalService.dismissAll(); 
           this.conformationPopup.openSuccessModal('Salutation updated successfully');
@@ -118,25 +114,26 @@ this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' })
   }
   
   deletesal(sal: any): void {
-      const deleteRequest = {
-        sno: sal.sno,
-        titlename: sal.titlename,
-        isdeleted: 'Active' 
-      };
-    
-      this.http.postdata('Title/delete', deleteRequest).subscribe({
-        next: () => {
-          this. getsaluation(); 
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('SAL data deleted successfully');
-        },
-        error: (err: any) => {
-          console.error('Delete SAL failed:', err);
-          this.conformationPopup.openErrorModal('Failed to delete SAL data');
-        }
-      });
-    }
-    
+    const deleteRequest = {
+      sno: sal.sno,
+      titlename: sal.titlename,
+      isdeleted: 'void' 
+    };
+  
+   this.subscription= this.http.postdata('Title/UPDATER', deleteRequest).subscribe({
+      next: (data:any) => {
+       this.getsaluation(); 
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('SAL data deleted successfully');
+      },
+      error: (err: any) => {
+        console.error('Delete SAL failed:', err);
+        this.conformationPopup.openErrorModal('Failed to delete SAL data');
+      }
+    });
   }
+  
+    
+}
   
 

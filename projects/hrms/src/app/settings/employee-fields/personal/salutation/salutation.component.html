@@ -8,6 +8,15 @@
             <span class="input-group-text" id="salutation"><button type="submit"
                     class="custom-btn btn-primary">{{'Add'|translate}}</button></span>
         </div>
+        <div *ngIf="saluationForm.get('sal')?.touched || saluationForm.get('sal')?.dirty">
+        
+            <div *ngIf="saluationForm.get('sal')?.hasError('required')" style="color: red; font-size: 16px;">
+              Please add this The salutation .
+            </div>
+          </div>
+          <div *ngIf="saluationForm.get('sal')?.hasError('pattern')" style="color: red; font-size: 16px;">
+            Only letters are allowed. Numbers and special characters are not permitted.
+          </div>
         </form>
     </div>
     <!--Data Content-->
@@ -18,8 +27,9 @@
                     <th class="col-span-2"></th>
                 </thead>
                 <tbody>
-                    @for (sal of saluationdetails ; track sal.name) {
-                    <tr *ngFor="let sal of saluationdetails">
+                    @for (sal of saluationdetails ; track sal.sno) {
+
+                    <tr >
                         <td class="w-75">{{sal.titlename}}</td>
                         <td class="w-25">
                             <div class="d-flex gap-4">
@@ -45,7 +55,7 @@
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm">
+    <form [formGroup]="updateForm" (ngSubmit)="updateSal()">
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
@@ -57,13 +67,13 @@
         </div>
         <div class="custom-main-popup-content p-5">
             <div class="mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2"><span class="error-msg">*</span></label>
-                <input type="text" class="form-control custom-input" formControlName="firstName"
+                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Salutation<span class="error-msg">*</span></label>
+                <input type="text" class="form-control custom-input" id="titlename" formControlName="titlename"
                     placeholder="Please enter Salutation">
             </div>
             <div class="d-flex gap-5 pt-4 w-100">
                 <button class="custom-btn btn-secondary w-50 py-3"(click)="close(modal)">{{'Close'|translate}}</button>
-                <button class="custom-btn btn-primary w-50 py-3" (click)="updateSal(saluationdetails)">{{'Update'|translate}}</button>
+                <button type="submit" class="custom-btn btn-primary w-50 py-3" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
             </div>
         </div>
    
@@ -81,7 +91,9 @@
             </div>
             <div class="d-flex gap-5 pt-2 w-100">
                 <button class="custom-btn btn-secondary w-50 py-3" (click)="modal.close()">{{'No'|translate}}</button>
-                <button class="custom-btn btn-primary w-50 py-3"(click)="deletesal(saluationdetails)">{{'yes'|translate}}</button>
+               
+                <button class="custom-btn btn-primary w-50 py-3" (click)="deletesal(updatesalutation)">{{'yes'|translate}}</button> 
+
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-manage-holidays',
@@ -8,5 +8,9 @@ import { RouterModule } from '@angular/router';
   styleUrl: './manage-holidays.component.scss'
 })
 export class ManageHolidaysComponent {
+  constructor( public router:Router) { }
 
+  nagvition(){
+    this.router.navigate(['/settings/employee-fields/addholidays']);
+  }
 }

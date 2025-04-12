@@ -327,7 +327,6 @@ body {
         border: none !important;
         transition: none !important;
     }
-
 }
 
 // Component Side Nav tabs stylings
@@ -359,7 +358,8 @@ body {
         font-weight: 700;
     }
 }
-//styles for pending approlas
+
+//styles for sub tabs and component display content
 .custom-component-left-content{
     width: 25rem;
     height: calc(100dvh - 12rem);
@@ -405,7 +405,7 @@ a {
 // button stylings
 .custom-btn {
     padding: 0.5rem 1rem;
-    border-radius: 0.6rem;
+    border-radius: 0.5rem;
     font-size: var(--fontsize14);
     border: 1px solid var(--btn-primary-color);
     font-weight: 500;
@@ -499,8 +499,7 @@ a {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1044,7 +1043,6 @@ input[type="file"] {
     }
 
 }
-
 //pagenation stylings
 
 // login components stylings
@@ -1182,26 +1180,6 @@ input[type="file"] {
     }
 }
 
-.main-settings-layout {
-    border: 1px solid #CCDAEC;
-    border-radius: 0.8rem;
-}
-
-.custom-settings-add-input {
-    max-width: 40rem;
-    border-radius: 0.8rem;
-    border: 0.5px solid #CCDAEC;
-
-    .custom-input {
-        border: none !important;
-    }
-
-    .input-group-text {
-        padding: 0px !important;
-        border: none;
-    }
-}
-
 input:focus {
     outline: none !important;
     box-shadow: none !important;
@@ -1213,22 +1191,8 @@ input:focus {
     cursor: pointer;
 }
 
-.custom-settings-data-table {
-    width: 50rem;
-
-    td {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 100%;
-        letter-spacing: 0%;
-        padding: 1rem;
-        color: #305889;
-        border-bottom: 1px solid #E8E8E8;
-    }
-}
-
 .confirmation-icon {
-    width: 5rem;
+    width: 3rem;
 }
 
 .confirmation-text {
@@ -1293,3 +1257,53 @@ input:focus {
 //     vertical-align: middle;
 //     color: #222B45;
 // }
+
+// Settings Stylings
+.custom-setting-right-content {
+    width: 100%;
+    height: calc(100dvh - 12rem);
+    overflow-y: auto;
+    border: 1px solid #CCDAEC;
+    border-radius: 0.5rem;
+    background-color: var(--white-color);
+    border: none !important;
+}
+
+.custom-setting-right-content {
+    .custom-settings-add-input {
+        max-width: 25rem;
+        border-radius: 0.5rem;
+        border: 0.25px solid #CCDAEC;
+    
+        .custom-input {
+            border: none !important;
+        }
+    
+        .input-group-text {
+            padding: 0px !important;
+            border: none;
+        }
+    }
+
+    .custom-settings-data-table {
+        width: 30rem;
+        height: calc(100vh - 25rem);
+        overflow-y: auto;
+    
+        td {
+            font-weight: 400;
+            font-size: var(--fontsize14);
+            line-height: 100%;
+            letter-spacing: 0%;
+            padding: 1rem;
+            color: #305889;
+            border-bottom: 1px solid #E8E8E8;
+        }
+    
+        .settings-common-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+    }
+}

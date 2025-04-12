@@ -51,7 +51,7 @@
                                             *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage"
                                             data-bs-toggle="modal"
                                             data-bs-target="#ProbationProcess">Process</button>
-                                        <button class="resend-btn me-3 mb-3"
+                                        <button class="custom-btn btn-primary"
                                             *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
                                             [routerLink]="['/time-off/pending-approvals/assessmentform']"
                                             (click)="setData(item)">Assessment form</button>
@@ -63,7 +63,7 @@
                                                 data-bs-target="#probationreject">Reject</button> -->
                                     </div>
                                 </td>
-                                <td class="text-center">
+                                <!-- <td class="text-center">
                                     <div class="dropdown">
                                         <a type="button" data-bs-toggle="dropdown">
                                             <i class="bi bi-three-dots-vertical"></i>
@@ -73,7 +73,7 @@
                                             <li><a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a></li>
                                         </ul>
                                     </div>
-                                </td>
+                                </td> -->
                             </tr>
                         }
                     

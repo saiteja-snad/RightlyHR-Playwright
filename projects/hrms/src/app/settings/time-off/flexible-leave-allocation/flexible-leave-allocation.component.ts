@@ -121,13 +121,10 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
       status: 'Published',
     };
 
-    console.log('Payload for category:', payload);
     this.http.getDataWithQueryParams("OrgLeavesCategories", payload).pipe(takeUntil(this.destroy$)).subscribe({
-
       next: (res: any) => {
         this.categoryDetails = res;
         this.leaveAllocationForm.get('categoryName')?.enable();
-        console.log('Category details:', res);
       },
       error: err => {
         console.error('Error fetching categories:', err);
@@ -145,7 +142,6 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
     };
     this.http.getDataWithQueryParams("Employeedata/getAll", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        console.log('Employee details:', res);
         this.employeeDetails = res.map((employee: any) => ({
           ...employee,
           fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
@@ -251,7 +247,6 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
 
   publishLeaveAllocation(form: FormGroup): void {
     if (form.invalid) return;
-   
     this.modalService.open(this.stagingLoadingModal, { centered: true });
     const formData = form.value;
     const payload = [{
@@ -269,9 +264,7 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
 
     this.http.postdata("LeavePolicy", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        setTimeout(() => {
-          this.modal.openSuccessModal('Leave allocation published successfully!');
-        }, 0);
+        this.modal.openSuccessModal('Leave allocation published successfully!');
       },
       error: (err: any) => {
         this.modalService.dismissAll();
@@ -286,6 +279,6 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
-    this.destroy$.complete();
+    this.destroy$.unsubscribe();
   }
 }

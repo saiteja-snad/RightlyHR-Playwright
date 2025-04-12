@@ -7,5 +7,5 @@ export default [
     { path: '', redirectTo: '/settings/roles-permissions/roles', pathMatch: 'full' },
     { path: 'roles', component: RolesComponent },
     { path: 'permissions', component: PermissionsComponent },
-    { path: 'role-assigne', component: RoleAssigneeComponent },
+    { path: 'role-assignee', component: RoleAssigneeComponent },
 ] as Route[];

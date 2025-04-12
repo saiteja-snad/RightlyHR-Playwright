@@ -11,10 +11,11 @@ import { IBackground, INotice, IProbation } from '../../../Interfaces/job-model'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss'
 })
@@ -33,6 +34,8 @@ export class OnboardingDetailsComponent {
   noticeDetails: INotice[] = []
   selectedEmployeeId: any;
   onboardingForm!: FormGroup;
+  traineeForm!: FormGroup;
+  isEditing = false;
   noticePeriodStatus = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -105,9 +108,20 @@ export class OnboardingDetailsComponent {
       wfhmanger: [{ value: "", disabled: true }],
     });
   }
-
-
-
+  initaializeTrainee(){
+    this.traineeForm = this.fb.group({
+      empType: [this.empdata.empType],
+      dateOfJoining: [this.empdata.dateOfJoining],
+      durationOfTrainee: [this.empdata.durationOfTrainee],
+      trainingEndDate: [this.empdata.trainingEndDate]
+    });
+  
+    // Sync with your model if needed
+    this.traineeForm.valueChanges.subscribe((val) => {
+      this.empdata = { ...this.empdata, ...val };
+    });
+  }
+  
   remoteLoginChange() {
     // Initialize filteredWorkLocations if remoteLogin has a default
     const initialWFH = this.onboardingForm.get('remoteLogin')?.value;
@@ -160,6 +174,9 @@ export class OnboardingDetailsComponent {
       remoteLogin: this.remoteLogin.find((item: any) => item.value === data.allowWFH),
       workLocation: this.worklocation.find((item: any) => item.value === data.workLocation),
       wfhmanger: this.Manager.find((item: any) => item.value === data.wfhManagerId),
+      trainingEndDate:moment(data.trainingEndDate).format('yyyy-MM-DD'),
+      empType:data.empType,
+      durationOfTrainee:moment(data.durationOfTrainee).format('yyyy-MM-DD')
     });
     console.log(this.onboardingForm.value);
 
@@ -353,6 +370,18 @@ export class OnboardingDetailsComponent {
     }
   }
 
+  letters(event: KeyboardEvent): boolean {
+    const charCode = event.key.charCodeAt(0);
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 32
+    ) {
+      return false;
+    }
+    return true;
+  }
+  
 }
 
 

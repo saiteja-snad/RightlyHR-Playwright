@@ -13,7 +13,7 @@
                     {{'Change RM'|translate}}
                 </button></div>
            
-               @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') ){
+               <!-- @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') ){ -->
                 <button class="custom-btn btn-primary"
                 *ngIf="isActive('personalinfo/personal/basic-info') "
                 (click)="emailForRequestDoc()" [disabled]="isLoading">
@@ -22,7 +22,8 @@
                 </span>
                 <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">  
                 </div>  
-            </button>  }
+            </button>
+          <!-- } -->
 
                 @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
                     <button class="custom-btn btn-secondary me-3"

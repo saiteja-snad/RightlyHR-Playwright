@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Ipersonal } from '../../../Interfaces/members-model';
@@ -26,6 +26,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
     RouterModule,
     NgbPopoverModule,
     FormsModule,
+    ReactiveFormsModule,
     PaginatorModule,
     DropdownModule,
     NoDataFoundComponent,
@@ -39,7 +40,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
-  recall_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
+  recall_For_Your_role_Details = new BehaviorSubject<ISeparation[]>([]);
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -54,16 +55,38 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   isLoading = false;
   jsonData = {} as any;
+  recallAcceptFormForProcess!:FormGroup;
+  recallAcceptForm!:FormGroup;
+  rejectSeparationForm!:FormGroup;
   constructor(
     private authService: AuthService,
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private fb:FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.getAllPendingApprovals();
+    this.formInializer();
+  }
+  //function to initalize the form
+  formInializer(){
+    this.recallAcceptFormForProcess = this.fb.group({
+      recallReason: [null,
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+      ]
+    });
+    this.recallAcceptForm = this.fb.group({
+      AcceptReason: [null,
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+      ]
+    });
+    this.rejectSeparationForm = this.fb.group({
+      notes: [null,[Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+      ]
+    });
   }
   //function to open the modal
   openModal(content: any) {
@@ -88,7 +111,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log(data.data);
-          this.recall_For_You_Details.next(
+          this.recall_For_Your_role_Details.next(
             data.data.filter(
               (item: any) =>
                 item.approvalHeader.status != 'Processed' &&
@@ -165,7 +188,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   formatDate(date: any) {
     return date?.split('T')[0];
   }
-  handleAccept(f: NgForm) {
+  handleAccept() {
     let loggedinuser = this.authService.getToken();
     this.isLoading = true;
     this.jsonData = JSON.stringify({
@@ -173,7 +196,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
     });
     let requestBody = {
       status: 'Approved',
-      comments: this.selectedSpRequestData.comments,
+      comments: this.recallAcceptForm.get('AcceptReason')?.value,
       isAcceptEarly:
         this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
       lastWorkingDate: this.selectedSpRequestData.spRequestLastWorkingDate,
@@ -190,6 +213,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (respone: any) => {
           this.isLoading = false;
+          this.recallAcceptForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
             'Recall Request Approved Successfully'
@@ -204,14 +228,14 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
-  handlerecallReject(f: NgForm) {
+  handlerecallReject() {
     this.jsonData = JSON.stringify({
       status: 'Rejected',
     });
     let loginuserdata = this.authService.getToken();
     let requestBody = {
       status: 'Rejected',
-      comments: this.selectedSpRequestData.rejectedReason,
+      comments: this.rejectSeparationForm.get('notes')?.value,
       approvedBy: loginuserdata.employeeId.toString(),
       meta: this.jsonData,
     };
@@ -223,6 +247,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
+          this.rejectSeparationForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
             'Recall Request Rejected Successfully'
@@ -239,7 +264,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
-  handlerecallProcess(f: NgForm) {
+  handlerecallProcess() {
     let loggedInUser = this.authService.getToken();
     this.isLoading = true;
     this.jsonData = JSON.stringify({
@@ -247,7 +272,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
     });
     let requestBody: any = {
       status: 'Processed',
-      comments: this.selectedSpRequestData.comments,
+      comments: this.recallAcceptFormForProcess.get('recallReason')?.value,
       isAcceptEarly:
         this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
       lastWorkingDate: this.selectedSpRequestData.spRequestLastWorkingDate,
@@ -273,6 +298,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (respone: any) => {
+          this.recallAcceptFormForProcess.reset();
           this.modalService.dismissAll();
           this.getAllPendingApprovals();
           this.conformationPopup.openSuccessModal(

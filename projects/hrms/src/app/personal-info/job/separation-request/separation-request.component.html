@@ -1,6 +1,13 @@
 <div class="custom-main-component-container mt-4">
-  <div class="d-flex justify-content-end">
+  <div class="d-flex justify-content-between align-items-center">
+    <div> <span class="component-sub-header">Separation Details</span></div>
+    @if(isLastWorkingDate(this.empdata.lastworkingday)&&nodueclearancedetails.length <= 0&&getSeparationDetails.value.length>0){
+       <div class="plus-button">
+      <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button" (click)="openModal(raiseNodue)"
+          class="plus-text">Raise No Due</span></span>
   </div>
+  }
+</div>
   <!--Input search-->
   <div class="custom-table-content">
     <table class="w-100">
@@ -13,7 +20,7 @@
           <th>{{'APPROVER STATUS'|translate}}</th>
           <th>{{'REQUEST TYPE'|translate}}</th>
           <th>{{'STATUS'|translate}}</th>
-          <th style="width: 15%"></th>
+          <th ></th>
         </tr>
       </thead>
       <tbody>
@@ -251,8 +258,8 @@
     </h4>
     <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
       <div class="mb-3">
-        <label class="form-label custom-label mb-2">Enter recall reason <span class="error-msg">*</span></label>
-        <textarea class="form-control custom-input" placeholder="Please enter recall reason" name="Reason"
+        <label class="form-label custom-label ">Enter recall reason <span class="error-msg">*</span></label>
+        <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*" placeholder="Please enter recall reason" name="Reason"
           formControlName="recallReason"></textarea>
 
         <div>
@@ -265,11 +272,22 @@
               Reason is required.
             </small>
           </div>
-
+          <div>
+            <small class="error-msg"
+            *ngIf="recallreason.get('recallReason')?.errors?.['maxlength'] && recallreason.get('recallReason')?.touched">
+            Maximum 250 characters allowed
+          </small>
+          </div>
+            <div>
+              <small class="error-msg"
+              *ngIf="recallreason.get('recallReason')?.errors?.['pattern'] && recallreason.get('recallReason')?.touched">
+              Leading spaces are not allowed
+            </small>
+            </div>
         </div>
       </div>
 
-      <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
+      <div class="d-flex  justify-content-around w-100">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
           {{'Cancle'|translate}}
         </button>
@@ -304,7 +322,7 @@
         <div class="col-md-6">
           <div class="mb-3">
             <label for="Effective Date ">Early relieving date <span class="error-msg">*</span></label>
-            <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
+            <input type="date" class="form-control custom-input"  placeholder="" formControlName="earlyReleivingDate"
               id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
             <small class="error-msg"
               *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
@@ -314,9 +332,9 @@
         </div>
         <div class="col-md-12">
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Reason for
+            <label class="form-label custom-label">Reason for
               early Relieving <span class="error-msg">*</span></label>
-            <textarea class="form-control custom-input" placeholder="Please provide early relieving reason...."
+            <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*" placeholder="Please provide early relieving reason...."
               name="Reason" formControlName="earlyReleivingReason"></textarea>
 
             <div>
@@ -329,12 +347,24 @@
                   Reason for early relieving is required
                 </small>
               </div>
+              <div>
+                <small class="error-msg"
+                *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength'] && earlyReleivingform.get('earlyReleivingReason')?.touched">
+                Maximum 250 characters allowed
+              </small>
+              </div>
+             <div>
+              <small class="error-msg"
+              *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern'] && earlyReleivingform.get('earlyReleivingReason')?.touched">
+              Leading spaces are not allowed
+            </small>
+             </div>
 
             </div>
           </div>
         </div>
       </div>
-      <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
+      <div class="d-flex justify-content-around">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
           {{'Cancle'|translate}}
         </button>
@@ -355,3 +385,84 @@
   </div>
 </ng-template>
 <!-- modal end to open the early relieving popup -->
+ <!-- modal open to raise nodue -->
+<ng-template #raiseNodue let-modal>
+  <div class="modal-body mt-4">
+    <!-- <img src="./assets/images/Vector@2x.png" alt="" class="imgg"> -->
+    <h3 class="want text-center mt-4">Raise No Due Request</h3>
+    <h5 class="want text-center mt-4">
+      Provide your official work email addresses!
+    </h5>
+    <div class="mt-4">
+      <form [formGroup]="profileForm">
+        <div class="ps-4 pe-4">
+          <h6>Add Emails <span class="error-msg">*</span></h6>
+          <!-- Main email input -->
+          <div class="">
+            <div class="d-flex">
+              <input name="addemail" class="form-control w-100" placeholder="Enter email" type="text"
+                formControlName="emails" />
+              <div class="pt-2 ps-2">
+                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            </div>
+            <!-- Error message for the main email input -->
+            <div *ngIf="emails?.invalid && (emails?.dirty || emails?.touched)" class="text-danger">
+              <div *ngIf="emails?.errors?.['required']">Email is required.</div>
+              <div *ngIf="emails?.errors?.['email']">Invalid email format.</div>
+            </div>
+          </div>
+
+          <!-- Dynamic email inputs from FormArray -->
+          <div class="w-100 mt-3" formArrayName="noduerequestedemails">
+            <div *ngFor="let item of formemailsfornodue.controls; let i = index">
+              <div class="d-flex">
+                <input [formControlName]="i" class="form-control mt-2 w-100" placeholder="Enter email" id="item-{{ i }}"
+                  type="text" />
+                <div class="pt-3 ps-2">
+                  <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="removeSection(i)"></button>
+                </div>
+              </div>
+              <div *ngIf="item.invalid && (item.dirty || item.touched)" class="text-danger">
+                <div *ngIf="item.errors?.['required']">Email is required.</div>
+                <div *ngIf="item.errors?.['email']">Invalid email format.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add button at the bottom -->
+          <div class="row mt-4">
+            <div class="col-12 text-end">
+              <button type="button" class="custom-btn btn-primary" (click)="addAlias()">
+                + Add
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="mt-3 mb-3 modal-footer">
+    <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
+      <button type="button" class="custom-btn btn-secondary"
+        (click)="modal.dismiss(); profileForm.reset(); formemailsfornodue.clear()">
+        {{'Cancle'|translate}}
+      </button>
+      <button type="submit" class="custom-btn btn-primary" [disabled]="profileForm.invalid||isLoading"
+        (click)="requestNoDue(profileForm)">
+        @if(!isLoading){
+        {{'Submit'|translate}}
+        }
+        @else {
+        <div class="d-flex">
+          <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+          </div>
+          <div> {{'Submitting'|translate}}</div>
+        </div>
+        }
+      </button>
+    </div>
+  </div>
+</ng-template>
+<!-- modal end to close the nodue -->

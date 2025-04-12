@@ -14,6 +14,11 @@ export class HttpService {
     compOff: false,
     wfh: false,
   });
+  tirggerPendingApprovalCountSignal = signal<{ compOff: boolean; wfh: boolean;permission:boolean }>({
+    compOff: false,
+    wfh: false,
+    permission:false,
+  });
 
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);

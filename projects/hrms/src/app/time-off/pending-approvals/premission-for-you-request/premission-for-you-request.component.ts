@@ -21,6 +21,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-premission-for-you-request',
@@ -32,7 +33,8 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule
   ],
   templateUrl: './premission-for-you-request.component.html',
   styleUrl: './premission-for-you-request.component.scss',
@@ -135,15 +137,16 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         )
         .subscribe({
           next: (response: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Approved Successfully'
             );
             this.approveForm.reset();
-
-            setTimeout(() => {
-              this.modalService.dismissAll();
-            }, 2000);
-           
+            this.selectedLeaveData = {} as PermissionRequestResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              permission: true,
+            }));
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);
@@ -154,6 +157,41 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
           },
         });
     }
+  }
+
+  handleProcess(request: PermissionRequestResponse) {
+    let requestBody = {
+      status: 'Processed',
+      approvedBy: this.empinfo.employeeId.toString(),
+    };
+    this.sharedModalService.openLoaderModal(
+      'Processing Request, Please wait...');
+    this.http
+      .putData(
+        `PendingApproval/process/${request.approvalHeader.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal(
+            'Request Processed Successfully'
+          );
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            permission: true,
+          }));
+        },
+        error: (reason: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openErrorModal(
+            reason.error.Message
+          );
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
+      });
   }
 
 
@@ -172,14 +210,16 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         )
         .subscribe({
           next: (response: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Rejcted Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData  = {} as PermissionRequestResponse;
-            setTimeout(() => {
-              this.modalService.dismissAll();
-            }, 2000);
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              permission: true,
+            }));
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);

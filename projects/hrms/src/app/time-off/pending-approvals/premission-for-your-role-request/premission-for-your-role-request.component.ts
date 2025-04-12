@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -14,6 +14,7 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-premission-for-your-role-request',
   imports: [
@@ -24,6 +25,8 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
+    ReactiveFormsModule,
+    TranslateModule
   ],
 
   templateUrl: './premission-for-your-role-request.component.html',
@@ -48,6 +51,9 @@ export class PremissionForYourRoleRequestComponent
   // approverComments = [] as AttendanceRequestC[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
+  selectedLeaveData = {} as PermissionRequestResponse;
+  approveForm!: FormGroup;
+  rejectForm!:FormGroup;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -57,6 +63,19 @@ export class PremissionForYourRoleRequestComponent
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
+  }
+
+  intializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+  }
+
+  intializeRejectForm() {  
+    this.rejectForm = this.fb.group({
+      comments: ['',[Validators.required,Validators.maxLength(250)]],
+    }); 
+
   }
 
   getAllPendingApprovals() {
@@ -85,7 +104,131 @@ export class PremissionForYourRoleRequestComponent
     this.first = event.first;
     this.rows = event.rows;
   }
+  openApproveModal(content: any, request: PermissionRequestResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+  }
+  openRejectModal(content: any, request: PermissionRequestResponse) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeRejectForm();
+    this.selectedLeaveData = request;
+  }
 
+  handleAccept(approveForm: FormGroup): void {
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      const requestBody = {
+        status: 'Approved',
+        comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
+      };
+
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openSuccessModal(
+              'Request Approved Successfully'
+            );
+            this.approveForm.reset();
+            this.selectedLeaveData = {} as PermissionRequestResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              permission: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
+
+  handleProcess(request: PermissionRequestResponse) {
+    let requestBody = {
+      status: 'Processed',
+      approvedBy: this.empinfo.employeeId.toString(),
+    };
+    this.sharedModalService.openLoaderModal(
+      'Processing Request, Please wait...');
+    this.http
+      .putData(
+        `PendingApproval/process/${request.approvalHeader.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal(
+            'Request Processed Successfully'
+          );
+          this.selectedLeaveData = {} as PermissionRequestResponse;
+          this.approveForm.reset();
+          
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            permission: true,
+          }));
+        },
+        error: (reason: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openErrorModal(
+            reason.error.Message
+          );
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
+      });
+  }
+
+
+  handleReject(rejectForm: FormGroup): void {
+    if (rejectForm.valid) {
+      const formData = rejectForm.value;
+      const requestBody = {
+        status: 'Rejected',
+        comments: formData.comments,
+      };
+
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openSuccessModal(
+              'Request Rejcted Successfully'
+            );
+            this.rejectForm.reset();
+            this.selectedLeaveData  = {} as PermissionRequestResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              permission: true,
+            }));
+            
+         
+          },
+          error: (reason: any) => {
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,

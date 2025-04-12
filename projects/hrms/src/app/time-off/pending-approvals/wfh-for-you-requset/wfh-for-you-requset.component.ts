@@ -12,7 +12,7 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { IJob } from '../../../Interfaces/letters-model';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import {
@@ -22,6 +22,7 @@ import {
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
+import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
 
 @Component({
   selector: 'app-wfh-for-you-requset',
@@ -36,7 +37,8 @@ import { TranslateModule } from '@ngx-translate/core';
     DateformatPipe,
     ReactiveFormsModule,
     TranslateModule,
-  ],
+    WfhsearchfilterPipe
+],
   templateUrl: './wfh-for-you-requset.component.html',
   styleUrl: './wfh-for-you-requset.component.scss',
 })
@@ -52,13 +54,14 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  leaves = [] as AttendanceRequest[];
+  leaves = new BehaviorSubject<AttendanceRequest[]>([]);
   approverComments = [] as any[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  searchValue: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -91,9 +94,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
-          console.log(response);
-          this.leaves = response.data as AttendanceRequest[];
-          console.log(this.leaves);
+          this.leaves.next(response.data);
         },
         error: (reason) => console.log(reason),
       });
@@ -144,6 +145,10 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
             );
             this.approveForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              wfh: true,
+            }));
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
@@ -178,6 +183,10 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              wfh: true,
+            }));
            
           },
           error: (reason: any) => {
@@ -209,6 +218,10 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
           this.sharedModalService.openSuccessModal(
             'Request Processed Successfully'
           );
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            wfh: true,
+          }));
         },
         error: (reason: any) => {
           this.modalService.dismissAll();

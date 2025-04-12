@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../Interfaces/timoff-model';
 import { Subject } from 'rxjs';
+import { TabsModule } from 'primeng/tabs';
+
 @Component({
   selector: 'app-premissions-request-tabs',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,TabsModule],
   templateUrl: './premissions-request-tabs.component.html',
   styleUrl: './premissions-request-tabs.component.scss'
 })
@@ -16,6 +18,7 @@ export class PremissionsRequestTabsComponent implements OnInit,OnDestroy{
   pendingApprovalCount = {} as ApprovalStatusCount[];
   roleWfh: AttendanceRequest[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
+  navTabs: any[] = [];
 
 
 
@@ -27,7 +30,20 @@ export class PremissionsRequestTabsComponent implements OnInit,OnDestroy{
 
   constructor(public readonly router: Router,
     private http: HttpService,
-  ) {}
+  ) {
+    effect(() => {
+      if (this.http.tirggerPendingApprovalCountSignal().permission) {
+        this.getAllPermissionPendingApprovalsCount();
+        console.log("Permission count signal triggered");
+        
+      this.http
+        .tirggerPendingApprovalCountSignal
+        .update((status) => ({ ...status, permission: false }));
+      }
+
+ 
+    });
+  }
 
   isActive(route: string): boolean {
     return this.router.isActive(route, true);
@@ -42,7 +58,11 @@ export class PremissionsRequestTabsComponent implements OnInit,OnDestroy{
         console.log(data);
 
         this.pendingApprovalCount = data.find(item => item.moduleId === moduleId) ? [data.find(item => item.moduleId === moduleId)!] : [];
-        console.log(this.pendingApprovalCount);
+        this.navTabs = [
+          { label: 'For You ', link: 'for-you', count: this.pendingApprovalCount.at(0)?.forYou ?? 0 },
+          { label: 'For Your Role', link: 'for-your-role', count: this.pendingApprovalCount.at(0)?.forYourRole ?? 0 },
+         
+        ];
         
       },
       error: (err) => {

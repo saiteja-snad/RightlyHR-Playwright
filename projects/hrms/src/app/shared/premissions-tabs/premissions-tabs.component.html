@@ -1,16 +1,16 @@
 
 
-<div class="card tabs-container">
+<div class="component-side-nav-tabs-container py-3">
     <ul class="nav flex-column gap-2" >
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['waiting-for-approval']" [class.active-tab]="isActive('/time-off/premissions/waiting-for-approval')" aria-current="page">Waiting For Approval ({{waitingForApprovalPermissionsCount}})</a>
+        <a class="nav-link" [routerLink]="['/time-off/premissions/waiting-for-approval']"   routerLinkActive="active-nav-link">Waiting For Approval ({{waitingForApprovalPermissionsCount}})</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['approved']" [class.active-tab]="isActive('time-off/premissions/approved')">Approved ({{approvalPermissionsRequestsCount}})</a>
+        <a class="nav-link" [routerLink]="['/time-off/premissions/approved']"  routerLinkActive="active-nav-link">Approved ({{approvalPermissionsRequestsCount}})</a>
       </li>
      
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['rejected']" [class.active-tab]="isActive('time-off/premissions/rejected')">Rejected ({{rejectedPermissionsRequestsCount}})</a>
+        <a class="nav-link" [routerLink]="['/time-off/premissions/rejected']"  routerLinkActive="active-nav-link">Rejected ({{rejectedPermissionsRequestsCount}})</a>
       </li>
       
     </ul>

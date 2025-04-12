@@ -162,12 +162,14 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
         )
         .subscribe({
           next: (response: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Approved Successfully'
             );
-            setTimeout(() => {
-              this.modalService.dismissAll();
-            }, 2000);
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              compOff: true,
+            }));
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);
@@ -194,14 +196,16 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
         )
         .subscribe({
           next: (response: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Rejcted Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
-            setTimeout(() => {
-              this.modalService.dismissAll();
-            }, 2000);
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              compOff: true,
+            }));
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);

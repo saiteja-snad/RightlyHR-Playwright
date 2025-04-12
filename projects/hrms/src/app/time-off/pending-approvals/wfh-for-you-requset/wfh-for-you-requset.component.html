@@ -4,8 +4,8 @@
         <div class="input-group custom-search mb-4">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
+                    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
+                    aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
         <div class="custom-table-content">
@@ -23,8 +23,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container *ngIf="leaves!.length > 0; else noDataTemplate">
-                        <tr *ngFor="let leave of leaves; let i = index">
+
+                    @if (((leaves | async) ?? []).length > 0) {
+                        @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ;  track leave.approvalHeader.id){
+                        <tr>
                             <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
                             <td>{{leave.entity.attendanceRequesterName}}</td>
                             <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
@@ -89,15 +91,15 @@
                                 </div>
                             </td>
                         </tr>
-                    </ng-container>
-                    <ng-template #noDataTemplate>
-                        <tr>
-                            <td colspan="4">
-                                <app-no-data-found></app-no-data-found>
-                            </td>
-                        </tr>
-                    </ng-template>
-
+                    }
+                }
+                @else{
+                    <tr>
+                        <td colospan="8">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                    }
                 </tbody>
             </table>
         </div>

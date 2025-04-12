@@ -94,8 +94,7 @@
   padding: 10px;
 }
 
-.inactive-success {
-  background-color: #304ffd;
+.save-button {
   border-radius: 14px;
   padding: 11px 51px 13px 52px;
   font-size: 16px;
@@ -103,7 +102,7 @@
   color: #fff;
 }
 
-.inactive-no {
+.cancel-button {
   background-color: #979797;
   border-radius: 14px;
   padding: 11px 55px 13px;
@@ -128,6 +127,7 @@
   height: auto;
   margin-bottom: 40px;
   overflow: hidden;
+  background-color: #fff;
 }
 
 .previous {

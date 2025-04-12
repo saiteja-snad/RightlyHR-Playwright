@@ -2,7 +2,7 @@
   <div class="loader"><h3>Loading ...</h3></div>
 </ng-template>
 
-<div class="container-fluid info-container pt-3 ">
+<div class="assessmentform-container pt-3">
   <div>
     <div *ngIf="dynamicFormHeader.length > 0 , else nodata">
       <div class="container-fluid page-div" id="content">
@@ -70,10 +70,7 @@
               <p class="bold">{{dynamicFormFooter[0].sectionName}}</p>
               <div *ngFor="let item of dynamicFormFooter[0]?.questions">
                 <p>{{item.question}} <span class="text-danger" *ngIf="displayTextArea"> *</span> </p>
-                <!-- <div>
-                          <span *ngIf="item.question=='Employee Signature:'" style="font-family: autographsignatureFont; font-size: xx-large;"> {{dynamicFormDetails.employeeName}}</span>
-                           <span *ngIf="item.question=='Reviewer Signature:'" style="font-family: autographsignatureFont; font-size: xx-large;"> {{dynamicFormDetails.reviewerName}}</span>
-                            </div> -->
+               
                 <div class="mb-2 w-100" *ngFor="let options of item.options;let optionIndex = index">
                   <div *ngIf="item.type=='text area' && options.optionId">
                     <textarea placeholder="Text area" class="form-control text-wrap" name="textarea" id="textarea"
@@ -113,12 +110,11 @@
         <div>
           <p class="text-danger"><span>Note:</span> Please fill all the fields</p>
         </div>
-        <button class="btn inactive-no" data-bs-toggle="modal" data-bs-target="#conformadd"
+        <button class="btn cancel-button" data-bs-toggle="modal" data-bs-target="#conformadd"
           (click)="cancel()">Cancel</button>
-        <button class="btn inactive-success ms-4" (click)="textArea()"
+        <button class="custom-btn btn-primary save-button ms-4" (click)="textArea()"
           [disabled]='!personal.valid || this.selected_questions.length<36'>Save</button>
-        <!-- <button class="btn inactive-success ms-4" [disabled]="overallRating<dynamicFormDetails.cutOffRating" (click)="FormDownload()">Download</button> -->
-        <!-- [disabled]="overallRating<dynamicFormDetails.cutOffRating" -->
+        
       </div>
     </div>
   </div>
@@ -151,10 +147,10 @@
           </div>
         </div>
         <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-          <button type="button" class="btn inactive-no" data-bs-dismiss="modal" aria-label="Close"
+          <button type="button" class="btn cancel-button" data-bs-dismiss="modal" aria-label="Close"
             type="reset">Cancel</button>
           <div>
-            <button type="submit" class="btn inactive-success" aria-label="Close" [disabled]="rejectSeparation.invalid"
+            <button type="submit" class="custom-btn btn-primary save-button" aria-label="Close" [disabled]="rejectSeparation.invalid"
               data-bs-dismiss="modal">Submit</button>
           </div>
         </div>
@@ -174,8 +170,8 @@
         </div>
         <h3 class="text-center inactive-poptext">Are you sure you want to cancel?</h3>
         <div class="d-flex mb-4 pb-2 mt-2 justify-content-between w-100 gap-5 px-5 pt-4">
-          <button type="button" class="btn inactive-no" data-bs-dismiss="modal">No</button>
-          <button type="button" class="btn inactive-success" data-bs-dismiss="modal" (click)="close()">Yes</button>
+          <button type="button" class="btn cancel-button" data-bs-dismiss="modal">No</button>
+          <button type="button" class="custom-btn btn-primary save-button" data-bs-dismiss="modal" (click)="close()">Yes</button>
         </div>
       </div>
     </div>
@@ -192,10 +188,10 @@
       <h4 class="text-center ps-3 pe-3 inactive-poptext mb-3"> Are you sure you want to Save?
       </h4>
       <div class="d-flex mb-4 pb-2 mt-2 justify-content-between w-100 gap-5 px-5">
-        <button type="button" class="btn inactive-no" data-bs-dismiss="modal" aria-label="Close" type="reset"
+        <button type="button" class="btn cancel-button" data-bs-dismiss="modal" aria-label="Close" type="reset"
           (click)="cancel()">No</button>
         <div>
-          <button type="submit" class="btn inactive-success" data-bs-dismiss="modal" (click)="formSubmit()">Yes</button>
+          <button type="submit" class="btn custom-btn btn-primary save-button" data-bs-dismiss="modal" (click)="formSubmit()">Yes</button>
         </div>
       </div>
     </div>
@@ -310,8 +306,8 @@
           </div>
 
           <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
-            <button type="reset" class="btn inactive-no" aria-label="Close" (click)="reset();modal.dismiss()">Close</button>
-            <button type="submit" class="btn inactive-success" aria-label="Close" [disabled]="acceptForm.invalid|| issubmitdiable||!buttondisable">
+            <button type="reset" class="btn cancel-button" aria-label="Close" (click)="reset();modal.dismiss()">Close</button>
+            <button type="submit" class="custom-btn btn-primary save-button" aria-label="Close" [disabled]="acceptForm.invalid|| issubmitdiable||!buttondisable">
               Submit</button>
           </div>
       </form>

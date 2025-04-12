@@ -290,23 +290,9 @@ export class AssessmentformComponent {
           ele.data.meta = meta;
         }
       });
-      // .forEach((ele:any)=>{
-
-      //     if(ele.id===sectionId){
-      //       ele.data.optionId=optionId
-      //     }
-
-      //   })
-      // .push({
-      //   id: sectionId,
-      //   data:  {"questionId":quetsionId,
-      //     "optionId": optionId,
-      //   "meta":meta,
-      // "sectionId":sectionId}
-      // }
-      //  )
+      
     } else {
-      // questions.forEach((ele:any)=>{
+      
       this.selected_questions.push({
         id: sectionId,
         data: {
@@ -316,29 +302,19 @@ export class AssessmentformComponent {
           sectionId: sectionId,
         },
       });
-      // })
+      
     }
-    // this.selected_questions.push({
-    //   id: sectionId,
-    //   data:  {"questionId":quetsionId,
-    //     "optionId": optionId,
-    //   "meta":meta,
-    // "sectionId":sectionId}
-    // }
-    //  )
+    
   }
 
   onCheckboxChangefooter(questions: any, rating: string, optionId: number, section: any, sectionId: number, quetsionId: number, meta: any): void {
-    // Initialize section rating for the current section if it's not set
+    
     if (!this.sectionRatings[sectionId]) {
       this.sectionRatings[sectionId] = 0;
     }
     // Reset section rating for the current section
     this.sectionRatings[sectionId] = 0;
-    // Iterate through sections to find the correct section based on sectionId
-    // section?.forEach((sec: any) => {
-    // if (sec.id === sectionId) {
-    // Iterate through questions in the current section
+    
     questions.forEach((optionsarray: any) => {
       optionsarray.options.forEach((element: any) => {
         if (element.optionId === optionId) {
@@ -383,19 +359,7 @@ export class AssessmentformComponent {
           ele.data.meta = meta;
         }
       });
-      // .forEach((ele:any)=>{
-      //     if(ele.id===sectionId){
-      //       ele.data.optionId=optionId
-      //     }
-      //   })
-      // .push({
-      //   id: sectionId,
-      //   data:  {"questionId":quetsionId,
-      //     "optionId": optionId,
-      //   "meta":meta,
-      // "sectionId":sectionId}
-      // }
-      //  )
+     
     } else {
       // questions.forEach((ele:any)=>{
       this.selected_questions.push({
@@ -538,7 +502,7 @@ export class AssessmentformComponent {
     }
     this.displayTextArea = !this.displayTextArea;
     this.indexspace = 25
-    // this.router.navigate(["/timeoffleaves/probation-approvals"])
+   
   }
 
   //to store file to the azure and return to the url
@@ -547,8 +511,7 @@ export class AssessmentformComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
-          // this.postProbationDetails(empId, data.path);
-          //this.updateOfferDetails(data.path);
+          
           console.log(data);
         }
       },
@@ -876,11 +839,7 @@ export class AssessmentformComponent {
       this.clearExtendData();
       this.clearDiscontinueData();
     }
-    // else {
-    //   // Toggle off Early Relieving
-    //   this.approve = false;
-    //   this.clearApproveData();
-    // }
+    
   }
 
   // Function to handle toggling Extend option

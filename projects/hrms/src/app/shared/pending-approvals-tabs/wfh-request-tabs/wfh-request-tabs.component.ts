@@ -8,10 +8,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { IPendingApprovals } from '../../../Interfaces/pendingapprovalsmodel';
 import { AttendanceRequest } from '../../../Interfaces/timoff-model';
 import { Subject } from 'rxjs';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-wfh-request-tabs',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,TabsModule],
   templateUrl: './wfh-request-tabs.component.html',
   styleUrl: './wfh-request-tabs.component.scss'
 })
@@ -20,7 +21,11 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   workFromHome = [] as AttendanceRequest[];
   roleWfh: AttendanceRequest[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  navTabs: any[] = [
+    { label: 'For You ', link: 'for-you', count: 9 },
+    { label: 'For Your Role', link: 'for-your-role', count: 9 },
+   
+  ];
 
 
   ngOnInit(): void {

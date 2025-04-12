@@ -20,10 +20,12 @@ export class TeamComponent {
     subscription!: Subscription;
     departments=[] as any;
     teamManagerDetails=[] as any;
-    updateDepartmentDetails=[] as any;
-    teamedetails=[] as any[];
+    updateDepartmentDetails: any; 
+
+    teamdetails=[] as any[];
+    deptdetails=[] as any;
     isEditMode = false;
-  
+   
     @ViewChild('addpopup') addpopup: any;
     @ViewChild('updatepopup') updatepopup: any;
     @ViewChild('deletepopup') deletepopup: any;
@@ -31,23 +33,27 @@ export class TeamComponent {
     updateForm!: FormGroup;
   sortdeaprtmentName: any;
   
-  
+  sortedDesignations: any[] = [];
   selectedId: boolean | undefined;
   
  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
   
     }
+    onDepartmentChange(event: Event) {
+      const selectedValue = (event.target as HTMLSelectElement).value;
+      console.log('Selected Department:', selectedValue);
+    }
     ngOnInit(): void {
       this.AddForm = this.fb.group({
-        department: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-        TeamName : ['', Validators.required],
+        DepartmentName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+        TeamName: ['', Validators.required],
         teamManager:['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
       });
   
       this.updateForm = this.fb.group({
-        DepartmentName1 : ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-        TeamName1  : ['', Validators.required],
-        teamManager1:['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+        UpdatedTeamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+        updatedDepartmentName: ['', Validators.required],
+        updatedteamManager:['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
       });
       this.getTeam();
       this. getDepartmentName()
@@ -64,18 +70,21 @@ export class TeamComponent {
       }
     }
     getDepartmentName() {
-      this.subscription = this.http
-        .getData('deaprtmentNameGradeMapper?sort=deaprtmentName')
-        .subscribe({
+      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
           next: (data: any) => {
-          this.departments = data;
+            console.log(data);
+          this.deptdetails= data as [];
             this.sortdeaprtmentName();
+            console.log(this.deptdetails)
           },
+          error: (reason: any) => {
+            console.log(reason);
+            alert("Insertion of data is failed")
+          }
         });
     }
-  
-    // Method to open the add modal dialog
-    openDialog() {
+
+openDialog() {
       this.modalService.open(this.addpopup, {
         backdrop: 'static',
         centered: true
@@ -85,10 +94,16 @@ export class TeamComponent {
       this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
         next: (data: any) => {
           console.log(data);
-          this.teamedetails = data;
+          this.sortdeaprtmentName();
+          console.log(this.deptdetails)
         },
+        error: (reason: any) => {
+          console.log(reason);
+          alert("Insertion of data is failed")
+        }
       });
-    }
+  }
+    
    sortDepartments() {
       // Sort designations alphabetically based on the 'designation' field
       this. sortDepartments= this.departmentdetails.sort((a: { departmentName: number; }, b: { departmentName: number; }) => {
@@ -129,9 +144,9 @@ export class TeamComponent {
   
     openupdateDialog(updateDepartmentDetails: any) {
       this.selectedId = updateDepartmentDetails.id;
-      this.updateForm.patchValue({ DepartmentName1:updateDepartmentDetails.DepartmentName1 });
-      this.updateForm.patchValue({ TeamName1:updateDepartmentDetails.TeamName1 });
-      this.updateForm.patchValue({teamManager1:updateDepartmentDetails.teamManager1 });
+      this.updateForm.patchValue({updatedDepartmentName:updateDepartmentDetails. updatedDepartmentName });
+      this.updateForm.patchValue({UpdatedTeamName:updateDepartmentDetails.UpdatedTeamName });
+      this.updateForm.patchValue({updatedteamManager:updateDepartmentDetails.updatedteamManager });
      
       this.modalService.open(this.updatepopup, {
         backdrop: 'static',
@@ -144,9 +159,9 @@ export class TeamComponent {
         const request = {
           departmentId: this.updateForm.value.departmentId,            
           isDeleted: false,
-          reportingmanagerId: this.updateForm.value.teamManager1,        
+          reportingmanagerId: this.updateForm.value.updatedteamManager ,        
           subdepartmentId: this.updateForm.value.subdepartmentId,      
-          subdepartmentName: this.updateForm.value.TeamName1.trim()      
+          subdepartmentName: this.updateForm.value.UpdatedTeamName.trim()      
         };
     
         this.subscription = this.http.postdata('Subdepartments/Update', request).subscribe({

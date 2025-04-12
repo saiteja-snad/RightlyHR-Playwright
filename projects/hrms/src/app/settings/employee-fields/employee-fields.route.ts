@@ -4,6 +4,9 @@ import { ExpensesConfigurationComponent } from './employee-fields-layout/expense
 import { Component } from '@angular/core';
 import { ExpensesAllowedDaysComponent } from './employee-fields-layout/expenses-configuration/expenses-allowed-days/expenses-allowed-days.component';
 import { ShitsComponent } from './shits/shits.component';
+import { PendingshitsComponent } from './shits/pendingshits/pendingshits.component';
+import { PulishedShitsComponent } from './shits/pulished-shits/pulished-shits.component';
+import { AddShitsComponent } from './shits/add-shits/add-shits.component';
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal/salutation', pathMatch: 'full' },
@@ -57,23 +60,15 @@ export default [
             }
         ]
     },
+    { path: 'addshits', loadComponent: () => import('./shits/add-shits/add-shits.component').then((m) => m.AddShitsComponent)  },
     {
-        path: 'shifts',
+        path: 'shits', component: ShitsComponent,
         children: [
-            { path: '', redirectTo: 'shifts', pathMatch: 'full' },
-            {
-                path: 'shifts',
-                component: ShitsComponent
-            },
-            {
-                path: 'pulished-shits',
-                loadComponent() {
-                    import('./shits/pulished-shits/pulished-shits.component').then(
-                        (m) => m.PulishedShitsComponent
-                    )
-                }
-            }
-
+          { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent)  },
+        
+          { path: 'published-shits',  loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent)  },  
+          { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' }
         ]
-    }
+      },
+
 ] as Route[];

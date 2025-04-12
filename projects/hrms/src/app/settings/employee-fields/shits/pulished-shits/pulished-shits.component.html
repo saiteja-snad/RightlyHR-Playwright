@@ -1,1 +1,38 @@
-<p>pulished-shits works!</p>
+<div class="custom-table-content ">
+    <table class="w-100">
+        <thead>
+            <tr>
+                <th>Worked Date</th>
+                <th>Availed</th>
+                <!-- <th>Reason</th> -->
+                <th>Applied Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tbody>
+            <!-- <ng-container *ngIf="approvedWFHs!.length > 0; else noDataTemplate">
+          <tr *ngFor="let wfhRequest of approvedWFHs; let i = index">
+            <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
+            <td [ngSwitch]="wfhRequest.durationType">
+              <span *ngSwitchCase="1">First Half</span>
+              <span *ngSwitchCase="3">Second Half</span>
+              <span *ngSwitchCase="2">Full Day</span>
+              <span *ngSwitchDefault>-</span>
+            </td>
+            <td>{{ wfhRequest.requestedDate | dateformat }}</td>
+            <td>{{ wfhRequest.status }}</td>
+          </tr>
+        </ng-container> -->
+
+            <ng-template #noDataTemplate>
+                <tr>
+                    <td colspan="4">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
+                </tr>
+            </ng-template>
+        </tbody>
+
+    </table>
+</div>

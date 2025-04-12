@@ -1,13 +1,29 @@
 <div class="custom-main-component-container">
-    <div class="card custom-background-card p-4">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <span class="component-sub-header">Basic Details</span>
-        </div>
-      
-     
-      </div>
-  
-     
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><span class="component-sub-header">Shits Details</span></div>
+    <div class="custom-add-btn" (click)="nagvition()">
+      <i class="bi bi-plus plus-icon me-1"></i>Add New
     </div>
   </div>
+
+  <div class="d-flex gap-3 w-100">
+    <div class="custom-component-left-content">
+      <div class="component-side-nav-tabs-container py-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/settings/employee-fields/shits/published-shits']"
+               routerLinkActive="active-nav-link">Published Shits</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/settings/employee-fields/shits/pending-for-submit']"
+               routerLinkActive="active-nav-link">Pending</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="custom-component-right-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

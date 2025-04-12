@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SettingSideNavComponent } from './setting-side-nav.component';
+import { BankNameComponent } from './bank-name.component';
 
-describe('SettingSideNavComponent', () => {
-  let component: SettingSideNavComponent;
-  let fixture: ComponentFixture<SettingSideNavComponent>;
+describe('BankNameComponent', () => {
+  let component: BankNameComponent;
+  let fixture: ComponentFixture<BankNameComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SettingSideNavComponent]
+      imports: [BankNameComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SettingSideNavComponent);
+    fixture = TestBed.createComponent(BankNameComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

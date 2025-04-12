@@ -5,16 +5,20 @@
                     class="bi bi-arrow-90deg-left me-2"></i> Create Expenses</p>
         </div>
     </div>
-
-    <div>
-        <div class="card custom-nav-tab-card px-2 mb-2">
-            <ul class="nav-tabs-main-content ps-0 text-center mb-0">
-                <li class="nav-item" [routerLink]="['/claimsandexpenses/addexpense']" routerLinkActive="nav-tab-active">
-                    Create Expenses
-                </li>
-            </ul>
-        </div>
+    <div class="component-nav-tabs-container card px-2 mb-3">
+        <p-tabs value="0" scrollable>
+            <p-tablist>
+                <ng-container *ngFor="let tab of navTabs;">
+                    <p-tab [value]="tab.link">
+                        <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                            {{ tab.label }}
+                        </a>
+                    </p-tab>
+                </ng-container>
+            </p-tablist>
+        </p-tabs>
     </div>
+
     <div class="card custom-card">
         <div class="p-3">
             <div>

@@ -294,5 +294,10 @@ export class EmergencyContactDetailsComponent {
       }
     };
   }
-    
+  
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

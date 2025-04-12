@@ -10,12 +10,12 @@ import { AppointmentletterpipePipe } from '../../../pipes/appointmentletterpipe.
 
 @Component({
   selector: 'app-document-history-appointment-letter',
-  imports: [CommonModule,ReactiveFormsModule, TranslateModule, DateformatPipe, FormsModule, AppointmentletterpipePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DateformatPipe, FormsModule, AppointmentletterpipePipe],
   templateUrl: './document-history-appointment-letter.component.html',
   styleUrl: './document-history-appointment-letter.component.scss'
 })
-export class DocumentHistoryAppointmentLetterComponent {
 
+export class DocumentHistoryAppointmentLetterComponent {
   subscription!: Subscription;
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
@@ -39,15 +39,11 @@ export class DocumentHistoryAppointmentLetterComponent {
       .DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl)
       .subscribe({
         next: (res: any) => {
-          let fileName = res.headers
-            .get('content-disposition')
-            ?.split(':')[1]
-            .split('=')[1];
+          let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
           let blob: Blob = res.body as Blob;
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
-          let filename =
-            file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+          let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
           a.download = filename;
           a.click();
         },

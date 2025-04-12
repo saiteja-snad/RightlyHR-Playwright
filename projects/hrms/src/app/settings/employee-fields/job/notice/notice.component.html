@@ -33,7 +33,7 @@
                   <div class="d-flex gap-4">
                     <!-- Update -->
                     <div>
-                      <a (click)="openUpdate(notice)"><img src="/settings-icon/edit.png" alt="edit icon"
+                      <a (click)="openupdate(notice)"><img src="/settings-icon/edit.png" alt="edit icon"
                           class="settings-common-icon"></a>
                     </div>
                     <!-- Delete -->
@@ -55,36 +55,39 @@
   <!-- Update popup -->
   <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
-      <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
-          <div class="pt-2">
-            <p class="popup-heading mb-0">{{ 'Edit Notice Period' | translate }}</p>
-          </div>
-          <div>
-            <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-          </div>
-        </div>
-        <div class="custom-main-popup-content p-5">
-          <div class="mb-4">
-            <label class="form-label custom-label mb-2">{{ 'Notice Period' | translate }}<span class="error-msg">*</span></label>
-            <input type="text" class="form-control custom-input" formControlName="noticeperiod"
-              placeholder="Please Enter Notice Period" (keypress)="blockNonAlphabets($event)">
-          </div>
-          <div *ngIf="updateForm.get('noticeperiod')?.touched && updateForm.get('noticeperiod')?.invalid">
-            <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('noticeperiod')?.errors?.['required']">
-              {{ 'Notice Period is required' | translate }}
-            </small>
-          </div>
-          <div class="d-flex gap-5 pt-4 w-100">
-            <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{ 'Close' | translate }}</button>
-            <!-- <button class="custom-btn btn-primary w-50 py-3" (click)="updateNoticeperiod(modal)" [disabled]="updateForm.invalid">{{ 'Update' | translate }}</button> -->
-            <button class="custom-btn btn-primary w-50 py-3" (click)="updateNoticeperiod(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </ng-template>
-  
+   <div class="custom-main-popup-container" ngbAutofocus>
+       <div class="d-flex justify-content-between popup-header-border p-4">
+           <div class="pt-2">
+               <p class="popup-heading mb-0">{{'Edit noticeperiod'|translate}}</p>
+           </div>
+           <div>
+               <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+           </div>
+       </div>
+       <div class="custom-main-popup-content p-5">
+           <div class="mb-4">
+               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'noticeperiod'|translate}}<span
+                       class="error-msg">*</span></label>
+               <input type="text" class="form-control custom-input" formControlName="noticeperiod"
+                   placeholder="Please Enter noticeperiod"  (keypress)="blockNonAlphabets($event)">
+           </div>
+           <div *ngIf="updateForm.get('noticeperiod')?.touched && updateForm.get('noticeperiod')?.invalid">
+               <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('noticeperiod')?.errors?.['required']">
+                {{'noticeperiodName is required'|translate}}
+               </small>
+               <!-- <small style="color: red;" *ngIf="updateForm.get('jobLocationName')?.errors?.['pattern']">
+                {{'Only alphabets and spaces are allowed'|translate}}
+                 </small> -->
+             </div>
+           <div class="d-flex gap-5 pt-4 w-100">
+               <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close'|translate}}</button>
+               <button class="custom-btn btn-primary w-50 py-3" (click)="updateNoticeperiod(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+           </div>
+         
+       </div>
+   </div>
+   </form>
+</ng-template>
   <!-- Delete Confirmation popup -->
   <ng-template #deletepopup let-modal>
     <div class="modal-body" ngbAutofocus>

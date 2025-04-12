@@ -1,148 +1,135 @@
 <div class="custom-main-component-container mt-4">
-    <div class="d-flex justify-content-end">
-    </div>
-    <!--Input search-->
-    <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>{{'RAISED DATE'|translate}}</th>
-                    <th>{{'NOTICE PERIOD(In Days)'|translate}}</th>
-                    <th>{{'LAST WORKING DAY'|translate}}</th>
-                    <th>{{'REASON'|translate}}</th>
-                    <th>{{'APPROVER STATUS'|translate}}</th>
-                    <th>{{'REQUEST TYPE'|translate}}</th>
-                    <th>{{'STATUS'|translate}}</th>
-                    <th style="width: 15%"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @if(((getSeparationDetails | async) ?? []).length > 0) {
-                @for (item of (getSeparationDetails|async); track item.id) {
-                    <tr>
-                        <td>{{ item.appliedDate | dateformat }}
-                        </td> 
-                        <td>
-                            @if(item.recallStatus == 'Recalled'){
-                                <span>NA</span>
-                            }
-                            @else{
-                                {{ item.noticePeriodDuration?item.noticePeriodDuration:'NA' }}
-                            }
-                        </td>
-      
-                        <td>
-                                {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
-                        </td>
-                        <td>
-                            @if(item.description){
-                                <span id="tooltip">
-                                    <div (click)="decription(item.description,openDiscriotionviewpopup)">
-                                      <i
-                                        class="bi bi-info-circle-fill info-icon"
-                                        data-toggle="tooltip"
-                                      ></i>
-                                    </div>
-                                  </span>
-                            }
-                            @else {
-                                NA
-                            }
-                          <div>
-                          </div>
-                        </td>
-                        <td>
-                            @if(item.approvers && item.approvers.length > 0;){
-                                <div
-                                id="tooltip"
-                                (click)="approverCommentsFunction(item.approvers,ApprovalPopup)"
-                              >
-                                <i
-                                  class="bi bi-info-circle-fill info-icon"
-                                  data-toggle="tooltip"
-                                ></i>
-                              </div>
-                            }
-                            @else{
-                                NA
-                            }
-                        </td>
-                        <td>
-                            {{ item.requestType?item.requestType:item.recallStatus }}
-                        </td>
-                        <td>
-                            {{item.status?item.status:'NA'}} 
-                        </td>
-                        <td>
-                          <div class="dropdown">
-                            @if(item.status != 'Rejected' &&
-                              item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions &&item.status != 'Recalled Processed'){
-                         <span type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                            }
-                         
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                              <li (click)="recallRequest(item,recallrequestpopup)">
-                                <a class="dropdown-item">
-                                  <i class="bi bi-repeat me-2 fs-5"></i>Recall
-                                </a>
-                              </li>
-                              @if( item.recallStatus.toLowerCase() !=
-                              'earlyrelieving' &&
-                            !recallandearlyrelievingbuttonConditions){
-                                       <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
-                                    <a class="dropdown-item">
-                                    <i class="bi bi-trash3 me-2"></i>Early relieving
-                                       </a>
-                                 </li>
-                              }
-                            
-                            </ul>
-                          </div>
-                        </td>
-                        <!-- </ng-container> -->
-                      </tr>
-              
+  <div class="d-flex justify-content-end">
+  </div>
+  <!--Input search-->
+  <div class="custom-table-content">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>{{'RAISED DATE'|translate}}</th>
+          <th>{{'NOTICE PERIOD(In Days)'|translate}}</th>
+          <th>{{'LAST WORKING DAY'|translate}}</th>
+          <th>{{'REASON'|translate}}</th>
+          <th>{{'APPROVER STATUS'|translate}}</th>
+          <th>{{'REQUEST TYPE'|translate}}</th>
+          <th>{{'STATUS'|translate}}</th>
+          <th style="width: 15%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if(((getSeparationDetails | async) ?? []).length > 0) {
+        @for (item of (getSeparationDetails|async); track item.id) {
+        <tr>
+          <td>{{ item.appliedDate?(item.appliedDate | dateformat):'-' }}
+          </td>
+          <td>
+            @if(item.recallStatus == 'Recalled'){
+            <span>NA</span>
+            }
+            @else{
+            {{ item.noticePeriodDuration?item.noticePeriodDuration:'NA' }}
+            }
+          </td>
 
+          <td>
+            {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
+          </td>
+          <td>
+            @if(item.description){
+            <span id="tooltip">
+              <div (click)="decription(item.description,openDiscriotionviewpopup)">
+                <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+              </div>
+            </span>
+            }
+            @else {
+            NA
+            }
+            <div>
+            </div>
+          </td>
+          <td>
+            @if(item.approvers && item.approvers.length > 0;){
+            <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)">
+              <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+            </div>
+            }
+            @else{
+            NA
+            }
+          </td>
+          <td>
+            {{ item.requestType?item.requestType:item.recallStatus }}
+          </td>
+          <td>
+            {{item.status?item.status:'NA'}}
+          </td>
+          <td>
+            <div class="dropdown">
+              @if(item.status != 'Rejected' &&
+              item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions &&item.status !=
+              'Recalled Processed'){
+              <span type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </span>
+              }
+
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li (click)="recallRequest(item,recallrequestpopup)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-repeat me-2 fs-5"></i>Recall
+                  </a>
+                </li>
+                @if( item.recallStatus.toLowerCase() !=
+                'earlyrelieving' &&
+                !recallandearlyrelievingbuttonConditions){
+                <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-trash3 me-2"></i>Early relieving
+                  </a>
+                </li>
                 }
-                }
-                @else{
-                <tr>
-                    <td>
-                            <app-no-data-found />
-                        </td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+
+              </ul>
+            </div>
+          </td>
+          <!-- </ng-container> -->
+        </tr>
+
+
+        }
+        }
+        @else{
+        <tr>
+          <td>
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>
-  <!-- Modal -->
+<!-- Modal -->
 <ng-template #openDiscriotionviewpopup let-modal>
 
   <div class="custom-main-popup-content" ngbAutofocus>
     <div class="modal-header">
       <h1 class="modal-title fs-5">View Comments</h1>
-      <button
-        type="button"
-        class="btn-close me-2"
-        (click)="modal.dismiss()"
-        aria-label="Close"
-      ></button>
+      <button type="button" class="btn-close me-2" (click)="modal.dismiss()" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-          <div class="cardd mb-3">
-            <div class="row m-0 p-0">
-              <div class="col-12 p-0">
-                <div class="p-0">
-                  <p class="m-0 ">
-                   <b> Comments:</b> {{ decription_Storing_Variable }}
-                  </p>
-                </div>
-              </div>
+      <div class="cardd mb-3">
+        <div class="row m-0 p-0">
+          <div class="col-12 p-0">
+            <div class="p-0">
+              <p class="m-0 ">
+                <b> Comments:</b> {{ decription_Storing_Variable }}
+              </p>
             </div>
           </div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
@@ -157,11 +144,7 @@
       <h1 class="modal-title fs-5" id="exampleModalLabel">
         Approver History Details
       </h1>
-      <button
-        type="button"
-        class="btn-close me-2"
-        (click)="modal.dismiss()"
-      ></button>
+      <button type="button" class="btn-close me-2" (click)="modal.dismiss()"></button>
     </div>
     <div class="modal-body">
       <div class="card custom-table mb-3">
@@ -182,82 +165,67 @@
           <tbody>
             <tr *ngFor="let comment of appover_comments">
               <td>
-                <span *ngIf="comment?.approverRole;else approverrole"> <span *ngIf="comment?.approverRole.toLowerCase()=='em';else maincontent">HR</span>
-                <ng-template #maincontent> {{comment.approverRole}}</ng-template>
+                <span *ngIf="comment?.approverRole;else approverrole"> <span
+                    *ngIf="comment?.approverRole.toLowerCase()=='em';else maincontent">HR</span>
+                  <ng-template #maincontent> {{comment.approverRole}}</ng-template>
                 </span>
                 <ng-template #approverrole>NA</ng-template>
               </td>
               <td>
                 <span *ngIf="comment.addedDate; else addeddate">
-                  {{ comment.addedDate | dateformat }}</span
-                >
+                  {{ comment.addedDate | dateformat }}</span>
                 <ng-template #addeddate>NA</ng-template>
               </td>
 
               <td>
                 <span *ngIf="comment.employeeName; else addedname">
                   {{ comment.employeeName }} ({{
-                    comment.fusionEmployeeId
-                  }})</span
-                >
+                  comment.fusionEmployeeId
+                  }})</span>
                 <ng-template #addedname>NA</ng-template>
               </td>
               <td>
-                <div
-                  class="text-center"
-                  *ngIf="comment.comments; else popupcomments"
-                >
+                <div class="text-center" *ngIf="comment.comments; else popupcomments">
                   <!-- <div class="text-truncate" style="width:150px;">{{comment.comments}}</div> -->
-                  <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave" ngbPopover="{{ comment?.comments }}" container="body"></i>
+                  <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
+                    ngbPopover="{{ comment?.comments }}" container="body"></i>
                 </div>
                 <ng-template #popupcomments>NA</ng-template>
               </td>
               <td>
-                <span
-                  *ngIf="
+                <span *ngIf="
                     comment?.metadata?.splastworkingDate;
                     else lastworkingdate
-                  "
-                >
-                  {{ comment.metadata.splastworkingDate | dateformat }}</span
-                >
+                  ">
+                  {{ comment.metadata.splastworkingDate | dateformat }}</span>
                 <ng-template #lastworkingdate>NA</ng-template>
               </td>
               <td>
-                <span
-                  *ngIf="
+                <span *ngIf="
                     comment?.metadata?.spearlyReliveingDate;
                     else earlydate
-                  "
-                >
+                  ">
                   {{
-                    comment.metadata.spearlyReliveingDate | dateformat
-                  }}</span
-                >
+                  comment.metadata.spearlyReliveingDate | dateformat
+                  }}</span>
                 <ng-template #earlydate>NA</ng-template>
               </td>
               <td>
-                <span
-                  *ngIf="comment?.metadata?.spExtendedDate; else extenddate"
-                >
-                  {{ comment.metadata.spExtendedDate | dateformat }}</span
-                >
+                <span *ngIf="comment?.metadata?.spExtendedDate; else extenddate">
+                  {{ comment.metadata.spExtendedDate | dateformat }}</span>
                 <ng-template #extenddate>NA</ng-template>
               </td>
               <td>
-                <span
-                  *ngIf="
+                <span *ngIf="
                     comment?.metadata?.isAcceptEarlyRequest;
                     else isaccept
-                  "
-                  >{{ comment.metadata.isAcceptEarlyRequest }}</span
-                >
+                  ">{{ comment.metadata.isAcceptEarlyRequest }}</span>
                 <ng-template #isaccept>NA</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.status; else isaccept">{{
                   comment.metadata.status
-                }}</span>
+                  }}</span>
                 <ng-template #isaccept>NA</ng-template>
               </td>
             </tr>
@@ -282,22 +250,22 @@
       request?
     </h4>
     <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
-        <div class="mb-3">
-          <label class="form-label custom-label mb-2">Enter recall reason <span class="error-msg">*</span></label>
-          <textarea class="form-control custom-input" placeholder="Please enter recall reason" name="Reason"
-            formControlName="recallReason"></textarea>
+      <div class="mb-3">
+        <label class="form-label custom-label mb-2">Enter recall reason <span class="error-msg">*</span></label>
+        <textarea class="form-control custom-input" placeholder="Please enter recall reason" name="Reason"
+          formControlName="recallReason"></textarea>
 
+        <div>
+          <span class="color">
+            {{ recallreason.get('recallReason')?.value?.length || 0 }} / 250
+          </span>
           <div>
-            <span class="color">
-              {{ recallreason.get('recallReason')?.value?.length || 0 }} / 250
-            </span>
-            <div>
-              <small class="error-msg"
+            <small class="error-msg"
               *ngIf="recallreason.get('recallReason')?.invalid && recallreason.get('recallReason')?.touched">
               Reason is required.
             </small>
-            </div>
-          
+          </div>
+
         </div>
       </div>
 
@@ -307,14 +275,14 @@
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
           @if(!isLoading){
-                {{'Submit'|translate}}
+          {{'Submit'|translate}}
           }
           @else {
-            <div class="d-flex">
-              <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-              </div>
-              <div> {{'Submitting'|translate}}</div>
+          <div class="d-flex">
+            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
             </div>
+            <div> {{'Submitting'|translate}}</div>
+          </div>
           }
         </button>
       </div>
@@ -334,57 +302,56 @@
     <form [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
       <div class="row">
         <div class="col-md-6">
-            <div class="mb-3">
-                <label for="Effective Date ">Early relieving date <span
-                        class="error-msg">*</span></label>
-                <input type="date" class="form-control custom-input" placeholder=""
-                    formControlName="earlyReleivingDate" id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)"  />
-                <small class="error-msg"
-                *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
-                    Early relieving Date
-                    is required </small>
-            </div>
+          <div class="mb-3">
+            <label for="Effective Date ">Early relieving date <span class="error-msg">*</span></label>
+            <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
+              id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
+            <small class="error-msg"
+              *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
+              Early relieving Date
+              is required </small>
+          </div>
         </div>
         <div class="col-md-12">
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Reason for
               early Relieving <span class="error-msg">*</span></label>
-            <textarea class="form-control custom-input" placeholder="Please provide early relieving reason...." name="Reason"
-              formControlName="earlyReleivingReason"></textarea>
-  
+            <textarea class="form-control custom-input" placeholder="Please provide early relieving reason...."
+              name="Reason" formControlName="earlyReleivingReason"></textarea>
+
             <div>
               <span class="color">
                 {{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }} / 250
               </span>
               <div>
                 <small class="error-msg"
-                *ngIf="earlyReleivingform.get('earlyReleivingReason')?.invalid && recallreason.get('earlyReleivingReason')?.touched">
-                Reason for early relieving is required
-              </small>
+                  *ngIf="earlyReleivingform.get('earlyReleivingReason')?.invalid && recallreason.get('earlyReleivingReason')?.touched">
+                  Reason for early relieving is required
+                </small>
               </div>
-            
+
+            </div>
           </div>
         </div>
-        </div>
-    </div>
+      </div>
       <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-        {{'Cancle'|translate}}
+          {{'Cancle'|translate}}
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
           @if(!isLoading){
-                {{'Submit'|translate}}
+          {{'Submit'|translate}}
           }
           @else {
-            <div class="d-flex">
-              <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-              </div>
-              <div> {{'Submitting'|translate}}</div>
+          <div class="d-flex">
+            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
             </div>
+            <div> {{'Submitting'|translate}}</div>
+          </div>
           }
         </button>
       </div>
     </form>
   </div>
 </ng-template>
- <!-- modal end to open the early relieving popup -->
+<!-- modal end to open the early relieving popup -->

@@ -76,6 +76,22 @@
    "Jobtype":"Jobtype",
    "Grade Name":"Grade Name",
    "Jobrole Name is required":"Jobrole Name is required",
-   "Edit Frequency":"Edit Frequency"
+   "Edit Frequency":"Edit Frequency",
+   "BackgroundCheckeName is required":"BackgroundCheckeName is required",
+   "noticeperiod":"noticeperiod",
+   "BackgroundCheck":"BackgroundCheck",
+   "Frequency is required":"Frequency is required",
+   "Edit BackgroundCheck":"Edit BackgroundCheck",
+   "Notice Period is required":"Notice Period is required",
+   "Edit noticeperiod":"Edit noticeperiod",
+   "Grade":"Grade",
+   "grade Name is required":"grade Name is required",
+   "Job Grade":"Job Grade",
+   "JobGrade is required":"Job Grade is required",
+   "GRADE DETAILS":"GRADE DETAILS",
+    "EDIT GRADE DETAILS":"EDIT GRADE DETAILS"
+   
+  
+
 
 }

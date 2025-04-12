@@ -2,7 +2,8 @@
     <table class="w-100 ">
         <tbody>
             <tr *ngFor="let role of roles">
-                <td [ngClass]="{'selected-row': role === selectedRole}" (click)="onRoleClick(role)" class="no-border ">{{ role.name }}
+                <td [ngClass]="{'selected-row': role === selectedRole}" (click)="onRoleClick(role)" class="no-border ">
+                    {{ role.name }}
                 </td>
             </tr>
         </tbody>
@@ -23,7 +24,6 @@
                         {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
                     </ng-template>
                 </p-select>
-
                 <!-- <p-multiSelect formControlName="selected_user" [options]="usersList" name="user" id="user"
                     optionLabel="fullName" placeholder="Search User" field="selectedUser" class="w-100"
                     [selectedItemsLabel]="customLabelTemplate" (ngModelChange)="selectedUserDetails($event)">
@@ -36,7 +36,6 @@
                 <button type="submit" class="main-custom-btn custom-btn-primary py-2 px-3"
                     [disabled]="createAssigneeForm.invalid">Add</button>
             </div>
-
         </div>
     </form>
 </div>
@@ -56,12 +55,10 @@
                 </td>
                 <td class="text-end delete-icon" (click)="onUserClick(user)"><b><i class="bi bi-trash3"></i></b>
                 </td>
-
             </tr>
         </tbody>
     </table>
 </div>
-
 
 <ng-template #confirmationModal let-modal>
     <div class="modal-body" ngbAutofocus>
@@ -82,6 +79,6 @@
 <ng-template #stagingLoadingModal let-modal>
     <div class="modal-body text-center p-5" ngbAutofocus>
         <div class="spinner-border text-primary" role="status"></div>
-        <p class="heading4 pt-4">Update in progress...</p>
+        <p class="heading4 pt-4">Loading...</p>
     </div>
 </ng-template>

@@ -37,9 +37,9 @@ export class NoticeComponent {
       noticeperiod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.updateForm = this.fb.group({
-      noticeperiod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
-    });
+      noticeperiod:  ['', Validators.required]
 
+    });
     this.getNoticeperiod();
   }
 
@@ -78,13 +78,24 @@ export class NoticeComponent {
       }
     });
   }
-
+  openupdate(noticePeriodList: any) {
+    this.selectedId = noticePeriodList.id;
+    this.updateForm.patchValue({ noticeperiod: noticePeriodList.period });
+  
+    // Mark control as touched and update validity
+    this.updateForm.get('noticeperiod')?.markAsTouched();
+    this.updateForm.get('noticeperiod')?.markAsDirty();
+    this.updateForm.get('noticeperiod')?.updateValueAndValidity();
+  
+    this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+  }
+  
   updateNoticeperiod(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: NoticeData = {
         period: this.updateForm.value.noticeperiod,
         isdeleted: 'Active',
-        sno: this.selectedId
+        id: this.selectedId
       };
 
       this.subscription = this.http.postdata('Noticeperiod/UPDATER', request).subscribe({
@@ -92,7 +103,7 @@ export class NoticeComponent {
           this.getNoticeperiod();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Notice Period updated successfully');
+          this.conformationPopup.openSuccessModal('Notice Period Updated Successfully');
         },
         error: () => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -101,11 +112,6 @@ export class NoticeComponent {
     }
   }
 
-  openUpdate(item: any) {
-    this.selectedId = item.sno;
-    this.updateForm.patchValue({ noticeperiod: item.period });
-    this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
-  }
 
   openDelete(item: any) {
     this.selectedDeleteDep = item;
@@ -118,14 +124,14 @@ export class NoticeComponent {
     const deleteRequest: NoticeData = {
       period: this.selectedDeleteDep.period,
       isdeleted: 'void',
-      sno: this.selectedDeleteDep.sno
+      id: this.selectedDeleteDep.id
     };
 
     this.http.postdata('Noticeperiod/UPDATER', deleteRequest).subscribe({
       next: () => {
         this.getNoticeperiod();
         modal.close();
-        this.conformationPopup.openSuccessModal('Notice Period deleted successfully');
+        this.conformationPopup.openSuccessModal('Notice Period Deleted Successfully');
       },
       error: () => {
         this.conformationPopup.openErrorModal('Failed to delete the notice period');

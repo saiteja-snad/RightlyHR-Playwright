@@ -1,1 +1,190 @@
-<p>grade works!</p>
+<button type="button" (click)="openDialog()" class="custom-btn btn-primary">{{'Add' | translate}}</button>
+
+<!-- Add Popup Modal -->
+
+<ng-template #addpopup let-modal>
+    <form [formGroup]="AddForm">
+      <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+          <div class="pt-2">
+            <p class="popup-heading mb-0">{{ 'GRADE DETAILS' | translate }}</p>
+          </div>
+          <div>
+            <a (click)="close(modal)">
+              <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+            </a>
+          </div>
+        </div>
+  
+        <div class="custom-main-popup-content p-5">
+          <!-- Job Role Field -->
+          <div class="mb-4">
+            <label for="Addgrade" class="form-label custom-label mb-2">
+              {{ 'Grade Name' | translate }} <span class="error-msg">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control custom-input"
+              formControlName="Addgrade"
+              placeholder="Please Enter GradeName" (keypress)="blockNonAlphabets($event)"
+            />
+            <div *ngIf="AddForm.get('Addgrade')?.touched && AddForm.get('Addgrade')?.invalid" class="error-msg">
+              {{ 'Grade Name is required' | translate }}.
+            </div>
+          </div>
+  
+          <!-- Grade Name Field -->
+          <div class="mb-4">
+            <label for="jobgrade" class="form-label custom-label mb-2">
+              {{ 'Job Grade' | translate }} <span class="error-msg">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <!-- <select class="form-control custom-input" formControlName="gradeId">
+                <option value="" disabled selected>Please select gradename</option>
+                <option *ngFor="let grade of gradedetails" [value]="grade.gradeId">
+                  {{ grade.gradeName }}
+                </option>
+              </select> -->
+
+            <input type="text"class="form-control custom-input" formControlName="jobgrade" placeholder="Please Enter JobGrade" (keypress)="blockNonAlphabets($event)" />
+            </div>
+            <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid">
+              <small style="color: red; font-size: 13px;">
+                {{ 'Job Grade is required' | translate }}
+              </small>
+            </div>
+          </div>
+  
+          <!-- Buttons -->
+          <div class="d-flex gap-5 pt-4 w-100">
+            <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+              {{ 'Close' | translate }}
+            </button>
+            <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">
+              {{ 'Add' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  
+<div class="custom-main-component-container">
+    <div class="custom-table-content mt-2">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>Grade Name</th>
+            <th>Job grade</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container>
+            <tr *ngFor="let roles of gradedetails"> 
+              <td>{{roles.gradeName}}</td>
+              <td>{{roles.jobGrade}}</td>
+              <td class="text-center">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openupdateDialog(roles)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <li (click)="opendelete(roles)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+          <!-- No Data Found Template -->
+          <!-- <ng-template #noDataTemplate>
+            <tr>
+              <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
+            </tr>
+          </ng-template> -->
+        </tbody>
+      </table>
+    </div>
+  
+  </div>
+  
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form [formGroup]="updateForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-4">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'EDIT GRADE DETAILS' | translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)">
+                        <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                    </a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-5">
+                <div class="mb-4">
+                    <label for="Updatejobrole" class="form-label custom-label mb-2">
+                        {{'Job Role' | translate}} <span class="error-msg">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
+                        placeholder="Please Enter JobRole" (keypress)="blockNonAlphabets($event)">
+                    <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched"
+                        class="error-msg">
+                        {{'Grade Name is required'|translate}}.
+                    </div>
+                </div>
+                <div class="mb-4">
+
+                    <label for="Updatejobrole" class="form-label custom-label mb-2">
+                        {{'Job Grade' | translate}} <span class="error-msg">*</span>
+                    </label>
+
+                    <div class="custom-p-select-content">
+                        <input type="text"class="form-control custom-input" formControlName="updategraderole" placeholder="Please Enter JobGrade" (keypress)="blockNonAlphabets($event)" />
+                    </div>
+
+                </div>
+                <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid">
+                    <small style="color: red; font-size: 13px;" *ngIf="updateForm.get('updategraderole')?.errors?.['required']">
+                        {{'Job Grade is required' | translate}}
+                    </small>
+                </div>
+                <div class="d-flex gap-5 pt-4 w-100">
+                    <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
+                        translate}}</button>
+                    <button class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
+                        [disabled]="updateForm.invalid">
+                        {{'Update' | translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+  
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-content text-center p-4">
+            <div class="py-5">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            </div>
+            <div class="d-flex gap-5 pt-2 w-100">
+                <button class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

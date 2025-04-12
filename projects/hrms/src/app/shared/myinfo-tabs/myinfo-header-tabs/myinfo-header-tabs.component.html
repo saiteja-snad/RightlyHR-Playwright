@@ -1,24 +1,13 @@
-<div class="tabs-header">
-    <ul class="nav">
-        <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/myinfo/personal']" routerLinkActive="nav-tab-active"
-                aria-current="page">Personal</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/myinfo/job']" routerLinkActive="nav-tab-active"
-                aria-current="page">Job</a>
-        </li>
-        <!-- <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/myinfo/documents']" routerLinkActive="nav-tab-active"
-                aria-current="page">Document</a>
-        </li> -->
-        <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/myinfo/team-members']" routerLinkActive="nav-tab-active"
-                aria-current="page">Team Members</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/myinfo/onboarding-request']" routerLinkActive="nav-tab-active"
-                aria-current="page">Onboard Request</a>
-        </li>
-    </ul>
+<div class="header-module-tabs-container">
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of navTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                        {{ tab.label }}
+                    </a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
 </div>

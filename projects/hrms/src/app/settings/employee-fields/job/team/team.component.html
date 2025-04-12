@@ -184,7 +184,7 @@
             </div>
               <!--Department Name*-->
               <div class="mb-4">
-                <label for="DepartmentName" class="form-label custom-label mb-2">
+                <label for="DepartmentName1" class="form-label custom-label mb-2">
                   {{ 'DepartmentName' | translate }} <span class="error-msg">*</span>
                 </label>
               
@@ -197,7 +197,7 @@
                   </select>
                 </div>
               
-                <div *ngIf="AddForm.get('DepartmentName')?.touched && AddForm.get('DepartmentName')?.invalid">
+                <div *ngIf="AddForm.get('DepartmentName1')?.touched && AddForm.get('DepartmentName1')?.invalid">
                   <small style="color: red; font-size: 13px;">
                     {{ 'Department is required' | translate }}
                   </small>

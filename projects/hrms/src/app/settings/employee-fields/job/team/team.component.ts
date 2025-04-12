@@ -23,8 +23,6 @@ export class TeamComponent {
     updateDepartmentDetails=[] as any;
     teamedetails=[] as any[];
     isEditMode = false;
-    
-
     @ViewChild('addpopup') addpopup: any;
     @ViewChild('updatepopup') updatepopup: any;
     @ViewChild('deletepopup') deletepopup: any;
@@ -33,8 +31,7 @@ export class TeamComponent {
   sortdeaprtmentName: any;
   selectedDeleteRole: any;
   selectedId: boolean | undefined;
- 
-    constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+ constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
   
     }
     ngOnInit(): void {
@@ -106,16 +103,16 @@ export class TeamComponent {
         subDepartmentName: 'uuiki'             
       };
     
-      this.subscription = this.http.postdata(' department GradeMapper', request).subscribe({
+      this.subscription = this.http.postdata('Subdepartments/Getalldept', request).subscribe({
         next: () => {
-          this.getDepartmentName(); // Refresh the list or data
-          modal.close(); // Close modal on success
+          this.getDepartmentName(); 
+          modal.close(); 
           this.conformationPopup.openSuccessModal('department Name added successfully');
-          this.resetForm(); // Clear form after success
+          this.resetForm(); 
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal('Insertion of data failed');
-          this.resetForm(); // Clear form on error too
+          this.resetForm(); 
         }
       });
     }
@@ -174,7 +171,7 @@ export class TeamComponent {
       if (!this.updateDepartmentDetails) return;
   
       this.subscription = this.http
-        .getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.id}`)
+        .getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.id}`) 
         .subscribe({
           next: () => {
             modal.close();

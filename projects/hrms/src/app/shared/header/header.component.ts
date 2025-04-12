@@ -43,14 +43,17 @@ export class HeaderComponent {
       .DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl)
       .subscribe({
         next: (res: any) => {
-          console.log(res)
+         // console.log(res)
           let blob = new Blob([res['body']], { type: 'image/png' });
-          console.log(blob);
+         // console.log(blob);
           let objectURL = URL.createObjectURL(blob);
           this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          console.log(this.imageUrl);
+         // console.log(this.imageUrl);
         },
-        error: (reason) => console.log(reason),
+        error: (reason) => {
+           //console.log(reason),
+        }
+          
       });
   }
 

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NoDueClearanceComponent } from './no-due-clearance.component';
+import { TimeOffLayoutComponent } from './time-off-layout.component';
 
-describe('NoDueClearanceComponent', () => {
-  let component: NoDueClearanceComponent;
-  let fixture: ComponentFixture<NoDueClearanceComponent>;
+describe('TimeOffLayoutComponent', () => {
+  let component: TimeOffLayoutComponent;
+  let fixture: ComponentFixture<TimeOffLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NoDueClearanceComponent]
+      imports: [TimeOffLayoutComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NoDueClearanceComponent);
+    fixture = TestBed.createComponent(TimeOffLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

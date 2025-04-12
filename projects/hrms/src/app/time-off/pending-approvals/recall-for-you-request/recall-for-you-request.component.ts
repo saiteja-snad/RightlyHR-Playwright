@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,6 +25,7 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
     TranslateModule,
     RouterModule,
     NgbPopoverModule,
+    ReactiveFormsModule,
     FormsModule,
     PaginatorModule,
     DropdownModule,
@@ -54,16 +55,38 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   isLoading = false;
   jsonData = {} as any;
+  recallAcceptFormForProcess!:FormGroup;
+  recallAcceptForm!:FormGroup;
+  rejectSeparationForm!:FormGroup;
   constructor(
     private authService: AuthService,
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private fb:FormBuilder
   ) {}
 
   ngOnInit(): void {
+    this.formInializer();
     this.getAllPendingApprovals();
+  }
+  //function to initalize the form
+  formInializer(){
+    this.recallAcceptFormForProcess = this.fb.group({
+      recallReason: [null,
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+      ]
+    });
+    this.recallAcceptForm = this.fb.group({
+      AcceptReason: [null,
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+      ]
+    });
+    this.rejectSeparationForm = this.fb.group({
+      notes: [null,[Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+      ]
+    });
   }
   //function to open the modal
   openModal(content: any) {
@@ -165,7 +188,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   formatDate(date: any) {
     return date?.split('T')[0];
   }
-  handleAccept(f: NgForm) {
+  handleAccept() {
     let loggedinuser = this.authService.getToken();
     this.isLoading = true;
     this.jsonData = JSON.stringify({
@@ -173,7 +196,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
     });
     let requestBody = {
       status: 'Approved',
-      comments: this.selectedSpRequestData.comments,
+      comments: this.recallAcceptForm.get('AcceptReason')?.value,
       isAcceptEarly:
         this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
       lastWorkingDate: this.selectedSpRequestData.spRequestLastWorkingDate,
@@ -190,6 +213,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (respone: any) => {
           this.isLoading = false;
+          this.recallAcceptForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
             'Recall Request Approved Successfully'
@@ -204,14 +228,14 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
-  handlerecallReject(f: NgForm) {
+  handlerecallReject() {
     this.jsonData = JSON.stringify({
       status: 'Rejected',
     });
     let loginuserdata = this.authService.getToken();
     let requestBody = {
       status: 'Rejected',
-      comments: this.selectedSpRequestData.rejectedReason,
+      comments: this.rejectSeparationForm.get('notes')?.value,
       approvedBy: loginuserdata.employeeId.toString(),
       meta: this.jsonData,
     };
@@ -223,6 +247,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
+          this.rejectSeparationForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
             'Recall Request Rejected Successfully'
@@ -239,7 +264,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
-  handlerecallProcess(f: NgForm) {
+  handlerecallProcess() {
     let loggedInUser = this.authService.getToken();
     this.isLoading = true;
     this.jsonData = JSON.stringify({
@@ -247,7 +272,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
     });
     let requestBody: any = {
       status: 'Processed',
-      comments: this.selectedSpRequestData.comments,
+      comments: this.recallAcceptFormForProcess.get('recallReason')?.value,
       isAcceptEarly:
         this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
       lastWorkingDate: this.selectedSpRequestData.spRequestLastWorkingDate,
@@ -273,6 +298,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (respone: any) => {
+          this.recallAcceptFormForProcess.reset();
           this.modalService.dismissAll();
           this.getAllPendingApprovals();
           this.conformationPopup.openSuccessModal(

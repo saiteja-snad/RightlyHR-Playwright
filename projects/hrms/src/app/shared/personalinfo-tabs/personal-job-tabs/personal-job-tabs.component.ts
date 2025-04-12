@@ -16,10 +16,12 @@ export class PersonalJobTabsComponent {
     { label: 'Offboarding', link: '/personalinfo/job/employmentType' },
     { label: 'Job', link: '/personalinfo/job/job-details' },
     { label: 'Separation', link: '/personalinfo/job/separation-details' },
+    { label: ' No Due Clearance', link: '/personalinfo/job/no-due-clearance-details' },
     { label: 'Past Experiences', link: '/personalinfo/job/past-experiences' },
     { label: 'Certifications', link: '/personalinfo/job/certifications' },
     { label: 'Probation Details', link: '/personalinfo/job/probation-details' },
-    { label: 'Onboarding Request', link: '/personalinfo/job/onboarding-requests' }
+    { label: 'Onboarding Request', link: '/personalinfo/job/onboarding-requests' },
+  
   ];
   
 }

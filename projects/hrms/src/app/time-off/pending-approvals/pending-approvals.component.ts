@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { PendingApprovalsTabsComponent } from '../../shared/pending-approvals-tabs/pending-approvals-tabs.component';
 
 
@@ -10,5 +10,7 @@ import { PendingApprovalsTabsComponent } from '../../shared/pending-approvals-ta
   styleUrl: './pending-approvals.component.scss'
 })
 export class PendingApprovalsComponent {
+constructor(public router : Router){
 
+}
 }

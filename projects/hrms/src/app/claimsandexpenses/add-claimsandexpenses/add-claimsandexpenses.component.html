@@ -89,9 +89,9 @@
                                     </div>
                                     <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
                                         class="error-msg">
-                                        <span class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
+                                        <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
                                             Expense
-                                            Type is required</span>
+                                            Type is required</div>
 
                                     </div>
                                 </div>
@@ -104,13 +104,13 @@
                                         placeholder="Please enter expense item" />
                                     <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
                                         class="error-msg">
-                                        <span class="error-msg"
-                                            *ngIf="item.get('item_Name')?.errors?.['required']">Expense
+                                        <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
+                                            Expense
                                             item
-                                            is required</span>
-                                        <span class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
+                                            is required</div>
+                                        <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                             Expense item must be less than 50 characters
-                                        </span>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -136,20 +136,19 @@
                                     <div *ngIf="item.get('expense_Amount')?.invalid && item.get('expense_Amount')?.touched"
                                         class="error-msg">
 
-                                        <span class="error-msg"
-                                            *ngIf="item.get('expense_Amount')?.errors?.['required']">
+                                        <div class="error-msg" *ngIf="item.get('expense_Amount')?.errors?.['required']">
                                             Expense amount is required
-                                        </span>
-                                        <span class="error-msg" *ngIf="item.get('expense_Amount')?.errors?.['pattern']">
+                                        </div>
+                                        <div class="error-msg" *ngIf="item.get('expense_Amount')?.errors?.['pattern']">
                                             Expense amount should allow two decimal places
-                                        </span>
-                                        <span class="error-msg"
+                                        </div>
+                                        <div class="error-msg"
                                             *ngIf="item.get('expense_Amount')?.errors?.['noAlphabets']">
                                             Alphabets are not allowed
-                                        </span>
-                                        <span class="error-msg" *ngIf="item.get('expense_Amount')?.errors?.['nonZero']">
+                                        </div>
+                                        <div class="error-msg" *ngIf="item.get('expense_Amount')?.errors?.['nonZero']">
                                             Expense amount cannot be zero
-                                        </span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -162,20 +161,20 @@
                                     <div *ngIf="item.get('receipt_Number')?.invalid && 
                                         (item.get('receipt_Number')?.touched || 
                                          item.get('receipt_Number')?.dirty)" class="error-msg">
-                                        <span *ngIf="item.get('receipt_Number')?.hasError('required')">
+                                        <div *ngIf="item.get('receipt_Number')?.hasError('required')">
                                             Receipt number is required
-                                        </span>
-                                        <span *ngIf="item.get('receipt_Number')?.hasError('maxlength')">
+                                        </div>
+                                        <div *ngIf="item.get('receipt_Number')?.hasError('maxlength')">
                                             Receipt number should be allow up to 18 characters also
-                                        </span>
+                                        </div>
 
                                     </div>
                                     <div *ngIf="item.get('receipt_Number')?.hasError('duplicate') && 
                                     (item.get('receipt_Number')?.touched || 
                                      item.get('receipt_Number')?.dirty)" class="error-msg">
-                                        <span>
+                                        <div>
                                             Receipt number should be unique
-                                        </span>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -206,7 +205,10 @@
                                             class="text-danger">*</span></label>
                                     <input type="file" class="form-control custom-input" accept=".pdf, image/*"
                                         (change)="fileupload($event, i)" />
-
+                                    <div class="error-msg"
+                                        *ngIf="item.get('attachment_url')?.invalid && item.get('attachment_url')?.touched">
+                                        Please choose a file
+                                    </div>
                                 </div>
                             </div>
 

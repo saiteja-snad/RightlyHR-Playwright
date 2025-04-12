@@ -14,10 +14,10 @@ export interface ISeparation {
   entity?: IEntityDetails;
 }
 export interface ISeparationRequest {
-  entity?:IEntityDetails;
-  module?:IModule;
-  approvalHeader?:IHeaderDetails
- }
+  entity?: IEntityDetails;
+  module?: IModule;
+  approvalHeader?: IHeaderDetails;
+}
 export interface IHeaderDetails {
   approvedType?: any;
   currentApproverId?: any;
@@ -49,10 +49,9 @@ export interface IEntityDetails {
   spEarlyRelievingReason: string;
 }
 export interface IModule {
-  id: number,
-   moduleName:string,
-   approvalflowRequired: boolean,
-   categoryType:string,
-   normalizedName: string
-
+  id: number;
+  moduleName: string;
+  approvalflowRequired: boolean;
+  categoryType: string;
+  normalizedName: string;
 }

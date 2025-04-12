@@ -465,3 +465,25 @@ gradeName: any;
       processedDate: any,
       isAcceptEarlyRelieving: boolean
   }
+
+  export interface IJobdetails {
+    subdeptId: any;
+    id: number,
+    employeeId: any,
+    effectiveDate: string,
+    reportsto: any,
+    department: string,
+    bussinessArea: string,
+    lopcation: string,
+    jobRole: string,
+    status: string,
+    firstName:string,
+    lastName:string,
+    subLocation:string
+    sublocationid:any,
+    locationid:any,
+    shiftId:any;
+    gradeId:any;
+    jobTypeId:any;
+    teamManagerId : any;
+  }

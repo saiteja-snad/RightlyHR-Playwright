@@ -36,6 +36,7 @@ export default [
             { path: 'background', loadComponent: () => import('./job/backgroundcheck/backgroundcheck.component').then((m) => m.BackgroundcheckComponent) },
             { path: 'frequency', loadComponent: () => import('./job/frequency/frequency.component').then((m) => m.FrequencyComponent) },
             { path: 'notice', loadComponent: () => import('./job/notice/notice.component').then((m) => m.NoticeComponent) },
+            { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent) },
         ]   
     },
     {

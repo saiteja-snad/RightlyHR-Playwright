@@ -26,7 +26,7 @@ export const environment = {
   ProbationrequestmoduleId: 18,
   ProbationExtensionId: 2,
   ProbationNoticePeriodId: 0,
-  ProbationbuttonbeforeId: 1,
-  ProbationExtendPeriodTimes: 3,
+  ProbationbuttonbeforeId: 3,
+  ProbationExtendPeriodTimes: 2,
   PMSrequestmoduleId:23
 };

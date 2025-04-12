@@ -6,13 +6,12 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Iprobationapproval } from '../../../Interfaces/pendingapprovalsmodel';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { HttpService } from '../../../services/http.service';
-
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { ProbationdetailsPipe } from '../../../Pipes/probationdetails.pipe';
 import moment from 'moment';
+import { ProbationdetailsPipe } from '../../../Pipes/probationdetails.pipe';
 
 @Component({
   selector: 'app-probation-pending-approvals',

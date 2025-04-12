@@ -12,7 +12,7 @@ import { TabsModule } from 'primeng/tabs';
 
 export class SettingsEmployeeFieldsModuleTabsComponent {
   navTabs: any[] = [
-    { label: 'personal', link: '/settings/employee-fields/personal' },
+    { label: 'Personal', link: '/settings/employee-fields/personal' },
     { label: 'Job', link: '/settings/employee-fields/job' },
     // { label: 'status', link: '' },
     // { label: 'Document', link: '' },

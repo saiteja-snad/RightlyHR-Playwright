@@ -23,14 +23,17 @@ export class TeamComponent {
     updateDepartmentDetails=[] as any;
     teamedetails=[] as any[];
     isEditMode = false;
+  
     @ViewChild('addpopup') addpopup: any;
     @ViewChild('updatepopup') updatepopup: any;
     @ViewChild('deletepopup') deletepopup: any;
     AddForm!: FormGroup;
     updateForm!: FormGroup;
   sortdeaprtmentName: any;
-  selectedDeleteRole: any;
+  
+  
   selectedId: boolean | undefined;
+  
  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
   
     }
@@ -62,7 +65,7 @@ export class TeamComponent {
     }
     getDepartmentName() {
       this.subscription = this.http
-        .getData('DesignationGradeMapper?sort=deaprtmentName')
+        .getData('deaprtmentNameGradeMapper?sort=deaprtmentName')
         .subscribe({
           next: (data: any) => {
           this.departments = data;
@@ -171,7 +174,7 @@ export class TeamComponent {
       if (!this.updateDepartmentDetails) return;
   
       this.subscription = this.http
-        .getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.id}`) 
+        .getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.id}`)// i need to check it Once api Subdepartments/deletebyid/1213
         .subscribe({
           next: () => {
             modal.close();

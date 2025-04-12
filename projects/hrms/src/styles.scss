@@ -227,7 +227,7 @@ body {
     }
 
     .bi-person-vcard {
-        font-size: 18px;
+        font-size: var(--fontsize18);
     }
 
     .sidenav-footer-content {
@@ -236,7 +236,7 @@ body {
 
     .logout-text {
         font-weight: 700;
-        font-size: 14px;
+        font-size: var(--fontsize16);
         line-height: 20px;
         color: var(--side-nav-item-color);
     }

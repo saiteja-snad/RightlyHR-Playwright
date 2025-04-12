@@ -1,22 +1,24 @@
 <form [formGroup]="GenderForm" (ngSubmit)="addGender()">
-    <div class="card main-settings-layout p-4">
+    <div class="p-4">
         <!-- Add Input-->
-        <div>
-            <div class="custom-settings-add-input input-group mb-5">
+        <div class="mb-4">
+            <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter gender"
                     formControlName="Gender" aria-label="gender" aria-describedby="gender"  (keypress)="blockNonAlphabets($event)" >
                 <span class="input-group-text" id="gender">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="GenderForm.invalid">{{'Add'|translate}}</button></span>
             </div>
+
+            <div *ngIf="GenderForm.get('Gender')?.touched && GenderForm.get('Gender')?.invalid" class="error-msg">
+                <div *ngIf="GenderForm.get('Gender')?.errors?.['required']">
+                  {{'Gender is required'|translate}}
+                </div>
+                <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
+                   {{'Only alphabets and spaces are allowed'|translate}}
+                </small> -->
+              </div>
         </div>
-          <div *ngIf="GenderForm.get('Gender')?.touched && GenderForm.get('Gender')?.invalid">
-            <small style="color: red;font-size: 13px;" *ngIf="GenderForm.get('Gender')?.errors?.['required']">
-              {{'Gender is required'|translate}}
-            </small>
-            <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
-               {{'Only alphabets and spaces are allowed'|translate}}
-            </small> -->
-          </div>
+         
           
           
         <!--Data Content-->

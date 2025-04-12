@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -8,16 +14,30 @@ import { Subject } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
-import { AttendanceRequest, ICategoryDetails } from '../../../../Interfaces/timoff-model';
+import {
+  AttendanceRequest,
+  ICategoryDetails,
+} from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { IPendingApprovals } from '../../../../Interfaces/pendingapprovalsmodel';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-compoff-for-you-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    NgbPopoverModule,
+    FormsModule,
+    PaginatorModule,
+    DropdownModule,
+    NoDataFoundComponent,
+    DateformatPipe,
+    ReactiveFormsModule,
+    TranslateModule
+  ],
   templateUrl: './compoff-for-you-request.component.html',
-  styleUrl: './compoff-for-you-request.component.scss'
+  styleUrl: './compoff-for-you-request.component.scss',
 })
 export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
@@ -37,7 +57,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   // approverComments = [] as AttendanceRequestC[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
-  approveForm!:FormGroup
+  approveForm!: FormGroup;
+  rejectForm!: FormGroup;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -50,12 +71,16 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.intializeApproveForm();
   }
 
-
-  intializeApproveForm() {  
+  intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['',[Validators.required,Validators.maxLength(250)]],
-    }); 
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+  }
 
+  intializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
   }
 
   getAllPendingApprovals() {
@@ -78,8 +103,14 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  openApproveModal(content: any,request:AttendanceRequest) {
+  openApproveModal(content: any, request: AttendanceRequest) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.selectedLeaveData = request;
+  }
+
+  openRejectModal(content: any, request: AttendanceRequest) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeRejectForm();
     this.selectedLeaveData = request;
   }
   onRowsChange() {
@@ -90,62 +121,107 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-  handleProcess(request: IPendingApprovals): void {
+  handleProcess(request: AttendanceRequest): void {
     const requestBody = {
       status: 'Processed',
-      approvedBy:this.empinfo.employeeId.toString()
+      approvedBy: this.empinfo.employeeId.toString(),
     };
-     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).subscribe({
-      next: (response: any) => {
-        this.sharedModalService.openSuccessModal('Request Processed Successfully');
-      },
-      error: (reason: any) => {
-        this.sharedModalService.openErrorModal(reason.error.Message);
-    
-      },
-      complete:()=>{
-        this.getAllPendingApprovals();
-       },
+    this.http
+      .putData(
+        `PendingApproval/process/${request.approvalHeader.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (response: any) => {
+          this.sharedModalService.openSuccessModal(
+            'Request Processed Successfully'
+          );
+        },
+        error: (reason: any) => {
+          this.sharedModalService.openErrorModal(reason.error.Message);
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
+      });
+  }
+
+  handleAccept(approveForm: FormGroup): void {
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      const requestBody = {
+        status: 'Approved',
+        comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
+      };
+
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.sharedModalService.openSuccessModal(
+              'Request Approved Successfully'
+            );
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 2000);
+          },
+          error: (reason: any) => {
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
+
+  handleReject(rejectForm: FormGroup): void {
+    if (rejectForm.valid) {
+      const formData = rejectForm.value;
+      const requestBody = {
+        status: 'Rejected',
+        comments: formData.comments,
+      };
+
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.sharedModalService.openSuccessModal(
+              'Request Rejcted Successfully'
+            );
+            this.rejectForm.reset();
+            this.selectedLeaveData = {} as AttendanceRequest;
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 2000);
+          },
+          error: (reason: any) => {
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
+
+  comments(value: any, commentspopup: any) {
+    this.modalService.open(commentspopup, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
     });
-  }
-
-
-
-  handleAccept(approveForm:FormGroup): void {
-    if(approveForm.valid){
-
-    const formData = approveForm.value;
-    const requestBody = {
-      status: 'Approved',
-      comments: formData.comments,
-      approvedBy:this.empinfo.employeeId.toString()
-    };
-
-    this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).subscribe({
-      next: (response: any) => {
-        this.sharedModalService.openSuccessModal('Request Approved Successfully');
-        setTimeout(() => {
-          this.modalService.dismissAll();
-        }, 2000);
-      },
-      error: (reason: any) => {
-        this.sharedModalService.openErrorModal(reason.error.Message);
-    
-      },complete:()=>{
-
-        this.getAllPendingApprovals();
-      }
-     
-    });
-  }
-  }
-
-  comments(value: any, commentspopup: any){
-    this.modalService.open(commentspopup, {centered: true,backdrop: 'static',size: 'lg'});
     this.approverComments = value;
     console.log(this.approverComments);
   }
-
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

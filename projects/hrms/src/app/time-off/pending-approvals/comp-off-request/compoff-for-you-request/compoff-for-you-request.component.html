@@ -30,42 +30,63 @@
                         <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
                         <td>{{leave.entity.attendanceRequestDurationType}}</td>
                         <td>
-                            <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                            @if(leave.entity.attendanceRequestDescription != null && leave.entity.attendanceRequestDescription != '') {
+                                <div>
+                                    <span>
+                                        <a type="button" placement="top" [ngbPopover]="reason">
+                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                        </a>
+                                        <ng-template #reason>
+                                            <div>
+                                                <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                                            </div>
+                                        </ng-template>
+                                    </span>
+                                </div>
+                            }@else {
+                                <div>
+                                    <span>-</span>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <div class="mt-2">
+                                <span *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments
+                                                        ;else compoffcomments">
+                                    <span id="tooltip">
+                                        <div data-bs-toggle="modal" data-bs-target="#CommentsPopups"
+                                            (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
+                                            <i style="position:relative;z-index: -1;"
+                                                class="bi bi-info-circle-fill "></i>
                                         </div>
-                                    </ng-template>
+                                    </span>
                                 </span>
+                                <ng-template #compoffcomments>-</ng-template>
                             </div>
                         </td>
-                        <td>  <div>
-                            <span>
-                                <a type="button" placement="top" >
-                                    <img src="images\info-fill.png" alt="info icon" (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)" class="info-icon">
-                                </a>
-                                
-                            </span>
-                        </div></td>
                         <td>{{leave.entity.attendanceRequestAppliedDate
                                             | dateformat}}</td>
-                        <td>
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu py-0">
-                                    <li (click)="openApproveModal(approval,leave)"><a class="dropdown-item"><i
-                                                class="bi bi-check-circle me-2"></i>Approve</a></li>
-                                    <li   (click)="openModal(rejectmodal)"><a class="dropdown-item"><i class="bi bi-x-circle me-2"
-                                              ></i>Reject</a></li>
-                                </ul>
-                            </div>
-                        </td>
+                      <td>
+                        <div class="dropdown">
+                            <a type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu py-0">
+                                @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
+                                <li (click)="openApproveModal(approval,leave)"><a class="dropdown-item"><i
+                                            class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
+                                </li>
+                                }
+                                @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
+                                <li (click)="handleProcess(leave)"><a class="dropdown-item"><i
+                                            class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
+                                </li>
+                                }
+                                <li (click)="openRejectModal(rejectmodal,leave)"><a class="dropdown-item"><i
+                                            class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a></li>
+                            </ul>
+                        </div>
+                    </td>
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
@@ -110,26 +131,39 @@
                 <img src="icons\succes.png" alt="succues" class="succes-icon">
             </div>
             <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">Are you sure you want to Approve?</h4>
+                <h4 class="text-center">{{'Are you sure you want to Approve?' | translate}}</h4>
             </div>
             <form [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="comments" class="form-label custom-label mb-2">Comments
+                        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
                             <span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="comments"
-                            placeholder="Please enter reason" formControlName="comments"></textarea>
+                        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+                            formControlName="comments" maxlength="250"></textarea>
+                            <!-- Character counter -->
+                        <div class="text-end small text-muted">
+                            {{ approveForm.get('comments')?.value?.length || 0 }}/250
+                        </div>
+                        <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+                            <div *ngIf="approveForm.get('comments')?.errors?.['required']">
+                              Comment is required.
+                            </div>
+                            <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">
+                              Comment cannot exceed 250 characters.
+                            </div>
+                          </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">Approve</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
+                        translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
+                        translate}}</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
-
 
 
 
@@ -138,38 +172,47 @@
 
         <div class="custom-main-popup-content p-5">
             <div class="d-flex justify-content-center align-items-center">
-                <img src="icons\reject.png" alt="succues" class="succes-icon">
+                <img src="icons\reject.png" alt="succues" class="error-icon">
             </div>
             <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">Are you sure you want to reject this request?</h4>
+                <h4 class="text-center">{{'Are you sure you want to Reject?' | translate}}</h4>
             </div>
-            <form action="">
+            <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reason
+                        <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
                             <span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter reason"></textarea>
-                    </div>
-                </div>
+                        <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection"
+                            formControlName="comments" maxlength="250"></textarea>
+                        <div class="text-end small text-muted">
+                            {{ rejectForm.get('comments')?.value?.length || 0 }}/250
+                        </div>
 
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2"> Approval
-                            Comments<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter approval comments"></textarea>
+                        <div class="error-msg"
+                            *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+                            <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
+                                Rejected
+                                Reason
+                                is
+                                required.
+                            </div>
+                            <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">
+                                Reason cannot exceed 250 characters.
+                            </div>
+                        </div>
                     </div>
-
                 </div>
                 <div class="d-flex justify-content-center gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-                    <button type="submit" class="custom-btn btn-primary">Yes</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
+                        translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
+                        translate}}</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
+
 
 
 <!-- commentspopup -->

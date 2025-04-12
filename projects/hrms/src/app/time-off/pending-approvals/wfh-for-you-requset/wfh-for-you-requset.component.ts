@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -9,10 +15,12 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { Subject } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
-import { LeaveApproval, LeaveApproverComment } from '../../../Interfaces/pendingapprovalsmodel';
-import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
-import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import {
+  AttendanceRequest,
+  ICategoryDetails,
+} from '../../../Interfaces/timoff-model';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-wfh-for-you-requset',
@@ -24,8 +32,9 @@ import { DateformatPipe } from "../../../pipes/dateformat.pipe";
     PaginatorModule,
     DropdownModule,
     NoDataFoundComponent,
-    DateformatPipe
-],
+    DateformatPipe,
+    ReactiveFormsModule,
+  ],
   templateUrl: './wfh-for-you-requset.component.html',
   styleUrl: './wfh-for-you-requset.component.scss',
 })
@@ -46,6 +55,8 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   // approverComments = [] as AttendanceRequestC[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
+  selectedLeaveData = {} as AttendanceRequest;
+  approveForm!: FormGroup;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -54,7 +65,13 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getAllPendingApprovals()
+    this.getAllPendingApprovals();
+  }
+
+  intializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
   }
 
   getAllPendingApprovals() {
@@ -84,13 +101,52 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
+  openApproveModal(content: any, request: AttendanceRequest) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+  }
 
-  comments(value: any, commentspopup: any){
-    this.modalService.open(commentspopup, {centered: true,backdrop: 'static',size: 'lg'});
+  handleAccept(approveForm: FormGroup): void {
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      const requestBody = {
+        status: 'Approved',
+        comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
+      };
+
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.sharedModalService.openSuccessModal(
+              'Request Approved Successfully'
+            );
+            this.approveForm.reset();
+          },
+          error: (reason: any) => {
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
+
+  comments(value: any, commentspopup: any) {
+    this.modalService.open(commentspopup, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
     this.approverComments = value;
     console.log(this.approverComments);
   }
-
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -2,11 +2,11 @@
   <ul class="nav">
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['for-you']"
-        [class.active-tab]="isActive('/time-off/pending-approvals/wfh/for-you')">For You (3)</a>
+        [class.active-tab]="isActive('/time-off/pending-approvals/wfh/for-you')">For You ({{pendingApprovalCount.at(0)?.forYou ?? 0}})</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['for-your-role']"
-        [class.active-tab]="isActive('/time-off/pending-approvals/wfh/for-your-role')">For Your Role (4)</a>
+        [class.active-tab]="isActive('/time-off/pending-approvals/wfh/for-your-role')">For Your Role ({{pendingApprovalCount.at(0)?.forYourRole ?? 0}})</a>
     </li>
   </ul>
 </div>

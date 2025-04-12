@@ -1,1 +1,210 @@
-<p>compoff-for-you-request works!</p>
+<div class="custom-main-component-container mt-3">
+    <div>
+        <!--Input search-->
+        <div class="input-group custom-search mb-4">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                    class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search here"
+                aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Employee ID </th>
+                        <th>Employee Name</th>
+                        <th>Worked Date</th>
+                        <th>Availed</th>
+                        <th>Reason</th>
+                        <th>Approver Comments</th>
+                        <th>Applied Date</th>
+                        <th>Action(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="leaves!.length > 0; else noDataTemplate">
+                    <tr *ngFor="let leave of leaves; let i = index">
+                        <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
+                        <td>{{leave.entity.attendanceRequesterName}}</td>
+                        <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
+                        <td>{{leave.entity.attendanceRequestDurationType}}</td>
+                        <td>
+                            <div>
+                                <span>
+                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                    <ng-template #reason>
+                                        <div>
+                                            <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                                        </div>
+                                    </ng-template>
+                                </span>
+                            </div>
+                        </td>
+                        <td>  <div>
+                            <span>
+                                <a type="button" placement="top" >
+                                    <img src="images\info-fill.png" alt="info icon" (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)" class="info-icon">
+                                </a>
+                                
+                            </span>
+                        </div></td>
+                        <td>{{leave.entity.attendanceRequestAppliedDate
+                                            | dateformat}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu py-0">
+                                    <li (click)="openApproveModal(approval,leave)"><a class="dropdown-item"><i
+                                                class="bi bi-check-circle me-2"></i>Approve</a></li>
+                                    <li   (click)="openModal(rejectmodal)"><a class="dropdown-item"><i class="bi bi-x-circle me-2"
+                                              ></i>Reject</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                      <td colspan="4">
+                        <app-no-data-found></app-no-data-found>
+                      </td>
+                    </tr>
+                  </ng-template>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-content pt-2 w-100">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                <!-- Dropdown for Rows per Page -->
+                <div class="d-flex align-items-center gap-3 p-2">
+                    <!-- Bootstrap Select -->
+                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onRowsChange()">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+                </div>
+
+                <!-- Pagination -->
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #approval let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+
+        <div class="custom-main-popup-content p-5">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="icons\succes.png" alt="succues" class="succes-icon">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <h4 class="text-center">Are you sure you want to Approve?</h4>
+            </div>
+            <form [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="comments" class="form-label custom-label mb-2">Comments
+                            <span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="comments"
+                            placeholder="Please enter reason" formControlName="comments"></textarea>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">Approve</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+
+
+<ng-template #rejectmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+
+        <div class="custom-main-popup-content p-5">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="icons\reject.png" alt="succues" class="succes-icon">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <h4 class="text-center">Are you sure you want to reject this request?</h4>
+            </div>
+            <form action="">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Reason
+                            <span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter reason"></textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2"> Approval
+                            Comments<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="exampleFormControlInput1"
+                            placeholder="Please enter approval comments"></textarea>
+                    </div>
+
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+                    <button type="submit" class="custom-btn btn-primary">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- commentspopup -->
+<ng-template #commentspopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Comments</p>
+            </div>
+            <div>
+                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+            </div>
+        </div>
+        
+        <div class="custom-main-component-container">
+            <div class="custom-table-content mt-2">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Comments</th>
+                            <th>Commented By</th>
+                            <th>Date</th>
+                            <th>Commented By ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let comment of approverComments">
+                            <td>{{ comment.comments }}</td>
+                            <td>{{ comment.addedName }}</td>
+                            <td>{{ comment.addedDate | dateformat }}</td>
+                            <td>{{ comment.addedByFusionEmpId }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-template>

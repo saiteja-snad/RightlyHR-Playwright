@@ -51,7 +51,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     console.log(EmployeeId);
     this.http
       .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=EMP`
+        `PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=ROLE`
       )
       .subscribe({
         next: (response: any) => {

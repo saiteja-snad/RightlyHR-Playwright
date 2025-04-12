@@ -5,8 +5,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { FormBuilder } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { IPendingApprovals } from '../../../Interfaces/pendingapprovalsmodel';
-import { AttendanceRequest } from '../../../Interfaces/timoff-model';
+import { ApprovalStatusCount, AttendanceRequest } from '../../../Interfaces/timoff-model';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -17,7 +16,7 @@ import { Subject } from 'rxjs';
 })
 export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   empinfo = {} as IJob;
-  workFromHome = [] as AttendanceRequest[];
+  pendingApprovalCount: ApprovalStatusCount[] = [];
   roleWfh: AttendanceRequest[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -25,6 +24,7 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.getAllWFHPendingApprovalsCount();
   }
   
 
@@ -39,26 +39,19 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   }
 
 
-  getAllPendingApprovals() {
-    let EmployeeId = parseInt(this.empinfo.employeeId);
-    console.log(EmployeeId);
-     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=EMP`).subscribe({
-      next: (data: any) => {
-        console.log(data.data);
-        this.workFromHome = data.data.filter((item:any)=>item.approvalHeader.status!='Processed' && item.approvalHeader.status!='Rejected')
+  getAllWFHPendingApprovalsCount() {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    const moduleId = 2;
+  
+    this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
+      next: (data: ApprovalStatusCount[]) => {
+        console.log(data);
+
+        this.pendingApprovalCount = data.filter(item => item.moduleId === moduleId);
+        console.log(this.pendingApprovalCount);
+        
       },
-      error: (reason) => console.log(reason),
-    });
-  }
-  getAllPendingApprovalsRole() {
-    let EmployeeId = parseInt(this.empinfo.employeeId);
-    console.log(EmployeeId);
-   this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=ROLE`).subscribe({
-      next: (data: any) => {
-        console.log(data.data);
-        this.roleWfh = data.data.filter((item:any)=>item.approvalHeader.status!='Processed' && item.approvalHeader.status!='Rejected')
-      },
-      error: (reason) => console.log(reason),
+      error: (err) => console.error('Error fetching approvals:', err),
     });
   }
 

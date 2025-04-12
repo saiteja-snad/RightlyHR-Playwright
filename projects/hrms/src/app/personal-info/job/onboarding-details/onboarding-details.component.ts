@@ -297,6 +297,7 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.markAllAsTouched();
       return;
     }
+    
     const payload = {
       employeeId: this.empinfo.employeeId,
       title: this.empinfo.title,
@@ -337,7 +338,14 @@ export class OnboardingDetailsComponent {
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empinfo.workLocation,
       wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empinfo.wfhManagerId,
       empType : this.empinfo.empType,
+      substatus : this.empinfo.substatus,
+
+      
     };
+    if (payload.empstatus === 'Active' && payload.substatus === 'Offer Letter Accepted') {
+      payload.substatus = 'Probation'
+      payload.empType = 'Probation'
+    }
     this.subscription = this.http
       .postdata(`Employeedata/UPDATER`, payload)
       .subscribe({

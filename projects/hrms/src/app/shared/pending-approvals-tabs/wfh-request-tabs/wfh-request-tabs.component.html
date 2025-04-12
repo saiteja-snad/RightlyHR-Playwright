@@ -1,12 +1,15 @@
-<div class="pending-approvals-tabs">
-  <ul class="nav">
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['for-you']"
-        [class.active-tab]="isActive('/time-off/pending-approvals/wfh/for-you')">For You (3)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['for-your-role']"
-        [class.active-tab]="isActive('/time-off/pending-approvals/wfh/for-your-role')">For Your Role (4)</a>
-    </li>
-  </ul>
+
+
+<div class="component-nav-tabs-container card px-2">
+  <p-tabs value="0" scrollable>
+      <p-tablist>
+          <ng-container *ngFor="let tab of navTabs;">
+              <p-tab [value]="tab.link">
+                  <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                      {{ tab.label }} ({{tab.count}})
+                  </a>
+              </p-tab>
+          </ng-container>
+      </p-tablist>
+  </p-tabs>
 </div>

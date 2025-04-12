@@ -1,31 +1,15 @@
-<div class="card custom-nav-tab-card px-2">
-    <ul class="nav-tabs-main-content ps-0 text-center mb-0">
-        <li class="nav-item" [routerLink]="['/personalinfo/job/pre-onboarding-details']" routerLinkActive="nav-tab-active">
-            Pre-Onboarding
-        </li>
-        <li class="nav-item" [routerLink]="['/personalinfo/job/onboarding-details']" routerLinkActive="nav-tab-active">
-            Onboarding
-        </li>
-        <li class="nav-item" [routerLink]="['/personalinfo/job/employmentType']" routerLinkActive="nav-tab-active">
-            Offboarding
-        </li>
-        <li class="nav-item" [routerLink]="['/personalinfo/job/job-details']" routerLinkActive="nav-tab-active">
-            Job
-        </li>
-        <li class="nav-item" [routerLink]="['/personalinfo/job/separation-details']" routerLinkActive="nav-tab-active">
-            Separation
-        </li>
-        <li class="nav-item" [routerLink]="['/personalinfo/job/past-experiences']" routerLinkActive="nav-tab-active">
-            Past Experiences
-        </li>
-        <li class="nav-item" [routerLink]="['/personalinfo/job/certifications']" routerLinkActive="nav-tab-active">
-            Certifications
-        </li>
-        <li class="nav-item" [routerLink]="['/personalinfo/job/probation-details']" routerLinkActive="nav-tab-active">
-            Probation Details
-        </li>
-        <li class="nav-item" [routerLink]="['/personalinfo/job/onboarding-requests']" routerLinkActive="nav-tab-active">
-            Onboarding Request
-        </li>
-    </ul>
+
+
+<div class="component-nav-tabs-container card px-2">
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of navTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                        {{ tab.label }}
+                    </a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
 </div>

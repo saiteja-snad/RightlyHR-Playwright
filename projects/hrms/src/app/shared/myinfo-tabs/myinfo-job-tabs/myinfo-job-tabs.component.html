@@ -1,41 +1,14 @@
-<div class="card custom-nav-tab-card px-2">
-    <ul class="nav-tabs-main-content ps-0 text-center mb-0">
-        <li class="nav-item" [routerLink]="['/myinfo/job/pre-onboarding-details']" routerLinkActive="nav-tab-active">
-            Pre-Onboarding
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/job/onboarding-details']" routerLinkActive="nav-tab-active">
-            Onboarding
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/job/employmentType']" routerLinkActive="nav-tab-active">
-            Offboarding
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/job/job-details']" routerLinkActive="nav-tab-active">
-            Job
-        </li>
-         <li class="nav-item" [routerLink]="['/myinfo/job/separation-details']" routerLinkActive="nav-tab-active">
-            Separation
-        </li>
-        <!-- <li class="nav-item" [routerLink]="['/myinfo/job/no-due-clearance-details']" routerLinkActive="nav-tab-active">
-            No Due Clearance
-        </li> -->
-        <li class="nav-item" [routerLink]="['/myinfo/job/probation-details']" routerLinkActive="nav-tab-active">
-            Probation
-        </li> 
-        <li class="nav-item" [routerLink]="['/myinfo/job/past-experiences']" routerLinkActive="nav-tab-active">
-            Past Experiences
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/job/certifications']" routerLinkActive="nav-tab-active">
-            Certifications
-        </li>
-        <!-- <li class="nav-item" [routerLink]="['/myinfo/job/compensation-details']" routerLinkActive="nav-tab-active">
-            Compensation
-        </li>
 
-        <li class="nav-item" [routerLink]="['/myinfo/job/desk-details']" routerLinkActive="nav-tab-active">
-            Desk
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/job/assets-details']" routerLinkActive="nav-tab-active">
-            Assets
-        </li> -->
-    </ul>
+<div class="component-nav-tabs-container card px-2 ">
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of navTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                        {{ tab.label }}
+                    </a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
 </div>

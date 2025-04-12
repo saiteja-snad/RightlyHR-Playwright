@@ -177,6 +177,7 @@ body {
         border-radius: 50%;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -284,6 +285,76 @@ body {
     }
 }
 
+// compments Nav Tabs stylings
+.component-nav-tabs-container {
+    border-radius: 0.5rem;
+    border: none !important;
+
+    .nav-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 400;
+        font-size: var(--fontsize15);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        padding: 0.75rem 1rem 0.5rem;
+    }
+
+    .nav-tab-active {
+        border-bottom: 0.25rem solid rgba(6, 39, 79, 1);
+        font-weight: 700;
+    }
+
+    a {
+        color: var(--primary-color) !important;
+
+        &:hover {
+            color: var(--primary-color) !important;
+        }
+
+        &:focus {
+            color: var(--primary-color) !important;
+        }
+    }
+
+    .p-tablist-tab-list {
+        gap: 0rem !important;
+        border: none !important;
+    }
+
+    .p-tab {
+        padding: 0rem !important;
+        border: none !important;
+        transition: none !important;
+    }
+
+}
+
+//custom component naviagtion nav tabs
+.custom-nav-tab-card {
+    border-radius: 0.5rem;
+    border: none !important;
+
+    .nav-tabs-main-content {
+        display: flex;
+        gap: 0.625rem;
+        list-style: none;
+    }
+
+    .nav-item {
+        cursor: pointer;
+        
+        font-weight: 700;
+        font-size: var(--fontsize14);
+        vertical-align: middle;
+    }
+
+    .nav-tab-active {
+        border-bottom: 3px solid var(--navtab-item-color);
+    }
+}
+
 // Component stylings
 .component-header {
     font-family: var(--font-family);
@@ -294,7 +365,10 @@ body {
     vertical-align: middle;
 }
 
-.bi-arrow-90deg-left{
+
+
+
+.bi-arrow-90deg-left {
     cursor: pointer;
 }
 
@@ -404,7 +478,8 @@ a {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -552,13 +627,17 @@ a {
 
 // salary details table
 .salary-details-table {
-    table, th, td {
+
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th, td {
+    th,
+    td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -680,29 +759,7 @@ a {
     }
 }
 
-//custom component naviagtion nav tabs
-.custom-nav-tab-card {
-    border-radius: 0.5rem;
-    border: none !important;
 
-    .nav-tabs-main-content {
-        display: flex;
-        gap: 0.625rem;
-        list-style: none;
-    }
-
-    .nav-item {
-        cursor: pointer;
-        padding: 0.625rem 1rem 0.5rem;
-        font-weight: 700;
-        font-size: var(--fontsize14);
-        vertical-align: middle;
-    }
-
-    .nav-tab-active {
-        border-bottom: 3px solid var(--navtab-item-color);
-    }
-}
 
 // events component stylings
 .event-card {

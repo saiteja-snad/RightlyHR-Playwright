@@ -284,7 +284,7 @@
     <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Enter recall reason <span class="error-msg">*</span></label>
-          <textarea class="form-control custom-input" placeholder="Please enter recall reason" name="Reason"
+          <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*" placeholder="Please enter recall reason" name="recallReason"
             formControlName="recallReason"></textarea>
 
           <div>
@@ -293,11 +293,22 @@
             </span>
             <div>
               <small class="error-msg"
-              *ngIf="recallreason.get('recallReason')?.invalid && recallreason.get('recallReason')?.touched">
-              Reason is required.
+              *ngIf="recallreason.get('recallReason')?.invalid&& recallreason.get('recallReason')?.touched">
+              Reason is required
+            </small>
+          </div>
+          <div>
+            <small class="error-msg"
+            *ngIf="recallreason.get('recallReason')?.errors?.['maxlength'] && recallreason.get('recallReason')?.touched">
+            Maximum 250 characters allowed
+          </small>
+          </div>
+            <div>
+              <small class="error-msg"
+              *ngIf="recallreason.get('recallReason')?.errors?.['pattern'] && recallreason.get('recallReason')?.touched">
+              Leading spaces are not allowed
             </small>
             </div>
-          
         </div>
       </div>
 
@@ -349,7 +360,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Reason for
               early Relieving <span class="error-msg">*</span></label>
-            <textarea class="form-control custom-input" placeholder="Please provide early relieving reason...." name="Reason"
+            <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*" placeholder="Please provide early relieving reason...." name="Reason"
               formControlName="earlyReleivingReason"></textarea>
   
             <div>
@@ -361,6 +372,19 @@
                 *ngIf="earlyReleivingform.get('earlyReleivingReason')?.invalid && recallreason.get('earlyReleivingReason')?.touched">
                 Reason for early relieving is required
               </small>
+              <div>
+                <small class="error-msg"
+                *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength'] && earlyReleivingform.get('earlyReleivingReason')?.touched">
+                Maximum 250 characters allowed
+              </small>
+              </div>
+             <div>
+              <small class="error-msg"
+              *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern'] && earlyReleivingform.get('earlyReleivingReason')?.touched">
+              Leading spaces are not allowed
+            </small>
+             </div>
+           
               </div>
             
           </div>

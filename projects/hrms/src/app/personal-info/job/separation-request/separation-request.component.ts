@@ -54,11 +54,11 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
   formInitialization(){
     this.recallreason = this.fb.group({
-      recallReason: [null,[Validators.required,Validators.maxLength(250)]],
+      recallReason: [null,[Validators.required,Validators.maxLength(250),Validators.pattern(/^(?!\s).*$/)]],
     });
     this.earlyReleivingform = this.fb.group({
       earlyReleivingDate: [null,[Validators.required]],
-      earlyReleivingReason: [null,[Validators.required,Validators.maxLength(250)]],
+      earlyReleivingReason: [null,[Validators.required,Validators.maxLength(250),Validators.pattern(/^(?!\s).*$/)]],
     });
   }
   //function to get employee by id
@@ -253,7 +253,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       isAcceptEarlyRelieving: this.postEarlyRelievingRequest.isAcceptEarlyRelieving,
       earlyRelievingDate: this.earlyReleivingform.get('earlyReleivingDate')?.value,
       parentId: this.postEarlyRelievingRequest.id,
-      reasonForEarlyRelieving: this.postEarlyRelievingRequest.reason,
+      reasonForEarlyRelieving: this.earlyReleivingform.get('earlyReleivingReason')?.value,
       moduleId: environment.SeparationrequestmoduleId
     }
     console.log(payLoad);

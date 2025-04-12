@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -7,23 +7,24 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { TeamData } from './team.model';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-team',
-  imports: [TranslateModule,CommonModule,ReactiveFormsModule],
+  imports: [TranslateModule,CommonModule,ReactiveFormsModule,SelectModule],
   templateUrl: './team.component.html',
   styleUrl: './team.component.scss'
 })
-export class TeamComponent {
+export class TeamComponent implements OnInit, OnDestroy {
   departmentdetails=[] as any;
   teamDetails=[] as any[];
     subscription!: Subscription;
     departments=[] as any;
     teamManagerDetails=[] as any;
     updateDepartmentDetails: any; 
-
+    teamdetailsdata=[] as any;
     teamdetails=[] as any[];
-    deptdetails=[] as any;
+    deptdetails=[] as any[];
     isEditMode = false;
    
     @ViewChild('addpopup') addpopup: any;
@@ -35,7 +36,7 @@ export class TeamComponent {
   
   sortedDesignations: any[] = [];
   selectedId: boolean | undefined;
-  
+ 
  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
   
     }
@@ -56,7 +57,8 @@ export class TeamComponent {
         updatedteamManager:['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
       });
       this.getTeam();
-      this. getDepartmentName()
+      this. getDepartmentName();
+      this.getTable() ;
     }
     // alphabet allowed only
     blockNonAlphabets(event: KeyboardEvent): void {
@@ -69,35 +71,36 @@ export class TeamComponent {
         event.preventDefault();
       }
     }
-    getDepartmentName() {
-      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
-          next: (data: any) => {
-            console.log(data);
-            alert("hello");
-          this.deptdetails= data as [];
-            this.sortdeaprtmentName();
-            console.log(this.deptdetails)
-          },
-          error: (reason: any) => {
-            console.log(reason);
-            alert("Insertion of data is failed")
-          }
-        });
-    }
-
+   
 openDialog() {
       this.modalService.open(this.addpopup, {
         backdrop: 'static',
         centered: true
       });
     }
+    
+  getDepartmentName() {
+    this.subscription = this.http.getData('Department').subscribe({
+        next: (data: any) => {
+          console.log(data);
+          alert("hello");
+        this.deptdetails= data as [];
+          this. sortdepartments();
+          console.log(this.deptdetails)
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          alert("Insertion of data is failed")
+        }
+      });
+  }
     getTeam() {
-      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
+      this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
         next: (data: any) => {
           console.log(data);
           alert("hello");
           this.teamdetails= data as [];
-          this.sortdeaprtmentName();
+          this. sortdepartments();
           console.log(this.teamdetails)
         },
         error: (reason: any) => {
@@ -107,26 +110,41 @@ openDialog() {
       });
   }
     
-   sortdepartments() {
-      // Sort departments alphabetically based on the 'designation' field
-      this. sortdepartments= this.deptdetails.sort((a: { departmentName: number; }, b: { departmentName: number; }) => {
-        if (a.departmentName < b.departmentName) return -1;
-        if (a.departmentName > b.departmentName) return 1;
-        return 0;
-      });
-    }
+  sortdepartments() {
+    this.deptdetails = this.deptdetails.sort((a, b) => {
+      const nameA = a.departmentName.toLowerCase();
+      const nameB = b.departmentName.toLowerCase();
+  
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      return 0;
+    });
+  }
+  
+
+  getTable() {
+      this.subscription = this.http.getData("Subdepartments/Getalldept").subscribe({
+         next: (data: any) => {
+           console.log(data);
+           this. teamdetailsdata = data as TeamData[]
+           console.log(this. teamdetailsdata)
+         },
+         error: (reason: any) => {
+           console.log(reason);
+           alert("Insertion of data is failed")
+         }
+       })
+     }
     //ADD
     addTeam(modal: any) {
-      const request: TeamData = {
-        departmentId: 1,                        
-        isDeleted: false,                      
-        reportingManagerId: '14463',      
-        subDepartmentName: 'uuiki'             
+     const request = {
+        reportingManagerId: this.AddForm?.get('DepartmentName')?.value,
+        subDepartmentName : this.AddForm?.get('DepartmentName')?.value,
+        isdeleted: "Active"
       };
-    
-      this.subscription = this.http.postdata('Subdepartments/Getalldept', request).subscribe({
+      this.subscription = this.http.postdata('Subdepartments', request).subscribe({
         next: () => {
-          this.getDepartmentName(); 
+          this. getTable(); 
           modal.close(); 
           this.conformationPopup.openSuccessModal('department Name added successfully');
           this.resetForm(); 
@@ -165,9 +183,9 @@ openDialog() {
         this.updateDepartmentDetails.  updatedteamManager = this.updateForm.get('reportingManagerId')?.value;
      
     
-        this.subscription = this.http.postdata('Subdepartments/Update', Request).subscribe({
+        this.subscription = this.http.postdata('Subdepartments/Update', this.updateDepartmentDetails).subscribe({
           next: (data: any) => {
-            this.getDepartmentName(); 
+            this.getTable(); 
             this.updateForm.reset(); 
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Status updated successfully');
@@ -190,12 +208,10 @@ openDialog() {
     const deleteRequest = {
         isdeleted: 'void' 
       };
-      this.subscription = this.http.getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.id}`)
-    .subscribe({
-          next: () => {
-            modal.close();
-            this. getDepartmentName()
-            this.conformationPopup.openSuccessModal('department Name Deleted Successfully');
+      this.subscription = this.http.getData("Subdepartments/deletebyid/{SubdepartmentId}",deleteRequest).subscribe({
+    next: () => {
+    modal.close();
+  this.conformationPopup.openSuccessModal('department Name Deleted Successfully');
   
           },
           error: (error: any) => {

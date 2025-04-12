@@ -14,32 +14,26 @@
           </a>
         </div>
       </div>
-
-
-
-      <div class="custom-main-popup-content p-5">
-        <!--Department name Field -->
+<div class="custom-main-popup-content p-5">
         <div class="mb-4">
-          <label for="departmentname" class="form-label custom-label mb-2">
-            {{ 'Department Name ' | translate }} <span class="error-msg">*</span>
+          <label for="DepartmentName" class="form-label custom-label mb-2">
+            {{ 'Department Names ' | translate }} <span class="error-msg">*</span>
           </label>
-          <div class="custom-p-select-content">
-            <select class="form-control custom-input" formControlName="DepartmentName">
-              <option value="" disabled selected>{{'Please select'|translate}}</option>
-              <option *ngFor="let dept of deptdetails" [value]="dept.DepartmentId">
-                {{ dept.departmentName}}
-              </option>
 
-            </select>
+          <div class="custom-p-select-content">
+           <p-select formControlName="DepartmentName" optionValue="departmentId" [options]="deptdetails" name="user" id="user"
+            optionLabel="DepartmentName" placeholder="Search Department Names" class="w-100" [filter]="true" filterBy="DepartmentName"
+            >
+        
+        </p-select>
           </div>
-          <div *ngIf="AddForm.get('DepartmentId')?.touched && AddForm.get('DepartmentId')?.invalid">
+
+          <div *ngIf="AddForm.get('departmentId')?.touched && AddForm.get('departmentId')?.invalid">
             <small style="color: red; font-size: 13px;">
-              {{ 'Grade Name is required' | translate }}
+              {{ 'department name  is required' | translate }}
             </small>
           </div>
         </div>
-
-
 
         <!-- Team  Name Field -->
         <div class="mb-4">
@@ -60,12 +54,11 @@
           </label>
 
           <div class="custom-p-select-content">
-            <select class="form-control custom-input" formControlName="teamManager">
-              <option [ngValue]="null" disabled>{{ 'Please select ' | translate }}</option>
-              <option *ngFor="let teams of teamdetails" [ngValue]="teams.teamManagerId">
-                {{ teams.teamManager }}
-              </option>
-            </select>
+           <p-select formControlName="teamManager" optionValue="teamManagerId" [options]="teamDetails" name="user" id="user"
+            optionLabel="teamManager" placeholder="Search Team Manager" class="w-100" [filter]="true" filterBy="teamManager"
+            >
+        
+        </p-select>
           </div>
 
           <div *ngIf="AddForm.get('teamManagerId')?.touched && AddForm.get('teamManagerId')?.invalid">
@@ -74,6 +67,10 @@
             </small>
           </div>
         </div>
+
+
+
+
         <div class="d-flex gap-5 pt-4 w-100">
           <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
             {{ 'Close' | translate }}
@@ -114,7 +111,7 @@
       </thead>
       <tbody>
         <ng-container>
-          <tr *ngFor="let teams of teamDetails">
+          <tr *ngFor="let teams of teamdetailsdata">
             <td>{{teams.reportingmanagerId}}</td>
             <td>{{teams.subdepartmentName}}</td>
             <td>{{teams. departmentId}}</td>
@@ -178,6 +175,12 @@
               {{ dept.DepartmentName }}
             </option>
           </select>
+          <!-- <p-select formControlName="updatedDepartmentName" optionValue="departmentId" [options]="departments" name="user" id="user"
+          optionLabel="DepartmentName" placeholder="Search Team Manager" class="w-100" [filter]="true" filterBy="DepartmentName"
+          [showClear]="true">
+      
+      </p-select> -->
+
         </div>
         <div *ngIf="AddForm.get('updatedDepartmentName')?.touched && AddForm.get('updatedDepartmentName')?.invalid">
           <small style="color: red; font-size: 13px;">

@@ -60,7 +60,7 @@ export class HttpService {
     return this.http.get(item_url);
   }
 
-  getData(url: string) {
+  getData(url: string, deleteRequest: { isdeleted: string; }) {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
 

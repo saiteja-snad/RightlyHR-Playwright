@@ -3,7 +3,6 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { INodue } from '../../../myinfo/job/nodue-details/nodue-details';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -14,6 +13,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { INodue } from '../../../myinfo/nodue-details/nodue-details';
 
 @Component({
   selector: 'app-no-due-clearance',

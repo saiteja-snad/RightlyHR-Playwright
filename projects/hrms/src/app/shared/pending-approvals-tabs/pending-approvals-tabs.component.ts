@@ -58,6 +58,11 @@ export class PendingApprovalsTabsComponent {
         error: (reason) => console.log(reason),
       });
     }
-
+    onclickseparation(){
+      this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+        ...status,
+        separation: true,
+      }));
+    }
   
 }

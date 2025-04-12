@@ -3,6 +3,7 @@ import { SalutationComponent } from './personal/salutation/salutation.component'
 import { ExpensesConfigurationComponent } from './employee-fields-layout/expenses-configuration/expenses-configuration.component';
 import { Component } from '@angular/core';
 import { ExpensesAllowedDaysComponent } from './employee-fields-layout/expenses-configuration/expenses-allowed-days/expenses-allowed-days.component';
+import { ShitsComponent } from './shits/shits.component';
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal/salutation', pathMatch: 'full' },
@@ -54,6 +55,25 @@ export default [
                         (m) => m.ExpensesAllowedDaysComponent
                     )
             }
+        ]
+    },
+    {
+        path: 'shifts',
+        children: [
+            { path: '', redirectTo: 'shifts', pathMatch: 'full' },
+            {
+                path: 'shifts',
+                component: ShitsComponent
+            },
+            {
+                path: 'pulished-shits',
+                loadComponent() {
+                    import('./shits/pulished-shits/pulished-shits.component').then(
+                        (m) => m.PulishedShitsComponent
+                    )
+                }
+            }
+
         ]
     }
 ] as Route[];

@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
+            <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i
                     class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
         </div>
     </div>
@@ -346,8 +346,8 @@
             </div>
 
             <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
-              <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid ||loading">{{buttonValue}}</button>
-              <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading" (click)="emailSendingforApprover()">Request
+              <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">{{buttonValue}}</button>
+              <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" (click)="emailSendingforApprover()">Request
                 For Approval</button>
                 @if(loading){
                   <div class="spinner-border text-primary" role="status"></div>

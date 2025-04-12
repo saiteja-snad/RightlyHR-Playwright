@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <div class="component-header my-3">Job Details</div>
+    <div class="component-header my-3">Probation Details</div>
     <div class="d-flex justify-content-between align-items-center">
         <div> <span class="education-sub-header"></span></div>
     </div>
@@ -18,18 +18,58 @@
                 </tr>
             </thead>
             <tbody>
+                @for (probation of getProbationRequestDetails; track $index) {
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{probation.appliedDate ? (probation.appliedDate | dateformat) : '-' }}</td>
+                    <td>{{probation.probationDays ? probation.probationDays : '-'}}</td>
+                    <td>{{probation.probationStartDate ? (probation.probationStartDate | dateformat) : '-' }}</td>
+                    <td>{{probation.probationEndDate ? (probation.probationEndDate | dateformat) : '-'}}</td>
+                    <td>{{probation.probationExtendedDate ? (probation.probationExtendedDate | dateformat) : '-'}}</td>
+                    <td>
+                        @if(probation.approvers && probation.approvers.length > 0;){
+                            <div (click)="probationCommentsFunction(probation.approvers)">
+                                <i class="bi bi-info-circle-fill"></i>
+                            </div>
+                        } @else {
+                            <div>-</div>
+                        }
+                    </td>
+                    <td>{{probation.status}}</td>
+                    <td class="text-center">
+                        @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status === 'Extended') {
+                        <div class="dropdown">
+                            <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <!--status pending-->
+                                @if(probation.status === 'Pending' && shouldprobationShowButton(empdata.probationEndDate) &&
+                                probation.status!='Extended'){
+                                <li>
+                                    <a (click)="requestForProbation(probation)" class="dropdown-item">
+                                        <i class="bi bi-repeat me-2"></i>Request for probation Confirmation</a>
+                                </li>
+                                }
+                                <!--status Rejected-->
+                                @if(probation.status === 'Rejected' && shouldprobationShowButton(empdata.probationEndDate)){
+                                <li>
+                                    <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
+                                        <i class="bi bi-repeat me-2"></i>Request for probation Confirmation</a>
+                                </li>
+                                }
+                                <!--status extended-->
+                                @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate) &&
+                                probation.probationExtendCount<probationExtendTimes){ <li>
+                                    <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
+                                        <i class="bi bi-repeat me-2"></i>Request for probation Confirmation</a>
+                                    </li>
+                                    }
+                            </ul>
+                        </div>
+                        } @else {
+                        <div>-</div>
+                        }
+                    </td>
                 </tr>
+                }
             </tbody>
         </table>
     </div>

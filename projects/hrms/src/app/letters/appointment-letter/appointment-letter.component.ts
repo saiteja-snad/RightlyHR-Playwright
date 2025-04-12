@@ -132,22 +132,7 @@ export class AppointmentLetterComponent {
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
-  // dataSuccessMsg(msg: string) {
-  //   this.Status = msg;
-  //   this.openmodel(this.successhide);
-  //   setTimeout(() => {
-  //     this.modalService.dismissAll();
-  //   }, 2000);
 
-  // }
-
-  // dataFailureMsg(msg: string) {
-  //   this.Status = msg;
-  //   this.openmodel(this.errorhide);
-  //   setTimeout(() => {
-  //     this.modalService.dismissAll();
-  //   }, 2000);
-  // }
   
   getAssertType() {
     this.subscription = this.http.getData(`AssetType`).subscribe({

@@ -6,6 +6,8 @@ import { MyinfoLayoutComponent } from "../../myinfo/myinfo-layout/myinfo-layout.
 import { ClaimsandexpensesLayoutComponent } from "../../claimsandexpenses/claimsandexpenses-layout/claimsandexpenses-layout.component";
 import { MsalGuard } from "@azure/msal-angular";
 import { PersonalinfoLayoutComponent } from "../../personal-info/personalinfo-layout/personalinfo-layout.component";
+import { PmsLayoutComponent } from "../../pms/pms-layout/pms-layout.component";
+import { CalendarViewComponent } from "../../calendar/calendar-view/calendar-view.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -15,5 +17,7 @@ export default [
     { path: 'personalinfo', component: PersonalinfoLayoutComponent,canActivate: [MsalGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
     { path: 'time-off', component: TimeOffLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../time-off/time-off.route') },
     { path: 'events', component: EventsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../events/events.route') },
-    { path: 'claimsandexpenses', component: ClaimsandexpensesLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../claimsandexpenses/claimsandexpenses.route') }
+    { path: 'claimsandexpenses', component: ClaimsandexpensesLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../claimsandexpenses/claimsandexpenses.route') },
+    { path: 'pms', component: PmsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../pms/pms.route') },
+    { path: 'calendar', component: CalendarViewComponent}
 ] as Route[];

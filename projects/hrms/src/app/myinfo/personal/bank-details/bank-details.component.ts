@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { Ibank, Ibankdetails } from '../../../Interfaces/personal-modal';
@@ -15,7 +15,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
-export class BankDetailsComponent {
+export class BankDetailsComponent implements OnInit,OnDestroy {
   banknames: Ibank[] = [];
   bankDetailsForm!: FormGroup;
   bankid: any
@@ -338,5 +338,11 @@ export class BankDetailsComponent {
           this.conformationPopup.openErrorModal('Failed to delete bank details. Please try again.');
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

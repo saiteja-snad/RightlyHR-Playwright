@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { IRelation } from '../../../Interfaces/personal-modal';
@@ -10,14 +10,14 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-
 @Component({
   selector: 'app-family-details',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './family-details.component.html',
   styleUrl: './family-details.component.scss'
 })
-export class FamilyDetailsComponent implements OnInit {
+
+export class FamilyDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   familyRelations: IRelation[] = [];
   selectedFamilyMembername: any
@@ -191,6 +191,12 @@ export class FamilyDetailsComponent implements OnInit {
           this.conformationPopup.openErrorModal('Family details deleted failed')
         },
       });
+  }
+  
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 
 }

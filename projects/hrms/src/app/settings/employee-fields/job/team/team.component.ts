@@ -73,6 +73,7 @@ export class TeamComponent {
       this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
           next: (data: any) => {
             console.log(data);
+            alert("hello");
           this.deptdetails= data as [];
             this.sortdeaprtmentName();
             console.log(this.deptdetails)
@@ -94,8 +95,10 @@ openDialog() {
       this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
         next: (data: any) => {
           console.log(data);
+          alert("hello");
+          this.teamdetails= data as [];
           this.sortdeaprtmentName();
-          console.log(this.deptdetails)
+          console.log(this.teamdetails)
         },
         error: (reason: any) => {
           console.log(reason);
@@ -104,9 +107,9 @@ openDialog() {
       });
   }
     
-   sortDepartments() {
-      // Sort designations alphabetically based on the 'designation' field
-      this. sortDepartments= this.departmentdetails.sort((a: { departmentName: number; }, b: { departmentName: number; }) => {
+   sortdepartments() {
+      // Sort departments alphabetically based on the 'designation' field
+      this. sortdepartments= this.deptdetails.sort((a: { departmentName: number; }, b: { departmentName: number; }) => {
         if (a.departmentName < b.departmentName) return -1;
         if (a.departmentName > b.departmentName) return 1;
         return 0;
@@ -142,11 +145,11 @@ openDialog() {
   
     // Method to open the update modal dialog
   
-    openupdateDialog(updateDepartmentDetails: any) {
-      this.selectedId = updateDepartmentDetails.id;
-      this.updateForm.patchValue({updatedDepartmentName:updateDepartmentDetails. updatedDepartmentName });
-      this.updateForm.patchValue({UpdatedTeamName:updateDepartmentDetails.UpdatedTeamName });
-      this.updateForm.patchValue({updatedteamManager:updateDepartmentDetails.updatedteamManager });
+    openupdateDialog(teams: any) {
+      this.selectedId = teams.id;
+      this.updateForm.patchValue({updatedDepartmentName:teams. updatedDepartmentName });
+      this.updateForm.patchValue({UpdatedTeamName:teams.UpdatedTeamName });
+      this.updateForm.patchValue({updatedteamManager:teams.updatedteamManager });
      
       this.modalService.open(this.updatepopup, {
         backdrop: 'static',
@@ -154,22 +157,20 @@ openDialog() {
       });
     }
     //  UPDATE
-    updateDepartment(modal: any) {
-      if (this.updateForm.valid && this.selectedId) {
-        const request = {
-          departmentId: this.updateForm.value.departmentId,            
-          isDeleted: false,
-          reportingmanagerId: this.updateForm.value.updatedteamManager ,        
-          subdepartmentId: this.updateForm.value.subdepartmentId,      
-          subdepartmentName: this.updateForm.value.UpdatedTeamName.trim()      
-        };
+    updateDepartment() {
+      if (this.updateForm.valid){
+       
+        this.updateDepartmentDetails. UpdatedTeamName = this.updateForm.get('UpdatedTeamName')?.value;
+        this.updateDepartmentDetails. updatedDepartmentName = this.updateForm.get('updatedDepartmentName')?.value;
+        this.updateDepartmentDetails.  updatedteamManager = this.updateForm.get('reportingManagerId')?.value;
+     
     
-        this.subscription = this.http.postdata('Subdepartments/Update', request).subscribe({
-          next: () => {
-            this.getDepartmentName();
-            modal.close();
-            this.conformationPopup.openSuccessModal(' department name Updated Successfully');
-            this.resetForm();
+        this.subscription = this.http.postdata('Subdepartments/Update', Request).subscribe({
+          next: (data: any) => {
+            this.getDepartmentName(); 
+            this.updateForm.reset(); 
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal('Status updated successfully');
           },
           error: (error: any) => {
             this.conformationPopup.openErrorModal('Update failed');
@@ -181,16 +182,16 @@ openDialog() {
     
     
     // DELETE
-    opendelete(updateDepartmentDetails: any) {
-      this.updateDepartmentDetails = updateDepartmentDetails;
+    opendelete(teams: any) {
+      this.updateDepartmentDetails = teams;
       this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
     }
     onDelete(modal: any) {
-      if (!this.updateDepartmentDetails) return;
-  
-      this.subscription = this.http
-        .getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.id}`)// i need to check it Once api Subdepartments/deletebyid/1213
-        .subscribe({
+    const deleteRequest = {
+        isdeleted: 'void' 
+      };
+      this.subscription = this.http.getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.id}`)
+    .subscribe({
           next: () => {
             modal.close();
             this. getDepartmentName()

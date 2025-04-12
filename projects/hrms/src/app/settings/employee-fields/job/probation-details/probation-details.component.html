@@ -1,0 +1,203 @@
+<button type="button" (click)="openDialog()" class="custom-btn btn-primary">{{'Add' | translate}}</button>
+
+<!-- Add Popup Modal -->
+
+<ng-template #addpopup let-modal>
+    <form [formGroup]="AddForm">
+      <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+          <div class="pt-2">
+            <p class="popup-heading mb-0">{{ 'Job Role' | translate }}</p>
+          </div>
+          <div>
+            <a (click)="close(modal)">
+              <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+            </a>
+          </div>
+        </div>
+  
+        <div class="custom-main-popup-content p-5">
+
+            <!--Type -->
+          <div class="mb-4">
+            <label for="Type" class="form-label custom-label mb-2">
+              {{ 'Type' | translate }} <span class="error-msg">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <select class="form-control custom-input" formControlName="Type">
+                <option value="" disabled selected>Please select type</option>
+                <option *ngFor="let pro of getProbationconfigValues" [value]="pro.id">
+                  {{ pro.value  }}
+                </option>
+              </select>
+            </div>
+            <div *ngIf="AddForm.get('Type')?.touched && AddForm.get('Type')?.invalid">
+              <small style="color: red; font-size: 13px;">
+                {{ 'Type is required' | translate }}
+              </small>
+            </div>
+          </div>
+          <!-- Duration -->
+          <div class="mb-4">
+            <label for="Duration" class="form-label custom-label mb-2">
+              {{ 'Job Role' | translate }} <span class="error-msg">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control custom-input"
+              formControlName="Duration"
+              placeholder="Please enter duration"
+            />
+            <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg">
+              {{ 'Duration is required' | translate }}.
+            </div>
+          </div>
+  
+          <!-- Buttons -->
+          <div class="d-flex gap-5 pt-4 w-100">
+            <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+              {{ 'Close' | translate }}
+            </button>
+            <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addPtobationDetails(modal)" [disabled]="AddForm.invalid">
+              {{ 'Add' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  
+<div class="custom-main-component-container">
+    <!-- <div class="d-flex justify-content-between align-items-center">
+      <div> <span class="education-sub-header">Education Details</span></div>
+      <div class="plus-button">
+        <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
+            (click)="openModal(addEducationmodal)" class="plus-text">Add
+            New</span></span>
+      </div>
+    </div> -->
+    <div class="custom-table-content mt-2">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Duration</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container>
+            <tr *ngFor="let pro of ProbationDetails">
+              <td>{{pro.value}}</td>
+              <td>{{pro.noOfDays}}</td>
+              <td class="text-center">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openupdateDialog(pro)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <li (click)="opendelete(pro)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+          <!-- No Data Found Template -->
+          <!-- <ng-template #noDataTemplate>
+            <tr>
+              <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
+            </tr>
+          </ng-template> -->
+        </tbody>
+      </table>
+    </div>
+  
+  </div>
+  
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form [formGroup]="updateForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-4">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Job Role' | translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)">
+                        <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                    </a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-5">
+                  <!--Type -->
+          <div class="mb-4">
+            <label for="Type" class="form-label custom-label mb-2">
+              {{ 'Type' | translate }} <span class="error-msg">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <select class="form-control custom-input" formControlName="Type">
+                <option value="" disabled selected>Please select gradename</option>
+                <option *ngFor="let pro of getProbationconfigValues" [value]="pro.configValueId">
+                  {{ pro.value }}
+                </option>
+              </select>
+            </div>
+            <div *ngIf="AddForm.get('Type')?.touched && AddForm.get('Type')?.invalid">
+              <small style="color: red; font-size: 13px;">
+                {{ 'Type is required' | translate }}
+              </small>
+            </div>
+          </div>
+          <!-- Duration -->
+          <div class="mb-4">
+            <label for="Duration" class="form-label custom-label mb-2">
+              {{ 'Job Role' | translate }} <span class="error-msg">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control custom-input"
+              formControlName="Duration"
+              placeholder="Please enter duration"
+            />
+            <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg">
+              {{ 'Duration is required' | translate }}.
+            </div>
+          </div>
+                <div class="d-flex gap-5 pt-4 w-100">
+                    <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
+                        translate}}</button>
+                    <button class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
+                        [disabled]="updateForm.invalid">
+                        {{'update' | translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+  
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-content text-center p-4">
+            <div class="py-5">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            </div>
+            <div class="d-flex gap-5 pt-2 w-100">
+                <button class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

@@ -37,6 +37,7 @@ export default [
             { path: 'notice', loadComponent: () => import('./job/notice/notice.component').then((m) => m.NoticeComponent) },
             { path: 'grade', loadComponent: () => import('./job/grade/grade.component').then((m) => m.GradeComponent) },
             { path: 'serving-period', loadComponent: () => import('./job/serving-period/serving-period.component').then((m) => m.ServingPeriodComponent)},
+            { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => (m.ProbationDetailsComponent))},
         ]   
     },
     {

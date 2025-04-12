@@ -84,13 +84,11 @@ onSubmit() {
   }
   openupdate(sal:any) {
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
-    console.log(sal)
     this.updatesalutation=sal;
     this.updateForm?.patchValue({titlename : sal.titlename});
 
 }
 opendelete(sal:any) {
-console.log(sal)
 this.updatesalutation=sal;
 this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
 }

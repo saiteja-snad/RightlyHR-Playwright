@@ -50,7 +50,6 @@ export class StatusComponent implements OnInit{
       },
       error: (reason: any) => {
         console.log(reason);
-        alert("Insertion of data is failed")
       }
     })
   }

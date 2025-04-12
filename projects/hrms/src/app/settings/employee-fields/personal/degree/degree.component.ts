@@ -47,7 +47,6 @@ this.degreeFrom = this.fb.group({
        },
        error: (reason: any) => {
          console.log(reason);
-         alert("Insertion of data is failed")
        }
      })
    }

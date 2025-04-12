@@ -51,11 +51,9 @@ export class BankNameComponent implements OnInit {
       next: (data: any) => {
         console.log(data);
         this.bankdetails = data as any[];
-        console.log(this.bankdetails);
       },
       error: (reason: any) => {
         console.log(reason);
-        alert('Insertion of data is failed');
       },
     });
   }

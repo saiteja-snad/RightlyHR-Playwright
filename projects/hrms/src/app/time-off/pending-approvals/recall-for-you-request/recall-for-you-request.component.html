@@ -300,7 +300,7 @@
                 </div>
               
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();recallAcceptForm.reset()">
                     {{ 'Cancel' | translate }}
                   </button>
               
@@ -366,7 +366,7 @@
                 </div>
               
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();rejectSeparationForm.reset()">
                     {{ 'Cancel' | translate }}
                   </button>
               
@@ -433,12 +433,12 @@
                 </div>
               
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                  <button type="button" class="custom-btn btn-secondary" (click)="recallAcceptFormForProcess.reset();modal.dismiss()">
                     {{ 'Cancel' | translate }}
                   </button>
                   <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptFormForProcess.invalid || isLoading">
                     @if (!isLoading) {
-                      {{ 'Approve' | translate }}
+                      {{ 'Process' | translate }}
                     } @else {
                       <div class="d-flex">
                         <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>

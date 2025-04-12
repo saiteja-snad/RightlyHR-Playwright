@@ -49,13 +49,17 @@ import { RecallForYouRequestComponent } from './pending-approvals/recall-for-you
 import { RecallForYourRoleRequestComponent } from './pending-approvals/recall-for-your-role-request/recall-for-your-role-request.component';
 import { RecallRequestsComponent } from './pending-approvals/recall-requests/recall-requests.component';
 import { NodueApprovalDetailsComponent } from './pending-approvals/nodue-approval-details/nodue-approval-details.component';
+import { ClaimsandexpensesComponent } from '../claimsandexpenses/claimsandexpenses/claimsandexpenses.component';
+import { ClaimsandexpensesRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-request.component';
+import { ClaimsandexpensesForYouRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-for-you-request/claimsandexpenses-for-you-request.component';
+import { ClaimsandexpensesForYourRoleRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-for-your-role-request/claimsandexpenses-for-your-role-request.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
   {
-    path: 'leaves',component: LeavesComponent,
+    path: 'leaves', component: LeavesComponent,
     children: [
-      {path: 'waiting-for-approval',component: LeavesWaitingForApprovalComponent,},
+      { path: 'waiting-for-approval', component: LeavesWaitingForApprovalComponent, },
       { path: 'approved', component: LeavesApprovalComponent },
       { path: 'processed', component: LeavesProcessedComponent },
       { path: 'rejected', component: LeavesRejectedComponent },
@@ -63,9 +67,9 @@ export default [
     ],
   },
   {
-    path: 'wfh',component: WorkFromHomeComponent,
+    path: 'wfh', component: WorkFromHomeComponent,
     children: [
-      {path: 'waiting-for-approval', component: WfhWaitingForApprovalComponent,},
+      { path: 'waiting-for-approval', component: WfhWaitingForApprovalComponent, },
       { path: 'approved', component: WfhApprovedComponent },
       { path: 'processed', component: WfhProcessedComponent },
       { path: 'rejected', component: WfhRejectedComponent },
@@ -74,20 +78,21 @@ export default [
     ],
   },
   {
-    path: 'comp-off',component: CompOffComponent,
+    path: 'comp-off', component: CompOffComponent,
     children: [
-      { path: 'waiting-for-approval', component: CompOffWaitingForApprovalComponent,},
+      { path: 'waiting-for-approval', component: CompOffWaitingForApprovalComponent, },
       { path: 'approved', component: CompOffApprovalComponent },
       { path: 'processed', component: CompOffProcessComponent },
       { path: 'rejected', component: CompOffRejectComponent },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
+
   {
     path: 'premissions',
     component: PremissionsComponent,
     children: [
-      {path: 'waiting-for-approval',component: PremissionsWaitingForApprovalComponent,},
+      { path: 'waiting-for-approval', component: PremissionsWaitingForApprovalComponent, },
       { path: 'approved', component: PremissionsApprovedComponent },
       { path: 'rejected', component: PremissionsRejectedComponent },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
@@ -96,18 +101,19 @@ export default [
   {
     path: 'on-behalf-of',
     component: OnBeHalfOfComponent,
-    children: [ {path: 'waiting-for-approval',component: OnBeHalfOfWaitingForApprovalComponent,},
-      { path: 'approved', component: OnBeHalfOfApprovalComponent },
-      { path: 'processed', component: OnBeHalfOfProcessComponent },
-      { path: 'rejected', component: OnBeHalfOfRejectComponent },
-      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    children: [{ path: 'waiting-for-approval', component: OnBeHalfOfWaitingForApprovalComponent, },
+    { path: 'approved', component: OnBeHalfOfApprovalComponent },
+    { path: 'processed', component: OnBeHalfOfProcessComponent },
+    { path: 'rejected', component: OnBeHalfOfRejectComponent },
+    { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   { path: 'attendance', component: AttendanceComponent },
   {
-    path: 'pending-approvals',component: PendingApprovalsComponent,
+    path: 'pending-approvals', component: PendingApprovalsComponent,
     children: [
-      {path: 'time-off-request',component: TimeOffRequestComponent,
+      {
+        path: 'time-off-request', component: TimeOffRequestComponent,
         children: [
           { path: 'for-you', component: TimeOffForYouRequestComponent },
           { path: 'for-your-role', component: TimeOffForYourRoleRequestComponent, },
@@ -128,7 +134,7 @@ export default [
         component: CompOffRequestComponent,
         children: [
           { path: 'for-you', component: CompoffForYouRequestComponent },
-          { path: 'for-your-role',component: CompoffForYourRoleRequestComponent,},
+          { path: 'for-your-role', component: CompoffForYourRoleRequestComponent, },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
@@ -137,8 +143,17 @@ export default [
         component: PremissionRequestComponent,
         children: [
           { path: 'for-you', component: PremissionForYouRequestComponent },
-          { path: 'for-your-role', component: PremissionForYourRoleRequestComponent,},
+          { path: 'for-your-role', component: PremissionForYourRoleRequestComponent, },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+        ],
+      },
+      {
+        path: 'claimsandexpenses-request', component: ClaimsandexpensesRequestComponent,
+        children: [
+          { path: 'for-you', component:ClaimsandexpensesForYouRequestComponent , },
+          { path: 'for-your-role', component: ClaimsandexpensesForYourRoleRequestComponent },
+       
+          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
 
@@ -156,14 +171,14 @@ export default [
         component: ProbationPendingApprovalsComponent
       },
       {
-        path: 'assessmentform',component: AssessmentformComponent,
+        path: 'assessmentform', component: AssessmentformComponent,
       },
       {
         path: 'separation-request',
         component: SeparationRequestComponent,
         children: [
-           { path: 'separation-for-you',component: SeparationForYouRequestComponent, },
-          { path: 'separation-for-role', component: SeparationForYourRoleRequestComponent,},
+          { path: 'separation-for-you', component: SeparationForYouRequestComponent, },
+          { path: 'separation-for-role', component: SeparationForYourRoleRequestComponent, },
           { path: '', redirectTo: 'separation-for-you', pathMatch: 'full' },
         ],
       },
@@ -171,8 +186,8 @@ export default [
         path: 'recall-request',
         component: RecallRequestsComponent,
         children: [
-           { path: 'recall-for-you',component: RecallForYouRequestComponent, },
-          { path: 'recall-for-role', component: RecallForYourRoleRequestComponent,},
+          { path: 'recall-for-you', component: RecallForYouRequestComponent, },
+          { path: 'recall-for-role', component: RecallForYourRoleRequestComponent, },
           { path: '', redirectTo: 'recall-for-you', pathMatch: 'full' },
         ],
       },

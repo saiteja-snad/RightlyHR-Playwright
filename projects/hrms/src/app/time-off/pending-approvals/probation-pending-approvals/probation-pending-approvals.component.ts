@@ -15,7 +15,7 @@ import { ProbationdetailsPipe } from '../../../Pipes/probationdetails.pipe';
 
 @Component({
   selector: 'app-probation-pending-approvals',
-  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule,NgbPopoverModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss'
 })

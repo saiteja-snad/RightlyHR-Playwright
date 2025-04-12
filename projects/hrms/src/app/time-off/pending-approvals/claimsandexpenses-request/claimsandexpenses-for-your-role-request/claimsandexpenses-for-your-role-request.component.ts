@@ -53,7 +53,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent {
     console.log(EmployeeId);
     this.http
       .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=198&approvedType=EMP`
+        `PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=ROLE`
       )
       .subscribe({
         next: (response: any) => {

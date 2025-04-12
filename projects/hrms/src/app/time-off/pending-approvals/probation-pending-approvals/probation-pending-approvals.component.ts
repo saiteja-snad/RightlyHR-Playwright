@@ -9,12 +9,13 @@ import { Iprobationapproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { HttpService } from '../../../services/http.service';
-import { ProbationdetailsPipe } from "../../../pipes/probationdetails.pipe";
+
 import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { ProbationdetailsPipe } from '../../../Pipes/probationdetails.pipe';
 
 @Component({
   selector: 'app-probation-pending-approvals',
-  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule,NgbPopoverModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss'
 })

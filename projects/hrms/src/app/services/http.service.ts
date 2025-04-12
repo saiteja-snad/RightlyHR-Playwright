@@ -9,11 +9,12 @@ import { environment } from '../../environments/environment.dev';
 })
 export class HttpService {
   communicationService!: BehaviorSubject<any>;
-  tirggerCountSignal = signal<{ compOff: boolean; wfh: boolean }>({
+  tirggerCountSignal = signal<{ compOff: boolean; wfh: boolean,employeeId:number }>({
     compOff: false,
     wfh: false,
+    employeeId:0
   });
-
+   
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }

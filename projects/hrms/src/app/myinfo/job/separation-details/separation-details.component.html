@@ -1,7 +1,7 @@
 <div class="custom-main-component-container mt-4">
   <div class="d-flex justify-content-between align-items-center">
     <div> <span class="component-sub-header">Separation Details</span></div>
-    @if(isLastWorkingDate(this.empdata.lastworkingday)&&nodueclearancedetails.length <= 0){
+    @if(isLastWorkingDate(this.empdata.lastworkingday)&&nodueclearancedetails.length <= 0 &&getSeparationDetails.value.length>0){
        <div class="plus-button">
       <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button" (click)="openModal(raiseNodue)"
           class="plus-text">Raise No Due</span></span>

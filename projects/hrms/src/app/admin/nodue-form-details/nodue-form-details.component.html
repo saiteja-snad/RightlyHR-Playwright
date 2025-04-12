@@ -1,170 +1,184 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-center p-5 mx-5">
-        <div class="card custom-no-due-card p-5">
-            <p class="component-header text-uppercase text-center">no due clearance form</p>
-        
-            <!--Grid content-->
-            <div class="row my-4 mx-1">
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Name of the employee:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Work Email ID:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Designation:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            EmpID:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Team Manager:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Reporting Manager:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Date of Joining:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Deparment:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Date of Relieving:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 border">
-                    <div class="d-flex p-2">
-                        <div class="label-name me-1">
-                            Location:
-                        </div>
-                        <div class="label-text">
-                            Poorna Sai Ramisetti
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="card custom-no-due-card">
+            <div id="content" class="p-5">
+                <p class="component-header text-uppercase text-center">NO DUE CLEARANCE FORM</p>
 
-            <!--table content-->
-            <div class="custom-table-content p-0">
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                           <th>Department</th>
-                           <th>Manager Name & Emp ID</th>
-                           <th>Signature</th>
-                           <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Department</td>
-                            <td>Manager Name & Emp ID</td>
-                            <td>Signature</td>
-                            <td>Date</td>
-                         </tr>
-                         <tr>
-                            <td>Department</td>
-                            <td>Manager Name & Emp ID</td>
-                            <td>Signature</td>
-                            <td>Date</td>
-                         </tr>
-                      </tbody>
-                </table>
-            </div>
-
-            <!--Footer-content-->
-            <!--Grid content-->
-            <div class="row my-4 mx-1">
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center py-2">
-                        <div class="label-name me-1">
-                            Employee Signature:
+                <!--Grid content-->
+                <div class="row my-4 mx-1">
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">Name of the employee:</div>
+                            <div class="label-text">
+                                {{this.empdata?.firstName ?? ''}} {{this.empdata?.middleName ?? ''}}
+                                {{this.empdata?.lastName ?? ''}}
+                            </div>
                         </div>
-                        <div class="letter-signature">
-                            Poorna Sai Ramisetti
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">Work Email ID:</div>
+                            <div class="label-text">{{this.empdata.workEmail}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">Designation:</div>
+                            <div class="label-text">{{this.jobdetails.jobRole}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">EmpID:</div>
+                            <div class="label-text">{{this.empdata.fusionEmpId}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">
+                                Team Manager:
+                            </div>
+                            <div class="label-text">
+                                {{this.jobdetails.firstName?? ''}} {{this.jobdetails.middleName?? ''}}
+                                {{this.jobdetails.lastName??''}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">
+                                Reporting Manager:
+                            </div>
+                            <div class="label-text">
+                                {{this.jobdetails.fName?? ''}} {{this.jobdetails.mName?? ''}}
+                                {{this.jobdetails.lName??''}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">
+                                Date of Joining:
+                            </div>
+                            <div class="label-text">
+                                {{this.empdata.dateOfJoining|dateformat}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">
+                                Deparment:
+                            </div>
+                            <div class="label-text">
+                                {{this.jobdetails.departmentName}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">
+                                Date of Relieving:
+                            </div>
+                            <div class="label-text">
+                                {{this.empdata.lastworkingday|dateformat}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border">
+                        <div class="d-flex p-2">
+                            <div class="label-name me-1">Location:</div>
+                            <div class="label-text">
+                                {{this.jobdetails.sublocationName }},{{this.jobdetails.locationName}}
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center py-2">
-                        <div class="label-name me-1">
-                            Signature:
+
+                <!--table content-->
+                <div class="custom-table-content p-0">
+                    <table class="w-100">
+                        <thead>
+                            <tr>
+                                <th>Department</th>
+                                <th>Manager Name & Emp ID</th>
+                                <th>Signature</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if( ((nodueclearancedetails | async) ?? []).length > 0){
+                            @for (item of ((nodueclearancedetails | async) ?? []); track item.id) {
+                            <tr>
+                                <td>{{item.departmentName??'-'}}</td>
+                                <td>{{item.processedByName ??'-'}}-{{item.processdByFusionEmpId??'-'}}</td>
+                                <td class="letter-signature">{{item.processedByName??'-'}}</td>
+                                <td>{{(item.processedDate|dateformat)??'-'}}</td>
+                            </tr>
+                            }}
+                        </tbody>
+                    </table>
+                </div>
+                <!--Footer-content-->
+
+                <!--Grid content-->
+                <div class="row my-4 mx-1">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center py-2">
+                            <div class="label-name me-1">
+                                Employee Signature:
+                            </div>
+                            <div class="letter-signature">
+                                {{this.empdata?.firstName ?? ''}} {{this.empdata?.middleName ?? ''}}
+                                {{this.empdata?.lastName ?? ''}}
+                            </div>
                         </div>
-                        <div class="letter-signature">
-                            Poorna Sai Ramisetti
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center py-2">
+                            <div class="label-name me-1">
+                                Signature:
+                            </div>
+                            <div class="letter-signature">
+                                {{authorityDetails.firstName ?? ''}} {{authorityDetails.middleName ?? ''}}
+                                {{authorityDetails.lastName ??''}}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!--Button Content-->
-            <div class="d-flex justify-content-end gap-3">
-                <button class="custom-btn btn-secondary">Cancel</button>
-               <button class="custom-btn btn-primary">Submit</button>
+            <div class="d-flex justify-content-end gap-3 my-4">
+                <button type="button" class="custom-btn btn-secondary" (click)="back()">
+                    {{'Cancle'|translate}}
+                </button>
+                <button type="button" class="custom-btn btn-primary" (click)="openModal(confirmationpopup)">
+                    {{'Submit'|translate}}
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+<ng-template #confirmationpopup let-modal>
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+        <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Submit? </h4>
+        <div class="d-flex mb-4 mt-3 pb-2 mt-1 justify-content-around w-100">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" [disabled]="isLoading" (click)="FormDownload()">
+                @if(!isLoading){
+                {{'Yes'|translate}}
+                }
+                @else {
+                <div class="d-flex">
+                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+                    <div> {{'Submitting'|translate}}</div>
+                </div>
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>

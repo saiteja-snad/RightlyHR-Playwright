@@ -52,6 +52,13 @@ export class NodueDetailsComponent implements OnInit,OnDestroy {
     this.getNodueClearance();
     this.getEmployeeId();
   }
+  //function to pass the employeeid
+  onsubmission(Value:any){
+    this.http.tirggerCountSignal.update((status) => ({
+      ...status,
+      employeeId: Value,
+    }));
+  }
     //function to get employee by id
     getEmployeeId() {
       let employeeId = parseInt(this.empinfo.employeeId);

@@ -292,7 +292,7 @@
                     @if(regular){
                     <div class="col-md-11">
                         <div class="mb-3">
-                            <label for="Effective Date ">Last Working Date <span class="redstar"></span></label>
+                            <label for="Effective Date ">Last Working Date <span class="error-msg"></span></label>
                             <div class="form-control  custom-input"> {{
                                 selectedSpRequestData?.spRequestLastWorkingDate | dateformat }}
                             </div>
@@ -306,7 +306,7 @@
 
                         </div>
                         <div class="mb-3">
-                            <label for="Descriptiondetails" type="Notes">Comments <span class="redstar">*</span></label>
+                            <label for="Descriptiondetails" type="Notes">Comments <span class="error-msg">*</span></label>
                             <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                                 placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                                 #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
@@ -421,7 +421,7 @@
                     </div>
                     <div class="mb-3 ps-3" *ngIf="selectedSpRequestData.spIsEarlyRelieveing">
                         <label for="Effective Date ">Are you willing to accept an early Relieving? <span
-                                class="redstar"></span></label>
+                                class="error-msg"></span></label>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="relieving" name="isreliving"
                                 [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck"
@@ -557,7 +557,7 @@
                 </div>
                 <div class="col-md-11">
                     <div class="mb-3" *ngIf="regular">
-                        <label for="Effective Date ">Last Working Date <span class="redstar"></span></label>
+                        <label for="Effective Date ">Last Working Date <span class="error-msg"></span></label>
                         <div class="form-control custom-input"> {{
                             selectedSpRequestData.spRequestLastWorkingDate | dateformat }}
                         </div>
@@ -570,7 +570,7 @@
 
                     </div>
                     <div class="mb-3" *ngIf="regular">
-                        <label for="Descriptiondetails" type="Notes">Comments <span class="redstar">*</span></label>
+                        <label for="Descriptiondetails" type="Notes">Comments <span class="error-msg">*</span></label>
                         <textarea class="form-control custome-input" id="exampleFormControlTextarea1"
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                             #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"

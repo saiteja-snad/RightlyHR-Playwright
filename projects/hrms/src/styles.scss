@@ -305,8 +305,42 @@ body {
 
 .custom-background-card{
     border: none;
-    border-radius: 0.8rem;
+    border-radius: 0.5rem;
     background-color: var(--body-bg-color);
+}
+
+.custom-file-name{
+    font-size: var(--fontsize14);
+    font-weight: 600;
+}
+
+// plus add btn
+.custom-add-btn {
+    font-size: var(--fontsize16);
+    vertical-align: middle;
+    font-weight: 700;
+    line-height: 100%;
+    letter-spacing: 0%;
+    cursor: pointer;
+
+    .plus-icon {
+        font-size: var(--fontsize18) !important;
+    }
+}
+
+// custom toggle input
+.custom-toggle-btn {
+    display: flex;
+    align-items: center;
+    vertical-align: middle !important;
+
+    .form-switch { 
+        font-size: large;
+    }
+
+    .form-check-input{
+        cursor: pointer;
+    }
 }
 
 .bi-arrow-90deg-left{

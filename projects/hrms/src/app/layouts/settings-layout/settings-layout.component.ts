@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../shared/header/header.component';
-import { SettingSideNavComponent } from "../../shared/setting-side-nav/setting-side-nav.component";
+import { SidenavComponent } from "../../shared/sidenav/sidenav.component";
 @Component({
   selector: 'app-settings-layout',
-  imports: [HeaderComponent, RouterOutlet, SettingSideNavComponent],
+  imports: [HeaderComponent, RouterOutlet, SidenavComponent],
   templateUrl: './settings-layout.component.html',
   styleUrl: './settings-layout.component.scss'
 })

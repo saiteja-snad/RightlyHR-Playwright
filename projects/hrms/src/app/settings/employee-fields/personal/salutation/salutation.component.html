@@ -1,4 +1,4 @@
-<div class="card main-settings-layout p-4">
+<div class="custom-main-component-container">
     <!-- Add Input-->
     <div>
         <form [formGroup]="saluationForm" (ngSubmit)="onSubmit()" >
@@ -19,7 +19,6 @@
                 </thead>
                 <tbody>
                     @for (sal of saluationdetails ; track sal.name) {
-
                     <tr *ngFor="let sal of saluationdetails">
                         <td class="w-75">{{sal.titlename}}</td>
                         <td class="w-25">

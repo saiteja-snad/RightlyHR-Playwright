@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SettingSideNavComponent } from './setting-side-nav.component';
+import { SettingsJobTabsComponent } from './settings-job-tabs.component';
 
-describe('SettingSideNavComponent', () => {
-  let component: SettingSideNavComponent;
-  let fixture: ComponentFixture<SettingSideNavComponent>;
+describe('SettingsJobTabsComponent', () => {
+  let component: SettingsJobTabsComponent;
+  let fixture: ComponentFixture<SettingsJobTabsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SettingSideNavComponent]
+      imports: [SettingsJobTabsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SettingSideNavComponent);
+    fixture = TestBed.createComponent(SettingsJobTabsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

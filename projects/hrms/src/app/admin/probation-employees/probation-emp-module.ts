@@ -100,5 +100,4 @@ export interface IJobdetails {
   subLocation: string,
   sublocationid: any,
   shiftName?: string;
-
 }

@@ -8,9 +8,10 @@ import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalin
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { PmsTabsComponent } from "../pms-tabs/pms-tabs.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PmsTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

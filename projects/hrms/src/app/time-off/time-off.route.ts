@@ -48,6 +48,7 @@ import { SeparationForYourRoleRequestComponent } from './pending-approvals/separ
 import { RecallForYouRequestComponent } from './pending-approvals/recall-for-you-request/recall-for-you-request.component';
 import { RecallForYourRoleRequestComponent } from './pending-approvals/recall-for-your-role-request/recall-for-your-role-request.component';
 import { RecallRequestsComponent } from './pending-approvals/recall-requests/recall-requests.component';
+import { NodueApprovalDetailsComponent } from './pending-approvals/nodue-approval-details/nodue-approval-details.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -177,6 +178,13 @@ export default [
            { path: 'recall-for-you',component: RecallForYouRequestComponent, },
           { path: 'recall-for-role', component: RecallForYourRoleRequestComponent,},
           { path: '', redirectTo: 'recall-for-you', pathMatch: 'full' },
+        ],
+      },
+      {
+        path: 'nodue-request',
+        component: NodueApprovalDetailsComponent,
+        children: [
+          { path: '', redirectTo: 'nodue-request', pathMatch: 'full' },
         ],
       },
       { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section

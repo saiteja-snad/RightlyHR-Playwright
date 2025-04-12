@@ -1,0 +1,20 @@
+export interface InoDuepending{
+    id: number,
+    noDueConfigureId:number,
+    raisedFor: number,
+    requestedBy: number,
+    status: string,
+    authorityValues: number,
+    departmentName: string,
+    employeeName: string,
+    processedByName:  string,
+    lastWorkingDate: Date,
+    createdAt: Date,
+    updatedAt: Date,
+    requestedDate: Date,
+    parentId: number,
+    departmentId: number,
+    employeeFusionEmpId: string,
+    requiredEmails: any,
+    lineOrder: number
+}

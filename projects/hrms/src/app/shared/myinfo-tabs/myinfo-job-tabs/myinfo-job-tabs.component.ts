@@ -22,7 +22,7 @@ export class MyinfoJobTabsComponent {
     { label: 'Certifications', link: '/myinfo/job/certifications' },
     { label: 'Compensation', link: '/myinfo/job/compensation-details' },
     { label: 'Desk', link: '/myinfo/job/compensation-details' },
-
+    {lable:'No Due',link:'/myinfo/job/no-due-clearance-details'},
     { label: 'Assets', link: '/myinfo/job/assets-details' },
 
 

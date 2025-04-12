@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Iroles } from '../../../roles-permissions/roles/roles.model';
 import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-salutation',
@@ -24,7 +25,7 @@ export class SalutationComponent implements OnInit {
   
 
 // salDeletedata: any;
-constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder) { }
+constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder, public formValidations:FormValidationsService) { }
   
   saluationForm!: FormGroup;
   updateForm!: FormGroup;
@@ -32,10 +33,10 @@ constructor(private modalService: NgbModal,private conformationPopup: OpenModalS
   ngOnInit(): void {
     this.saluationForm = this.fb.group({
      
-      saluation: [null, [Validators.required]]
+      saluation: ['', [Validators.required]]
       });
       this.updateForm = this.fb.group({
-        titlename: ["", Validators.required] 
+        titlename: ['', [Validators.required]] 
       });
     this.getsaluation();
   
@@ -77,7 +78,7 @@ onSubmit() {
     });
     
   }
-  close(modal: any): void {
+  close(modal: any) {
     modal.dismiss();
     this.updateForm.reset();
   }
@@ -124,11 +125,11 @@ this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' })
       next: (data:any) => {
        this.getsaluation(); 
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('SAL data deleted successfully');
+        this.conformationPopup.openSuccessModal('Salutation deleted successfully');
       },
       error: (err: any) => {
-        console.error('Delete SAL failed:', err);
-        this.conformationPopup.openErrorModal('Failed to delete SAL data');
+        console.error('Delete salutation failed:', err);
+        this.conformationPopup.openErrorModal('Failed to delete salutation');
       }
     });
   }

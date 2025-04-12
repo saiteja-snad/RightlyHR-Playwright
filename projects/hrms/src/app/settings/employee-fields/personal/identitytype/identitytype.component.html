@@ -4,8 +4,9 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter identitytype"
-                    formControlName="IdentityType" aria-label="identitytype" aria-describedby="identitytype">
-                <span class="input-group-text" id="gender">
+                    formControlName="IdentityType" aria-label="identitytype" aria-describedby="identitytype"
+                    (keydown)="formValidations.restrictInitialSpace($event)">
+                <span class="input-group-text" id="identitytype">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="IdentityForm.invalid">{{'Add'|translate}}</button></span>
             </div>
@@ -24,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (type of IdentityDetail; track type.id) {
+                @for (type of IdentityDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ type.identityType1}}</td>
                     <td class="w-25">
@@ -65,7 +66,8 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'IdentityType'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="IdentityType"
-                        placeholder="Please enter identitytype">
+                        placeholder="Please enter identitytype"
+                        (keydown)="formValidations.restrictInitialSpace($event)">
                     <div *ngIf="updateForm.get('IdentityType')?.touched && updateForm.get('IdentityType')?.invalid" class="error-msg mt-2">
                         <div *ngIf="updateForm.get('IdentityType')?.errors?.['required']">{{'Identitytype is required'|translate}}</div>
                     </div>

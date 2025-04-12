@@ -6,131 +6,155 @@ import { HttpService } from '../../../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { IBank } from './bank-name.model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-bank-name',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './bank-name.component.html',
-  styleUrl: './bank-name.component.scss'
+  styleUrl: './bank-name.component.scss',
 })
 export class BankNameComponent implements OnInit {
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
-  bankdetails=[]as any[];
-  updateBankdetails={} as any;
-  
+  bankdetails = [] as any[];
+  updateBankdetails = {} as any;
+  selectedDeleteBank = {} as any;
   subscription!: Subscription;
-  bank=[]as any[];
+  bank = [] as any[];
+  selectedId: number | null = null;
 
+  // salDeletedata: any;
+  constructor(
+    private modalService: NgbModal,
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
+    private fb: FormBuilder,
+    public formValidations: FormValidationsService,
+  ) {}
 
-// salDeletedata: any;
-constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder) { }
-  
-bankForm!: FormGroup;
+  bankForm!: FormGroup;
   updateForm!: FormGroup;
-  
+
   ngOnInit(): void {
     this.bankForm = this.fb.group({
-     
-      bank: [null, [Validators.required]]
-      });
-      this.updateForm = this.fb.group({
-        bankName2: ["", Validators.required] 
-      });
+      bank: [null, [Validators.required]],
+    });
+    this.updateForm = this.fb.group({
+      bankName2: ['', Validators.required],
+    });
     this.getBank();
-  
-      
-    }
+  }
   getBank() {
-    this.subscription = this.http.getData("Bank").subscribe({
-       next: (data: any) => {
-         console.log(data);
-         this.bankdetails = data as any[];
-         console.log(this.bankdetails)
-       },
-       error: (reason: any) => {
-         console.log(reason);
-         alert("Insertion of data is failed")
-       }
-     })
-   }
-onSubmit() {
-  const request = {
-    bankName1: this.bankForm?.get('bank')?.value,
-    IsDeleted: "Active"
-  };
+    this.subscription = this.http.getData('Bank').subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.bankdetails = data as any[];
+        console.log(this.bankdetails);
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        alert('Insertion of data is failed');
+      },
+    });
+  }
+  onSubmit() {
+    const request = {
+      bankName1: this.bankForm?.get('bank')?.value,
+      IsDeleted: 'Active',
+    };
 
-  console.log('Sending request:', request); 
+    console.log('Sending request:', request);
 
-  this.subscription = this.http.postdata("Bank", request).subscribe({
-    next: (data: any) => {
-      console.log('Response:', data);
-      this.modalService.dismissAll();
-      this.bankForm.reset();
-      this.getBank(); 
-      this.conformationPopup.openSuccessModal('Bank added successfully');
-    },
-    error: (reason: any) => {
-      console.error('Error:', reason);
-      this.conformationPopup.openErrorModal('Failed to add bank data');
-    }
-  });
-}
+    this.subscription = this.http.postdata('Bank', request).subscribe({
+      next: (data: any) => {
+        console.log('Response:', data);
+        this.modalService.dismissAll();
+        this.bankForm.reset();
+        this.getBank();
+        this.conformationPopup.openSuccessModal('Bank added successfully');
+      },
+      error: (reason: any) => {
+        console.error('Error:', reason);
+        this.conformationPopup.openErrorModal('Failed to add bank data');
+      },
+    });
+  }
 
   close(modal: any): void {
     modal.dismiss();
     this.updateForm.reset();
   }
-  openupdate(bank:any) {
-    this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
-    console.log(bank)
-    this.updateBankdetails=bank;
-    this.updateForm?.patchValue({bankName1 : bank.bankName1});
 
-}
-opendelete(bank:any) {
-console.log(bank)
-this.updateBankdetails=bank;
-this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
-}
-updateBank(): void {
-  if (this.updateForm.valid) {
-    
-    this.updateBankdetails.bankName2 = this.updateForm.get('bankName2')?.value;
-    this.subscription = this.http.postdata(`Bank/UPDATER`, this.updateBankdetails).subscribe({
-      next: (data: any) => {
-        this.updateForm.reset(); 
-        this.modalService.dismissAll(); 
-        this.conformationPopup.openSuccessModal('bank updated successfully');
-      },
-      error: (err: any) => {
-        console.error('Update failed:', err);
-        this.conformationPopup.openErrorModal('Update failed. Please try again.');
-      }
+  opendelete(bank: any) {
+    console.log(bank);
+    this.selectedDeleteBank = bank;
+    this.modalService.open(this.deletepopup, {
+      centered: true,
+      backdrop: 'static',
     });
-  } else {
-    this.conformationPopup.openErrorModal('Form is invalid. Please check the inputs.');
   }
-}
-  deletebank(bank: any): void {
+
+  openupdate(banklist: any) {
+    this.selectedId = banklist.sno;
+    this.updateForm.patchValue({ bankName2: banklist.bankName1 });
+    this.modalService.open(this.updatepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
+  }
+  updateBank(modal: any) {
+    if (this.updateForm.valid && this.selectedId) {
+      const request: IBank = {
+        bankName1: this.updateForm.value.bankName2.trim(),
+        isdeleted: 'Active',
+        sno: this.selectedId,
+      };
+      this.subscription = this.http
+        .postdata(`Bank/UPDATER`, request)
+        .subscribe({
+          next: () => {
+            this.getBank();
+            modal.close();
+            this.updateForm.reset();
+            this.conformationPopup.openSuccessModal(
+              'Bank updated successfully'
+            );
+          },
+          error: (err: any) => {
+            this.conformationPopup.openErrorModal(
+              'Update failed. Please try again.'
+            );
+          },
+        });
+    }
+  }
+
+  onDeleteBank(modal: any) {
+    if (!this.selectedDeleteBank) return;
+
     const deleteRequest = {
-      sno: bank.sno,
-      bankName1 : bank.bankName1,
-      isdeleted: 'void' 
+      sno: this.selectedDeleteBank.sno,
+      bankName1: this.selectedDeleteBank.bankName1,
+      isdeleted: 'void',
     };
-  
-   this.subscription= this.http.postdata('Bank/UPDATER', deleteRequest).subscribe({
-      next: (data:any) => {
-       this.getBank(); 
-        this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('bank data deleted successfully');
+
+    this.http.postdata('Bank/UPDATER', deleteRequest).subscribe({
+      next: () => {
+        this.getBank();
+        modal.close();
+        this.conformationPopup.openSuccessModal('Bank deleted successfully');
       },
       error: (err: any) => {
         console.error('Delete bank failed:', err);
         this.conformationPopup.openErrorModal('Failed to delete bank data');
-      }
+      },
     });
   }
-  
-    
+
+  closeDelete(modal: any) {
+    modal.dismiss();
+    this.selectedDeleteBank = null;
+  }
 }

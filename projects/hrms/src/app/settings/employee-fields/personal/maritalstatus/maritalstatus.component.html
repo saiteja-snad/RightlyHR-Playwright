@@ -5,8 +5,8 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter marital status"
                     formControlName="MaritalStatus" aria-label="status" aria-describedby="status"
-                    (keypress)="blockNonAlphabets($event)">
-                <span class="input-group-text" id="gender">
+                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                <span class="input-group-text" id="status">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="MaritalStatusForm.invalid">{{'Add'|translate}}</button></span>
             </div>
@@ -25,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (status of MaritalStatusDetail; track status.id) {
+                @for (status of MaritalStatusDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ status.maritalstatus1}}</td>
                     <td class="w-25">
@@ -66,7 +66,8 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Marital Status'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="MaritalStatus"
-                        placeholder="Please enter marital status" (keypress)="blockNonAlphabets($event)">
+                        placeholder="Please enter marital status" 
+                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('MaritalStatus')?.touched && updateForm.get('MaritalStatus')?.invalid" class="error-msg mt-2">
                         <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['required']">{{'Marital status is required'|translate}}</div>
                     </div>

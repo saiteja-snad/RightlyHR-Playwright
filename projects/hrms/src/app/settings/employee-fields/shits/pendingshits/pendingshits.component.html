@@ -2,28 +2,34 @@
     <table class="w-100">
         <thead>
             <tr>
-                <th>Worked Date</th>
-                <th>Availed</th>
-                <!-- <th>Reason</th> -->
-                <th>Applied Date</th>
+                <th>Year</th>
+                <th>Location</th>
+                <th>Sub Location</th>
                 <th>Status</th>
+                <th>Added By</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        <tbody>
-            <!-- <ng-container *ngIf="approvedWFHs!.length > 0; else noDataTemplate">
-          <tr *ngFor="let wfhRequest of approvedWFHs; let i = index">
-            <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="wfhRequest.durationType">
-              <span *ngSwitchCase="1">First Half</span>
-              <span *ngSwitchCase="3">Second Half</span>
-              <span *ngSwitchCase="2">Full Day</span>
-              <span *ngSwitchDefault>-</span>
-            </td>
-            <td>{{ wfhRequest.requestedDate | dateformat }}</td>
-            <td>{{ wfhRequest.status }}</td>
-          </tr>
-        </ng-container> -->
+            <ng-container *ngIf="shiftsData!.length > 0; else noDataTemplate">
+                <tr *ngFor="let shift of shiftsData; let i = index">
+                    <td>{{ shift.applicableyear }}</td>
+                    <td>{{ shift.locationName }}</td>
+                    <td>{{ shift.subLocationName }}</td>
+                    <td>{{ shift.addedbyName }}</td>
+                    <td>{{ shift.status }}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li><a class="dropdown-item" (click)="updateShift(shift.id)"><i class="bi bi-pencil me-2"></i>Update</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </ng-container>
 
             <ng-template #noDataTemplate>
                 <tr>
@@ -36,4 +42,3 @@
 
     </table>
 </div>
-  

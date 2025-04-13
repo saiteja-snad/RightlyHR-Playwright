@@ -36,76 +36,76 @@ export class TeamComponent implements OnInit, OnDestroy {
 
   sortedDesignations: any[] = [];
   selectedId: boolean | undefined;
-  
- constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
-  
-    }
-    onDepartmentChange(event: Event) {
-      const selectedValue = (event.target as HTMLSelectElement).value;
-      console.log('Selected Department:', selectedValue);
-    }
-    ngOnInit(): void {
-      this.AddForm = this.fb.group({
-        DepartmentName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-        TeamName: ['', Validators.required],
-        teamManager:['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      });
-  
-      this.updateForm = this.fb.group({
-        UpdatedTeamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-        updatedDepartmentName: ['', Validators.required],
-        updatedteamManager:['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
-      });
-      this.getTeam();
-      this. getDepartmentName()
-    }
-    // alphabet allowed only
-    blockNonAlphabets(event: KeyboardEvent): void {
-      const inputChar = String.fromCharCode(event.keyCode);
-      const char = String.fromCharCode(event.keyCode);
-      // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-      const pattern = /^[a-zA-Z ]$/;
-      const input = (event.target as HTMLInputElement).value;
-      if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-        event.preventDefault();
-      }
-    }
-    getDepartmentName() {
-      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
-          next: (data: any) => {
-            console.log(data);
-            alert("hello");
-          this.deptdetails= data as [];
-            this.sortdeaprtmentName();
-            console.log(this.deptdetails)
-          },
-          error: (reason: any) => {
-            console.log(reason);
-            alert("Insertion of data is failed")
-          }
-        });
-    }
 
-openDialog() {
-      this.modalService.open(this.addpopup, {
-        backdrop: 'static',
-        centered: true
-      });
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+
+  }
+  onDepartmentChange(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    console.log('Selected Department:', selectedValue);
+  }
+  ngOnInit(): void {
+    this.AddForm = this.fb.group({
+      DepartmentName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      TeamName: ['', Validators.required],
+      teamManager: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+    });
+
+    this.updateForm = this.fb.group({
+      UpdatedTeamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      updatedDepartmentName: ['', Validators.required],
+      updatedteamManager: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+    });
+    this.getTeam();
+    this.getDepartmentName()
+  }
+  // alphabet allowed only
+  blockNonAlphabets(event: KeyboardEvent): void {
+    const inputChar = String.fromCharCode(event.keyCode);
+    const char = String.fromCharCode(event.keyCode);
+    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
+    const pattern = /^[a-zA-Z ]$/;
+    const input = (event.target as HTMLInputElement).value;
+    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
+      event.preventDefault();
     }
-    getTeam() {
-      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
-        next: (data: any) => {
-          console.log(data);
-          alert("hello");
-          this.teamdetails= data as [];
-          this.sortdeaprtmentName();
-          console.log(this.teamdetails)
-        },
-        error: (reason: any) => {
-          console.log(reason);
-          alert("Insertion of data is failed")
-        }
-      });
+  }
+  getDepartmentName() {
+    this.subscription = this.http.getData('Department').subscribe({
+      next: (data: any) => {
+        console.log(data);
+        alert("hello");
+        this.deptdetails = data as [];
+        this.sortdeaprtmentName();
+        console.log(this.deptdetails)
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        alert("Insertion of data is failed")
+      }
+    });
+  }
+
+  openDialog() {
+    this.modalService.open(this.addpopup, {
+      backdrop: 'static',
+      centered: true
+    });
+  }
+  getTeam() {
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        console.log(data);
+        alert("hello");
+        this.teamdetails = data as [];
+        this.sortdeaprtmentName();
+        console.log(this.teamdetails)
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        alert("Insertion of data is failed")
+      }
+    });
   }
 
   sortdepartments() {
@@ -200,29 +200,22 @@ openDialog() {
     this.updateDepartmentDetails = teams;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
-  onDelete(modal: any) {
+  onDelete(modal: any, subdepartmentId: number) {
     const deleteRequest = {
-      isdeleted: 'void',
+      isDeleted: true
+    };
 
-      subdepartmentId: 0,
-      subdepartmentName: "",
-      departmentId: 0,
-      reportingmanagerId: 0,
-      "isDeleted": true
-    }
-
-    this.subscription = this.http.postdata("Subdepartments/deletebyid/{SubdepartmentId}", this.deleteRequest).subscribe({
+    this.subscription = this.http.postdata(`Subdepartments/deletebyid/${subdepartmentId}`, deleteRequest).subscribe({
       next: () => {
         modal.close();
-        this.conformationPopup.openSuccessModal('department Name Deleted Successfully');
-
+        this.conformationPopup.openSuccessModal('Department deleted successfully');
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-
+        this.conformationPopup.openErrorModal('Deletion of department failed');
       }
     });
   }
+
   closeDelete(modal: any) {
     modal.dismiss();
   };

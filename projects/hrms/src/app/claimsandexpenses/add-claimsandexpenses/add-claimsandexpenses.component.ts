@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, NgModel, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
@@ -7,10 +7,13 @@ import { IExpense, IExpenseHeader, IExpenseItem, Iexpensetype, Inewexpense, INew
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
+import { TabsModule } from 'primeng/tabs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule,],
+  imports: [RouterModule, Select, ReactiveFormsModule,TranslateModule, CommonModule,TabsModule],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
   providers: [DatePipe]
@@ -25,16 +28,22 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   subscription!: Subscription
   minDate!: string;
   maxDate!: string;
+  spinnerLoader=false;
+  saveasDraftloder=false
   emails =[];
   timeoffValid = false;
   istimeoffValid = true;
   currentDate = new Date();
+  removeindex:any
   expensetype = [] as Iexpensetype[];
   expenseemployeedata: IExpense[] = [];
-
-
+  @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
+  navTabs: any[] = [
+    { label: 'Create Expenses', link: '/claimsandexpenses/addexpense' },
+   
+  ];
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
-    private http: HttpService) { }
+    private http: HttpService,private modalService: NgbModal) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
@@ -90,6 +99,24 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     }, 0);
   }
 
+  opendeletModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  delteitem(i: number) {
+    this.removeindex = i
+    this.modalService.dismissAll();
+    this.opendeletModal(this.deleteconformation)
+
+  }
+  
+  removeExpense() {
+    this.expenseItems.removeAt(this.removeindex);
+    this.calculateTotalExpensesAmount();
+    this.modalService.dismissAll()
+    this.conformationPopup.openSuccessModal("Expene iteam deleted successfully")
+   
+  }
 
   setDate() {
     const today = new Date();
@@ -208,16 +235,12 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   }
 
   onchangeexpnes(event: any, index: number) {
-    const selectedId = event.value; // <-- PrimeNG sends the selected value in `event.value`
-  
-    console.log('Selected Expense ID:', selectedId);
-  
+    const selectedId = event.value;  
     this.onExpenseChanged(selectedId, index);
   }
   
   onExpenseChanged(selectedId: number, index: number) {
-    this.selectedexpensesid = selectedId;
-  
+    this.selectedexpensesid = selectedId; 
     this.http.getData(`Expense/getbyid/${this.selectedexpensesid}`).subscribe({
       next: (data: any) => {
         console.log('Fetched expense data:', data);
@@ -232,6 +255,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
 
   fromdata(form: FormGroup): void {
     if (form.valid) {
+      this.spinnerLoader=true
       const payload: INewExpense = {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
@@ -252,8 +276,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         })),
         attachment_url: undefined
       };
-
-
 
       const filepath = `/Expenses/${this.empinfo.employeeId}`;
 
@@ -284,10 +306,8 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal('Expenses submitted successfully');
-              // this.filterAllExpenses()
-      
               this.getexpensesheaderbyid(this.empinfo.employeeId);
-              // Call the get function after posting
+           
             }
           },
           error: (error: any) => {
@@ -301,7 +321,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           next: (data: any) => {
             if (data) {
               this.conformationPopup.openSuccessModal('Expenses submitted successfully');
-              //this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
@@ -323,6 +342,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
 
   saveasDraft(form: FormGroup): void {
     if (form.valid) {
+      this.saveasDraftloder=true
       const payload: INewExpense = {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
@@ -343,9 +363,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         })),
         attachment_url: undefined
       };
-
-
-
       const filepath = `/Expenses/${this.empinfo.employeeId}`;
 
       // Check if there is any file to upload

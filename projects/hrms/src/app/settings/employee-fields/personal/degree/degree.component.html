@@ -1,0 +1,98 @@
+<div class="custom-main-component-container">
+    <form [formGroup]="degreeFrom" (ngSubmit)="onSubmit()">
+        <!-- Add Input-->
+        <div class="mb-4">
+            <div class="custom-settings-add-input input-group">
+                <input type="text" class="form-control custom-input" placeholder="Please enter degree"
+                    formControlName="degree" aria-label="degree" aria-describedby="degree" 
+                    (keydown)="formValidations.restrictInitialSpace($event)">
+                <span class="input-group-text" id="gender">   
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="degreeFrom.invalid">{{'Add'|translate}}</button></span>
+            </div>
+            <div *ngIf="degreeFrom.get('degree')?.touched && degreeFrom.get('degree')?.invalid" class="error-msg mt-2">
+                <div *ngIf="degreeFrom.get('degree')?.errors?.['required']">{{'Degree is required'|translate}}</div>
+            </div>
+        </div>
+    </form>
+
+    <!--Data Content-->
+    <div class="custom-settings-data-table">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="col-span-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (degree of degreedetails; track degree.sno) {
+                <tr>
+                    <td class="w-75">{{degree.degreeName}}</td>
+                    <td class="w-25">
+                        <div class="d-flex gap-4">
+                            <!--Update-->
+                            <div>
+                                <a (click)="openupdate(degree)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                        class="settings-common-icon"></a>
+                            </div>
+                            <!--Delete-->
+                            <div>
+                                <a (click)="opendelete(degree)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                        class="settings-common-icon"></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form [formGroup]="updateForm" (ngSubmit)="updateDegree()">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-3">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Edit Degree'|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-4">
+                <div class="mb-4">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'DegreeName'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="degreeName"
+                        placeholder="Please enter degree name"
+                        (keydown)="formValidations.restrictInitialSpace($event)">
+                    <div *ngIf="updateForm.get('degreeName')?.touched && updateForm.get('degreeName')?.invalid" class="error-msg mt-2">
+                        <div *ngIf="updateForm.get('degreeName')?.errors?.['required']">{{'Degree name is required'|translate}}</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-5 w-100 pt-3">
+                    <button class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary w-50 py-2" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-content text-center p-4">
+            <div class="py-4">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            </div>
+            <div class="d-flex gap-5 pt-2 w-100">
+                <button class="custom-btn btn-secondary w-50 py-2"(click)="modal.close()">{{'No'|translate}}</button>
+                <button class="custom-btn btn-primary w-50 py-2" (click)="deleteDegree(updateDegreeDetails)">{{'Yes'|translate}}</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

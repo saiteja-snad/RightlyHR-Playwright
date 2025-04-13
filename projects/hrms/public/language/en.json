@@ -90,6 +90,7 @@
    "JobGrade is required":"Job Grade is required",
    "GRADE DETAILS":"GRADE DETAILS",
     "EDIT GRADE DETAILS":"EDIT GRADE DETAILS",
+<<<<<<< HEAD
     "Edit Sub Location'":"Edit Sub Location",
     "Search Employee":"Search Employee",
     "Employee is required":"Employee is required",
@@ -111,6 +112,16 @@
     "Enter Performance Variable Bonus":"Enter Performance Variable Bonus"
     
     
+=======
+    "Approve":"Approve",
+    "Reject":"Reject",
+    "Cancel":"Cancel",
+    "Process":"Process",
+    "Rejected Reason":"Rejected Reason",
+    "Are you sure you want to Reject?":"Are you sure you want to Reject?",
+    "Are you sure you want to Approve?":"Are you sure you want to Approve?",
+    "Comments":"Comments"
+>>>>>>> dd9e88daa840a7f181ff7ce40b029635f93e1732
    
   
 

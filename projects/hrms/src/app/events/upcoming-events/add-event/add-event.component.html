@@ -1,5 +1,5 @@
 <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4" >
+    <div class="d-flex justify-content-between popup-header-border p-3" ngbAutofocus>
         <div class="pt-2">
             <p class="popup-heading mb-0">Add Event</p>
         </div>
@@ -8,45 +8,51 @@
         </div>
     </div>
     <div class="custom-main-popup-content p-4">
-        <form  [formGroup]="customEventForm" (ngSubmit)="postevents(customEventForm)">
+        <form [formGroup]="customEventForm" (ngSubmit)="postevents(customEventForm)">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
-                            class="text-danger">*</span></label>
+                    <label for="eventDate" class="form-label custom-label mb-2">Event Date<span class="text-danger">*</span></label>
                     <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
-                    <small *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.invalid" class="text-danger">
-                        Event date is required.
-                      </small>
-                      <small *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')" class="text-danger">
-                        Event date cannot be in the past.
-                      </small>
+                    <div *ngIf="customEventForm.get('eventDate')?.touched" class="error-msg">Event date is required.</div>
+                    <div *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')"
+                        class="error-msg">Event date cannot be in the past.
+                    </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
                     <label for="title" class="form-label custom-label mb-2">Event Title<span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="title"
-                        placeholder="Please enter event title"  formControlName="eventTitle">
-                        <small *ngIf="customEventForm.get('title')?.touched && customEventForm.get('title')?.invalid" class="text-danger">
-                            <span *ngIf="customEventForm.get('title')?.errors?.['required']">Title is required.</span>
-                            <span *ngIf="customEventForm.get('title')?.errors?.['pattern']">Cannot start with whitespace.</span>
-                        </small>
+                        placeholder="Please enter event title" formControlName="eventTitle">
+                    <div *ngIf="customEventForm.get('title')?.touched && customEventForm.get('title')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="customEventForm.get('title')?.errors?.['required']">Title is required.</div>
+                    </div>
                 </div>
-                <div class="col-md-12 mb-3">
-                    <label for="description" class="form-label custom-label mb-2">Event Description<span
-                            class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input"  formControlName="eventMessage" placeholder="Please enter description"
-                        id="description"></textarea>
 
-                </div>
                 <div class="col-md-12 mb-3">
-                    <label for="file" class="form-label custom-label mb-2">Attachment<span
-                            class="text-danger">*</span></label>
-                    <input type="file" class="form-control custom-input" id="file"  formControlName="imageUrl"  >
+                    <label for="description" class="form-label custom-label mb-2">Event Description<span class="text-danger">*</span></label>
+                    <textarea class="form-control custom-input" formControlName="eventMessage" placeholder="Please enter description" id="description"></textarea>
+                    <div *ngIf="customEventForm.get('eventMessage')?.errors?.['required']  && customEventForm.get('title')?.touched" class="error-msg">
+                        Event Description is requied
+                    </div>
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    <label for="file" class="form-label custom-label mb-2">Attachmen</label>
+                    <input type="file" class="form-control custom-input" id="file" formControlName="imageUrl">
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">Close</button>
-                <button type="submit" class="custom-btn btn-primary">Add</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="customEventForm.invalid || spinnerLoader">
+                  @if(spinnerLoader) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading' | translate}}...</span>
+                  } @else {
+                    <span>{{'Add'| translate}}</span>
+                  }
+                </button>
             </div>
         </form>
     </div>

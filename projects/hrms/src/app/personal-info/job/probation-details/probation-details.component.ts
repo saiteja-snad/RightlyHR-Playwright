@@ -3,10 +3,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IJob } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../environments/environment.dev';
 @Component({
   selector: 'app-probation-details',
   imports: [CommonModule, DateformatPipe],
@@ -31,6 +32,9 @@ export class ProbationDetailsComponent implements OnInit {
     this.loggedinuser = this.authService.getToken();
     this.getEmployeeId();
     this.getProbationRequest();
+    this.getProbationExtendDays()
+    console.log(this.probationProbationNotiperiodDuration);
+    
   }
 
   getEmployeeId(): void {
@@ -58,7 +62,24 @@ export class ProbationDetailsComponent implements OnInit {
     const shouldShow = (this.isprobationEndDateComplete(probationEndDate));
     return shouldShow;
   }
-
+  getProbationExtendDays() {
+    const probationnoticeperiodId = environment.ProbationbuttonbeforeId;
+    const probtimesextended = environment.ProbationExtendPeriodTimes
+    this.subscription = this.http.getData(`ProbationFlow/settingsprobationconfiggetall`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        const duration = data.find((ele: any) => {
+          return ele.configValueId === probationnoticeperiodId;
+        })
+        console.log(duration);
+        this.probationProbationNotiperiodDuration = duration.noOfDays;
+        const probExtendTimes = data.find((ele: any) => {
+          return ele.configValueId === probtimesextended;
+        })
+        this.probationExtendTimes = probExtendTimes.noOfDays;
+      }
+    })
+  }
   isprobationEndDateComplete(probationEndDate: string) {
     console.log(probationEndDate);
     if (probationEndDate) {

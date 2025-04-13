@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import html2canvas from 'html2canvas';
@@ -183,18 +183,18 @@ export class ProbationConfirmationLetterComponent {
   //function to patch the values in the form to the template
   pathValuesFuction() {
     const formValues = this.probationConfirmationForm.value;
-    this.probationLetterData.firstName = formValues.employeeId.firstName,
-    this.probationLetterData.middleName = formValues.employeeId.middleName,
-    this.probationLetterData.lastName = formValues.employeeId.lastName,
-    this.probationLetterData.fusionEmpId = formValues.employeeId.fusionEmpId,
-    this.probationLetterData.jobRole = formValues.employeeId.jobDetails.jobRole,
-    this.probationLetterData.department = formValues.employeeId.firstName,
-    this.probationLetterData.workLocation = formValues.employeeId.jobDetails.subLocation+ ', '+formValues.employeeId.jobDetails.lopcation,
+    this.probationLetterData.firstName = formValues.employeeId?.firstName,
+    this.probationLetterData.middleName = formValues.employeeId?.middleName,
+    this.probationLetterData.lastName = formValues.employeeId?.lastName,
+    this.probationLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
+    this.probationLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
+    this.probationLetterData.department = formValues.employeeId?.firstName,
+    this.probationLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation+ ', '+formValues.employeeId?.jobDetails?.lopcation,
     this.probationLetterData.issuedDate = formValues.issuedDate,
     this.probationLetterData.effectiveDate = formValues.effectiveDate,
     this.probationLetterData.Copys = formValues.Documenttype;
-    this.probationLetterData.authorityName = formValues.authorityid.fullName,
-    this.probationLetterData.authorityDesignation = formValues.authorityid.designation
+    this.probationLetterData.authorityName = formValues.authorityid?.fullName,
+    this.probationLetterData.authorityDesignation = formValues.authorityid?.designation
   }
 
   //to post probation letter email Details to the offerletter table

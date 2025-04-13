@@ -1,99 +1,204 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <p class="component-header cursor mb-0">Events</p>
-        </div>
-        <div>
-            <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i class="bi bi-plus me-2"></i>Add Event</button>
-        </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <p class="component-header mb-0">Events</p>
     </div>
-
-    <!--tabs content-->
-    <div class="my-4">
-        <app-events-tabs />
+    <div>
+      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
+          class="bi bi-plus me-2"></i>Add Event</button>
     </div>
+  </div>
 
-    <!--content-->
+  <!--tabs content-->
+  <!-- <div class="my-4">
+    <app-events-tabs />
+  </div> -->
+
+  <ng-container *ngIf="(getEventsData$ | async) === null; else maincontent">
+    <ng-template #loadingSpinner>
+      <div class="loader-placeholder-content text-center">
+        <div>
+          <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
+        </div>
+      </div>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+  </ng-container>
+
+  <!--content-->
+  <ng-template #maincontent>
     <div class="custom-events-main-content">
-        <!--Todays Events-->
-        <div class="card events-section-card mb-4">
-            <div class="my-4">
-                <p class="component-header cursor mb-0">Today's Events</p>
-            </div>
-            <div class="row gap-4">
-                <div class="col">
-                    <div class="card event-card">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex gap-3 align-items-center">
-                                <div class="card event-icon-card">
-                                    <img src="icons\event-icon.png" alt="Event Icon" class="event-icon">
-                                </div>
-                                <div>
-                                    <p class="event-name mb-0">Tech Treck</p>
-                                    <p class="date mb-0">08-Jan-2025</p>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a></li>
-                                    <li><a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <p class="event-content-text mb-3">“Lorem Ipsum is simply dummy text of the printing and
-                                typesetting industry Standards.”</p>
-                        </div>
-                        <hr class="vr-line m-0">
-                        <div class="pt-3">
-                            <img src="images\event-image.png" alt="Event Image" class="event-image w-100">
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!--Todays Events-->
+      <div class="card events-section-card mb-4">
+        <div class="mb-3">
+          <p class="component-sub-header mb-0">Today's Events</p>
         </div>
-        
-        <!--Upcoming Events-->
-        <div class="card events-section-card">
-            <div class="my-4">
-                <p class="component-header cursor mb-0">Upcoming Events</p>
-            </div>
-            <div class="d-flex flex-wrap gap-4">
-                <!--event-->
-                <div class="card event-card mb-3">
-                    <div class="d-flex justify-content-between">
-                        <div class="d-flex gap-3 align-items-center">
-                            <div class="card event-icon-card">
-                                <img src="icons\event-icon.png" alt="Event Icon" class="event-icon">
-                            </div>
-                            <div>
-                                <p class="event-name mb-0">Tech Treck</p>
-                                <p class="date mb-0">08-Jan-2025</p>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <a data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                <li><a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a></li>
-                                <li><a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a></li>
-                            </ul>
-                        </div>
+
+        <div class="row gap-4">
+          <ng-container *ngFor="let item of getEventsData$ | async">
+            <!-- Show only events that match today's date -->
+            <div class="col" *ngIf="(item.eventDate | dateformat) === (CurrentDate | dateformat)">
+              <div class="card event-card">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex gap-3 align-items-center">
+                    <div class="card event-icon-card">
+                      <img src="icons\event-icon.png" alt="Event Icon" class="event-icon">
                     </div>
-                    <div class="mt-3">
-                        <p class="event-content-text mb-3">“Lorem Ipsum is simply dummy text of the printing and
-                            typesetting industry Standards.”</p>
+                    <div>
+                      <p class="event-name mb-0">{{ item.eventTitle }}</p>
+                      <p class="date mb-0">{{ item.eventDate | date: 'dd-MMM-yyyy' }}</p>
                     </div>
-                    <hr class="vr-line m-0">
-                    <div class="pt-3">
-                        <img src="images\event-image.png" alt="Event Image" class="event-image w-100">
-                    </div>
+                  </div>
+                  <div class="dropdown">
+                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </a>
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                      <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item"><i
+                            class="bi bi-pencil me-2"></i>Update</a></li>
+                      <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item"><i
+                            class="bi bi-trash3 me-2"></i>Delete</a></li>
+                    </ul>
+                  </div>
                 </div>
+                <div class="mt-3">
+                  <p class="event-content-text mb-3">{{ item.eventDescription }}</p>
+                </div>
+                <hr class="vr-line m-0">
+                <div class="pt-3" *ngIf="item.attachmentUrl">
+                  <img [src]="item.attachmentUrl" alt="Event Image" class="event-image w-100">
+                </div>
+              </div>
             </div>
+          </ng-container>
         </div>
+      </div>
+
+      <!--Upcoming Events-->
+      <div class="card events-section-card">
+        <div class="mb-4">
+          <p class="component-sub-header mb-0">Upcoming Events</p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-4">
+          <!-- Loop over events -->
+          <div class="card event-card mb-3" *ngFor="let event of getEventsData$ | async">
+            <div class="d-flex justify-content-between">
+              <div class="d-flex gap-3 align-items-center">
+                <div class="card event-icon-card">
+                  <img src="icons\event-icon.png" alt="Event Icon" class="event-icon">
+                </div>
+                <div>
+                  <p class="event-name mb-0">{{ event.eventTitle }}</p>
+                  <p class="date mb-0">{{ event.eventDate | date: 'dd-MMM-yyyy' }}</p>
+                </div>
+              </div>
+              <div class="dropdown">
+                <a class="dropdown-click" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li (click)="openModalupdate(updateevets,event)"><a class="dropdown-item"><i
+                        class="bi bi-pencil me-2"></i>Update</a></li>
+                  <li (click)="setdata=event;openmodal(deleteconformation)"><a class="dropdown-item"><i
+                        class="bi bi-trash3 me-2"></i>Delete</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-3">
+              <p class="event-content-text mb-3">{{ event.eventMessage }}</p>
+            </div>
+            <hr class="vr-line m-0">
+            <div class="pt-3" *ngIf="event.attachmentUrl">
+              <img [src]="event.attachmentUrl" alt="Event Image" class="event-image img-fluid w-100">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </ng-template>
 </div>
+
+<!--Delete Popup-->
+<ng-template #deleteconformation let-modal>
+  <div class="result-popup-content p-5" ngbAutofocus>
+    <div>
+      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+      <p class="confirmation-text mb-4">Are you sure you want to delete the Event ?</p>
+    </div>
+    <div class="d-flex justify-content-center gap-5">
+      <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="modal.dismiss()">No</button>
+      <button type="submit" class="custom-btn btn-primary w-50 py-2" (click)="DeleteEvent(setdata.eventId)">Yes</button>
+    </div>
+  </div>
+</ng-template>
+
+<!--update Popup-->
+<ng-template #updateevets let-modal>
+  <div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between popup-header-border p-3" ngbAutofocus>
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Update Event</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content p-4">
+      <form [formGroup]="customEventupdateForm" (ngSubmit)="updateEvents(customEventupdateForm)">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
+                class="text-danger">*</span></label>
+            <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
+            <div *ngIf="customEventupdateForm.get('eventDate')?.touched" class="error-msg">
+              Event date is required.
+            </div>
+            <div
+              *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
+              class="error-msg">
+              Event date cannot be in the past.
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="title" class="form-label custom-label mb-2">Event Title<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="title" placeholder="Please enter event title"
+              formControlName="eventTitle">
+            <div *ngIf="customEventupdateForm.get('title')?.touched && customEventupdateForm.get('title')?.invalid"
+              class="error-msg">
+              <div *ngIf="customEventupdateForm.get('title')?.errors?.['required']">Title is required.</div>
+            </div>
+          </div>
+          <div class="col-md-12 mb-3">
+            <label for="description" class="form-label custom-label mb-2">Event Description<span
+                class="text-danger">*</span></label>
+            <textarea class="form-control custom-input" formControlName="eventMessage"
+              placeholder="Please enter description" id="description"></textarea>
+            <div *ngIf="customEventupdateForm.get('eventMessage')?.errors?.['required']" class="error-msg">
+              Event Description is requied
+            </div>
+          </div>
+          <div class="col-md-12 mb-3">
+            <label for="file" class="form-label custom-label mb-2">Attachment</label>
+            <input type="file" class="form-control custom-input" id="file" formControlName="imageUrl">
+            <div *ngIf="selectedImagePreview" class="my-2 text-wrap w-100 text-truncate">
+              <b>{{ selectedImagePreview }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-3 mt-4">
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="customEventupdateForm || spinnerLoader">
+            @if (spinnerLoader) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading' | translate}}...</span>
+            } @else {
+            <span>{{'Update'| translate}}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

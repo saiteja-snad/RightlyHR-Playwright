@@ -1,0 +1,18 @@
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-shits',
+  imports: [CommonModule,RouterModule],
+  templateUrl: './shits.component.html',
+  styleUrl: './shits.component.scss'
+})
+export class ShitsComponent {
+
+  constructor( public router:Router) { }
+
+  nagvition(){
+    this.router.navigate(['/settings/employee-fields/addshits']);
+  }
+}

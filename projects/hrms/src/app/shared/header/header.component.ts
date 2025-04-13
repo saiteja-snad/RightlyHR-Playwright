@@ -9,9 +9,10 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PmsTabsComponent } from "../pms-tabs/pms-tabs.component";
+import { SettingsMainHeaderTabsComponent } from "../settings-tabs/settings-main-header-tabs/settings-main-header-tabs.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PmsTabsComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PmsTabsComponent, SettingsMainHeaderTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -42,14 +43,17 @@ export class HeaderComponent {
       .DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl)
       .subscribe({
         next: (res: any) => {
-          console.log(res)
+         // console.log(res)
           let blob = new Blob([res['body']], { type: 'image/png' });
-          console.log(blob);
+         // console.log(blob);
           let objectURL = URL.createObjectURL(blob);
           this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          console.log(this.imageUrl);
+         // console.log(this.imageUrl);
         },
-        error: (reason) => console.log(reason),
+        error: (reason) => {
+           //console.log(reason),
+        }
+          
       });
   }
 

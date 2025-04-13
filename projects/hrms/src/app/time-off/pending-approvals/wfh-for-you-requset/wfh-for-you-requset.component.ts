@@ -1,18 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { IJob } from '../../../Interfaces/letters-model';
-import { Subject } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { LeaveApproval, LeaveApproverComment } from '../../../Interfaces/pendingapprovalsmodel';
 import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { BehaviorSubject, Subject } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
 
 @Component({
   selector: 'app-wfh-for-you-requset',
@@ -24,7 +32,10 @@ import { DateformatPipe } from "../../../pipes/dateformat.pipe";
     PaginatorModule,
     DropdownModule,
     NoDataFoundComponent,
-    DateformatPipe
+    DateformatPipe,
+    ReactiveFormsModule,
+    TranslateModule,
+    WfhsearchfilterPipe
 ],
   templateUrl: './wfh-for-you-requset.component.html',
   styleUrl: './wfh-for-you-requset.component.scss',
@@ -41,11 +52,14 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  leaves = [] as AttendanceRequest[];
+  leaves = new BehaviorSubject<AttendanceRequest[]>([]);
   approverComments = [] as any[];
-  // approverComments = [] as AttendanceRequestC[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
+  selectedLeaveData = {} as AttendanceRequest;
+  approveForm!: FormGroup;
+  rejectForm!: FormGroup;
+  searchValue: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -54,7 +68,19 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getAllPendingApprovals()
+    this.getAllPendingApprovals();
+  }
+
+  intializeApproveForm() {
+    this.approveForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+  }
+
+  intializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
   }
 
   getAllPendingApprovals() {
@@ -66,9 +92,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
-          console.log(response);
-          this.leaves = response.data as AttendanceRequest[];
-          console.log(this.leaves);
+          this.leaves.next(response.data);
         },
         error: (reason) => console.log(reason),
       });
@@ -84,13 +108,139 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
+  openApproveModal(content: any, request: AttendanceRequest) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeApproveForm();
+    this.selectedLeaveData = request;
+  }
 
-  comments(value: any, commentspopup: any){
-    this.modalService.open(commentspopup, {centered: true,backdrop: 'static',size: 'lg'});
+  openRejectModal(content: any, request: AttendanceRequest) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeRejectForm();
+    this.selectedLeaveData = request;
+  }
+
+  handleAccept(approveForm: FormGroup): void {
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      const requestBody = {
+        status: 'Approved',
+        comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
+      };
+      this.sharedModalService.openLoaderModal(
+        'Approving Request, Please wait...');
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openSuccessModal(
+              'Request Approved Successfully'
+            );
+            this.approveForm.reset();
+            this.selectedLeaveData = {} as AttendanceRequest;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              wfh: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
+
+  handleReject(rejectForm: FormGroup): void {
+    if (rejectForm.valid) {
+      const formData = rejectForm.value;
+      const requestBody = {
+        status: 'Rejected',
+        comments: formData.comments,
+      };
+      this.sharedModalService.openLoaderModal(
+        'Rejecting Request, Please wait...');
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openSuccessModal(
+              'Request Rejcted Successfully'
+            );
+            this.rejectForm.reset();
+            this.selectedLeaveData = {} as AttendanceRequest;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              wfh: true,
+            }));
+           
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
+
+  handleProcess(request: AttendanceRequest) {
+    let requestBody = {
+      status: 'Processed',
+      approvedBy: this.empinfo.employeeId.toString(),
+    };
+    this.sharedModalService.openLoaderModal(
+      'Processing Request, Please wait...');
+    this.http
+      .putData(
+        `PendingApproval/process/${request.approvalHeader.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal(
+            'Request Processed Successfully'
+          );
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            wfh: true,
+          }));
+        },
+        error: (reason: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openErrorModal(
+            reason.error.Message
+          );
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
+      });
+  }
+  comments(value: any, commentspopup: any) {
+    this.modalService.open(commentspopup, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
     this.approverComments = value;
     console.log(this.approverComments);
   }
-
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -11,7 +11,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ISeparation, ISeparationRequest } from './separation-for-you-request';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
@@ -250,6 +250,10 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         next: (respone: any) => {
           this.isLoading = false;
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            separation: true,
+          }));
           if (this.requestType === 'Separation Request') {
             this.conformationPopup.openSuccessModal(
               'Separation Request Approved Successfully'
@@ -298,6 +302,10 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.isLoading = false;
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            separation: true,
+          }));
           if (this.requestType === 'Separation Request') {
             this.conformationPopup.openSuccessModal(
               'Separation Request Rejected Successfully'
@@ -384,6 +392,10 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.getseparationforyourequests();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            separation: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Separation Request Processed Successfully'
           );

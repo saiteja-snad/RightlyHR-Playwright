@@ -6,7 +6,7 @@ import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';

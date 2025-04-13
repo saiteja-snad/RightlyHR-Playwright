@@ -1,30 +1,14 @@
-<div class="card custom-nav-tab-card px-2">
-    <ul class="nav-tabs-main-content ps-0 text-center mb-0">
-        @if(rbac.allowedToAccess('My Info', 'Basic Information', 'view')){
-            <li class="nav-item" [routerLink]="['/myinfo/personal/basic-info']" routerLinkActive="nav-tab-active">
-                Basic Information
-            </li>
-        }
-        <li class="nav-item" [routerLink]="['/myinfo/personal/address-info']" routerLinkActive="nav-tab-active">
-            Address
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/personal/contact-details']" routerLinkActive="nav-tab-active">
-            Contact
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/personal/emergency-contact-details']" routerLinkActive="nav-tab-active">
-            Emergency Contact
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/personal/education-details']" routerLinkActive="nav-tab-active">
-            Education
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/personal/identity-details']" routerLinkActive="nav-tab-active">
-            Identity
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/personal/family-details']" routerLinkActive="nav-tab-active">
-            Family
-        </li>
-        <li class="nav-item" [routerLink]="['/myinfo/personal/bank-details']" routerLinkActive="nav-tab-active">
-            Bank
-        </li>
-    </ul>
+
+<div class="component-nav-tabs-container card px-2">
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of filteredTabs">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                        {{ tab.label }}
+                    </a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
 </div>

@@ -23,7 +23,5 @@ export class MyinfoJobTabsComponent {
     { label: 'Compensation', link: '/myinfo/job/compensation-details' },
     { label: 'Desk', link: '/myinfo/job/compensation-details' },
     { label: 'Assets', link: '/myinfo/job/assets-details' },
-
-
   ];
 }

@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormsModule } 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';

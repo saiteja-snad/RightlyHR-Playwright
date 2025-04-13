@@ -7,7 +7,7 @@ import { Ieducation, Ipersonal } from '../../models/education.model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../http-services/http.service';
 import moment from 'moment';
-import { DateFormatPipe } from "../../pipes/date-format.pipe";
+import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import { PopupService } from '../../common-services/popup.service';
 import { UpdateEducationDetailsComponent } from './update-education-details/update-education-details.component';
 import { DataService } from '../../common-services/data.service';

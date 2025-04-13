@@ -17,7 +17,7 @@ import {
   ICategoryDetails,
   PermissionRequestResponse,
 } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';

@@ -9,7 +9,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
 import { RegularizationRequest } from '../../../Interfaces/timoff-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-premissions-waiting-for-approval',

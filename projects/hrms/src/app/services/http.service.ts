@@ -312,10 +312,19 @@ export class HttpService {
     );
   }
 
-  getAllPendingApprovalsCount(moduleId: number, employeeId: number): Observable<ApprovalStatusCount[]> {
-    return this.http.get<ApprovalStatusCount[]>(
-      `${this.ApiUrl}PendingApproval/getApprovalStatusCounts?moduleId=${moduleId}&EmployeeId=${employeeId}`
-    );
+getAllPendingApprovalsCount(moduleId?: number, employeeId?: number): Observable<ApprovalStatusCount[]> {
+  let params = new HttpParams();
+  
+  if (moduleId !== undefined && moduleId !== null) {
+    params = params.set('moduleId', moduleId.toString());
   }
+
+  if (employeeId !== undefined && employeeId !== null) {
+    params = params.set('EmployeeId', employeeId.toString());
+  }
+
+  return this.http.get<ApprovalStatusCount[]>(`${this.ApiUrl}PendingApproval/getApprovalStatusCounts`, { params });
+}
+
   
 }

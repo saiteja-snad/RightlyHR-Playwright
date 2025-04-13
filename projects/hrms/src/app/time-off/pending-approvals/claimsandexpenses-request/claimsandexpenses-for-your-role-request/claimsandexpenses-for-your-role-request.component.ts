@@ -7,7 +7,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { IJob } from '../../../../Interfaces/letters-model';
-import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { DropdownModule } from 'primeng/dropdown';
@@ -53,7 +53,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent {
     console.log(EmployeeId);
     this.http
       .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=198&approvedType=EMP`
+        `PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=ROLE`
       )
       .subscribe({
         next: (response: any) => {

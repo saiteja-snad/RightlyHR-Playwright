@@ -151,10 +151,10 @@ export class JobDetailsComponent {
       team: [{ value: null, disabled: true }],
       teamManager: [{ value: null, disabled: true }],
       reportingManager: [{ value: '', disabled: true }],
-      description: [null, [Validators.required, Validators.maxLength(400)]],
+      description: [null, [Validators.required, Validators.maxLength(400),Validators.pattern(/^(?!\s).*$/)]],
       isEarlyRelieving: [false],
       earlyRelievingDate: [null, Validators.required],
-      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400)]]
+      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400),Validators.pattern(/^(?!\s).*$/)]]
     });
 
     // Disable early relieving fields by default

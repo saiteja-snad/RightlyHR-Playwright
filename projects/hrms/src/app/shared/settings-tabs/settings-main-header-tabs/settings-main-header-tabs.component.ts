@@ -14,7 +14,7 @@ export class SettingsMainHeaderTabsComponent {
   navTabs: any[] = [
     { label: 'Employee Fields', link: '/settings/employee-fields' },
     { label: 'Roles', link: '/settings/roles-permissions' },
-    { label: 'Time Off', link: '/myinfo/team-members' },
+    { label: 'Time Off', link: '/settings/timeoff-configurations' },
     { label: 'Asset Configuration', link: '/myinfo/onboarding-request' },
     { label: 'Dynamic Forms', link: '/myinfo/onboarding-request' }
   ];

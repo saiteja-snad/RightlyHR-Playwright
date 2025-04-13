@@ -343,7 +343,7 @@ body {
         line-height: 100%;
         letter-spacing: 0%;
         vertical-align: middle;
-        padding: 1.25rem 1rem;
+        padding: 1rem;
     }
 
     .active-nav-link{
@@ -366,6 +366,7 @@ body {
     border-radius: 0.5rem;
     overflow-y: auto;
     background-color: var(--white-color);
+    border: 1px solid #CCDAEC;
 }
 
 .custom-component-right-content{
@@ -373,6 +374,7 @@ body {
     height: calc(100dvh - 12rem);
     overflow-y: auto;
     border-radius: 0.5rem;
+    border: 1px solid #CCDAEC;
 }
 
 // Component stylings
@@ -383,6 +385,7 @@ body {
     line-height: 100%;
     letter-spacing: 0%;
     vertical-align: middle;
+    color: var(--primary-color);
 }
 
 .component-sub-header {
@@ -392,9 +395,10 @@ body {
     line-height: 100%;
     letter-spacing: 0%;
     vertical-align: middle;
+    color: var(--primary-color);
 }
 
-.custom-background-card{
+.custom-background-card {
     border: none;
     background-color: var(--body-bg-color);
 }
@@ -825,6 +829,12 @@ a {
 }
 
 // custom -select dropdown
+.dropdown {
+    .dropdown-click {
+        color: #000 !important;
+    }
+}
+
 .custom-dropdown-menu {
     border: 1px solid #305889;
     background-color: #F0F4F8;
@@ -833,7 +843,7 @@ a {
     .dropdown-item {
         padding: 0.625rem;
         font-weight: 600;
-        font-size: var(--fontsize12);
+        font-size: var(--fontsize14);
         color: #305889;
         border-bottom: 1px solid #C8D5E4;
     }
@@ -854,8 +864,6 @@ a {
         font-weight: 700;
     }
 }
-
-
 
 // events component stylings
 .event-card {
@@ -895,7 +903,7 @@ a {
 
     .event-content-text {
         font-weight: 400;
-        font-size: var(font-size);
+        font-size: var(--fontsize13);
         color: #808E9D;
     }
 
@@ -905,7 +913,7 @@ a {
     }
 
     .event-image {
-        height: 8rem;
+        height: 14rem;
         border-radius: 0.75rem;
     }
 }
@@ -1069,7 +1077,7 @@ input[type="file"] {
     }
 
     .content-text {
-        font-size: 2.5rem;
+        font-size: 2.25rem;
         font-weight: 500;
     }
 }
@@ -1301,7 +1309,7 @@ input:focus {
     border: 1px solid #CCDAEC;
     border-radius: 0.5rem;
     background-color: var(--white-color);
-    border: none !important;
+    border: 1px solid #CCDAEC;
 }
 
 .custom-setting-right-content {

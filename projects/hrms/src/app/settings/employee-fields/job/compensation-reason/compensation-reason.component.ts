@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ICompensation } from './compensation-reason.model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-compensation-reason',
@@ -24,33 +25,26 @@ export class CompensationReasonComponent {
   selectedId: number | null = null;
   selectedDeletereason: any = null;
   subscription!: Subscription;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
+  ) {
 
   }
   ngOnInit(): void {
     this.CompensationForm = this.fb.group({
-      Reason: ['', [Validators.required], Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]
+      Reason: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.updateForm = this.fb.group({
-      Reason: ['', [Validators.required], Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]
+      UpdateReason: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
 
     this.getReason();
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    // if (!pattern.test(inputChar)) {
-    //   event.preventDefault(); // blocks numbers or symbols
-    // }
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+
   getReason() {
     this.http.getData('CompensationReason').subscribe((data: any) => {
       this.CompensationReason = data;
@@ -79,7 +73,7 @@ export class CompensationReasonComponent {
   updateReason(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: ICompensation = {
-        reason: this.updateForm.value.Reason.trim(),
+        reason: this.updateForm.value.UpdateReason.trim(),
         isdeleted: "Active",
         sno: this.selectedId
       };
@@ -103,7 +97,7 @@ export class CompensationReasonComponent {
   }
   openupdate(reasonList: any) {
     this.selectedId = reasonList.sno;
-    this.updateForm.patchValue({ Reason: reasonList.reason });
+    this.updateForm.patchValue({ UpdateReason : reasonList.reason });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE

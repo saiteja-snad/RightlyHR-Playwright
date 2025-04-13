@@ -87,6 +87,9 @@
                         <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
                             placeholder="Type here"></textarea>
+                            <div *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid" class="error-msg">
+                                Reason is required.
+                              </div>
                     </div>
 
                     <div class="col-md-12 mb-3" *ngIf="availablebalance">

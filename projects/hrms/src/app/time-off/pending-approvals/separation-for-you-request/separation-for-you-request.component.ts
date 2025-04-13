@@ -15,6 +15,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { environment } from '../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-separation-for-you-request',
@@ -85,10 +86,10 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   getseparationforyourequests() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    console.log(EmployeeId);
+    let moduleId=environment.SeparationrequestmoduleId
     this.subscription = this.http
       .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=13&approvedType=EMP`
+        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`
       )
       .subscribe({
         next: (data: any) => {

@@ -8,6 +8,14 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApprovalStatusCount } from '../../Interfaces/timoff-model';
 import { environment } from '../../../environments/environment';
 
+interface NavLink {
+  label: string;
+  route: string;
+  moduleId: number;
+  count?: number; // <-- add this
+}
+
+
 @Component({
   selector: 'app-pending-approvals-tabs',
   imports: [CommonModule, RouterModule],
@@ -23,45 +31,45 @@ export class PendingApprovalsTabsComponent {
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   countEmp: any;
   countRole: any;
-  navLinks = [
+  navLinks: NavLink[] = [
     {
       label: 'Time-Off',
       route: '/time-off/pending-approvals/time-off-request',
-      moduleId: 1,
+      moduleId: environment.leavesModuleId,
     },
-    { label: 'WFH', route: '/time-off/pending-approvals/wfh', moduleId: 2 },
-    { label: 'Comp-Off', route: '/time-off/pending-approvals/comp-off', moduleId: 3 },
-    { label: 'Permissions', route: '/time-off/pending-approvals/permissions', moduleId: 18 },
+    { label: 'WFH', route: '/time-off/pending-approvals/wfh', moduleId: environment.wfhModuleId },
+    { label: 'Comp-Off', route: '/time-off/pending-approvals/comp-off', moduleId: environment.compoffModuleId },
+    { label: 'Permissions', route: '/time-off/pending-approvals/permissions', moduleId: environment.permissionsModuleId },
     {
       label: 'Attendance Regularization',
       route: '/time-off/pending-approvals/attendance-request',
-      moduleId: 4,
+      moduleId: environment.attendanceRegularizationModuleId,
     },
     {
       label: 'Separation Requests',
       route: '/time-off/pending-approvals/separation-request',
-      moduleId: 5,
+      moduleId: environment.SeparationrequestmoduleId,
     },
     {
       label: 'Recall Requests',
       route: '/time-off/pending-approvals/recall-request',
-      moduleId: 6,
+      moduleId: environment.RecallrequestmoduleId,
     },
-    { label: 'Trainee Details', route: '/time-off/pending-approvals/trainee',moduleId: 7 },
+    { label: 'Trainee Details', route: '/time-off/pending-approvals/trainee',moduleId: environment.traineeoffboardingModuleId },
     {
       label: 'No Due Clearance Requests',
       route: '/time-off/pending-approvals/nodue-request',
-      moduleId: 8,
+      moduleId: environment.nodueModuleId,
     },
     {
       label: 'Claims and Expenses',
       route: '/time-off/pending-approvals/claimsandexpenses-request',
-      moduleId: 19,
+      moduleId: environment.expensesModuleId,
     },
     {
       label: 'Probation Details',
       route: '/time-off/pending-approvals/probation-request',
-      moduleId: 9,
+      moduleId: environment.ProbationrequestmoduleId,
     },
   ];
   constructor(
@@ -123,15 +131,25 @@ export class PendingApprovalsTabsComponent {
 
   getAllPendingApprovalsCount() {
     const employeeId = parseInt(this.LOGIN.employeeId);
-    this.http.getAllPendingApprovalsCount(undefined,employeeId).subscribe({
+    this.http.getAllPendingApprovalsCount(undefined, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
-        console.log(data);
-        const filtered = data;
-        this.pendingApprovalCount.set(filtered);
+        const countMap = new Map<number, number>();
+        data.forEach(item => countMap.set(item.moduleId, item.totalCount));
+  
+        // Update navLinks with count
+        this.navLinks = this.navLinks.map(link => ({
+          ...link,
+          count: countMap.get(link.moduleId) || 0
+        }));
+  
+        // this.pendingApprovalCount.set(data);
+        // console.log(this.navLinks);
+        
       },
       error: (err) => console.error('Error fetching approvals:', err),
     });
   }
+  
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

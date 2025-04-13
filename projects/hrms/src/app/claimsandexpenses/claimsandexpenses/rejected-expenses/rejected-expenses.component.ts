@@ -8,10 +8,11 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe,CommonModule,NgxDocViewerModule],
+  imports: [DateformatPipe,CommonModule,NgxDocViewerModule,FormsModule],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
@@ -20,18 +21,18 @@ export class RejectedExpensesComponent {
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
-  flitredrejected = new BehaviorSubject<any[]>([]);
+
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   constructor(
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
  
-  expenesEmplyeedata: IExpense[] = [];
-  draftsCount: number = 0;
+    searchTerm: any = ''
+    expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+    this.getexpensesheaderbyemployeeid();
   }
 
 
@@ -39,30 +40,20 @@ export class RejectedExpensesComponent {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
-  getexpensesheaderbyemployeeid(_employeeId: number): void {
-    //params
-    const params = this.empinfo.employeeId;
-
+  getexpensesheaderbyemployeeid(): void {
+    const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Rejected&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata = data as IExpense[];
-          this.filterapprovedExpenses();
+          this.expenesEmplyeedata.next(data) 
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
 
-  filterapprovedExpenses() {
-    const draftExpenses = this.expenesEmplyeedata
-      .filter((expense) => expense.status === 'Rejected')
-      .reverse();
-    this.flitredrejected.next(draftExpenses);
-    this.draftsCount = draftExpenses.length;
-  }
 
-  
 
   viewItem(expid: number,) {
     console.log(expid);

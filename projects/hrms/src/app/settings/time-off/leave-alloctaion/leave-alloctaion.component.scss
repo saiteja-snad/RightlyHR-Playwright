@@ -1,0 +1,94 @@
+.dash{
+    background-color: #f9fbff;
+    padding: 30px 20px;
+  }
+    
+    .settings-cards{
+      border-radius: 15px;
+      padding: 20px 30px;
+      background-color: #ffff;
+      box-shadow: none;
+      border: 1px solid rgb(231, 227, 227);
+      min-height: 80vh;
+      margin-left: 10px;
+      border-radius: 0px 15px 15px 15px;
+    }
+    
+    .nav-tabs{
+      margin-left: 10px;
+      border-bottom: none;
+    }
+    
+    .settings-heading{
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1;
+      text-align: left;
+      color: #222b45;
+    }
+    
+    
+    th{
+      background-color: #f4f8ff;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 16px;
+      line-height: normal;
+      text-align: left;
+      color:#8a9099;
+      text-transform: uppercase;
+    }
+    
+    td{
+      font-size: 14px;
+      font-weight: 500;
+      line-height: normal;
+      letter-spacing: normal;
+      text-align: left;
+      color: #3f434a;
+      padding: 16px;
+      border-bottom: 1px solid rgb(231, 227, 227);
+    }
+    
+    .settings-add-btn{
+      color: #ffff;
+      background-color: #304ffd;
+      border-radius: 10px;
+    }
+    
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    .input2{
+     
+      width:8rem;
+     
+    }
+    @media (max-width:800px){
+    .table-scroll{
+      overflow-y: scroll;
+      overflow-x: scroll;
+      height: max-content;
+      max-height: 50.4vh;
+      width:fit-content;
+    }
+    }
+    
+    @media (min-width:900px){
+      .days{
+        text-align: center;
+      }
+    }
+  
+    .bi-check-circle-fill{
+      color: #304ffd;
+      font-size: 3rem;
+    
+    }
+  
+    .bgfade{
+      background-color: #1b1b1b82;
+    }  

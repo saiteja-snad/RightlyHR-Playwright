@@ -9,7 +9,7 @@ import { HttpService } from '../../services/http.service';
 import { ITrainee } from './Prospective-interns-modules';
 import { FormsModule } from '@angular/forms';
 import { IServe } from '../../Interfaces/letters-model';
-import { ActiveEmployeePipe } from '../../pipes/active-employee.pipe';
+import { ActiveEmployeePipe } from '../../Pipes/active-employee.pipe';
 
 @Component({
   selector: 'app-prospective-interns',

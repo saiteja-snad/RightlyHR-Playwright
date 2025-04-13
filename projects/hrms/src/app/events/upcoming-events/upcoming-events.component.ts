@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { EventsTabsComponent } from "../../shared/events-tabs/events-tabs.component";
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddEventComponent } from './add-event/add-event.component';
 import { Observable, of, shareReplay, Subscription, tap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, EventsTabsComponent, DateformatPipe, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule,TranslateModule],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })
+
 export class UpcomingEventsComponent {
   subscription!: Subscription
   customEventupdateForm!: FormGroup;

@@ -10,7 +10,7 @@ import { Location } from '@angular/common'
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { environment } from '../../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DateFormatPipe } from "../../pipes/date-format.pipe";
+import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 @Component({
   selector: 'app-review',
   imports: [CommonModule, FormsModule, RouterModule, NgxDocViewerModule, DateFormatPipe],

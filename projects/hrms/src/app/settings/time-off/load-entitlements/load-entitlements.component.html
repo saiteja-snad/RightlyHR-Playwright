@@ -1,0 +1,130 @@
+<div class="container-fluid dash">
+
+  
+
+    <div class="card settings-cards">
+        <div class="row">
+            <div class="col-lg-4 ">
+                <div><span class="settings-heading">Load Entitlements</span></div>
+            </div>
+        </div>
+        <hr>
+        <div>
+            <label class="form-label bold-label">Employee Id</label>
+            <input type="search" class="form-select custom-emp-select" aria-label="Employee" name="Employee"
+                placeholder="Search by Employee Id or Name" [(ngModel)]="fusionEmployeeId"
+                (input)="onSearchChange(fusionEmployeeId)" (click)="toggleDropdown('empid')"
+                (search)="onClearSearch()" [class.open]="isDropdownOpen" autocomplete="off" required />
+            <div class="dropdown-menu" #dropdownMenu [class.show]="isDropdownOpen">
+
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="DateOfJoining" class="form-label bold-label">Date Of Joining</label>
+                <input type="text" class="form-control" id="dateOfJoining" name="DateOfJoining" disabled
+                    placeholder="Date Of Joining" >
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="Location" class="form-label bold-label">Location</label>
+                <input type="text" class="form-control" id="location" name="Location" disabled placeholder="Location">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="Sub Location" class="form-label bold-label">Sub Location</label>
+                <input type="text" class="form-control" id="sublocation" name="Sub Location" disabled
+                    placeholder="Sub Location">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="shift" class="form-label bold-label">Shift</label>
+                <input type="text" class="form-control" id="shift" name="Shift" disabled placeholder="Shift">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="FirstName" class="form-label bold-label">First Name</label>
+                <input type="text" class="form-control" id="FirstName" placeholder="First Name" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="LastName" class="form-label bold-label">Last Name</label>
+                <input type="text" class="form-control" id="LastName" placeholder="Last Name" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="WorkEmail" class="form-label bold-label">Work Email</label>
+                <input type="email" class="form-control" id="WorkEmail" placeholder="Work Email" disabled>
+            </div>
+
+
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-4 ">
+                <div><span class="heading">Leave Entitlements</span></div>
+            </div>
+        </div>
+
+        <div class="table-scroll">
+            <table  style="width:100%;"> <!-- Table shown only if records exist -->
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Category</th>
+                        <th>Policy Leaves</th>
+                        <th>Entitled Leaves</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let record of leavePolicyRecords; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ record.category }}</td>
+                        <td>{{ record.policyLeaves }}</td>
+                        <td class="input-field" style="width: 400px;" contenteditable="false" #entitledLeaves>{{ record.entitledLeaves }}</td>
+                        <td><button class="btn btn-primary" (click)="editRow(entitledLeaves, record)">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div *ngIf="leavePolicyRecords.length === 0" class="no-data-found mt-3 mb-3" >
+                No data found
+            </div>
+        </div>
+        
+
+      
+        <div class="center-button mt-2">
+            <button class="btn btn-primary" (click)="sendEntitlementRequest()">Load Entitlements</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- success message popup -->
+<div class="modal fade bgfade " id="successhide" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center pb-5">
+            <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
+            <h4 class="text-center ps-3 pe-3 mb-3 ">{{StatusMsg}}</h4>
+        </div>
+    </div>
+</div>
+
+<!-- error message popup -->
+<div class="modal fade bgfade " id="entitled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center pb-5">
+            <i class="bi bi-exclamation-circle mt-4 mb-3 "></i>
+            <h4 class="text-center ps-3 pe-3 mb-3 ">{{StatusMsg}}</h4>
+            <button class="btn btn-primary" (click)="close()">OK</button>
+        </div>
+
+    </div>
+</div>

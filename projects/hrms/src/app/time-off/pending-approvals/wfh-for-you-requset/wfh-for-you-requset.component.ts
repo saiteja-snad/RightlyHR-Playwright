@@ -12,15 +12,13 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { IJob } from '../../../Interfaces/letters-model';
-import { BehaviorSubject, Subject } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
-import {
-  AttendanceRequest,
-  ICategoryDetails,
-} from '../../../Interfaces/timoff-model';
-import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { LeaveApproval, LeaveApproverComment } from '../../../Interfaces/pendingapprovalsmodel';
+import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { BehaviorSubject, Subject } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
 

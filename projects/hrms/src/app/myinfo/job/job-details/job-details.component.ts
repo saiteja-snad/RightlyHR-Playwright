@@ -7,7 +7,7 @@ import { IDepartment, IGrade, IJob, IJobdetails, IJobtype, IRole } from '../../.
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import moment from 'moment';
 import { environment } from '../../../../environments/environment.dev';

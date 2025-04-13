@@ -9,7 +9,7 @@ import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { SearchfilterPipe } from "../../pipes/searchfilter.pipe";
+import { SearchfilterPipe } from "../../Pipes/searchfilter.pipe";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';

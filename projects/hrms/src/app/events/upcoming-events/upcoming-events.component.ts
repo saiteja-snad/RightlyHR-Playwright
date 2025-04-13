@@ -7,7 +7,7 @@ import { AddEventComponent } from './add-event/add-event.component';
 import { Observable, of, shareReplay, Subscription, tap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';

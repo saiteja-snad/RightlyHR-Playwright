@@ -9,7 +9,7 @@ import { HttpService } from '../../http-services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
 import { Location } from '@angular/common';
-import { DateFormatPipe } from "../../pipes/date-format.pipe";
+import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { PopupService } from '../../common-services/popup.service';
 import { Ipersonal } from '../../models/personal-details.model';

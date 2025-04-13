@@ -255,4 +255,32 @@ export interface ApprovalStatusCount {
   totalCount: number;
 }
 
+export interface ILeavePolicyData{
+  id:number
+  year :number
+  locationId :number
+  subLocationId :number
+  shiftId :number
+  categoryId :number
+  allowedDays :number
+  entityType :string
+  entityReferenceId:number
+  status :string
+  comments :string
+  addedBy :number
+  addedDate :Date
+  lastModifiedBy :number
+  lastModifiedDate :Date
+  }
+  export interface Igradeid{
+    gradeId: number;
+    gradeName: string;
+    jobGrade: string;
+    createdat: any;
+    updatedat: any;
+    isdeleted: string;
+    maxDays:number;
+    categoryId:number;
+    lpId:number
+}
 

@@ -1,50 +1,13 @@
+
 <div class="component-side-nav-tabs-container py-3">
   <ul class="nav flex-column">
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/time-off-request']"
-      routerLinkActive="active-nav-link">Time-Off ({{countEmp + countRole}})</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/wfh']"
-      routerLinkActive="active-nav-link">WFH (12)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/comp-off']"
-      routerLinkActive="active-nav-link">Comp-Off (12)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/permissions']"
-      routerLinkActive="active-nav-link">Permissions (12)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/attendance-request']"
-      routerLinkActive="active-nav-link">Attendance Regularization  (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/separation-request']" (click)="onclickseparation()" routerLinkActive="active-nav-link">Separation Requests (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/recall-request']" routerLinkActive="active-nav-link">Recall Requests (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/trainee']"
-      routerLinkActive="active-nav-link">Trainee Details (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/nodue-request']"
-      routerLinkActive="active-nav-link">No Due Clearance Requests (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/claimsandexpenses-request']"
-      routerLinkActive="active-nav-link">Claims and Expenses (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/probation-request']"
-      routerLinkActive="active-nav-link">Probation Details (0)</a>
-    </li>
+      <li class="nav-item" *ngFor="let link of navLinks">
+          <a class="nav-link" [routerLink]="[link.route]" routerLinkActive="active-nav-link">
+              {{ link.label }}
+          </a>
+      </li>
   </ul>
 </div>
-
 
 
 

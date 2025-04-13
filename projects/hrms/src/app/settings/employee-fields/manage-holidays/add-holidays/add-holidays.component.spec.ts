@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NoDueClearanceComponent } from './no-due-clearance.component';
+import { AddHolidaysComponent } from './add-holidays.component';
 
-describe('NoDueClearanceComponent', () => {
-  let component: NoDueClearanceComponent;
-  let fixture: ComponentFixture<NoDueClearanceComponent>;
+describe('AddHolidaysComponent', () => {
+  let component: AddHolidaysComponent;
+  let fixture: ComponentFixture<AddHolidaysComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NoDueClearanceComponent]
+      imports: [AddHolidaysComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NoDueClearanceComponent);
+    fixture = TestBed.createComponent(AddHolidaysComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

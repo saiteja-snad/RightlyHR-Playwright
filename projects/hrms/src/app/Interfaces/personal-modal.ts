@@ -1,7 +1,7 @@
 export interface Ipersonal {
   separationType: string;
     bgc: any;
-    status: any;
+    status?: any;
     remoteLogin: any;
     totalExperience: any;
     pt: any;

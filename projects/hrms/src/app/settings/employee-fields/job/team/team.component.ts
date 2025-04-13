@@ -73,14 +73,12 @@ export class TeamComponent {
       this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
           next: (data: any) => {
             console.log(data);
-            alert("hello");
           this.deptdetails= data as [];
             this.sortdeaprtmentName();
             console.log(this.deptdetails)
           },
           error: (reason: any) => {
             console.log(reason);
-            alert("Insertion of data is failed")
           }
         });
     }
@@ -95,14 +93,12 @@ openDialog() {
       this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
         next: (data: any) => {
           console.log(data);
-          alert("hello");
           this.teamdetails= data as [];
           this.sortdeaprtmentName();
           console.log(this.teamdetails)
         },
         error: (reason: any) => {
           console.log(reason);
-          alert("Insertion of data is failed")
         }
       });
   }

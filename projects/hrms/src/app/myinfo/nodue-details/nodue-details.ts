@@ -1,0 +1,21 @@
+export interface INodue{
+    id: number,
+    noDueConfigureId: number,
+    raisedFor: number,
+    requestedBy: number,
+    status: string,
+    subStatus:string,
+    authorityValues: string,
+    departmentName: string,
+    employeeName:string,
+    processedByName: string,
+    lastWorkingDate: Date,
+    createdAt: Date,
+    updatedAt: Date,
+    requestedDate: Date,
+    parentId: number,
+    departmentId: number,
+    employeeFusionEmpId: string,
+    requiredEmails: any,
+    lineOrder: number
+}

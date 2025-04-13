@@ -10,14 +10,17 @@ import { ApprovalStatusCount } from '../Interfaces/timoff-model';
 })
 export class HttpService {
   communicationService!: BehaviorSubject<any>;
-  tirggerCountSignal = signal<{ compOff: boolean; wfh: boolean }>({
+  tirggerCountSignal = signal<{ compOff: boolean; wfh: boolean,employeeId:number }>({
     compOff: false,
     wfh: false,
+    employeeId:0
   });
-  tirggerPendingApprovalCountSignal = signal<{ compOff: boolean; wfh: boolean;permission:boolean }>({
+  tirggerPendingApprovalCountSignal = signal<{ compOff: boolean; wfh: boolean;permission:boolean ;separation:boolean,recall:boolean}>({
     compOff: false,
     wfh: false,
     permission:false,
+    separation:false,
+    recall:false
   });
 
   constructor(private http: HttpClient) {

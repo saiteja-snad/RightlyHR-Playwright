@@ -5,10 +5,11 @@ import { ICompOff } from '../../interfaces/compoff.modal';
 import { IJob } from '../../interfaces/letters-model';
 import { HttpService } from '../../services/http.service';
 import { Subject, takeUntil } from 'rxjs';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-wfh-approvaltabs',
-  imports: [RouterModule],
+  imports: [RouterModule,CommonModule,TabsModule],
   templateUrl: './wfh-approvaltabs.component.html',
   styleUrl: './wfh-approvaltabs.component.scss',
 })
@@ -18,6 +19,14 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   waitingForApprovalWFHCount = 0;
   approvedWFHRequestsCount = 0;
   processedWFHRequestsCount = 0;
+
+  navTabs: any[] = [
+    { label: 'Waiting For Approval', link: 'waiting-for-approval', count:this.waitingForApprovalWFHCount },
+    { label: 'Approved', link: 'approved', count: this.approvedWFHRequestsCount },
+    { label: 'Processed', link: 'processed', count: this.processedWFHRequestsCount },
+    { label: 'Rejected', link: 'rejected', count: this.rejectedWFHRequestsCount },
+   
+  ];
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -39,9 +48,6 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
     this.getCompOffRequest();
   }
 
-  isActive(route: string): boolean {
-    return this.router.isActive(route, true);
-  }
 
   getCompOffRequest() {
     let empId = this.empinfo.employeeId;

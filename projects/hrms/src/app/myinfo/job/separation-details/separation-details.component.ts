@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
@@ -20,67 +20,195 @@ import { environment } from '../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-separation-details',
-  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    NgbPopoverModule,
+    ReactiveFormsModule,
+    FormsModule,
+    PaginatorModule,
+    DropdownModule,
+    DateformatPipe,
+    NgxDocViewerModule,
+    NoDataFoundComponent,
+  ],
   templateUrl: './separation-details.component.html',
-  styleUrl: './separation-details.component.scss'
+  styleUrl: './separation-details.component.scss',
 })
-export class SeparationDetailsComponent implements OnInit,OnDestroy {
-  getSeparationDetails= new BehaviorSubject<ISeparation[]>([]);
+export class SeparationDetailsComponent implements OnInit, OnDestroy {
+  getSeparationDetails = new BehaviorSubject<ISeparation[]>([]);
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
-  empdata={} as Ipersonal;
+  empdata = {} as Ipersonal;
   substatus: any;
   status: any;
   recallbuttonConditions = false;
   recallandearlyrelievingbuttonConditions = false;
   isLastWorkingDatePassed = false;
-  showSaperationDots= true;
+  showSaperationDots = true;
   decription_Storing_Variable: any;
   selectRecallrequest = {} as any;
-  postEarlyRelievingRequest={} as any;
+  postEarlyRelievingRequest = {} as any;
   appover_comments = {} as any;
-  recallreason!:FormGroup;
-  earlyReleivingform!:FormGroup;
-  isLoading=false;
-  constructor(private authService: AuthService,private fb: FormBuilder,private http: HttpService,private router: Router,
-    private conformationPopup: OpenModalService,private modalService: NgbModal,) {
+  recallreason!: FormGroup;
+  earlyReleivingform!: FormGroup;
+  isLoading = false;
+  requestraise: any;
+  profileForm!: FormGroup;
+  constructor(
+    private authService: AuthService,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private router: Router,
+    private conformationPopup: OpenModalService,
+    private modalService: NgbModal
+  ) {
     // Initialize any required services or dependencies here
   }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    this.getEmployeeId();
     this.formInitialization();
     // Simulate fetching separation details
     this.fetchSeparationDetails();
+    this.getonboardPeriodData();
+    
+    this.getNodueClearance();
   }
-  formInitialization(){
+  formInitialization() {
     this.recallreason = this.fb.group({
-      recallReason: [null,[Validators.required,Validators.maxLength(250)]],
+      recallReason: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(250),
+          Validators.pattern(/^(?!\s).*$/),
+        ],
+      ],
     });
     this.earlyReleivingform = this.fb.group({
-      earlyReleivingDate: [null,[Validators.required]],
-      earlyReleivingReason: [null,[Validators.required,Validators.maxLength(250)]],
+      earlyReleivingDate: [null, [Validators.required]],
+      earlyReleivingReason: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(250),
+          Validators.pattern(/^(?!\s).*$/),
+        ],
+      ],
     });
+    this.profileForm = this.fb.group({
+      emails: ['', [Validators.required, Validators.email]],
+      noduerequestedemails: this.fb.array([]),
+    });
+  }
+  //function to open the modal
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true });
+  }
+  removeSection(index: number) {
+    this.formemailsfornodue.removeAt(index);
+  }
+  get formemailsfornodue() {
+    return this.profileForm.get('noduerequestedemails') as FormArray;
+  }
+  // Convenience getter for the emails field
+  get emails() {
+    return this.profileForm.get('emails');
+  }
+  addAlias() {
+    this.formemailsfornodue.push(
+      this.fb.control('', [Validators.required, Validators.email])
+    );
+  }
+  requestNoDue(f: FormGroup) {
+    this.isLoading = true;
+    const noduereq = {
+      requestedBy: this.empdata.employeeId,
+      raisedFor: this.empdata.employeeId,
+      requiredEmails: `${
+        this.profileForm.value.emails
+      }, ${this.profileForm.value.noduerequestedemails.join(', ')}`,
+    };
+    this.subscription = this.http
+      .postdata('NoDueClearanceForm', noduereq)
+      .subscribe({
+        next: (data: any) => {
+          this.profileForm.reset();
+          this.formemailsfornodue.clear();
+          this.modalService.dismissAll();
+          this.getNodueClearance();
+          this.conformationPopup.openSuccessModal(
+            'No Due Request Raised Successfully'
+          );
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          this.conformationPopup.openErrorModal('reason.error.Message');
+          const modalElement = document.getElementById('errorhide');
+        },
+      });
+  }
+  //function to get the notice period duration
+  nodueDuration: any;
+  getonboardPeriodData() {
+    this.subscription = this.http.getData(`ServingPeriods`).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        let noduevalue = res.find((ele: any) => {
+          return (
+            ele.servingPeriodType?.toLowerCase() == 'button before no due'
+          );
+        });
+        this.nodueDuration = noduevalue.duration;
+      },
+    });
+  }
+  //function to get the nodue list
+  nodueclearancedetails=[] as any;
+  getNodueClearance(){
+     let employeeId = parseInt(this.empinfo.employeeId)
+    this.subscription=this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
+      next:(data:any)=>{
+        console.log(data);
+        this.nodueclearancedetails=data;
+      }
+    })
+  }
+  //funtion to check the valudation
+  isLastWorkingDate(lastWorkingDate: string): boolean {
+    if (lastWorkingDate) {
+      const endDate = moment(lastWorkingDate);
+      const buttonEnabledDate = moment(lastWorkingDate).subtract(this.nodueDuration, 'days');
+      const currentDate = moment();
+  
+      // Check if current date is between buttonEnabledDate and endDate
+      const isWithinWindow = currentDate.isBetween(buttonEnabledDate, endDate, undefined, '[]');
+  
+      // Check if current date is after endDate
+      const isPastLastWorkingDate = currentDate.isAfter(endDate);
+  
+      return isWithinWindow || isPastLastWorkingDate;
+    }
+    return false;
   }
   //function to get employee by id
   getEmployeeId() {
     let employeeId = parseInt(this.empinfo.employeeId);
-    console.log(this.empinfo);
-
     this.subscription = this.http
       .getData(`Employeedata/${employeeId}`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.empdata = data as Ipersonal;
         },
         error: (err: any) => {
           console.log(err);
-          this.conformationPopup.openErrorModal ('Insertion of data faild');
+          this.conformationPopup.openErrorModal('Insertion of data faild');
         },
       });
   }
- 
-//function to get the separation details of the employee
+
+  //function to get the separation details of the employee
   fetchSeparationDetails(): void {
     const EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
@@ -140,8 +268,8 @@ export class SeparationDetailsComponent implements OnInit,OnDestroy {
     }
     return data;
   }
-//function to open the modal for the comments
-  approverCommentsFunction(Value: any,content: any) {
+  //function to open the modal for the comments
+  approverCommentsFunction(Value: any, content: any) {
     this.modalService.open(content, { centered: true });
     console.log(Value);
     this.appover_comments = Value.map((ele: any) => {
@@ -152,26 +280,26 @@ export class SeparationDetailsComponent implements OnInit,OnDestroy {
       };
     });
   }
-//function to store the disaciption values
-  decription(value: any,content:any) {
+  //function to store the disaciption values
+  decription(value: any, content: any) {
     this.modalService.open(content, { centered: true });
-    this.decription_Storing_Variable= value;
+    this.decription_Storing_Variable = value;
   }
-    //function to select data of perticular record to  recall the request
-    recallRequest(data: any,content: any) {
-      this.modalService.open(content, { centered: true });
-      this.selectRecallrequest = JSON.parse(JSON.stringify(data));
-      console.log(this.selectRecallrequest);
-    }
-    //function to select the data of early relieving request
-    earlyReleivingdata(data: any,content: any) {
-      this.modalService.open(content, { centered: true });
-      this.postEarlyRelievingRequest = data;
-      console.log(this.postEarlyRelievingRequest);
-    }
-     //function to recall the request
-   postRecallRequest() {
-    this.isLoading=true;
+  //function to select data of perticular record to  recall the request
+  recallRequest(data: any, content: any) {
+    this.modalService.open(content, { centered: true });
+    this.selectRecallrequest = JSON.parse(JSON.stringify(data));
+    console.log(this.selectRecallrequest);
+  }
+  //function to select the data of early relieving request
+  earlyReleivingdata(data: any, content: any) {
+    this.modalService.open(content, { centered: true });
+    this.postEarlyRelievingRequest = data;
+    console.log(this.postEarlyRelievingRequest);
+  }
+  //function to recall the request
+  postRecallRequest() {
+    this.isLoading = true;
     let currentDate = new Date();
     let payLoad = {
       // id: this.selectRecallrequest.id,
@@ -200,25 +328,27 @@ export class SeparationDetailsComponent implements OnInit,OnDestroy {
       .postdata(`SeparationRequests`, payLoad)
       .subscribe({
         next: (res: any) => {
-          console.log(res);
           if (res) {
-            this.isLoading=false;
+            this.isLoading = false;
             this.modalService.dismissAll();
             this.recallreason.reset();
-            this.conformationPopup.openSuccessModal('Recalled Request Raised successfully');
+            this.conformationPopup.openSuccessModal(
+              'Recalled Request Raised successfully'
+            );
             this.fetchSeparationDetails();
           }
         },
         error: (err: any) => {
-          this.isLoading=false;
+          this.isLoading = false;
           console.log(err);
-          this.conformationPopup.openErrorModal(err.error.message)
+          this.conformationPopup.openErrorModal(err.error.message);
         },
       });
   }
-  difference = 0
+  difference = 0;
   getBlockedFutureDate(lastWorkingDate: string): string {
-    let earlyrelievingdate=this.earlyReleivingform.get('earlyReleivingDate')?.value;
+    let earlyrelievingdate =
+      this.earlyReleivingform.get('earlyReleivingDate')?.value;
     if (earlyrelievingdate && this.postEarlyRelievingRequest.appliedDate) {
       const d1 = moment(this.postEarlyRelievingRequest.appliedDate);
       const d2 = moment(earlyrelievingdate);
@@ -226,15 +356,17 @@ export class SeparationDetailsComponent implements OnInit,OnDestroy {
     } else {
       this.difference = 0;
     }
-  console.log('Difference in days:', this.difference);
-    const formattedDate = moment(lastWorkingDate).startOf('day').format('YYYY-MM-DD');
+    console.log('Difference in days:', this.difference);
+    const formattedDate = moment(lastWorkingDate)
+      .startOf('day')
+      .format('YYYY-MM-DD');
     console.log('Formatted date:', formattedDate);
     return formattedDate;
   }
   //function to raise the early relieving request
   postEarlyrelieving() {
-    this.isLoading=true;
-    let currentDate =moment()
+    this.isLoading = true;
+    let currentDate = moment();
     let payLoad = {
       // id: this.selectRecallrequest.id,
       employeeId: this.postEarlyRelievingRequest.employeeId,
@@ -250,30 +382,38 @@ export class SeparationDetailsComponent implements OnInit,OnDestroy {
       jobId: this.postEarlyRelievingRequest.jobId,
       currentApprover: this.postEarlyRelievingRequest.currentApprover,
       isEarlyRelieving: true,
-      isAcceptEarlyRelieving: this.postEarlyRelievingRequest.isAcceptEarlyRelieving,
-      earlyRelievingDate: this.earlyReleivingform.get('earlyReleivingDate')?.value,
+      isAcceptEarlyRelieving:
+        this.postEarlyRelievingRequest.isAcceptEarlyRelieving,
+      earlyRelievingDate:
+        this.earlyReleivingform.get('earlyReleivingDate')?.value,
       parentId: this.postEarlyRelievingRequest.id,
-      reasonForEarlyRelieving: this.postEarlyRelievingRequest.reason,
-      moduleId: environment.SeparationrequestmoduleId
-    }
+      reasonForEarlyRelieving: this.earlyReleivingform.get(
+        'earlyReleivingReason'
+      )?.value,
+      moduleId: environment.SeparationrequestmoduleId,
+    };
     console.log(payLoad);
 
-    this.subscription = this.http.postdata(`SeparationRequests`, payLoad).subscribe({
-      next: (res: any) => {
-        console.log(res);
-        if (res) {
-          this.isLoading=false;
-          this.modalService.dismissAll();
-          this.earlyReleivingform.reset();
-        this.conformationPopup.openSuccessModal('Early Relieving Request Raised successfully');
-          this.fetchSeparationDetails();
-        }
-      },
-      error: (err: any) => {
-        this.isLoading=false;
-        this.conformationPopup.openErrorModal(err.error.message);
-      }
-    })
+    this.subscription = this.http
+      .postdata(`SeparationRequests`, payLoad)
+      .subscribe({
+        next: (res: any) => {
+          console.log(res);
+          if (res) {
+            this.isLoading = false;
+            this.modalService.dismissAll();
+            this.earlyReleivingform.reset();
+            this.conformationPopup.openSuccessModal(
+              'Early Relieving Request Raised successfully'
+            );
+            this.fetchSeparationDetails();
+          }
+        },
+        error: (err: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openErrorModal(err.error.message);
+        },
+      });
   }
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources

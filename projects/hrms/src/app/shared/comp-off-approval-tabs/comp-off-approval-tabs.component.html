@@ -1,20 +1,22 @@
 
 
-<div class="card tabs-container">
+<div class="component-side-nav-tabs-container py-3">
     <ul class="nav flex-column gap-2" >
       <li class="nav-item ">
-        <a class="nav-link" [routerLink]="['waiting-for-approval']" [class.active-tab]="isActive('/time-off/comp-off/waiting-for-approval')" aria-current="page">Waiting For Approval ({{waitingForApprovalCompOffCount}})</a>
+        <a class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']" routerLinkActive="active-nav-link" aria-current="page">Waiting For Approval ({{waitingForApprovalCompOffCount}})</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['approved']" [class.active-tab]="isActive('time-off/comp-off/approved')">Approved ({{approvalCompOffRequestsCount}})</a>
+        <a class="nav-link" [routerLink]="['/time-off/comp-off/approved']" routerLinkActive="active-nav-link" >Approved ({{approvalCompOffRequestsCount}})</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['processed']" [class.active-tab]="isActive('time-off/comp-off/processed')">Processed ({{processedCompOffRequestsCount}})</a>
+        <a class="nav-link" [routerLink]="['/time-off/comp-off/processed']" routerLinkActive="active-nav-link" >Processed ({{processedCompOffRequestsCount}})</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['rejected']" [class.active-tab]="isActive('time-off/comp-off/rejected')">Rejected ({{rejectedCompOffRequestsCount}})</a>
+        <a class="nav-link" [routerLink]="['/time-off/comp-off/rejected']"  routerLinkActive="active-nav-link">Rejected ({{rejectedCompOffRequestsCount}})</a>
       </li>
       
     </ul>
 
   </div>
+
+

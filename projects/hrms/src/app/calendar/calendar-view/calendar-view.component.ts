@@ -201,7 +201,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
               start: formattedBday,
               color: 'rgb(143, 143, 204)',
               textColor: 'black',
-              display: '../../../../public/calendar/birthday.png',
+              display: 'calendar/birthday.png',
             });
           }
 
@@ -218,7 +218,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
                 start: formattedJoinDate,
                 color: 'rgb(204, 143, 143)',
                 textColor: 'black',
-                display: '/calendar/milestone.png',
+                display: 'calendar/milestone.png',
               });
             }
           }
@@ -233,7 +233,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
               start: formattedJoinDate,
               color: 'rgb(204, 204, 143)',
               textColor: 'black',
-              display: '/calendar/new-joinees.png',
+              display: 'calendar/new-joinees.png',
             });
           }
         }
@@ -257,7 +257,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
                 start: formattedHolidayDate,
                 color: '#28692b4d',
                 textColor: 'black',
-                display: '../../calendar/holidays.png',
+                display: 'calendar/holidays.png',
               });
             }
           }

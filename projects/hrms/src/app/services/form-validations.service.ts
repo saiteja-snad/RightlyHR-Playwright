@@ -40,10 +40,39 @@ export class FormValidationsService {
       return null; // Valid input
     };
   }
-  restrictInitialSpace(event: any) {
-    const value = event.target.value;
-    if (value.length === 0 && event.key === ' ') {
-      event.preventDefault(); // Block space at the start
+  restrictInitialSpace(event: any): void {
+    const key = event.key;
+    const inputValue = (event.target as HTMLInputElement).value;
+  
+    // Prevent leading space
+    if (key === ' ' && inputValue.length === 0) {
+      event.preventDefault();
+    }
+  
+    // Prevent consecutive spaces
+    if (key === ' ' && inputValue.endsWith(' ')) {
+      event.preventDefault();
+    }
+  }
+
+  blockNonAlphabets(event: KeyboardEvent): void {
+    const key = event.key;
+    const input = (event.target as HTMLInputElement).value;
+  
+    // Allow control keys: Backspace, Tab, Arrow keys, Delete, etc.
+    if (
+      key === 'Backspace' || key === 'Delete' ||  key === 'Tab' ||
+      key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowUp' ||
+      key === 'ArrowDown' ||
+      key === 'Home' || key === 'End'
+    ) {
+      return; // Allow these keys
+    }
+  
+    // Only allow letters and space (but not space as first character)
+    const pattern = /^[a-zA-Z ]$/;
+    if (!pattern.test(key) || (key === ' ' && input.length === 0)) {
+      event.preventDefault();
     }
   }
 

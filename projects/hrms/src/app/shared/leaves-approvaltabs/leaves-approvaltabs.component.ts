@@ -4,10 +4,12 @@ import { Subscription } from 'rxjs';
 import { Ilpid } from '../../interfaces/timoff-model';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-leaves-approvaltabs',
-  imports: [RouterModule],
+  imports: [RouterModule,CommonModule,TabsModule],
   templateUrl: './leaves-approvaltabs.component.html',
   styleUrl: './leaves-approvaltabs.component.scss'
 })
@@ -20,7 +22,12 @@ export class LeavesApprovaltabsComponent {
     waitingForApprovalCount: any;
     approvedCount: any;
     rejectedCount: any;
-
+    statusTabs: any[] = [
+      { label: 'Waiting For Approval', link: 'waiting-for-approval', },
+      { label: 'Approved', link: 'approved', },
+      { label: 'Processed', link: 'processed', },
+      { label: 'Rejected', link: 'rejected', }
+    ];
 
     constructor(public readonly router: Router,private http: HttpService, private authService: AuthService) {}
 
@@ -30,9 +37,8 @@ export class LeavesApprovaltabsComponent {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getDataByLPID();
   }
-  isActive(route: string): boolean {
-    return this.router.isActive(route, true);
-  }
+
+  
 
   getDataByLPID() {
     let empid = this.empdata.employeeId;

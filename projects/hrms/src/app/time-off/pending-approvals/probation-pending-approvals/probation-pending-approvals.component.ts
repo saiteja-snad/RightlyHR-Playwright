@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -11,22 +11,25 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { HttpService } from '../../../services/http.service';
 import { ProbationdetailsPipe } from "../../../pipes/probationdetails.pipe";
 import { Ipersonal } from '../../../interfaces/personal-modal';
+import moment from 'moment';
+
 
 @Component({
   selector: 'app-probation-pending-approvals',
-  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule,NgbPopoverModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss'
 })
 export class ProbationPendingApprovalsComponent {
     subscription!: Subscription;
-    probationDetails = new BehaviorSubject<Iprobationapproval[]>([]);
+    probationDetails = [] as any;
     probationExtensionDuration!: number;
     searchValue: any;
     LOGIN: any;
     totalRecords = 100
     first: any = 0;
     rows: any = 10;
+    isempeffectivevaild: boolean = true;
     options = [
       { label: 10, value: 10 },
       { label: 15, value: 15 },
@@ -71,6 +74,8 @@ export class ProbationPendingApprovalsComponent {
                 item.approvalHeader.status != 'Processed' &&
                 item.approvalHeader.status != 'Rejected'
             );
+            console.log(this.probationDetails);
+            
             // this.filterPendingApprovalsByModule();
           },
           error: (reason) => console.log(reason),
@@ -184,5 +189,193 @@ export class ProbationPendingApprovalsComponent {
         },
       });
   }
-  
+
+  onclickproceevalue(value: any) {
+    let ProcessedRequest = this.myApproverComments.find((ele: any) => {
+      return ele.approverRole === value;
+    });
+    this.selectedData.responseId = ProcessedRequest.metadata.responseId;
+    this.selectedData.overAllRating = ProcessedRequest.metadata.Overallrating;
+  }
+
+  discontinue: boolean = false;
+  extend: boolean = false;
+  approve: boolean = false;
+  buttondisable: boolean = false;
+  // Function to handle toggling Early Relieving option
+  toggleApprove() {
+    if (!this.approve) {
+      this.discontinue = false;
+      this.extend = false;
+      this.approve = true;
+      this.buttondisable = true;
+      this.selectedData.requestSelectedType = 'Approve';
+      // Clear data related to Extend and Discontinue
+      this.clearExtendData();
+      this.clearDiscontinueData();
+    }
+    //  else {
+    //   // Toggle off Early Relieving
+    //   this.approve = false;
+    //   this.clearApproveData();
+    // }
+  }
+  toggleExtend() {
+    this.discontinue = false;
+    this.approve = false;
+    this.extend = true;
+    this.buttondisable = true;
+    this.selectedData.requestSelectedType = 'Extend';
+    // Clear data related to approve Relieving and Discontinue
+    this.clearApproveData();
+    this.clearDiscontinueData();
+  }
+
+  // Function to handle toggling Discontinue option
+  toggleDiscontinue() {
+    this.extend = false;
+    this.approve = false;
+    this.discontinue = true;
+    this.buttondisable = true;
+    this.selectedData.requestSelectedType = 'Reject';
+    // Clear data related to Early Relieving and Extend
+    this.clearApproveData();
+    this.clearExtendData();
+  }
+  clearApproveData() {
+    this.selectedData.comments = '';
+  }
+
+  // Function to clear data related to Extend
+  clearExtendData() {
+    this.selectedData.extenddate = null;
+    this.selectedData.comments = ''; // Assuming comments is used for Extend
+    this.selectedData.reasonForExtend = '';
+  }
+
+  // Function to clear data related to Discontinue
+  clearDiscontinueData() {
+    this.selectedData.comments = '';
+    this.selectedData.rejectedReason = '';
+  }
+
+  issubmitdiable: boolean = false;
+  ifreasonnull(Value: any) {
+    console.log(Value);
+    if (!Value || !Value.trim()) {
+      this.issubmitdiable = true;
+    } else {
+      this.issubmitdiable = false;
+    }
+  }
+
+  letters(event: KeyboardEvent): boolean {
+    const charCode = event.key.charCodeAt(0);
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 32
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  getBlockedFutureDate(lastWorkingDate: string): string {
+    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day'); // Set time to start of day (midnight)
+    // Format the date as "YYYY-MM-DD"
+    const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
+    return formattedDate;
+  }
+
+  getBlockedFutureDateupto(startDate: string, duration: number): string {
+    const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
+    // Add the duration (e.g., 90 days) to the start date
+    const futureDate = startDateObj.add(duration, 'days');
+    // Format the future date as "YYYY-MM-DD"
+    const formattedFutureDate = futureDate.format('YYYY-MM-DD');
+    return formattedFutureDate;
+  }
+
+  jsonData = {} as any;
+  handleProcess(f: NgForm) {
+    if (this.selectedData.requestSelectedType == 'Approve') {
+      this.jsonData = JSON.stringify({
+        status: 'Processed',
+        responseId: this.selectedData.responseId,
+        Overallrating: this.selectedData.overAllRating,
+      });
+    }
+    if (this.selectedData.requestSelectedType == 'Reject') {
+      this.jsonData = JSON.stringify({
+        status: 'Rejected',
+        responseId: this.selectedData.responseId,
+        Overallrating: this.selectedData.overAllRating,
+      });
+    }
+    if (this.selectedData.requestSelectedType == 'Extend') {
+      this.jsonData = JSON.stringify({
+        status: 'Extended',
+        PrExtendedDate: this.selectedData.extenddate,
+        responseId: this.selectedData.responseId,
+        Overallrating: this.selectedData.overAllRating,
+      });
+    }
+    let requestBody = {
+      status: 'Processed',
+      comments: this.selectedData.comments,
+      probationExtendedDate: this.selectedData.extenddate,
+      meta: this.jsonData,
+      responseId: this.selectedData.responseId,
+      approvedBy: this.LOGIN.employeeId.toString(),
+    };
+    if (this.selectedData.requestSelectedType == 'Approve') {
+      requestBody.status = 'Processed';
+      requestBody.comments = this.selectedData.comments;
+    }
+    if (this.selectedData.requestSelectedType == 'Reject') {
+      requestBody.status = 'Rejected';
+      requestBody.comments = this.selectedData.rejectedReason;
+    }
+    if (this.selectedData.requestSelectedType == 'Extend') {
+      requestBody.probationExtendedDate = this.selectedData.extenddate;
+      requestBody.status = 'Processed';
+      requestBody.comments = this.selectedData.comments;
+    }
+    this.subscription = this.http
+      .putData(
+        `PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          //alert("Request Processed Successfully")
+          //this.dataSuccessMsg('Probation Request Processed Successfully');
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        },
+        error: (reason: any) => {
+          //this.dataFailureMsg(reason.error.message);
+        },
+        complete: () => {},
+      });
+  }
+
+
+  reset() {
+    this.clearApproveData();
+    this.clearExtendData();
+    this.clearDiscontinueData();
+    this.discontinue = false;
+    this.extend = false;
+    this.approve = false;
+    this.selectedData.proccesoption = '';
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 }

@@ -1,0 +1,167 @@
+<form [formGroup]="leaveAllocationForm" (ngSubmit)="publishLeaveAllocation(leaveAllocationForm)">
+    <!-- Year -->
+    <div class="mb-3">
+        <label for="year" class="form-label custom-label mb-2">
+            {{ "Year" | translate }}<span class="required">*</span>
+        </label>
+        <div class="custom-select-dropdown">
+            <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
+                formControlName="year" placeholder="Please select year" (onChange)="enableLocation()">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                <ng-template let-year #item>{{ year }}</ng-template>
+            </p-select>
+        </div>
+        <div *ngIf="leaveAllocationForm.get('year')?.touched && leaveAllocationForm.get('year')?.invalid"
+            class="error-msg text-end my-1">
+            <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">
+                Please select year
+            </div>
+        </div>
+    </div>
+
+    <!-- Location -->
+    <div class="mb-3">
+        <label for="location" class="form-label custom-label mb-2">
+            {{ "Location" | translate }}<span class="required">*</span>
+        </label>
+        <div class="custom-select-dropdown">
+            <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
+                filterBy="jobLocationName" [showClear]="false" formControlName="location"
+                placeholder="Please select location" (onChange)="onLocationChange($event.value)">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
+                <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
+            </p-select>
+        </div>
+        <div *ngIf="leaveAllocationForm.get('location')?.touched && leaveAllocationForm.get('location')?.invalid"
+            class="error-msg text-end my-1">
+            <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">
+                Please select location
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub Location -->
+    <div class="mb-3">
+        <label for="subLocation" class="form-label custom-label mb-2">
+            {{ "Sub Location" | translate }}<span class="required">*</span>
+        </label>
+        <div class="custom-select-dropdown">
+            <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
+                filterBy="jobSubLocationName" [showClear]="false" formControlName="subLocation"
+                placeholder="Please select sub location" (onChange)="getAllShifts($event.value)">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
+                <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
+            </p-select>
+
+        </div>
+        <div *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid"
+            class="error-msg text-end my-1">
+            <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">
+                Please select sub location
+            </div>
+        </div>
+    </div>
+
+    <!-- Shifts -->
+    <div class="mb-3">
+        <label for="shift" class="form-label custom-label mb-2">
+            {{ "Shift" | translate }}<span class="required">*</span>
+        </label>
+        <div class="custom-select-dropdown">
+            <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
+                [showClear]="false" formControlName="shift" placeholder="Please select shift"
+                (onChange)="getCategoryDetails($event.value)">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
+                <ng-template let-location #item>{{ location.shiftName }}</ng-template>
+            </p-select>
+        </div>
+        <div *ngIf="leaveAllocationForm.get('shift')?.touched && leaveAllocationForm.get('shift')?.invalid"
+            class="error-msg text-end my-1">
+            <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">
+                Please select shift
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Name -->
+    <div class="mb-3">
+        <label for="categoryName" class="form-label custom-label mb-2">
+            {{ "Category Name" | translate }}<span class="required">*</span>
+        </label>
+        <div class="custom-select-dropdown">
+            <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name" [showClear]="false"
+                formControlName="categoryName" placeholder="Please select category name" (onChange)="getAllEmployees()">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+                <ng-template let-location #item>{{ location.name }}</ng-template>
+            </p-select>
+        </div>
+        <div *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
+            class="error-msg text-end my-1">
+            <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">
+                Please select category name
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Name -->
+    <div class="mb-3">
+        <label for="employeeName" class="form-label custom-label mb-2">
+            {{ "Employee Name" | translate }}<span class="required">*</span>
+        </label>
+        <div class="custom-select-dropdown">
+            <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                [showClear]="false" formControlName="employeeName" placeholder="Please select employee"
+                (onChange)="onSelectedEmployee($event.value, leaveAllocationForm)">
+                <ng-template let-selectedOption #selectedItem>
+                    {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+                </ng-template>
+                <ng-template let-user #item>
+                    {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
+                </ng-template>
+            </p-select>
+        </div>
+        <div *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
+            class="error-msg text-end my-1">
+            <div *ngIf="leaveAllocationForm.get('employeeName')?.errors?.['required']">
+                Please select employee
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-table-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Days</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    {{selectedEmployee}}
+                </tr>
+                <tr>
+                    <input type="text" formControlName="days" class="form-control" placeholder="Please enter days"
+                        min="0" max="365" (keypress)="validateInput($event)" />
+                    <div *ngIf="leaveAllocationForm.get('days')?.touched && leaveAllocationForm.get('days')?.invalid"
+                        class="error-msg text-end my-1">
+                        <div *ngIf="leaveAllocationForm.get('days')?.errors?.['required']">
+                            Please enter days
+                        </div>
+                    </div>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit" class="main-custom-btn custom-btn-primary py-2 px-3"
+        [disabled]="leaveAllocationForm.invalid">Add</button>
+</form>
+
+<ng-template #stagingLoadingModal let-modal>
+    <div class="modal-body text-center p-5" ngbAutofocus>
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="heading4 pt-4">Loading...</p>
+    </div>
+</ng-template>

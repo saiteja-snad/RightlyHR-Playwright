@@ -89,7 +89,15 @@
    "Job Grade":"Job Grade",
    "JobGrade is required":"Job Grade is required",
    "GRADE DETAILS":"GRADE DETAILS",
-    "EDIT GRADE DETAILS":"EDIT GRADE DETAILS"
+    "EDIT GRADE DETAILS":"EDIT GRADE DETAILS",
+    "Approve":"Approve",
+    "Reject":"Reject",
+    "Cancel":"Cancel",
+    "Process":"Process",
+    "Rejected Reason":"Rejected Reason",
+    "Are you sure you want to Reject?":"Are you sure you want to Reject?",
+    "Are you sure you want to Approve?":"Are you sure you want to Approve?",
+    "Comments":"Comments"
    
   
 

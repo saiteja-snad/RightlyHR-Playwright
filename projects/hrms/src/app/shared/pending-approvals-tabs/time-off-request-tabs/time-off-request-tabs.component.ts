@@ -5,10 +5,11 @@ import { Subscription } from 'rxjs';
 import { LeaveApproval } from '../../../interfaces/pendingapprovalsmodel';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-time-off-request-tabs',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,TabsModule],
   templateUrl: './time-off-request-tabs.component.html',
   styleUrl: './time-off-request-tabs.component.scss'
 })
@@ -19,12 +20,14 @@ export class TimeOffRequestTabsComponent {
   leavesRole = [] as LeaveApproval[];
   countEmp: any;
   countRole: any;
-
+  navTabs: any[] = [
+    { label: 'For You ', link: 'for-you', count: 9 },
+    { label: 'For Your Role', link: 'for-your-role', count: 9 },
+   
+  ];
   constructor(public readonly router: Router, private http: HttpService, private modalService: NgbModal) { }
 
-  isActive(route: string): boolean {
-    return this.router.isActive(route, true);
-  }
+
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsEMP();

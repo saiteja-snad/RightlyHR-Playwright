@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IExpense, IExpensedatabyid, IExpenseHeader, IExpenses, Iexpensetype, INewExpense } from '../../../interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscribable, Subscription, switchMap } from 'rxjs';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -15,7 +15,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe,NgxDocViewerModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, DateformatPipe,NgxDocViewerModule, ReactiveFormsModule,FormsModule, Select],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe]
@@ -44,7 +44,7 @@ export class DraftsExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
-
+    serach:any
   expenesEmplyeedata: IExpense[] = [];
   draftsCount: number = 0;
   ngOnInit(): void {
@@ -53,7 +53,7 @@ export class DraftsExpensesComponent {
     this.initiateForm();
     this.getExpensetype();
     this.getdatabyentriy();
-    this.getexpensesheaderbyemployeeid(this.empinfo.employeeid)
+    this.getexpensesheaderbyemployeeid()
     this.setDate()
 
     this.newExpenseForm.valueChanges.subscribe(() => {
@@ -299,7 +299,7 @@ export class DraftsExpensesComponent {
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal('Expenses submitted successfully');
 
-              this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+              this.getexpensesheaderbyemployeeid();
               // Call the get function after posting
             
           },
@@ -318,7 +318,7 @@ export class DraftsExpensesComponent {
            
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+              this.getexpensesheaderbyemployeeid();
             
           },
           error: (error: any) => {
@@ -391,7 +391,7 @@ export class DraftsExpensesComponent {
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal('Expenses save as draft successfully');
 
-              this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+              this.getexpensesheaderbyemployeeid();
               // Call the get function after posting
             
           },
@@ -410,7 +410,7 @@ export class DraftsExpensesComponent {
            
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+              this.getexpensesheaderbyemployeeid();
             
           },
           error: (error: any) => {
@@ -459,12 +459,11 @@ export class DraftsExpensesComponent {
   }
 
 
-  getexpensesheaderbyemployeeid(_employeeId: number): void {
-    //params
-    const params = this.empinfo.employeeId;
+  getexpensesheaderbyemployeeid(): void {
+ 
 
     this.subscription = this.http
-      .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
+      .getDatabyid(`Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=draft&searchQuery=${this.serach}'`, ).subscribe({
         next: (data: any) => {
           this.expenesEmplyeedata = data as IExpense[];
           this.filterDraftsExpenses();

@@ -1,21 +1,25 @@
-.main-layout-container{
+.main-layout-container {
+    position: relative;
     width: 100%;
     height: 100dvh;
     overflow: hidden;
 }
 
-.sidebar-content{
-    width: max-content;
+.sidebar-content {
+    width: 6.75rem;
 }
 
-.main-layout-content{
-    width: 100%;
+.main-layout-content {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 6.75rem);
+    overflow: hidden;
 }
 
 .display-area {
     width: 100%;
-    height: calc(100dvh - 5.6rem);
-    padding: 1.6rem;
+    height: calc(100dvh - 4.25rem);
+    padding: 1rem;
     overflow-x: hidden;
     overflow-y: auto;
 }

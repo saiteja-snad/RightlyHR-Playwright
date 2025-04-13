@@ -7,10 +7,11 @@ import { IExpense, IExpenseHeader, IExpenseItem, Iexpensetype, Inewexpense, INew
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule,],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule,TabsModule],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
   providers: [DatePipe]
@@ -32,7 +33,10 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   expensetype = [] as Iexpensetype[];
   expenseemployeedata: IExpense[] = [];
 
-
+  navTabs: any[] = [
+    { label: 'Create Expenses', link: '/claimsandexpenses/addexpens' },
+   
+  ];
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
     private http: HttpService) { }
   ngOnInit(): void {

@@ -68,7 +68,7 @@ export class UserValidationComponent {
           }, 2000);
   
         } else {
-          this.router.navigate(['/admin-dashboard']);
+          this.router.navigate(['/myinfo']);
         }
       },
       error: (err) => {

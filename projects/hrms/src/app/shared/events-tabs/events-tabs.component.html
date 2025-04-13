@@ -1,6 +1,14 @@
-<div class="card custom-nav-tab-card px-2">
-    <ul class="nav-tabs-main-content ps-0 text-center mb-0">
-        <li class="nav-item" [routerLink]="['/events/upcoming']" routerLinkActive="nav-tab-active">Upcoming Events</li>
-        <li class="nav-item" [routerLink]="['/events/past']" routerLinkActive="nav-tab-active">past Events</li>
-    </ul>
+
+<div class="component-nav-tabs-container card px-2">
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of navTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                        {{ tab.label }}
+                    </a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
 </div>

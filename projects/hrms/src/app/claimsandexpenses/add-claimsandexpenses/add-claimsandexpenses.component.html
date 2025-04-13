@@ -181,7 +181,7 @@
 
                                 <!-- Delete Icon -->
                                 <div class="col-md-1 mt-4 d-flex align-items-center  justify-content-end">
-                                    <button type="button" class="custom-icon btn" (click)="expenseItems.removeAt(i)">
+                                    <button type="button" class="custom-icon btn"(click)="delteitem(i)">
                                         <i class="bi bi-trash text-danger"></i>
                                     </button>
                                 </div>
@@ -215,21 +215,44 @@
                         </div>
 
                         <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
-
                             <b>Total Amount : </b>{{
                             totalexpensesamount > 0 ? totalexpensesamount : '' }}
                         </div>
                     </div>
                     <div class=" d-flex justify-content-end gap-3 p-3" *ngIf="expenseItems.length > 0">
-                        <button type="button" class="custom-btn btn-secondary" [disabled]="newExpenseForm.invalid"
-                            (click)="saveasDraft(newExpenseForm)">Save as draft</button>
-                        <button type="submit" class="custom-btn btn-primary">Submit</button>
+                        <button type="button" class="custom-btn btn-secondary" [disabled]="newExpenseForm.invalid || saveasDraftloder"
+                            (click)="saveasDraft(newExpenseForm)">
+                            @if (saveasDraftloder) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading' | translate}}...</span>
+                                } @else {
+                                <span>{{'Save as draft'| translate}}</span>
+                                }</button>
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="newExpenseForm.invalid || spinnerLoader">
+                            @if (spinnerLoader) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading' | translate}}...</span>
+                                } @else {
+                                <span>{{'Submit'| translate}}</span>
+                                }
+                        </button>
                     </div>
                 </form>
             </div>
-
-
         </div>
-
     </div>
 </div>
+
+
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to delete the Expense iteam?</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="removeExpense()">Yes</button>
+        </div>
+    </div>
+</ng-template>

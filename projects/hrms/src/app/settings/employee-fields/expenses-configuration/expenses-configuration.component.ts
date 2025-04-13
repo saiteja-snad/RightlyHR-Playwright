@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { OpenModalService } from '../../../../services/open-modal.service';
-import { HttpService } from '../../../../services/http.service';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { IExpenses } from '../../../../interfaces/claimsandexpenses.model';
+import { IExpenses } from '../../../interfaces/claimsandexpenses.model';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { HttpService } from '../../../services/http.service';
+
 
 @Component({
   selector: 'app-expenses-configuration',

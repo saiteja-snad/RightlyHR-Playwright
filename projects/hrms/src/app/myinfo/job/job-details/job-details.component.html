@@ -199,10 +199,18 @@
                                 <span class="color">{{ separationRequestForm.get('description')?.value?.length || 0 }} /
                                     400</span>
                             </div>
-                            <div class="error-msg"
-                                *ngIf="separationRequestForm.get('description')?.invalid && separationRequestForm.get('description')?.touched">
-                                Reason for Separation is required
-                            </div>
+                            <small class="error-msg"
+                            *ngIf="separationRequestForm.get('description')?.touched && separationRequestForm.get('description')?.invalid">
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['required']">
+                              Reason for Separation is required
+                            </ng-container>
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['maxlength']">
+                              Maximum 400 characters allowed
+                            </ng-container>
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['pattern']">
+                              Reason for Separation should not start with a space.
+                            </ng-container>
+                          </small>
                         </div>
                     </div>
 
@@ -239,10 +247,18 @@
                                     separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }} /
                                     400</span>
                             </div>
-                            <div class="error-msg"
-                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.invalid && separationRequestForm.get('reasonForEarlyRelieving')?.touched">
-                                Reason for Early Relieving is required
-                            </div>
+                            <small class="error-msg"
+                      *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
+                        Reason for Early Relieving is required
+                      </ng-container>
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['maxlength']">
+                        Maximum 400 characters allowed
+                      </ng-container>
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['pattern']">
+                        Reason for Early Relieving should not start with a space.
+                      </ng-container>
+                    </small>
                         </div>
                     </div>
                 </div>

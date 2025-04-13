@@ -12,7 +12,7 @@ interface NavLink {
   label: string;
   route: string;
   moduleId: number;
-  count?: number; // <-- add this
+  count?: number;
 }
 
 
@@ -74,8 +74,7 @@ export class PendingApprovalsTabsComponent {
   ];
   constructor(
     public readonly router: Router,
-    private http: HttpService,
-    private modalService: NgbModal
+    private http: HttpService
   ) {}
 
   isActive(router: string): boolean {
@@ -83,45 +82,11 @@ export class PendingApprovalsTabsComponent {
   }
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    // this.getAllPendingApprovalsEMP();
-    // this.getAllPendingApprovalsROLE();
     this.getAllPendingApprovalsCount();
   }
-  getAllPendingApprovalsEMP() {
-    let EmployeeId = parseInt(this.LOGIN.employeeId);
-    console.log(EmployeeId);
-    this.subscription = this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=EMP`
-      )
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.leavesEmp = response.data as LeaveApproval[];
-          this.countEmp = this.leavesEmp.length ?? 0;
-          console.log(this.leavesEmp);
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
 
-  getAllPendingApprovalsROLE() {
-    let EmployeeId = parseInt(this.LOGIN.employeeId);
-    console.log(EmployeeId);
-    this.subscription = this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=ROLE`
-      )
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.leavesRole = response.data as LeaveApproval[];
-          this.countRole = this.leavesRole.length ?? 0;
-          console.log(this.leavesRole);
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
+
+
   onclickseparation() {
     this.http.tirggerPendingApprovalCountSignal.update((status) => ({
       ...status,
@@ -135,16 +100,11 @@ export class PendingApprovalsTabsComponent {
       next: (data: ApprovalStatusCount[]) => {
         const countMap = new Map<number, number>();
         data.forEach(item => countMap.set(item.moduleId, item.totalCount));
-  
-        // Update navLinks with count
+
         this.navLinks = this.navLinks.map(link => ({
           ...link,
           count: countMap.get(link.moduleId) || 0
         }));
-  
-        // this.pendingApprovalCount.set(data);
-        // console.log(this.navLinks);
-        
       },
       error: (err) => console.error('Error fetching approvals:', err),
     });

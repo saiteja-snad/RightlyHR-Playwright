@@ -5,7 +5,7 @@ import { WfhApprovaltabsComponent } from "../../shared/wfh-approvaltabs/wfh-appr
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
 import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { Subject } from 'rxjs';
@@ -80,7 +80,8 @@ alloweddates: string = ''
 
   intializeCompOffForm() {
     this.addWFHForm = this.fb.group({
-      workedDate: ['', Validators.required],
+      workedDate: ['', Validators.required
+      , [this.noWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]],
       availing: ['', Validators.required],
       halfType: [''],
       reason: ['', Validators.required],
@@ -146,6 +147,30 @@ alloweddates: string = ''
       this.getWFHBal(workedDate);
     }
   }
+
+  noWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    if (control.value) {
+      const date = new Date(control.value);
+      const day = date.getDay();
+      // Check if the day is Saturday (6) or Sunday (0)
+      if (day === 0 || day === 6) {
+        return { weekend: true };
+      }
+    }
+    return null;
+  }
+    // Custom Validator: Ensure date is after the date of joining
+    afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
+      if (control.value && this.empinfo.dateOfJoining) {
+        const selectedDate = new Date(control.value);
+        const joiningDate = new Date(this.empinfo.dateOfJoining);
+        // Check if the selected date is before the date of joining
+        if (selectedDate < joiningDate) {
+          return { beforeJoining: true };
+        }
+      }
+      return null;
+    }
   getWFHBal(currentDate: any) {
     let empId = this.empinfo.employeeId;
     // let currentDate = new Date().toISOString().split('T')[0];

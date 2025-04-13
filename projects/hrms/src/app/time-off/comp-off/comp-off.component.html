@@ -39,6 +39,10 @@
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
                             formControlName="workedDate" required>
+                            <div *ngIf="addCompOffForm.get('workedDate')?.touched && addCompOffForm.get('workedDate')?.invalid" class="error-msg">
+                                <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required.</div>
+                              </div>
+                              <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['notWeekend']">Only weekends are allowed. Please select a Saturday or Sunday.</div>
                     </div>
                 </div>
 
@@ -86,7 +90,11 @@
                         <label for="reason" class="form-label custom-label mb-2">Reason<span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
-                            placeholder="Type here"></textarea>
+                            placeholder="Type here" maxlength="25"></textarea>
+                            <div *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid" class="error-msg">
+                                <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">Reason is required.</div>
+                                <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>
+                              </div>
                     </div>
                 </div>
 

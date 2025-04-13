@@ -3,6 +3,7 @@ import { CompOffApprovalTabsComponent } from '../../shared/comp-off-approval-tab
 import { RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -45,6 +46,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
   duration!: any;
   wfhValidations = {} as IValidations;
   spinnerLoader = false;
+  alloweddates: string = '';
+
 
   constructor(
     private modalService: NgbModal,
@@ -62,6 +65,19 @@ export class CompOffComponent implements OnInit, OnDestroy {
     this.fullDayValue = JSON.parse(
       localStorage.getItem('filterFullDayData') || '{}'
     );
+    this.addCompOffForm.get('availing')?.valueChanges.subscribe((value) => {
+      const halfTypeControl = this.addCompOffForm.get('halfType');
+      if (value === 'Half Day') {
+        halfTypeControl?.setValidators([Validators.required]);
+        halfTypeControl?.enable();
+      } else {
+        halfTypeControl?.clearValidators();
+        halfTypeControl?.setValue('');
+        halfTypeControl?.disable();
+      }
+      halfTypeControl?.updateValueAndValidity();
+    });
+  
 
     this.intializeCompOffForm();
     this.getWorkfromhomeCriteria();
@@ -261,7 +277,39 @@ export class CompOffComponent implements OnInit, OnDestroy {
         },
       });
   }
+  // Custom Validator: Allow only weekends
+  onlyWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    if (control.value) {
+      const date = new Date(control.value);
+      const day = date.getDay();
+      // Check if the day is not Saturday (6) or Sunday (0)
+      if (day !== 0 && day !== 6) {
+        return { notWeekend: true };
+      }
+    }
+    return null;
+  }
 
+  // Custom Validator: Ensure date is after the date of joining
+  afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    if (control.value && this.empinfo.dateOfJoining) {
+      const selectedDate = new Date(control.value);
+      const joiningDate = new Date(this.empinfo.dateOfJoining);
+      // Check if the selected date is before the date of joining
+      if (selectedDate < joiningDate) {
+        return { beforeJoining: true };
+      }
+    }
+    return null;
+  }
+
+  formatDate(date: string | Date): string {
+    const d = new Date(date);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`;
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -42,6 +42,11 @@
                             <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid" class="error-msg">
                                 Worked Date is required.
                               </div>
+                              <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']" class="error-msg">
+                                Weekends are not allowed. Please select a weekday.
+                              </div>
+                              <div *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
+                              
                     </div>
 
                     <!-- Availing -->

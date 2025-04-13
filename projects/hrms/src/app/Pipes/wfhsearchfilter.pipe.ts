@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AttendanceRequest } from '../Interfaces/timoff-model';
+import { AttendanceRequest } from '../interfaces/timoff-model';
 
 @Pipe({
   name: 'wfhsearchfilter',

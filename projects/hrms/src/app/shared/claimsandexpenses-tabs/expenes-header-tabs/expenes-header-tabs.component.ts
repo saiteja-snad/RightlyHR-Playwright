@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
-import { IExpense } from '../../../Interfaces/claimsandexpenses.model';
+import { IExpense } from '../../../interfaces/claimsandexpenses.model';
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 

@@ -1,8 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Entity } from '../../../../Interfaces/claimsandexpenses.model';
+import { Entity } from '../../../../interfaces/claimsandexpenses.model';
 import { Subject } from 'rxjs';
-import { IJob } from '../../../../Interfaces/letters-model';
+import { IJob } from '../../../../interfaces/letters-model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';

@@ -12,7 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { Ipersonal } from '../../../interfaces/personal-modal';
 import { INodue } from '../../../myinfo/nodue-details/nodue-details';
 
 @Component({

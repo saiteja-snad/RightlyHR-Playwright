@@ -2,7 +2,7 @@ import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpService } from '../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { Ipersonal } from '../../Interfaces/personal-modal';
+import { Ipersonal } from '../../interfaces/personal-modal';
 import { OpenModalService } from '../../services/open-modal.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';

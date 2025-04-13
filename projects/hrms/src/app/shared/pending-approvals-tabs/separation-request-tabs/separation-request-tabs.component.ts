@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, effect, signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ApprovalStatusCount } from '../../../Interfaces/timoff-model';
+import { ApprovalStatusCount } from '../../../interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { IJob } from '../../../Interfaces/job-model';
+import { IJob } from '../../../interfaces/job-model';
 import { Subject } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 

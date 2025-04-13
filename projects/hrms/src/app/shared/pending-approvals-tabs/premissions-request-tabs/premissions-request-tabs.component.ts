@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { IJob } from '../../../Interfaces/letters-model';
+import { IJob } from '../../../interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
-import { ApprovalStatusCount, AttendanceRequest } from '../../../Interfaces/timoff-model';
+import { ApprovalStatusCount, AttendanceRequest } from '../../../interfaces/timoff-model';
 import { Subject } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 

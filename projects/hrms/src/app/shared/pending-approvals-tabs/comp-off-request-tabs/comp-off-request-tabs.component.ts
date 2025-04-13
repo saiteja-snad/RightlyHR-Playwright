@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { IJob } from '../../../Interfaces/letters-model';
+import { IJob } from '../../../interfaces/letters-model';
 import { FormBuilder } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { ApprovalStatusCount, AttendanceRequest } from '../../../Interfaces/timoff-model';
+import { ApprovalStatusCount, AttendanceRequest } from '../../../interfaces/timoff-model';
 import { Subject } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 

@@ -8,7 +8,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Router, RouterModule } from '@angular/router';
 import { INodue } from './nodue-details';
-import { Ipersonal } from '../../Interfaces/members-model';
+import { Ipersonal } from '../../interfaces/members-model';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';

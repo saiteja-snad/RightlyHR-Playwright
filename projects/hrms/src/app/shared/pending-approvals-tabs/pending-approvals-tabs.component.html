@@ -4,8 +4,16 @@
         <a class="nav-link d-flex justify-content-between align-items-center"
            [routerLink]="[link.route]"
            routerLinkActive="active-nav-link">
-          <span>{{ link.label }} <span *ngIf="link.count && link.count > 0">({{ link.count }})</span></span>
-        </a>
+          <span>
+            {{ link.label }} 
+            @if(link.count && link.count > 0) {
+              <span>( {{ link.count }})</span>
+            }@else {
+              <span>(0)</span>
+            }
+        
+        </span>
+         </a>
       </li>
     </ul>
   </div>

@@ -2,16 +2,16 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { IRelation } from '../../../interfaces/personal-modal';
+import { IRelation } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { IProbationEmployees } from '../../../interfaces/letters-model';
-import { IJob } from '../../../interfaces/job-model';
+import { IProbationEmployees } from '../../../Interfaces/letters-model';
+import { IJob } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-family-details',

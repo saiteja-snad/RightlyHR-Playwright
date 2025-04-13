@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { IJob } from '../../interfaces/job-model';
+import { IJob } from '../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import { SearchfilterPipe } from "../../pipes/searchfilter.pipe";
+import { SearchfilterPipe } from "../../Pipes/searchfilter.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({

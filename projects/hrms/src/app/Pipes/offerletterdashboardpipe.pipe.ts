@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { IOfferLetterDetails } from '../interfaces/documentsHistory';
+import { IOfferLetterDetails } from '../Interfaces/documentsHistory';
 
 @Pipe({
   name: 'offerletterdashboardpipe'

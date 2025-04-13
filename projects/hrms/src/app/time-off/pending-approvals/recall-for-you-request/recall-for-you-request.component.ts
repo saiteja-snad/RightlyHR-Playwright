@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -16,7 +16,7 @@ import {
   ISeparation,
   ISeparationRequest,
 } from '../separation-for-you-request/separation-for-you-request';
-import { Ipersonal } from '../../../interfaces/personal-modal';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
 
 @Component({
   selector: 'app-recall-for-you-request',

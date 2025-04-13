@@ -11,13 +11,13 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject } from 'rxjs';
-import { IJob } from '../../../interfaces/letters-model';
+import { IJob } from '../../../Interfaces/letters-model';
 import {
   AttendanceRequest,
   ICategoryDetails,
   PermissionRequestResponse,
-} from '../../../interfaces/timoff-model';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+} from '../../../Interfaces/timoff-model';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';

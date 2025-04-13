@@ -1,14 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Entity } from '../../../../interfaces/claimsandexpenses.model';
+import { Entity } from '../../../../Interfaces/claimsandexpenses.model';
 import { Subject } from 'rxjs';
-import { IJob } from '../../../../interfaces/letters-model';
+import { IJob } from '../../../../Interfaces/letters-model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { HttpService } from '../../../../services/http.service';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
-import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 

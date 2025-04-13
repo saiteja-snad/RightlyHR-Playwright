@@ -6,10 +6,10 @@ import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
-import { IJob } from '../../../interfaces/letters-model';
-import { IBackground, INotice, IProbation } from '../../../interfaces/job-model';
+import { IJob } from '../../../Interfaces/letters-model';
+import { IBackground, INotice, IProbation } from '../../../Interfaces/job-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IBranchLocation, Ipersonal, IStatus } from '../../../interfaces/personal-modal';
+import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 
 @Component({

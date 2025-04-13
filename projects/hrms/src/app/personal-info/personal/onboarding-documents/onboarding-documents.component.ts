@@ -6,7 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
-import { Ipersonal } from '../../../interfaces/personal-modal';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
 
 @Component({
   selector: 'app-onboarding-documents',

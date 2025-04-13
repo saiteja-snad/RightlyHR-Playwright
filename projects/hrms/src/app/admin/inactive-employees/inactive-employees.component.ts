@@ -7,7 +7,7 @@ import { HttpService } from '../../services/http.service';
 import { Iinactive } from './inactive-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { InactiveEmployeePipe } from '../../pipes/inactive-employee.pipe';
+import { InactiveEmployeePipe } from '../../Pipes/inactive-employee.pipe';
 @Component({
   selector: 'app-inactive-employees',
   imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule],

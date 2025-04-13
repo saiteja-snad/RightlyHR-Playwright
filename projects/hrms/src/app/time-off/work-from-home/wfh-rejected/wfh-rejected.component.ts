@@ -5,10 +5,10 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
-import { IJob } from '../../../interfaces/letters-model';
+import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
-import { ICompOff } from '../../../interfaces/compoff.modal';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { ICompOff } from '../../../Interfaces/compoff.modal';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({

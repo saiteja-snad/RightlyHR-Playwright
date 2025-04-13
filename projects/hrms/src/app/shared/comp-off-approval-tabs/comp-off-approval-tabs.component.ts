@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { IJob } from '../../interfaces/letters-model';
+import { IJob } from '../../Interfaces/letters-model';
 import { HttpService } from '../../services/http.service';
 import { Subject, takeUntil } from 'rxjs';
 

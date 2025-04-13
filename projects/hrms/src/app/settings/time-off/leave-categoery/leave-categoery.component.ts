@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { IJobdetails } from '../../../interfaces/job-model';
-import { Iorgcategoryleaves } from '../../../interfaces/timoff-model';
+import { IJobdetails } from '../../../Interfaces/job-model';
+import { Iorgcategoryleaves } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 

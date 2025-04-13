@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { Ipersonal } from '../../../interfaces/members-model';
+import { Ipersonal } from '../../../Interfaces/members-model';
 import { CommonModule } from '@angular/common';
-import { IJob } from '../../../interfaces/onboarding-documents';
+import { IJob } from '../../../Interfaces/onboarding-documents';
 
 @Component({
   selector: 'app-onboarding-requests',

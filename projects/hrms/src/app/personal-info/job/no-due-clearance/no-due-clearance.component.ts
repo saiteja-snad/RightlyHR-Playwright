@@ -11,8 +11,8 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { Ipersonal } from '../../../interfaces/personal-modal';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { INodue } from '../../../myinfo/nodue-details/nodue-details';
 
 @Component({

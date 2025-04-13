@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { CommonModule } from '@angular/common';
@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { IemployeeDetails } from '../../interfaces/letters-model';
+import { IemployeeDetails } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 

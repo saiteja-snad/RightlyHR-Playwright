@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, NgModel, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
-import { IExpense, IExpenseHeader, IExpenseItem, Iexpensetype, Inewexpense, INewExpense } from '../../interfaces/claimsandexpenses.model';
+import { IExpense, IExpenseHeader, IExpenseItem, Iexpensetype, Inewexpense, INewExpense } from '../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';

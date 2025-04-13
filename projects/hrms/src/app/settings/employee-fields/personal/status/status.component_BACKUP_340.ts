@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 <<<<<<< HEAD
-import { IStatus } from '../../../../interfaces/personal-modal';
+import { IStatus } from '../../../../Interfaces/personal-modal';
 =======
 
 >>>>>>> 777b6b5d39039f8b1b2ac4d78344d584da0b7481

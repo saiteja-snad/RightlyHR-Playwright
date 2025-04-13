@@ -5,13 +5,13 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IRelation } from '../../../interfaces/personal-modal';
+import { IRelation } from '../../../Interfaces/personal-modal';
 import { Select } from 'primeng/select';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { IJob } from '../../../interfaces/job-model';
+import { IJob } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-emergency-contact-details',

@@ -8,12 +8,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IJob } from '../../interfaces/letters-model';
+import { IJob } from '../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import { LeaveConfigurationSetting, OrgHolidayHeader, OrgWeekendHeader } from '../../interfaces/compoff.modal';
+import { LeaveConfigurationSetting, OrgHolidayHeader, OrgWeekendHeader } from '../../Interfaces/compoff.modal';
 import { CommonModule } from '@angular/common';
-import { Ileavesdatas, IValidations } from '../../interfaces/timoff-model';
+import { Ileavesdatas, IValidations } from '../../Interfaces/timoff-model';
 import moment from 'moment';
 import { OpenModalService } from '../../services/open-modal.service';
 

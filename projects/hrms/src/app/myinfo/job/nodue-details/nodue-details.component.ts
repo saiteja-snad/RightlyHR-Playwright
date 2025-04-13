@@ -6,13 +6,13 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { Router, RouterModule } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { Ipersonal } from '../../../interfaces/personal-modal';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { INodue } from './nodue-details';
 
 @Component({

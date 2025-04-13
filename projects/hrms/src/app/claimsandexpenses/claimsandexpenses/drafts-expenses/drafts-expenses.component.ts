@@ -1,12 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IExpense, IExpensedatabyid, IExpenseHeader, IExpenses, Iexpensetype, INewExpense } from '../../../interfaces/claimsandexpenses.model';
+import { IExpense, IExpensedatabyid, IExpenseHeader, IExpenses, Iexpensetype, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscribable, Subscription, switchMap } from 'rxjs';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule, DatePipe } from '@angular/common';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../../services/open-modal.service';

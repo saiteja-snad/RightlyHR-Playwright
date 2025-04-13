@@ -1,17 +1,17 @@
 import { Component, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { AttendanceRequest, ICategoryDetails } from '../../../../interfaces/timoff-model';
+import { AttendanceRequest, ICategoryDetails } from '../../../../Interfaces/timoff-model';
 import { Subject } from 'rxjs';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { IJob } from '../../../../interfaces/letters-model';
-import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
+import { IJob } from '../../../../Interfaces/letters-model';
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { DropdownModule } from 'primeng/dropdown';
-import { Entity } from '../../../../interfaces/claimsandexpenses.model';
+import { Entity } from '../../../../Interfaces/claimsandexpenses.model';
 
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',

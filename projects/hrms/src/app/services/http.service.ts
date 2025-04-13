@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, catchError } from 'rxjs';
 import { environment } from '../../environments/environment.dev';
-import { ApprovalStatusCount } from '../interfaces/timoff-model';
+import { ApprovalStatusCount } from '../Interfaces/timoff-model';
 
 
 @Injectable({

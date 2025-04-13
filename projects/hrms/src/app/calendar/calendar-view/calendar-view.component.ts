@@ -8,7 +8,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import { firstValueFrom, Subscription } from 'rxjs';
-import { IemployeeDetails } from '../../interfaces/job-model';
+import { IemployeeDetails } from '../../Interfaces/job-model';
 import { HttpService } from '../../services/http.service';
 import { FormsModule } from '@angular/forms';
 

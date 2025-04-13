@@ -5,7 +5,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
@@ -13,7 +13,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
 import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
-import { IaddressemployeeDetails, IAuthority } from '../../interfaces/letters-model';
+import { IaddressemployeeDetails, IAuthority } from '../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-address-proof-letter',

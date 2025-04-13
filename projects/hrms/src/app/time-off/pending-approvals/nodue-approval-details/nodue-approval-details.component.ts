@@ -13,7 +13,7 @@ import {
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { InoDuepending } from './nodue-approval-details';
-import { NodueDetailsPipe } from '../../../pipes/nodue-details.pipe';
+import { NodueDetailsPipe } from '../../../Pipes/nodue-details.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';

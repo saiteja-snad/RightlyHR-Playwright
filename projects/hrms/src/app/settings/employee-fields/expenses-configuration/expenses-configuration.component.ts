@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { IExpenses } from '../../../interfaces/claimsandexpenses.model';
+import { IExpenses } from '../../../Interfaces/claimsandexpenses.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 

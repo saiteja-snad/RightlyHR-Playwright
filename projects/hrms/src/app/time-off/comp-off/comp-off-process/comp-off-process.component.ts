@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ICompOff } from '../../../interfaces/compoff.modal';
-import { IJob } from '../../../interfaces/letters-model';
+import { ICompOff } from '../../../Interfaces/compoff.modal';
+import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";

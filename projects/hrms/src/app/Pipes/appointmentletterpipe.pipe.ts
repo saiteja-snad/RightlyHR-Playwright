@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { IAppointmentLetterDetails } from '../interfaces/documentsHistory';
+import { IAppointmentLetterDetails } from '../Interfaces/documentsHistory';
 
 @Pipe({
   name: 'appointmentletterpipe'

@@ -9,10 +9,10 @@ import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-import { IAuthority, IemployeeDetails, IJob } from '../../interfaces/letters-model';
+import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 
 @Component({

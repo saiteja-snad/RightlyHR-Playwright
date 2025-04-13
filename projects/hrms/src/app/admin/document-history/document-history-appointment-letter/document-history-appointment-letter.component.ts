@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { IAppointmentLetterDetails } from '../../../interfaces/documentsHistory';
+import { IAppointmentLetterDetails } from '../../../Interfaces/documentsHistory';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { AppointmentletterpipePipe } from '../../../pipes/appointmentletterpipe.pipe';
+import { AppointmentletterpipePipe } from '../../../Pipes/appointmentletterpipe.pipe';
 
 @Component({
   selector: 'app-document-history-appointment-letter',

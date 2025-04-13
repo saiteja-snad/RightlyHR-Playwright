@@ -5,12 +5,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
-import { IRehiredata, ITermination } from '../../../interfaces/job-model';
+import { IRehiredata, ITermination } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
-import { IStatus } from '../../../interfaces/personal-modal';
+import { IStatus } from '../../../Interfaces/personal-modal';
 import { IJobdetails } from '../../../admin/active-employees/active-model';
 import { Select } from 'primeng/select';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-employe-off-boarding',

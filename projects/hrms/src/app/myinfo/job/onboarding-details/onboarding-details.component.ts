@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IBranchLocation, Ipersonal, IStatus } from '../../../interfaces/personal-modal';
+import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
-import { IJob } from '../../../interfaces/letters-model';
-import { IProbation } from '../../../interfaces/job-model';
+import { IJob } from '../../../Interfaces/letters-model';
+import { IProbation } from '../../../Interfaces/job-model';
 
 @Component({
   selector: 'app-onboarding-details',

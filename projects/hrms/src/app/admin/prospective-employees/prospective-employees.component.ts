@@ -8,7 +8,7 @@ import { HttpService } from '../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import {  Iprospective } from './Prospective-model';
 import { TranslateModule } from '@ngx-translate/core';
-import { ProspectivePipe } from '../../Pipes/prospective.pipe';
+import { ProspectivePipe } from '../../pipes/prospective.pipe';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-prospective-employees',

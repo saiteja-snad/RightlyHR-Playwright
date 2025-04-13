@@ -67,7 +67,7 @@ export class HttpService {
     return this.http.get(item_url);
   }
 
-  getData(url: string, deleteRequest: { isdeleted: string; }) {
+  getData(url: string ) {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
   postletters(url: string) {

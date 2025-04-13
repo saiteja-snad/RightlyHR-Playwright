@@ -81,7 +81,7 @@ export class TeamComponent implements OnInit, OnDestroy {
   }
 
   getDepartmentName() {
-    this.subscription = this.http.getDatabyid('Department').subscribe({
+    this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
         console.log(data);
         alert("hello");
@@ -96,7 +96,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     });
   }
   getTeam() {
-    this.subscription = this.http.getitembyid('Employeedata/ActiveEmployees').subscribe({
+    this.subscription = this.http.getDatabyid('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
         console.log(data);
         alert("hello");
@@ -124,7 +124,7 @@ export class TeamComponent implements OnInit, OnDestroy {
 
 
   getTable() {
-    this.subscription = this.http.getData("Subdepartments/Getalldept").subscribe({
+    this.subscription = this.http.getDatabyid("Subdepartments/Getalldept").subscribe({
       next: (data: any) => {
         console.log(data);
         this.teamdetailsdata = data as TeamData[]
@@ -179,7 +179,7 @@ export class TeamComponent implements OnInit, OnDestroy {
 
       this.updateDepartmentDetails.UpdatedTeamName = this.updateForm.get('UpdatedTeamName')?.value;
       this.updateDepartmentDetails.updatedDepartmentName = this.updateForm.get('updatedDepartmentName')?.value;
-      this.updateDepartmentDetails.updatedteamManager = this.updateForm.get('reportingManagerId')?.value;
+      this.updateDepartmentDetails.updatedteamManager = this.updateForm.get('updatedteamManager')?.value;
 
 
       this.subscription = this.http.postdata('Subdepartments/Update', this.updateDepartmentDetails).subscribe({

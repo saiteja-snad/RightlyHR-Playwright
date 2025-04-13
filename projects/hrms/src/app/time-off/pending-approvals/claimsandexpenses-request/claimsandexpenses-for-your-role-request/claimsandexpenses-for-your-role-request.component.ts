@@ -7,7 +7,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { IJob } from '../../../../Interfaces/letters-model';
-import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { DropdownModule } from 'primeng/dropdown';

@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { ITrainee } from './active-interns-modules';
-import { ActiveEmployeePipe } from "../../pipes/active-employee.pipe";
+import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { FormsModule } from '@angular/forms';
 
 @Component({

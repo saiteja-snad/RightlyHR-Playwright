@@ -8,7 +8,7 @@ import { Iinactivetrainee } from './inactive-trainee-mod';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { ActiveEmployeePipe } from '../../pipes/active-employee.pipe';
+import { ActiveEmployeePipe } from '../../Pipes/active-employee.pipe';
 
 @Component({
   selector: 'app-inactive-interns',

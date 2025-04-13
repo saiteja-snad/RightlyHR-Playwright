@@ -9,7 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { LettersTabComponent } from '../../shared/letters-tab/letters-tab.component';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';

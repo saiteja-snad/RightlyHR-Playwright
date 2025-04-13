@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';

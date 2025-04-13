@@ -33,6 +33,9 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   hours!: any;
   duration!: any;
   spinnerLoader = false;
+  availablebalance!:number
+  totalbalance: any;
+alloweddates: string = ''
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -51,7 +54,25 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
     this.getDataByLPID();
     this.getWorkfromhomeCriteria();
+    this.addWFHForm.get('availing')?.valueChanges.subscribe(value => {
+      const halfTypeControl = this.addWFHForm.get('halfType');
+      if (value === 'Half Day') {
+        halfTypeControl?.setValidators([Validators.required]);
+        halfTypeControl?.enable();
+      } else {
+        halfTypeControl?.clearValidators();
+        halfTypeControl?.setValue('');
+        halfTypeControl?.disable();
+      }
+      halfTypeControl?.updateValueAndValidity();
+    });
+
+    
+  if (this.empinfo.dateOfJoining) {
+    this.alloweddates = this.formatDate(this.empinfo.dateOfJoining);
   }
+  }
+
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -69,12 +90,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
 
   updateDuration() {
-    // this.enableButton = false;
-    // this.selectedValuehalf=false;
-    // let starttime =`${this.compoffdata.startTimeProp} ${this.compoffdata.am}`
-    // console.log(starttime);
-    // let endtime =`${this.compoffdata.endTimeProp} ${this.compoffdata.pm}`
-    // console.log(endtime);
     console.log(this.workFromHomedata.startTimeProp);
     console.log(this.workFromHomedata.endTimeProp);
     if (
@@ -125,7 +140,28 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       }
     }
   }
+  ngAfterViewInit() {
+    const workedDate = this.addWFHForm.get('workedDate')?.value;
+    if (workedDate) {
+      this.getWFHBal(workedDate);
+    }
+  }
+  getWFHBal(currentDate: any) {
+    let empId = this.empinfo.employeeId;
+    // let currentDate = new Date().toISOString().split('T')[0];
+  this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
+      next: (response: any) => {
+        console.log(response);
+     
+        this.totalbalance = response.totalBalance;
+        this.availablebalance = response.availableBalance
 
+        console.log(this.totalbalance);
+
+      },
+      error: (reason: any) => console.log(reason)
+    })
+  }
   getDataByLPID() {
     let emp = this.empinfo.employeeId;
     this.http.getData(`Timeoff/LPID/${emp}`).subscribe({
@@ -255,6 +291,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.spinnerLoader = false;
+          this.sharedModalService.openErrorModal(err.error.message)
         },
         complete: () => {
           this.addWFHForm.reset();
@@ -264,6 +301,14 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     }
 
   
+  }
+
+  formatDate(date: string | Date): string {
+    const d = new Date(date);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`;
   }
 
   ngOnDestroy(): void {

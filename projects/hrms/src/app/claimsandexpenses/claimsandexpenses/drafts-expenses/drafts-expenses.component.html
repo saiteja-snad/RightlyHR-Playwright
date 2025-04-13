@@ -5,51 +5,65 @@
         <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
             [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
-    <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Expense Title</th>
-                    <th>Expense Date</th>
-                    <th>Total Amount</th>
-                    <th>Status</th>
-                    <th class="text-center">Actions</th>
+    <ng-container *ngIf="(expenesEmplyeedata | async) === null; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="loader-placeholder-content text-center">
+                <div>
+                    <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
+                </div>
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
 
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let exp of expenesEmplyeedata | async">
-                        <td>{{ exp.expenses_Title }}</td>
-                        <td>{{ exp.applied_date | dateformat }}</td>
-                        <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-                        <td> <span class="me-2">●</span> {{ exp.status }}
-                        </td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a class="dropdown-item"
-                                            (click)="openModal(updateModal);viewItem(exp.expenses_ID)"><i
-                                                class="bi bi-pencil me-2"></i>Update</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-container>
-                <!-- No Data Found Template -->
-                <ng-template #noDataTemplate>
+    <ng-template #maincontent>
+
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
                     <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
+                        <th>Expense Title</th>
+                        <th>Expense Date</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
+
                     </tr>
-                </ng-template>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
+                        <tr *ngFor="let exp of expenesEmplyeedata | async">
+                            <td>{{ exp.expenses_Title }}</td>
+                            <td>{{ exp.applied_date | dateformat }}</td>
+                            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+                            <td> <span class="me-2">●</span> {{ exp.status }}
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)"><i
+                                                    class="bi bi-pencil me-2"></i>Update</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- No Data Found Template -->
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td>
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
 </div>
 
 

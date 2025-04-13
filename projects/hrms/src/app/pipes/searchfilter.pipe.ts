@@ -6,11 +6,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class SearchfilterPipe implements PipeTransform {
 
   transform(items: any[], searchText: string, searchProperties: string[] = []): any[] {
+    console.log("searchTokens",searchText);
     if (!items || !searchText || !searchProperties.length) {
         return items;
     }
 
     const searchTokens = searchText.toLowerCase().split(/\s+/);
+    console.log("searchTokens",searchTokens);
 
     return items.filter(item => {
         return searchTokens.every(token => {
@@ -20,6 +22,9 @@ export class SearchfilterPipe implements PipeTransform {
             });
         });
     });
+
+
+    
 }
 
 }

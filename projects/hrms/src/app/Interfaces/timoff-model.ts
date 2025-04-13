@@ -212,9 +212,47 @@ export interface ApprovalHeader {
   requestedBy: number;
 }
 
+
 export interface Module {
   id: number;
   moduleName: string;
   approvalflowRequired: boolean;
   categoryType: string;
 }
+
+
+export interface PermissionRequestResponse {
+  entity: PermissionRequest;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+}
+
+export interface PermissionRequest {
+  id: number;
+  raisedFor: number;
+  raisedForName: string;
+  fusionempId: string;
+  requestedBy: number;
+  requestedDate: string; // ISO string
+  createdDate: string;
+  type: string;
+  moduleId: number;
+  referenceTypeId: number;
+  duration: string; // Can be string or number depending on backend
+  status: string;
+  notes: string;
+  headerId: number;
+  regularizationApproverComments: any[]; // Define type if structured
+}
+
+
+export interface ApprovalStatusCount {
+  moduleId: number;
+  moduleName: string;
+  forYou: number;
+  forYourRole: number;
+  totalCount: number;
+}
+
+

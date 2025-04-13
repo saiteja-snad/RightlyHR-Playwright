@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { GenderData } from './gender.model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-gender',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
@@ -25,7 +26,7 @@ export class GenderComponent {
   selectedDeleteGender: any = null;
   subscription!: Subscription;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService, public formValidations: FormValidationsService) { }
 
   ngOnInit(): void {
     this.GenderForm = this.fb.group({
@@ -35,17 +36,6 @@ export class GenderComponent {
       Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.getGender();
-  }
-
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
   }
 
   getGender() {
@@ -63,7 +53,7 @@ export class GenderComponent {
     this.subscription = this.http.postdata('Gender', request).subscribe({
       next: () => {
         this.getGender();
-        this.conformationPopup.openSuccessModal('Gender Name added successfully');
+        this.conformationPopup.openSuccessModal('Gender added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -86,7 +76,7 @@ export class GenderComponent {
           this.getGender();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Gender Name updated successfully');
+          this.conformationPopup.openSuccessModal('Gender updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');

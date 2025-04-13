@@ -21,7 +21,7 @@
       routerLinkActive="active-nav-link">Attendance Regularization  (9)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/separation-request']" routerLinkActive="active-nav-link">Separation Requests (9)</a>
+      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/separation-request']" (click)="onclickseparation()" routerLinkActive="active-nav-link">Separation Requests (9)</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['/time-off/pending-approvals/recall-request']" routerLinkActive="active-nav-link">Recall Requests (9)</a>
@@ -31,8 +31,12 @@
       routerLinkActive="active-nav-link">Trainee Details (9)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/nodue']"
+      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/nodue-request']"
       routerLinkActive="active-nav-link">No Due Clearance Requests (9)</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/pending-approvals/claimsandexpenses-request']"
+      routerLinkActive="active-nav-link">Claims and Expenses (9)</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['/time-off/pending-approvals/probation-request']"

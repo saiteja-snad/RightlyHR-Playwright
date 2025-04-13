@@ -1214,51 +1214,63 @@ input:focus {
 }
 
 //stylesfor expenses
-// .custom-table {
-//     width: 100%;
-//     overflow: auto;
-//     background-color: #FFFFFF;
-//     border: 1px solid #E7E7ED;
-//     border-radius: 1.2rem;
-//     position: relative;
+.custom-table {
+    width: 100%;
+    overflow: auto;
+    background-color: #FFFFFF;
+    border: 1px solid #E7E7ED;
+    border-radius: 1.2rem;
+    position: relative;
 
 
-//     thead {
-//         top: 0%;
-//         position: sticky;
-//         z-index: 1;
-//     }
+    thead {
+        top: 0%;
+        position: sticky;
+        z-index: 1;
+    }
 
-//     th,
-//     td {
-//         font-weight: 400;
-//         font-size: var(--fontsize14);
-//         line-height: 100%;
-//         letter-spacing: 0%;
-//         vertical-align: middle;
-//         padding: 1.6rem;
-//     }
+    th,
+    td {
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        padding: 1.6rem;
+    }
 
-//     th {
-//         background-color: var(--table-header-bg-color);
-//         color: var(--table-header-color);
-//         text-wrap: nowrap;
-//         text-transform: uppercase;
-//     }
+    th {
+        background-color: var(--table-header-bg-color);
+        color: var(--table-header-color);
+        text-wrap: nowrap;
+        text-transform: uppercase;
+    }
 
-//     th:first-child {
-//         border-top-left-radius: 1.2rem;
-//     }
+    th:first-child {
+        border-top-left-radius: 1.2rem;
+    }
 
-//     th:last-child {
-//         border-top-right-radius: 1.2rem;
-//     }
+    th:last-child {
+        border-top-right-radius: 1.2rem;
+    }
 
-//     tr:nth-child(even) {
-//         background-color: var(--table-data-bg-even-color);
-//     }
+    tr:nth-child(even) {
+        background-color: var(--table-data-bg-even-color);
+    }
 
-// }
+}
+// loader
+.loader-placeholder-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100dvh - 18rem);
+
+    .sand-clock {
+        width: 16rem;
+        height: 12rem;
+    }
+}
 
 // .expenses-title-text {
 //     font-weight: 700;
@@ -1269,6 +1281,20 @@ input:focus {
 //     color: #222B45;
 // }
 
+
+// success icon
+.succes-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+}
+
+//error icon
+.error-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+}
 // Settings Stylings
 .custom-setting-right-content {
     width: 100%;

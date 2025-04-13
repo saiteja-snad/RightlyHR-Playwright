@@ -46,7 +46,7 @@
                 </option>
               </select> -->
 
-            <input type="text"class="form-control custom-input" formControlName="Duration" placeholder="Please enter duration" (keypress)="blockNonAlphabets($event)" />
+            <input type="text"class="form-control custom-input" formControlName="Duration" placeholder="Please enter duration"/>
             </div>
             <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid">
               <small style="color: red; font-size: 13px;">
@@ -134,7 +134,7 @@
             <div class="custom-main-popup-content p-5">
                 <div class="mb-4">
                     <label for="UpdateServingPeriod" class="form-label custom-label mb-2">
-                        {{'Job Role' | translate}} <span class="error-msg">*</span>
+                        {{'Serving Period Type' | translate}} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateServingPeriod"
                         placeholder="Please Enter Serving Period" (keypress)="blockNonAlphabets($event)">
@@ -145,18 +145,18 @@
                 </div>
                 <div class="mb-4">
 
-                    <label for="UpdateServingPeriod" class="form-label custom-label mb-2">
-                        {{'Serving Period Type' | translate}} <span class="error-msg">*</span>
+                    <label for="UpdateDuration" class="form-label custom-label mb-2">
+                        {{'Duration' | translate}} <span class="error-msg">*</span>
                     </label>
 
                     <div class="custom-p-select-content">
-                        <input type="text"class="form-control custom-input" formControlName="UpdateServingPeriod" placeholder="Please enter serving period" (keypress)="blockNonAlphabets($event)" />
+                        <input type="text"class="form-control custom-input" formControlName="UpdateDuration" placeholder="Please enter duration"/>
                     </div>
 
                 </div>
-                <div *ngIf="updateForm.get('UpdateServingPeriod')?.touched && updateForm.get('UpdateServingPeriod')?.invalid">
-                    <small style="color: red; font-size: 13px;" *ngIf="updateForm.get('UpdateServingPeriod')?.errors?.['required']">
-                        {{'Serving period is required' | translate}}
+                <div *ngIf="updateForm.get('UpdateDuration')?.touched && updateForm.get('UpdateDuration')?.invalid">
+                    <small style="color: red; font-size: 13px;" *ngIf="updateForm.get('UpdateDuration')?.errors?.['required']">
+                        {{'Duration is required' | translate}}
                     </small>
                 </div>
                 <div class="d-flex gap-5 pt-4 w-100">

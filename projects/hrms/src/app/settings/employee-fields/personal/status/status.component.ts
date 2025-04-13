@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-status',
@@ -29,7 +30,7 @@ export class StatusComponent implements OnInit{
     @ViewChild('updatepopup') updatepopup: any;
 
   
-    constructor(private fb: FormBuilder,private modalService: NgbModal,private http: HttpService,private conformationPopup: OpenModalService) {}
+    constructor(private fb: FormBuilder,private modalService: NgbModal,private http: HttpService,private conformationPopup: OpenModalService, public formValidations: FormValidationsService) {}
     
     ngOnInit(): void {
       this.statusForm = this.fb.group({
@@ -49,7 +50,6 @@ export class StatusComponent implements OnInit{
       },
       error: (reason: any) => {
         console.log(reason);
-        alert("Insertion of data is failed")
       }
     })
   }

@@ -265,43 +265,58 @@
                 <img src="icons\succes.png" alt="succues" class="succes-icon">
             </div>
             <h4 class="text-center ps-3 pe-3 inactive-poptext"> Are you sure you want to Approve? </h4>
-            <form name="recallacceptForm" class="ps-5 mb-3 w-100" #recallacceptForm="ngForm"
-                (ngSubmit)="recallacceptForm.valid && handleAccept(recallacceptForm)">
+            <form [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()" class="ps-5 mb-3 w-100">
                 <div class="col-11">
-                    <div class="mb-3 mt-2">
-                        <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span
-                                class="error-msg">*</span></label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1"
-                            placeholder="Please enter comments" name="Reason" maxlength="250" #recallcomments="ngModel"
-                            [(ngModel)]="selectedSpRequestData.comments" rows="3" required></textarea>
-                        <div>
-                            <span>{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
-                                /250</span>
-                        </div>
-
-                        <small class="error-msg"
-                            *ngIf="(recallcomments.touched && recallcomments.invalid) || (recallcomments.invalid && recallacceptForm.submitted)">
-                            Comments is required </small>
+                  <div class="mb-3 mt-2">
+                    <label for="exampleFormControlTextarea1" class="form-label labell">
+                      Comments <span class="error-msg">*</span>
+                    </label>
+                    <textarea
+                      id="exampleFormControlTextarea1"
+                      class="form-control"
+                      formControlName="AcceptReason"
+                      maxlength="250"
+                      placeholder="Please enter comments"
+                      rows="3">
+                    </textarea>
+              
+                    <div>
+                      <span>{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</span>
                     </div>
+              
+                    <small class="error-msg"
+                      *ngIf="recallAcceptForm.get('AcceptReason')?.touched && recallAcceptForm.get('AcceptReason')?.invalid">
+                      <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['required']">
+                        Comments is required
+                      </ng-container>
+                      <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                      </ng-container>
+                      <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['pattern']">
+                        Leading spaces are not allowed
+                      </ng-container>
+                    </small>
+                  </div>
                 </div>
+              
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-                        {{'Cancel'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="recallacceptForm.invalid||isLoading">
-                        @if(!isLoading){
-                        {{'Approve'|translate}}
-                        }
-                        @else {
-                        <div class="d-flex">
-                            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-                            </div>
-                            <div> {{'Submitting'|translate}}</div>
-                        </div>
-                        }
-                    </button>
+                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();recallAcceptForm.reset()">
+                    {{ 'Cancel' | translate }}
+                  </button>
+              
+                  <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptForm.invalid || isLoading">
+                    @if (!isLoading) {
+                      {{ 'Approve' | translate }}
+                    } @else {
+                      <div class="d-flex">
+                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+                        <div>{{ 'Submitting' | translate }}</div>
+                      </div>
+                    }
+                  </button>
                 </div>
-            </form>
+              </form>
+              
         </div>
     </div>
 
@@ -316,44 +331,58 @@
             <div class="d-flex justify-content-center align-items-center mt-3">
                 <h4 class="text-center">Are you sure you want to reject this request?</h4>
             </div>
-            <form name="rejectSeparation" class="ps-5 w-100" #rejectSeparation="ngForm"
-                (ngSubmit)="rejectSeparation.valid && handlerecallReject(rejectSeparation)">
+            <form [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()" class="ps-5 w-100">
                 <div class="col-11">
-                    <div class="mb-3 mt-2">
-                        <label for="exampleFormControlTextarea1" class="form-label labell">Enter reason<span
-                                class="error-msg">*</span></label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1"
-                            placeholder="Please enter reason" name="notes" #notes="ngModel" [maxlength]="250"
-                            [(ngModel)]="selectedSpRequestData.rejectedReason" rows="3" required></textarea>
-                        <div>
-                            <span>{{ selectedSpRequestData?.rejectedReason?.length ?
-                                selectedSpRequestData?.rejectedReason?.length : 0 }}/250</span>
-                        </div>
-                        <!-- Validation error message -->
-                        <small class="error-msg"
-                            *ngIf="(notes.touched && notes.invalid) || (rejectSeparation.submitted && notes.invalid)">
-                            Reason is required
-                        </small>
+                  <div class="mb-3 mt-2">
+                    <label for="exampleFormControlTextarea1" class="form-label labell">
+                      Enter reason <span class="error-msg">*</span>
+                    </label>
+                    <textarea
+                      class="form-control"
+                      id="exampleFormControlTextarea1"
+                      placeholder="Please enter reason"
+                      formControlName="notes"
+                      rows="3"
+                      maxlength="250">
+                    </textarea>
+              
+                    <div>
+                      <span>{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</span>
                     </div>
+              
+                    <small class="error-msg"
+                      *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
+                      <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
+                        Reason is required
+                      </ng-container>
+                      <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                      </ng-container>
+                      <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['pattern']">
+                        Leading spaces are not allowed
+                      </ng-container>
+                    </small>
+                  </div>
                 </div>
+              
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-                        {{'Cancel'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="rejectSeparation.invalid||isLoading">
-                        @if(!isLoading){
-                        {{'Approve'|translate}}
-                        }
-                        @else {
-                        <div class="d-flex">
-                            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-                            </div>
-                            <div> {{'Submitting'|translate}}</div>
-                        </div>
-                        }
-                    </button>
+                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();rejectSeparationForm.reset()">
+                    {{ 'Cancel' | translate }}
+                  </button>
+              
+                  <button type="submit" class="custom-btn btn-primary" [disabled]="rejectSeparationForm.invalid || isLoading">
+                    @if (!isLoading) {
+                      {{ 'Reject' | translate }}
+                    } @else {
+                      <div class="d-flex">
+                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+                        <div>{{ 'Submitting' | translate }}</div>
+                      </div>
+                    }
+                  </button>
                 </div>
-            </form>
+              </form>
+              
         </div>
     </div>
 </ng-template>
@@ -365,44 +394,61 @@
                 <img src="icons\succes.png" alt="succues" class="succes-icon">
             </div>
             <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">Are you sure you want to approve this request?</h4>
+                <h4 class="text-center">Are you sure you want to Process this request?</h4>
             </div>
-            <form name="recallacceptFormforprocess" class="ps-5 mb-3 w-100" #recallacceptFormforprocess="ngForm"
-                (ngSubmit)="recallacceptFormforprocess.valid && handlerecallProcess(recallacceptFormforprocess)">
+            <form [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()" class="ps-5 mb-3 w-100">
                 <div class="col-11">
-                    <div class="mb-3 mt-2">
-                        <label for="exampleFormControlTextarea1" class="form-label labell">Comments <span
-                                class="error-msg">*</span></label>
-                        <textarea class="form-control" id="recallReason" placeholder="Please enter comments"
-                            name="recallReason" #recallcommentsforprocess="ngModel" maxlength="250"
-                            [(ngModel)]="selectedSpRequestData.comments" rows="3" required></textarea>
-                        <div>
-                            <span>{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
-                                /250</span>
-                        </div>
-                        <small class="error-msg"
-                            *ngIf="(recallcommentsforprocess.touched && recallcommentsforprocess.invalid) || (recallacceptFormforprocess.invalid && recallacceptFormforprocess.submitted)">
-                            Comments is required </small>
+                  <div class="mb-3 mt-2">
+                    <label for="exampleFormControlTextarea1" class="form-label labell">
+                      Comments <span class="error-msg">*</span>
+                    </label>
+                    <textarea
+                      class="form-control"
+                      id="recallReason"
+                      placeholder="Please enter comments"
+                      formControlName="recallReason"
+                      rows="3"
+                      maxlength="250">
+                    </textarea>
+              
+                    <div>
+                      <span>
+                        {{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250
+                      </span>
                     </div>
+              
+                    <small class="error-msg"
+                      *ngIf="recallAcceptFormForProcess.get('recallReason')?.touched && recallAcceptFormForProcess.get('recallReason')?.invalid">
+                      <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['required']">
+                        Comments is required
+                      </ng-container>
+                      <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                      </ng-container>
+                      <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['pattern']">
+                        Leading spaces are not allowed
+                      </ng-container>
+                    </small>
+                  </div>
                 </div>
+              
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-                        {{'Cancel'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="recallacceptFormforprocess.invalid||isLoading">
-                        @if(!isLoading){
-                        {{'Approve'|translate}}
-                        }
-                        @else {
-                        <div class="d-flex">
-                            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-                            </div>
-                            <div> {{'Submitting'|translate}}</div>
-                        </div>
-                        }
-                    </button>
+                  <button type="button" class="custom-btn btn-secondary" (click)="recallAcceptFormForProcess.reset();modal.dismiss()">
+                    {{ 'Cancel' | translate }}
+                  </button>
+                  <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptFormForProcess.invalid || isLoading">
+                    @if (!isLoading) {
+                      {{ 'Process' | translate }}
+                    } @else {
+                      <div class="d-flex">
+                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+                        <div>{{ 'Submitting' | translate }}</div>
+                      </div>
+                    }
+                  </button>
                 </div>
-            </form>
+              </form>
+              
         </div>
     </div>
 </ng-template>

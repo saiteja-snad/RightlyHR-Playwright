@@ -6,7 +6,7 @@ import { Ipersonal } from '../../Interfaces/personal-modal';
 import { OpenModalService } from '../../services/open-modal.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

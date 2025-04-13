@@ -15,10 +15,12 @@ export class HttpService {
     wfh: false,
     employeeId:0
   });
-  tirggerPendingApprovalCountSignal = signal<{ compOff: boolean; wfh: boolean;permission:boolean }>({
+  tirggerPendingApprovalCountSignal = signal<{ compOff: boolean; wfh: boolean;permission:boolean ;separation:boolean,recall:boolean}>({
     compOff: false,
     wfh: false,
     permission:false,
+    separation:false,
+    recall:false
   });
 
   constructor(private http: HttpClient) {

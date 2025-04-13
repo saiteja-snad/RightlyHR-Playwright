@@ -215,6 +215,10 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.recallAcceptForm.reset();
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Approved Successfully'
           );
@@ -249,6 +253,10 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.rejectSeparationForm.reset();
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Rejected Successfully'
           );
@@ -301,6 +309,10 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
           this.recallAcceptFormForProcess.reset();
           this.modalService.dismissAll();
           this.getAllPendingApprovals();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Processed Successfull'
           );

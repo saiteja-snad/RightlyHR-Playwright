@@ -11,6 +11,7 @@ import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-f
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
+import { ExpenseApprovalResponse } from '../../../../Interfaces/timoff-model';
 
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
@@ -31,7 +32,7 @@ export class ClaimsandexpensesForYouRequestComponent {
     { label: 25, value: 25 },
   ];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  expenseheaderpending = [] as Entity[];
+  expenseheaderpending = [] as ExpenseApprovalResponse[];
   approverComments = [] as any[];
   // approverComments = [] as AttendanceRequestC[];
  
@@ -57,7 +58,7 @@ export class ClaimsandexpensesForYouRequestComponent {
       .subscribe({
         next: (response: any) => {
           console.log(response);
-          this.expenseheaderpending = (response.data as Entity[]).filter(
+          this.expenseheaderpending = (response.data as ExpenseApprovalResponse[]).filter(
             (item) =>
               item.approvalHeader.status != 'Processed' &&
               item.approvalHeader.status != 'Rejected'

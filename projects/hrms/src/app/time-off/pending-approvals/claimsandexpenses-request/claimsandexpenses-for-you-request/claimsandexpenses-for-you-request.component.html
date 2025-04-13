@@ -13,47 +13,35 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Employee ID </th>
-                        <th>Employee Name</th>
-                        <th>Worked Date</th>
-                        <th>Availed</th>
-                        <th>Reason</th>
-                        <th>Approver Comments</th>
+                        <th>Employee Name </th>
+                        <th>Expense Title</th>
                         <th>Applied Date</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>View Expense Type</th>
+                        <th>Approver Comments</th>
                         <th>Action(s)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <ng-container *ngIf="expenseheaderpending!.length > 0; else noDataTemplate">
                     <tr *ngFor="let leave of expenseheaderpending; let i = index">
-                        <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
-                        <td>{{leave.entity.attendanceRequesterName}}</td>
-                        <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
-                        <td>{{leave.entity.attendanceRequestDurationType}}</td>
-                        <td>
-                            <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
-                            </div>
-                        </td>
-                        <td>  <div>
+                        <td>{{leave.entity.employeeName}}</td>
+                        <td>{{leave.entity.expenseType}}</td>
+                        <td>{{leave.entity.applied_date | dateformat}}</td>
+                        <td>{{leave.entity.totalExpenseAmount}}</td>
+                        <td>{{leave.entity.status}}</td>
+                        <td>-</td>
+                        <td>  
+                        <div>
                             <span>
                                 <a type="button" placement="top" >
-                                    <img src="images\info-fill.png" alt="info icon" (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)" class="info-icon">
+                                    <img src="images\info-fill.png" alt="info icon" (click)="comments(leave.entity.expenseApproverComments,commentspopup)" class="info-icon">
                                 </a>
                                 
                             </span>
-                        </div></td>
-                        <td>{{leave.entity.attendanceRequestAppliedDate
-                                            | dateformat}}</td>
+                        </div>
+                        </td>
                         <td>
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">

@@ -284,3 +284,24 @@ export interface ILeavePolicyData{
     lpId:number
 }
 
+
+export interface ExpenseApprovalResponse {
+  entity: ExpenseEntity;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+}
+
+export interface ExpenseEntity {
+  expenses_ID: number;
+  applied_date: string;
+  expenses_Title: string;
+  status: string;
+  employeeId: number;
+  fusionEmpId: string;
+  employeeName: string;
+  totalExpenseAmount: number;
+  expenseType: string;
+  pendingheaderId: number;
+  expenseApproverComments: any[]; // Replace `any` with specific type if available
+}

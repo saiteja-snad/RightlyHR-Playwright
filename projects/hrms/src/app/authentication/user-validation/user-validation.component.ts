@@ -23,8 +23,8 @@ export class UserValidationComponent {
     private http: HttpService
   ) {}
 
-  ngOnInit(): void {
-    this.postLogin();
+  async ngOnInit() {
+    await this.postLogin();
   }
   async postLogin() {
     await this._msalService.instance.initialize();

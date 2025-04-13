@@ -12,7 +12,7 @@ import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Valid
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Ipersonal } from '../../../Interfaces/members-model';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -215,6 +215,10 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.recallAcceptForm.reset();
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Approved Successfully'
           );
@@ -249,6 +253,10 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.rejectSeparationForm.reset();
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Rejected Successfully'
           );
@@ -301,6 +309,10 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.recallAcceptFormForProcess.reset();
           this.modalService.dismissAll();
           this.getAllPendingApprovals();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Processed Successfull'
           );

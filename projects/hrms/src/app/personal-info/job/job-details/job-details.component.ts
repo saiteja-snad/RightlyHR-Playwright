@@ -7,7 +7,7 @@ import { IDepartment, IGrade, IJob, IJobdetails, IJobtype, IRole } from '../../.
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import moment from 'moment';
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environments/environment.dev';
@@ -126,10 +126,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
       team: [{ value: null, disabled: true }],
       teamManager: [{ value: null, disabled: true }],
       reportingManager: [{ value: '', disabled: true }],
-      description: [null, [Validators.required, Validators.maxLength(400)]],
+      description: [null, [Validators.required, Validators.maxLength(400),Validators.pattern(/^(?!\s).*$/)]],
       isEarlyRelieving: [false],
       earlyRelievingDate: [null, Validators.required],
-      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400)]]
+      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400),Validators.pattern(/^(?!\s).*$/)]]
     });
 
     // Disable early relieving fields by default

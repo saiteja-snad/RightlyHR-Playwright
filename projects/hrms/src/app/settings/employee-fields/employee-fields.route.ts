@@ -50,6 +50,7 @@ export default [
             { path: '', redirectTo: 'expenes-configuartion', pathMatch: 'full' },
             { path: 'expenes-configuartion', component: ExpensesConfigurationComponent },
             { path: 'expenes-allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent) }
+
         ]
     },
     { path: 'addshits', loadComponent: () => import('./shits/add-shits/add-shits.component').then((m) => m.AddShitsComponent) },

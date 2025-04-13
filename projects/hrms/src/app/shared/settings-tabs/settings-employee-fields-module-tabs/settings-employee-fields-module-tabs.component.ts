@@ -14,14 +14,14 @@ export class SettingsEmployeeFieldsModuleTabsComponent {
   navTabs: any[] = [
     { label: 'Personal', link: '/settings/employee-fields/personal' },
     { label: 'Job', link: '/settings/employee-fields/job' },
-    // { label: 'status', link: '' },
-    // { label: 'Document', link: '' },
-    // { label: 'Manage Shifts', link: '' },
-    // { label: 'Manage Policies', link: '' },
-    // { label: 'Manage Holidays', link: '' },
-    // { label: 'Manage Weekends', link: '' },
-    // { label: 'Expense Configurations', link: '' },
-    // { label: 'Manage DST', link: '' },
-    // { label: 'No Due Clearance', link: '' }
+    { label: 'status', link: '/settings/employee-fields/job' },
+    { label: 'Document', link: '/settings/employee-fields/job' },
+    { label: 'Manage Shifts', link: '/settings/employee-fields/manage-shifts' },
+    { label: 'Manage Policies', link: '/settings/employee-fields/manage-policies' },
+    { label: 'Manage Holidays', link: '/settings/employee-fields/manage-holidays' },
+    { label: 'Manage Weekends', link: '/settings/employee-fields/job' },
+    { label: 'Expense Configurations', link: '/settings/employee-fields/job' },
+    { label: 'Manage DST', link: '/settings/employee-fields/job' },
+    { label: 'No Due Clearance', link: '/settings/employee-fields/job' }
   ];
 }

@@ -385,6 +385,7 @@ body {
     line-height: 100%;
     letter-spacing: 0%;
     vertical-align: middle;
+    color: var(--primary-color);
 }
 
 .component-sub-header {
@@ -394,9 +395,10 @@ body {
     line-height: 100%;
     letter-spacing: 0%;
     vertical-align: middle;
+    color: var(--primary-color);
 }
 
-.custom-background-card{
+.custom-background-card {
     border: none;
     background-color: var(--body-bg-color);
 }

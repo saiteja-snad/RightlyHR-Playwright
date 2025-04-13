@@ -13,9 +13,8 @@ import { SettingsJobTabsComponent } from "../../../shared/settings-tabs/settings
 })
 
 export class EmployeeFieldsLayoutComponent {
-  constructor(public readonly router: Router) {
-
-  }
+  
+  constructor(public readonly router: Router) { }
 
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes

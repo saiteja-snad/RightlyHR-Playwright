@@ -3,7 +3,7 @@ import { LeaveCategoeryComponent } from "./leave-categoery/leave-categoery.compo
 import { FlexibleLeaveAllocationComponent } from "./flexible-leave-allocation/flexible-leave-allocation.component";
 
 export default [
-    { path: '', redirectTo: '/settings/time-off/flexible-leave-allocation', pathMatch: 'full' },
+    { path: '', redirectTo: '/settings/timeoff-configurations/flexible-leave-allocation', pathMatch: 'full' },
     { path: 'leave-categoery', component: LeaveCategoeryComponent },
     { path: 'flexible-leave-allocation', component: FlexibleLeaveAllocationComponent },
 ] as Route[];

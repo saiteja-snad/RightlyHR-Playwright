@@ -50,8 +50,6 @@ export default [
             { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent) },
         ]
     },
-
-
     {
         path: 'job', children: [
             { path: '', redirectTo: 'jobrole', pathMatch: 'full' },

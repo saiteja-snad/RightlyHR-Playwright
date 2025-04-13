@@ -14,10 +14,12 @@ import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss'
 })
@@ -86,9 +88,15 @@ export class ApprisalLetterComponent {
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
+  variablePayOptions: { name: string, value: boolean }[]  = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false }
+  ];
+  
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
+    private conformationPopup: OpenModalService,
     // private toaster: NgToastService,
     private router: Router,
     private authService: AuthService,
@@ -197,6 +205,7 @@ export class ApprisalLetterComponent {
     } else {
       this.employeeForm.get('variablePayAmount')?.disable();
       this.employeeForm.get('variablePayAmount')?.setValue(0);
+      this.appraisalData.variablePayAmount = '0';
     }
   }
 
@@ -655,6 +664,11 @@ export class ApprisalLetterComponent {
 
 
   async postAppraisalLetterFormSubmit(f: FormGroup) {
+    if (this.employeeForm.invalid) {
+      // Mark all fields as touched so validation messages appear
+      this.employeeForm.markAllAsTouched();
+      return;
+    }
     const data = await this.appraisalData;
     data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
     data.compeffectivedate = this.formatDate(data.compeffectivedate);
@@ -816,7 +830,8 @@ export class ApprisalLetterComponent {
         next: (data: any) => {
           if (data) {
             this.result.documentUrl = data.path;
-            this.dataSuccessMsg('Appraisal Letter Generated Successfully');
+            // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
+            this.conformationPopup.openSuccessModal('Appraisal Letter Generated Successfully');
 
             this.router.navigate(['/admin/active']);
             console.log(data);
@@ -844,7 +859,8 @@ export class ApprisalLetterComponent {
           this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
             next: (data: any) => {
               console.log(data);
-              this.dataSuccessMsg('Email Sent Successfully');
+              // this.dataSuccessMsg('Email Sent Successfully');
+              this.conformationPopup.openSuccessModal('Email Sent Successfully');
 
               location.reload();
             },
@@ -1110,9 +1126,10 @@ export class ApprisalLetterComponent {
       JobRole:['', Validators.required],
       Documenttype: [null, Validators.required],
       bonus: [0],
+      authorityid: [null, Validators.required],
       isVariablePay: [null, Validators.required],
-      variablePayAmount: ['', Validators.required],
-      authorityid: [null, Validators.required]
+      variablePayAmount: ['', Validators.required]
+     
     })
   }
 

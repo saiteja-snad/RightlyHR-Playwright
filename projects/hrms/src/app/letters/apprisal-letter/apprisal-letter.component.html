@@ -3,10 +3,10 @@
     <div class="d-flex py-3">
       <div>
         <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i
-            class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+            class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate }}</p>
       </div>
       <div>
-        <span class="heading"><span class="px-2">>></span>Apprisal Letter</span>
+        <span class="heading"><span class="px-2">>></span>{{'Apprisal Letter'| translate }}</span>
       </div>
     </div>
   </div>
@@ -19,27 +19,23 @@
 
           <div class="row">
             <div class="col-md-12 mb-4">
-              <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+              <label class="form-label custom-label mb-2">{{'Search Employee'| translate }} <span
+                  class="error-msg">*</span></label>
               <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionLabel="fullName" [(ngModel)]="fusionEmpId" [filter]="true"
-                  filterBy="fullName" [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
-                  class="custom-select w-100" (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+                  filterBy="fullName" [showClear]="true" placeholder="Please select employee"
+                  formControlName="fusionEmpId" class="custom-select w-100"
+                  (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
                 </p-select>
               </div>
               <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
-                <div class="error-msg">Employee is required</div>
+                <div class="error-msg">{{'Employee is required'| translate }}</div>
               </div>
             </div>
 
             <div class="col-md-12 mb-4">
-              <label class="form-label custom-label mb-2">Promotion Designation</label>
+              <label class="form-label custom-label mb-2">{{'Promotion Designation'| translate }}</label>
               <div class="custom-p-select-content">
-                <!-- <p-select [options]="AllDesignationwithGradeId" optionLabel="designationName" [filter]="true" filterBy="name"
-                  [showClear]="true" placeholder="Please select promotion designation" formControlName="JobRole" (optionsFound)="updateOptionsFound($event)" (isListitem)="isItemIntheList($event)"
-                  (selectedOption)="onOptionSelected($event, 'JobRole')"
-                  [formSubmitted]="appraisalLetterForm.submitted" 
-                  class="custom-select w-100" >
-                </p-select> -->
                 <p-select [options]="AllDesignationwithGradeId" optionLabel="designationName" [filter]="true"
                   filterBy="designationName" [showClear]="true" placeholder="Please select promotion designation"
                   formControlName="JobRole" (optionsFound)="updateOptionsFound(true)"
@@ -48,147 +44,122 @@
                 </p-select>
               </div>
               <div *ngIf="employeeForm.get('JobRole')?.invalid && employeeForm.get('JobRole')?.touched">
-                <div class="error-msg">Promotion Designation is required</div>
+                <div class="error-msg">{{'Promotion Designation is required'| translate }}</div>
               </div>
             </div>
 
             <div class="col-md-12 mb-4">
               <label class="form-label custom-label mb-2"> Date<span class="text-danger">*</span></label>
-              <input type="date" formControlName="dateofAppraisal" [(ngModel)]="appraisalData.dateofAppraisal" class="form-control input-field" id="appraisalDate"
-                required (change)="DateValidation()" onkeydown="return false"
+              <input type="date" placeholder="Please enter Date" formControlName="dateofAppraisal"
+                [(ngModel)]="appraisalData.dateofAppraisal" class="form-control input-field" id="appraisalDate" required
+                (change)="DateValidation()" onkeydown="return false"
                 [ngClass]="{ 'is-invalid': employeeForm.get('dateofAppraisal')?.invalid && employeeForm.get('dateofAppraisal')?.touched || !isdateofAppraisal}" />
-
-                <!-- <input type="date" class="form-control input-field"  id="relievingDate"
-                formControlName="dateofpromotion" [(ngModel)]="promotiondata.dateofpromotion"
-                placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false"
-                [ngClass]="{ 'is-invalid': employeeForm.get('dateofpromotion')?.invalid && employeeForm.get('dateofpromotion')?.touched || !isdateofpromotion }" /> -->
-
-              <div>
-                <div *ngIf="employeeForm.get('appraisalDate')?.invalid && employeeForm.get('appraisalDate')?.touched">
-                  <div class="error-msg">Date is required</div>
+              <!-- <div> -->
+                <!-- <div *ngIf="employeeForm.get('appraisalDate')?.invalid && employeeForm.get('appraisalDate')?.touched">
+                  <div class="error-msg">{{'Date is required'| translate }}</div>
                 </div>
-                <small *ngIf="!isdateofAppraisal" class="error-msg"> Date should be after the probation end
-                  date</small>
-              </div>
-              
+                <div *ngIf="!isdateofAppraisal" class="error-msg"> {{' Date should be after the probation end date'|
+                  translate }}</div>
+              </div> -->
+
+
+              <div *ngIf="employeeForm.get('dateofAppraisal')?.touched">
+                <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')"
+                    class="error-msg">
+                    Date is required
+                </div>
+                <small *ngIf="!isdateofAppraisal" class="error-msg">
+                    Date should be after the date of joining
+                </small>
+            </div>
             </div>
 
             <div class="col-md-12 mb-4">
-              <label class="form-label custom-label mb-2">Next Compensation Review Date<span
+              <label class="form-label custom-label mb-2"> {{'Next Compensation Review Date'| translate }}<span
                   class="text-danger">*</span></label>
-              <input type="date" formControlName="reviewdate"  [(ngModel)]="appraisalData.reviewdate" class="form-control input-field" id="reviewdate" required
-                (change)="DateValidation2()" [ngClass]="{ 'is-invalid': !isNextApprisal}">
+              <input type="date" formControlName="reviewdate" [(ngModel)]="appraisalData.reviewdate"
+                class="form-control input-field" id="reviewdate" required (change)="DateValidation2()"
+                [ngClass]="{ 'is-invalid': !isNextApprisal}">
               <div *ngIf="employeeForm.get('reviewdate')?.invalid && employeeForm.get('reviewdate')?.touched">
-                <div class="error-msg">Compensation Review Date is required</div>
+                <div class="error-msg">{{'Compensation Review Date is required '| translate }}</div>
               </div>
-              <small *ngIf="!isNextApprisal" class="error-msg"> Date should be after the probation end
-                date</small>
+              <small *ngIf="!isNextApprisal" class="error-msg"> {{'Date should be after the probation end date'|
+                translate }}</small>
             </div>
 
             <div class="col-md-12 mb-4">
-              <label>Document Type <span class="error-msg">*</span></label>
+              <label> {{'Document Type'| translate }} <span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <!-- <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
-                  formControlName="Documenttype" class="form-select custom-select">
-                  <option disabled [ngValue]="undefined">Select</option>
-                  <option Value="true">Yes</option>
-                  <option Value="false">No</option>
-                </p-select> -->
                 <p-select [options]="employeementType" optionLabel="name" optionValue="value"
-                placeholder="Please select document type" [showClear]="true"
-                [(ngModel)]="appraisalData.Documenttype" formControlName="Documenttype"
-                inputId="documenttype" class="form-select custom-select">
-            </p-select>
+                  placeholder="Please select document type" [showClear]="true" [(ngModel)]="appraisalData.Documenttype"
+                  formControlName="Documenttype" inputId="documenttype" class="form-select custom-select">
+                </p-select>
               </div>
               <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
-                <div class="error-msg">Document Type is required</div>
+                <div class="error-msg"> {{'Document Type is required'| translate }}</div>
               </div>
             </div>
 
             <div class="col-md-12 mb-4">
-              <label class="form-label">Enter Performance Variable Bonus</label>
+              <label class="form-label"> {{'Enter Performance Variable Bonus'| translate }}</label>
               <input type="number" class="form-control input-field" placeholder="Enter Bonus" formControlName="bonus"
                 (input)="sanitizeInput($event)" />
               <div *ngIf="employeeForm.get('bonus')?.invalid && employeeForm.get('bonus')?.touched">
-                <div class="error-msg">Performance Variable Bonus is required</div>
+                <div class="error-msg">{{'Performance Variable Bonus is required'| translate }}</div>
               </div>
             </div>
 
             <!-- <div class="col-md-12 mb-4">
-              <label class="form-label custom-label mb-2">Variable Pay <span class="error-msg">*</span>
-              </label> -->
-              <!-- <select formControlName="isVariablePay" class="form-select input-field" id="variable pay" required
-                (change)="onVariablePayChange(appraisalData.isVariablePay)">
-                <option disabled [ngValue]="undefined">Select</option>
-                <option [ngValue]="true">Yes</option>
-                <option [ngValue]="false">No</option>
-              </select> -->
-
-              <!-- <select type="text" formControlName="isVariablePay" id="variable pay" name="variable pay" [(ngModel)]="appraisalData.isVariablePay"
-              class="form-select input-field" placeholder="pf" aria-label="Default select example"  autocomplete="off" required  (change)="onVariablePayChange(appraisalData.isVariablePay)">
-              <option disabled [ngValue]="undefined">Select</option>
-              <option [ngValue]="true">Yes</option>
-              <option [ngValue]="false">No</option>
-            </select>
-              <div *ngIf="employeeForm.get('isVariablePay')?.invalid && employeeForm.get('isVariablePay')?.touched">
-                <div class="error-msg">Variable Pay is required</div>
-              </div>
-            </div>
-
-            <div class="col-md-12 mb-4">
-              <label class="form-label custom-label mb-2">Variable Amount<span class="error-msg">*</span></label>
-              <input type="text" formControlName="variablePayAmount" class="form-control input-field" [(ngModel)]="appraisalData.variablePayAmount"
-                id="variableamount" placeholder="Variable Amount" maxlength="10"
-                [disabled]="!appraisalData.isVariablePay" (keypress)="numbers($event)" autocomplete="off" required>
-              <div
-                *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
-                <div class="error-msg">Variable Amount is required</div> -->
-
-
-                <!-- <input type="text" formControlName="variablePayAmount" name="variableamount" [(ngModel)]="appraisalData.variablePayAmount"
-                        class="form-control input-field" id="variableamount" placeholder="Variable Amount" maxlength="10"  (change)="onVariablePayChange(appraisalData.isVariablePay)" [disabled]="!appraisalData.isVariablePay"
-                        (keypress)="numbers($event)"   autocomplete="off" required>
-                      <small class="error-msg"
-                      *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
-                      <div class="error-msg">Variable Amount is required -->
-              <!-- </div> -->
-               <!-- </div>
-              
-            </div> -->
-            <div class="col-md-12 mb-4">
-              <label  class="form-label custom-label mb-2">Variable Pay <span class="error-msg">*</span>
-              </label>
-              <select formControlName="isVariablePay" class="form-select input-field" id="variable pay" required
+              <label  class="form-label custom-label mb-2"> {{'Variable Pay'| translate }} <span class="error-msg">*</span></label>
+              <select type="text" formControlName="isVariablePay"  placeholder="Please select Variable Pay" class="form-select input-field" id="variable pay" required
                 (change)="onVariablePayChange()">
                 <option disabled [ngValue]="undefined">Select</option>
                 <option [ngValue]="true">Yes</option>
                 <option [ngValue]="false">No</option>
               </select>          
               <div *ngIf="employeeForm.get('isVariablePay')?.invalid && employeeForm.get('isVariablePay')?.touched">
-                <div class="error-msg">Variable Pay is required</div>
+                <div class="error-msg"> {{'Variable Pay is required'| translate }}</div>
+              </div>
+            </div> -->
+
+            <div class="col-md-12 mb-4">
+              <label class="form-label custom-label mb-2">
+                {{ 'Variable Pay' | translate }} <span class="error-msg">*</span>
+              </label>
+
+              <p-select [options]="variablePayOptions"  optionLabel="name" optionValue="value" formControlName="isVariablePay"
+                placeholder="Please select Variable Pay" (onChange)="onVariablePayChange()" [showClear]="true"
+                [autoDisplayFirst]="false" [styleClass]="'input-field w-100'" id="variablePay"
+               ></p-select>
+
+              <div *ngIf="employeeForm.get('isVariablePay')?.invalid && employeeForm.get('isVariablePay')?.touched">
+                <div class="error-msg">{{ 'Variable Pay is required' | translate }}</div>
               </div>
             </div>
-  
+
+
             <div class="col-md-12 mb-4">
-              <label  class="form-label custom-label mb-2">Variable Amount<span
+              <label class="form-label custom-label mb-2">{{'Variable Amount'| translate }}<span
                   class="error-msg">*</span></label>
-              <input type="text" formControlName="variablePayAmount" class="form-control input-field" id="variableamount"
-                placeholder="Variable Amount" maxlength="10" [disabled]="!appraisalData.isVariablePay"
-                (keypress)="numbers($event)" autocomplete="off" required>
+              <input type="text" formControlName="variablePayAmount" class="form-control input-field"
+                id="variableamount" placeholder="Variable Amount" [(ngModel)]="appraisalData.variablePayAmount" maxlength="10"
+                [disabled]="!appraisalData.isVariablePay" (keypress)="numbers($event)" autocomplete="off" required>
               <div
                 *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
-                <div class="error-msg">Variable Amount is required</div>
+                <div class="error-msg">{{'Variable Amount is required '| translate }}</div>
               </div>
             </div>
+
             <div class="col-md-12 mb-4">
-              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                Authority Name<span class="error-msg">*</span></label>
+              <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name' |
+                translate }}<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                  class="form-select custom-select" formControlName="authorityid" [(ngModel)]="appraisalData.variablePayAmount" (onChange)="onclickDesignation()" />
+                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please Select Authority Name"
+                  class="form-select custom-select" formControlName="authorityid"
+                  [(ngModel)]="appraisalData.variablePayAmount" (onChange)="onclickDesignation()" />
               </div>
               <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                <div class="error-msg">Signature Authority Name is required</div>
+                <div class="error-msg"> {{'Signature Authority Name is required'| translate }}</div>
               </div>
             </div>
 
@@ -197,8 +168,7 @@
                 Effective Date in Job Tab Before Generating the Document.</p>
             </div>
             <div class="d-flex flex-wrap gap-3 pt-4">
-              <button type="submit" class="custom-btn btn-primary">Generate Document</button>
-              <!-- <button type="button" class="custom-btn btn-primary">Request For Approval</button> -->
+              <button type="submit" class="custom-btn btn-primary">{{'Generate Document'| translate }}</button>
             </div>
           </div>
         </form>
@@ -222,18 +192,18 @@
 
                 <!-- start of letter -->
                 <div class="mb-2 mt-2">
-                  <div class="text-center letter-header"><b>Appraisal Letter</b></div>
+                  <div class="text-center letter-header"><b>{{'Appraisal Letter' | translate }}</b></div>
                 </div>
                 <div class="text-end mb-3 mt-2"><span class="">Date:</span><span
                     class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
                 </div>
                 <!-- start of paragraphs -->
                 <p class="letter-sub-header">
-                  <span *ngIf="!appraisalData.firstName">Employee Name</span>
+                  <span *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
                   <span class="me-1">{{gender}}</span>{{appraisalData.firstName}}
                   {{appraisalData.middleName}} {{appraisalData.lastName}},
                   <br>
-                  <span *ngIf="!appraisalData.jobRole">Designation</span>
+                  <span *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
                   <span class="details">{{appraisalData.jobRole}}</span>
                 </p>
                 <!-- <p class="">

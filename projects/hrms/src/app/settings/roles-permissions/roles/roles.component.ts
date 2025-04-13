@@ -103,7 +103,7 @@ export class RolesComponent implements OnInit, OnDestroy {
   openupdate(roles: any) {
     console.log(roles)
     this.rolesDeletedata = roles;
-    this.updateForm?.patchValue({ firstName: roles.normalizedName });
+    this.updateForm?.patchValue({ firstName: roles.name });
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
   }
 

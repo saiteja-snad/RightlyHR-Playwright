@@ -28,6 +28,9 @@ export class PendingExpensesComponent {
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   searchTerm:any=''
+  approverComments = [] as any[];
+  
+  @ViewChild('commentspopup') modalContent: any;
   constructor( 
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
  
@@ -42,9 +45,6 @@ export class PendingExpensesComponent {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
-
-
-
 
 
   getexpensesheaderbyemployeeid(): void {
@@ -74,7 +74,16 @@ export class PendingExpensesComponent {
       });
 
   }
-
+  comments(value: any, commentspopup: any) {
+    this.modalService.open(commentspopup, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
+    this.approverComments = value;
+    console.log(this.approverComments);
+  }
+  
   onSelectDownload(file: any): void {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).subscribe({
       next: (res: any) => {

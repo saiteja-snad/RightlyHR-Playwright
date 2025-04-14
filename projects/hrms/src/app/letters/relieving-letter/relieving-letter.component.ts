@@ -16,10 +16,11 @@ import jsPDF from 'jspdf';
 import { IemployeeDetails } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-relieving-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss'
 })
@@ -47,6 +48,7 @@ export class RelievingLetterComponent {
   signatureAuthorityName!: string | null
   authorityDesignation!: string | null;
   authorityDetails = [] as any;
+  authoritydetails = [] as any;
   disablebuttonforemployeeid: boolean = false; //variable to disable the fields
   disablebuttonforauthority: boolean = true; //variable to disable the fields
   value: string = 'Generate Document';
@@ -92,15 +94,23 @@ private conformationPopup: OpenModalService,
       signatureAuthority: [null, Validators.required]
      });
   }
+  // DateValidation() {
+  //   if (this.relievingLetterData.dateofRelieving <= this.relievingLetterData.dateOfJoining) {
+  //     this.isdateofRelieving = false;
+  //   } else {
+  //     this.isdateofRelieving = true;
+  //   }
+  // }
+
   DateValidation() {
-    if (this.relievingLetterData.dateofRelieving <= this.relievingLetterData.dateOfJoining) {
-      this.isdateofRelieving = false;
-    } else {
-      this.isdateofRelieving = true;
-    }
+    const relievingDate = new Date(this.relievingLetterData.dateofRelieving);
+    const joiningDate = new Date(this.relievingLetterData.dateOfJoining);
+  
+    this.isdateofRelieving = relievingDate > joiningDate;
+  
+    // Force Angular to show error immediately
+    this.employeeForm.get('dateofRelieving')?.markAsTouched();
   }
-
-
 
   getIssuedEmployeebyId() {
     this.employeedata = this.Employeeinfo.firstName + " " + this.Employeeinfo.middleName + " " + this.Employeeinfo.lastName
@@ -133,13 +143,22 @@ private conformationPopup: OpenModalService,
   }
   Onclick(event: any) {
     const selectedEmployee = event.value; 
-    console.log('Selected employee:', selectedEmployee);
-  
     const employeeId = selectedEmployee?.id; 
     
     this.fusionEmpId = employeeId; 
-    this.getJobdetails(this.fusionEmpId);
-    
+    console.log('Selected employee:', selectedEmployee);
+    this.relievingLetterData = {};
+    this.relievingLetterData = this.employeeiddetails.find(
+      (c: any) => c.employeeId  == event.value.id
+    );
+ 
+    this.getJobdetails(this.relievingLetterData);
+    console.log(this.relievingLetterData);
+    if (this.relievingLetterData.gender == 'Male') {
+      return this.gender = "his", this.gender2 = 'he', this.gender3 = 'Mr.';
+    } else {
+      return this.gender = "her",this.gender2 = 'she', this.gender3 = 'Ms.';
+    }
   
    
   }
@@ -197,7 +216,7 @@ private conformationPopup: OpenModalService,
     }
 
     onclickDesignation() {
-      let signatureAuthorityDetails = this.authorityDetails.find(
+      let signatureAuthorityDetails = this.authoritydetails.find(
         (c: any) => (c.employeeId == this.relievingLetterData.authorityid)
       );
       console.log(signatureAuthorityDetails);
@@ -220,6 +239,7 @@ private conformationPopup: OpenModalService,
       this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
         next: (data: any) => {
           console.log(data);
+          this.authoritydetails = data;
           this.authorityDetails = data.map((authority: any) => ({
             ...authority,
             fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
@@ -257,7 +277,7 @@ private conformationPopup: OpenModalService,
     //get Job Details by empployeeid
     getJobdetails(Employee: any) {
       this.subscription = this.http
-        .getData(`JobDetails/${Employee}`)
+        .getData(`JobDetails/${Employee.employeeId}`)
         .subscribe({
           next: (data: any) => {
             console.log(data);
@@ -279,6 +299,7 @@ private conformationPopup: OpenModalService,
       this.subscription = this.http.getData('Employeedata/InactiveEmployees').subscribe({
         next: (data: any) => {
           console.log('API Response:', data);
+          this.employeeiddetails = data;
     
           this.allinactiveemployes = data.map((employee: any) => ({
             id: employee.employeeId,
@@ -294,6 +315,11 @@ private conformationPopup: OpenModalService,
     }
 
     async postRelievingLetterFormSubmit(f: FormGroup) {
+      if (this.employeeForm.invalid) {
+        // Mark all fields as touched so validation messages appear
+        this.employeeForm.markAllAsTouched();
+        return;
+      }
       const data = await this.relievingLetterData;
       data.dateofRelieving = data.dateofRelieving;
       data.dateOfJoining = data.dateOfJoining;

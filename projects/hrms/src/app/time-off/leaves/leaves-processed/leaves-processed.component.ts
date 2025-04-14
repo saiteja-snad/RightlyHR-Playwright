@@ -9,10 +9,11 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-leaves-processed',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './leaves-processed.component.html',
   styleUrl: './leaves-processed.component.scss'
 })

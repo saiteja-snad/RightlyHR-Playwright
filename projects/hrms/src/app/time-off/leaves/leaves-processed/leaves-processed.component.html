@@ -13,38 +13,46 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let item of lpdata">
-                <td>{{item.date| dateformat}}</td>
-                <td>{{item.categoryName}}</td>
-                <td>{{item.duration}}</td>
-                <td>
-                    {{ item.durationType == 1 ? 'First Half' : 
-                       item.durationType == 2 ? 'Full Day' : 
-                       item.durationType == 3 ? 'Second Half' : 'Unknown' 
-                    }}
-                </td>
-                <td>{{item.startdate| dateformat}}</td>
-                <td>{{item.enddate| dateformat}}</td>
+            @if (lpdata.length > 0) {
+                <tr *ngFor="let item of lpdata">
+                    <td>{{item.date| dateformat}}</td>
+                    <td>{{item.categoryName}}</td>
+                    <td>{{item.duration}}</td>
+                    <td>
+                        {{ item.durationType == 1 ? 'First Half' : 
+                           item.durationType == 2 ? 'Full Day' : 
+                           item.durationType == 3 ? 'Second Half' : 'Unknown' 
+                        }}
+                    </td>
+                    <td>{{item.startdate| dateformat}}</td>
+                    <td>{{item.enddate| dateformat}}</td>
+    
+                    <td>
+                        <div>
+                            <span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <div>
+                                        <p class="mb-0">{{item.notes}}</p>
+                                    </div>
+                                </ng-template>
+                            </span>
+                        </div>
+                    </td>
+    
+                    <td>{{item.status}}</td>
+    
+    
+                </tr>
+            }
+            @else{
+                <tr>
+                    <app-no-data-found></app-no-data-found>
 
-                <td>
-                    <div>
-                        <span>
-                            <a type="button" placement="top" [ngbPopover]="reason">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
-                            <ng-template #reason>
-                                <div>
-                                    <p class="mb-0">{{item.notes}}</p>
-                                </div>
-                            </ng-template>
-                        </span>
-                    </div>
-                </td>
-
-                <td>{{item.status}}</td>
-
-
-            </tr>
+                </tr>
+            }
 
         </tbody>
     </table>

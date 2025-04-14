@@ -60,7 +60,7 @@ export default [
     },
     { path: 'addpolices', loadComponent: () => import('./manage-policies/add-policies/add-policies.component').then((m) => m.AddPoliciesComponent) },
     {
-        path: 'manage-policies', 
+        path: 'manage-policies',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./manage-policies/published-policies/published-policies.component').then((m) => m.PublishedPoliciesComponent) },
@@ -70,7 +70,7 @@ export default [
 
     { path: 'addholidays', loadComponent: () => import('./manage-holidays/add-holidays/add-holidays.component').then((m) => m.AddHolidaysComponent) },
     {
-        path: 'manage-holidays', 
+        path: 'manage-holidays',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./manage-holidays/published-holidays/published-holidays.component').then((m) => m.PublishedHolidaysComponent) },

@@ -46,15 +46,17 @@ export class TeamComponent implements OnInit, OnDestroy {
     console.log('Selected Department:', selectedValue);
   }
   ngOnInit(): void {
+    this.getTable() 
     this.AddForm = this.fb.group({
-      DepartmentName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      TeamName: ['', Validators.required],
-      teamManager: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      teamName: ['', Validators.required],
+      departmentId:[null,Validators.required],
+      teamManager: ['', [Validators.required]],
+
     });
  
     this.updateForm = this.fb.group({
-      UpdatedTeamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      updatedDepartmentName: ['', Validators.required],
+      updateddepartmentId: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      UpdatedTeamName: ['', Validators.required],
       updatedteamManager: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.getTeam();
@@ -77,7 +79,6 @@ export class TeamComponent implements OnInit, OnDestroy {
         console.log(data);
         alert("hello");
         this.deptdetails = data as [];
-        this.sortdeaprtmentName();
         console.log(this.deptdetails)
       },
       error: (reason: any) => {
@@ -97,9 +98,18 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
       next: (data: any) => {
         console.log(data);
-        alert("hello");
-        this.teamdetails = data as [];
-        this.sortdeaprtmentName();
+        if (data) {
+          this.teamdetails = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
+        }
         console.log(this.teamdetails)
       },
       error: (reason: any) => {
@@ -161,7 +171,7 @@ export class TeamComponent implements OnInit, OnDestroy {
         subdepartmentId: 0, // This will be assigned by the API
         subdepartmentName: this.AddForm.get('teamName')?.value,
         departmentId: this.AddForm.get('departmentId')?.value, // This should be the sno value
-        reportingmanagerId: Number(this.AddForm.get('teamManagerId')?.value) || null,
+        reportingmanagerId: Number(this.AddForm.get('teamManager')?.value) || null,
         isdeleted: false
       };
  
@@ -318,17 +328,8 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {
-    const deleteRequest = {
-      isdeleted: 'void',
- 
-      subdepartmentId: modal.id,
-      subdepartmentName: "",
-      departmentId: 0,
-      reportingmanagerId: 0,
-      "isDeleted": true
-    }
- 
-    this.subscription = this.http.getData(`Subdepartments/deletebyid/${deleteRequest.subdepartmentId}`).subscribe({
+    console.log(this.updateDepartmentDetails)
+    this.subscription = this.http.getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.subdepartmentId}`).subscribe({
       next: () => {
         modal.close();
         this.conformationPopup.openSuccessModal('Team deleted successfully');

@@ -216,14 +216,16 @@ export class AddProspectiveInternComponent {
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
         console.log(res);
-        this.result = res.employeeData;
+        // this.result = res.employeeData;
         console.log(this.result);
         if (res.statusCode == 201) {
           this.result = res.employeeData;
           console.log(this.result);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Prospective Intern created successfully');
-          this.isLoading = false;
+          this.http.activeTabSubject.next(this.result.employeeId);
+          // this.isLoading = false;
+          if (this.result.employeeId != null) {
           const jobdata = {
             employeeId: this.result.employeeId,
             gradeId: this.gradeIdValue.gradeId,
@@ -240,6 +242,7 @@ export class AddProspectiveInternComponent {
               },
               error: (Reason) => console.log(Reason),
             });
+          }
         }
         else if (res.statusCode == 409) {
           this.conformationPopup.openErrorModal(res.message);

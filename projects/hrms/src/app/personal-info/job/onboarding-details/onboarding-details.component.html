@@ -30,8 +30,6 @@
                         </div>
                     </div>
 
-
-
                     <div class="col-md-6 col-lg-4 mb-4">
                         <label for="dateOfJoining" class="form-label custom-label mb-2">Date Of Joining</label>
                         <input type="date" class="form-control custom-input" id="dateOfJoining"
@@ -87,11 +85,10 @@
                         <label for="noticePeriodStatus" class="form-label custom-label mb-2">Notice Period Status
                             <span class="text-danger">*</span></label>
 
-                       <!-- <input type="text" class="form-control custom-input"  formControlName="noticePeriodStatus"> -->
-                       <p-select [options]="noticePeriod" optionLabel="name"
-                                formControlName="noticePeriodStatus" placeholder="Select Notice Period"
-                                class="form-select custom-select">
-                            </p-select>
+                        <!-- <input type="text" class="form-control custom-input"  formControlName="noticePeriodStatus"> -->
+                        <p-select [options]="noticePeriod" optionLabel="name" formControlName="noticePeriodStatus"
+                            placeholder="Select Notice Period" class="form-select custom-select">
+                        </p-select>
                         <div class="error-msg"
                             *ngIf="onboardingForm.get('noticePeriodStatus')?.invalid && onboardingForm.get('noticePeriodStatus')?.touched">
                             Notice Period Status is required
@@ -118,9 +115,8 @@
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="salaryHold" class="form-label custom-label mb-2">Salary Hold</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="salaryHoldDetails" optionLabel="name"
-                                formControlName="salaryHold" placeholder="Select Salary Hold"
-                                class="form-select custom-select">
+                            <p-select [options]="salaryHoldDetails" optionLabel="name" formControlName="salaryHold"
+                                placeholder="Select Salary Hold" class="form-select custom-select">
                             </p-select>
                         </div>
                         <div class="error-msg"
@@ -211,26 +207,80 @@
                         </div>
                     </div>
 
-                     @if (onboardingForm.get('remoteLogin')?.value === false) {
-                        <div class="col-md-6 col-lg-4 mb-3" >
+                    @if (onboardingForm.get('remoteLogin')?.value === false) {
+                    <div class="col-md-6 col-lg-4 mb-3">
 
-                            <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="Manager" formControlName="wfhmanger" optionLabel="name"
-                                    optionValue="value" placeholder="Select Work From Home Maner"
-                                    class="form-select custom-select" (onChange)="onReportingManagerChange($event.value)">
-                                </p-select>
-                            </div>
-                            <div class="error-msg"
-                                *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
-                                Work From Home Manager is required
-                            </div>
+                        <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="Manager" formControlName="wfhmanger" optionLabel="name"
+                                optionValue="value" placeholder="Select Work From Home Maner"
+                                class="form-select custom-select" (onChange)="onReportingManagerChange($event.value)">
+                            </p-select>
                         </div>
-                     }
-                    
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
+                            Work From Home Manager is required
+                        </div>
+                    </div>
+                    }
+
                 </div>
 
             </form>
+        </div>
+
+        <div class="card myinfo-content-card p-4 mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <span class="myinfo-sub-header">Trainee Details</span>
+                </div>
+            </div>
+            <div class="myinfo-input-content">
+                <form [formGroup]="traineeForm">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <label class="form-label">Employment Type Status</label>
+                            <input type="text" class="form-control custom-input" formControlName="empType"
+                                [disabled]="empdata.empstatus.toLowerCase() == 'trainee prospective' || !isEditing"
+                                placeholder="Employment type status" />
+                        </div>
+                        @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') &&
+                        isEditing ){
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <label class="form-label">Trainee Start Date</label>
+                            <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
+                                [disabled]="empdata.empstatus.toLowerCase() == 'trainee prospective' || !isEditing " />
+                        </div>
+                        }
+                        @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') && !isEditing){
+                            <div class="col-md-6 col-lg-4 mb-3" >
+                            <label class="form-label">Trainee Start Date</label>
+                            <input type="date" class="form-control custom-input" id="dateOfJoining"
+                                formControlName="dateOfJoining" placeholder="Please enter probation end date"
+                                onkeydown="return false;">
+                        </div>
+                        }
+                        
+                        <div class="col-md-6 col-lg-4">
+                            <label class="form-label">Duration of Training</label>
+                            <input type="text" class="form-control custom-input" formControlName="durationOfTrainee"
+                                placeholder="Duration of Training"
+                                [disabled]="empdata.empstatus === 'Trainee Prospective' || !isEditing "
+                                (keypress)="letters($event)" appNameConversion />
+                        </div>
+
+                        @if(!isEditing ){
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <label class="form-label">Training End Date</label>
+                            <input type="date" class="form-control custom-input" id="trainingEndDate"
+                                formControlName="trainingEndDate" placeholder="Please enter probation end date"
+                                onkeydown="return false;">
+                        </div>
+                        }
+
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

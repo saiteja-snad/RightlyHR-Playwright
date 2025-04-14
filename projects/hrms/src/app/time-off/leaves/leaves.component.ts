@@ -96,6 +96,7 @@ export class LeavesComponent {
   allPolicy = {} as any;
   hasErrors = false;
   startDate:any;
+  isLoading: boolean = false;
   endDate : any;
   @ViewChild('leaveForm') work!: NgForm;
   totalRecords = 100
@@ -1186,6 +1187,7 @@ export class LeavesComponent {
   onSubmit() {
       console.log('Starting leave submission process...');
       this.isSubmitted = true;
+      this.isLoading = true;
       if (!this.leaveForm.invalid) {
         this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
         let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -1198,6 +1200,8 @@ export class LeavesComponent {
         this.leaveFormData.isdeleted = true;
         this.leaveFormData.startdate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
         this.leaveFormData.enddate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+        this.leaveFormData.notes = this.leaveForm.get('reason')?.value
+
 
         if (this.empdata.probationEndDate) {
           // Check if the employee is still on probation
@@ -1340,6 +1344,7 @@ export class LeavesComponent {
             console.log('Leave submission response:', data);
             if (data) {
               this.disableSubmitButton = true;
+
               console.log('Leave submitted successfully.');
               console.log('Start date:', this.startDate);
               console.log('End date:', this.endDate);
@@ -1348,7 +1353,9 @@ export class LeavesComponent {
               setTimeout( () => {
                 this.modalService.dismissAll();
                 this.leaveForm.reset();
+                window.location.reload();
               }, 2000);
+              this.isLoading = false;
             }
           },
           error: (err: any) => {
@@ -1371,7 +1378,12 @@ export class LeavesComponent {
       }
     }
 
+  cleardata(){
+    this.leaveForm.reset();
+    this.modalService.dismissAll();
+  }
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
   }
+
 }

@@ -1,8 +1,9 @@
 export interface TeamData {
-    id?: number;                       
-    departmentId: number;             
-    isDeleted: boolean;              
-    reportingManagerId: string;     
-    subDepartmentName: string;      
-  }
+  subdepartmentId?: number;                      
+  departmentId: number;            
+  isDeleted: boolean;              
+  reportingmanagerId: string;    
+  subdepartmentName: string;      
+}
+
   

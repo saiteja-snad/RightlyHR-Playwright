@@ -8,7 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-leaves-waiting-for-approval',

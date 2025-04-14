@@ -484,7 +484,7 @@
 
 <ng-template #seprationModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
@@ -492,7 +492,7 @@
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content p-3">
             <form [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
                 <div class="row">
                     <div class="col-md-6">
@@ -554,10 +554,18 @@
                                 <span class="color">{{ separationRequestForm.get('description')?.value?.length || 0 }} /
                                     400</span>
                             </div>
-                            <div class="error-msg"
-                                *ngIf="separationRequestForm.get('description')?.invalid && separationRequestForm.get('description')?.touched">
-                                Reason for Separation is required
-                            </div>
+                            <small class="error-msg"
+                            *ngIf="separationRequestForm.get('description')?.touched && separationRequestForm.get('description')?.invalid">
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['required']">
+                              Reason for Separation is required
+                            </ng-container>
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['maxlength']">
+                              Maximum 400 characters allowed
+                            </ng-container>
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['pattern']">
+                              Reason for Separation should not start with a space.
+                            </ng-container>
+                          </small>
                         </div>
                     </div>
 
@@ -594,15 +602,23 @@
                                     separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }} /
                                     400</span>
                             </div>
-                            <div class="error-msg"
-                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.invalid && separationRequestForm.get('reasonForEarlyRelieving')?.touched">
-                                Reason for Early Relieving is required
-                            </div>
+                            <small class="error-msg"
+                      *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
+                        Reason for Early Relieving is required
+                      </ng-container>
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['maxlength']">
+                        Maximum 400 characters allowed
+                      </ng-container>
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['pattern']">
+                        Reason for Early Relieving should not start with a space.
+                      </ng-container>
+                    </small>
                         </div>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3 mt-4">
+                <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid||isLoading">
                         @if(!isLoading){

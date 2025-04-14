@@ -11,7 +11,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ISeparation, ISeparationRequest } from './separation-for-you-request';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';

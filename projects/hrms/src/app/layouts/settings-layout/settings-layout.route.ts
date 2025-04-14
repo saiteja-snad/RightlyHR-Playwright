@@ -8,5 +8,5 @@ export default [
     { path: '', redirectTo: '/settings/employee-fields', pathMatch: 'full' },
     { path: 'employee-fields', component: EmployeeFieldsLayoutComponent,canActivate: [MsalGuard], loadChildren: () => import('../../settings/employee-fields/employee-fields.route') },
     { path: 'roles-permissions', component:RolesPermissionsLayoutComponent ,canActivate: [MsalGuard], loadChildren: () => import('../../settings/roles-permissions/roles.route') },
-    { path: 'time-off', component: TimeOffLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../settings/time-off/time-off.route') },
+    { path: 'timeoff-configurations', component: TimeOffLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../settings/time-off/time-off.route') },
 ] as Route[];

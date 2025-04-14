@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IAddress, IDepartment, IemployeeDetails, IIssuelocation, IMake } from './appointment-letter-model';
 import { Subscription } from 'rxjs';

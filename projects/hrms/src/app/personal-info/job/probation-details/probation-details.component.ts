@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IJob } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

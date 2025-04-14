@@ -258,9 +258,9 @@
     </h4>
     <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
       <div class="mb-3">
-        <label class="form-label custom-label ">Enter recall reason <span class="error-msg">*</span></label>
-        <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*" placeholder="Please enter recall reason" name="Reason"
-          formControlName="recallReason"></textarea>
+        <label class="form-label custom-label mb-2">Enter recall reason <span class="error-msg">*</span></label>
+        <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
+          placeholder="Please enter recall reason" name="recallReason" formControlName="recallReason"></textarea>
 
         <div>
           <span class="color">
@@ -268,26 +268,22 @@
           </span>
           <div>
             <small class="error-msg"
-              *ngIf="recallreason.get('recallReason')?.invalid && recallreason.get('recallReason')?.touched">
-              Reason is required.
-            </small>
-          </div>
-          <div>
-            <small class="error-msg"
-            *ngIf="recallreason.get('recallReason')?.errors?.['maxlength'] && recallreason.get('recallReason')?.touched">
-            Maximum 250 characters allowed
+            *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
+            <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['required']">
+              Recall Reason is required
+            </ng-container>
+            <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['maxlength']">
+              Maximum 400 characters allowed
+            </ng-container>
+            <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['pattern']">
+              Reason for Recall should not start with a space.
+            </ng-container>
           </small>
           </div>
-            <div>
-              <small class="error-msg"
-              *ngIf="recallreason.get('recallReason')?.errors?.['pattern'] && recallreason.get('recallReason')?.touched">
-              Leading spaces are not allowed
-            </small>
-            </div>
         </div>
       </div>
 
-      <div class="d-flex  justify-content-around w-100">
+      <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
           {{'Cancle'|translate}}
         </button>
@@ -322,7 +318,7 @@
         <div class="col-md-6">
           <div class="mb-3">
             <label for="Effective Date ">Early relieving date <span class="error-msg">*</span></label>
-            <input type="date" class="form-control custom-input"  placeholder="" formControlName="earlyReleivingDate"
+            <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
               id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
             <small class="error-msg"
               *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
@@ -332,10 +328,11 @@
         </div>
         <div class="col-md-12">
           <div class="mb-3">
-            <label class="form-label custom-label">Reason for
+            <label class="form-label custom-label mb-2">Reason for
               early Relieving <span class="error-msg">*</span></label>
-            <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*" placeholder="Please provide early relieving reason...."
-              name="Reason" formControlName="earlyReleivingReason"></textarea>
+            <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*"
+              placeholder="Please provide early relieving reason...." name="Reason"
+              formControlName="earlyReleivingReason"></textarea>
 
             <div>
               <span class="color">
@@ -343,28 +340,23 @@
               </span>
               <div>
                 <small class="error-msg"
-                  *ngIf="earlyReleivingform.get('earlyReleivingReason')?.invalid && recallreason.get('earlyReleivingReason')?.touched">
-                  Reason for early relieving is required
-                </small>
-              </div>
-              <div>
-                <small class="error-msg"
-                *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength'] && earlyReleivingform.get('earlyReleivingReason')?.touched">
-                Maximum 250 characters allowed
+                *ngIf="earlyReleivingform.get('earlyReleivingReason')?.touched && earlyReleivingform.get('earlyReleivingReason')?.invalid">
+                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['required']">
+                  Reason for Early Relieving is required
+                </ng-container>
+                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength']">
+                  Maximum 400 characters allowed
+                </ng-container>
+                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern']">
+                  Reason for Early Relieving should not start with a space.
+                </ng-container>
               </small>
               </div>
-             <div>
-              <small class="error-msg"
-              *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern'] && earlyReleivingform.get('earlyReleivingReason')?.touched">
-              Leading spaces are not allowed
-            </small>
-             </div>
-
             </div>
           </div>
         </div>
       </div>
-      <div class="d-flex justify-content-around">
+      <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
           {{'Cancle'|translate}}
         </button>

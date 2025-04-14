@@ -143,7 +143,7 @@
           {{ 'Department Name' | translate }} <span class="error-msg">*</span>
         </label>
         <select class="form-control custom-input" formControlName="departmentId" id="updateDepartmentId"
-          (change)="onUpdateDepartmentChange($event)">
+          >
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept.departmentId">
             {{dept.departmentName}}
@@ -192,7 +192,7 @@
               {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
             </label>
             <select class="form-control custom-input" formControlName="teamManagerId" id="updateTeamManagerId"
-              (change)="onUpdateManagerChange($event)">
+              >
               <option value="">Select Team Manager</option>
               <option *ngFor="let manager of teamDetails" [value]="manager.employeeId">
                 {{manager.firstName}} {{manager.lastName}}

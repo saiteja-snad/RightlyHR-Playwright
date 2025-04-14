@@ -155,29 +155,11 @@ export class TeamComponent implements OnInit, OnDestroy {
     if (this.AddForm.valid) {
       console.log('Form values:', this.AddForm.value);
  
-      // Get departmentId (which should be the sno value from the department)
-      const departmentIdValue = this.AddForm.get('departmentId')?.value;
- 
-      // Ensure departmentId is properly processed
-      let departmentId: number | null = null;
- 
-      if (departmentIdValue !== null && departmentIdValue !== undefined && departmentIdValue !== '') {
-        if (typeof departmentIdValue === 'number') {
-          departmentId = departmentIdValue;
-        } else if (typeof departmentIdValue === 'string' && !isNaN(Number(departmentIdValue))) {
-          departmentId = Number(departmentIdValue);
-        }
-      }
- 
-      console.log('Department ID value (sno from department):', departmentIdValue);
-      console.log('Department ID value (processed):', departmentId);
-      console.log('Department ID value type:', typeof departmentId);
- 
       // Create payload according to Swagger API specification
       const request = {
         subdepartmentId: 0, // This will be assigned by the API
         subdepartmentName: this.AddForm.get('teamName')?.value,
-        departmentId: departmentId, // This should be the sno value
+        departmentId: this.AddForm.get('departmentId')?.value, // This should be the sno value
         reportingmanagerId: Number(this.AddForm.get('teamManagerId')?.value) || null,
         isdeleted: false
       };
@@ -198,11 +180,11 @@ export class TeamComponent implements OnInit, OnDestroy {
       });
     } else {
       console.warn('Add form is invalid:', this.AddForm.errors);
-      // Mark all fields as touched to trigger validation errors
-      Object.keys(this.AddForm.controls).forEach(key => {
-        const control = this.AddForm.get(key);
-        control?.markAsTouched();
-      });
+      // // Mark all fields as touched to trigger validation errors
+      // Object.keys(this.AddForm.controls).forEach(key => {
+      //   const control = this.AddForm.get(key);
+      //   control?.markAsTouched();
+      // });
     }
   }
   close(modal: any) {
@@ -245,30 +227,11 @@ export class TeamComponent implements OnInit, OnDestroy {
   updateTeam(modal: any) {
     if (this.updateForm.valid) {
       console.log('Update form values:', this.updateForm.value);
- 
-      // Get departmentId (which should be the sno value from the department)
-      const departmentIdValue = this.updateForm.get('departmentId')?.value;
- 
-      // Ensure departmentId is properly processed
-      let departmentId: number | null = null;
- 
-      if (departmentIdValue !== null && departmentIdValue !== undefined && departmentIdValue !== '') {
-        if (typeof departmentIdValue === 'number') {
-          departmentId = departmentIdValue;
-        } else if (typeof departmentIdValue === 'string' && !isNaN(Number(departmentIdValue))) {
-          departmentId = Number(departmentIdValue);
-        }
-      }
- 
-      console.log('Department ID value (sno from department):', departmentIdValue);
-      console.log('Department ID value (processed):', departmentId);
-      console.log('Department ID value type:', typeof departmentId);
- 
       // Create payload according to Swagger API specification
       const request = {
         subdepartmentId: this.updateDepartmentDetails.subdepartmentId,
         subdepartmentName: this.updateForm.get('teamName')?.value,
-        departmentId: departmentId, // This should be the sno value
+        departmentId: this.updateDepartmentDetails.get('departmentId').value, // This should be the sno value
         reportingmanagerId: Number(this.updateForm.get('teamManagerId')?.value) || null,
         isdeleted: false
       };
@@ -290,10 +253,10 @@ export class TeamComponent implements OnInit, OnDestroy {
     } else {
       console.warn('Update form is invalid:', this.updateForm.errors);
       // Mark all fields as touched to trigger validation errors
-      Object.keys(this.updateForm.controls).forEach(key => {
-        const control = this.updateForm.get(key);
-        control?.markAsTouched();
-      });
+      // Object.keys(this.updateForm.controls).forEach(key => {
+      //   const control = this.updateForm.get(key);
+      //   control?.markAsTouched();
+      // });
     }
   }
  
@@ -381,16 +344,8 @@ export class TeamComponent implements OnInit, OnDestroy {
  
  
   resetForm() {
-    this.AddForm.reset({
-      departmentId: '',
-      teamName: '',
-      teamManagerId: ''
-    });
-    this.updateForm.reset({
-      departmentId: '',
-      teamName: '',
-      teamManagerId: ''
-    });
+    this.AddForm.reset();
+    this.updateForm.reset();
     this.isEditMode = false;
     console.log('Forms reset');
   }

@@ -1,8 +1,5 @@
 <button type="button" (click)="openDialog()" class="custom-btn btn-primary me-2">{{'Add' | translate}}</button>
-<button type="button" (click)="loadInitialData()" class="custom-btn btn-secondary">
-  <i class="bi bi-arrow-clockwise me-1"></i>{{'Refresh Data' | translate}}
-</button>
-
+ 
 <!-- Add Popup Modal  -->
 <ng-template #addpopup let-modal>
   <form [formGroup]="AddForm">
@@ -17,7 +14,7 @@
           </a>
         </div>
       </div>
-
+ 
       <!-- Department dropdown -->
       <div class="mb-4">
         <label for="departmentId" class="form-label custom-label mb-2">
@@ -36,7 +33,7 @@
           </small>
         </div>
       </div>
-
+ 
       <!-- Team Name field -->
       <div class="mb-4">
         <label for="teamName" class="form-label custom-label mb-2">
@@ -48,13 +45,13 @@
           {{ 'Team name is required' | translate }}
         </div>
       </div>
-
+ 
       <!-- Team Manager dropdown -->
       <div class="mb-4">
         <label for="teamManagerId" class="form-label custom-label mb-2">
           {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
         </label>
-
+ 
         <div class="custom-p-select-content">
           <p-select formControlName="teamManager" optionValue="teamManagerId" [options]="teamDetails" name="user"
             id="user" optionLabel="teamManager" placeholder="Search Team Manager" class="w-100" [filter]="true"
@@ -67,7 +64,7 @@
           </small>
         </div>
       </div>
-
+ 
       <div class="d-flex gap-5 pt-4 w-100">
         <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
           {{ 'Close' | translate }}
@@ -80,7 +77,7 @@
     </div>
   </form>
 </ng-template>
-
+ 
 <div class="custom-main-component-container">
   <div class="custom-table-content mt-2">
     <table class="w-100">
@@ -119,12 +116,12 @@
             </td>
           </tr>
         </ng-container>
-
+ 
       </tbody>
     </table>
   </div>
 </div>
-
+ 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
   <form [formGroup]="updateForm">
@@ -139,14 +136,7 @@
           </a>
         </div>
       </div>
-
-      <!-- Debug information -->
-      <div class="p-2 mb-3 bg-light rounded">
-        <small>Form valid: {{updateForm.valid}}</small><br>
-        <small>Department valid: {{updateForm.get('departmentId')?.valid}}</small><br>
-        <small>Department value: {{updateForm.get('departmentId')?.value | json}}</small>
-      </div>
-
+ 
       <!-- Department dropdown -->
       <div class="mb-4">
         <label for="updateDepartmentId" class="form-label custom-label mb-2">
@@ -156,20 +146,16 @@
           (change)="onUpdateDepartmentChange($event)">
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept.departmentId">
-            {{dept.departmentName}} (ID: {{dept.departmentId}})
+            {{dept.departmentName}}
           </option>
         </select>
-        <!-- Additional debug info -->
-        <small class="text-muted">
-          Selected ID: {{updateForm.get('departmentId')?.value}}
-        </small>
         <div *ngIf="updateForm.get('departmentId')?.touched && updateForm.get('departmentId')?.invalid">
           <small style="color: red; font-size: 13px;">
             {{ 'Department Name is required' | translate }}
           </small>
         </div>
       </div>
-
+ 
       <!--teamName-->
       <div class="custom-main-popup-content p-5">
         <div class="mb-4">
@@ -183,15 +169,15 @@
             {{'Team name is required'|translate}}.
           </div>
         </div>
-
+ 
         <!--teamManager-->
         <div class="mb-4">
           <label for="updatedteamManager" class="form-label custom-label mb-2">
             {{ 'teamManager' | translate }} <span class="error-msg">*</span>
           </label>
-
+ 
           <div class="custom-p-select-content">
-
+ 
             <div class="custom-p-select-content">
               <p-select formControlName="updatedteamManager" optionValue="teamManagerId" [options]="teamDetails"
                 name="user" id="user" optionLabel="updatedteamManager" placeholder="Search Team Manager" class="w-100"
@@ -199,39 +185,41 @@
               </p-select>
             </div>
           </div>
-
-      <!-- Team Manager dropdown -->
-      <div class="mb-4">
-        <label for="updateTeamManagerId" class="form-label custom-label mb-2">
-          {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
-        </label>
-        <select class="form-control custom-input" formControlName="teamManagerId" id="updateTeamManagerId"
-          (change)="onUpdateManagerChange($event)">
-          <option value="">Select Team Manager</option>
-          <option *ngFor="let manager of teamDetails" [value]="manager.employeeId">
-            {{manager.firstName}} {{manager.lastName}}
-          </option>
-        </select>
-        <div *ngIf="updateForm.get('teamManagerId')?.touched && updateForm.get('teamManagerId')?.invalid">
-          <small style="color: red; font-size: 13px;">
-            {{ 'Team Manager is required' | translate }}
-          </small>
+ 
+          <!-- Team Manager dropdown -->
+          <div class="mb-4">
+            <label for="updateTeamManagerId" class="form-label custom-label mb-2">
+              {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
+            </label>
+            <select class="form-control custom-input" formControlName="teamManagerId" id="updateTeamManagerId"
+              (change)="onUpdateManagerChange($event)">
+              <option value="">Select Team Manager</option>
+              <option *ngFor="let manager of teamDetails" [value]="manager.employeeId">
+                {{manager.firstName}} {{manager.lastName}}
+              </option>
+            </select>
+            <div *ngIf="updateForm.get('teamManagerId')?.touched && updateForm.get('teamManagerId')?.invalid">
+              <small style="color: red; font-size: 13px;">
+                {{ 'Team Manager is required' | translate }}
+              </small>
+            </div>
+          </div>
+ 
+          <div class="d-flex gap-5 pt-4 w-100">
+            <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+              {{'Close' | translate}}
+            </button>
+            <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateTeam(modal)"
+              [disabled]="updateForm.invalid">
+              {{'Update' | translate}}
+            </button>
+          </div>
         </div>
-      </div>
-
-      <div class="d-flex gap-5 pt-4 w-100">
-        <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
-          {{'Close' | translate}}
-        </button>
-        <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateTeam(modal)"
-          [disabled]="updateForm.invalid">
-          {{'Update' | translate}}
-        </button>
       </div>
     </div>
   </form>
 </ng-template>
-
+ 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
   <div class="modal-body" ngbAutofocus>
@@ -244,8 +232,7 @@
         <button class="custom-btn btn-secondary w-50 py-3" (click)="closeDelete(modal)">
           {{'No'|translate}}
         </button>
-        <button class="custom-btn btn-primary w-50 py-3"
-          (click)="onDelete(modal, updateDepartmentDetails.subdepartmentId)">
+        <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">
           {{'Yes'|translate}}
         </button>
       </div>

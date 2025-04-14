@@ -136,7 +136,7 @@
               <div class="custom-p-select-content">
                 <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please Select Authority Name"
                   class="form-select custom-select" formControlName="authorityid"
-                  [(ngModel)]="appraisalData.variablePayAmount" (onChange)="onclickDesignation()" />
+                  [(ngModel)]="appraisalData.authorityid" (onChange)="onclickDesignation()" />
               </div>
               <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                 <div class="error-msg"> {{'Signature Authority Name is required'| translate }}</div>

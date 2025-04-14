@@ -2,69 +2,7 @@
 
 <!-- Add Popup Modal -->
 
-<ng-template #addpopup let-modal>
-    <form [formGroup]="AddForm">
-      <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
-          <div class="pt-2">
-            <p class="popup-heading mb-0">{{ 'Job Role' | translate }}</p>
-          </div>
-          <div>
-            <a (click)="close(modal)">
-              <img src="icons/close.png" alt="Close Icon" class="close-icon" />
-            </a>
-          </div>
-        </div>
-  
-        <div class="custom-main-popup-content p-5">
-          <!-- Job Role Field -->
-          <div class="mb-4">
-            <label for="Addjobrole" class="form-label custom-label mb-2">
-              {{ 'Job Role' | translate }} <span class="error-msg">*</span>
-            </label>
-            <input
-              type="text"
-              class="form-control custom-input"
-              formControlName="Addjobrole"
-              placeholder="Please enter job role" 
-              (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"
-            />
-            <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg mt-2">
-              <div *ngIf="AddForm.get('Addjobrole')?.errors?.['required']">{{'Job role is required'|translate}}</div>
-          </div>
-          </div>
-  
-          <!-- Grade Name Field -->
-          <div class="mb-4">
-            <label for="gradeId" class="form-label custom-label mb-2">
-              {{ 'Grade Name' | translate }} <span class="error-msg">*</span>
-            </label>
-            <div class="custom-p-select-content">
-              <select title="text" class="form-control custom-input" formControlName="gradeId">
-                <option value="" disabled selected>Please select gradename</option>
-                <option *ngFor="let grade of gradedetails" [value]="grade.gradeId">
-                  {{ grade.gradeName }}
-                </option>
-              </select>
-            </div>
-            <div *ngIf="AddForm.get('gradeId')?.touched && AddForm.get('gradeId')?.invalid" class="error-msg mt-2">
-              <div *ngIf="AddForm.get('gradeId')?.errors?.['required']">{{'Grade is required'|translate}}</div>
-          </div>
-          </div>
-  
-          <!-- Buttons -->
-          <div class="d-flex gap-5 pt-4 w-100">
-            <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
-              {{ 'Close' | translate }}
-            </button>
-            <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">
-              {{ 'Add' | translate }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </ng-template>
+
   
 <div class="custom-main-component-container">
     <!-- <div class="d-flex justify-content-between align-items-center">
@@ -181,6 +119,70 @@
     </form>
 </ng-template>
   
+
+<ng-template #addpopup let-modal>
+  <form [formGroup]="AddForm">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">{{ 'Job Role' | translate }}</p>
+        </div>
+        <div>
+          <a (click)="close(modal)">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+          </a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content p-5">
+        <!-- Job Role Field -->
+        <div class="mb-4">
+          <label for="Addjobrole" class="form-label custom-label mb-2">
+            {{ 'Job Role' | translate }} <span class="error-msg">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control custom-input"
+            formControlName="Addjobrole"
+            placeholder="Please enter job role" 
+            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"
+          />
+          <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg mt-2">
+            <div *ngIf="AddForm.get('Addjobrole')?.errors?.['required']">{{'Job role is required'|translate}}</div>
+        </div>
+        </div>
+
+        <!-- Grade Name Field -->
+        <div class="mb-4">
+          <label for="gradeId" class="form-label custom-label mb-2">
+            {{ 'Grade Name' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <select title="text" class="form-control custom-input" formControlName="gradeId">
+              <option value="" disabled selected>Please select gradename</option>
+              <option *ngFor="let grade of gradedetails" [value]="grade.gradeId">
+                {{ grade.gradeName }}
+              </option>
+            </select>
+          </div>
+          <div *ngIf="AddForm.get('gradeId')?.touched && AddForm.get('gradeId')?.invalid" class="error-msg mt-2">
+            <div *ngIf="AddForm.get('gradeId')?.errors?.['required']">{{'Grade is required'|translate}}</div>
+        </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-5 pt-4 w-100">
+          <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+            {{ 'Close' | translate }}
+          </button>
+          <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">
+            {{ 'Add' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>

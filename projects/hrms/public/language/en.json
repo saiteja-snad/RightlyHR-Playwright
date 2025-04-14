@@ -10,6 +10,7 @@
    "Promotion Letter":"Promotion Letter",
    "ID":"ID",
    "EmployeeName": "Employee Name",
+   "Date should be after the date of probition end date":"Date should be after the date of probition end date",
    "Personal Email":"Personal Email",
    "Phone Number" : "Phone Number",
    "Location":     "Location ",
@@ -90,6 +91,25 @@
    "JobGrade is required":"Job Grade is required",
    "GRADE DETAILS":"GRADE DETAILS",
     "EDIT GRADE DETAILS":"EDIT GRADE DETAILS",
+    "Edit Sub Location'":"Edit Sub Location",
+    "Search Employee":"Search Employee",
+    "Employee is required":"Employee is required",
+    "Promotion Designation":"Promotion Designation",
+    "Apprisal Letter":"Apprisal Letter",
+    "Promotion Designation is required":"Promotion Designation is required",
+    "Date is required":"Date is required",
+    " Date should be after the probation end date":" Date should be after the probation end date",
+    "Next Compensation Review Date":"Next Compensation Review Date",
+    "Compensation Review Date is required":"Compensation Review Date is required",
+    "Performance Variable Bonus is required":"Performance Variable Bonus is required",
+    "Variable Pay":"Variable Pay",
+    "Variable Pay is required":"Variable Pay is required",
+    "Variable Amount":"Variable Amount",
+    "Variable Amount is required":"Variable Amount is required",
+    "Signature Authority Name":"Signature Authority Name",
+    "Signature Authority Name is required":"Signature Authority Name is required",
+    "Generate Document":"Generate Document",
+    "Enter Performance Variable Bonus":"Enter Performance Variable Bonus",
     "Approve":"Approve",
     "Reject":"Reject",
     "Cancel":"Cancel",
@@ -97,7 +117,12 @@
     "Rejected Reason":"Rejected Reason",
     "Are you sure you want to Reject?":"Are you sure you want to Reject?",
     "Are you sure you want to Approve?":"Are you sure you want to Approve?",
-    "Comments":"Comments"
+    "Comments":"Comments",
+    "Date":"Date",
+    "Note":"Note",
+    "Note is required":"Note is required",
+    "No results found":"No results found"
+
    
   
 

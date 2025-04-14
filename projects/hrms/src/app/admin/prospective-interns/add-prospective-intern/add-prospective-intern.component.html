@@ -107,12 +107,11 @@
                         {{'Sub Location'|translate}}<span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">  
-                            <select type="text" class="form-select custom-select" placeholder="Sub Location"
+                            <select type="text" class="form-select custom-select" placeholder="Select Sub Location"
                             id="sublocation" name="sublocation"  (change)="onClickValue()"
                             formControlName="subLocation" required>
-                            <option [ngValue]="undefined">{{'Select Sub Location'|translate}}
+                            <option [ngValue]="undefined">Select Sub Location
                             </option>
-
                             <option *ngFor="let item of subLocationsDropdown" [value]="item.id">
                                 {{item.jobSubLocationName}}</option>
                         </select>

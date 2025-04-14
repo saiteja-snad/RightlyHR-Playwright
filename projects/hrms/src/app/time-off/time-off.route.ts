@@ -48,6 +48,7 @@ import { SeparationForYourRoleRequestComponent } from './pending-approvals/separ
 import { RecallForYouRequestComponent } from './pending-approvals/recall-for-you-request/recall-for-you-request.component';
 import { RecallForYourRoleRequestComponent } from './pending-approvals/recall-for-your-role-request/recall-for-your-role-request.component';
 import { RecallRequestsComponent } from './pending-approvals/recall-requests/recall-requests.component';
+import { TraineeApprovalsComponent } from './pending-approvals/trainee-approvals/trainee-approvals.component';
 import { NodueApprovalDetailsComponent } from './pending-approvals/nodue-approval-details/nodue-approval-details.component';
 import { ClaimsandexpensesComponent } from '../claimsandexpenses/claimsandexpenses/claimsandexpenses.component';
 import { ClaimsandexpensesRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-request.component';
@@ -199,6 +200,10 @@ export default [
         ],
       },
       { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section
+      
+      {path:'trainee-approvals', component:TraineeApprovalsComponent,
+      
+      }
     ],
   },
 ] as Route[];

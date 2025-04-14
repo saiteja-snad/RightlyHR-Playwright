@@ -8,10 +8,11 @@ import { SettingsManageShitsTabsComponent } from "../../../shared/settings-tabs/
 import { ManageShiftsTabsComponent } from "../../../shared/manage-shifts-tabs/manage-shifts-tabs.component";
 import { ManageHolidaysTabsComponent } from "../../../shared/manage-holidays-tabs/manage-holidays-tabs.component";
 import { ManagePoliciesTabsComponent } from "../../../shared/manage-policies-tabs/manage-policies-tabs.component";
+import { SettingsExpenesConfigurtionsTabsComponent } from "../../../shared/settings-expenes-configurtions-tabs/settings-expenes-configurtions-tabs.component";
 
 @Component({
   selector: 'app-employee-fields-layout',
-  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent, ManageShiftsTabsComponent, ManageHolidaysTabsComponent, ManagePoliciesTabsComponent],
+  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent, ManageShiftsTabsComponent, ManageHolidaysTabsComponent, ManagePoliciesTabsComponent, SettingsExpenesConfigurtionsTabsComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })

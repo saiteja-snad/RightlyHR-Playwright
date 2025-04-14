@@ -174,7 +174,7 @@
             "qa": {
               "fileReplacements": [
                 {
-                  "replace": "projects/hrms/src/environments/environment.ts",
+                  "replace": "projects/hrms/src/environments/environment.dev.ts",
                   "with": "projects/hrms/src/environments/environment.qa.ts"
                 }
               ],

@@ -20,8 +20,8 @@ export class SettingsEmployeeFieldsModuleTabsComponent {
     { label: 'Manage Policies', link: '/settings/employee-fields/manage-policies' },
     { label: 'Manage Holidays', link: '/settings/employee-fields/manage-holidays' },
     { label: 'Manage Weekends', link: '/settings/employee-fields/job' },
-    { label: 'Expense Configurations', link: '/settings/employee-fields/job' },
+    { label: 'Expense Configurations', link: '/settings/employee-fields/expenes' },
     { label: 'Manage DST', link: '/settings/employee-fields/job' },
-    { label: 'No Due Clearance', link: '/settings/employee-fields/job' }
+    { label: 'No Due Clearance', link: '/settings/employee-fields/no-due-clearnce' }
   ];
 }

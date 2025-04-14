@@ -110,7 +110,7 @@
                         </div>
 
                         <div class="col-xl-12 mb-4">
-                            <label class="form-label custom-label mb-2">Select Address<span
+                            <label class="form-label custom-label mb-2">{{'Select Address'|translate}}<span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="addressdata" optionValue="value" optionLabel="name"
@@ -179,7 +179,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
-                            <label class="form-label custom-label mb-2">Mobile Number with Country Code<span class="error-msg">*</span></label>
+                            <label class="form-label custom-label mb-2">{{'Mobile Number with Country Code'|translate}}<span class="error-msg">*</span></label>
                             <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                               @if (!loadingCode) {
                                 <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
@@ -256,7 +256,7 @@
                             <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                                     class="error-msg">*</span></label>
                             <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                                placeholder="Please enter expected start date" />
+                                placeholder="Please enter expected start date" (change)="onDateOfJoiningChange()"  (change)="updateEndDateValidityupdate()" (change)="updateEndDateValidityForExpectedStartDate()"/>
                             <div
                                 *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                                 <div class="error-msg">Expected Start Date is required</div>
@@ -280,7 +280,7 @@
                         </div>
                         <div class="col-xl-6 col-lg-12 mb-4">
                             <label class="form-label custom-label mb-2">
-                              {{'Select Internship Period(Months)' | translate}}<span class="error-msg">*</span>
+                              {{'Internship Period(Months)' | translate}}<span class="error-msg">*</span>
                             </label>
                             <div class="custom-p-select-content">
                               <p-select 
@@ -288,7 +288,7 @@
                                 optionLabel="name"
                                 placeholder="Please select internship period" 
                                 formControlName="internshipperiod"
-                                class="form-select custom-select" (change)="isDataPopulated1()">
+                                class="form-select custom-select"  (click)="calculateEndDate(traineeEmpData.internshipperiod)" >
                               </p-select>
                             </div>
                             <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
@@ -415,8 +415,9 @@
                                         <li class="paragraph mb-3">
                                             <strong>{{'Start Date and Duration' | translate}}: </strong>Your internship will commence on
                                             <u><strong>{{traineeEmpData.dateOfJoining | dateformat}}</strong></u> and is expected to complete on
-                                            <u><strong>{{traineeEmpData.endDate | dateformat}}</strong></u>, lasting for a period of 
-                                            <strong>{{traineeEmpData.internshipperiod}} Months</strong>.
+                                            <!-- <u> <strong>{{traineeEmpData.endDate | dateformat}}</strong></u> -->
+                                                lasting for a period of 
+                                            <strong>{{traineeEmpData.endDate | dateformat}} Months</strong>.
                                           </li>
                                         <li class="paragraph mb-3"><strong>{{'Working Hours and Location'|translate}}: </strong>The
                                             standard

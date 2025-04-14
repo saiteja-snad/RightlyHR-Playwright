@@ -4,8 +4,8 @@
         <div class="input-group custom-search mb-4">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
         <div class="custom-table-content">
@@ -23,45 +23,45 @@
                 <tbody>
 
                     @if ((probationDetails).length > 0) {
-                        @for (item of ((probationDetails ) ?? []) | probationdetails : searchValue; track item.approvalHeader.id){
-                            <tr>
-                                <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
-                                <td>{{item.entity?.employeeName ?? '-'}}</td>
-                                <td>{{item.entity?.probationStartDate ?? '-' | date}}</td>
-                                <td>{{item.entity?.probationEndDate ?? '-' | date}}</td>
-                                <td class="text-center">
-                                    <div class="mt-2">
-                                        <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
-                                            <span id="tooltip">
-                                                <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
-                                                <div data-bs-toggle="modal" (click)="handleData(item)"
-                                                    (click)="approverComments(item.entity?.prApproverComments)">
-                                                    <i style="position:relative;z-index: -1;"
-                                                        class="bi bi-info-circle-fill "></i></div>
-                                                <!-- </div> -->
-                                            </span>
-                                        </span>
-                                        <ng-template #approvercomments>-</ng-template>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <div>
-                                        <button class="custom-btn btn-primary"
-                                            (click)="handleRequests(item); getComments(item.entity?.prApproverComments)"
-                                            *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#ProbationProcess">Process</button>
-                                        <button class="custom-btn btn-primary"
-                                            *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                            [routerLink]="['/time-off/pending-approvals/assessmentform']"
-                                            (click)="setData(item)">Assessment form</button>
-                                        
-                                    </div>
-                                </td>
-                                
-                            </tr>
-                        }
-                    
+                    @for (item of ((probationDetails ) ?? []) | probationdetails : searchValue; track
+                    item.approvalHeader.id){
+                    <tr>
+                        <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
+                        <td>{{item.entity?.employeeName ?? '-'}}</td>
+                        <td>{{item.entity?.probationStartDate ?? '-' | date}}</td>
+                        <td>{{item.entity?.probationEndDate ?? '-' | date}}</td>
+                        <td class="cursor">
+                            <div class="mt-2">
+                                <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
+                                    <span id="tooltip">
+                                        <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
+                                        <div data-bs-toggle="modal" (click)="handleData(item)"
+                                            (click)="approverComments(item.entity?.prApproverComments)">
+                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                        </div>
+                                        <!-- </div> -->
+                                    </span>
+                                </span>
+                                <ng-template #approvercomments>-</ng-template>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div>
+                                <button class="custom-btn btn-primary"
+                                    (click)="handleRequests(item); getComments(item.entity?.prApproverComments)"
+                                    *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage"
+                                    data-bs-toggle="modal" data-bs-target="#ProbationProcess">Process</button>
+                                <button class="custom-btn btn-primary"
+                                    *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
+                                    [routerLink]="['/time-off/pending-approvals/assessmentform']"
+                                    (click)="setData(item)">Assessment form</button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                    }
+
                     }
                     @else{
                     <tr>
@@ -107,61 +107,67 @@
                 <button type="button" class="btn-close me-2" data-bs-dismiss="modal" (click)="closeModel()"
                     aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="card mb-3">
-                    <table class="w-100">
-                        <thead>
-                            <tr>
-                                <th class="text-nowrap">Approver Role</th>
-                                <th class="text-nowrap">Over all Rating</th>
-                                <th class="text-nowrap">Status</th>
-                                <th class="text-nowrap">Extended Date</th>
-                                <th class="text-nowrap">comments </th>
-                                <th class="text-nowrap">Commented Date</th>
-                                <th class="text-nowrap">Commented by</th>
-                                <th class="text-nowrap">Attachment</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let comment of myApproverComments">
-                                <td>
-                                    <span *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
-                                    <ng-template #approverrole>NA</ng-template>
-                                </td>
-                                <td><span>{{comment.metadata.Overallrating|number : '1.2-2' }}</span></td>
-                                <td>
-                                    <span *ngIf="comment?.metadata?.status;else status">{{comment.metadata.status}}</span>
-                                    <ng-template #status>NA</ng-template>
-                                </td>
-                                <td>
-                                    <span *ngIf="comment?.metadata?.PrExtendedDate;else extenddate">{{comment.metadata.PrExtendedDate | date}}</span>
-                                    <ng-template #extenddate>NA</ng-template>
-                                </td>
-                                <td class="">
-                                    <div class="text-center" *ngIf="comment?.comments;else popupcomments">
-                                        
-                                        <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
-                                            ngbPopover="{{comment?.comments}}"> </i>
-                                    </div>
-                                    <ng-template #popupcomments>NA</ng-template>
-                                </td>
-                                <td><span *ngIf="comment.addedDate;else addeddate">
-                                        {{comment.addedDate | date}}</span>
-                                    <ng-template #addeddate>NA</ng-template>
-                                </td>
-                                <td><span *ngIf="comment.addedName;else addedname">
-                                        {{comment.addedName}} ({{comment.addedByFusionEmpId}})</span>
-                                    <ng-template #addedname>NA</ng-template>
-                                </td>
-                                <td>
-                                    <a type="button" style="color: blue;" (click)="openview()"
-                                        (click)="setformView(this.selectedData.employeeId,comment?.metadata?.responseId)">
-                                        <i class="bi bi-paperclip"></i>View
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="modal-body" ngbAutofocus>
+                <div class="custom-main-component-container">
+                    <div class="custom-table-content mt-2">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap">Approver Role</th>
+                                    <th class="text-nowrap">Over all Rating</th>
+                                    <th class="text-nowrap">Status</th>
+                                    <th class="text-nowrap">Extended Date</th>
+                                    <th class="text-nowrap">Comments </th>
+                                    <th class="text-nowrap">Commented Date</th>
+                                    <th class="text-nowrap">Commented by</th>
+                                    <th class="text-nowrap">Attachment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let comment of myApproverComments">
+                                    <td>
+                                        <span
+                                            *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
+                                        <ng-template #approverrole>NA</ng-template>
+                                    </td>
+                                    <td><span>{{comment.metadata.Overallrating|number : '1.2-2' }}</span></td>
+                                    <td>
+                                        <span
+                                            *ngIf="comment?.metadata?.status;else status">{{comment.metadata.status}}</span>
+                                        <ng-template #status>NA</ng-template>
+                                    </td>
+                                    <td>
+                                        <span
+                                            *ngIf="comment?.metadata?.PrExtendedDate;else extenddate">{{comment.metadata.PrExtendedDate
+                                            | date}}</span>
+                                        <ng-template #extenddate>NA</ng-template>
+                                    </td>
+                                    <td class="">
+                                        <div class="text-center" *ngIf="comment?.comments;else popupcomments">
+
+                                            <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
+                                                ngbPopover="{{comment?.comments}}"> </i>
+                                        </div>
+                                        <ng-template #popupcomments>NA</ng-template>
+                                    </td>
+                                    <td><span *ngIf="comment.addedDate;else addeddate">
+                                            {{comment.addedDate | date}}</span>
+                                        <ng-template #addeddate>NA</ng-template>
+                                    </td>
+                                    <td><span *ngIf="comment.addedName;else addedname">
+                                            {{comment.addedName}} ({{comment.addedByFusionEmpId}})</span>
+                                        <ng-template #addedname>NA</ng-template>
+                                    </td>
+                                    <td>
+                                        <a type="button" style="color: blue;" (click)="openview()"
+                                            (click)="setformView(this.selectedData.employeeId,comment?.metadata?.responseId)">
+                                            <i class="bi bi-paperclip"></i>View
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -185,7 +191,8 @@
 
                 <div class="col-11 ">
                     <div class="mb-3">
-                        <label for="selct option">Whose approval form would you like to proceed with?<span class="error-msg">*</span></label>
+                        <label for="selct option">Whose approval form would you like to proceed with?<span
+                                class="error-msg">*</span></label>
                         <select class="form-select" aria-label="Default select example" id="selectoption"
                             name="selectoption" #processoption="ngModel" [(ngModel)]="selectedData.proccesoption"
                             (change)="onclickproceevalue(selectedData.proccesoption)" required>
@@ -224,7 +231,8 @@
                                 #earlyrelievingreason="ngModel" maxlength="250" [(ngModel)]="selectedData.comments"
                                 (ngModelChange)="ifreasonnull(selectedData.comments)" required rows="3"></textarea>
                             <div>
-                                <span class="color">{{selectedData.comments?.length?selectedData.comments?.length:0}}/250</span>
+                                <span
+                                    class="color">{{selectedData.comments?.length?selectedData.comments?.length:0}}/250</span>
                             </div>
 
                             <small class="error-msg"
@@ -298,6 +306,23 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- model start to view reason -->
+<div class="modal fade" id="rolereq" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: fit-content;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" (click)="close()"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <app-probationform-view></app-probationform-view>
+            </div>
         </div>
     </div>
 </div>

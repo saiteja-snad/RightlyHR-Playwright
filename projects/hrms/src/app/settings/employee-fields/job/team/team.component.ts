@@ -54,7 +54,7 @@ export class TeamComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getTable() 
     this.AddForm = this.fb.group({
-      teamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      teamName: ['', [Validators.required]],
       departmentId:[null,[Validators.required]],
       teamManager: ['', [Validators.required]],
 
@@ -62,7 +62,7 @@ export class TeamComponent implements OnInit, OnDestroy {
  
     this.updateForm = this.fb.group({
       updateddepartmentId: ['', [Validators.required]],
-      UpdatedTeamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      UpdatedTeamName: ['', [Validators.required]],
       updatedteamManager: ['', [Validators.required]]
     });
     this.getTeam();

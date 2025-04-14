@@ -3,9 +3,7 @@ import { LeaveCategoeryComponent } from "./leave-categoery/leave-categoery.compo
 import { FlexibleLeaveAllocationComponent } from "./flexible-leave-allocation/flexible-leave-allocation.component";
 import { LeaveAlloctaionComponent } from "./leave-alloctaion/leave-alloctaion.component";
 import { LoadEntitlementsComponent } from "./load-entitlements/load-entitlements.component";
-import { WFHEntitlemenCriteriaComponent } from "./attendance-eligibility-criteria/wfh-entitlemen-criteria/wfh-entitlemen-criteria.component";
-import { CompOffEntitlementCriteriaComponent } from "./attendance-eligibility-criteria/comp-off-entitlement-criteria/comp-off-entitlement-criteria.component";
-import { AttendanceComponent } from "../../time-off/attendance/attendance.component";
+
 import { AttendanceEligibilityCriteriaComponent } from "./attendance-eligibility-criteria/attendance-eligibility-criteria.component";
 
 export default [

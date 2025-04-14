@@ -11,10 +11,12 @@ import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import moment from 'moment';
 import { ICategoryDetails } from '../../../../Interfaces/timoff-model';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingapprovals.pipe";
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-time-off-for-you-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe,NoDataFoundComponent],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss'
 })
@@ -24,6 +26,7 @@ export class TimeOffForYouRequestComponent {
   rows: any = 10;
   LOGIN: any;
   subscription!: Subscription;
+  searchValue :any;
   leaves = [] as LeaveApproval[];
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList ={} as ICategoryDetails;

@@ -50,17 +50,6 @@ export class SubLocationComponent {
     this.getSubLocation();
 
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
 
   // // Method to open the add modal dialog
   openDialog() {
@@ -90,7 +79,7 @@ export class SubLocationComponent {
 
         this.getSubLocation();
         modal.close();
-        this.conformationPopup.openSuccessModal('SubLocation added successfully');
+        this.conformationPopup.openSuccessModal('Sub location added successfully');
 
           this.resetForm();
       },
@@ -129,7 +118,7 @@ export class SubLocationComponent {
 
           this.getSubLocation();
           modal.close();
-          this.conformationPopup.openSuccessModal('SubLocation Name Updated Successfully');
+          this.conformationPopup.openSuccessModal('Sub location updated successfully');
           this.resetForm();
         },
         error: (error: any) => {
@@ -154,7 +143,7 @@ export class SubLocationComponent {
         next: () => {
           modal.close();
           this.getSubLocation();
-          this.conformationPopup.openSuccessModal('SubLocation Name Deleted Successfully');
+          this.conformationPopup.openSuccessModal('Sub location deleted successfully');
 
         },
         error: (error: any) => {
@@ -179,6 +168,5 @@ export class SubLocationComponent {
       this.subscription.unsubscribe();
     }
   }
-
 
 }

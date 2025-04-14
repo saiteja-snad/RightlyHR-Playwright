@@ -44,20 +44,20 @@ export class LeavesApprovaltabsComponent {
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
-        console.log(response);
         if (Array.isArray(response)) {
-          this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
-           this.waitingForApprovalCount = this.lpdata.length ?? 0;
-          console.log("Processed Records Count:", this.processedCount);
-          this.lpdata = response.filter(item => item.status === 'Approved');
-           this.approvedCount = this.lpdata.length ?? 0;
-          console.log("Processed Records Count:", this.approvedCount);
-          this.lpdata = response.filter(item => item.status === 'Rejected');
-           this.rejectedCount = this.lpdata.length ?? 0;
-          console.log("Processed Records Count:", this.rejectedCount);
-          this.lpdata = response.filter(item => item.status === 'Processed');
-           this.processedCount = this.lpdata.length ?? 0;
-          console.log("Processed Records Count:", this.processedCount);
+          // Count based on status
+          const waiting = response.filter(item => item.status === 'Waiting for Approval');
+          const approved = response.filter(item => item.status === 'Approved');
+          const rejected = response.filter(item => item.status === 'Rejected');
+          const processed = response.filter(item => item.status === 'Processed');
+
+          // Set counts
+          this.statusTabs = [
+            { label: 'Waiting For Approval', link: 'waiting-for-approval', count: waiting.length },
+            { label: 'Approved', link: 'approved', count: approved.length },
+            { label: 'Processed', link: 'processed', count: processed.length },
+            { label: 'Rejected', link: 'rejected', count: rejected.length }
+          ];
         } else {
           console.error("Invalid response format");
         }

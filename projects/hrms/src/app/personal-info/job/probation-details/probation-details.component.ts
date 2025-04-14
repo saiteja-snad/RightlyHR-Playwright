@@ -6,11 +6,13 @@ import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../environments/environment.dev';
+import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 @Component({
   selector: 'app-probation-details',
-  imports: [CommonModule, DateformatPipe],
+  standalone: true,
+  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })
@@ -145,14 +147,34 @@ export class ProbationDetailsComponent implements OnInit {
       }
     })
   }
-
+  closeModel() {
+    const modalElement = document.getElementById('probationCommentsPopup');
+    if (modalElement) {
+      modalElement.classList.remove('show');
+      modalElement.style.display = 'none';
+    }
+  }
+  openview() {
+    this.closeModel();
+    const modalElement = document.getElementById('probationformView');
+    if (modalElement) {
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
+    }
+  }
+  close(){
+    window.location.reload();
+  }
+  setformView(employeeId: number, responseId: number) {
+    this.http.communicationService.next({ employeeId, responseId });
+  }
   probationCommentsFunction(Value: any) {
-    // const modalElement = document.getElementById('probationCommentsPopup');
-    // if (modalElement) {
-    //   modalElement.classList.add('show');
-    //   modalElement.style.display = 'block';
-    // }
-    // console.log(Value)
+    const modalElement = document.getElementById('probationCommentsPopup');
+    if (modalElement) {
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
+    }
+    console.log(Value)
     this.appcomment = Value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.metaData);

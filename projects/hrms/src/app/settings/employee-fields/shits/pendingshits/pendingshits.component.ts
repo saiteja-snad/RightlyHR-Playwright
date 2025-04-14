@@ -46,4 +46,7 @@ export class PendingshitsComponent {
     }
   }
 
+  nagvition(){
+    this.router.navigate(['/settings/employee-fields/addshifts']);
+  }
 }

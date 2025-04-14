@@ -18,11 +18,11 @@ export class TimeOffRequestTabsComponent {
   subscription!: Subscription;
   leavesEmp = [] as LeaveApproval[];
   leavesRole = [] as LeaveApproval[];
-  countEmp: any;
-  countRole: any;
+  countEmp: any = 0;
+  countRole: any = 0;
   navTabs: any[] = [
-    { label: 'For You ', link: 'for-you', count: 9 },
-    { label: 'For Your Role', link: 'for-your-role', count: 9 },
+    { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
+    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
    
   ];
   constructor(public readonly router: Router, private http: HttpService, private modalService: NgbModal) { }
@@ -41,6 +41,13 @@ export class TimeOffRequestTabsComponent {
         console.log(response);
         this.leavesEmp = response.data as LeaveApproval[];
         this.countEmp = this.leavesEmp.length ?? 0;
+        this.navTabs = [
+          { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
+          { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
+         
+        ];
+        console.log(this.countEmp);
+        
         console.log(this.leavesEmp);
       },
       error: (reason) => console.log(reason),
@@ -55,7 +62,13 @@ export class TimeOffRequestTabsComponent {
         console.log(response);
         this.leavesRole = response.data as LeaveApproval[];
         this.countRole = this.leavesRole.length ?? 0;
+        this.navTabs = [
+          { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
+          { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
+         
+        ];
         console.log(this.leavesRole);
+        console.log(this.countRole);
       },
       error: (reason) => console.log(reason),
     });

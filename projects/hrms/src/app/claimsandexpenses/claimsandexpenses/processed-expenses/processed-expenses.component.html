@@ -18,7 +18,7 @@
       </thead>
       <tbody>
         <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let exp of flitredprocessed | async">
+          <tr *ngFor="let exp of expenesEmplyeedata | async">
             <td>{{ exp.expenses_Title }}</td>
             <td>{{ exp.applied_date | dateformat }}</td>
             <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>

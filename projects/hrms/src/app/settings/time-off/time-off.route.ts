@@ -16,18 +16,17 @@ export default [
     { path: 'flexible-leave-allocation', component: FlexibleLeaveAllocationComponent },
     {
         path: 'eligibility-criterias',
-        component:AttendanceEligibilityCriteriaComponent,
+        component: AttendanceEligibilityCriteriaComponent,
         children: [
-            { path: '', redirectTo: 'comp-off', pathMatch: 'full'  },
-          { path: 'comp-off',loadComponent: () => import('./attendance-eligibility-criteria/comp-off-entitlement-criteria/comp-off-entitlement-criteria.component').then((m) => m.CompOffEntitlementCriteriaComponent) },
-         { path: 'wfh',loadComponent: () => import('./attendance-eligibility-criteria/wfh-entitlemen-criteria/wfh-entitlemen-criteria.component').then((m) => m.WFHEntitlemenCriteriaComponent)  },
-          { path: 'permissions', loadComponent: () => import('./attendance-eligibility-criteria/permissions/permissions.component').then((m) => m.PermissionsComponent)  },
+            { path: '', redirectTo: 'comp-off', pathMatch: 'full' },
+            { path: 'comp-off', loadComponent: () => import('./attendance-eligibility-criteria/comp-off-entitlement-criteria/comp-off-entitlement-criteria.component').then((m) => m.CompOffEntitlementCriteriaComponent) },
+            { path: 'wfh', loadComponent: () => import('./attendance-eligibility-criteria/wfh-entitlemen-criteria/wfh-entitlemen-criteria.component').then((m) => m.WFHEntitlemenCriteriaComponent) },
+            { path: 'permissions', loadComponent: () => import('./attendance-eligibility-criteria/permissions/permissions.component').then((m) => m.PermissionsComponent) },
         ]
-      }
-    
+    }
+
 
 
 ] as Route[];
 
 
-  

@@ -1,112 +1,97 @@
-<form [formGroup]="BussinesForm" (ngSubmit)="addBusiness()">
-    <div class="card main-settings-layout p-4">
+<div class="custom-main-component-container">
+    <form [formGroup]="BussinesForm" (ngSubmit)="addBusiness()">
         <!-- Add Input-->
-        <div>
-            <div class="custom-settings-add-input input-group mb-5">
-                <input type="text" class="form-control custom-input" placeholder="Please Enter Business"
-                    formControlName="BUSINESS" aria-label="BussinesDetail" aria-describedby="BussinesDetail"  (keypress)="blockNonAlphabets($event)" >
+        <div class="mb-4">
+            <div class="custom-settings-add-input input-group">
+                <input type="text" class="form-control custom-input" placeholder="Please enter business area"
+                    formControlName="BUSINESS" aria-label="BussinesDetail" aria-describedby="BussinesDetail"
+                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="BussinesDetail">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="BussinesForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="BussinesForm.invalid">{{'Add'|translate}}</button></span>
+            </div>
+            <div *ngIf="BussinesForm.get('BUSINESS')?.touched && BussinesForm.get('BUSINESS')?.invalid" class="error-msg mt-2">
+                <div *ngIf="BussinesForm.get('BUSINESS')?.errors?.['required']">{{'Business area is required'|translate}}</div>
             </div>
         </div>
-          <div *ngIf="BussinesForm.get('BUSINESS')?.touched && BussinesForm.get('BUSINESS')?.invalid">
-            <small style="color: red;font-size: 13px;" *ngIf="BussinesForm.get('BUSINESS')?.errors?.['required']">
-              {{'BussinesDetail is required'|translate}}
-            </small>
-            <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
-               {{'Only alphabets and spaces are allowed'|translate}}
-            </small> -->
-          </div>
-          
-          
-        <!--Data Content-->
-         <div>
-            <div class="custom-settings-data-table">
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                            <th class="col-span-2"></th>                            
-                        </tr>
+    </form>
 
-                    </thead>
-                    <tbody>
-                         @for (loc of BussinesDetail; track loc.id) {
-                        <tr *ngFor="let loc of BussinesDetail">
-                             <tr>
-                            <td class="w-75">{{ loc.areaName}}</td>                           
-                            <td class="w-25">
-                                <div class="d-flex gap-4">
-                                    <!--Update-->
-                                     <div>
-                                        <a (click)="openupdate(loc)"><img src="/settings-icon/edit.png" alt="edit icon"
-                                                class="settings-common-icon"></a>
-                                    </div> 
-                                    <!--Delete-->
-                                    <div>
-                                        <a (click)="opendelete(loc)"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                                class="settings-common-icon"></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div> 
-          
+    <!--Data Content-->
+    <div class="custom-settings-data-table">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="col-span-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (loc of BussinesDetail; track $index) {
+                <tr>
+                    <td class="w-75">{{ loc.areaName}}</td>
+                    <td class="w-25">
+                        <div class="d-flex gap-4">
+                            <!--Update-->
+                            <div>
+                                <a (click)="openupdate(loc)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                        class="settings-common-icon"></a>
+                            </div>
+                            <!--Delete-->
+                            <div>
+                                <a (click)="opendelete(loc)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                        class="settings-common-icon"></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
-</form>
+</div>
+
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
-   <div class="custom-main-popup-container" ngbAutofocus>
-       <div class="d-flex justify-content-between popup-header-border p-4">
-           <div class="pt-2">
-               <p class="popup-heading mb-0">{{'Edit Business'|translate}}</p>
-           </div>
-           <div>
-               <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-           </div>
-       </div>
-       <div class="custom-main-popup-content p-5">
-           <div class="mb-4">
-               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Business'|translate}}<span
-                       class="error-msg">*</span></label>
-               <input type="text" class="form-control custom-input" formControlName="BUSINESS"
-                   placeholder="Please Enter Business"  (keypress)="blockNonAlphabets($event)">
-           </div>
-           <div *ngIf="updateForm.get('BUSINESS')?.touched && updateForm.get('BUSINESS')?.invalid">
-               <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('BUSINESS')?.errors?.['required']">
-                {{'BussinesDetail is required'|translate}}
-               </small>
-               <!-- <small style="color: red;" *ngIf="updateForm.get('jobLocationName')?.errors?.['pattern']">
-                {{'Only alphabets and spaces are allowed'|translate}}
-                 </small> -->
-             </div>
-           <div class="d-flex gap-5 pt-4 w-100">
-               <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close'|translate}}</button>
-               <button class="custom-btn btn-primary w-50 py-3" (click)="updateBusiness(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
-           </div>
-         
-       </div>
-   </div>
-   </form>
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-3">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Edit Business Area'|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-4">
+                <div class="mb-4">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Business Area'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="BUSINESS" placeholder="Please enter business area"
+                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    <div *ngIf="updateForm.get('BUSINESS')?.touched && updateForm.get('BUSINESS')?.invalid" class="error-msg mt-2">
+                        <div *ngIf="updateForm.get('BUSINESS')?.errors?.['required']">{{'Business area is required'|translate}}</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-5 w-100 pt-3">
+                    <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="updateBusiness(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </ng-template>
+
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
     <div class="modal-body" ngbAutofocus>
         <div class="custom-main-popup-content text-center p-4">
-            <div class="py-5">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+            <div class="py-4">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
             <div class="d-flex gap-5 pt-2 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'yes'|translate}}</button>
+                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
     </div>
 </ng-template>
-
-

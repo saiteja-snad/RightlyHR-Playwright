@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { JobLocation } from './locationModule';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-location',
@@ -24,7 +25,13 @@ export class LocationComponent implements OnInit,OnDestroy {
   selectedId: number | null = null;
   selectedDeleteLoc: any = null;
   subscription!: Subscription;
-  constructor(private modalService: NgbModal,private fb: FormBuilder,private http: HttpService,private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService,
+  ) {
    
    }
 
@@ -37,20 +44,6 @@ export class LocationComponent implements OnInit,OnDestroy {
     });
     
     this.getLocation();
-  }
-
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    // if (!pattern.test(inputChar)) {
-    //   event.preventDefault(); // blocks numbers or symbols
-    // }
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
   }
   
   getLocation() {

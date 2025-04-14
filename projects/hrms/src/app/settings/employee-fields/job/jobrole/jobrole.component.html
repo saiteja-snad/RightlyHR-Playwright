@@ -26,11 +26,12 @@
               type="text"
               class="form-control custom-input"
               formControlName="Addjobrole"
-              placeholder="Please Enter JobRole" (keypress)="blockNonAlphabets($event)"
+              placeholder="Please enter job role" 
+              (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"
             />
-            <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg">
-              {{ 'Jobrole Name is required' | translate }}.
-            </div>
+            <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg mt-2">
+              <div *ngIf="AddForm.get('Addjobrole')?.errors?.['required']">{{'Job role is required'|translate}}</div>
+          </div>
           </div>
   
           <!-- Grade Name Field -->
@@ -39,18 +40,16 @@
               {{ 'Grade Name' | translate }} <span class="error-msg">*</span>
             </label>
             <div class="custom-p-select-content">
-              <select class="form-control custom-input" formControlName="gradeId">
+              <select title="text" class="form-control custom-input" formControlName="gradeId">
                 <option value="" disabled selected>Please select gradename</option>
                 <option *ngFor="let grade of gradedetails" [value]="grade.gradeId">
                   {{ grade.gradeName }}
                 </option>
               </select>
             </div>
-            <div *ngIf="AddForm.get('gradeId')?.touched && AddForm.get('gradeId')?.invalid">
-              <small style="color: red; font-size: 13px;">
-                {{ 'Grade Name is required' | translate }}
-              </small>
-            </div>
+            <div *ngIf="AddForm.get('gradeId')?.touched && AddForm.get('gradeId')?.invalid" class="error-msg mt-2">
+              <div *ngIf="AddForm.get('gradeId')?.errors?.['required']">{{'Grade is required'|translate}}</div>
+          </div>
           </div>
   
           <!-- Buttons -->
@@ -143,10 +142,11 @@
                         {{'Job Role' | translate}} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
-                        placeholder="Please Enter JobRole" (keypress)="blockNonAlphabets($event)">
+                        placeholder="Please enter job role" 
+                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched"
                         class="error-msg">
-                        {{'Jobrole Name is required'|translate}}.
+                        {{'Job role is required'|translate}}.
                     </div>
                 </div>
                 <div class="mb-4">
@@ -156,7 +156,7 @@
                     </label>
 
                     <div class="custom-p-select-content">
-                        <select class="form-control custom-input" formControlName="updategradeId">
+                        <select title="text" class="form-control custom-input" formControlName="updategradeId">
                             <option value="" disabled selected>Please select designation</option>
                             <option *ngFor="let grade of gradedetails" [value]="grade.gradeId">
                                 {{ grade.gradeName }}
@@ -165,15 +165,13 @@
                     </div>
 
                 </div>
-                <div *ngIf="updateForm.get('updategradeId')?.touched && updateForm.get('updategradeId')?.invalid">
-                    <small style="color: red; font-size: 13px;" *ngIf="updateForm.get('updategradeId')?.errors?.['required']">
-                        {{'Grade Name is required' | translate}}
-                    </small>
-                </div>
+                <div *ngIf="AddForm.get('updategradeId')?.touched && AddForm.get('updategradeId')?.invalid" class="error-msg mt-2">
+                  <div *ngIf="AddForm.get('updategradeId')?.errors?.['required']">{{'Grade is required'|translate}}</div>
+              </div>
                 <div class="d-flex gap-5 pt-4 w-100">
-                    <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
+                    <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
                         translate}}</button>
-                    <button class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
+                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
                         [disabled]="updateForm.invalid">
                         {{'update' | translate}}
                     </button>

@@ -1,94 +1,58 @@
-<div class="container-fluid ">
-    <div class="item">
-      <ul class="nav nav-tabs pt-2">
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/admin/holiday']" routerLinkActive="active"
-         >Holidays</a>
-        </li>
-      </ul>
+<div class="custom-main-component-container  ">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <p class="component-header cursor mb-0"><i class="bi bi-arrow-90deg-left me-2"></i> Holidays</p>
     </div>
+  </div>
 
-    <div class="mt-4 mb-4">
-        <div class="d-flex align-items-center ms-2">
-            <span class="me-2">Select year:</span>
-            <form [formGroup]="holidaysform" class="m-0">
-              <select
-                formControlName="selectedYear"
-                class="form-select form-select-sm"
-                style="width: auto;"
-                (change)="getHoliday(jobshiftdetails)"
-                aria-label="Default select example">
-                <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-              </select>
-            </form>
-          </div>
-          
 
-        <ul class="nav nav-tabs mt-3  border-bottom " id="pills-tab" role="tablist">
-          <li class="nav-item today-nav-item" role="presentation">
-              <button class="nav-link today-nav-link active" id="pills-home-tab" data-bs-toggle="pill"
-                  data-bs-target="#TimeOff" type="button" role="tab" aria-controls="pills-home"
-                  aria-selected="true">
-                  Public Holidays [{{optional}}]
-              </button>
-          </li>
-          <li class="nav-item today-nav-item" role="presentation">
-            <button class="nav-link today-nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                data-bs-target="#CompOff" type="button" role="tab" aria-controls="pills-profile"
-                aria-selected="false">
-                Optional Holidays [{{length}}]
-            </button>
-        </li>
-      </ul>
+  <div class="d-flex align-items-center ms-2">
+    <span class="me-2">Select year:</span>
+    <form [formGroup]="holidaysform" class="m-0">
+      <select formControlName="selectedYear" class="form-select form-select-sm" style="width: auto;"
+        (change)="getHoliday(jobshiftdetails)" aria-label="Default select example">
+        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+      </select>
+    </form>
+  </div>
 
-      <div class="tab-content pt-2 border-top" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="TimeOff" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
-          <div class="table-scroll mt-3">
-            <table>
-              <thead>
-                <th class="w-25">Name</th>
-                <th>Date</th>
-              </thead>
-              <tbody>
-                <ng-container *ngIf="orgHolidayItemsArrayFalse.length > 0; else noDataFound">
-                  <tr *ngFor="let item of orgHolidayItemsArrayFalse">
-                    <td>{{item.holidayName}}</td>
-                    <td>{{item.holidayDate}}</td>
-                  </tr>
-                </ng-container>
-                <ng-template #noDataFound>
-                  <tr>
-                    <td colspan="2" class="text-center">No Data Found</td>
-                  </tr>
-                </ng-template>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      
-        <div class="tab-pane fade" id="CompOff" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
-          <div class="table-scroll mt-3">
-            <table>
-              <thead>
-                <th class="w-25">Name</th>
-                <th>Date</th>
-              </thead>
-              <tbody>
-                <ng-container *ngIf="orgHolidayItemsArrayTrue.length > 0; else noDataFound">
-                  <tr *ngFor="let item of orgHolidayItemsArrayTrue">
-                    <td>{{item.holidayName}}</td>
-                    <td>{{item.holidayDate}}</td>
-                  </tr>
-                </ng-container>
-                <ng-template #noDataFound>
-                  <tr>
-                    <td colspan="2" class="text-center">No Data Found</td>
-                  </tr>
-                </ng-template>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>  
+
+  <div class="component-nav-tabs-container card px-2 mb-3 mt-2">
+    <p-tabs value="0" scrollable>
+      <p-tablist>
+        <ng-container *ngFor="let tab of navTabs;">
+          <p-tab [value]="tab.link">
+            <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+              {{ tab.label }}
+            </a>
+          </p-tab>
+        </ng-container>
+      </p-tablist>
+    </p-tabs>
+  </div>
+  <div class="custom-table-content">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th> Date</th>
+
+
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="orgHolidayItemsArrayFalse.length > 0; else noDataFound">
+          <tr *ngFor="let item of orgHolidayItemsArrayFalse">
+            <td>{{item.holidayName}}</td>
+            <td>{{item.holidayDate}}</td>
+          </tr>
+        </ng-container>
+        <ng-template #noDataFound>
+          <tr>
+            <td colspan="2" class="text-center"><app-no-data-found></app-no-data-found></td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
 </div>

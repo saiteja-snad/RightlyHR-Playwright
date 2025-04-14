@@ -4,10 +4,13 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angul
 import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
+import { TabsModule } from 'primeng/tabs';
+import { Select } from 'primeng/select';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-publicholidays',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, TabsModule, Select, NoDataFoundComponent],
   templateUrl: './publicholidays.component.html',
   styleUrl: './publicholidays.component.scss'
 })
@@ -26,10 +29,29 @@ export class PublicholidaysComponent {
   jobshiftdetails: any;
   years: number[] = [];
   empinfo = {} as any;
-  
+  navTabs: any[] = [
+    { label: 'Public Holidays', link: '/holidays/public-holidays' },
+    { label: 'Optional Holidays', link: '/holidays/optional-holidays' },
+   
+  ];
 
   constructor(public router: Router, private fb: FormBuilder, private conformationPopup: OpenModalService,
     private http: HttpService) { }
+    ngOnInit(): void {
+      this.holidaysform = new FormGroup({
+        selectedYear: new FormControl(this.selectedYear)
+      });
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      console.log(this.empinfo.employeeId);
+      this.getjobDetails();
+       this.currentYear = new Date().getFullYear();
+       for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+           this.years.push(i);
+       }
+       this.selectedYear = this.currentYear;
+     
+     
+    }
   
     getjobDetails() {
       let EmployeeId = this.empinfo.employeeId;
@@ -81,20 +103,6 @@ export class PublicholidaysComponent {
           error: (reason: any) => console.log(reason)
       });
   }
-  ngOnInit(): void {
-    this.holidaysform = new FormGroup({
-      selectedYear: new FormControl(this.selectedYear)
-    });
-    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    console.log(this.empinfo.employeeId);
-    this.getjobDetails();
-     this.currentYear = new Date().getFullYear();
-     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
-         this.years.push(i);
-     }
-     this.selectedYear = this.currentYear;
-   
-   
-  }
+
 }
 

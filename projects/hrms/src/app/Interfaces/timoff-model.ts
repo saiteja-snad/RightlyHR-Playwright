@@ -305,3 +305,39 @@ export interface ExpenseEntity {
   pendingheaderId: number;
   expenseApproverComments: any[]; // Replace `any` with specific type if available
 }
+
+
+export interface IEligibilityCriteria{
+  id:number;
+  name:string;
+  value:string;
+}
+
+export interface IPermissionType{
+  id:number;
+  name:string;
+  type:string
+  isDeleted: boolean,
+  createdAt: any,
+  updatedAt:any 
+}
+
+export interface Ipermissions{
+  name:string;
+  isDeleted: boolean,
+  type:string
+}
+export interface IPermissionsvalue {
+  id: number;
+  entity: string;
+  attribute: string;
+  value: string;
+  meta: string;
+}
+export interface IRegularizationvalue {
+  id: number;
+  entity: string;
+  attribute: string;
+  value: string;
+  meta: string;
+}

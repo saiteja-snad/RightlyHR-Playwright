@@ -8,7 +8,11 @@
             {{ link.label }} 
             @if(link.count && link.count > 0) {
               <span>( {{ link.count }})</span>
-            }@else {
+            }
+            @else if(link.label=='No Due Clearance Requests'){
+              <span>({{nodue_Request_data.length}})</span>
+            }
+            @else {
               <span>(0)</span>
             }
         

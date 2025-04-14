@@ -23,17 +23,15 @@
                         {{ 'Location' | translate }} <span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <select class="form-control custom-input" formControlName="AddSubLocation">
+                        <select title="text" class="form-control custom-input" formControlName="AddSubLocation">
                             <option value="" disabled selected>Please select Location</option>
                             <option *ngFor="let subloc of SubLocationdetails" [value]="subloc.jobLocationId">
                                 {{ subloc.jobLocationName }}
                             </option>
                         </select>
                     </div>
-                    <div *ngIf="AddForm.get('AddSubLocation')?.touched && AddForm.get('AddSubLocation')?.invalid">
-                        <small style="color: red; font-size: 13px;">
-                            {{ 'Location is required' | translate }}
-                        </small>
+                    <div *ngIf="AddForm.get('AddSubLocation')?.touched && AddForm.get('AddSubLocation')?.invalid" class="error-msg mt-2">
+                        <div *ngIf="AddForm.get('AddSubLocation')?.errors?.['required']">{{'Loaction is required'|translate}}</div>
                     </div>
                 </div>
                 <!-- sublocation Field -->
@@ -42,10 +40,11 @@
                         {{ 'Sub Location' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="AddLocation"
-                        placeholder="Please Enter SubLocation" (keypress)="blockNonAlphabets($event)" />
+                        placeholder="Please Enter SubLocation" 
+                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"  />
                     <div *ngIf="AddForm.get('AddLocation')?.touched && AddForm.get('AddLocation')?.invalid"
                         class="error-msg">
-                        {{ 'Sub Location is required' | translate }}.
+                        {{ 'Sub location is required' | translate }}.
                     </div>
                 </div>
                 <!-- Buttons -->

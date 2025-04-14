@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { TeamData } from './team.model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-team',
@@ -36,7 +37,13 @@ export class TeamComponent {
   sortedDesignations: any[] = [];
   selectedId: boolean | undefined;
   
- constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+ constructor(
+  private modalService: NgbModal, 
+  private fb: FormBuilder, 
+  private http: HttpService, 
+  private conformationPopup: OpenModalService,
+  public formValidations: FormValidationsService,
+) {
   
     }
     onDepartmentChange(event: Event) {
@@ -58,17 +65,7 @@ export class TeamComponent {
       this.getTeam();
       this. getDepartmentName()
     }
-    // alphabet allowed only
-    blockNonAlphabets(event: KeyboardEvent): void {
-      const inputChar = String.fromCharCode(event.keyCode);
-      const char = String.fromCharCode(event.keyCode);
-      // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-      const pattern = /^[a-zA-Z ]$/;
-      const input = (event.target as HTMLInputElement).value;
-      if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-        event.preventDefault();
-      }
-    }
+
     getDepartmentName() {
       this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
           next: (data: any) => {
@@ -124,7 +121,7 @@ openDialog() {
         next: () => {
           this.getDepartmentName(); 
           modal.close(); 
-          this.conformationPopup.openSuccessModal('department Name added successfully');
+          this.conformationPopup.openSuccessModal('Team added successfully');
           this.resetForm(); 
         },
         error: (error: any) => {
@@ -166,7 +163,7 @@ openDialog() {
             this.getDepartmentName(); 
             this.updateForm.reset(); 
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Status updated successfully');
+            this.conformationPopup.openSuccessModal('Team updated successfully');
           },
           error: (error: any) => {
             this.conformationPopup.openErrorModal('Update failed');
@@ -191,7 +188,7 @@ openDialog() {
           next: () => {
             modal.close();
             this. getDepartmentName()
-            this.conformationPopup.openSuccessModal('department Name Deleted Successfully');
+            this.conformationPopup.openSuccessModal('Team deleted successfully');
   
           },
           error: (error: any) => {

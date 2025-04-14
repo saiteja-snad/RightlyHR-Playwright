@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { subLocationData } from './sub-location-model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-sub-location',
@@ -27,7 +28,13 @@ export class SubLocationComponent {
   @ViewChild('deletepopup') deletepopup: any;
   AddForm!: FormGroup;
   updateForm!: FormGroup;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
+  ) {
 
   }
   ngOnInit(): void {

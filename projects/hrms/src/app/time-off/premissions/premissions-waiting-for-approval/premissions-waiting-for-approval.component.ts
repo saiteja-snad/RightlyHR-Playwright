@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import {  FormsModule } from '@angular/forms';
 import {  NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -37,7 +37,16 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
 
   constructor(
     private http: HttpService
-  ) {}
+  ) {
+    effect(() => {
+      if (this.http.tirggerCountSignal().permission) {
+        this.getDataPermissions();
+      this.http
+        .tirggerCountSignal
+        .update((status) => ({ ...status, permission: false }));
+      }
+    });
+  }
 
 
   ngOnInit(): void {

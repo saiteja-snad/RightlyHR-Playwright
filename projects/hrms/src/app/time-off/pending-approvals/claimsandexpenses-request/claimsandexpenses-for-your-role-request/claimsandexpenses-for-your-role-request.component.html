@@ -240,10 +240,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let comment of approverComments">
-            <td>{{ comment.comments }}</td>
-            <td>{{ comment.addedName }}</td>
-            <td>{{ comment.addedDate | dateformat }}</td>
-            <td>{{ comment.addedByFusionEmpId }}</td>
+            <td>{{ comment?.comments }}</td>
+            <td>{{ comment?.addedName }}</td>
+            <td>{{ comment?.addedDate | dateformat }}</td>
+            <td>{{ comment?.addedByFusionEmpId }}</td>
           </tr>
         </tbody>
       </table>

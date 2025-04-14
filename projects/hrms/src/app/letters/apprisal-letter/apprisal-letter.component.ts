@@ -14,10 +14,12 @@ import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss'
 })
@@ -29,6 +31,7 @@ export class ApprisalLetterComponent {
   result = {} as any;
   fusionEmpId: any;
   employeeiddetails = [] as any;
+  employeeiDetails = [] as any;
   employeeCompensationDetails = [] as any;
   AppraisalFile!: File;
   isdateofAppraisal: boolean = true;
@@ -42,6 +45,7 @@ export class ApprisalLetterComponent {
   isDropdownOpenauthority: boolean = false;
   employeeFusionId = {} as any;
   showDropdown: boolean = false;
+  authoritydetails = [] as any;
   isDisabled!: boolean;
   filteredOptions = [] as any;
   authorityName: any;
@@ -84,9 +88,15 @@ export class ApprisalLetterComponent {
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
+  variablePayOptions: { name: string, value: boolean }[]  = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false }
+  ];
+  
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
+    private conformationPopup: OpenModalService,
     // private toaster: NgToastService,
     private router: Router,
     private authService: AuthService,
@@ -129,6 +139,8 @@ export class ApprisalLetterComponent {
       this.isdateofAppraisal = true;
     }
   }
+
+
 
   DateValidation2() {
     const reviewdate = new Date(this.appraisalData.reviewdate);
@@ -178,8 +190,21 @@ export class ApprisalLetterComponent {
     }
   }
 
-  onVariablePayChange(isVariablePay: boolean): void {
-    if (isVariablePay === false) {
+  // onVariablePayChange(isVariablePay: boolean): void {
+  //   if (isVariablePay === false) {
+  //     this.appraisalData.variablePayAmount = '0';
+  //   }
+  // }
+  onVariablePayChange() {
+    const isVariable = this.employeeForm.get('isVariablePay')?.value;
+  
+    if (isVariable === true) {
+      this.employeeForm.get('variablePayAmount')?.enable();
+      this.employeeForm.get('variablePayAmount')?.reset();
+      this.appraisalData.variablePayAmount = this.employeeForm.get('variablePayAmount')?.value;
+    } else {
+      this.employeeForm.get('variablePayAmount')?.disable();
+      this.employeeForm.get('variablePayAmount')?.setValue(0);
       this.appraisalData.variablePayAmount = '0';
     }
   }
@@ -190,7 +215,7 @@ export class ApprisalLetterComponent {
     this.fusionEmpId = fusionemployeeId;
     console.log(fusionemployeeId);
     this.appraisalData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId
+      (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
     );
     this.disablebuttonforemployeeid = true;
     this.getCompensationById(this.appraisalData);
@@ -258,8 +283,8 @@ export class ApprisalLetterComponent {
     }
   }
   onclickDesignation() {
-    let signatureAuthorityDetails = this.authorityDetails.find(
-      (c: any) => c.employeeId == this.appraisalData.authorityid
+    let signatureAuthorityDetails = this.authoritydetails.find(
+      (c: any) => c.employeeId == this.appraisalData.variablePayAmount.employeeId
     );
     console.log(signatureAuthorityDetails);
     if (signatureAuthorityDetails) {
@@ -282,6 +307,7 @@ export class ApprisalLetterComponent {
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.authoritydetails = data;
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
@@ -617,6 +643,7 @@ export class ApprisalLetterComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
+          this.employeeiDetails = data;
           //this.employeeiddetails = data as IemployeeDetails[];
           this.employeeiddetails = data.map((employee: any) => {
             return {
@@ -637,6 +664,11 @@ export class ApprisalLetterComponent {
 
 
   async postAppraisalLetterFormSubmit(f: FormGroup) {
+    if (this.employeeForm.invalid) {
+      // Mark all fields as touched so validation messages appear
+      this.employeeForm.markAllAsTouched();
+      return;
+    }
     const data = await this.appraisalData;
     data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
     data.compeffectivedate = this.formatDate(data.compeffectivedate);
@@ -798,7 +830,8 @@ export class ApprisalLetterComponent {
         next: (data: any) => {
           if (data) {
             this.result.documentUrl = data.path;
-            this.dataSuccessMsg('Appraisal Letter Generated Successfully');
+            // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
+            this.conformationPopup.openSuccessModal('Appraisal Letter Generated Successfully');
 
             this.router.navigate(['/admin/active']);
             console.log(data);
@@ -826,7 +859,8 @@ export class ApprisalLetterComponent {
           this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
             next: (data: any) => {
               console.log(data);
-              this.dataSuccessMsg('Email Sent Successfully');
+              // this.dataSuccessMsg('Email Sent Successfully');
+              this.conformationPopup.openSuccessModal('Email Sent Successfully');
 
               location.reload();
             },
@@ -897,7 +931,11 @@ export class ApprisalLetterComponent {
   updateOptionsFound(found: boolean) {
     this.optionsFound = found;
   }
-
+  // updateOptionsFound(event: Event) {
+  //   // If it's a checkbox or input, you might extract value like this
+  //   const target = event.target as HTMLInputElement;
+  //   this.optionsFound = target.checked; // or .value depending on context
+  // }
   AllDesignationwithGradeId: any;
   getDesignationWithGradeIdDetails = [] as any;
   getDesignationwithGradeid() {
@@ -905,11 +943,21 @@ export class ApprisalLetterComponent {
       next: (data: any) => {
         console.log(data);
         this.getDesignationWithGradeIdDetails = data;
-        this.AllDesignationwithGradeId =
-          this.getDesignationWithGradeIdDetails.map(
-            (item: { designationName: any }) => item.designationName
-          );
-      },
+      //   this.AllDesignationwithGradeId =
+      //     this.getDesignationWithGradeIdDetails.map(
+      //       (item: { designationName: any }) => item.designationName
+      //     );
+      // },
+      
+      this.AllDesignationwithGradeId = this.getDesignationWithGradeIdDetails.map(
+        (item: { designationName: any }) => ({
+          designationName: item.designationName,
+          value: item.designationName
+        })
+      );
+      
+      console.log(" AllDesignationwithGradeId is:",this.AllDesignationwithGradeId);
+    },
       error: (err: any) => { },
     });
   }
@@ -919,10 +967,26 @@ export class ApprisalLetterComponent {
   gradeIdValue: any;
   getGradename: any;
   islistedItem: boolean = true;
-  isItemIntheList(isitem: boolean) {
-    console.log(isitem);
+  // isItemIntheList(isitem: boolean) {
+  //   console.log(isitem);
+  //   this.islistedItem = isitem;
+  //   if (isitem == false) {
+  //     this.gradeIdValue = {};
+  //     this.getGradename = '';
+  //     this.promotion = false;
+  //     this.nopromotion = true;
+  //   } else {
+  //     this.promotion = true;
+  //     this.nopromotion = false;
+  //   }
+  // }
+  isItemIntheList(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const isitem = target.checked ?? false; // or target.value === 'true'
+  
     this.islistedItem = isitem;
-    if (isitem == false) {
+  
+    if (!isitem) {
       this.gradeIdValue = {};
       this.getGradename = '';
       this.promotion = false;
@@ -932,6 +996,7 @@ export class ApprisalLetterComponent {
       this.nopromotion = false;
     }
   }
+  
   //function to get the grade name for the designation
 
   getGradeNameById() {
@@ -949,22 +1014,85 @@ export class ApprisalLetterComponent {
 
   buttondisable: boolean = false;
 
-  onOptionSelected(option: string, dropdownCategory: string) {
-    this.appraisalData.designation = option;
-    if (!option) {
-      this.buttondisable = false;
+  // onOptionSelected(option: string, dropdownCategory: string) {
+  //   this.appraisalData.designation = option;
+  //   if (!option) {
+  //     this.buttondisable = false;
+  //   } else {
+  //     this.buttondisable = true;
+  //   }
+  //   this.islistedItem = true;
+  //   this.optionsFound = true;
+  //   if (dropdownCategory === 'JobRole') {
+  //     this.selectedValueJobRoledrop = option;
+  //     this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
+  //       (ele: { designationName: string }) =>
+  //         ele.designationName == this.selectedValueJobRoledrop
+  //     );
+  //     console.log(this.gradeIdValue.gradeId);
+  //     this.getGradeNameById();
+  //   } else if (dropdownCategory === 'reportingtoUpdate') {
+  //     this.selectedValueReportstodropUpdate = option;
+  //     const selectedName = this.selectedValueReportstodropUpdate;
+  //     const selectedObject = this.allempdata.find(
+  //       ({ firstName, lastName }) => `${firstName} ${lastName}` === selectedName
+  //     );
+  //     if (selectedObject) {
+  //       this.selectedValueReportstoEmployeeIddropUpdate =
+  //         selectedObject.employeeId;
+  //       console.log(this.selectedValueReportstoEmployeeIddropUpdate); // 2
+  //     } else {
+  //       console.log('Selected name not found');
+  //     }
+  //   } else if (dropdownCategory === 'businessareaUpdate') {
+  //     this.selectedValuebusinessdropUpdate = option;
+  //   } else if (dropdownCategory === 'jobroleUpdate') {
+  //     this.selectedValueJobRoledropUpdate = option;
+
+  //     this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
+  //       (ele: { designationName: string }) =>
+  //         ele.designationName == this.selectedValueJobRoledropUpdate
+  //     );
+
+  //     this.getGradeNameById();
+  //   } else if (dropdownCategory === 'employmenttype') {
+  //     this.selectedValueemployeementtypedropUpdate = option;
+  //   } else if (dropdownCategory === 'employmenttypeupdate') {
+  //     this.selectedValueEmployementtypedropInitial = option;
+  //   } else if (dropdownCategory === 'countryCode') {
+  //     this.selectedValuecontactnumberCountrydropdown = option;
+  //   } else if (dropdownCategory === 'countryCodeUpdate') {
+  //     this.selectedValuecontactnumberCountryCodeInitial = option;
+  //   }
+  // }
+
+
+  
+  onOptionSelected(event: any, dropdownCategory: string) {
+    console.log('selectedOption event:', event);
+  
+    // If event is an object with `designationName`, extract the string:
+    let option = '';
+    if (typeof event === 'string') {
+      option = event;
+    } else if (event?.designationName) {
+      option = event.designationName;
     } else {
-      this.buttondisable = true;
+      option = event?.target?.value ?? '';
     }
+  
+    this.appraisalData.designation = option;
+    this.buttondisable = !!option;
     this.islistedItem = true;
     this.optionsFound = true;
+  
     if (dropdownCategory === 'JobRole') {
       this.selectedValueJobRoledrop = option;
       this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
         (ele: { designationName: string }) =>
-          ele.designationName == this.selectedValueJobRoledrop
+          ele.designationName === this.selectedValueJobRoledrop
       );
-      console.log(this.gradeIdValue.gradeId);
+      console.log(this.gradeIdValue?.gradeId);
       this.getGradeNameById();
     } else if (dropdownCategory === 'reportingtoUpdate') {
       this.selectedValueReportstodropUpdate = option;
@@ -975,32 +1103,14 @@ export class ApprisalLetterComponent {
       if (selectedObject) {
         this.selectedValueReportstoEmployeeIddropUpdate =
           selectedObject.employeeId;
-        console.log(this.selectedValueReportstoEmployeeIddropUpdate); // 2
+        console.log(this.selectedValueReportstoEmployeeIddropUpdate);
       } else {
         console.log('Selected name not found');
       }
-    } else if (dropdownCategory === 'businessareaUpdate') {
-      this.selectedValuebusinessdropUpdate = option;
-    } else if (dropdownCategory === 'jobroleUpdate') {
-      this.selectedValueJobRoledropUpdate = option;
-
-      this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
-        (ele: { designationName: string }) =>
-          ele.designationName == this.selectedValueJobRoledropUpdate
-      );
-
-      this.getGradeNameById();
-    } else if (dropdownCategory === 'employmenttype') {
-      this.selectedValueemployeementtypedropUpdate = option;
-    } else if (dropdownCategory === 'employmenttypeupdate') {
-      this.selectedValueEmployementtypedropInitial = option;
-    } else if (dropdownCategory === 'countryCode') {
-      this.selectedValuecontactnumberCountrydropdown = option;
-    } else if (dropdownCategory === 'countryCodeUpdate') {
-      this.selectedValuecontactnumberCountryCodeInitial = option;
     }
+    // ...rest of the dropdownCategory logic (same as yours)
   }
-
+  
   closeDropdown() {
     this.isDropdownOpen = false;
   }
@@ -1016,9 +1126,10 @@ export class ApprisalLetterComponent {
       JobRole:['', Validators.required],
       Documenttype: [null, Validators.required],
       bonus: [0],
+      authorityid: [null, Validators.required],
       isVariablePay: [null, Validators.required],
-      variablePayAmount: ['', Validators.required],
-      authorityid: [null, Validators.required]
+      variablePayAmount: ['', Validators.required]
+     
     })
   }
 

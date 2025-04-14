@@ -13,6 +13,6 @@ export class ShitsComponent {
   constructor( public router:Router) { }
 
   nagvition(){
-    this.router.navigate(['/settings/employee-fields/addshits']);
+    this.router.navigate(['/settings/employee-fields/addshifts']);
   }
 }

@@ -26,10 +26,11 @@
               type="text"
               class="form-control custom-input"
               formControlName="Addgrade"
-              placeholder="Please Enter GradeName" (keypress)="blockNonAlphabets($event)"
+              placeholder="Please enter grade name" 
+              (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" 
             />
             <div *ngIf="AddForm.get('Addgrade')?.touched && AddForm.get('Addgrade')?.invalid" class="error-msg">
-              {{ 'Grade Name is required' | translate }}.
+              {{ 'Grade name is required' | translate }}.
             </div>
           </div>
   
@@ -46,13 +47,12 @@
                 </option>
               </select> -->
 
-            <input type="text"class="form-control custom-input" formControlName="jobgrade" placeholder="Please Enter JobGrade" (keypress)="blockNonAlphabets($event)" />
+            <input type="text"class="form-control custom-input" formControlName="jobgrade" placeholder="Please enter job grade" 
+            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" />
             </div>
-            <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid">
-              <small style="color: red; font-size: 13px;">
-                {{ 'Job Grade is required' | translate }}
-              </small>
-            </div>
+            <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid" class="error-msg mt-2">
+              <div *ngIf="AddForm.get('jobgrade')?.errors?.['required']">{{'Grade is required'|translate}}</div>
+          </div>
           </div>
   
           <!-- Buttons -->
@@ -137,10 +137,11 @@
                         {{'Job Role' | translate}} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
-                        placeholder="Please Enter JobRole" (keypress)="blockNonAlphabets($event)">
+                        placeholder="Please enter job role" 
+                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" >
                     <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched"
                         class="error-msg">
-                        {{'Grade Name is required'|translate}}.
+                        {{'Grade name is required'|translate}}.
                     </div>
                 </div>
                 <div class="mb-4">
@@ -150,19 +151,18 @@
                     </label>
 
                     <div class="custom-p-select-content">
-                        <input type="text"class="form-control custom-input" formControlName="updategraderole" placeholder="Please Enter JobGrade" (keypress)="blockNonAlphabets($event)" />
+                        <input type="text"class="form-control custom-input" formControlName="updategraderole" placeholder="Please enter job grade" 
+                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"  />
                     </div>
 
                 </div>
-                <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid">
-                    <small style="color: red; font-size: 13px;" *ngIf="updateForm.get('updategraderole')?.errors?.['required']">
-                        {{'Job Grade is required' | translate}}
-                    </small>
-                </div>
+                <div *ngIf="AddForm.get('updategraderole')?.touched && AddForm.get('updategraderole')?.invalid" class="error-msg mt-2">
+                  <div *ngIf="AddForm.get('updategraderole')?.errors?.['required']">{{'Job grade is required'|translate}}</div>
+              </div>
                 <div class="d-flex gap-5 pt-4 w-100">
-                    <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
+                    <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
                         translate}}</button>
-                    <button class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
+                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
                         [disabled]="updateForm.invalid">
                         {{'Update' | translate}}
                     </button>

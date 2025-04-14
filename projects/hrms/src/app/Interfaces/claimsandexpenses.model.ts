@@ -187,6 +187,7 @@ totalExpenseAmount: string|number;
 
   
   export interface IExpenseItems {
+    expenseType:any;
     expenseitem_id: number;
     expenses_ID: number;
     item_Name: string;

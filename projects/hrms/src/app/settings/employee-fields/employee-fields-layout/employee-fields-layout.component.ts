@@ -4,10 +4,14 @@ import { Router, RouterModule } from '@angular/router';
 import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { SettingsPersonalTabsComponent } from "../../../shared/settings-tabs/settings-personal-tabs/settings-personal-tabs.component";
 import { SettingsJobTabsComponent } from "../../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component";
+import { SettingsManageShitsTabsComponent } from "../../../shared/settings-tabs/settings-manage-shits-tabs/settings-manage-shits-tabs.component";
+import { ManageShiftsTabsComponent } from "../../../shared/manage-shifts-tabs/manage-shifts-tabs.component";
+import { ManageHolidaysTabsComponent } from "../../../shared/manage-holidays-tabs/manage-holidays-tabs.component";
+import { ManagePoliciesTabsComponent } from "../../../shared/manage-policies-tabs/manage-policies-tabs.component";
 
 @Component({
   selector: 'app-employee-fields-layout',
-  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent],
+  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent, ManageShiftsTabsComponent, ManageHolidaysTabsComponent, ManagePoliciesTabsComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })

@@ -38,7 +38,7 @@ export class RejectedExpensesComponent {
 
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
   getexpensesheaderbyemployeeid(): void {

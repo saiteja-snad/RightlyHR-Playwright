@@ -5,7 +5,6 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { FormBuilder } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { IPendingApprovals } from '../../../Interfaces/pendingapprovalsmodel';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../Interfaces/timoff-model';
 import { Subject } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';

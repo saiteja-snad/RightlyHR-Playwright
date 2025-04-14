@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { gradeDATA } from './grade-modeL';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-grade',
@@ -26,7 +27,13 @@ export class GradeComponent {
   @ViewChild('deletepopup') deletepopup: any;
   AddForm!: FormGroup;
   updateForm!: FormGroup;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
+  ) {
 
   }
   ngOnInit(): void {
@@ -42,18 +49,7 @@ export class GradeComponent {
     this.getgradeid();
    
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
- 
+
   // // Method to open the add modal dialog
   openDialog() {
     this.modalService.open(this.addpopup, {
@@ -82,7 +78,7 @@ export class GradeComponent {
 
         this.getgradeid();
         modal.close();
-        this.conformationPopup.openSuccessModal('GreadeDetails  added successfully');
+        this.conformationPopup.openSuccessModal('Greade details  added successfully');
         
          this.resetForm();
       },
@@ -121,7 +117,7 @@ export class GradeComponent {
 
           this.getgradeid();
           modal.close();
-          this.conformationPopup.openSuccessModal('GreadeDetails  Updated Successfully');
+          this.conformationPopup.openSuccessModal('Greade details updated successfully');
            this.resetForm();
         },
         error: (error: any) => {
@@ -150,7 +146,7 @@ export class GradeComponent {
         next: () => {
          this.getgradeid();
           modal.close();
-          this.conformationPopup.openSuccessModal('GreadeDetails Deleted successfully');
+          this.conformationPopup.openSuccessModal('Greade details deleted successfully');
         },
         error: () => {
           this.conformationPopup.openErrorModal('Failed to delete the frequency');

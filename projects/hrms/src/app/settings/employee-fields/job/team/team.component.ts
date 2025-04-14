@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { TeamData } from './team.model';
 import { SelectModule } from 'primeng/select';
+import { FormValidationsService } from '../../../../services/form-validations.service';
  
 @Component({
   selector: 'app-team',
@@ -37,7 +38,7 @@ export class TeamComponent implements OnInit, OnDestroy {
   sortedDesignations: any[] = [];
   selectedId: boolean | undefined;
  
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService,public formValidations: FormValidationsService,) {
  
   }
   onDepartmentChange(event: Event) {

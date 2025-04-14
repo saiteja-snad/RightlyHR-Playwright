@@ -29,9 +29,8 @@
                 class="custom-select">
               </p-dropdown>
             </div>
-          
+          <!-- select all employees drop down for HR code start -->
             <label class="employee-lable" for="">Select Employee</label>
-          
             <div>
               <p-dropdown 
                 [options]="getAllEmployeeInfo" 
@@ -45,12 +44,28 @@
                 class="custom-select">
               </p-dropdown>
             </div>
+            <!-- select all employees drop down for HR code end -->
+             <!-- select all employees drop down for team manager code start -->
+            <label class="employee-lable" for="">Select Employee</label>
           
+            <div>
+              <p-dropdown 
+                [options]="get_Employeelist_forTM" 
+                optionValue="employeeId"
+                [filter]="true"
+                filterBy="fullName" [showClear]="false"
+                [(ngModel)]="selectedEmployee" 
+                placeholder="Select Employee" 
+                (onChange)="getAttendnaceData(selectedEmployee)"
+                optionLabel="fullName" 
+                class="custom-select">
+              </p-dropdown>
+            </div>
             <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdate.employeeId)">
               <i class="bi bi-plus me-2"></i>My Attendance
             </button>
           </div>
-          
+           <!-- select all employees drop down for team manager code end -->
     </div>
     <div class="row">
 

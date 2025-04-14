@@ -71,6 +71,7 @@ export class AttendanceComponent implements OnInit, OnDestroy{
     this.selectedEmployee=loggedInUser.employeeId;
     this.getAttendnaceData(this.empdate.employeeId);
     this.getAllEmployeeDetails();
+    this.getEmployeeDetails();
   }
 //function to get the attendance data
 getAttendnaceData(employeeId:number){
@@ -129,7 +130,7 @@ getAttendnaceData(employeeId:number){
                 return {
                   ...employee,
                   fullName: `${
-                    employee.employeeId ? employee.fusionEmpId + ' - ' : ''
+                    employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                   }${employee.firstName} ${
                     employee.middleName ? employee.middleName + ' ' : ''
                   }${employee.lastName}`,
@@ -139,6 +140,28 @@ getAttendnaceData(employeeId:number){
           },
         });
     }
+      // function to get the data of employees by hierarchy
+  get_Employeelist_forTM=[] as any;
+  getEmployeeDetails(){
+   const EmployeeId=this.empdate.employeeId;
+   this.subscription=this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+     next:(response:any)=>{
+       console.log(response);
+       if(response){
+         this.get_Employeelist_forTM=response.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${
+              employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+            }${employee.firstName} ${
+              employee.middleName ? employee.middleName + ' ' : ''
+            }${employee.lastName}`,
+          };
+        });
+       }
+     } 
+   })
+  }
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

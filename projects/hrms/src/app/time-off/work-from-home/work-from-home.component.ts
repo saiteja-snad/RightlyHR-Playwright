@@ -5,7 +5,7 @@ import { WfhApprovaltabsComponent } from "../../shared/wfh-approvaltabs/wfh-appr
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
 import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { Subject } from 'rxjs';
@@ -33,6 +33,9 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   hours!: any;
   duration!: any;
   spinnerLoader = false;
+  availablebalance!:number
+  totalbalance: any;
+
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -41,7 +44,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.intializeCompOffForm();
+    this.intializewfhForm();
     this.halfDayValue = JSON.parse(
       localStorage.getItem('filterHalfDayData') || '{}'
     );
@@ -51,30 +54,44 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
     this.getDataByLPID();
     this.getWorkfromhomeCriteria();
+    this.handleAvailingChange()
+  
+
+
   }
+
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  intializeCompOffForm() {
+  intializewfhForm() {
     this.addWFHForm = this.fb.group({
-      workedDate: ['', Validators.required],
+      workedDate: ['', 
+        [Validators.required, ]
+      ],
       availing: ['', Validators.required],
       halfType: [''],
       reason: ['', Validators.required],
     });
   }
 
-
+  handleAvailingChange(){
+    this.addWFHForm.get('availing')?.valueChanges.subscribe(value => {
+      const halfTypeControl = this.addWFHForm.get('halfType');
+      if (value === 'Half Day') {
+        halfTypeControl?.setValidators([Validators.required]);
+        halfTypeControl?.enable();
+      } else {
+        halfTypeControl?.clearValidators();
+        halfTypeControl?.setValue('');
+        halfTypeControl?.disable();
+      }
+      halfTypeControl?.updateValueAndValidity();
+    });
+  }
 
   updateDuration() {
-    // this.enableButton = false;
-    // this.selectedValuehalf=false;
-    // let starttime =`${this.compoffdata.startTimeProp} ${this.compoffdata.am}`
-    // console.log(starttime);
-    // let endtime =`${this.compoffdata.endTimeProp} ${this.compoffdata.pm}`
-    // console.log(endtime);
     console.log(this.workFromHomedata.startTimeProp);
     console.log(this.workFromHomedata.endTimeProp);
     if (
@@ -125,7 +142,55 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       }
     }
   }
+  ngAfterViewInit() {
+    const workedDate = this.addWFHForm.get('workedDate')?.value;
+    if (workedDate) {
+      this.getWFHBal(workedDate);
+    }
+  }
 
+  // noWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
+  //   if (control.value) {
+  //     const date = new Date(control.value);
+  //     const day = date.getDay();
+  //     // Check if the day is Saturday (6) or Sunday (0)
+  //     if (day === 0 || day === 6) {
+  //       return { weekend: true };
+  //     }
+  //   }
+  //   return null;
+  // }
+  //   // Custom Validator: Ensure date is after the date of joining
+  //   afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
+  //     if (control.value && this.empinfo.dateOfJoining) {
+  //       const selectedDate = new Date(control.value);
+  //       const joiningDate = new Date(this.empinfo.dateOfJoining);
+  //       console.log(joiningDate)
+  //       // Check if the selected date is before the date of joining
+  //       if (selectedDate < joiningDate) {
+  //         return { beforeJoining: true };
+  //       }
+  //     }
+  //     return null;
+  //   }
+  getWFHBal(currentDate: any) {
+    let empId = this.empinfo.employeeId;
+    // let currentDate = new Date().toISOString().split('T')[0];
+  this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
+      next: (response: any) => {
+        console.log(response);
+     
+        if(response){
+          this.totalbalance = response.totalBalance;
+          this.availablebalance = response.availableBalance
+        }
+
+        console.log(this.totalbalance);
+
+      },
+      error: (reason: any) => console.log(reason)
+    })
+  }
   getDataByLPID() {
     let emp = this.empinfo.employeeId;
     this.http.getData(`Timeoff/LPID/${emp}`).subscribe({
@@ -246,6 +311,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
           this.sharedModalService.openSuccessModal(
             'Request submitted successfully'
           );
+          this.getWFHBal(null)
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             wfh: true,
@@ -255,6 +321,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.spinnerLoader = false;
+          this.sharedModalService.openErrorModal(err.error.message)
         },
         complete: () => {
           this.addWFHForm.reset();
@@ -264,6 +331,14 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     }
 
   
+  }
+
+  formatDate(date: string | Date): string {
+    const d = new Date(date);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`;
   }
 
   ngOnDestroy(): void {

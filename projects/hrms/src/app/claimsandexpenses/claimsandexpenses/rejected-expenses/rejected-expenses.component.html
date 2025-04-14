@@ -1,10 +1,9 @@
 <div class="custom-main-component-container mt-4">
   <div class="input-group custom-search mb-4">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username" [(ngModel)]="searchTerm"  
-    (ngModelChange)="getexpensesheaderbyemployeeid()"
-        aria-describedby="basic-addon1">
-</div>
+    <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
+      [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
+  </div>
   <div class="custom-table-content">
     <table class="w-100">
       <thead>
@@ -18,26 +17,36 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let exp of expenesEmplyeedata | async">
-          <td>{{ exp.expenses_Title }}</td>
-          <td>{{ exp.applied_date | dateformat }}</td>
-          <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-          <td> <span class="me-2">●</span> {{ exp.status }}
-          </td>
+        <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let exp of expenesEmplyeedata | async">
+            <td>{{ exp.expenses_Title }}</td>
+            <td>{{ exp.applied_date | dateformat }}</td>
+            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+            <td> <span class="me-2">●</span> {{ exp.status }}
+            </td>
 
 
-          <td class="text-center">
-            <div class="dropdown">
-              <a data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical"></i>
-              </a>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
-                      class="bi bi-paperclip me-2"></i>View</a></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
+            <td class="text-center">
+              <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
+                        class="bi bi-paperclip me-2"></i>View</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <!-- No Data Found Template -->
+        <ng-template #noDataTemplate>
+          <tr>
+            <td>
+              <app-no-data-found />
+            </td>
+          </tr>
+        </ng-template>
 
       </tbody>
     </table>
@@ -46,7 +55,7 @@
 
 
 <ng-template #viewDetailsModal let-modal>
-  <div class="custom-main-popup-container" >
+  <div class="custom-main-popup-container">
     <div class="d-flex justify-content-between popup-header-border p-4">
       <div class="pt-2">
         <p class="popup-heading mb-0">Expenses Details</p>

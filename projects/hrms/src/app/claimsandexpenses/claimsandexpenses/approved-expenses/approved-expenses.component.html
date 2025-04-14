@@ -18,6 +18,7 @@
         </tr>
       </thead>
       <tbody>
+        <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
         <tr *ngFor="let exp of expenesEmplyeedata | async">
           <td>{{ exp.expenses_Title }}</td>
           <td>{{ exp.applied_date | dateformat }}</td>
@@ -36,6 +37,15 @@
             </div>
           </td>
         </tr>
+      </ng-container>
+      <!-- No Data Found Template -->
+      <ng-template #noDataTemplate>
+          <tr>
+              <td>
+                  <app-no-data-found />
+              </td>
+          </tr>
+      </ng-template>
 
       </tbody>
     </table>

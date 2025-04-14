@@ -196,6 +196,7 @@ export class PremissionsComponent implements OnInit,OnDestroy{
     error: (err: any) => {
       this.spinnerLoader = false;
       console.error(err);
+      this.sharedModalService.openErrorModal(err.error)
   
     },
     complete: () => { 

@@ -145,21 +145,21 @@ export class OnboardingDetailsComponent {
   
   patchForm(data: any): void {
     this.onboardingForm.patchValue({
-      status: this.Statusdetails.find((item: any) => item.statusname === data.empstatus),
+      status: this.Statusdetails.find((item: any) => item.statusname === data?.empstatus),
       dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
-      branchLocation: this.branchLocations.find((item: any) => item.branchCode === data.branchCode),
+      branchLocation: this.branchLocations.find((item: any) => item.branchCode === data?.branchCode),
       probationEndDate: data.probationEndDate ? moment(data.probationEndDate).format('yyyy-MM-DD') : null,
-      probationStatus: this.probation.find((item: any) => item.probationstatus1 === data.probationStatus),
+      probationStatus: this.probation.find((item: any) => item.probationstatus1 === data?.probationStatus),
       noticePeriodStatus: this.noticePeriod.find((item: any) => item.name === data.noticePeriod),
-      backgroundCheckStatus: this.backgroundDetails.find((item: any) => item.backgroundcheckstatus1 === data.backgroundCheckStatus),
-      salaryHold: this.salaryHoldDetails.find((item: any) => item.value === data.issalaryhold),
-      pf: this.pfdata.find((item: any) => item.value === data.pf),
-      esic: this.esicdata.find((item: any) => item.value === data.esic),
-      pt: this.ptdata.find((item: any) => item.value === data.pt),
+      backgroundCheckStatus: this.backgroundDetails.find((item: any) => item.backgroundcheckstatus1 === data?.backgroundCheckStatus),
+      salaryHold: this.salaryHoldDetails.find((item: any) => item.value === data?.issalaryhold),
+      pf: this.pfdata.find((item: any) => item.value === data?.pf),
+      esic: this.esicdata.find((item: any) => item.value === data?.esic),
+      pt: this.ptdata.find((item: any) => item.value === data?.pt),
       totalExperience: data.totalYearsOfExperience,
-      remoteLogin: this.remoteLogin.find((item: any) => item.value === data.allowWFH),
-      workLocation: this.worklocation.find((item: any) => item.value === data.workLocation),
-      wfhmanger: this.Manager.find((item: any) => item.value === data.wfhManagerId),
+      remoteLogin: this.remoteLogin.find((item: any) => item.value === data?.allowWFH),
+      workLocation: this.worklocation.find((item: any) => item.value === data?.workLocation),
+      wfhmanger: this.Manager.find((item: any) => item.value === data?.wfhManagerId),
     });
     console.log(this.onboardingForm.value);
 

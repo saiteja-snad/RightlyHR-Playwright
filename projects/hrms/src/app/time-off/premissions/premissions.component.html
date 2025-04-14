@@ -39,6 +39,10 @@
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="permissionDate"  id="Date"
                             onkeydown="return false" placeholder="Select Date" />
+                            <div *ngIf="permissionForm.get('permissionDate')?.touched && permissionForm.get('permissionDate')?.invalid" class="error-msg">
+                                Permission Date is required.
+                              </div>
+
                     </div>
                 </div>
                 <div class="row">
@@ -49,6 +53,9 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="duration" optionLabel="name"  id="duration" formControlName="duration" placeholder="Please select duration"
                             class="form-select custom-select" />
+                            <div *ngIf="permissionForm.get('duration')?.touched && permissionForm.get('duration')?.invalid" class="error-msg">
+                                Duration is required.
+                              </div>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -57,6 +64,9 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="leaveTypes" optionLabel="name" formControlName="leaveType"
                                 placeholder="Please select permission type" id="leaveType" class="form-select custom-select" />
+                                <div *ngIf="permissionForm.get('leaveType')?.touched && permissionForm.get('leaveType')?.invalid" class="error-msg">
+                                    Premission Type is required.
+                                  </div>
                         </div>
                     </div>
 
@@ -70,6 +80,9 @@
                         <textarea class="form-control custom-input" formControlName="reason" id="reason"  rows="3"
                         placeholder="Type here"
                             placeholder="Type Here"></textarea>
+                            <div *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid" class="error-msg">
+                                Reason is required.
+                              </div>
                     </div>
 
                 </div>

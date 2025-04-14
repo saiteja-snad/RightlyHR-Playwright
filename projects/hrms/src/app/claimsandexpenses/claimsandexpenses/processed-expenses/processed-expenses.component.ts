@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-processed-expenses',
-  imports: [CommonModule, DateformatPipe,NgxDocViewerModule,FormsModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })

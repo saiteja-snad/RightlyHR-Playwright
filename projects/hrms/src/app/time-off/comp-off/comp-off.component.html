@@ -43,7 +43,7 @@
                                 <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required.</div>
                               </div>
                               <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
-                              <div  class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['notWeekend']">Only weekends are allowed. Please select a Saturday or Sunday.</div>
+                              <div  class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['notWeekend']">Selected date is not eligible for compoff</div>
                     </div>
                 </div>
 

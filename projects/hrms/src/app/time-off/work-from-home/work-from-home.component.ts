@@ -35,7 +35,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   availablebalance!:number
   totalbalance: any;
-alloweddates: string = ''
+
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -57,10 +57,7 @@ alloweddates: string = ''
     this.handleAvailingChange()
   
 
-    
-  if (this.empinfo.dateOfJoining) {
-    this.alloweddates = this.formatDate(this.empinfo.dateOfJoining);
-  }
+
   }
 
 
@@ -71,14 +68,14 @@ alloweddates: string = ''
   intializewfhForm() {
     this.addWFHForm = this.fb.group({
       workedDate: ['', 
-        [Validators.required, this.noWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]
+        [Validators.required, ]
       ],
       availing: ['', Validators.required],
       halfType: [''],
       reason: ['', Validators.required],
     });
   }
-  
+
   handleAvailingChange(){
     this.addWFHForm.get('availing')?.valueChanges.subscribe(value => {
       const halfTypeControl = this.addWFHForm.get('halfType');
@@ -152,29 +149,30 @@ alloweddates: string = ''
     }
   }
 
-  noWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
-    if (control.value) {
-      const date = new Date(control.value);
-      const day = date.getDay();
-      // Check if the day is Saturday (6) or Sunday (0)
-      if (day === 0 || day === 6) {
-        return { weekend: true };
-      }
-    }
-    return null;
-  }
-    // Custom Validator: Ensure date is after the date of joining
-    afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
-      if (control.value && this.empinfo.dateOfJoining) {
-        const selectedDate = new Date(control.value);
-        const joiningDate = new Date(this.empinfo.dateOfJoining);
-        // Check if the selected date is before the date of joining
-        if (selectedDate < joiningDate) {
-          return { beforeJoining: true };
-        }
-      }
-      return null;
-    }
+  // noWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
+  //   if (control.value) {
+  //     const date = new Date(control.value);
+  //     const day = date.getDay();
+  //     // Check if the day is Saturday (6) or Sunday (0)
+  //     if (day === 0 || day === 6) {
+  //       return { weekend: true };
+  //     }
+  //   }
+  //   return null;
+  // }
+  //   // Custom Validator: Ensure date is after the date of joining
+  //   afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
+  //     if (control.value && this.empinfo.dateOfJoining) {
+  //       const selectedDate = new Date(control.value);
+  //       const joiningDate = new Date(this.empinfo.dateOfJoining);
+  //       console.log(joiningDate)
+  //       // Check if the selected date is before the date of joining
+  //       if (selectedDate < joiningDate) {
+  //         return { beforeJoining: true };
+  //       }
+  //     }
+  //     return null;
+  //   }
   getWFHBal(currentDate: any) {
     let empId = this.empinfo.employeeId;
     // let currentDate = new Date().toISOString().split('T')[0];
@@ -182,8 +180,10 @@ alloweddates: string = ''
       next: (response: any) => {
         console.log(response);
      
-        this.totalbalance = response.totalBalance;
-        this.availablebalance = response.availableBalance
+        if(response){
+          this.totalbalance = response.totalBalance;
+          this.availablebalance = response.availableBalance
+        }
 
         console.log(this.totalbalance);
 
@@ -311,6 +311,7 @@ alloweddates: string = ''
           this.sharedModalService.openSuccessModal(
             'Request submitted successfully'
           );
+          this.getWFHBal(null)
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             wfh: true,

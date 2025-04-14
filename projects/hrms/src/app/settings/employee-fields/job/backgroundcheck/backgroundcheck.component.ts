@@ -7,6 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import {backgroundcheckData } from './background-model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-backgroundcheck',
@@ -30,7 +31,8 @@ export class BackgroundcheckComponent {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
   ) {}
 
   ngOnInit(): void {
@@ -43,17 +45,6 @@ export class BackgroundcheckComponent {
     });
 
     this.BackgroundChecktype();
-  }
-
-  // Allow only alphabets and spaces
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const char = String.fromCharCode(event.keyCode);
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
   }
 
   // GET
@@ -76,7 +67,7 @@ export class BackgroundcheckComponent {
     this.subscription = this.http.postdata('Background', request).subscribe({
       next: () => {
         this.BackgroundChecktype();
-        this.conformationPopup.openSuccessModal('BackgroundCheck Name added successfully');
+        this.conformationPopup.openSuccessModal('Backgroundcheck name added successfully');
         this.resetForm();
       },
       error: () => {
@@ -100,7 +91,7 @@ export class BackgroundcheckComponent {
           this.BackgroundChecktype();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('BackgroundCheck Name updated successfully');
+          this.conformationPopup.openSuccessModal('Backgroundcheck name updated successfully');
         },
         error: () => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -142,7 +133,7 @@ export class BackgroundcheckComponent {
       next: () => {
         this.BackgroundChecktype();
         modal.close();
-        this.conformationPopup.openSuccessModal('Backgroundcheck Name deleted successfully');
+        this.conformationPopup.openSuccessModal('Backgroundcheck name deleted successfully');
       },
       error: () => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

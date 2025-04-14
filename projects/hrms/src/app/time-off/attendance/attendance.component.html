@@ -4,29 +4,50 @@
             <p class="component-header cursor mb-0">Attendance</p>
         </div>
         <div class="d-flex gap-3">
-            <label class=" employee-lable" for="">Select</label>
-
-            <div> <select class="form-select custom-select" aria-label="Default select example">
-                    <option selected>Year</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select></div>
-            <div> <select class="form-select custom-select" aria-label="Default select example">
-                    <option selected>Mouth</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select></div>
-            <label class=" employee-lable" for="">Select Employee</label>
-            <div> <select class="form-select custom-select" aria-label="Default select example">
-                    <option selected>Select Employee</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select></div>
-            <button type="button" class="custom-btn btn-primary"><i class="bi bi-plus me-2"></i>My Attendance</button>
-        </div>
+            <label class="employee-lable" for="">Select</label>
+          
+            <div>
+              <p-dropdown 
+                [options]="yearOptions" 
+                optionValue="value"
+                [(ngModel)]="selectedYear" 
+                placeholder="Year" 
+                optionLabel="name" 
+                (onChange)="getAttendnaceData()"
+                class="custom-select">
+              </p-dropdown>
+            </div>
+          
+            <div>
+              <p-dropdown 
+                [options]="monthOptions" 
+                optionValue="value"
+                [(ngModel)]="selectedMonth" 
+                placeholder="Month" 
+                (onChange)="getAttendnaceData()"
+                optionLabel="name" 
+                class="custom-select">
+              </p-dropdown>
+            </div>
+          
+            <label class="employee-lable" for="">Select Employee</label>
+          
+            <div>
+              <p-dropdown 
+                [options]="employeeOptions" 
+                optionValue="value"
+                [(ngModel)]="selectedEmployee" 
+                placeholder="Select Employee" 
+                optionLabel="name" 
+                class="custom-select">
+              </p-dropdown>
+            </div>
+          
+            <button type="button" class="custom-btn btn-primary">
+              <i class="bi bi-plus me-2"></i>My Attendance
+            </button>
+          </div>
+          
     </div>
     <div class="row">
 

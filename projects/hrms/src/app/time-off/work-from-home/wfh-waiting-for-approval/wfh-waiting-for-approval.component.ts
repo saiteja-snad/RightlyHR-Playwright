@@ -1,5 +1,5 @@
  import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import {  FormsModule } from '@angular/forms';
 import {  NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -39,7 +39,16 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
 
   constructor(
     private http: HttpService
-  ) {}
+  ) {
+    effect(() => {
+      if (this.http.tirggerCountSignal().wfh) {
+        this.getWFHRequests();
+      this.http
+        .tirggerCountSignal
+        .update((status) => ({ ...status, wfh: false }));
+      }
+    });
+  }
 
 
   ngOnInit(): void {

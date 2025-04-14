@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { HttpService } from '../../../../services/http.service';
 import { DepartmentData } from './department-module';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-department',
@@ -24,7 +25,13 @@ export class DepartmentComponent {
   selectedId: number | null = null;
   selectedDeleteDep: any = null;
   subscription!: Subscription;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
+  ) {
 
   }
   ngOnInit(): void {
@@ -37,20 +44,7 @@ export class DepartmentComponent {
 
     this.getDepartment();
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    // if (!pattern.test(inputChar)) {
-    //   event.preventDefault(); // blocks numbers or symbols
-    // }
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+
   getDepartment() {
     this.http.getData('Department').subscribe((data: any) => {
       this.DepartmentDetail = data;
@@ -66,7 +60,7 @@ export class DepartmentComponent {
     this.subscription = this.http.postdata('Department', request).subscribe({
       next: () => {
         this.getDepartment();
-        this.conformationPopup.openSuccessModal('Department Name added successfully');
+        this.conformationPopup.openSuccessModal('Department added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -89,7 +83,7 @@ export class DepartmentComponent {
           this.getDepartment();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Department Name updated successfully');
+          this.conformationPopup.openSuccessModal('Department updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -124,7 +118,7 @@ export class DepartmentComponent {
       next: () => {
         this.getDepartment();
         modal.close();
-        this.conformationPopup.openSuccessModal('DepartmentName deleted successfully');
+        this.conformationPopup.openSuccessModal('Department deleted successfully');
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

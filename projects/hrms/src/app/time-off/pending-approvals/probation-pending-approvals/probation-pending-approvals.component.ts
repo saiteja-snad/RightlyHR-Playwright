@@ -12,11 +12,12 @@ import { HttpService } from '../../../services/http.service';
 import { ProbationdetailsPipe } from "../../../Pipes/probationdetails.pipe";
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
+import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 
 
 @Component({
   selector: 'app-probation-pending-approvals',
-  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule,NgbPopoverModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule,NgbPopoverModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe, ProbationformViewComponent],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss'
 })
@@ -371,6 +372,14 @@ export class ProbationPendingApprovalsComponent {
     this.extend = false;
     this.approve = false;
     this.selectedData.proccesoption = '';
+  }
+
+  close() {
+    const modalElement = document.getElementById('rolereq');
+    if (modalElement) {
+      modalElement.classList.remove('show');
+      modalElement.style.display = 'none';
+    }
   }
 
   ngOnDestroy(): void {

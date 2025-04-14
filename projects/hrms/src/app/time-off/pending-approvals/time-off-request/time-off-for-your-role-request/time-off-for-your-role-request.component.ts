@@ -9,10 +9,12 @@ import { HttpService } from '../../../../services/http.service';
 import { IPendingApprovals, LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingapprovals.pipe";
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-time-off-for-your-role-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe, NoDataFoundComponent],
   templateUrl: './time-off-for-your-role-request.component.html',
   styleUrl: './time-off-for-your-role-request.component.scss'
 })
@@ -26,6 +28,7 @@ export class TimeOffForYourRoleRequestComponent {
   approverComments = [] as LeaveApproverComment[];
   selectedLeaveData = {} as any;
   issubmitdiable: boolean = false;
+  searchValue :any;
   @ViewChild('commentspopup') modalContent: any;
   options = [
     { label: 10, value: 10 },

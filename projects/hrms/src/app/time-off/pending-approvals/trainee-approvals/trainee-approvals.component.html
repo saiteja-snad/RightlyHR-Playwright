@@ -1,0 +1,379 @@
+<div class="custom-main-component-container mt-3">
+    <div>
+        <div class="mb-3">
+            <app-trainee-approvals-tabs/>
+        </div>
+        <!--Input search-->
+        <div class="input-group custom-search mb-4">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                    class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search here"
+                aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th class="text-nowrap">{{'Intern Employee ID'|translate}}</th>
+                        <th class="text-nowrap">{{'Employee Name'|translate}}</th>
+                        <th class="text-nowrap">{{'Internship Start Date'|translate}}</th>
+                        <th class="text-nowrap">{{'Internship End Date'|translate}}</th>
+                        <th class="text-nowrap">{{'Approved Comments'|translate}}</th>
+                        <th class="text-nowrap"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(((Trainees | async) ?? []).length > 0) {
+                    <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
+                        <td ><span
+                                *ngIf="trn.entity?.fusionEmpId;else employeeid">{{trn.entity?.fusionEmpId}}</span>
+                            <ng-template #employeeid>-</ng-template>
+                        </td>
+                        <td ><span
+                                *ngIf="trn.entity?.empName;else RequesterName">{{trn.entity?.empName}}</span>
+                            <ng-template #RequesterName>-</ng-template>
+                        </td>
+
+                        <td ><span
+                                *ngIf="trn.entity?.traineeStartDate;else workeddate">{{trn.entity?.traineeStartDate
+                                | dateformat }}</span>
+                            <ng-template #workeddate>-</ng-template>
+                        </td>
+                        <td ><span
+                                *ngIf="trn.entity?.traineeEndDate;else starttime">{{trn.entity?.traineeEndDate
+                                | dateformat
+                                }}</span>
+                            <ng-template #starttime>-</ng-template>
+                        </td>
+                        <td >
+                            <div class="mt-2">
+                                <span *ngIf="trn.entity?.comments;else approvercomments">
+                                    <span id="tooltip">
+                                        <div data-bs-toggle="modal" data-bs-target="#CommentsPopup"
+                                            (click)="commentsFunction(trn.entity?.comments)"><i
+                                                style="position:relative;z-index: -1;"
+                                                class="bi bi-info-circle-fill "></i></div>
+                                    </span>
+                                </span>
+                                <ng-template #approvercomments>-</ng-template>
+                            </div>
+                        </td>
+                        <td >
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(trn.approvalHeader.currentapprovalStage !=
+                                    trn.approvalHeader.finalapprovalStage){
+                                    <li>
+                                        <button class="dropdown-item" type="button" data-bs-toggle="modal"
+                                            (click)="openModal(PermissionsApprove);handleRequests(trn)">
+                                            Approve</button>
+                                    </li>
+                                    }
+                                    @if(trn.approvalHeader.currentapprovalStage !=
+                                    trn.approvalHeader.finalapprovalStage){
+                                    <li><button class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"> Reject</button>
+                                    </li>}
+                                    @if(trn.approvalHeader.currentapprovalStage ==
+                                    trn.approvalHeader.finalapprovalStage){
+                                    <li>
+                                        <button class="dropdown-item" (click)="handleProcess(trn)" *ngIf="">
+                                            Process</button>
+                                    </li>
+                                    }
+                                    @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
+                                    <li>
+                                        <button class="dropdown-item" data-bs-toggle="modal"  (click)="openModal(RejectTrainee);handleRequests(trn)"
+                                           >  Reject</button>
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                    @else{
+                    <tr>
+                        <td>
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-content pt-2 w-100">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                <div class="d-flex align-items-center gap-3 p-2">
+                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onRowsChange()">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+                </div>
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- popup for approve start -->
+<ng-template #PermissionsApprove let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-main-popup-content p-5">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="icons\succes.png" alt="succues" class="succes-icon">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <h4 class="text-center">Are you sure you want to Approve?</h4>
+            </div>
+            <form name="acceptForm" class="ps-5 w-100" #acceptForm="ngForm" (ngSubmit)=" handleAccept(acceptForm)">
+                <div class="col-11 ">
+                    <div class="mb-3 mt-2">
+                        <label for="exampleFormControlTextarea1" class="form-label labell">Feedback<span
+                                class="error-msg">*</span></label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1"
+                            placeholder="Please provide feedback" name="Feedback" #Feedback="ngModel" maxlength="250"
+                            [(ngModel)]="selectedLeaveData.trcomments" rows="3" required></textarea>
+
+                        <div><small class="error-msg mt-2"
+                                *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">Feedback
+                                is required
+                            </small></div>
+                        <div class="mt-2"><span
+                                class="color">{{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" 
+                        >{{'No' | translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="acceptForm.invalid || ! selectedLeaveData.trcomments">{{'Yes'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!-- popup for Reject start -->
+<ng-template #RejectTrainee let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-main-popup-content p-5">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="icons\succes.png" alt="succues" class="succes-icon">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <h4 class="text-center">Are you sure you want to Reject?</h4>
+            </div>
+            <form name="acceptForm" class="ps-5 w-100" #acceptForm="ngForm">
+                <div class="col-11">
+                    <div class="form-outline p-2 mb-1">
+                        <div class="form-check form-check-inline ms-5 ms-2">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                    id="flexRadioDefault1" (click)="toggleExtend()">
+                                Extend
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline ms-5 ms-2">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                    id="flexRadioDefault2" (click)="toggleDiscontinue()">
+                                Discontinue
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-11 " *ngIf="extend">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Extend Date<span
+                                    class="error-msg">*</span>
+                            </label>
+                            <input class="form-control" type="date" aria-label="Default select example" id="extenddate"
+                                placeholder="" name="extenddate" #extenddate="ngModel"
+                                (change)="updateExtendDateValidity()" [(ngModel)]="selectedLeaveData.extenddate"
+                                required [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
+                            <small class="error-msg"
+                                *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && acceptForm.submitted)">Extend
+                                date is required
+                            </small>
+                            <small class="error-msg" *ngIf="!isempeffectivevaild">Extend Date
+                                cannot be
+                                less than Training End date</small>
+                        </div>
+                    </div>
+                    <div class="col-11 " *ngIf="extend">
+                        <div class="mb-3 mt-2">
+                            <label for="exampleFormControlTextarea1" class="form-label ">Feedback for Extend<span
+                                    class="error-msg">*</span></label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1"
+                                placeholder="Please provide Feedback" name="Extendreason" #Extendreason="ngModel"
+                                [(ngModel)]="selectedLeaveData.trcomments" required rows="3"></textarea>
+                            <small class="error-msg"
+                                *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted) || (Extendreason.errors?.['pattern']) ">
+                                Feedback for Extend is required</small>
+                        </div>
+                    </div>
+                    <div class="col-md-12" *ngIf="discontinue">
+                        <div class="mb-3">
+                            <label for="Descriptiondetails" type="Notes">Reason <span class="error-msg">*</span></label>
+                            <textarea type="text" class="form-control" id="Descriptiondetails" name="Descriptiondetails"
+                                aria-label="Description" rows="3" maxlength="400"
+                                placeholder="Please provide the reason" #Descriptiondetails="ngModel" autocomplete="off"
+                                [(ngModel)]="selectedLeaveData.rejectedReason" required></textarea>
+                            <div>
+                                <span class="color">{{selectedLeaveData.rejectedReason?.length ?
+                                    selectedLeaveData.rejectedReason.length : 0}} /400</span>
+                            </div>
+                            <small class="error-msg"
+                                *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && selectedLeaveData.submitted)">
+                                Reason is required
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary" (click)="reload()" type="reset"
+                        (click)="selectedLeaveData = {}">{{'No'|translate}}</button>
+
+                    <button *ngIf="!discontinue" type="submit" class="custom-btn btn-primary"
+                        [disabled]="!selectedLeaveData.trcomments || !selectedLeaveData.extenddate"
+                        (click)="handleExtend(acceptForm)">{{'Yes'|translate}}</button>
+
+                    <button *ngIf="discontinue && !extend" type="submit" class="custom-btn btn-primary"
+                        [disabled]="!selectedLeaveData.rejectedReason" (click)="handleReject(acceptForm)">{{'Yes'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!-- popup for Extend start -->
+<ng-template #sprequestReject let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-main-popup-content p-5">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="icons\succes.png" alt="succues" class="succes-icon">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <h4 class="text-center">Are you sure
+                    you want to Extend?</h4>
+            </div>
+            <form name="rejectSeparations" class="ps-5 w-100" #rejectSeparations="ngForm"
+                (ngSubmit)="rejectSeparations.valid && handleExtend(rejectSeparations)">
+                <div class="mb-3 mt-2">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="mb-3">
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">Extend Date<span
+                                        class="error-msg">*</span>
+                                </label>
+                                <input class="form-control" type="date" aria-label="Default select example"
+                                    id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
+                                    (change)="updateExtendDateValidity()" [(ngModel)]="selectedLeaveData.extenddate"
+                                    required [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
+                                <small class="error-msg"
+                                    *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && rejectSeparations.submitted)">Extend
+                                    date is required
+                                </small>
+                                <small class="error-msg" *ngIf="!isempeffectivevaild">Extend Date
+                                    cannot be
+                                    less than Training End date</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-11 ">
+                    <div class="mb-3 mt-2">
+                        <label for="exampleFormControlTextarea1" class="form-label labell">Reason for Extend<span
+                                class="error-msg">*</span></label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1"
+                            placeholder="Please provide Extend reason" name="notes" #notes="ngModel"
+                            [(ngModel)]="selectedLeaveData.trcomments" required rows="3"></textarea>
+                        <small class="error-msg"
+                            *ngIf="(notes.touched && notes.invalid) || (notes.invalid && rejectSeparations.submitted) || (notes.errors?.['pattern']) ">
+                            Reason is required</small>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary" (click)="reload()"
+                        type="reset">{{'Cancel'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="rejectSeparations.invalid || !isempeffectivevaild">{{'Submit'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<div class="modal fade" id="CommentsPopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="min-width: 40vw;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">View Comments</h1>
+                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <tr class="card mb-3" *ngFor="let comment of comments">
+                    <div class="cardd">
+                        <div class=" row w-100 m-0 p-0">
+                            <div class="col-md-8 p-0">
+                                <div class="p-0">
+                                    <p class="m-0 popupcomments">Comments: {{comment.comments}}</p>
+                                </div>
+                                <p class="m-0 popupcomments">Commented by: {{comment.addedName}}
+                                </p>
+                            </div>
+                            <div class="text-end col-md-4 p-0">
+                                <p class="m-0 popupcomments">Date: {{comment.addedDate |dateformat}}
+                                </p>
+                                <p class="m-0 popupcomments">Commented by ID:
+                                    {{comment.addedByFusionEmpId}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </tr>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="custom-btn btn-primary">{{'Close'|translate}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #successhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+        <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
+    </div>
+</ng-template>
+
+<ng-template #errorhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+        <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
+    </div>
+</ng-template>
+
+<!-- loading popup start -->
+<ng-template #loading let-modal>
+    <div class="modal-body mt-4 text-center">
+        <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+            <div class="modal-body pt-4 pb-4">
+                <div class="spinner-border text-primary d-inline-block ms-3" style="width: 2rem; height: 2rem"
+                    role="status">
+                    <span class="sr-only"></span>
+                </div>
+                <p>Request is in progress please wait...</p>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- loading popup end -->

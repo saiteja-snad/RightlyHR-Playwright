@@ -7,6 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import {JobtypeData } from './jobtype-module';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-jobtype',
@@ -24,7 +25,13 @@ export class JobtypeComponent {
   selectedId: number | null = null;
   selectedDeleteDep: any = null;
   subscription!: Subscription;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
+  ) {
 
   }
   ngOnInit(): void {
@@ -37,20 +44,7 @@ export class JobtypeComponent {
 
     this.getJobtype();
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    // if (!pattern.test(inputChar)) {
-    //   event.preventDefault(); // blocks numbers or symbols
-    // }
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+
   getJobtype() {
     this.subscription = this.http.getData('Jobtype').subscribe({
       next: (data: any) => {
@@ -70,7 +64,7 @@ export class JobtypeComponent {
     this.subscription = this.http.postdata('Jobtype', request).subscribe({
       next: () => {
         this.getJobtype();
-        this.conformationPopup.openSuccessModal('Jobtype Name added successfully');
+        this.conformationPopup.openSuccessModal('Jobtype added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -93,7 +87,7 @@ export class JobtypeComponent {
             this.getJobtype();
             modal.close();
             this.updateForm.reset();
-            this.conformationPopup.openSuccessModal('Jobtype Name updated successfully');
+            this.conformationPopup.openSuccessModal('Jobtype updated successfully');
           },
           error: (err: any) => {
             this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -128,7 +122,7 @@ export class JobtypeComponent {
         next: () => {
           this.getJobtype();
           modal.close();
-          this.conformationPopup.openSuccessModal('JobType Name deleted successfully');
+          this.conformationPopup.openSuccessModal('JobType deleted successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Failed to delete the location');

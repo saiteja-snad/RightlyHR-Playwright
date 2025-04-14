@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -215,6 +215,10 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.recallAcceptForm.reset();
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Approved Successfully'
           );
@@ -249,6 +253,10 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.rejectSeparationForm.reset();
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Rejected Successfully'
           );
@@ -301,6 +309,10 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
           this.recallAcceptFormForProcess.reset();
           this.modalService.dismissAll();
           this.getAllPendingApprovals();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Recall Request Processed Successfull'
           );

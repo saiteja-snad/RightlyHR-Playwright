@@ -4,7 +4,6 @@ export interface ILocation {
     isDeleted: boolean
     jobSubLocations: ISubLocation[]
 }
-
 export interface ISubLocation {
     id: number,
     jobLocationId: any,
@@ -12,7 +11,6 @@ export interface ISubLocation {
     isDeleted: boolean,
     jobLocationName: string,
 }
-
 export interface IEmployees {
     id: number;
     wfhManagerId: number;
@@ -42,7 +40,6 @@ export interface IEmployees {
     mName: string;
     shiftId: number;
 }
-
 export interface IShiftHeader {
     id: number;
     locationId: number;
@@ -50,18 +47,17 @@ export interface IShiftHeader {
     applicableyear: number;
     status: string;
     addedby: number;
-    addedDate: string; // ISO string — optionally parse as Date
+    addedDate: string; 
     statusCode: number;
     orgShiftsItems: IShiftItem[];
 }
-
 export interface IShiftItem {
     id: number;
     headerID: number;
     shiftName: string;
-    shiftStartTime: string; // "HH:mm" format
+    shiftStartTime: string; 
     duration: number;
-    shiftEndTime: string;   // "HH:mm" format
+    shiftEndTime: string;  
     shiftDescription: string;
     status: string;
     code: string;
@@ -71,7 +67,6 @@ export interface IShiftItem {
     halfDayMinHrs: number;
     fullDayMinHrs: number;
 }
-
 export interface ICategoryDetails {
     id: number;
     applicableYear: number;
@@ -104,9 +99,9 @@ export interface ICategoryDetails {
     validity: number;
     status: string;
     addedBy: number;
-    addedDate: string; // Consider using Date type if you parse it
+    addedDate: string; 
     lastModifiedBy: number;
-    lastModifiedDate: string; // Same here
+    lastModifiedDate: string; 
     isDefault: boolean;
     isProbationAllowed: boolean;
     probationDays: number;

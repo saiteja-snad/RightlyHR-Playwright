@@ -255,4 +255,53 @@ export interface ApprovalStatusCount {
   totalCount: number;
 }
 
+export interface ILeavePolicyData{
+  id:number
+  year :number
+  locationId :number
+  subLocationId :number
+  shiftId :number
+  categoryId :number
+  allowedDays :number
+  entityType :string
+  entityReferenceId:number
+  status :string
+  comments :string
+  addedBy :number
+  addedDate :Date
+  lastModifiedBy :number
+  lastModifiedDate :Date
+  }
+  export interface Igradeid{
+    gradeId: number;
+    gradeName: string;
+    jobGrade: string;
+    createdat: any;
+    updatedat: any;
+    isdeleted: string;
+    maxDays:number;
+    categoryId:number;
+    lpId:number
+}
 
+
+export interface ExpenseApprovalResponse {
+  entity: ExpenseEntity;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+}
+
+export interface ExpenseEntity {
+  expenses_ID: number;
+  applied_date: string;
+  expenses_Title: string;
+  status: string;
+  employeeId: number;
+  fusionEmpId: string;
+  employeeName: string;
+  totalExpenseAmount: number;
+  expenseType: string;
+  pendingheaderId: number;
+  expenseApproverComments: any[]; // Replace `any` with specific type if available
+}

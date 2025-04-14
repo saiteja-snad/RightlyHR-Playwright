@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   ISeparation,
@@ -253,6 +253,10 @@ export class SeparationForYourRoleRequestComponent {
         next: (respone: any) => {
           this.isLoading = false;
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            separation: true,
+          }));
           if (this.requestType === 'Separation Request') {
             this.conformationPopup.openSuccessModal(
               'Separation Request Approved Successfully'
@@ -301,6 +305,10 @@ export class SeparationForYourRoleRequestComponent {
         next: (response: any) => {
           this.isLoading = false;
           this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            separation: true,
+          }));
           if (this.requestType === 'Separation Request') {
             this.conformationPopup.openSuccessModal(
               'Separation Request Rejected Successfully'
@@ -387,6 +395,10 @@ export class SeparationForYourRoleRequestComponent {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.getseparationforrolerequests();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            separation: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Separation Request Processed Successfully'
           );

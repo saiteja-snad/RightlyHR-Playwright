@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { subLocationData } from './sub-location-model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-sub-location',
@@ -33,7 +34,13 @@ throw new Error('Method not implemented.');
   @ViewChild('deletepopup') deletepopup: any;
   AddForm!: FormGroup;
   updateForm!: FormGroup;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
+  ) {
 
   }
   ngOnInit(): void {
@@ -49,18 +56,7 @@ throw new Error('Method not implemented.');
       this.getSubLocation();
      
     }
-    // alphabet allowed only
-    blockNonAlphabets(event: KeyboardEvent): void {
-      const inputChar = String.fromCharCode(event.keyCode);
-      const char = String.fromCharCode(event.keyCode);
-      // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-      const pattern = /^[a-zA-Z ]$/;
-      const input = (event.target as HTMLInputElement).value;
-      if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-        event.preventDefault();
-      }
-    }
-   
+
     // // Method to open the add modal dialog
     openDialog() {
       this.modalService.open(this.addpopup, {
@@ -89,7 +85,7 @@ throw new Error('Method not implemented.');
   
           this.getSubLocation();
           modal.close();
-          this.conformationPopup.openSuccessModal('SubLocation added successfully');
+          this.conformationPopup.openSuccessModal('Sub location added successfully');
           
           //  this.resetForm();
         },

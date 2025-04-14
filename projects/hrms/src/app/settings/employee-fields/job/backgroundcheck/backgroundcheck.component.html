@@ -1,135 +1,97 @@
-<form [formGroup]="BackgroundCheckForm" (ngSubmit)="addBackgroundCheckType()">
-    <div class="card main-settings-layout p-4">
-        <!-- Add Input-->
-        <div>
-            <div class="custom-settings-add-input input-group mb-5">
-                <input type="text" class="form-control custom-input" placeholder="Please Enter BackgroundCheck"
-                    formControlName="BackgroundCheck" aria-label="BackgroundCheck" aria-describedby="BackgroundCheck"  (keypress)="blockNonAlphabets($event)" >
-                <span class="input-group-text" id="BackgroundCheck">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="BackgroundCheckForm.invalid">{{'Add'|translate}}</button></span>
-            </div>
-        </div>
-          <div *ngIf="BackgroundCheckForm.get('BackgroundCheck')?.touched && BackgroundCheckForm.get('BackgroundCheck')?.invalid">
-            <small style="color: red;font-size: 13px;" *ngIf="BackgroundCheckForm.get('BackgroundCheck')?.errors?.['required']">
-              {{'BackgroundCheckeName is required'|translate}}
-            </small>
-            <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
-               {{'Only alphabets and spaces are allowed'|translate}}
-            </small> -->
+<div class="custom-main-component-container">
+  <form [formGroup]="BackgroundCheckForm" (ngSubmit)="addBackgroundCheckType()">
+      <!-- Add Input-->
+      <div class="mb-4">
+          <div class="custom-settings-add-input input-group">
+              <input type="text" class="form-control custom-input" placeholder="Please enter backgroundcheck status"
+                  formControlName="BackgroundCheck" aria-label="BackgroundCheck" aria-describedby="BackgroundCheck"
+                  (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+              <span class="input-group-text" id="BackgroundCheck">
+                  <button type="submit" class="custom-btn btn-primary"
+                      [disabled]="BackgroundCheckForm.invalid">{{'Add'|translate}}</button></span>
           </div>
-          
-          
-  
-  <!-- BackgroundCheck List Table -->
-  <div>
-    <div class="custom-settings-data-table">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th class="col-span-2"></th>                            
-                </tr>
+          <div *ngIf="BackgroundCheckForm.get('BackgroundCheck')?.touched && BackgroundCheckForm.get('BackgroundCheck')?.invalid" class="error-msg mt-2">
+              <div *ngIf="BackgroundCheckForm.get('BackgroundCheck')?.errors?.['required']">{{'Backgroundcheck status is required'|translate}}</div>
+          </div>
+      </div>
+  </form>
 
-            </thead>
-            <tbody>
-                 @for (back of BackgroundCheckDetail; track back.id) {
-                <tr *ngFor="let back of BackgroundCheckDetail">
-                     <tr>
-                    <td class="w-75">{{ back.backgroundcheckstatus1}}</td>                           
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                             <div>
-                                <a (click)="openupdate(back)"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
-                            </div> 
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(back)"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-</div> 
-  
-  <!-- Update Popup -->
-  <ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm">
+  <!--Data Content-->
+  <div class="custom-settings-data-table">
+      <table class="w-100">
+          <thead>
+              <tr>
+                  <th class="col-span-2"></th>
+              </tr>
+          </thead>
+          <tbody>
+              @for (back of BackgroundCheckDetail; track $index) {
+              <tr>
+                  <td class="w-75">{{ back.backgroundcheckstatus1}}</td>
+                  <td class="w-25">
+                      <div class="d-flex gap-4">
+                          <!--Update-->
+                          <div>
+                              <a (click)="openupdate(back)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                      class="settings-common-icon"></a>
+                          </div>
+                          <!--Delete-->
+                          <div>
+                              <a (click)="opendelete(back)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                      class="settings-common-icon"></a>
+                          </div>
+                      </div>
+                  </td>
+              </tr>
+              }
+          </tbody>
+      </table>
+  </div>
+</div>
+
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+  <form [formGroup]="updateForm">
       <div class="custom-main-popup-container" ngbAutofocus>
-        <!-- Header -->
-        <div class="d-flex justify-content-between popup-header-border p-4">
-          <div class="pt-2">
-            <p class="popup-heading mb-0">{{ 'Edit BackgroundCheck' | translate }}</p>
+          <div class="d-flex justify-content-between popup-header-border p-3">
+              <div class="pt-2">
+                  <p class="popup-heading mb-0">{{'Edit BackgroundCheck'|translate}}</p>
+              </div>
+              <div>
+                  <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+              </div>
           </div>
-          <div>
-            <a (click)="close(modal)">
-              <img src="icons/close.png" alt="Close Icon" class="close-icon">
-            </a>
+          <div class="custom-main-popup-content p-4">
+              <div class="mb-4">
+                  <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'BackgroundCheck'|translate}}
+                      <span class="error-msg">*</span></label>
+                  <input type="text" class="form-control custom-input" formControlName="BackgroundCheck" placeholder="Please enter backgroundcheck status"
+                  (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                  <div *ngIf="updateForm.get('BackgroundCheck')?.touched && updateForm.get('BackgroundCheck')?.invalid" class="error-msg mt-2">
+                      <div *ngIf="updateForm.get('BackgroundCheck')?.errors?.['required']">{{'Backgroundcheck is required'|translate}}</div>
+                  </div>
+              </div>
+              <div class="d-flex gap-5 w-100 pt-3">
+                  <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
+                  <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="updateBackgroundChecktype(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+              </div>
           </div>
-        </div>
-  
-        <!-- Content -->
-        <div class="custom-main-popup-content p-5">
-          <div class="mb-4">
-            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
-              {{ 'BackgroundCheck' | translate }}<span class="error-msg">*</span>
-            </label>
-            <input
-              type="text"
-              class="form-control custom-input"
-              formControlName="BackgroundCheck"
-              placeholder="Please Enter BackgroundCheck"
-              (keypress)="blockNonAlphabets($event)"
-            >
-          </div>
-  
-          <!-- Validation -->
-          <div *ngIf="updateForm.get('BackgroundCheck')?.touched && updateForm.get('BackgroundCheck')?.invalid">
-            <small class="text-danger" *ngIf="updateForm.get('BackgroundCheck')?.errors?.['required']">
-              {{ 'BackgroundCheckName is required' | translate }}
-            </small>
-            <!--
-            <small class="text-danger" *ngIf="updateForm.get('BackgroundCheck')?.errors?.['pattern']">
-              {{ 'Only alphabets and spaces are allowed' | translate }}
-            </small>
-            -->
-          </div>
-  
-          <!-- Buttons -->
-          <div class="d-flex gap-5 pt-4 w-100">
-            <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
-              {{ 'Close' | translate }}
-            </button>
-            <button class="custom-btn btn-primary w-50 py-3" (click)="updateBackgroundChecktype(modal)" [disabled]="updateForm.invalid">
-              {{ 'Update' | translate }}
-            </button>
-          </div>
-        </div>
       </div>
-    </form>
-  </ng-template>
-  
-  <!-- Delete Confirmation Popup -->
-  <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
+  </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+  <div class="modal-body" ngbAutofocus>
       <div class="custom-main-popup-content text-center p-4">
-        <div class="py-5">
-          <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
-          <p class="confirmation-text">{{ 'Are you sure you want to Delete?' | translate }}</p>
-        </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-          <button class="custom-btn btn-secondary w-50 py-3" (click)="closeDelete(modal)">
-            {{ 'No' | translate }}
-          </button>
-          <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">
-            {{ 'Yes' | translate }}
-          </button>
-        </div>
+          <div class="py-4">
+              <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+              <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+          </div>
+          <div class="d-flex gap-5 pt-2 w-100">
+              <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+              <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+          </div>
       </div>
-    </div>
-  </ng-template>
-  
+  </div>
+</ng-template>

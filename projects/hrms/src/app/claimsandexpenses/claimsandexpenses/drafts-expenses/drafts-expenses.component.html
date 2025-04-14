@@ -36,7 +36,7 @@
                             <td>{{ exp.expenses_Title }}</td>
                             <td>{{ exp.applied_date | dateformat }}</td>
                             <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-                            <td> <span class="me-2">●</span> {{ exp.status }}
+                            <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
                             </td>
                             <td class="text-center">
                                 <div class="dropdown">
@@ -67,56 +67,6 @@
 </div>
 
 
-<ng-template #viewDetailsModal let-modal>
-    <div class="custom-main-popup-container">
-        <div class="d-flex justify-content-between popup-header-border p-4">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">Expenses Details</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
-        </div>
-        <div class="custom-main-popup-content p-4">
-
-            <div class="custom-table-content">
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                            <th>Expense Type</th>
-                            <th>Expense Date</th>
-                            <th>Total Amount</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let item of expenseheaderiteams">
-                            <td>{{ item.expenses_Title }}</td>
-                            <td>{{ item.applied_date | dateformat }}</td>
-                            <td>{{ item.expenses_Title }}</td>
-
-                            <td>
-                                <div class="row">
-                                    <div class="col d-flex align-items-center">
-                                        <a type="button" class="me-2 dowload-text" (click)="onSelectDownload(item)">
-                                            <i class="bi bi-download me-2"></i>Download
-                                        </a>
-                                        <a type="button" class="view-text">
-                                            <i class="bi bi-paperclip"></i>View
-                                        </a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</ng-template>
 
 
 <ng-template #updateModal let-modal>
@@ -173,8 +123,8 @@
                                 </div>
                             </div>
                             <!-- Add New Expense Button -->
-                            <div class="col-md-4 mb-3 mt-5">
-                                <button type="button" class="custom-btn btn-primary" (click)="addExpenseItem()">
+                            <div class="col-md-4 mb-3 ">
+                                <button type="button" class="custom-btn btn-primary mt-4" (click)="addExpenseItem()">
                                     <i class="bi bi-plus me-2"></i> Add New Expense
                                 </button>
                             </div>

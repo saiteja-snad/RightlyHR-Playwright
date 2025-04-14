@@ -7,6 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { frequenceData } from './frequency-model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-frequency',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
@@ -28,7 +29,8 @@ export class FrequencyComponent {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService,
   ) { }
 
   ngOnInit(): void {
@@ -40,15 +42,6 @@ export class FrequencyComponent {
     });
 
     this.getFrequencies();
-  }
-
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const char = String.fromCharCode(event.keyCode);
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
   }
 
   getFrequencies() {

@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { jobRoleDATA } from './jobrole-model';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 
 
@@ -30,7 +31,13 @@ export class JobroleComponent {
   @ViewChild('deletepopup') deletepopup: any;
   AddForm!: FormGroup;
   updateForm!: FormGroup;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
+  ) {
 
   }
   ngOnInit(): void {
@@ -46,17 +53,7 @@ export class JobroleComponent {
     this.getgradeid();
     this.getJobrole();
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+
   getJobrole() {
     this.subscription = this.http
       .getData('DesignationGradeMapper?sort=designationName')
@@ -103,7 +100,7 @@ export class JobroleComponent {
 
         this.getJobrole();
         modal.close();
-        this.conformationPopup.openSuccessModal('Jobrole Name added successfully');
+        this.conformationPopup.openSuccessModal('Job role added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -141,7 +138,7 @@ export class JobroleComponent {
 
           this.getJobrole();
           modal.close();
-          this.conformationPopup.openSuccessModal('Jobrole Name Updated Successfully');
+          this.conformationPopup.openSuccessModal('Job role updated successfully');
           this.resetForm();
         },
         error: (error: any) => {
@@ -166,7 +163,7 @@ export class JobroleComponent {
         next: () => {
           modal.close();
           this.getJobrole();
-          this.conformationPopup.openSuccessModal('Jobrole Name Deleted Successfully');
+          this.conformationPopup.openSuccessModal('Job role deleted successfully');
 
         },
         error: (error: any) => {

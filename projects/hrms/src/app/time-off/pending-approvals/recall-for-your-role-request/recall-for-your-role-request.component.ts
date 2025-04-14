@@ -17,6 +17,7 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { environment } from '../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-recall-for-your-role-request',
@@ -103,10 +104,10 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   getAllPendingApprovals() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    console.log(EmployeeId);
+    let moduleId=environment.RecallrequestmoduleId;
     this.subscription = this.http
       .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=14&approvedType=ROLE`
+        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`
       )
       .subscribe({
         next: (data: any) => {

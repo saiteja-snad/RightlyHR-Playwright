@@ -17,6 +17,7 @@ import {
   ISeparationRequest,
 } from '../separation-for-you-request/separation-for-you-request';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { environment } from '../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-recall-for-you-request',
@@ -103,10 +104,10 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   getAllPendingApprovals() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    console.log(EmployeeId);
+    let moduleId=environment.RecallrequestmoduleId
     this.subscription = this.http
       .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=14&approvedType=EMP`
+        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}}&approvedType=EMP`
       )
       .subscribe({
         next: (data: any) => {

@@ -5,7 +5,7 @@ import { LeaveAlloctaionComponent } from "./leave-alloctaion/leave-alloctaion.co
 import { LoadEntitlementsComponent } from "./load-entitlements/load-entitlements.component";
 
 export default [
-    { path: '', redirectTo: '/settings/time-off/flexible-leave-allocation', pathMatch: 'full' },
+    { path: '', redirectTo: '/settings/timeoff-configurations/flexible-leave-allocation', pathMatch: 'full' },
     { path: 'leave-categoery', component: LeaveCategoeryComponent },
     { path: 'leave-allocation', component: LeaveAlloctaionComponent },
     { path: 'load-entitlements', component: LoadEntitlementsComponent },

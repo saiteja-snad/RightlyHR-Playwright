@@ -198,6 +198,7 @@ export class PremissionsComponent implements OnInit,OnDestroy{
       ...status,
       permission: true,
     }));
+    this.permissionForm.reset();
     setTimeout(() => {
       window.location.reload();
     }

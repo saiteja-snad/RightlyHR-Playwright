@@ -29,7 +29,36 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 })
 export class AttendanceComponent implements OnInit, OnDestroy{
   subscription!:Subscription;
+  yearOptions = [
+    { name: '2024', value: 2024 },
+    { name: '2025', value: 2025},
+    { name: '2026', value: 2026 }
+  ];
   
+  monthOptions = [
+    { name: 'January', value: 1 },
+    { name: 'February', value: 2 },
+    { name: 'March', value: 3 },
+    { name: 'April', value: 4 },
+    { name: 'May', value: 5 },
+    { name: 'June', value: 6 },
+    { name: 'July', value: 7 },
+    { name: 'August', value: 8 },
+    { name: 'September', value: 9 },
+    { name: 'October', value: 10 },
+    { name: 'November', value: 11 },
+    { name: 'December', value: 12 }
+  ];
+  
+  employeeOptions = [
+    { name: 'One', value: 1 },
+    { name: 'Two', value: 2 },
+    { name: 'Three', value: 3 }
+  ];
+  
+  selectedYear: any;
+  selectedMonth: any;
+  selectedEmployee: any;
   constructor(private authService: AuthService,
     private http: HttpService,
     private router: Router,
@@ -59,7 +88,9 @@ export class AttendanceComponent implements OnInit, OnDestroy{
   }
 //function to get the attendance data
 getAttendnaceData(){
- this.subscription= this.http.getData('').subscribe({
+  let  loggedInUser=this.authService.getToken();
+  let employeeId=loggedInUser.employeeId;
+ this.subscription= this.http.getData(`/v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`).subscribe({
     next(response:any){
     console.log(response)
     }

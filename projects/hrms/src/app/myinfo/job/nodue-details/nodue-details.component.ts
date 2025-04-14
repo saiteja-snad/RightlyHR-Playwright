@@ -48,7 +48,7 @@ export class NodueDetailsComponent implements OnInit,OnDestroy {
     // Initialize any required services or dependencies here
   }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getNodueClearance();
     this.getEmployeeId();
   }

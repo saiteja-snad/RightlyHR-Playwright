@@ -109,7 +109,7 @@ export class ClaimsandexpensesForYouRequestComponent
       });
   }
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true,size:'xl', backdrop: 'static' });
   }
   onRowsChange() {
     this.first = 0;

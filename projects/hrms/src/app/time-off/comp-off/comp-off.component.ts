@@ -134,6 +134,10 @@ export class CompOffComponent implements OnInit, OnDestroy {
             compOff: true,
           }));
 
+          setTimeout(() => {
+            window.location.reload();
+          }
+        , 2000);
           //write a signal to trigger the get all count in the side bar
         },
         error: (err: any) => {

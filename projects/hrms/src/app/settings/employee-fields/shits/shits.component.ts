@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-shits',
@@ -13,6 +13,6 @@ export class ShitsComponent {
   constructor( public router:Router) { }
 
   nagvition(){
-    this.router.navigate(['/settings/employee-fields/addshits']);
+    this.router.navigate(['/settings/employee-fields/addshifts']);
   }
 }

@@ -312,10 +312,16 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
             'Request submitted successfully'
           );
           this.getWFHBal(null)
+
+          setTimeout(() => {
+            window.location.reload();
+          }
+        , 2000);
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             wfh: true,
           }));
+     
 
           //write a signal to trigger the get all count in the side bar
         },

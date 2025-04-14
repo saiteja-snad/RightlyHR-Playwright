@@ -37,15 +37,16 @@
                         <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
-                            formControlName="workedDate"[min]="alloweddates" 
-                            [max]="alloweddates" (change)="getWFHBal(addWFHForm.get('workedDate')?.value)">
+                            formControlName="workedDate"
+                            (change)="getWFHBal(addWFHForm.get('workedDate')?.value)">
                             <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid" class="error-msg">
                                 Worked Date is required.
                               </div>
                               <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']" class="error-msg">
                                 Weekends are not allowed. Please select a weekday.
                               </div>
-                              <div *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
+                              
+                              <div class="error-msg" *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
                               
                     </div>
 

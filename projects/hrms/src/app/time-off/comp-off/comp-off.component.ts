@@ -65,24 +65,13 @@ export class CompOffComponent implements OnInit, OnDestroy {
     this.fullDayValue = JSON.parse(
       localStorage.getItem('filterFullDayData') || '{}'
     );
-    this.addCompOffForm.get('availing')?.valueChanges.subscribe((value) => {
-      const halfTypeControl = this.addCompOffForm.get('halfType');
-      if (value === 'Half Day') {
-        halfTypeControl?.setValidators([Validators.required]);
-        halfTypeControl?.enable();
-      } else {
-        halfTypeControl?.clearValidators();
-        halfTypeControl?.setValue('');
-        halfTypeControl?.disable();
-      }
-      halfTypeControl?.updateValueAndValidity();
-    });
-  
+    
 
     this.intializeCompOffForm();
     this.getWorkfromhomeCriteria();
     this.getEmployeeeHolidays();
     this.getEmployeeeWeekends();
+    this.handleAvailingChange()
   }
 
   openModal(content: any) {
@@ -91,7 +80,9 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   intializeCompOffForm() {
     this.addCompOffForm = this.fb.group({
-      workedDate: ['', Validators.required],
+      workedDate: ['', 
+        [Validators.required, this.onlyWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]
+      ],
       availing: ['', Validators.required],
       halfType: [''],
       reason: ['', Validators.required],

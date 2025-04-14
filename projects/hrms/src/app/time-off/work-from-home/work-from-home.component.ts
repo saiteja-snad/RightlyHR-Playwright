@@ -44,7 +44,7 @@ alloweddates: string = ''
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.intializeCompOffForm();
+    this.intializewfhForm();
     this.halfDayValue = JSON.parse(
       localStorage.getItem('filterHalfDayData') || '{}'
     );
@@ -54,18 +54,8 @@ alloweddates: string = ''
 
     this.getDataByLPID();
     this.getWorkfromhomeCriteria();
-    this.addWFHForm.get('availing')?.valueChanges.subscribe(value => {
-      const halfTypeControl = this.addWFHForm.get('halfType');
-      if (value === 'Half Day') {
-        halfTypeControl?.setValidators([Validators.required]);
-        halfTypeControl?.enable();
-      } else {
-        halfTypeControl?.clearValidators();
-        halfTypeControl?.setValue('');
-        halfTypeControl?.disable();
-      }
-      halfTypeControl?.updateValueAndValidity();
-    });
+    this.handleAvailingChange()
+  
 
     
   if (this.empinfo.dateOfJoining) {
@@ -78,17 +68,31 @@ alloweddates: string = ''
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  intializeCompOffForm() {
+  intializewfhForm() {
     this.addWFHForm = this.fb.group({
-      workedDate: ['', Validators.required
-      , [this.noWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]],
+      workedDate: ['', 
+        [Validators.required, this.noWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]
+      ],
       availing: ['', Validators.required],
       halfType: [''],
       reason: ['', Validators.required],
     });
   }
-
-
+  
+  handleAvailingChange(){
+    this.addWFHForm.get('availing')?.valueChanges.subscribe(value => {
+      const halfTypeControl = this.addWFHForm.get('halfType');
+      if (value === 'Half Day') {
+        halfTypeControl?.setValidators([Validators.required]);
+        halfTypeControl?.enable();
+      } else {
+        halfTypeControl?.clearValidators();
+        halfTypeControl?.setValue('');
+        halfTypeControl?.disable();
+      }
+      halfTypeControl?.updateValueAndValidity();
+    });
+  }
 
   updateDuration() {
     console.log(this.workFromHomedata.startTimeProp);

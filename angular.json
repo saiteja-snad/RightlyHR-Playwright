@@ -69,8 +69,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "projects/preonboarding/src/environments/environment.ts",
-                  "with": "projects/preonboarding/src/environments/environment.qa.ts"
+                  "replace": "projects/preonboarding/environments/environment.ts",
+                  "with": "projects/preonboarding/environments/environment.qa.ts"
                 }
               ]
             },

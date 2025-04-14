@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { LeaveApproval } from '../../Interfaces/pendingapprovalsmodel';
@@ -31,6 +31,7 @@ export class PendingApprovalsTabsComponent {
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   countEmp: any;
   countRole: any;
+  nodue_Request_data=[]as any[];
   navLinks: NavLink[] = [
     {
       label: 'Time-Off',
@@ -75,7 +76,20 @@ export class PendingApprovalsTabsComponent {
   constructor(
     public readonly router: Router,
     private http: HttpService
-  ) {}
+  ) {
+    effect(() => {
+      if ((this.http.tirggerPendingApprovalCountSignal().wfh)||(this.http.tirggerPendingApprovalCountSignal().separation)
+        ||(this.http.tirggerPendingApprovalCountSignal().nodue)) {
+        this.getAllPendingApprovalsCount();
+        this.getAllPendingApprovalsNoDue();
+      this.http
+        .tirggerPendingApprovalCountSignal
+        .update((status) => ({ ...status, wfh: false,separation:false,nodue:false }));
+      }
+
+ 
+    });
+  }
 
   isActive(router: string): boolean {
     return this.router.isActive(router, true);
@@ -83,15 +97,21 @@ export class PendingApprovalsTabsComponent {
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsCount();
+    this.getAllPendingApprovalsNoDue();
   }
-
-
-
-  onclickseparation() {
-    this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-      ...status,
-      separation: true,
-    }));
+  getAllPendingApprovalsNoDue() {
+    const EmployeeId = this.LOGIN.employeeId;
+    console.log(EmployeeId);
+    this.subscription = this.http
+      .getData(
+        `NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`
+      )
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.nodue_Request_data=data;
+        },
+      });
   }
 
   getAllPendingApprovalsCount() {

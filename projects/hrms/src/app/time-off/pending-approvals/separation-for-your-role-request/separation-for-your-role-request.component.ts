@@ -18,6 +18,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
+import { environment } from '../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-separation-for-your-role-request',
@@ -88,10 +89,11 @@ export class SeparationForYourRoleRequestComponent {
   getseparationforrolerequests() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
+    let moduleId=environment.SeparationrequestmoduleId
     console.log(EmployeeId);
     this.subscription = this.http
       .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=13&approvedType=ROLE`
+        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`
       )
       .subscribe({
         next: (data: any) => {
@@ -253,6 +255,7 @@ export class SeparationForYourRoleRequestComponent {
         next: (respone: any) => {
           this.isLoading = false;
           this.modalService.dismissAll();
+          this.regular=true;
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
             separation: true,

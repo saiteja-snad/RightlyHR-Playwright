@@ -28,7 +28,7 @@
                 <p class="popup-heading mb-0">Request Premission</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();this.permissionForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -39,6 +39,10 @@
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="permissionDate"  id="Date"
                             onkeydown="return false" placeholder="Select Date" />
+                            <div *ngIf="permissionForm.get('permissionDate')?.touched && permissionForm.get('permissionDate')?.invalid" class="error-msg">
+                                Permission Date is required.
+                              </div>
+
                     </div>
                 </div>
                 <div class="row">
@@ -49,6 +53,9 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="duration" optionLabel="name"  id="duration" formControlName="duration" placeholder="Please select duration"
                             class="form-select custom-select" />
+                            <div *ngIf="permissionForm.get('duration')?.touched && permissionForm.get('duration')?.invalid" class="error-msg">
+                                Duration is required.
+                              </div>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -57,6 +64,9 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="leaveTypes" optionLabel="name" formControlName="leaveType"
                                 placeholder="Please select permission type" id="leaveType" class="form-select custom-select" />
+                                <div *ngIf="permissionForm.get('leaveType')?.touched && permissionForm.get('leaveType')?.invalid" class="error-msg">
+                                    Premission Type is required.
+                                  </div>
                         </div>
                     </div>
 
@@ -68,13 +78,24 @@
                         <label for="reason" class="form-label custom-label mb-2">Reason <span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason"  rows="3"
-                        placeholder="Type here"
+                        placeholder="Type here" maxlength="250"
                             placeholder="Type Here"></textarea>
+                            <div class="text-end small text-muted">
+                                {{ permissionForm.get('reason')?.value?.length || 0 }}/250
+                            </div>
+                            <div class="error-msg" *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid">
+                                <div *ngIf="permissionForm.get('reason')?.errors?.['required']">
+                                  Reason is required.
+                                </div>
+                                <div *ngIf="permissionForm.get('reason')?.errors?.['maxlength']">
+                                    Reason cannot exceed 250 characters.
+                                </div>
+                              </div>
                     </div>
 
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();this.permissionForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="permissionForm.invalid || spinnerLoader">
                          @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

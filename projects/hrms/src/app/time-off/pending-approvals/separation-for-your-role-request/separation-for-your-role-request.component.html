@@ -186,11 +186,11 @@
                             <input type="hidden"
                                 [value]="selectedSpRequestData.spMangerEarlyreliveingDate ? 'true' : 'false'"
                                 name="isreliving">
-                            <input  type="checkbox" id="earlyrelieving"
+                            <input  type="checkbox" id="earlyrelieving" name="earlyrelieving"
                                 [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" #isaccept="ngModel"
                                 (click)="toggleEarly()"
                                 (ngModelChange)="extendCondition(selectedSpRequestData.spIsAcceptEarlyrelievingcheck)">
-                            <label class="form-check-label me-2" for="earlyrelieving">
+                            <label class="form-check-label" for="earlyrelieving">
                                 Yes
                             </label>
                         </div>
@@ -235,17 +235,17 @@
                         <label>Comments <span class="error-msg">*</span></label>
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                            #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
+                            #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
                             required></textarea>
                         <div>
                             <span
                                 class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                                 /250</span>
                         </div>
-
-                        <small class="error-msg"
-                            *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptForm.submitted) ">
-                            Comments is required</small>
+                        <small class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptForm.submitted)">
+                            <span *ngIf="earlyrelievingreason.errors?.['required']">Comments is required.</span>
+                            <span *ngIf="earlyrelievingreason.errors?.['pattern']">Comments should not start with a space.</span>
+                        </small>
                     </div>
                     }
                     <!-- Extend Section -->
@@ -273,16 +273,17 @@
                         <label>Feedback for Extend <span class="error-msg">*</span></label>
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
-                            [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"></textarea>
+                            [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3" pattern="^[^\s].*"></textarea>
                         <div>
                             <span
                                 class="color">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}
                                 /250</span>
                         </div>
-
-                        <small class="error-msg"
-                            *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted) || (Extendreason.errors?.['pattern']) ">
-                            Feedback for Extend is required</small>
+                        <small class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted)">
+                            <span *ngIf="Extendreason.errors?.['required']">Feedback for Extend is required.</span>
+                            <span *ngIf="Extendreason.errors?.['pattern']">Feedback for Extend should not start with a space.</span>
+                        </small>
+                        
                     </div>
                     }
 
@@ -309,7 +310,7 @@
                             <label for="Descriptiondetails" type="Notes">Comments <span class="error-msg">*</span></label>
                             <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                                 placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                                #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
+                                #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
                                 required></textarea>
                             <div>
                                 <span
@@ -317,9 +318,10 @@
                                     /250</span>
                             </div>
 
-                            <small class="error-msg"
-                                *ngIf="(comments.touched && comments.invalid) || (comments.invalid && acceptForm.submitted)">
-                                Comments is required </small>
+                            <small class="error-msg" *ngIf="(comments.touched && comments.invalid) || (comments.invalid && acceptForm.submitted)">
+                                <span *ngIf="comments.errors?.['required']">Comments is required.</span>
+                                <span *ngIf="comments.errors?.['pattern']">Comments should not start with a space.</span>
+                            </small>
                         </div>
 
                     </div>
@@ -473,17 +475,17 @@
                 <div class="form-outline p-2 mb-1 d-flex align-items-center"
                     *ngIf="selectedSpRequestData.spIsAcceptEarlyrelievingcheck!=true">
                     <div class="form-check form-check-inline ">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
+                        <input  type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
                             (click)="toggleRegular()">
                         <label class="form-check-label ms-2" for="flexRadioDiscontinue">Regular</label>
                     </div>
                     <div class="form-check form-check-inline ms-3">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioEarly"
+                        <input  type="radio" name="flexRadioDefault" id="flexRadioEarly"
                             [checked]="selectedRadio === 'early'" (click)="toggleEarly()">
                         <label class="form-check-label ms-2" for="flexRadioEarly">Early Relieving</label>
                     </div>
                     <div class="form-check form-check-inline ms-3">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
+                        <input  type="radio" name="flexRadioDefault" id="flexRadioExtend"
                             (click)="toggleExtend()">
                         <label class="form-check-label ms-2" for="flexRadioExtend">Extend</label>
                     </div>
@@ -505,7 +507,7 @@
                         <label for="exampleFormControlTextarea1" class="form-label ">Reason for Early Relieving<span
                                 class="error-msg">*</span></label>
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                            placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
+                            placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250" pattern="^[^\s].*"
                             #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
                             required></textarea>
                         <div>
@@ -513,10 +515,10 @@
                                 class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                                 /250</span>
                         </div>
-
-                        <small class="error-msg"
-                            *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptFormforprocess.submitted) ">
-                            Reason for Early Relieving is required</small>
+                        <small class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptFormforprocess.submitted)">
+                            <span *ngIf="earlyrelievingreason.errors?.['required']">Reason for Early Relieving is required.</span>
+                            <span *ngIf="earlyrelievingreason.errors?.['pattern']">Reason for Early Relieving should not start with a space.</span>
+                        </small>
                     </div>
                 </div>
                 <div class="col-11">
@@ -543,16 +545,17 @@
                                 class="error-msg">*</span></label>
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
-                            [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"></textarea>
+                            [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3" pattern="^[^\s].*"></textarea>
                         <div>
                             <span
                                 class="color">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}
                                 /250</span>
                         </div>
-
-                        <small class="error-msg"
-                            *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptFormforprocess.submitted) || (Extendreason.errors?.['pattern']) ">
-                            Feedback for Extend is required</small>
+                        <small class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptFormforprocess.submitted)">
+                            <span *ngIf="Extendreason.errors?.['required']">Feedback for Extend is required.</span>
+                            <span *ngIf="Extendreason.errors?.['pattern']">Feedback for Extend should not start with a space.</span>
+                        </small>
+                        
                     </div>
                 </div>
                 <div class="col-md-11">
@@ -573,17 +576,17 @@
                         <label for="Descriptiondetails" type="Notes">Comments <span class="error-msg">*</span></label>
                         <textarea class="form-control custome-input" id="exampleFormControlTextarea1"
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                            #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
+                            #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" pattern="^[^\s].*" rows="3"
                             required></textarea>
                         <div>
                             <span
                                 class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                                 /250</span>
                         </div>
-
-                        <small class="error-msg"
-                            *ngIf="(comments.touched && comments.invalid) || (comments.invalid && acceptFormforprocess.submitted)">
-                            Comments is required </small>
+                        <small class="error-msg" *ngIf="(comments.touched && comments.invalid) || (comments.invalid && acceptFormforprocess.submitted)">
+                            <span *ngIf="comments.errors?.['required']">Comments is required.</span>
+                            <span *ngIf="comments.errors?.['pattern']">Comments should not start with a space.</span>
+                        </small>
                     </div>
 
                 </div>

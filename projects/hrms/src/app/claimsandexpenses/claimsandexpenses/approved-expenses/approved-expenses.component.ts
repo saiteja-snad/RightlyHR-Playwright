@@ -10,11 +10,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import {  NgxDocViewerModule } from 'ngx-doc-viewer';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 
 @Component({
   selector: 'app-approved-expenses',
-  imports: [CommonModule,DateformatPipe,NgxDocViewerModule,FormsModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
   templateUrl: './approved-expenses.component.html',
   styleUrl: './approved-expenses.component.scss'
 })

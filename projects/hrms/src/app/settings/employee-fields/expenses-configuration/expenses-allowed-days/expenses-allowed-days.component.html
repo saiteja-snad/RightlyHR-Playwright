@@ -1,7 +1,7 @@
-<div class="card main-settings-layout p-4">
+<div class="custom-main-component-container">
     <!-- Add Input-->
 
-    <div class="custom-settings-data-table">
+    <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
                 <th class="col-span-2">Name</th>
@@ -14,14 +14,12 @@
                     <td class="w-50">{{attribute}}</td>
                     <td class="W-25">{{value}}</td>
                     <td class="text-center">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a type="button" (click)="openModal(expensesallowmodal)"><img
-                                        src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
-                            </div>
-                           
+                         <!--Update-->
+                         <div>
+                            <a type="button" (click)="openModal(expensesallowmodal)"><img
+                                    src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
                         </div>
+                    
                     </td>
                 </tr>
 
@@ -29,6 +27,8 @@
         </table>
     </div>
 </div>
+
+
 
 <ng-template #expensesallowmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>

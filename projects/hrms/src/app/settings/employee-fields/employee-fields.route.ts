@@ -1,8 +1,5 @@
 import { Route, } from '@angular/router';
-import { ShitsComponent } from './shits/shits.component';
 import { ExpensesConfigurationComponent } from './expenses-configuration/expenses-configuration.component';
-import { ManagePoliciesComponent } from './manage-policies/manage-policies/manage-policies.component';
-import { ManageHolidaysComponent } from './manage-holidays/manage-holidays/manage-holidays.component';
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal/salutation', pathMatch: 'full' },
@@ -45,25 +42,25 @@ export default [
         ]
     },
     {
-        path: 'expenes-configuartion',
+        path: 'expenes',
         children: [
-            { path: '', redirectTo: 'expenes-configuartion', pathMatch: 'full' },
-            { path: 'expenes-configuartion', component: ExpensesConfigurationComponent },
-            { path: 'expenes-allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent) }
+            { path: '', redirectTo: 'configuartion', pathMatch: 'full' },
+            { path: 'configuartion', loadComponent: () => import('./expenses-configuration/expenses-configuration.component').then((m) => m.ExpensesConfigurationComponent) },
+            { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent) }
         ]
     },
-    { path: 'addshits', loadComponent: () => import('./shits/add-shits/add-shits.component').then((m) => m.AddShitsComponent) },
+    { path: 'addshifts', loadComponent: () => import('./shits/add-shits/add-shits.component').then((m) => m.AddShitsComponent) },
     {
-        path: 'manage-shifts', component: ShitsComponent,
+        path: 'manage-shifts',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
-            { path: 'published-shits', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
+            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
         ]
     },
     { path: 'addpolices', loadComponent: () => import('./manage-policies/add-policies/add-policies.component').then((m) => m.AddPoliciesComponent) },
     {
-        path: 'manage-policies', component: ManagePoliciesComponent,
+        path: 'manage-policies',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./manage-policies/published-policies/published-policies.component').then((m) => m.PublishedPoliciesComponent) },
@@ -73,7 +70,7 @@ export default [
 
     { path: 'addholidays', loadComponent: () => import('./manage-holidays/add-holidays/add-holidays.component').then((m) => m.AddHolidaysComponent) },
     {
-        path: 'manage-holidays', component: ManageHolidaysComponent,
+        path: 'manage-holidays',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./manage-holidays/published-holidays/published-holidays.component').then((m) => m.PublishedHolidaysComponent) },

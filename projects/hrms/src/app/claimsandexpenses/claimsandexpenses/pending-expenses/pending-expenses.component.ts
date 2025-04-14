@@ -7,7 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../../../services/http.service';
 
 import { CommonModule } from '@angular/common';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";

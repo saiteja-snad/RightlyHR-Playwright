@@ -8,7 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import {  NgxDocViewerModule } from 'ngx-doc-viewer';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 

@@ -255,21 +255,17 @@
           </span>
           <div>
             <small class="error-msg"
-              *ngIf="recallreason.get('recallReason')?.invalid&& recallreason.get('recallReason')?.touched">
-              Reason is required
-            </small>
-          </div>
-          <div>
-            <small class="error-msg"
-              *ngIf="recallreason.get('recallReason')?.errors?.['maxlength'] && recallreason.get('recallReason')?.touched">
-              Maximum 250 characters allowed
-            </small>
-          </div>
-          <div>
-            <small class="error-msg"
-              *ngIf="recallreason.get('recallReason')?.errors?.['pattern'] && recallreason.get('recallReason')?.touched">
-              Leading spaces are not allowed
-            </small>
+            *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
+            <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['required']">
+              Recall Reason is required
+            </ng-container>
+            <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['maxlength']">
+              Maximum 400 characters allowed
+            </ng-container>
+            <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['pattern']">
+              Reason for Recall should not start with a space.
+            </ng-container>
+          </small>
           </div>
         </div>
       </div>
@@ -331,24 +327,18 @@
               </span>
               <div>
                 <small class="error-msg"
-                  *ngIf="earlyReleivingform.get('earlyReleivingReason')?.invalid && recallreason.get('earlyReleivingReason')?.touched">
-                  Reason for early relieving is required
-                </small>
-                <div>
-                  <small class="error-msg"
-                    *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength'] && earlyReleivingform.get('earlyReleivingReason')?.touched">
-                    Maximum 250 characters allowed
-                  </small>
-                </div>
-                <div>
-                  <small class="error-msg"
-                    *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern'] && earlyReleivingform.get('earlyReleivingReason')?.touched">
-                    Leading spaces are not allowed
-                  </small>
-                </div>
-
+                *ngIf="earlyReleivingform.get('earlyReleivingReason')?.touched && earlyReleivingform.get('earlyReleivingReason')?.invalid">
+                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['required']">
+                  Reason for Early Relieving is required
+                </ng-container>
+                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength']">
+                  Maximum 400 characters allowed
+                </ng-container>
+                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern']">
+                  Reason for Early Relieving should not start with a space.
+                </ng-container>
+              </small>
               </div>
-
             </div>
           </div>
         </div>

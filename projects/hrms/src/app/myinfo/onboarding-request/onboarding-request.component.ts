@@ -7,7 +7,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { IJob } from '../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import { SearchfilterPipe } from "../../pipes/searchfilter.pipe";
+import { SearchfilterPipe } from "../../Pipes/searchfilter.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({

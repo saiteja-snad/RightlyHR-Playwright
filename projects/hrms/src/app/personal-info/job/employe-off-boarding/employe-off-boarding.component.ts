@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { IStatus } from '../../../Interfaces/personal-modal';
 import { IJobdetails } from '../../../admin/active-employees/active-model';
 import { Select } from 'primeng/select';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-employe-off-boarding',

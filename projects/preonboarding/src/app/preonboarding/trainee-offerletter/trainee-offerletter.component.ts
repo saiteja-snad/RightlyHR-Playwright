@@ -8,7 +8,7 @@ import moment from 'moment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from "../../../../../hrms/src/app/pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../../hrms/src/app/Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { PopupService } from '../../common-services/popup.service';
 

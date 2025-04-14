@@ -1,0 +1,154 @@
+.dash {
+    background-color: #f9fbff;
+    padding: 30px 20px;
+}
+
+.settings-cards {
+    border-radius: 15px;
+    padding: 20px 30px;
+    background-color: #ffff;
+    box-shadow: none;
+    border: 1px solid rgb(231, 227, 227);
+    min-height: 80vh;
+    margin-left: 10px;
+    border-radius: 0px 15px 15px 15px;
+}
+
+.settings-heading {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+    text-align: left;
+    color: #222b45;
+}
+
+.form-select {
+    border-radius: 5px;
+    height: 34px;
+    width: 14%;
+}
+
+.dropdown-menu {
+    overflow-y: auto;
+    max-height: 180px;
+    width: 350px;
+    background: #fff;
+}
+
+.dropdown-item {
+    font-size: 12px;
+}
+
+.dropdown-item:active {
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.bold-label {
+    font-weight: bold;
+}
+
+.heading {
+    font-size: 18px;
+}
+
+.table-scroll {
+    overflow-y: scroll;
+    height: max-content;
+    max-height: 50.4vh;
+}
+
+@media (max-width:800px) {
+    .table-scroll {
+        overflow-y: scroll;
+        overflow-x: scroll;
+        height: max-content;
+        max-height: 50.4vh;
+    }
+}
+
+thead {
+    border-radius: 10px;
+    background-color: #f4f8ff;
+    padding: 20px;
+}
+
+th {
+    padding: 15px;
+    color: #8a9099;
+    text-align: center;
+    font-size: 14px;
+}
+
+td {
+    padding: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: normal;
+    color: #3f434a;
+    text-align: center;
+}
+
+.center-button {
+    text-align: center;
+}
+
+.center-button button {
+    width: 200px;
+}
+
+.dropdown-menu {
+    display: none; /* Initially hide the dropdown */
+}
+
+.dropdown-menu.show {
+    display: block; /* Show the dropdown when the class 'show' is applied */
+}
+
+/* Apply cursor pointer to clear button */
+::ng-deep .form-select::-webkit-search-cancel-button {
+    cursor: pointer;
+}
+
+.custom-emp-select{
+    width:350px;
+    cursor: pointer;
+}
+
+
+
+.input-field[contenteditable="false"] {
+    background-color: #eee; /* gray background */
+    color: #999; /* gray text */   
+  }
+
+  .inpuut-field[contenteditable="true"] {
+    background-color: #fff; /* white background */  
+  }
+
+  .bgfade{
+    background-color: #1b1b1b82;
+  }
+
+  .bi-check-circle-fill{
+    color: #304ffd;
+    font-size: 3rem;
+  }
+
+  .bi-exclamation-circle{
+    color: #ed0e0e;
+  font-size: 3rem;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+}
+
+.dropdown-item:hover {
+    cursor: pointer;
+}
+.no-data-found{
+    text-align: center;
+}

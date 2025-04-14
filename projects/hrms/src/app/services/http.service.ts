@@ -10,17 +10,29 @@ import { ApprovalStatusCount } from '../Interfaces/timoff-model';
 })
 export class HttpService {
   communicationService!: BehaviorSubject<any>;
-  tirggerCountSignal = signal<{ compOff: boolean; wfh: boolean,employeeId:number }>({
+  tirggerCountSignal = signal<{
+    compOff: boolean;
+    wfh: boolean;
+    employeeId: number;
+  }>({
     compOff: false,
     wfh: false,
-    employeeId:0
+    employeeId: 0,
   });
-  tirggerPendingApprovalCountSignal = signal<{ compOff: boolean; wfh: boolean;permission:boolean ;separation:boolean,recall:boolean}>({
+  tirggerPendingApprovalCountSignal = signal<{
+    compOff: boolean;
+    wfh: boolean;
+    permission: boolean;
+    separation: boolean;
+    recall: boolean;
+    expenses:boolean;
+  }>({
     compOff: false,
     wfh: false,
-    permission:false,
-    separation:false,
-    recall:false
+    permission: false,
+    separation: false,
+    recall: false,
+    expenses: false,
   });
 
   constructor(private http: HttpClient) {
@@ -313,10 +325,23 @@ export class HttpService {
     );
   }
 
-  getAllPendingApprovalsCount(moduleId: number, employeeId: number): Observable<ApprovalStatusCount[]> {
+  getAllPendingApprovalsCount(
+    moduleId?: number,
+    employeeId?: number
+  ): Observable<ApprovalStatusCount[]> {
+    let params = new HttpParams();
+
+    if (moduleId !== undefined && moduleId !== null) {
+      params = params.set('moduleId', moduleId.toString());
+    }
+
+    if (employeeId !== undefined && employeeId !== null) {
+      params = params.set('EmployeeId', employeeId.toString());
+    }
+
     return this.http.get<ApprovalStatusCount[]>(
-      `${this.ApiUrl}PendingApproval/getApprovalStatusCounts?moduleId=${moduleId}&EmployeeId=${employeeId}`
+      `${this.ApiUrl}PendingApproval/getApprovalStatusCounts`,
+      { params }
     );
   }
-  
 }

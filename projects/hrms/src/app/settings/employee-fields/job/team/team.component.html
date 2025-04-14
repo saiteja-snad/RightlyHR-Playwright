@@ -51,13 +51,13 @@
         <label for="teamManagerId" class="form-label custom-label mb-2">
           {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
         </label>
-        <select class="form-control custom-input" formControlName="teamManagerId" id="teamManagerId"
-          (change)="onManagerChange($event)">
-          <option value="">Select Team Manager</option>
-          <option *ngFor="let manager of teamDetails" [value]="manager.employeeId">
-            {{manager.firstName}} {{manager.lastName}}
-          </option>
-        </select>
+
+        <div class="custom-p-select-content">
+          <p-select formControlName="teamManager" optionValue="teamManagerId" [options]="teamDetails" name="user"
+            id="user" optionLabel="teamManager" placeholder="Search Team Manager" class="w-100" [filter]="true"
+            filterBy="teamManager">
+          </p-select>
+        </div>
         <div *ngIf="AddForm.get('teamManagerId')?.touched && AddForm.get('teamManagerId')?.invalid">
           <small style="color: red; font-size: 13px;">
             {{ 'Team Manager is required' | translate }}
@@ -90,33 +90,33 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let team of teamdetailsdata">
-          <td>{{team.departmentName || 'N/A'}}</td>
-          <td>{{team.subdepartmentName || 'N/A'}}</td>
-          <td>{{team.teamManagerName || 'N/A'}}</td>
-          <td class="text-center">
-            <div class="dropdown">
-              <span type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical"></i>
-              </span>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li (click)="openupdateDialog(team)">
-                  <a class="dropdown-item">
-                    <i class="bi bi-pencil me-2"></i>Update
-                  </a>
-                </li>
-                <li (click)="opendelete(team)">
-                  <a class="dropdown-item">
-                    <i class="bi bi-trash3 me-2"></i>Delete
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="teamdetailsdata.length === 0">
-          <td colspan="4" class="text-center py-3">No teams found. Please add a team.</td>
-        </tr>
+        <ng-container>
+          <tr *ngFor="let teams of teamdetailsdata">
+            <td>{{teams.reportingmanagerId}}</td>
+            <td>{{teams.subdepartmentName}}</td>
+            <td>{{teams. departmentId}}</td>
+            <td class="text-center">
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li (click)="openupdateDialog(teams)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-pencil me-2"></i>Update
+                    </a>
+                  </li>
+                  <li (click)="opendelete(teams)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-trash3 me-2"></i>Delete
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+
       </tbody>
     </table>
   </div>
@@ -156,17 +156,35 @@
         </div>
       </div>
 
-      <!-- Team Name field -->
-      <div class="mb-4">
-        <label for="updateTeamName" class="form-label custom-label mb-2">
-          {{'Team Name' | translate}} <span class="error-msg">*</span>
-        </label>
-        <input type="text" class="form-control custom-input" formControlName="teamName" id="updateTeamName"
-          placeholder="Please Enter Team Name" (keypress)="blockNonAlphabets($event)">
-        <div *ngIf="updateForm.get('teamName')?.invalid && updateForm.get('teamName')?.touched" class="error-msg">
-          {{'Team name is required'|translate}}
+      <!--teamName-->
+      <div class="custom-main-popup-content p-5">
+        <div class="mb-4">
+          <label for="UpdatedTeamName" class="form-label custom-label mb-2">
+            {{'team Name' | translate}} <span class="error-msg">*</span>
+          </label>
+          <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
+            placeholder="Please Enter TeamName" (keypress)="blockNonAlphabets($event)">
+          <div *ngIf="updateForm.get('UpdatedTeamName')?.invalid && updateForm.get('UpdatedTeamName')?.touched"
+            class="error-msg">
+            {{'Team name is required'|translate}}.
+          </div>
         </div>
-      </div>
+
+        <!--teamManager-->
+        <div class="mb-4">
+          <label for="updatedteamManager" class="form-label custom-label mb-2">
+            {{ 'teamManager' | translate }} <span class="error-msg">*</span>
+          </label>
+
+          <div class="custom-p-select-content">
+
+            <div class="custom-p-select-content">
+              <p-select formControlName="updatedteamManager" optionValue="teamManagerId" [options]="teamDetails"
+                name="user" id="user" optionLabel="updatedteamManager" placeholder="Search Team Manager" class="w-100"
+                [filter]="true" filterBy="updatedteamManager">
+              </p-select>
+            </div>
+          </div>
 
       <!-- Team Manager dropdown -->
       <div class="mb-4">

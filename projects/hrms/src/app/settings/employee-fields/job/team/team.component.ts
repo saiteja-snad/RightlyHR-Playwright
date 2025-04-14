@@ -16,6 +16,7 @@ import { SelectModule } from 'primeng/select';
   styleUrl: './team.component.scss'
 })
 export class TeamComponent implements OnInit, OnDestroy {
+  [x: string]: any;
   departmentdetails = [] as any;
   teamDetails = [] as any[];
   subscription!: Subscription;
@@ -33,262 +34,92 @@ export class TeamComponent implements OnInit, OnDestroy {
   AddForm!: FormGroup;
   updateForm!: FormGroup;
   sortdeaprtmentName: any;
-
+  selectedEmployee = {} as any;
   sortedDesignations: any[] = [];
   selectedId: boolean | undefined;
-
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
-
-  }
-  onDepartmentChange(event: Event) {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedValue = selectElement.value;
-    console.log('Selected Department value (raw):', selectedValue);
-
-    // Convert to number if it's a numeric string and not "null" or empty
-    let departmentId: string | number | null = selectedValue;
-
-    if (selectedValue === "null" || selectedValue === "") {
-      departmentId = null;
-      console.log('Department value is null or empty, setting to null');
-    } else if (!isNaN(Number(selectedValue))) {
-      departmentId = Number(selectedValue);
-      console.log('Department value is numeric, converted to Number:', departmentId);
-    } else {
-      console.log('Department value is non-numeric string:', departmentId);
+  
+ constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  
     }
-
-    console.log('Selected Department value (processed):', departmentId);
-
-    // Set the value directly to ensure it's properly recognized
-    this.AddForm.get('departmentId')?.setValue(departmentId);
-    this.AddForm.get('departmentId')?.markAsDirty();
-    this.AddForm.get('departmentId')?.updateValueAndValidity();
-
-    console.log('Form after department change:', this.AddForm.value);
-    console.log('Department valid:', this.AddForm.get('departmentId')?.valid);
-  }
-  onManagerChange(event: Event) {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedValue = selectElement.value;
-    console.log('Selected Team Manager value (raw):', selectedValue);
-
-    // Convert to number if it's a numeric string and not "null" or empty
-    let managerId: string | number = selectedValue;
-    if (selectedValue !== "null" && selectedValue !== "" && !isNaN(Number(selectedValue))) {
-      managerId = Number(selectedValue);
+    onDepartmentChange(event: Event) {
+      const selectedValue = (event.target as HTMLSelectElement).value;
+      console.log('Selected Department:', selectedValue);
     }
-
-    console.log('Selected Team Manager value (processed):', managerId);
-
-    // Set the value directly to ensure it's properly recognized
-    this.AddForm.get('teamManagerId')?.setValue(managerId);
-    this.AddForm.get('teamManagerId')?.markAsDirty();
-    this.AddForm.get('teamManagerId')?.updateValueAndValidity();
-
-    console.log('Form after manager change:', this.AddForm.value);
-    console.log('Team Manager valid:', this.AddForm.get('teamManagerId')?.valid);
-  }
-  ngOnInit(): void {
-    console.log('Team Component initialized');
-    this.loadInitialData();
-    this.initializeForms();
-  }
-
-  private initializeForms(): void {
-    this.AddForm = this.fb.group({
-      departmentId: ['', Validators.required],
-      teamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      teamManagerId: ['', Validators.required]
-    });
-
-    this.updateForm = this.fb.group({
-      departmentId: ['', Validators.required],
-      teamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      teamManagerId: ['', Validators.required]
-    });
-    console.log('Forms initialized');
-
-    // Add form value change listener for debugging
-    this.AddForm.valueChanges.subscribe(values => {
-      console.log('Form values changed:', values);
-    });
-  }
-
-  loadInitialData(): void {
-    console.log('Starting to load initial data');
-
-    // Load team managers first
-    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-      next: (data: any) => {
-        console.log('Team managers API response:', data);
-
-        // Simplify manager data
-        this.teamDetails = data.map((employee: any) => {
-          return {
-            employeeId: employee.employeeId || employee.id || null,
-            firstName: employee.firstName || '',
-            lastName: employee.lastName || ''
-          };
-        });
-
-        this.teamManagerDetails = this.teamDetails;
-        console.log('Team managers loaded:', this.teamDetails.length);
-
-        if (this.teamDetails.length > 0) {
-          console.log('Sample team manager data:', this.teamDetails[0]);
-        }
-
-        // After managers are loaded, load departments
-        this.getDepartments();
-
-        // Then load team data
-        this.getTeamAndDepartments();
-      },
-      error: (error: any) => {
-        console.error('Error fetching team managers:', error);
-        this.conformationPopup.openErrorModal('Failed to load team managers');
-
-        // Still try to load departments and teams even if managers fail
-        this.getDepartments();
-        this.getTeamAndDepartments();
-      }
-    });
-  }
-
-  // Get Departments
-  getDepartments() {
-    console.log('Fetching departments from: Department');
-    this.subscription = this.http.getData('Department').subscribe({
-      next: (data: any) => {
-        console.log('Raw Departments API response:', data);
-
-        if (data && data.length > 0) {
-          // Check the first item to understand the structure
-          const sample = data[0];
-          console.log('Department sample raw structure:', JSON.stringify(sample));
-        }
-
-        // Map departments using the 'sno' field as departmentId
-        this.deptdetails = data.map((dept: any) => {
-          // For debugging
-          console.log('Processing department:', dept);
-
-          // Use sno field as the departmentId
-          let id = null;
-          if (dept.sno !== undefined) {
-            // Use sno as the primary ID
-            id = dept.sno;
-            console.log('Using sno as departmentId:', id);
-          } else if (dept.departmentId !== undefined) {
-            id = dept.departmentId;
-          } else if (dept.id !== undefined) {
-            id = dept.id;
-          }
-
-          // Try to find department name from different possible fields
-          const name = dept.departmentName || dept.name || dept.Department || 'Unknown Department';
-
-          const mappedDept = {
-            departmentId: id,
-            departmentName: name
-          };
-
-          console.log('Mapped department:', mappedDept);
-          return mappedDept;
-        });
-
-        this.departments = this.deptdetails;
-        console.log('Departments loaded:', this.deptdetails.length);
-
-        if (this.deptdetails.length > 0) {
-          console.log('Sample department data after mapping:', this.deptdetails[0]);
-          console.log('departmentId type:', typeof this.deptdetails[0].departmentId);
-        }
-
-        this.sortDepartments();
-      },
-      error: (error: any) => {
-        console.error('Error fetching departments:', error);
-        this.conformationPopup.openErrorModal('Failed to load departments');
-      }
-    });
-  }
-
-  // Get Team and Departments for table
-  getTeamAndDepartments() {
-    console.log('Fetching team and departments data from: Subdepartments/Getalldept');
-    this.subscription = this.http.getDatabyid("Subdepartments/Getalldept").subscribe({
-      next: (data: any) => {
-        console.log('Team and departments API response:', data);
-
-        // Map the data to include manager names
-        this.teamdetailsdata = data.map((team: any) => {
-          // Find manager name if reportingmanagerId exists
-          let managerName = 'N/A';
-          if (team.reportingmanagerId) {
-            const manager = this.teamDetails.find(m => m.employeeId === team.reportingmanagerId);
-            if (manager) {
-              managerName = `${manager.firstName} ${manager.lastName}`;
-            }
-          }
-
-          return {
-            ...team,
-            teamManagerName: managerName
-          };
-        });
-
-        console.log('Team and departments loaded with manager names:', this.teamdetailsdata.length);
-        if (this.teamdetailsdata.length > 0) {
-          console.log('Sample team and department data with manager:', this.teamdetailsdata[0]);
-        }
-      },
-      error: (error: any) => {
-        console.error('Error fetching team and departments:', error);
-        this.conformationPopup.openErrorModal('Failed to load team and department data');
-      }
-    });
-  }
-
-  // Sort departments alphabetically
-  sortDepartments() {
-    if (!this.deptdetails || this.deptdetails.length === 0) {
-      console.warn('Cannot sort departments: Empty or invalid department data');
-      return;
-    }
-
-    try {
-      this.deptdetails = this.deptdetails.sort((a, b) => {
-        const nameA = a.departmentName.toLowerCase();
-        const nameB = b.departmentName.toLowerCase();
-        return nameA.localeCompare(nameB);
+    ngOnInit(): void {
+      this.AddForm = this.fb.group({
+        DepartmentName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+        TeamName: ['', Validators.required],
+        teamManager:['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
       });
-      console.log('Departments sorted successfully');
-    } catch (error) {
-      console.error('Error sorting departments:', error);
+  
+      this.updateForm = this.fb.group({
+        UpdatedTeamName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+        updatedDepartmentName: ['', Validators.required],
+        updatedteamManager:['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      });
+      this.getTeam();
+      this. getDepartmentName()
     }
+    // alphabet allowed only
+    blockNonAlphabets(event: KeyboardEvent): void {
+      const inputChar = String.fromCharCode(event.keyCode);
+      const char = String.fromCharCode(event.keyCode);
+      // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
+      const pattern = /^[a-zA-Z ]$/;
+      const input = (event.target as HTMLInputElement).value;
+      if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
+        event.preventDefault();
+      }
+    }
+    getDepartmentName() {
+      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
+          next: (data: any) => {
+            console.log(data);
+            alert("hello");
+          this.deptdetails= data as [];
+            this.sortdeaprtmentName();
+            console.log(this.deptdetails)
+          },
+          error: (reason: any) => {
+            console.log(reason);
+            alert("Insertion of data is failed")
+          }
+        });
+    }
+
+openDialog() {
+      this.modalService.open(this.addpopup, {
+        backdrop: 'static',
+        centered: true
+      });
+    }
+    getTeam() {
+      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
+        next: (data: any) => {
+          console.log(data);
+          alert("hello");
+          this.teamdetails= data as [];
+          this.sortdeaprtmentName();
+          console.log(this.teamdetails)
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          alert("Insertion of data is failed")
+        }
+      });
   }
 
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+  sortdepartments() {
+    this.deptdetails = this.deptdetails.sort((a, b) => {
+      const nameA = a.departmentName.toLowerCase();
+      const nameB = b.departmentName.toLowerCase();
 
-  openDialog() {
-    this.resetForm();
-    this.modalService.open(this.addpopup, {
-      backdrop: 'static',
-      centered: true
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      return 0;
     });
   }
+
 
   getTable() {
     this.subscription = this.http.getDatabyid("Subdepartments/Getalldept").subscribe({
@@ -525,13 +356,19 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.updateDepartmentDetails = teams;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
-  onDelete(modal: any, subdepartmentId: number) {
-    console.log('Deleting team with subdepartmentId:', subdepartmentId);
+  onDelete(modal: any) {
+    const deleteRequest = {
+      isdeleted: 'void',
 
-    // Using getData instead of postdata as per Swagger documentation
-    this.subscription = this.http.getData(`Subdepartments/deletebyid/${subdepartmentId}`).subscribe({
-      next: (response) => {
-        console.log('Team deleted successfully, response:', response);
+      subdepartmentId: 0,
+      subdepartmentName: "",
+      departmentId: 0,
+      reportingmanagerId: 0,
+      "isDeleted": true
+    }
+
+    this.subscription = this.http.postdata("Subdepartments/deletebyid/{SubdepartmentId}", this.deleteRequest).subscribe({
+      next: () => {
         modal.close();
         this.getTeamAndDepartments();
         this.conformationPopup.openSuccessModal('Team deleted successfully');
@@ -542,7 +379,6 @@ export class TeamComponent implements OnInit, OnDestroy {
       }
     });
   }
-
   closeDelete(modal: any) {
     modal.dismiss();
   };

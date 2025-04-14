@@ -36,7 +36,9 @@ export class MyinfoJobTabsComponent implements OnInit {
 
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
-      return this.rbac.allowedToAccess(permissionString);
+      const value = this.rbac.allowedToAccess(permissionString);
+      console.log(value);
+      return value;
     });
   }
 }

@@ -142,6 +142,13 @@ export class CompOffComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.spinnerLoader = false;
+          if(err.error.message.toLowerCase()=='you already applied to same category for same day'){
+              this.sharedModalService.openErrorModal('Same date range already exists')
+        }else{
+          this.sharedModalService.openErrorModal( err.error.message)
+        }
+       
+
         },
         complete: () => {
           this.addCompOffForm.reset();

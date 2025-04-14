@@ -163,7 +163,8 @@
             {{'team Name' | translate}} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
-            placeholder="Please Enter TeamName" (keypress)="blockNonAlphabets($event)">
+            placeholder="Please Enter TeamName" 
+            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" >
           <div *ngIf="updateForm.get('UpdatedTeamName')?.invalid && updateForm.get('UpdatedTeamName')?.touched"
             class="error-msg">
             {{'Team name is required'|translate}}.

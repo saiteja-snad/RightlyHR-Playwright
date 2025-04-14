@@ -2,99 +2,71 @@
     <!--Input search-->
     <div class="input-group custom-search mb-4">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username" [(ngModel)]="searchTerm"  
-        (ngModelChange)="getexpensesheaderbyemployeeid()"
-            aria-describedby="basic-addon1">
+        <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
+            [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
-    <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Expense Title</th>
-                    <th>Expense Date</th>
-                    <th>Total Amount</th>
-                    <th>Status</th>
-                    <th class="text-center">Actions</th>
-
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let exp of expenesEmplyeedata | async">
-                    <td>{{ exp.expenses_Title }}</td>
-                    <td>{{ exp.applied_date | dateformat }}</td>
-                    <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-                    <td> <span class="me-2">●</span> {{ exp.status }}
-                    </td>
-
-                    <td class="text-center">
-                        <div class="dropdown">
-                            <a data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                <li><a class="dropdown-item"
-                                        (click)="openModal(updateModal);viewItem(exp.expenses_ID)"><i
-                                            class="bi bi-pencil me-2"></i>Update</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-
-<ng-template #viewDetailsModal let-modal>
-    <div class="custom-main-popup-container">
-        <div class="d-flex justify-content-between popup-header-border p-4">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">Expenses Details</p>
+    <ng-container *ngIf="(expenesEmplyeedata | async) === null; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="loader-placeholder-content text-center">
+                <div>
+                    <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
+                </div>
             </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
-        </div>
-        <div class="custom-main-popup-content p-4">
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
 
-            <div class="custom-table-content">
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                            <th>Expense Type</th>
-                            <th>Expense Date</th>
-                            <th>Total Amount</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+    <ng-template #maincontent>
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let item of expenseheaderiteams">
-                            <td>{{ item.expenses_Title }}</td>
-                            <td>{{ item.applied_date | dateformat }}</td>
-                            <td>{{ item.expenses_Title }}</td>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Expense Title</th>
+                        <th>Expense Date</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
 
-                            <td>
-                                <div class="row">
-                                    <div class="col d-flex align-items-center">
-                                        <a type="button" class="me-2 dowload-text" (click)="onSelectDownload(item)">
-                                            <i class="bi bi-download me-2"></i>Download
-                                        </a>
-                                        <a type="button" class="view-text">
-                                            <i class="bi bi-paperclip"></i>View
-                                        </a>
-                                    </div>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
+                        <tr *ngFor="let exp of expenesEmplyeedata | async">
+                            <td>{{ exp.expenses_Title }}</td>
+                            <td>{{ exp.applied_date | dateformat }}</td>
+                            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+                            <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)"><i
+                                                    class="bi bi-pencil me-2"></i>Update</a></li>
+                                    </ul>
                                 </div>
                             </td>
                         </tr>
-
-                    </tbody>
-                </table>
-            </div>
+                    </ng-container>
+                    <!-- No Data Found Template -->
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td>
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
         </div>
-    </div>
-</ng-template>
+    </ng-template>
+</div>
+
+
 
 
 <ng-template #updateModal let-modal>
@@ -151,8 +123,8 @@
                                 </div>
                             </div>
                             <!-- Add New Expense Button -->
-                            <div class="col-md-4 mb-3 mt-5">
-                                <button type="button" class="custom-btn btn-primary" (click)="addExpenseItem()">
+                            <div class="col-md-4 mb-3 ">
+                                <button type="button" class="custom-btn btn-primary mt-4" (click)="addExpenseItem()">
                                     <i class="bi bi-plus me-2"></i> Add New Expense
                                 </button>
                             </div>
@@ -192,12 +164,11 @@
                                             placeholder="Please enter expense item" />
                                         <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
                                             class="error-msg">
-                                            <div class="error-msg"
-                                                *ngIf="item.get('item_Name')?.errors?.['required']">Expense
+                                            <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
+                                                Expense
                                                 item
                                                 is required</div>
-                                            <div class="error-msg"
-                                                *ngIf="item.get('item_Name')?.errors?.['maxlength']">
+                                            <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                                 Expense item must be less than 50 characters
                                             </div>
                                         </div>
@@ -300,8 +271,7 @@
                                         <input type="file" class="form-control custom-input" accept=".pdf, image/*"
                                             (change)="fileupload($event, i)" />
                                         <div class="error-msg"
-                                            *ngIf="item.get('attachment_url')?.invalid && item.get('attachment_url')?.touched"
-                                            >
+                                            *ngIf="item.get('attachment_url')?.invalid && item.get('attachment_url')?.touched">
                                             Please choose a file
                                         </div>
                                         <div class="d-flex gap-3 mt-3">
@@ -323,22 +293,26 @@
                             </div>
                         </div>
                         <div class=" d-flex justify-content-end gap-3 p-3" *ngIf="expenseItems.length > 0">
-                            <button type="button" class="custom-btn btn-secondary" [disabled]="newExpenseForm.invalid || saveasDraftloder"
-                                (click)="saveasDraft(newExpenseForm)"> 
+                            <button type="button" class="custom-btn btn-secondary"
+                                [disabled]="newExpenseForm.invalid || saveasDraftloder"
+                                (click)="saveasDraft(newExpenseForm)">
                                 @if (saveasDraftloder) {
-                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                    <span>{{'Loading' | translate}}...</span>
-                                    } @else {
-                                    <span>{{'Save as draft'| translate}}</span>
-                                    }
+                                <span class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{'Loading' | translate}}...</span>
+                                } @else {
+                                <span>{{'Save as draft'| translate}}</span>
+                                }
                             </button>
-                            <button type="submit" class="custom-btn btn-primary" [disabled]="newExpenseForm.invalid || spinnerLoader">
+                            <button type="submit" class="custom-btn btn-primary"
+                                [disabled]="newExpenseForm.invalid || spinnerLoader">
                                 @if (spinnerLoader) {
-                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                    <span>{{'Loading' | translate}}...</span>
-                                    } @else {
-                                    <span>{{'Submit'| translate}}</span>
-                                    }
+                                <span class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{'Loading' | translate}}...</span>
+                                } @else {
+                                <span>{{'Submit'| translate}}</span>
+                                }
                             </button>
                         </div>
                     </form>

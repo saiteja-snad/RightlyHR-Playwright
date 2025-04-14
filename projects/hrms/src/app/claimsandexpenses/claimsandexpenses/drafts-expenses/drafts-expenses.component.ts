@@ -13,10 +13,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Select } from 'primeng/select';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { TranslateModule } from '@ngx-translate/core';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe,NgxDocViewerModule,TranslateModule, ReactiveFormsModule,FormsModule, Select],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, Select, NoDataFoundComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe]

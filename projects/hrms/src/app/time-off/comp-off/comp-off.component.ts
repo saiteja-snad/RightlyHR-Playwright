@@ -3,6 +3,7 @@ import { CompOffApprovalTabsComponent } from '../../shared/comp-off-approval-tab
 import { RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -45,6 +46,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
   duration!: any;
   wfhValidations = {} as IValidations;
   spinnerLoader = false;
+  alloweddates: string = '';
+
 
   constructor(
     private modalService: NgbModal,
@@ -62,11 +65,13 @@ export class CompOffComponent implements OnInit, OnDestroy {
     this.fullDayValue = JSON.parse(
       localStorage.getItem('filterFullDayData') || '{}'
     );
+    
 
     this.intializeCompOffForm();
     this.getWorkfromhomeCriteria();
     this.getEmployeeeHolidays();
     this.getEmployeeeWeekends();
+    this.handleAvailingChange()
   }
 
   openModal(content: any) {
@@ -75,7 +80,9 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   intializeCompOffForm() {
     this.addCompOffForm = this.fb.group({
-      workedDate: ['', Validators.required],
+      workedDate: ['', 
+        [Validators.required, this.onlyWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]
+      ],
       availing: ['', Validators.required],
       halfType: [''],
       reason: ['', Validators.required],
@@ -127,10 +134,21 @@ export class CompOffComponent implements OnInit, OnDestroy {
             compOff: true,
           }));
 
+          setTimeout(() => {
+            window.location.reload();
+          }
+        , 2000);
           //write a signal to trigger the get all count in the side bar
         },
         error: (err: any) => {
           this.spinnerLoader = false;
+          if(err.error.message.toLowerCase()=='you already applied to same category for same day'){
+              this.sharedModalService.openErrorModal('Same date range already exists')
+        }else{
+          this.sharedModalService.openErrorModal( err.error.message)
+        }
+       
+
         },
         complete: () => {
           this.addCompOffForm.reset();
@@ -261,7 +279,39 @@ export class CompOffComponent implements OnInit, OnDestroy {
         },
       });
   }
+  // Custom Validator: Allow only weekends
+  onlyWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    if (control.value) {
+      const date = new Date(control.value);
+      const day = date.getDay();
+      // Check if the day is not Saturday (6) or Sunday (0)
+      if (day !== 0 && day !== 6) {
+        return { notWeekend: true };
+      }
+    }
+    return null;
+  }
 
+  // Custom Validator: Ensure date is after the date of joining
+  afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    if (control.value && this.empinfo.dateOfJoining) {
+      const selectedDate = new Date(control.value);
+      const joiningDate = new Date(this.empinfo.dateOfJoining);
+      // Check if the selected date is before the date of joining
+      if (selectedDate < joiningDate) {
+        return { beforeJoining: true };
+      }
+    }
+    return null;
+  }
+
+  formatDate(date: string | Date): string {
+    const d = new Date(date);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`;
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

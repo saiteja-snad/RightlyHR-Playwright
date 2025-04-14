@@ -8,11 +8,12 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe,CommonModule,NgxDocViewerModule,FormsModule],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
@@ -37,7 +38,7 @@ export class RejectedExpensesComponent {
 
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
   getexpensesheaderbyemployeeid(): void {

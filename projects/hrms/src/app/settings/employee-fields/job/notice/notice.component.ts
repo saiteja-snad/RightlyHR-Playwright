@@ -7,6 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { NoticeData } from './notice-module';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-notice',
@@ -29,27 +30,19 @@ export class NoticeComponent {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
   ) {}
 
   ngOnInit(): void {
     this.noticeperiodForm = this.fb.group({
-      noticeperiod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      noticeperiod: ['', [Validators.required]]
     });
     this.updateForm = this.fb.group({
       noticeperiod:  ['', Validators.required]
 
     });
     this.getNoticeperiod();
-  }
-
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const char = String.fromCharCode(event.keyCode);
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
   }
 
   getNoticeperiod() {

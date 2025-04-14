@@ -291,46 +291,43 @@
 </ng-template>
 
 <!-- commentspopup -->
+<!-- commentspopup -->
 <ng-template #commentspopup let-modal>
-  <div class="modal-body" ngbAutofocus>
+
+  <div class="custom-main-popup-container">
     <div class="d-flex justify-content-between popup-header-border p-4">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Comments</p>
+        <p class="popup-heading mb-0">Approver Comments</p>
       </div>
       <div>
-        <button
-          type="button"
-          class="btn-close"
-          aria-label="Close"
-          (click)="modal.dismiss('Cross click')"
-        ></button>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
 
-    <div class="custom-main-component-container">
-      <div class="custom-table-content mt-2">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Comments</th>
-              <th>Commented By</th>
-              <th>Date</th>
-              <th>Commented By ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let comment of approverComments">
-              <td>{{ comment.comments }}</td>
-              <td>{{ comment.addedName }}</td>
-              <td>{{ comment.addedDate | dateformat }}</td>
-              <td>{{ comment.addedByFusionEmpId }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="custom-table mt-2">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>Comments</th>
+            <th>Commented By</th>
+            <th>Date</th>
+            <th>Commented By ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let comment of approverComments">
+            <td>{{ comment.comments }}</td>
+            <td>{{ comment.addedName }}</td>
+            <td>{{ comment.addedDate | dateformat }}</td>
+            <td>{{ comment.addedByFusionEmpId }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
+
 </ng-template>
+
 
 
 <ng-template #viewDetailsModal let-modal>

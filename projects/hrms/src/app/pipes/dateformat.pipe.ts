@@ -1,11 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
 import { environment } from '../../environments/environment';
-
-
 @Pipe({
   name: 'dateformat'
 })
+
 export class DateformatPipe implements PipeTransform {
   private customsetup: any;
   private datePipe: DatePipe;
@@ -22,5 +21,4 @@ export class DateformatPipe implements PipeTransform {
     }
     return null;
   }
-
 }

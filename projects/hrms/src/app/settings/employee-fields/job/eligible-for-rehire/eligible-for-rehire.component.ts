@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-eligible-for-rehire',
@@ -24,33 +25,26 @@ export class EligibleForRehireComponent {
   selectedId: number | null = null;
   selectedDeleteeligibility: any = null;
   subscription!: Subscription;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations : FormValidationsService
+  ) {
 
   }
   ngOnInit(): void {
     this.EligibilityForm = this.fb.group({
-      Rehire: ['', [Validators.required], Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]
+      Rehire: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.updateForm = this.fb.group({
-      Rehire: ['', [Validators.required], Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]
+      Rehire: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
 
     this.getEligibility();
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    // if (!pattern.test(inputChar)) {
-    //   event.preventDefault(); // blocks numbers or symbols
-    // }
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+
   getEligibility() {
     this.http.getData('Eligibleforrehire').subscribe((data: any) => {
       this.EligibilityDetail = data;

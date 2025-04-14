@@ -55,6 +55,7 @@ export class PersonalinfoLayoutComponent implements OnInit,OnDestroy{
     });
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.empinfo);
+    console.log(this.empdata);
     this.initializeForm();
     this.initialzerevoke();
     this.getAllTeammembersList();
@@ -62,6 +63,8 @@ export class PersonalinfoLayoutComponent implements OnInit,OnDestroy{
     this.emppersonalinfo=JSON.parse(localStorage.getItem("personaldata") || '{}')
     this.getTraineeofferdetails();
     this.assignHeading();
+    
+    
   }
  
   emailForRequestDoc() {

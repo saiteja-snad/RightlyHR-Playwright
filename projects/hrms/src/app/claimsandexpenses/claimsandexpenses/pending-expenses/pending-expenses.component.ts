@@ -7,12 +7,14 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../../../services/http.service';
 
 import { CommonModule } from '@angular/common';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { FormsModule } from '@angular/forms';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule,DateformatPipe,NgxDocViewerModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })
@@ -25,14 +27,15 @@ export class PendingExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
+  searchTerm:any=''
   constructor( 
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
  
-  expenesEmplyeedata: IExpense[] = [];
+    expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   draftsCount: number = 0;
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+    this.getexpensesheaderbyemployeeid();
   }
 
 
@@ -43,30 +46,19 @@ export class PendingExpensesComponent {
 
 
 
-  getexpensesheaderbyemployeeid(_employeeId: number): void {
-    //params
-    const params = this.empinfo.employeeId;
 
+  getexpensesheaderbyemployeeid(): void {
+    const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Waiting for Approval&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata = data as IExpense[];
-          this.filterWaitingforApprovalExpenses();
+          this.expenesEmplyeedata.next(data) 
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
-
-  filterWaitingforApprovalExpenses() {
-    const draftExpenses = this.expenesEmplyeedata
-      .filter((expense) => expense.status === 'Waiting for Approval')
-      .reverse();
-    this.flitredWaitingforApprovalExpenses.next(draftExpenses);
-    this.draftsCount = draftExpenses.length;
-  }
-
-  
 
   viewItem(expid: number,) {
     console.log(expid);

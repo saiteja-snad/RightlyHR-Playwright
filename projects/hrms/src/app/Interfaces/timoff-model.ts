@@ -212,9 +212,96 @@ export interface ApprovalHeader {
   requestedBy: number;
 }
 
+
 export interface Module {
   id: number;
   moduleName: string;
   approvalflowRequired: boolean;
   categoryType: string;
+}
+
+
+export interface PermissionRequestResponse {
+  entity: PermissionRequest;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+}
+
+export interface PermissionRequest {
+  id: number;
+  raisedFor: number;
+  raisedForName: string;
+  fusionempId: string;
+  requestedBy: number;
+  requestedDate: string; // ISO string
+  createdDate: string;
+  type: string;
+  moduleId: number;
+  referenceTypeId: number;
+  duration: string; // Can be string or number depending on backend
+  status: string;
+  notes: string;
+  headerId: number;
+  regularizationApproverComments: any[]; // Define type if structured
+}
+
+
+export interface ApprovalStatusCount {
+  moduleId: number;
+  moduleName: string;
+  forYou: number;
+  forYourRole: number;
+  totalCount: number;
+}
+
+export interface ILeavePolicyData{
+  id:number
+  year :number
+  locationId :number
+  subLocationId :number
+  shiftId :number
+  categoryId :number
+  allowedDays :number
+  entityType :string
+  entityReferenceId:number
+  status :string
+  comments :string
+  addedBy :number
+  addedDate :Date
+  lastModifiedBy :number
+  lastModifiedDate :Date
+  }
+  export interface Igradeid{
+    gradeId: number;
+    gradeName: string;
+    jobGrade: string;
+    createdat: any;
+    updatedat: any;
+    isdeleted: string;
+    maxDays:number;
+    categoryId:number;
+    lpId:number
+}
+
+
+export interface ExpenseApprovalResponse {
+  entity: ExpenseEntity;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+}
+
+export interface ExpenseEntity {
+  expenses_ID: number;
+  applied_date: string;
+  expenses_Title: string;
+  status: string;
+  employeeId: number;
+  fusionEmpId: string;
+  employeeName: string;
+  totalExpenseAmount: number;
+  expenseType: string;
+  pendingheaderId: number;
+  expenseApproverComments: any[]; // Replace `any` with specific type if available
 }

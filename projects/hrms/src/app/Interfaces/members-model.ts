@@ -1,13 +1,17 @@
 export interface Ipersonal {
+empstatus: any;
 experienceType: string;
 employeeId: any;
 emailaddress: string,
+substatus : any;
+isCredentialExpired : any
 }
 export interface Iteammembers{
     [x: string]: any;
     firstName: any,
     lastName: any,
     middleName: any,
+    
     duration: any,
     jobRole: any,
     workEmail: any,

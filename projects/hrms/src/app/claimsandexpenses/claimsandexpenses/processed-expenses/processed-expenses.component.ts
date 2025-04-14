@@ -6,12 +6,14 @@ import { IExpense, IExpenseHeaders, INewExpense } from '../../../Interfaces/clai
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { FormsModule } from '@angular/forms';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-processed-expenses',
-  imports: [CommonModule, DateformatPipe,NgxDocViewerModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })
@@ -26,46 +28,29 @@ export class ProcessedExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   constructor(
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
- 
-  expenesEmplyeedata: IExpense[] = [];
+    searchTerm: any = ''
+    expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   draftsCount: number = 0;
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+    this.getexpensesheaderbyemployeeid();
   }
-
-
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
-
-
-
-
-  getexpensesheaderbyemployeeid(_employeeId: number): void {
-    //params
-    const params = this.empinfo.employeeId;
-
+  getexpensesheaderbyemployeeid(): void {
+    const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Processed&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata = data as IExpense[];
-          this.filterapprovedExpenses();
+          this.expenesEmplyeedata.next(data) 
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
 
-  filterapprovedExpenses() {
-    const draftExpenses = this.expenesEmplyeedata
-      .filter((expense) => expense.status === 'Processed')
-      .reverse();
-    this.flitredprocessed.next(draftExpenses);
-    this.draftsCount = draftExpenses.length;
-  }
-
-  
 
   viewItem(expid: number,) {
     console.log(expid);

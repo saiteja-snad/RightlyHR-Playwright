@@ -137,7 +137,7 @@ export class MyinfoDetailsComponent {
                 }
               },
               error: (reason: any) => {
-                console.log(reason);
+               // console.log(reason);
                 this.conformationPopup.openErrorModal('Basic Info update failed')
 
               },
@@ -154,14 +154,16 @@ export class MyinfoDetailsComponent {
       .DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl)
       .subscribe({
         next: (res: any) => {
-          console.log(res)
+        //  console.log(res)
           let blob = new Blob([res['body']], { type: 'image/png' });
           console.log(blob);
           let objectURL = URL.createObjectURL(blob);
           this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
           console.log(this.imageUrl);
         },
-        error: (reason:any) => console.log(reason),
+        error: (reason:any) =>{ 
+          // console.log(reason)
+        },
       });
   }
  
@@ -174,7 +176,9 @@ export class MyinfoDetailsComponent {
         this.empdata = data ;
         if(this.empdata.profileUrl) this.onSelectprofilePicDownload(this.empdata)
       },
-      error: reason => console.log(reason)
+      error: reason => {
+        //console.log(reason)
+      }
     });
   }
 }

@@ -6,7 +6,7 @@ import { of, Subscription } from 'rxjs';
 import { HttpService } from '../../http-services/http.service';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import moment from 'moment';
-import { DateFormatPipe } from "../../pipes/date-format.pipe";
+import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

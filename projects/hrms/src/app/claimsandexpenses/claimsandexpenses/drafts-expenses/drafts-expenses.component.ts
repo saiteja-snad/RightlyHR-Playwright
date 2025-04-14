@@ -2,20 +2,22 @@ import { Component, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IExpense, IExpensedatabyid, IExpenseHeader, IExpenses, Iexpensetype, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscribable, Subscription, switchMap } from 'rxjs';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule, DatePipe } from '@angular/common';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Select } from 'primeng/select';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { TranslateModule } from '@ngx-translate/core';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe,NgxDocViewerModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, Select, NoDataFoundComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe]
@@ -28,6 +30,7 @@ export class DraftsExpensesComponent {
   selectedExpenseType: any;
   selectedexpensesid: any;
   newExpenseForm!: FormGroup;
+  spinnerLoader=false
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
@@ -39,21 +42,22 @@ export class DraftsExpensesComponent {
   expenseheaderiteams: INewExpense[] = [];
   updataid!: number;
   matchingExpense: any;
+  saveasDraftloder=false
   @ViewChild('updateModal') private updateModal!: NgbModal;
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
-
-  expenesEmplyeedata: IExpense[] = [];
-  draftsCount: number = 0;
+    searchTerm: any = ''
+  expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
+ 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
     this.initiateForm();
     this.getExpensetype();
     this.getdatabyentriy();
-    this.getexpensesheaderbyemployeeid(this.empinfo.employeeid)
+    this.getexpensesheaderbyemployeeid()
     this.setDate()
 
     this.newExpenseForm.valueChanges.subscribe(() => {
@@ -244,6 +248,7 @@ export class DraftsExpensesComponent {
 
   submitepxenses(form: FormGroup): void {
     if (form.valid) {
+      this.spinnerLoader=true
       const payload = {
         expenses_ID: this.updataid,
         applied_date: new Date().toISOString(),
@@ -265,19 +270,14 @@ export class DraftsExpensesComponent {
         })),
      
       };
-
-
-
       const filepath = `/Expenses/${this.empinfo.employeeId}`;
-
       // Check if there is any file to upload
       if (this.Myexpense) {
         const fileUpload$ = this.http.uploadFileWithQuery(
           'FileSystem/uploadfiletodirectory',
           filepath,
           this.Myexpense
-        );
-
+        )
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path
@@ -287,20 +287,16 @@ export class DraftsExpensesComponent {
                 item.attachment_url = data.path;
               }
             });
-
             // Now post the updated payload
             return this.http.putData(`Expenses_Header/${this.updataid}`, payload);
           })
         ).subscribe({
-          next: (data: any) => {
-          
+          next: (data: any) => {     
               this.modalService.dismissAll()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal('Expenses submitted successfully');
-
-              this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
-              // Call the get function after posting
+              this.getexpensesheaderbyemployeeid();
             
           },
           error: (error: any) => {
@@ -312,14 +308,11 @@ export class DraftsExpensesComponent {
         // No file to upload, directly post the payload
         this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
           next: (data: any) => {
-          
               this.modalService.dismissAll()
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
-           
+              this.conformationPopup.openSuccessModal('Expenses submitted successfully');          
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
-            
+              this.getexpensesheaderbyemployeeid();      
           },
           error: (error: any) => {
             console.log("error" + error)
@@ -336,6 +329,7 @@ export class DraftsExpensesComponent {
 
   saveasDraft(form: FormGroup): void {
     if (form.valid) {
+      this.saveasDraftloder=true
       const payload = {
         expenses_ID: this.updataid,
         applied_date: new Date().toISOString(),
@@ -358,8 +352,6 @@ export class DraftsExpensesComponent {
      
       };
 
-
-
       const filepath = `/Expenses/${this.empinfo.employeeId}`;
 
       // Check if there is any file to upload
@@ -391,7 +383,7 @@ export class DraftsExpensesComponent {
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal('Expenses save as draft successfully');
 
-              this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+              this.getexpensesheaderbyemployeeid();
               // Call the get function after posting
             
           },
@@ -410,7 +402,7 @@ export class DraftsExpensesComponent {
            
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+              this.getexpensesheaderbyemployeeid();
             
           },
           error: (error: any) => {
@@ -458,31 +450,18 @@ export class DraftsExpensesComponent {
     }
   }
 
-
-  getexpensesheaderbyemployeeid(_employeeId: number): void {
-    //params
-    const params = this.empinfo.employeeId;
-
+  getexpensesheaderbyemployeeid(): void {
+    const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Draft&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata = data as IExpense[];
-          this.filterDraftsExpenses();
+          this.expenesEmplyeedata.next(data) 
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
-
-  filterDraftsExpenses() {
-    const draftExpenses = this.expenesEmplyeedata
-      .filter((expense) => expense.status === 'Draft')
-      .reverse();
-    this.flitredDrafts.next(draftExpenses);
-    this.draftsCount = draftExpenses.length;
-  }
-
-
 
   viewItem(expid: number,) {
     console.log(expid);
@@ -507,10 +486,7 @@ export class DraftsExpensesComponent {
     // Ensure that the expenses array is populated
     const expensesArray = this.expensetype
 
-    const expenseIdToFind = data.expenseitem[0].expenseId; // Assuming data.expenseitem is an array
-
-    console.log('Expenses Array:', expensesArray);
-    console.log('Expense ID to find:', expenseIdToFind);
+    const expenseIdToFind = data.expenseitem[0].expenseId; 
 
     this.matchingExpense = expensesArray.find(exp => exp.expenseId === expenseIdToFind);
 

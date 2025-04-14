@@ -3,44 +3,67 @@
     <div class="input-group custom-search mb-4">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
-            aria-describedby="basic-addon1">
+            [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
-    <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Expense Title</th>
-                    <th>Expense Date</th>
-                    <th>Total Amount</th>
-                    <th>Status</th>
-                    <th class="text-center">Actions</th>
+    <ng-container *ngIf="(expenesEmplyeedata | async) === null; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="loader-placeholder-content text-center">
+                <div>
+                    <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
+                </div>
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
 
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let exp of flitredDrafts | async">
-                    <td>{{ exp.expenses_Title }}</td>
-                    <td>{{ exp.applied_date | dateformat }}</td>
-                    <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-                    <td> <span class="me-2">●</span> {{ exp.status }}
-                    </td>
+    <ng-template #maincontent>
 
-                    <td class="text-center">
-                        <div class="dropdown">
-                            <a data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                <li><a class="dropdown-item"
-                                        (click)="openModal(updateModal);viewItem(exp.expenses_ID)"><i
-                                            class="bi bi-pencil me-2"></i>Update</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Expense Title</th>
+                        <th>Expense Date</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
+                        <tr *ngFor="let exp of expenesEmplyeedata | async">
+                            <td>{{ exp.expenses_Title }}</td>
+                            <td>{{ exp.applied_date | dateformat }}</td>
+                            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+                            <td> <span class="me-2">●</span> {{ exp.status }}
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)"><i
+                                                    class="bi bi-pencil me-2"></i>Update</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <!-- No Data Found Template -->
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td>
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
 </div>
 
 
@@ -176,9 +199,9 @@
                                         </div>
                                         <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
                                             class="error-msg">
-                                            <span class="error-msg"
+                                            <div class="error-msg"
                                                 *ngIf="item.get('item_expense')?.errors?.['required']"> Expense
-                                                Type is required</span>
+                                                Type is required</div>
 
                                         </div>
                                     </div>
@@ -191,14 +214,13 @@
                                             placeholder="Please enter expense item" />
                                         <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
                                             class="error-msg">
-                                            <span class="error-msg"
-                                                *ngIf="item.get('item_Name')?.errors?.['required']">Expense
+                                            <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
+                                                Expense
                                                 item
-                                                is required</span>
-                                            <span class="error-msg"
-                                                *ngIf="item.get('item_Name')?.errors?.['maxlength']">
+                                                is required</div>
+                                            <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                                 Expense item must be less than 50 characters
-                                            </span>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -224,22 +246,22 @@
                                         <div *ngIf="item.get('expense_Amount')?.invalid && item.get('expense_Amount')?.touched"
                                             class="error-msg">
 
-                                            <span class="error-msg"
+                                            <div class="error-msg"
                                                 *ngIf="item.get('expense_Amount')?.errors?.['required']">
                                                 Expense amount is required
-                                            </span>
-                                            <span class="error-msg"
+                                            </div>
+                                            <div class="error-msg"
                                                 *ngIf="item.get('expense_Amount')?.errors?.['pattern']">
                                                 Expense amount should allow two decimal places
-                                            </span>
-                                            <span class="error-msg"
+                                            </div>
+                                            <div class="error-msg"
                                                 *ngIf="item.get('expense_Amount')?.errors?.['noAlphabets']">
                                                 Alphabets are not allowed
-                                            </span>
-                                            <span class="error-msg"
+                                            </div>
+                                            <div class="error-msg"
                                                 *ngIf="item.get('expense_Amount')?.errors?.['nonZero']">
                                                 Expense amount cannot be zero
-                                            </span>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -253,20 +275,20 @@
                                         <div *ngIf="item.get('receipt_Number')?.invalid && 
                                         (item.get('receipt_Number')?.touched || 
                                          item.get('receipt_Number')?.dirty)" class="error-msg">
-                                            <span *ngIf="item.get('receipt_Number')?.hasError('required')">
+                                            <div *ngIf="item.get('receipt_Number')?.hasError('required')">
                                                 Receipt number is required
-                                            </span>
-                                            <span *ngIf="item.get('receipt_Number')?.hasError('maxlength')">
+                                            </div>
+                                            <div *ngIf="item.get('receipt_Number')?.hasError('maxlength')">
                                                 Receipt number should be allow up to 18 characters also
-                                            </span>
+                                            </div>
 
                                         </div>
                                         <div *ngIf="item.get('receipt_Number')?.hasError('duplicate') && 
                                     (item.get('receipt_Number')?.touched || 
                                      item.get('receipt_Number')?.dirty)" class="error-msg">
-                                            <span>
+                                            <div>
                                                 Receipt number should be unique
-                                            </span>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -298,8 +320,10 @@
                                                 class="text-danger">*</span></label>
                                         <input type="file" class="form-control custom-input" accept=".pdf, image/*"
                                             (change)="fileupload($event, i)" />
-
-
+                                        <div class="error-msg"
+                                            *ngIf="item.get('attachment_url')?.invalid && item.get('attachment_url')?.touched">
+                                            Please choose a file
+                                        </div>
                                         <div class="d-flex gap-3 mt-3">
                                             <a type="button" class="dowload-text"
                                                 (click)="onSelectDownload(item.get('attachment_url'))">
@@ -310,25 +334,36 @@
                                                 <i class="bi bi-paperclip"></i>View
                                             </a>
                                         </div>
-
-
                                     </div>
-
-
                                 </div>
-
                             </div>
-
                             <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
-
                                 <b>Total Amount : </b>{{
                                 totalexpensesamount > 0 ? totalexpensesamount : '' }}
                             </div>
                         </div>
                         <div class=" d-flex justify-content-end gap-3 p-3" *ngIf="expenseItems.length > 0">
-                            <button type="button" class="custom-btn btn-secondary" [disabled]="newExpenseForm.invalid"
-                                (click)="saveasDraft(newExpenseForm)">Save as draft</button>
-                            <button type="submit" class="custom-btn btn-primary">Submit</button>
+                            <button type="button" class="custom-btn btn-secondary"
+                                [disabled]="newExpenseForm.invalid || saveasDraftloder"
+                                (click)="saveasDraft(newExpenseForm)">
+                                @if (saveasDraftloder) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{'Loading' | translate}}...</span>
+                                } @else {
+                                <span>{{'Save as draft'| translate}}</span>
+                                }
+                            </button>
+                            <button type="submit" class="custom-btn btn-primary"
+                                [disabled]="newExpenseForm.invalid || spinnerLoader">
+                                @if (spinnerLoader) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{'Loading' | translate}}...</span>
+                                } @else {
+                                <span>{{'Submit'| translate}}</span>
+                                }
+                            </button>
                         </div>
                     </form>
                 </div>

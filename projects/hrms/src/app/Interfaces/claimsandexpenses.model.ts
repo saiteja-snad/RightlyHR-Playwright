@@ -73,6 +73,7 @@ attachment_url: any;
   }
   
   export interface IExpense {
+totalExpenseAmount: string|number;
     //get by expensesid
     expenses_ID: number;
     applied_date: string;
@@ -207,4 +208,56 @@ attachment_url: any;
     approverEmail: string;
     expenseitem: IExpenseItems[];
   }
+ export interface Event {
+    name: string;
+    date: string;
+    description: string;
+    iconUrl: string;
+    imageUrl: string;
+  }
   
+  
+export interface Entity {
+  data:any
+  entity:any
+  approvalHeader:IApprovalHeader,
+  Expensescomments:ExpenseApproverComment[]
+  module:IMasterModule
+  lastName: any
+  firstName: any
+  middleName : string
+  approvedBy:any
+
+}
+export interface IMasterModule{
+  id:number,
+  moduleName:string,
+  approvalflowRequired:boolean,
+  categoryType:string,
+  normalizedName?:string
+}
+
+export interface ExpenseApproverComment {
+  id: number;
+  pendingItemsId: number;
+  addedBy: number;
+  addedDate: string; 
+  comments: string;
+  addedByFusionEmpId: string;
+  addedName: string;
+  action: string;
+  metaData: any; 
+  approverRole: any; 
+}
+
+export interface IApprovalHeader{
+  id?:number,
+  moduleId:number
+  referenceEntityId:number,
+  status:string,
+  comment?:string,
+  currentapprovalStage:string,
+  currentApproverId:number,
+  finalapprovalStage:string,
+  requestedBy:number
+}

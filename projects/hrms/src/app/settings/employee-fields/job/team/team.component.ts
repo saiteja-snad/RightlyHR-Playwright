@@ -16,7 +16,6 @@ import { SelectModule } from 'primeng/select';
   styleUrl: './team.component.scss'
 })
 export class TeamComponent implements OnInit, OnDestroy {
-  [x: string]: any;
   departmentdetails = [] as any;
   teamDetails = [] as any[];
   subscription!: Subscription;
@@ -188,7 +187,6 @@ export class TeamComponent implements OnInit, OnDestroy {
       this.subscription = this.http.postdata('Subdepartments', request).subscribe({
         next: (response) => {
           console.log('Team added successfully, response:', response);
-          this['getTeamAndDepartments']();
           modal.close();
           this.conformationPopup.openSuccessModal('Team added successfully');
           this.resetForm();
@@ -280,7 +278,6 @@ export class TeamComponent implements OnInit, OnDestroy {
       this.subscription = this.http.postdata('Subdepartments/Update', request).subscribe({
         next: (response) => {
           console.log('Team updated successfully, response:', response);
-          this['getTeamAndDepartments']();
           modal.close();
           this.conformationPopup.openSuccessModal('Team updated successfully');
           this.resetForm();
@@ -360,17 +357,16 @@ export class TeamComponent implements OnInit, OnDestroy {
     const deleteRequest = {
       isdeleted: 'void',
  
-      subdepartmentId: 0,
+      subdepartmentId: modal.id,
       subdepartmentName: "",
       departmentId: 0,
       reportingmanagerId: 0,
       "isDeleted": true
     }
  
-    this.subscription = this.http.postdata("Subdepartments/deletebyid/{SubdepartmentId}", this['deleteRequest']).subscribe({
+    this.subscription = this.http.getData(`Subdepartments/deletebyid/${deleteRequest.subdepartmentId}`).subscribe({
       next: () => {
         modal.close();
-        this['getTeamAndDepartments']();
         this.conformationPopup.openSuccessModal('Team deleted successfully');
       },
       error: (error: any) => {
@@ -405,4 +401,3 @@ export class TeamComponent implements OnInit, OnDestroy {
     }
   }
 }
- 

@@ -73,7 +73,9 @@ attachment_url: any;
   }
   
   export interface IExpense {
-totalExpenseAmount: string|number;
+expenseApproverComments: any;
+  entity: ExpenseEntity[];
+  totalExpenseAmount: string|number;
     //get by expensesid
     expenses_ID: number;
     applied_date: string;
@@ -87,6 +89,21 @@ totalExpenseAmount: string|number;
     expense_Date:any,
     expenseitem: IExpenseItem[];
   }
+
+  
+export interface ExpenseEntity {
+  expenses_ID: number;
+  applied_date: string;
+  expenses_Title: string;
+  status: string;
+  employeeId: number;
+  fusionEmpId: string;
+  employeeName: string;
+  totalExpenseAmount: number;
+  expenseType: string;
+  pendingheaderId: number;
+  expenseApproverComments: any[]; // Replace `any` with specific type if available
+}
   
   export interface Inewexpense {
     additionaldetails: any;

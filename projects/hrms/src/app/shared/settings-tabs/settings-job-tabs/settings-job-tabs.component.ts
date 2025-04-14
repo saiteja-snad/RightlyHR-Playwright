@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-settings-job-tabs',
   imports: [RouterModule, CommonModule],
   templateUrl: './settings-job-tabs.component.html',
-  styleUrl: './settings-job-tabs.component.scss'
+  styleUrl: './settings-job-tabs.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class SettingsJobTabsComponent {

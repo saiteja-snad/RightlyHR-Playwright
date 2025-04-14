@@ -177,6 +177,7 @@ body {
         border-radius: 50%;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -331,7 +332,7 @@ body {
 
 // Component Side Nav tabs stylings
 .component-side-nav-tabs-container {
-    .nav-item{
+    .nav-item {
         border-bottom: 1px solid #efefef !important;
     }
 
@@ -346,8 +347,8 @@ body {
         padding: 1rem;
     }
 
-    .active-nav-link{
-        color:var(--primary-color);
+    .active-nav-link {
+        color: var(--primary-color);
         font-weight: 700;
         background-color: var(--body-bg-color);
         border-right: 0.25rem solid var(--primary-color);
@@ -360,7 +361,7 @@ body {
 }
 
 //styles for sub tabs and component display content
-.custom-component-left-content{
+.custom-component-left-content {
     width: 25rem;
     height: calc(100dvh - 12rem);
     border-radius: 0.5rem;
@@ -369,7 +370,7 @@ body {
     border: 1px solid #CCDAEC;
 }
 
-.custom-component-right-content{
+.custom-component-right-content {
     width: 100%;
     height: calc(100dvh - 12rem);
     overflow-y: auto;
@@ -407,7 +408,7 @@ body {
     cursor: pointer;
 }
 
-.omponent-edit-icon{
+.omponent-edit-icon {
     font-size: var(--fontsize16);
 }
 
@@ -517,7 +518,8 @@ a {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -732,13 +734,17 @@ a {
 
 // salary details table
 .salary-details-table {
-    table, th, td {
+
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th, td {
+    th,
+    td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -748,7 +754,8 @@ a {
         font-weight: bold;
     }
 
-    tr:nth-child(4), tr:nth-child(9) {
+    tr:nth-child(4),
+    tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -799,6 +806,7 @@ a {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // custom search field
@@ -1060,6 +1068,7 @@ input[type="file"] {
     }
 
 }
+
 //pagenation stylings
 
 // login components stylings
@@ -1265,6 +1274,7 @@ input:focus {
     }
 
 }
+
 // loader
 .loader-placeholder-content {
     display: flex;
@@ -1301,6 +1311,7 @@ input:focus {
     height: 44px;
     border-radius: 8px;
 }
+
 // Settings Stylings
 .custom-setting-right-content {
     width: 100%;
@@ -1317,11 +1328,11 @@ input:focus {
         max-width: 25rem;
         border-radius: 0.5rem;
         border: 0.25px solid #CCDAEC;
-    
+
         .custom-input {
             border: none !important;
         }
-    
+
         .input-group-text {
             padding: 0px !important;
             border: none;
@@ -1332,7 +1343,7 @@ input:focus {
         width: 30rem;
         height: calc(100vh - 25rem);
         overflow-y: auto;
-    
+
         td {
             font-weight: 400;
             font-size: var(--fontsize14);
@@ -1342,11 +1353,97 @@ input:focus {
             color: #305889;
             border-bottom: 1px solid #E8E8E8;
         }
-    
+
         .settings-common-icon {
             width: 1.25rem;
             height: 1.25rem;
             cursor: pointer;
         }
     }
+}
+
+/* Global override styles for PrimeNG tabs to ensure white background */
+.p-tabview .p-tabview-nav,
+.p-tabview .p-tabview-nav li,
+.p-tabview .p-tabview-nav li .p-tabview-nav-link,
+.p-tabview .p-tabview-panels,
+.p-tab,
+.p-tablist,
+.p-tablist-tab-list,
+.component-nav-tabs-container.card {
+    background-color: #ffffff !important;
+    color: #06274F !important;
+}
+
+.card.component-nav-tabs-container {
+    background-color: #ffffff !important;
+    border-color: #ccdaec !important;
+}
+
+/* Direct style override to target the navigation buttons by tag and class */
+button.p-tablist-prev-button,
+button.p-tablist-next-button,
+button.p-tabview-nav-prev,
+button.p-tabview-nav-next,
+.component-nav-tabs-container button,
+.p-tabview button,
+.p-tablist button {
+    background-color: #ffffff !important;
+    color: #06274F !important;
+    border: none !important;
+}
+
+/* Fix for dark SVG icons in buttons */
+button.p-tabview-nav-prev svg,
+button.p-tabview-nav-next svg,
+button.p-tablist-prev-button svg,
+button.p-tablist-next-button svg {
+    fill: #06274F !important;
+    stroke: #06274F !important;
+}
+
+/* Specific fix for the tab navigation arrow buttons */
+.p-tabview-nav-container,
+.p-tablist-container,
+.p-tabview-nav-content {
+    background-color: #ffffff !important;
+}
+
+/* Fix for arrow navigation in PrimeNG tabs */
+.p-tabview-nav-prev,
+.p-tabview-nav-next,
+.p-tablist-prev-button,
+.p-tablist-next-button,
+.p-element.p-tabview-nav-prev,
+.p-element.p-tabview-nav-next,
+.p-element.p-tablist-prev-button,
+.p-element.p-tablist-next-button {
+    background-color: #ffffff !important;
+
+    &::before,
+    &::after,
+    & *,
+    & *::before,
+    & *::after {
+        background-color: #ffffff !important;
+    }
+
+    /* Force any chevron/icon element to have white background */
+    & span,
+    & i,
+    & svg,
+    & path,
+    & g {
+        background-color: #ffffff !important;
+    }
+
+    & .p-icon {
+        background-color: #ffffff !important;
+    }
+}
+
+/* Direct selector for arrow icons */
+.pi-chevron-left,
+.pi-chevron-right {
+    background-color: #ffffff !important;
 }

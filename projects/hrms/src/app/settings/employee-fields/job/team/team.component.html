@@ -186,33 +186,35 @@
             </div>
           </div>
 
-      <!-- Team Manager dropdown -->
-      <div class="mb-4">
-        <label for="updateTeamManagerId" class="form-label custom-label mb-2">
-          {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
-        </label>
-        <select class="form-control custom-input" formControlName="teamManagerId" id="updateTeamManagerId"
-          (change)="onUpdateManagerChange($event)">
-          <option value="">Select Team Manager</option>
-          <option *ngFor="let manager of teamDetails" [value]="manager.employeeId">
-            {{manager.firstName}} {{manager.lastName}}
-          </option>
-        </select>
-        <div *ngIf="updateForm.get('teamManagerId')?.touched && updateForm.get('teamManagerId')?.invalid">
-          <small style="color: red; font-size: 13px;">
-            {{ 'Team Manager is required' | translate }}
-          </small>
-        </div>
-      </div>
+          <!-- Team Manager dropdown -->
+          <div class="mb-4">
+            <label for="updateTeamManagerId" class="form-label custom-label mb-2">
+              {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
+            </label>
+            <select class="form-control custom-input" formControlName="teamManagerId" id="updateTeamManagerId"
+              (change)="onUpdateManagerChange($event)">
+              <option value="">Select Team Manager</option>
+              <option *ngFor="let manager of teamDetails" [value]="manager.employeeId">
+                {{manager.firstName}} {{manager.lastName}}
+              </option>
+            </select>
+            <div *ngIf="updateForm.get('teamManagerId')?.touched && updateForm.get('teamManagerId')?.invalid">
+              <small style="color: red; font-size: 13px;">
+                {{ 'Team Manager is required' | translate }}
+              </small>
+            </div>
+          </div>
 
-      <div class="d-flex gap-5 pt-4 w-100">
-        <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
-          {{'Close' | translate}}
-        </button>
-        <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateTeam(modal)"
-          [disabled]="updateForm.invalid">
-          {{'Update' | translate}}
-        </button>
+          <div class="d-flex gap-5 pt-4 w-100">
+            <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+              {{'Close' | translate}}
+            </button>
+            <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateTeam(modal)"
+              [disabled]="updateForm.invalid">
+              {{'Update' | translate}}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </form>
@@ -230,8 +232,7 @@
         <button class="custom-btn btn-secondary w-50 py-3" (click)="closeDelete(modal)">
           {{'No'|translate}}
         </button>
-        <button class="custom-btn btn-primary w-50 py-3"
-          (click)="onDelete(modal, updateDepartmentDetails.subdepartmentId)">
+        <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">
           {{'Yes'|translate}}
         </button>
       </div>

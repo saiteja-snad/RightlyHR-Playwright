@@ -52,12 +52,25 @@
         </label>
 
         <div class="custom-p-select-content">
-          <p-select formControlName="teamManager" optionValue="teamManagerId" [options]="teamDetails" name="user"
-            id="user" optionLabel="teamManager" placeholder="Search Team Manager" class="w-100" [filter]="true"
-            filterBy="teamManager">
-          </p-select>
+          <!-- <p-select formControlName="teamManager" optionValue="reportingmanagerId" [options]="teamDetails" name="user"
+            id="user" optionLabel="subdepartmentName" placeholder="Search Team Manager" class="w-100" [filter]="true"
+            filterBy="subdepartmentName">
+          </p-select> -->
+          <select type="text" class="form-select" id="employeename"
+          name="employeename"
+          (change)="onEmployeeSelect($any($event.target).value)"
+          #employeename="ngModel"
+          [(ngModel)]="subdepartmentdata.reportingmanagerId"
+          aria-describedby="emailHelp" required>
+          <option [ngValue]="undefined" disabled selected>
+              Select</option>
+          <option *ngFor="let item of Active" [value]="item.employeeId">
+              {{item.firstName}} {{item.middleName}} {{item.lastName}}
+          </option>
+      </select>
+
         </div>
-        <div *ngIf="AddForm.get('teamManagerId')?.touched && AddForm.get('teamManagerId')?.invalid">
+        <div *ngIf="AddForm.get('reportingmanagerId')?.touched && AddForm.get('reportingmanagerId')?.invalid">
           <small style="color: red; font-size: 13px;">
             {{ 'Team Manager is required' | translate }}
           </small>
@@ -92,9 +105,9 @@
       <tbody>
         <ng-container>
           <tr *ngFor="let teams of teamdetailsdata">
-            <td>{{teams.reportingmanagerId}}</td>
-            <td>{{teams.subdepartmentName}}</td>
-            <td>{{teams. departmentId}}</td>
+            <td>{{ teams.departmentId }}</td>
+            <td>{{ teams.subdepartmentName }}</td>
+            <td>{{ teams.reportingmanagerId }}</td>
             <td class="text-center">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
@@ -174,13 +187,13 @@
         <!--teamManager-->
         <div class="mb-4">
           <label for="updatedteamManager" class="form-label custom-label mb-2">
-            {{ 'teamManager' | translate }} <span class="error-msg">*</span>
+            {{'teamManager' | translate}} <span class="error-msg">*</span>
           </label>
 
           <div class="custom-p-select-content">
 
             <div class="custom-p-select-content">
-              <p-select formControlName="updatedteamManager" optionValue="teamManagerId" [options]="teamDetails"
+              <p-select formControlName="updatedteamManager" optionValue="reportingmanagerId" [options]="teamDetails"
                 name="user" id="user" optionLabel="updatedteamManager" placeholder="Search Team Manager" class="w-100"
                 [filter]="true" filterBy="updatedteamManager">
               </p-select>

@@ -16,6 +16,7 @@ import { SelectModule } from 'primeng/select';
   styleUrl: './team.component.scss'
 })
 export class TeamComponent implements OnInit, OnDestroy {
+  [x: string]: any;
   departmentdetails = [] as any;
   teamDetails = [] as any[];
   subscription!: Subscription;
@@ -33,7 +34,7 @@ export class TeamComponent implements OnInit, OnDestroy {
   AddForm!: FormGroup;
   updateForm!: FormGroup;
   sortdeaprtmentName: any;
-
+  selectedEmployee = {} as any;
   sortedDesignations: any[] = [];
   selectedId: boolean | undefined;
   
@@ -71,7 +72,7 @@ export class TeamComponent implements OnInit, OnDestroy {
       }
     }
     getDepartmentName() {
-      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
+      this.subscription = this.http.getData('Department').subscribe({
           next: (data: any) => {
             console.log(data);
             alert("hello");
@@ -93,13 +94,13 @@ openDialog() {
       });
     }
     getTeam() {
-      this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
+      this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
         next: (data: any) => {
           console.log(data);
           alert("hello");
-          this.teamdetails= data as [];
-          this.sortdeaprtmentName();
-          console.log(this.teamdetails)
+          this.teamDetails= data;
+          // this.sortdeaprtmentName();
+          console.log(this.teamDetails)
         },
         error: (reason: any) => {
           console.log(reason);
@@ -107,7 +108,10 @@ openDialog() {
         }
       });
   }
-
+  onEmployeeSelect(employeeId: number) {
+    this.selectedEmployee = this.empids.find((e) => e.employeeId == employeeId);
+  }
+ 
   sortdepartments() {
     this.deptdetails = this.deptdetails.sort((a, b) => {
       const nameA = a.departmentName.toLowerCase();
@@ -203,12 +207,11 @@ openDialog() {
   onDelete(modal: any) {
     const deleteRequest = {
       isdeleted: 'void',
-
       subdepartmentId: 0,
       subdepartmentName: "",
       departmentId: 0,
       reportingmanagerId: 0,
-      "isDeleted": true
+    
     }
 
     this.subscription = this.http.postdata("Subdepartments/deletebyid/{SubdepartmentId}", this.deleteRequest).subscribe({
@@ -222,6 +225,9 @@ openDialog() {
 
       }
     });
+  }
+  deleteRequest(arg0: string, deleteRequest: any) {
+    throw new Error('Method not implemented.');
   }
   closeDelete(modal: any) {
     modal.dismiss();

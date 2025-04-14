@@ -28,7 +28,7 @@
                 <p class="popup-heading mb-0">Request Premission</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();this.permissionForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -78,16 +78,24 @@
                         <label for="reason" class="form-label custom-label mb-2">Reason <span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason"  rows="3"
-                        placeholder="Type here"
+                        placeholder="Type here" maxlength="250"
                             placeholder="Type Here"></textarea>
-                            <div *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid" class="error-msg">
-                                Reason is required.
+                            <div class="text-end small text-muted">
+                                {{ permissionForm.get('reason')?.value?.length || 0 }}/250
+                            </div>
+                            <div class="error-msg" *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid">
+                                <div *ngIf="permissionForm.get('reason')?.errors?.['required']">
+                                  Reason is required.
+                                </div>
+                                <div *ngIf="permissionForm.get('reason')?.errors?.['maxlength']">
+                                    Reason cannot exceed 250 characters.
+                                </div>
                               </div>
                     </div>
 
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();this.permissionForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="permissionForm.invalid || spinnerLoader">
                          @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

@@ -91,10 +91,17 @@
                         <label for="reason" class="form-label custom-label mb-2">Reason<span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
-                            placeholder="Type here" maxlength="25"></textarea>
-                            <div *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid" class="error-msg">
-                                <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">Reason is required.</div>
-                                <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>
+                            placeholder="Type here" maxlength="250"></textarea>
+                            <div class="text-end small text-muted">
+                                {{ addCompOffForm.get('reason')?.value?.length || 0 }}/250
+                            </div>
+                            <div class="error-msg" *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid">
+                                <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">
+                                    Reason is required.
+                                </div>
+                                <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">
+                                    Reason cannot exceed 250 characters.
+                                </div>
                               </div>
                     </div>
                 </div>

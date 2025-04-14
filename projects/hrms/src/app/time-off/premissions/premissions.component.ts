@@ -53,7 +53,10 @@ export class PremissionsComponent implements OnInit,OnDestroy{
   constructor(    private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService) {}
+    private sharedModalService: OpenModalService) {
+
+
+    }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeeHolidays();
@@ -191,7 +194,15 @@ export class PremissionsComponent implements OnInit,OnDestroy{
      this.sharedModalService.openSuccessModal(
        'Request submitted successfully'
      );
-
+     this.http.tirggerCountSignal.update((status) => ({
+      ...status,
+      permission: true,
+    }));
+    this.permissionForm.reset();
+    setTimeout(() => {
+      window.location.reload();
+    }
+  , 2000);
     },
     error: (err: any) => {
       this.spinnerLoader = false;

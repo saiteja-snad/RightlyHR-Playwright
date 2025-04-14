@@ -23,9 +23,9 @@
             <th>Applied Date</th>
             <th>Total Amount</th>
             <th>Status</th>
-            <th>View Expense Type</th>
-            <th>Approver Comments</th>
-            <th>Action(s)</th>
+            <th class="text-center">View Expense</th>
+            <th class="text-center">Approver Comments</th>
+            <th class="text-center">Action(s)</th>
           </tr>
         </thead>
         <tbody>
@@ -59,7 +59,7 @@
               </td>
               <td>
                 <div>
-                  <span>
+                  <span  *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
                     <a type="button" placement="top">
                       <img
                         src="images\info-fill.png"
@@ -75,8 +75,11 @@
                     </a>
                   </span>
                 </div>
+                <ng-template #NA>
+                  N/A
+                </ng-template>
               </td>
-              <td>
+              <td  class="text-center">
                 <div class="dropdown">
                   <a type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -342,33 +345,38 @@
     </div>
 
     <div class="d-flex gap-5 p-3">
-      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams!.expenses_Title }}</b>
-      <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams!.approverEmail }}</b>
+      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
+      <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
     </div>
     <div class="custom-table">
       <table class="w-100">
         <thead>
           <tr>
-            <th>Item Name</th>
+            <th>Expense Type</th>
+            <th>Expense  Name</th>
             <th>Expense Date</th>
             <th>Total Amount</th>
             <th>Status</th>
-            <th>Actions</th>
+            <th>Receipt Number</th>
+            <th colspan="2">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
+            <td>{{ item?.expenseType }}</td>
             <td>{{ item?.item_Name }}</td>
             <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
             <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+          
             <td>{{ item?.status }}</td>
+            <td>{{ item?.receipt_Number }}</td>
             <td>
 
               <div class="d-flex gap-2">
-                <a type="button" class="me-2 dowload-text" (click)="onSelectDownload(item?.attachment_url)">
+                <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
                   <i class="bi bi-download me-2"></i>Download
                 </a>
-                <a type="button" class="view-text" (click)="onViewAttachement(item?.attachment_url)">
+                <a type="button" class="view-text text-nowrap" (click)="onViewAttachement(item?.attachment_url)">
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>

@@ -31,6 +31,9 @@
               <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                 <div class="error-msg">{{'Employee is required'| translate }}</div>
               </div>
+              <small *ngIf="!disablebuttonforemployeeid" class="error-msg">
+                <p>  {{'No results found'| translate }}</p>
+            </small>
             </div>
 
             <div class="col-md-12 mb-4">
@@ -49,27 +52,18 @@
             </div>
 
             <div class="col-md-12 mb-4">
-              <label class="form-label custom-label mb-2"> Date<span class="text-danger">*</span></label>
+              <label class="form-label custom-label mb-2"> {{'Date'| translate }}<span class="text-danger">*</span></label>
               <input type="date" placeholder="Please enter Date" formControlName="dateofAppraisal"
                 [(ngModel)]="appraisalData.dateofAppraisal" class="form-control input-field" id="appraisalDate" required
                 (change)="DateValidation()" onkeydown="return false"
                 [ngClass]="{ 'is-invalid': employeeForm.get('dateofAppraisal')?.invalid && employeeForm.get('dateofAppraisal')?.touched || !isdateofAppraisal}" />
-              <!-- <div> -->
-                <!-- <div *ngIf="employeeForm.get('appraisalDate')?.invalid && employeeForm.get('appraisalDate')?.touched">
-                  <div class="error-msg">{{'Date is required'| translate }}</div>
-                </div>
-                <div *ngIf="!isdateofAppraisal" class="error-msg"> {{' Date should be after the probation end date'|
-                  translate }}</div>
-              </div> -->
-
-
               <div *ngIf="employeeForm.get('dateofAppraisal')?.touched">
                 <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')"
                     class="error-msg">
-                    Date is required
+                     {{'Date is required'| translate }}
                 </div>
                 <small *ngIf="!isdateofAppraisal" class="error-msg">
-                    Date should be after the date of joining
+                     {{'Date should be after the probation end date'| translate }}
                 </small>
             </div>
             </div>
@@ -108,20 +102,6 @@
                 <div class="error-msg">{{'Performance Variable Bonus is required'| translate }}</div>
               </div>
             </div>
-
-            <!-- <div class="col-md-12 mb-4">
-              <label  class="form-label custom-label mb-2"> {{'Variable Pay'| translate }} <span class="error-msg">*</span></label>
-              <select type="text" formControlName="isVariablePay"  placeholder="Please select Variable Pay" class="form-select input-field" id="variable pay" required
-                (change)="onVariablePayChange()">
-                <option disabled [ngValue]="undefined">Select</option>
-                <option [ngValue]="true">Yes</option>
-                <option [ngValue]="false">No</option>
-              </select>          
-              <div *ngIf="employeeForm.get('isVariablePay')?.invalid && employeeForm.get('isVariablePay')?.touched">
-                <div class="error-msg"> {{'Variable Pay is required'| translate }}</div>
-              </div>
-            </div> -->
-
             <div class="col-md-12 mb-4">
               <label class="form-label custom-label mb-2">
                 {{ 'Variable Pay' | translate }} <span class="error-msg">*</span>
@@ -164,11 +144,11 @@
             </div>
 
             <div>
-              <p class="note-text"><span class="note me-2">Note:</span>Please Update Updated Salary, Compensation
+              <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please Update Updated Salary, Compensation
                 Effective Date in Job Tab Before Generating the Document.</p>
             </div>
             <div class="d-flex flex-wrap gap-3 pt-4">
-              <button type="submit" class="custom-btn btn-primary">{{'Generate Document'| translate }}</button>
+              <button type="submit" class="custom-btn btn-primary"   [disabled]="!isdateofAppraisal||!disablebuttonforemployeeid||!disablebuttonforauthority">{{'Generate Document'| translate }}</button>
             </div>
           </div>
         </form>

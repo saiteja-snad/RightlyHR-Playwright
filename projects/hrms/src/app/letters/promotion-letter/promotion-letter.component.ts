@@ -14,10 +14,12 @@ import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-promotion-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
   templateUrl: './promotion-letter.component.html',
   styleUrl: './promotion-letter.component.scss'
 })
@@ -68,6 +70,7 @@ export class PromotionLetterComponent {
     private router: Router,
     private authService: AuthService,
     private elementRef: ElementRef,
+     private conformationPopup: OpenModalService,
     config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,
   ) {
     config.backdrop = 'static';
@@ -102,7 +105,7 @@ export class PromotionLetterComponent {
 
   initializeForm() {
     this.employeeForm = this.fb.group({   
-      fusionEmpId: ['', Validators.required],
+      fusionEmpId: [null, Validators.required],
       dateofpromotion: ['', Validators.required],
       Documenttype: ['', Validators.required],
       note: ['',],
@@ -552,6 +555,11 @@ onClickOutside(target: any) {
   }
 
   async postPromotionLetterFormSubmit(f: FormGroup) {
+    if (this.employeeForm.invalid) {
+      // Mark all fields as touched so validation messages appear
+      this.employeeForm.markAllAsTouched();
+      return;
+    }
     const data = await this.promotiondata;
     console.log(data);
 
@@ -614,7 +622,7 @@ onClickOutside(target: any) {
         next: (data: any) => {
           if (data) {
             this.result.documentUrl = data.path;
-            this.dataSuccessMsg("Promotion Letter Generated Successfully")
+            this.conformationPopup.openSuccessModal("Promotion Letter Generated Successfully")
             
             console.log(data);
           }
@@ -651,7 +659,7 @@ onClickOutside(target: any) {
           this.subscription=this.http.postdata(`CustomEmail/Promotionletter`,emaildetails).subscribe({
             next:(data:any)=>{
               console.log(data);
-              this.dataSuccessMsg("Email Sent Successfully")
+              this.conformationPopup.openSuccessModal("Email Sent Successfully")
               this.router.navigate(['/admin/active']);
             },
             error:(err:any)=>{

@@ -10,6 +10,7 @@
    "Promotion Letter":"Promotion Letter",
    "ID":"ID",
    "EmployeeName": "Employee Name",
+   "Date should be after the date of probition end date":"Date should be after the date of probition end date",
    "Personal Email":"Personal Email",
    "Phone Number" : "Phone Number",
    "Location":     "Location ",
@@ -116,7 +117,11 @@
     "Rejected Reason":"Rejected Reason",
     "Are you sure you want to Reject?":"Are you sure you want to Reject?",
     "Are you sure you want to Approve?":"Are you sure you want to Approve?",
-    "Comments":"Comments"
+    "Comments":"Comments",
+    "Date":"Date",
+    "Note":"Note",
+    "Note is required":"Note is required",
+    "No results found":"No results found"
 
    
   

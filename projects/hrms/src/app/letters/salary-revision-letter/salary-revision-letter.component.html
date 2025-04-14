@@ -3,10 +3,10 @@
         <div class="d-flex py-3">
             <div>
                 <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i
-                        class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+                        class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate }}</p>
             </div>
             <div>
-                <span class="heading"><span class="px-2">>></span>Salary Revision Letter</span>
+                <span class="heading"><span class="px-2">>></span>{{'Salary Revision Letter'| translate }}</span>
             </div>
         </div>
     </div>
@@ -18,32 +18,25 @@
                 <form [formGroup]="employeeForm" (ngSubmit)="postAppraisalLetterFormSubmit(employeeForm)">
                     <div class="row">
                         <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search
-                                Employee<span class="text-danger">*</span></label>
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Search Employee'| translate }}<span class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
-                                    filterBy="name" [showClear]="true" placeholder="Please select employee"
+                                    filterBy="fullName" [showClear]="true" placeholder="Please select employee"
                                     formControlName="fusionEmpId" class="custom-select w-100"
                                     (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
                                 </p-select>
                             </div>
                             <div
                                 *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
-                                <div class="error-msg">Employee is required</div>
+                                <div class="error-msg">{{'Employee is required'| translate }}</div>
                             </div>
-                        </div>
-                        <!-- <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Date <span
-                                    class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="dateofAppraisal" [(ngModel)]="appraisalData.dateofAppraisal"
-                                placeholder="Please enter Date" />
-                                <div *ngIf="employeeForm.get('dateofAppraisal')?.invalid && employeeForm.get('dateofAppraisal')?.touched">
-                                    <div class="error-msg">Date is required</div>
-                                </div>
-                        </div> -->
+                            <small *ngIf="!disablebuttonforemployeeid" class="error-msg">
+                                <p>{{'No results found'| translate }}</p>
+                            </small>
+                        </div> 
                         <div class="col-md-12 mb-4">
                             <label class="form-label custom-label mb-2">
-                                Date <span class="error-msg">*</span>
+                                {{'Date'| translate }} <span class="error-msg">*</span>
                             </label>
 
                             <input type="date" class="form-control custom-input" id="relievingDate"
@@ -55,60 +48,32 @@
                             <div *ngIf="employeeForm.get('dateofAppraisal')?.touched">
                                 <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')"
                                     class="error-msg">
-                                    Date is required
+                                    {{'Date is required'| translate }}
                                 </div>
                                 <small *ngIf="!isdateofAppraisal" class="error-msg">
-                                    Date should be after the date of joining
+                                    {{'Date should be after the probation end date'| translate }}
                                 </small>
                             </div>
                         </div>
                         <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Document Type <span
+                            <label class="form-label custom-label mb-2">{{'Document Type'| translate }} <span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <!-- <p-select [options]="employeementType" optionLabel="name"
-                                    placeholder="Please select document type"  [(ngModel)]="appraisalData.Documenttype" formControlName="Documenttype"
-                                    class="form-select custom-select" >
-                                    <option disabled [ngValue]="undefined">Select</option>
-                                </p-select> -->
-                                <!-- <div class="mb-4 mt-4">
-                                    <label for="offerissueddate" class="form-label label-text">Document Type
-                                        <span class="redstar">*</span></label>
-                                    <select type="text" formControlName="Documenttype" name="issuedby"
-                                        [(ngModel)]="appraisalData.Documenttype" class="form-select custom-select" id="issuedby"
-                                        placeholder="Issued By" aria-label="Default select example" required>
-                                        <option style="color: rgb(189, 187, 184);" [ngValue]="undefined">Select Type
-                                        </option>
-                                        <option [ngValue]="true">Soft Copy</option>
-                                        <option [ngValue]="false">Hard Copy</option>
-        
-                                    </select>
-                                </div> -->
-                                <!-- <div class="mb-4 mt-4"> -->
-                                <!-- <label for="documenttype" class="form-label label-text">
-                                      Document Type <span class="redstar">*</span>
-                                    </label> -->
-
                                 <p-select [options]="employeementType" optionLabel="name" optionValue="value"
                                     placeholder="Please select document type" [showClear]="true"
                                     [(ngModel)]="appraisalData.Documenttype" formControlName="Documenttype"
                                     inputId="documenttype" class="form-select custom-select w-100">
                                 </p-select>
-                                <!-- </div> -->
-
-
                             </div>
                             <div
                                 *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
-                                <div class="error-msg">Document Type is required</div>
+                                <div class="error-msg">{{'Document Type is required'| translate }}</div>
                             </div>
                         </div>
                         <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                                Authority Name<span class="error-msg">*</span></label>
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name' |
+                translate }}<span class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <!-- <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                class="form-select custom-select" formControlName="authorityid" (change)="onclickDesignation()" /> -->
                                 <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
                                     placeholder="Signature Authority Name" class="form-select custom-select"
                                     formControlName="authorityid" [(ngModel)]="appraisalData.authorityid"
@@ -117,7 +82,7 @@
                             </div>
                             <div
                                 *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                                <div class="error-msg">Signature Authority Name is required</div>
+                                <div class="error-msg">{{'Signature Authority Name is required'| translate }}</div>
                             </div>
                         </div>
 
@@ -128,7 +93,7 @@
                             Salary in Personal and Job Tabs Before Generating the Document.</p>
                     </div>
                     <div class="d-flex flex-wrap gap-3 pt-4">
-                        <button type="submit" class="custom-btn btn-primary">Generate Document</button>
+                        <button type="submit" class="custom-btn btn-primary"  [disabled]="!isdateofAppraisal||!disablebuttonforemployeeid||!disablebuttonforauthority">{{'Generate Document'| translate }}</button>
                     </div>
                 </form>
             </div>
@@ -141,9 +106,6 @@
                         <!--page-1-->
                         <div class="letter-page-content" id="pdfContent1">
                             <div class="letter-page-sub-content">
-                                <!-- <div *ngIf="appraisalData.Documenttype;else doc" class="mb-5"> -->
-                                <!-- <app-letterhead></app-letterhead> -->
-                                <!-- </div> -->
                                 <div *ngIf="appraisalData.Documenttype; else doc" class="mb-5">
                                     <app-lettersheader></app-lettersheader>
                                 </div>

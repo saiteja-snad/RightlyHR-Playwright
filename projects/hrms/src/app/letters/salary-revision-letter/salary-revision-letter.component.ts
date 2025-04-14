@@ -16,10 +16,12 @@ import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { IemployeeDetails } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-salary-revision-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss'
 })
@@ -66,6 +68,7 @@ export class SalaryRevisionLetterComponent {
     // private toaster: NgToastService,
      private router: Router, 
     private authService: AuthService,
+    private conformationPopup: OpenModalService,
     //  private _userAcessService: UserAccessService,
       private elementRef: ElementRef,private fb: FormBuilder,
     config: NgbModalConfig, private modalService: NgbModal) {
@@ -118,10 +121,10 @@ export class SalaryRevisionLetterComponent {
   }
   initializeForm() {
     this.employeeForm = this.fb.group({
-      fusionEmpId: ['', Validators.required],
+      fusionEmpId: [null, Validators.required],
       dateofAppraisal: ['', Validators.required],
-      Documenttype: ['', Validators.required],
-      authorityid: ['', Validators.required]
+      Documenttype: [null, Validators.required],
+      authorityid: [null, Validators.required]
      });
   }
   //function for issed by
@@ -565,6 +568,11 @@ export class SalaryRevisionLetterComponent {
       });
   }
   async postAppraisalLetterFormSubmit(f: FormGroup) {
+    if (this.employeeForm.invalid) {
+      // Mark all fields as touched so validation messages appear
+      this.employeeForm.markAllAsTouched();
+      return;
+    }
     const data = await this.appraisalData;
     data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
     data.compeffectivedate = this.formatDate(data.compeffectivedate);
@@ -650,7 +658,7 @@ export class SalaryRevisionLetterComponent {
         next: (data: any) => {
           if (data) {
             this.result.documentUrl = data.path;
-            this.dataSuccessMsg(
+            this.conformationPopup.openSuccessModal(
               'Salary revision Letter Generated Successfully'
             );
             console.log(data);
@@ -682,7 +690,7 @@ export class SalaryRevisionLetterComponent {
             .subscribe({
               next: (data: any) => {
                 console.log(data);
-                this.dataSuccessMsg('Email Sent Successfully');
+                this.conformationPopup.openSuccessModal('Email Sent Successfully');
               },
               error: (err: any) => {
                 console.log(err);

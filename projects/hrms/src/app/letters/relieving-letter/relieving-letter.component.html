@@ -3,10 +3,10 @@
         <div class="d-flex py-3">
             <div>
                 <p class="main-content-heading cursor mb-0" (click)="navigateDashboard()"><i
-                        class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+                        class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate }}</p>
             </div>
             <div>
-                <span class="heading"><span class="px-2">>></span>Relieving Letter</span>
+                <span class="heading"><span class="px-2">>></span> {{'Relieving Letter'| translate }}</span>
             </div>
         </div>
     </div>
@@ -18,8 +18,8 @@
                 <form [formGroup]="employeeForm" (ngSubmit)="postRelievingLetterFormSubmit(employeeForm)">
                     <div class="row">
                         <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search
-                                Employee<span class="text-danger">*</span></label>
+                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Search Employee'| translate }}
+                                <span class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="allinactiveemployes" optionLabel="employee" [filter]="true"
                                     filterBy="employee" [showClear]="true" placeholder="Please select employee"
@@ -28,26 +28,14 @@
                                 </p-select>
                                 <div
                                     *ngIf="employeeForm.get('searchEmployee')?.invalid && employeeForm.get('searchEmployee')?.touched">
-                                    <div class="error-msg">Employee is required</div>
-                                </div>
+                                    <div class="error-msg">{{'Employee is required'| translate }}</div>
+                                </div>          
                             </div>
                         </div>
-                        <!-- <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Date <span class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" id="relievingDate" formControlName="dateofRelieving"
-                             [(ngModel)]="relievingLetterData.dateofRelieving"    [min]="relievingLetterData.dateOfJoining | dateformat"
-                             placeholder="Please enter Date"  (change)="DateValidation()" onkeydown="return false"
-                             [ngClass]="{ 'is-invalid': !isdateofRelieving}"/>
 
-                            <div *ngIf="employeeForm.get('dateofRelieving')?.invalid && employeeForm.get('dateofRelieving')?.touched">
-                              <div class="error-msg">Date is required</div>
-                              <small *ngIf="!isdateofRelieving" class="error-msg">Date should be after the date of
-                                joining</small>
-                            </div>
-                          </div> -->
                         <div class="col-md-12 mb-4">
                             <label class="form-label custom-label mb-2">
-                                Date <span class="error-msg">*</span>
+                                {{'Date'| translate }} <span class="error-msg">*</span>
                             </label>
 
                             <input type="date" class="form-control custom-input" id="relievingDate"
@@ -59,36 +47,18 @@
                             <div *ngIf="employeeForm.get('dateofRelieving')?.touched">
                                 <div *ngIf="employeeForm.get('dateofRelieving')?.hasError('required')"
                                     class="error-msg">
-                                    Date is required
+                                    {{'Date is required'| translate }}
                                 </div>
                                 <small *ngIf="!isdateofRelieving" class="error-msg">
-                                    Date should be after the date of joining
+                                    {{'Date should be after the date of probition end date'| translate }}
                                 </small>
                             </div>
                         </div>
 
                         <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Document Type <span
+                            <label class="form-label custom-label mb-2">{{'Document Type'| translate }} <span
                                     class="error-msg">*</span></label>
                             <div class="custom-p-select-content">
-                                <!-- <p-select [options]="employeementType" optionLabel="name"
-                                    placeholder="Please select document type" formControlName="documentType" [(ngModel)]="relievingLetterData.Documenttype"
-                                    class="form-select custom-select" >
-                                    <option disabled [ngValue]="undefined">Select</option>
-                                    <option Value="true">Yes</option>
-                                    <option Value="false">No</option>
-                                </p-select> -->
-
-
-                                <!-- <select type="text" name="issuedby" formControlName="documentType"
-                                    [(ngModel)]="relievingLetterData.Documenttype" class="form-select custom-select"
-                                    id="issuedby" placeholder="Issued By" aria-label="Default select example" required>
-                                    <option style="color: rgb(189, 187, 184);" [ngValue]="undefined">Select Type
-                                    </option>
-                                    <option [ngValue]="true">Soft Copy</option>
-                                    <option [ngValue]="false">Hard Copy</option>
-
-                                </select> -->
                                 <p-select [options]="employeementType" optionLabel="name" optionValue="value"
                                     placeholder="Please select document type" [showClear]="true"
                                     [(ngModel)]="relievingLetterData.Documenttype" formControlName="documentType"
@@ -97,23 +67,12 @@
                             </div>
                             <div
                                 *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                                <div class="error-msg">Document Type is required</div>
+                                <div class="error-msg">{{'Document Type is required'| translate }}</div>
                             </div>
                         </div>
                         <div class="col-md-12 mb-4">
-                            <!-- <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                              Authority Name<span class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">
-                              <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                class="form-select custom-select" formControlName="signatureAuthority" [(ngModel)]="relievingLetterData.authorityid"  (onChange)="onclickDesignation()" />
-                            </div>
-                            <div *ngIf="employeeForm.get('signatureAuthority')?.invalid && employeeForm.get('signatureAuthority')?.touched">
-                              <div class="error-msg">Signature Authority Name is required</div>
-                            </div> -->
-
-
                             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
-                                Signature Authority Name<span class="error-msg">*</span>
+                                {{'Signature Authority Name'| translate }}<span class="error-msg">*</span>
                             </label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
@@ -125,18 +84,18 @@
                             </div>
                             <div
                                 *ngIf="employeeForm.get('signatureAuthority')?.invalid && employeeForm.get('signatureAuthority')?.touched">
-                                <div class="error-msg">Signature Authority Name is required</div>
+                                <div class="error-msg">{{'Signature Authority Name is required'| translate }}</div>
                             </div>
 
                         </div>
                         <div>
-                            <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
+                            <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please Update Employee Full Name,
                                 Designation, Joining Date, Address, in Personal and Job Tabs before Generating the
                                 Document.</p>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap gap-3 pt-4">
-                        <button type="submit" class="custom-btn btn-primary">Generate Document</button>
+                        <button type="submit" class="custom-btn btn-primary"[disabled]="!isdateofRelieving||!disablebuttonforauthority">{{'Generate Document'| translate }}</button>
                     </div>
                 </form>
             </div>

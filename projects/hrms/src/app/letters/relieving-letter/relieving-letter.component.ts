@@ -16,10 +16,11 @@ import jsPDF from 'jspdf';
 import { IemployeeDetails } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-relieving-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss'
 })
@@ -314,6 +315,11 @@ private conformationPopup: OpenModalService,
     }
 
     async postRelievingLetterFormSubmit(f: FormGroup) {
+      if (this.employeeForm.invalid) {
+        // Mark all fields as touched so validation messages appear
+        this.employeeForm.markAllAsTouched();
+        return;
+      }
       const data = await this.relievingLetterData;
       data.dateofRelieving = data.dateofRelieving;
       data.dateOfJoining = data.dateOfJoining;

@@ -1198,6 +1198,8 @@ export class LeavesComponent {
         this.leaveFormData.isdeleted = true;
         this.leaveFormData.startdate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
         this.leaveFormData.enddate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+        this.leaveFormData.notes = this.leaveForm.get('reason')?.value
+
 
         if (this.empdata.probationEndDate) {
           // Check if the employee is still on probation
@@ -1348,6 +1350,7 @@ export class LeavesComponent {
               setTimeout( () => {
                 this.modalService.dismissAll();
                 this.leaveForm.reset();
+                window.location.reload();
               }, 2000);
             }
           },
@@ -1371,7 +1374,12 @@ export class LeavesComponent {
       }
     }
 
+  cleardata(){
+    this.leaveForm.reset();
+    this.modalService.dismissAll();
+  }
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
   }
+
 }

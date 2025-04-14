@@ -136,6 +136,10 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.AcceptForm.reset();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Request Approved Successfully'
           );
@@ -170,6 +174,10 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.rejectForm.reset();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
           this.conformationPopup.openSuccessModal(
             'Request rejected successfully'
           );

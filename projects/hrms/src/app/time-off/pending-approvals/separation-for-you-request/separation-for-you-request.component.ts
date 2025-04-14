@@ -251,6 +251,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         next: (respone: any) => {
           this.isLoading = false;
           this.modalService.dismissAll();
+          this.regular=true;
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
             separation: true,

@@ -1,7 +1,7 @@
-
 export interface subLocationData {
-    jobLocationId?: number,
+    jobLocationId: number,
     jobSubLocationName: string,
     isDeleted: boolean,
+    id?:number;
     }
   

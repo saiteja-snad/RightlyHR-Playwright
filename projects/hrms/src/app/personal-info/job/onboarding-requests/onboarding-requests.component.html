@@ -22,7 +22,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of dynamicData">
+                <ng-container *ngIf="((dynamicData | async) ?? []).length > 0; else noDataTemplate">
+                <tr *ngFor="let item of dynamicData |async">
                     <td>{{ item.requestedDate | dateformat }}</td>
                     <td>{{ item.trainingStartDate | dateformat }}</td>
                     <td>{{ item.trainingEndDate | dateformat }}</td>
@@ -54,6 +55,14 @@
                         </div>
                     </td>
                 </tr>
+            </ng-container>
+            <ng-template #noDataTemplate>
+                <tr>
+                    <td>
+                        <app-no-data-found />
+                    </td>
+                </tr>
+            </ng-template>
             </tbody>
         </table>
     </div>

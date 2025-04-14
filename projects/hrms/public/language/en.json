@@ -97,9 +97,29 @@
     "Rejected Reason":"Rejected Reason",
     "Are you sure you want to Reject?":"Are you sure you want to Reject?",
     "Are you sure you want to Approve?":"Are you sure you want to Approve?",
-    "Comments":"Comments"
-   
-  
+    "Comments":"Comments",
+   "Intern Employee ID":"Intern Employee ID",
+   "Employee Name":"Employee Name",
+   "Internship Start Date":"Internship Start Date",
+   "Internship End Date":"Internship End Date",
+   "Approved Comments":"Approved Comments",
+   "Internship Period(Months)":"Internship Period(Months)",
+   "Offer Expiry Date":"Offer Expiry Date",
+   "Offer Issued Date":"Offer Issued Date",
+   "Work Location":"Work Location",
+   "Salary (Cost to Company)":"Salary (Cost to Company)",
+   "Mobile Number with Country Code":"Mobile Number with Country Code",
+   "Pincode":"Pincode",
+   "Country":"Country",
+   "State":"State",
+   "City":"City",
+   "Address Line 2":"Address Line 2",
+   "Address Line 1":"Address Line 1",
+   "Select Address":"Select Address",
+   "Salutation":"Salutation",
+   "Search Employee":"Search Employee",
+   "Gender":"Gender"
+
 
 
 }

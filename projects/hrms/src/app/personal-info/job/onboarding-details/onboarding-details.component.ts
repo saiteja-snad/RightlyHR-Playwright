@@ -111,10 +111,10 @@ export class OnboardingDetailsComponent {
   
   initializeTrainee(){
     this.traineeForm = this.fb.group({
-      empType: [this.empdata.empType],
-      dateOfJoining: [this.empdata.dateOfJoining],
-      durationOfTrainee: [this.empdata.durationOfTrainee],
-      trainingEndDate: [this.empdata.trainingEndDate]
+      empType: [ { value: "", disabled: true }],
+      dateOfJoining: [{ value: "", disabled: true }],
+      durationOfTrainee: [{ value: "", disabled: true }],
+      trainingEndDate: [{ value: "", disabled: true }]
     });
   }
   
@@ -226,6 +226,39 @@ export class OnboardingDetailsComponent {
           });
           console.log(filteredData);
           this.Statusdetails = filteredData;
+        }
+        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee') {
+          const filteredData = data.filter((status: IStatus) => {
+            const lowerCaseStatusName = status.statusname.toLowerCase();
+            return lowerCaseStatusName === 'trainee active' 
+            || lowerCaseStatusName === 'inactive' 
+            || lowerCaseStatusName === 'trainee';
+          });
+          this.Statusdetails = filteredData
+        }
+        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee prospective') {
+          const filteredData = data.filter((status: IStatus) => {
+            const lowerCaseStatusName = status.statusname.toLowerCase();
+            return lowerCaseStatusName === 'trainee active' || lowerCaseStatusName === 'trainee prospective';
+          });
+
+          this.Statusdetails = filteredData
+        }
+        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee active') {
+          const filteredData = data.filter((status: IStatus) => {
+            const lowerCaseStatusName = status.statusname.toLowerCase();
+            return lowerCaseStatusName === 'trainee active';
+          });
+          this.Statusdetails = filteredData
+
+        }
+        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee inactive') {
+          const filteredData = data.filter((status: IStatus) => {
+            const lowerCaseStatusName = status.statusname.toLowerCase();
+            return lowerCaseStatusName === 'trainee inactive';
+          });
+          //console.log(filteredData);
+          this.Statusdetails = filteredData
         }
       },
     });
@@ -358,7 +391,7 @@ export class OnboardingDetailsComponent {
       .postdata(`Employeedata/UPDATER`, payload)
       .subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully',);
+          this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
           this.getEmployeeId();
           this.onboardingForm.disable();
           console.log('Data updated successfully:', data);

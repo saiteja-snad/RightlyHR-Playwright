@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import moment from 'moment';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -10,16 +10,18 @@ import { FormGroup } from '@angular/forms';
 import { Ipersonal } from '../../../Interfaces/members-model';
 import { CommonModule } from '@angular/common';
 import { IJob } from '../../../Interfaces/onboarding-documents';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-onboarding-requests',
-  imports: [DateformatPipe, CommonModule],
+  imports: [DateformatPipe, CommonModule, NoDataFoundComponent],
   templateUrl: './onboarding-requests.component.html',
   styleUrl: './onboarding-requests.component.scss'
 })
 export class OnboardingRequestsComponent {
   empdata = {} as any;
-  dynamicData: any;
+  dynamicData=new BehaviorSubject<any>([]);
   currentdateformate!: string
   empinfo = {} as IJob;
   onboardDuration: any;
@@ -41,7 +43,7 @@ export class OnboardingRequestsComponent {
   imgurl!: string;
   isEditing: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router, private http: HttpService, private conformationPopup: OpenModalService,) {
+  constructor(private authService: AuthService, private router: Router, private http: HttpService, private conformationPopup: OpenModalService,private modalService: NgbModal) {
 
   }
   ngOnInit(): void {
@@ -53,7 +55,7 @@ export class OnboardingRequestsComponent {
   }
   isStatusAllowed(): boolean {
     const allowedStatuses = ['waiting for approval', 'approved', 'processed'];
-    const hasAllowedStatus = this.dynamicData.some((ele: any) => allowedStatuses.includes(ele.status?.toLowerCase()));
+    const hasAllowedStatus = this.dynamicData.value.some((ele: any) => allowedStatuses.includes(ele.status?.toLowerCase()));
     return hasAllowedStatus;
   }
   isTrainingEndDateComplete() {
@@ -108,6 +110,7 @@ export class OnboardingRequestsComponent {
     this.http.postdata('onboardRequest', requestBody).subscribe({
       next: (response: any) => {
         this.conformationPopup.openSuccessModal("Onboard Request submitted successfully")
+        this.modalService.dismissAll();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message)
@@ -165,7 +168,7 @@ export class OnboardingRequestsComponent {
         this.disablebuttonforonboard = filtereddata
         this.buttonviewwhenExtended = data.some((ele: any) => ele.status?.toLowerCase() === 'extended');
         console.log(this.buttonviewwhenExtended)
-        this.isTrainingEndDateComplete();
+        // this.isTrainingEndDateComplete();
         this.getonboardPeriodData();
         this.isStatusAllowed();
         console.log(this.isStatusAllowed())

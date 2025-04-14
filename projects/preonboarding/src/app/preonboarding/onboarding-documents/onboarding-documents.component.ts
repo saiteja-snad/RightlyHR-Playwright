@@ -14,6 +14,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { PopupService } from '../../common-services/popup.service';
 import { Ipersonal } from '../../models/personal-details.model';
 import { DateFormatPipe } from '../../Pipes/date-format.pipe';
+
 @Component({
   selector: 'app-onboarding-documents',
   imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbTooltipModule, NgxDocViewerModule, RouterModule],

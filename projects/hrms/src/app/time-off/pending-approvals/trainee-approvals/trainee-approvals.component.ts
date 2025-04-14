@@ -1,20 +1,25 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Itraineeapproval } from '../../../Interfaces/traineedetails.model';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators,NgForm, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators,NgForm, FormControl, FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../../services/auth.service';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { TranslateModule } from '@ngx-translate/core';
+import { TraineesearchfilterPipe } from "../../../Pipes/traineesearchfilter.pipe";
+import { ITrainee } from '../../../admin/prospective-interns/Prospective-interns-modules';
+import { TraineeApprovalsTabsComponent } from "../../../shared/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 @Component({
   selector: 'app-trainee-approvals',
-  imports: [DateformatPipe, CommonModule, NoDataFoundComponent, ReactiveFormsModule, NgbPopoverModule,],
+  imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule,FormsModule, TranslateModule, NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent],
   templateUrl: './trainee-approvals.component.html',
   styleUrl: './trainee-approvals.component.scss'
 })
@@ -32,7 +37,7 @@ export class TraineeApprovalsComponent {
   subscription!: Subscription;
   requesthandler = {} as any;
   empdata = {} as Ipersonal;
-  trainee_details = new BehaviorSubject<Itraineeapproval[]>([]);
+  Trainees = new BehaviorSubject<Itraineeapproval[]>([]);
   myApproverComments = {} as any;
   discontinue: any;
   extend: any;
@@ -41,9 +46,17 @@ export class TraineeApprovalsComponent {
   rejectSeparationForm!:FormGroup
   Status!:any;
   comments=[] as any;
-  Trainees = [] as any [];
   noRecalllength=[] as any;
-
+  Traineeaprovalsearch:any;
+  totalRecords = 100;
+  first: any = 0;
+  rows: any = 10;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 },
+  ];
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,private authService: AuthService,) {
     this.customsetup = environment.dateformat;
     this.datePipe = new DatePipe('en-US');
@@ -86,7 +99,13 @@ export class TraineeApprovalsComponent {
   commentsFunction(Value: any) {
     this.comment = Value;
   }
-
+onRowsChange() {
+    this.first = 0;
+  }
+  onPageChange(event: PaginatorState) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
 
   toggleExtend() {
     this.discontinue = false;
@@ -170,9 +189,6 @@ export class TraineeApprovalsComponent {
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
         },
       });
   }
@@ -196,9 +212,6 @@ export class TraineeApprovalsComponent {
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
         },
       });
   }
@@ -258,9 +271,6 @@ export class TraineeApprovalsComponent {
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
         },
       });
   }
@@ -277,7 +287,7 @@ export class TraineeApprovalsComponent {
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=15&approvedType=EMP`).subscribe({
       next: (data: any) => {
         console.log(data);
-         this.Trainees = data.data
+         this.Trainees.next(data.data as Itraineeapproval[])
          this.noRecalllength=this.Trainees;
          console.log(this.Trainees)
       },

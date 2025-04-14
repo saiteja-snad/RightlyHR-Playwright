@@ -228,56 +228,59 @@
 
             </form>
         </div>
-    </div>
-    <div class="card myinfo-content-card p-4 mt-3">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <span class="myinfo-sub-header">Trainee Details</span>
-            </div>
-        </div>
-        <div class="myinfo-input-content">
-            <form [formGroup]="traineeForm">
-                <div class="row">
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <label class="form-label">Employment Type Status</label>
-                        <input type="text" class="form-control custom-input" formControlName="empType"
-                            [disabled]="empdata.empstatus === 'Trainee Prospective' || !isEditing" placeholder="Employment type status"/>
-                    </div>
-                    @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') &&
-                    isEditing ){
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label class="form-label">Trainee Start Date</label>
-                        <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                            [disabled]="empdata.empstatus === 'Trainee Prospective' || !isEditing " />
-                    </div>
-                    }
 
-                    <div class="col-md-6 col-lg-4 mb-3"
-                        *ngIf="(empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') && !isEditing">
-                        <label class="form-label">Trainee Start Date</label>
-                        <input type="date" class="form-control custom-input" id="dateOfJoining"
-                            formControlName="dateOfJoining" placeholder="Please enter probation end date"
-                            onkeydown="return false;">
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <label class="form-label">Duration of Training</label>
-                        <input type="text" class="form-control custom-input" formControlName="durationOfTrainee"
-                            placeholder="Duration of Training"
-                            [disabled]="empdata.empstatus === 'Trainee Prospective' || !isEditing "
-                            (keypress)="letters($event)" appNameConversion />
-                    </div>
-
-                    @if(!isEditing ){
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label class="form-label">Training End Date</label>
-                        <input type="date" class="form-control custom-input" id="trainingEndDate"
-                            formControlName="trainingEndDate" placeholder="Please enter probation end date"
-                            onkeydown="return false;">
-                    </div>
-                    }
-
+        <div class="card myinfo-content-card p-4 mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <span class="myinfo-sub-header">Trainee Details</span>
                 </div>
-            </form>
+            </div>
+            <div class="myinfo-input-content">
+                <form [formGroup]="traineeForm">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <label class="form-label">Employment Type Status</label>
+                            <input type="text" class="form-control custom-input" formControlName="empType"
+                                [disabled]="empdata.empstatus.toLowerCase() == 'trainee prospective' || !isEditing"
+                                placeholder="Employment type status" />
+                        </div>
+                        @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') &&
+                        isEditing ){
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <label class="form-label">Trainee Start Date</label>
+                            <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
+                                [disabled]="empdata.empstatus.toLowerCase() == 'trainee prospective' || !isEditing " />
+                        </div>
+                        }
+                        @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') && !isEditing){
+                            <div class="col-md-6 col-lg-4 mb-3" >
+                            <label class="form-label">Trainee Start Date</label>
+                            <input type="date" class="form-control custom-input" id="dateOfJoining"
+                                formControlName="dateOfJoining" placeholder="Please enter probation end date"
+                                onkeydown="return false;">
+                        </div>
+                        }
+                        
+                        <div class="col-md-6 col-lg-4">
+                            <label class="form-label">Duration of Training</label>
+                            <input type="text" class="form-control custom-input" formControlName="durationOfTrainee"
+                                placeholder="Duration of Training"
+                                [disabled]="empdata.empstatus === 'Trainee Prospective' || !isEditing "
+                                (keypress)="letters($event)" appNameConversion />
+                        </div>
+
+                        @if(!isEditing ){
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <label class="form-label">Training End Date</label>
+                            <input type="date" class="form-control custom-input" id="trainingEndDate"
+                                formControlName="trainingEndDate" placeholder="Please enter probation end date"
+                                onkeydown="return false;">
+                        </div>
+                        }
+
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -24,7 +24,7 @@
                 <option *ngFor="let year of years" [value]="year">{{ year }}</option>
               </select> -->
               <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year" optionLabel="label"
-               optionValue="value" class="date" aria-label="Default select example">
+               class="form-select custom-select">
               </p-select>
             </form>
         </div>

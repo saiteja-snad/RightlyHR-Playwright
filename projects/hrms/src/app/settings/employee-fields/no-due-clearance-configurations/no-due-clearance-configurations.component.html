@@ -96,7 +96,7 @@
               </p-select>
             </div>
             <!-- Validation Error -->
-            <div *ngIf="noDueForm.get('department')?.touched && noDueForm.get('department')?.invalid">
+            <div class="error-msg" *ngIf="noDueForm.get('department')?.touched && noDueForm.get('department')?.invalid">
               <div *ngIf="noDueForm.get('department')?.errors?.['required']">
                 Please select department
               </div>
@@ -122,10 +122,10 @@
           <!-- Employee -->
           @if(noDueForm.get('selectedEmpRole')?.value === 'EMPLOYEE'){
           <div class="mb-3">
-            <label for="dispatcher" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
+            <label for="dispatcher" class="form-label custom-label mb-2">Employee <span class="text-danger">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect formControlName="employee" [options]="usersList" name="user" id="user"  optionLabel="fullName"
-                placeholder="Search User" field="selectedUser" class="form-select custom-select" [selectedItemsLabel]="customLabelTemplate"
+                placeholder="Select employee" field="selectedUser" class="form-select custom-select" [selectedItemsLabel]="customLabelTemplate"
                 (ngModelChange)="selectedUserDetails($event)">
                 <ng-template let-user pTemplate="item">
                   <div>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</div>

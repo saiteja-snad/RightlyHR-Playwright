@@ -1,20 +1,23 @@
 
+<div class="component-side-nav-tabs-container py-3">
+  <ul class="nav flex-column ">
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/on-behalf-of/waiting-for-approval']"
+        routerLinkActive="active-nav-link" aria-current="page">Waiting For Approval (12)</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/on-behalf-of/approved']" routerLinkActive="active-nav-link">Approved
+        (12)</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/on-behalf-of/processed']"
+        routerLinkActive="active-nav-link">Processed (12)</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/on-behalf-of/rejected']" routerLinkActive="active-nav-link">Rejected
+        (12)</a>
+    </li>
 
-<div class="card tabs-container">
-    <ul class="nav flex-column gap-2" >
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['waiting-for-approval']" [class.active-tab]="isActive('/time-off/on-behalf-of/waiting-for-approval')" aria-current="page">Waiting For Approval (12)</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['approved']" [class.active-tab]="isActive('time-off/on-behalf-of/approved')">Approved (12)</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['processed']" [class.active-tab]="isActive('time-off/on-behalf-of/processed')">Processed (12)</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['rejected']" [class.active-tab]="isActive('time-off/on-behalf-of/rejected')">Rejected (12)</a>
-      </li>
-      
-    </ul>
+  </ul>
 
-  </div>
+</div>

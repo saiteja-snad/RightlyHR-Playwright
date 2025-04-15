@@ -22,7 +22,7 @@ export class ProcessedExpensesComponent {
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
-  flitredprocessed = new BehaviorSubject<any[]>([]);
+
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;

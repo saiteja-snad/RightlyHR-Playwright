@@ -10,7 +10,9 @@
         <div class="box WFH" [ngStyle]="{'background-color':  'rgb(143, 143, 204)'}"></div>
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showBirthdays" [(ngModel)]="showBirthdays"
+          
             (change)="filterEventsByTitle()">
+            <span><img src="calendar/birthday.png" alt=""></span>
           <label class="form-check-label" for="showBirthdays">{{ 'Birthdays' | translate}}</label>
         </div>
       </div>
@@ -20,6 +22,7 @@
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showAnniversaries" [(ngModel)]="showAnniversaries"
             (change)="filterEventsByTitle()">
+            <span><img src="calendar/milestone.png" alt=""></span>
           <label class="form-check-label" for="showAnniversaries">{{ 'Anniversaries' | translate}}</label>
         </div>
       </div>
@@ -29,6 +32,7 @@
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showJoinees" [(ngModel)]="showJoinees"
             (change)="filterEventsByTitle()">
+            <span><img src="calendar/new-joinees.png" alt=""></span>
           <label class="form-check-label" for="showJoinees">{{ 'New Joinees' | translate }}</label>
         </div>
       </div>
@@ -38,6 +42,7 @@
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showHolidays" [(ngModel)]="showHolidays"
             (change)="filterEventsByTitle()">
+            <span><img src="calendar\holidays.png" alt=""></span>
           <label class="form-check-label" for="showHolidays">{{ 'Holidays' | translate }}</label>
         </div>
       </div>
@@ -46,7 +51,13 @@
     </div>
 
     <div class="col-10">
-      <full-calendar [options]="calendarOptions" [events]="eventsPromise | async"></full-calendar>
+      <full-calendar [options]="calendarOptions" [events]="eventsPromise | async">
+        <ng-template #eventContent let-arg>
+          <!-- <b *ngIf="arg.timeText" >{{ arg.timeText }}</b> -->
+          <div><span class="event-title m-0">{{ arg.event.title }}<span><img [src]="arg.event.display" alt="arg"
+                  class="ms-2"></span></span></div>
+        </ng-template>
+      </full-calendar>
 
     </div>
 

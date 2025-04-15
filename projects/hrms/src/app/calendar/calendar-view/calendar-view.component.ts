@@ -46,13 +46,15 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private changeDetector: ChangeDetectorRef,
-    private http: HttpService
+    private http: HttpService,
+
   ) { }
 
 
   ngOnInit(): void {
 
     this.filterEventsByTitle()
+    
 
     this.employeeInfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     const currentDate = new Date();
@@ -84,6 +86,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     }
     return '';
   }
+ 
 
   handleEvents(events: EventApi[]) {
     this.currentEvents = events;
@@ -245,7 +248,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
         if (index === 3 && this.showHolidays && holidaysResult) {
           const orgHolidaysItems = holidaysResult.orgHolidaysItems;
 
-          for (let j = 0; j < orgHolidaysItems.length; j++) {
+          for (let j = 0; j < orgHolidaysItems?.length; j++) {
             const holidayDate = new Date(orgHolidaysItems[j].holidayDate);
             const formattedHolidayDate = `${this.changeYear}-${String(holidayDate.getMonth() + 1).padStart(2, '0')}-${String(holidayDate.getDate()).padStart(2, '0')}`;
             const eventTitle = `${orgHolidaysItems[j].holidayName}${orgHolidaysItems[j].isOptional ? ' (Optional)' : ''}`;
@@ -257,7 +260,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
                 start: formattedHolidayDate,
                 color: '#28692b4d',
                 textColor: 'black',
-                display: 'calendar/holidays.png',
+                display: 'calendar/birthday.png',
               });
             }
           }
@@ -272,6 +275,8 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  
   ngOnDestroy(): void {
 
   }

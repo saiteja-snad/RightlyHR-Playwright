@@ -94,7 +94,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 
     const payload: any = {
       id: this.selectedPermission.id,
-      name: this.permissionsForm.value.name,
+      name: this.permissionUpdateForm.value.name,
       isDeleted: this.selectedPermission.isDeleted,
       type: 'Permissions',
       createdAt: formattedDate,

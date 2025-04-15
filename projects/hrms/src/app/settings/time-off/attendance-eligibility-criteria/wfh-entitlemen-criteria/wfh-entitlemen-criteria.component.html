@@ -8,10 +8,59 @@
                         <th>Value</th>
                     </tr>
                 </thead>
-                <tbody>
+                <!-- <tbody>
                     <tr *ngFor="let criteria of eligibilityCriterias">
                         <td>{{criteria.name}}</td>
                         <td>{{criteria.value}}</td>
+                    </tr>
+                </tbody> -->
+                <tbody>
+                    <tr *ngFor="
+                        let criteria of eligibilityCriterias ;let i = index">
+                        <td class="table-text">{{ criteria.name }}</td>
+                        <td class="table-text">
+                            <ng-container *ngIf="editingIndex !== i">
+                                {{ criteria.value }}
+                            </ng-container>
+
+                            <ng-container *ngIf="editingIndex === i">
+                                <input class="form-control" type="text"
+                                    [(ngModel)]="temporaryValue"
+                                    (keypress)="validateDecimal($event, criteria.value)"
+                                    (keydown.tab)="editingIndex === i"
+                                     />
+                            </ng-container>
+                        </td>
+
+                        <td>
+                            <ng-container *ngIf="editingIndex !== i; else editingMode">
+                                <div ngbDropdown placement="left">
+                                    <a class="nav-link edit-buttons" ngbDropdownToggle>
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+
+                                    <div ngbDropdownMenu>
+                                            <a class="edit-buttons w-100"
+                                                (click)="enableEdit(i, criteria.id, criteria.value)">
+                                                <i class="bi bi-pencil-fill px-2"></i>Update
+                                            </a>
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <ng-template #editingMode>
+                                <div class="d-flex gap-2">
+                                    <button class="submit-btn" type="button"
+                                    (click)="submitWFHValue(i,temporaryValue)">
+                                    Update
+                                </button>
+                                <button class="cancel-btn" type="button" (click)="disableEdit()">
+                                    <!-- <i class="bi bi-x-circle-fill"></i> -->
+                                    Cancel
+                                </button>
+                                </div>
+                            </ng-template>
+                        </td>
                     </tr>
                 </tbody>
             </table>

@@ -93,7 +93,7 @@
                     </thead>
                     <tbody>
 
-                        
+
                         @if(attendanceData.value.length>0){
                             @for (item of attendanceData|async; track $index) {
                                 <tr >
@@ -102,13 +102,12 @@
                                     <td>{{(item.firstLogin|dateformat)??'-'}}</td>
                                     <td>{{(item.lastLogout|dateformat)??'-'}}</td>
                                     <td>{{item.duration?.totalDuration??'-'}}</td>
-                                    <td [ngClass]="getStatusClass(item.status)">{{item.status}}
+                                    <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
                                         @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdate.employeeId){
                                            <a href="" class="ms-2"><u>Leave</u> </a>
                                            @if(this.rbac.allowedToAccess('Attendnace Regularization Button.view')){
                                             <a href="" class="ms-2"><u>Regularization</u> </a>                 
                                            }
-                                           
                                         }
                                     </td>
                                     <td>

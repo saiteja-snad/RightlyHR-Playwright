@@ -5,7 +5,7 @@ export interface IAttendance{
       lastLogout: Date,
       duration: any,
       status: string,
-      subStatus: [],
+      subStatus?: [],
       tags: [],
       dayLogs:IdayLogs[],
 }

@@ -11,6 +11,7 @@ import { IBackground, INotice, IProbation } from '../../../Interfaces/job-model'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-onboarding-details',
@@ -73,7 +74,7 @@ export class OnboardingDetailsComponent {
   ];
   filteredWorkLocations: any[] = [];
   selectedWorkLocation: any = null;
-  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private modalService: NgbModal,public rbac:RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -156,7 +157,7 @@ export class OnboardingDetailsComponent {
   patchForm(data: any): void {
     // Patching values for onboardingForm
     this.onboardingForm.patchValue({
-      status: this.Statusdetails.find((item: any) => item.statusname === data?.empstatus),
+      status: this.Statusdetails.find((item: any) => item?.statusname === data?.empstatus),
       dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
       branchLocation: this.branchLocations.find((item: any) => item.branchCode === data?.branchCode),
       probationEndDate: data.probationEndDate ? moment(data.probationEndDate).format('yyyy-MM-DD') : null,

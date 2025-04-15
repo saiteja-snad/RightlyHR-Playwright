@@ -10,6 +10,7 @@ import { ITrainee } from './Prospective-interns-modules';
 import { FormsModule } from '@angular/forms';
 import { IServe } from '../../Interfaces/letters-model';
 import { ActiveEmployeePipe } from '../../Pipes/active-employee.pipe';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-prospective-interns',
@@ -17,7 +18,7 @@ import { ActiveEmployeePipe } from '../../Pipes/active-employee.pipe';
   templateUrl: './prospective-interns.component.html',
   styleUrl: './prospective-interns.component.scss'
 })
-export class ProspectiveInternsComponent implements OnInit, OnDestroy{
+export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   searchValue: any;
   Trainee = [] as any;
@@ -31,7 +32,9 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy{
   gradeIdValue: any;
   selectedValueJobRoledrop: string = '';
   optionsFound: boolean = true;
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
+  filteredTabs: any[] = [];
+  constructor(private router: Router, private http: HttpService,
+     private modalService: NgbModal, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empdata();
@@ -44,17 +47,18 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy{
       });
     this.getservingperiod();
   }
+
   empdata() {
     this.subscription = this.http.getData(`Employeedata/TrainingEmployees`).subscribe({
       next: (data: any) => {
         console.log(data);
         this.Trainee = data as ITrainee[];
       },
-
       error: (reason: any) => console.log(reason)
     });
 
   }
+
   jobLocationList() {
     this.subscription = this.http
       .getData(`JobLocation/getAllLocations`)
@@ -65,9 +69,11 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy{
         },
       });
   }
+
   openAddProspective() {
     this.modalService.open(AddProspectiveInternComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
+
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
@@ -76,13 +82,6 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy{
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     console.log(this.emp);
     this.router.navigate(['/personalinfo']);
-  }
-
-  checkaccess(rba: string): boolean {
-    let access = JSON.parse(localStorage.getItem('fusionroleClaims') || '{}');
-    if (access.includes(rba)) return true
-    else return false
-
   }
 
   filterByDuration(duration: string) {
@@ -115,6 +114,7 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy{
 
     })
   }
+
   buttondisable = false;
   disablebutton: boolean = false
   initialLocationId: any;
@@ -130,10 +130,11 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy{
       }
     })
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
+  
 }

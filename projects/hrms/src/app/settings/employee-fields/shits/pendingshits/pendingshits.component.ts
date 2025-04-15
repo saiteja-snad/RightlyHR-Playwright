@@ -36,7 +36,7 @@ export class PendingshitsComponent {
   }
 
   updateShift(id: any): void {
-    this.router.navigate(['/settings/employee-fields/update-shift', id]);
+    this.router.navigate(['/settings/employee-fields/updateshifts', id]);
   }
 
 

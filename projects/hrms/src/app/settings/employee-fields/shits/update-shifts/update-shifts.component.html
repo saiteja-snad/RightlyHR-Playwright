@@ -23,7 +23,7 @@
     <div class="card custom-card">
         <div class="p-3">
             <div>
-                <form [formGroup]="shiftForm">
+                <form [formGroup]="shiftForm" (ngSubmit)="updateshift(shiftForm)">
                     <div class="row g-2 mb-3">
                         <!-- Year -->
                         <div class="col-md-3 mb-3">
@@ -47,9 +47,9 @@
                             <label class="form-label custom-label mb-2">Location <span
                                     class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select formControlName="location" placeholder="Select Sub Location" optionLabel="jobLocationName" optionValue="id"
-                                    class="form-select custom-select" (onChange)="onLocationChange($event.value)" [disabled]="!shiftForm.get('location')?.valid"
-                                    [options]="locations">
+                                <p-select formControlName="location" placeholder="Select Sub Location"
+                                    optionLabel="jobLocationName" optionValue="id" class="form-select custom-select"
+                                    [disabled]="!shiftForm.get('location')?.valid" [options]="locations">
                                 </p-select>
                             </div>
 
@@ -66,9 +66,13 @@
                             <label class="form-label custom-label mb-2">Sub Location <span
                                     class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select formControlName="subLocation" placeholder="Select Sub Location" optionLabel="jobSubLocationName" optionValue="id"
+                                <!-- <p-select formControlName="subLocation" placeholder="Select Sub Location" optionLabel="jobSubLocationName" optionValue="id"
                                     class="form-select custom-select" [disabled]="!shiftForm.get('location')?.valid"
                                     [options]="subLocations">
+                                </p-select> -->
+                                <p-select formControlName="subLocation" placeholder="Select Sub Location"
+                                    optionLabel="jobSubLocationName"  optionValue="id" [options]="sublocation"
+                                    [disabled]="!shiftForm.get('location')?.valid" class="form-select custom-select">
                                 </p-select>
                             </div>
                             <div class="error-msg"
@@ -196,9 +200,10 @@
                     </div>
 
                     <div class=" d-flex justify-content-end gap-3 p-3">
-                        <button type="button" class="custom-btn btn-secondary" [disabled]="shiftForm.invalid" >Save as
+                        <button type="submit" class="custom-btn btn-secondary" [disabled]="shiftForm.invalid">Save as
                             draft</button>
-                        <button type="submit" class="custom-btn btn-primary"  [disabled]="shiftForm.invalid" >Submit</button>
+                        <button type="submit" class="custom-btn btn-primary"
+                            [disabled]="shiftForm.invalid">Submit</button>
                     </div>
 
                 </form>

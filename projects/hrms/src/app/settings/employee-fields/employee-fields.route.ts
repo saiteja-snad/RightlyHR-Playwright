@@ -58,6 +58,15 @@ export default [
             { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
         ]
     },
+    {  path: 'updateshifts/:id', loadComponent: () => import('./shits/update-shifts/update-shifts.component').then((m) => m.UpdateShiftsComponent) },
+    {
+        path: 'manage-shifts',
+        children: [
+            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
+            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
+        ]
+    },
     { path: 'addpolices', loadComponent: () => import('./manage-policies/add-policies/add-policies.component').then((m) => m.AddPoliciesComponent) },
     {
         path: 'manage-policies',

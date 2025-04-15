@@ -29,6 +29,11 @@ export class UpdateShiftsComponent {
   Employeeinfo = {} as any;
   currentYear: number = new Date().getFullYear();
   shiftId!: number;
+  shiftDATA:any;
+  selectdata:any;
+  selectedLocationId:any;
+  matchedSubLocation:any;
+  selectedLocation:any;
   navTabs: any[] = [
     { label: 'Update Shifts', link: '/claimsandexpenses/addexpens' },
   ];
@@ -72,7 +77,38 @@ export class UpdateShiftsComponent {
   addShift() {
     this.shifts.push(this.createShift());
   }
+updateshift(f: FormGroup){
+ // Create a new array with the properties from this.selectedshift.orgShiftsItems
+//  let updatedShift = {
+//   id: this.selectedshift.id,
+//   locationId: this.selectedshift.locationId,
+//   subLocationId: this.selectedshift.subLocationId,
+//   applicableyear: this.selectedshift.applicableyear,
+//   status: "Pending for Submission",
+//   addedby: this.Employeeinfo.employeeId,
+//   addedDate: this.selectedshift.addedDate,
+//   lastModifeddate:new Date(),
+  
+//   orgShiftsItems: this.selectedshift.orgShiftsItems.map((row: any) => ({
 
+//     shiftName: row.shiftName,
+//     id: row.id,
+//     headerID: this.selectedshift.id,
+//     shiftStartTime: row.shiftStartTime1 + ':' + row.shiftEndTime1,
+//     shiftEndTime: row.shiftStartTime2 + ':' + row.shiftEndTime2,
+//     shiftDescription: "hi",
+//     status: "Pending for Submission",
+//     code: row.code,
+//     color: row.color,
+//     allowedGracePeriod: row.allowedGracePeriod,
+//     latesAllowed: row.latesAllowed,
+//     allowedBreakTime: row.allowedBreakTime,
+//     halfDayMinHrs: row.halfDayMinHrs,
+//     fullDayMinHrs: row.fullDayMinHrs,
+//   }))
+// }
+
+}
   get shifts(): FormArray {
     return this.shiftForm.get('shifts') as FormArray;
   }
@@ -82,13 +118,13 @@ export class UpdateShiftsComponent {
       shiftCode: [shiftData?.code || '', Validators.required],
       shiftName: [shiftData?.shiftName || '', Validators.required],
       color: [shiftData?.color || '#00ff00'],
-      startTime: [shiftData?.shiftStartTime?.split(':')[0] || '00', Validators.required],
-      endTime: [shiftData?.shiftStartTime?.split(':')[1] || '00', Validators.required],
-      gracePeriod: [shiftData?.allowedGracePeriod || 15, Validators.required],
-      latesAllowed: [shiftData?.latesAllowed || 3, Validators.required],
-      breakTime: [shiftData?.allowedBreakTime || 1, Validators.required],
-      halfDayMinHrs: [shiftData?.halfDayMinHrs || 3, Validators.required],
-      fullDayMinHrs: [shiftData?.fullDayMinHrs || 6, Validators.required],
+      startTime: [shiftData?.shiftStartTime?.split(':')[0] || '', Validators.required],
+      endTime: [shiftData?.shiftStartTime?.split(':')[1] || '', Validators.required],
+      gracePeriod: [shiftData?.allowedGracePeriod ||'', Validators.required],
+      latesAllowed: [shiftData?.latesAllowed || '', Validators.required],
+      breakTime: [shiftData?.allowedBreakTime || '', Validators.required],
+      halfDayMinHrs: [shiftData?.halfDayMinHrs || '', Validators.required],
+      fullDayMinHrs: [shiftData?.fullDayMinHrs || '', Validators.required],
     });
   }
 
@@ -100,9 +136,12 @@ export class UpdateShiftsComponent {
           location: data.locationId,
           subLocation: data.subLocationId,
         });
-
-        this.onLocationChange(data.locationId); // to load sublocations
-
+        this.shiftDATA = data.subLocationId;
+        this.selectedLocationId = data.locationId;
+        console.log("Selected Locationid:", this.selectedLocationId);
+        console.log(this.shiftDATA);
+       
+         this.onLocationChange(data.locationId); // to load sublocations
         const shiftArray = this.shiftForm.get('shifts') as FormArray;
         shiftArray.clear(); // remove any existing default shift
 
@@ -111,8 +150,8 @@ export class UpdateShiftsComponent {
             shiftCode: [item.code],
             shiftName: [item.shiftName],
             color: [item.color],
-            startTime: [item.shiftStartTime.split(':')[0]],
-            endTime: [item.shiftEndTime.split(':')[1]],
+            startTime: [item.shiftStartTime],
+            endTime: [item.shiftEndTime],
             gracePeriod: [item.allowedGracePeriod],
             latesAllowed: [item.latesAllowed],
             breakTime: [item.allowedBreakTime],
@@ -121,6 +160,8 @@ export class UpdateShiftsComponent {
           }));
         });
       },
+      // startTime: [item.shiftStartTime.split(':')[0]],
+      //       endTime: [item.shiftEndTime.split(':')[1]],
       error: (err: any) => console.error('Error loading shift data', err)
     });
   }
@@ -128,25 +169,53 @@ export class UpdateShiftsComponent {
 
   onLocationChange(selectedLocationId: number | null) {
     const subLocationControl = this.shiftForm.get('subLocation');
-    subLocationControl?.reset();
+    // subLocationControl?.reset();
 
     if (selectedLocationId) {
       subLocationControl?.enable();
       const selectedLocation = this.locations.find(loc => loc.id === selectedLocationId);
-      this.subLocations = selectedLocation?.subLocations || [];
+      this.subLocations = selectedLocation?.subLocations||[];
+      this.selectdata = this.subLocations.find(loc => loc.id === this.shiftDATA);
+      if (this.selectdata) {
+        subLocationControl?.setValue(this.selectdata.id); // ensure `optionValue="id"` is used in p-select
+      }
+      console.log(this.subLocations);
+      console.log(this.selectdata);
     } else {
       subLocationControl?.disable();
       this.subLocations = [];
     }
   }
-
+ 
+  sublocation:any;
   geAllLocations() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
         this.locations = data;
+        this.selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
+        console.log(this.selectedLocation);
+        console.log("Selected Location:", this.selectedLocation);
+        this.sublocation = this.selectedLocation.subLocations;
+        // console.log("Selected sublocation:", sublocation);
+        const sublocationdata = this.sublocation.find(
+          (sub: any) => sub.id === this.shiftDATA
+        );
+        
+        if (sublocationdata) {
+          console.log("Matched Sub Location ID:", sublocationdata.id);
+          console.log("Selected Sub Location Name:", sublocationdata.jobSubLocationName);
+            this.matchedSubLocation = sublocationdata;
+            if (this.matchedSubLocation) {
+             // Set the value to form
+              this.shiftForm.patchValue({ subLocation: this.matchedSubLocation.id });
+      
+              // Optionally store matched name for display/logging
+              this.matchedSubLocation = this.matchedSubLocation.jobSubLocationName;
+            }
+          }
       },
       error: (reason: any) => console.log(reason)
-    });
+     });
   }
 
   nagvition() {

@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from 
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle } from '../../Interfaces/letters-model';
@@ -226,21 +226,14 @@ export class TraineeOfferLetterComponent {
     this.calculateEndDate(this.traineeEmpData.internshipperiod);
   }
 
-  calculateEndDate(value: any) {
+  calculateEndDate(value:any) {
     if (this.traineeEmpData.dateOfJoining && value) {
       const startDate = new Date(this.traineeEmpData.dateOfJoining);
-      const months = parseInt(value.value, 10);
-      console.log(months)
-      const days = this.getDaysFromMonths(months);
-      console.log(days)
-      if (days > 0) {
-        this.traineeEmpData.durationOfTrainee = days;
-      }
+      const months = parseInt(value, 10);
       const endDate = new Date(startDate.setMonth(startDate.getMonth() + months));
-      this.traineeEmpData.endDate = moment(endDate).format('YYYY-MM-DD') // Format as YYYY-MM-DD
+      this.traineeEmpData.endDate = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
     }
     console.log(this.traineeEmpData.endDate);
-
   }
 
   getDaysFromMonths(months: number): number {
@@ -543,7 +536,7 @@ export class TraineeOfferLetterComponent {
        dateOfJoining: this.formatDate(data?.dateOfJoining),
        Copys: data?.copys,
        trainingEndDate:this.formatDate(data.endDate),
-       note:data?.note,
+       note:this.traineeEmpData?.note,
        authorityid: data?.authorityid,
        phoneNumber: data?.phoneNumber,
      })
@@ -738,10 +731,7 @@ export class TraineeOfferLetterComponent {
           if (this.result.employeeId != null) {
             const jobdata = {
               employeeId: this.result.employeeId,
-
               effectiveDate: data.dateOfJoining,
-              // reportsto: ,
-
               locationid: data.locationId,
               sublocationid: data.sublocationId,
               reportsto: data.reportingmanagerId,
@@ -764,8 +754,6 @@ export class TraineeOfferLetterComponent {
               empid: this.result.employeeId,
               jobType: 'Contract',
               empEffectiveDate: data.dateOfJoining,
-              // "empComments": null,
-              // "gradeId": null,
               isdeleted: 'Active',
             };
 
@@ -774,7 +762,6 @@ export class TraineeOfferLetterComponent {
               .subscribe({
                 next: (data: any) => {
                   console.log(data);
-                  // alert("education data successfully added")
                 },
                 error: (Reason) => console.log(Reason),
               });
@@ -784,7 +771,6 @@ export class TraineeOfferLetterComponent {
               .subscribe({
                 next: (data: any) => {
                   console.log(data);
-                  // alert("comp data successfully added")
                 },
                 error: (Reason) => console.log(Reason),
               });
@@ -794,8 +780,6 @@ export class TraineeOfferLetterComponent {
                 next: (data: any) => {
                   console.log(data);
                   this.disableFieldsForApproval = false;
-                  // alert("employeedata coming successfully");
-                  // this.router.navigate(['/admin']);
                 },
                 error: (Reason) => console.log(Reason),
               });

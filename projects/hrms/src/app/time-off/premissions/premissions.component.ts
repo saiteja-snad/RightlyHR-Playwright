@@ -53,12 +53,15 @@ export class PremissionsComponent implements OnInit,OnDestroy{
   constructor(    private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService) {}
+    private sharedModalService: OpenModalService) {
+
+
+    }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeeHolidays();
     this.getEmployeeeWeekends();
-    this.getDuration();
+    // this.getDuration();
     this.getPermissionTypes()
     this.formintions()
     this.getEAVData()
@@ -139,7 +142,7 @@ export class PremissionsComponent implements OnInit,OnDestroy{
   }
 
   getPermissionTypes(){
-    this.http.getData(`PermissionTypes?type=${'permissions'}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PermissionTypes?type=${'Permissions'}`).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response: any) =>{
         console.log(response)
           this.leaveTypes = response as LeaveType[]
@@ -191,11 +194,20 @@ export class PremissionsComponent implements OnInit,OnDestroy{
      this.sharedModalService.openSuccessModal(
        'Request submitted successfully'
      );
-
+     this.http.tirggerCountSignal.update((status) => ({
+      ...status,
+      permission: true,
+    }));
+    this.permissionForm.reset();
+    setTimeout(() => {
+      window.location.reload();
+    }
+  , 2000);
     },
     error: (err: any) => {
       this.spinnerLoader = false;
       console.error(err);
+      this.sharedModalService.openErrorModal(err.error)
   
     },
     complete: () => { 

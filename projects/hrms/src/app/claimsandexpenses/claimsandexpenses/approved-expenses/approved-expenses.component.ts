@@ -5,16 +5,17 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import {  NgxDocViewerModule } from 'ngx-doc-viewer';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 
 @Component({
   selector: 'app-approved-expenses',
-  imports: [CommonModule,DateformatPipe,NgxDocViewerModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
   templateUrl: './approved-expenses.component.html',
   styleUrl: './approved-expenses.component.scss'
 })
@@ -23,18 +24,18 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
-  flitredApproved = new BehaviorSubject<any[]>([]);
+
    expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   constructor(public router: Router, private fb: FormBuilder, 
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
  
-  expenesEmplyeedata: IExpense[] = [];
-  draftsCount: number = 0;
+    searchTerm: any = ''
+  expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+    this.getexpensesheaderbyemployeeid();
   }
 
 
@@ -45,27 +46,17 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
 
 
 
-  getexpensesheaderbyemployeeid(_employeeId: number): void {
-    //params
-    const params = this.empinfo.employeeId;
-
+  getexpensesheaderbyemployeeid(): void {
+    const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Approved&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata = data as IExpense[];
-          this.filterapprovedExpenses();
+          this.expenesEmplyeedata.next(data) 
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
-  }
-
-  filterapprovedExpenses() {
-    const draftExpenses = this.expenesEmplyeedata
-      .filter((expense) => expense.status === 'Approved')
-      .reverse();
-    this.flitredApproved.next(draftExpenses);
-    this.draftsCount = draftExpenses.length;
   }
 
   

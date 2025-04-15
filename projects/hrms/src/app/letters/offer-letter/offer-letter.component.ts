@@ -13,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';

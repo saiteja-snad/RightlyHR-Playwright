@@ -2,7 +2,7 @@
   <div class="input-group custom-search mb-4">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
-      aria-describedby="basic-addon1">
+      [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
   </div>
   <div class="custom-table-content">
     <table class="w-100">
@@ -12,37 +12,105 @@
           <th>Expense Date</th>
           <th>Total Amount</th>
           <th>Status</th>
-          <th class="text-center">Actions</th>
+          <th class="text-center">Approver Comments</th>
+          <th class="text-center">View Details
+          </th>
 
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let exp of flitredWaitingforApprovalExpenses | async">
-          <td>{{ exp.expenses_Title }}</td>
-          <td>{{ exp.applied_date | dateformat }}</td>
-          <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-          <td> <span class="me-2">●</span> {{ exp.status }}
-          </td>
-
-          <td class="text-center">
-            <div class="dropdown">
-              <a data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical"></i>
-              </a>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
-                      class="bi bi-paperclip me-2"></i>View</a></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
+        <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let exp of expenesEmplyeedata | async">
+            <td>{{ exp.expenses_Title }}</td>
+            <td>{{ exp.applied_date | dateformat }}</td>
+            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+            <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
+            </td>
+            <td class="text-center">
+              <div>
+                <span *ngIf="exp.expenseApproverComments?.length > 0; else NA">
+                  <a type="button" placement="top">
+                    <img src="images\info-fill.png" alt="info icon" (click)="
+                        comments(
+                          exp.expenseApproverComments,
+                          commentspopup
+                        )
+                      " class="info-icon" />
+                  </a>
+                </span>
+                <ng-template #NA>
+                  N/A
+                </ng-template>
+              </div>
+            </td>
+            <td class="text-center">
+              <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
+                        class="bi bi-paperclip me-2"></i>View</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <!-- No Data Found Template -->
+        <ng-template #noDataTemplate>
+          <tr>
+            <td>
+              <app-no-data-found />
+            </td>
+          </tr>
+        </ng-template>
 
       </tbody>
     </table>
   </div>
 </div>
 
+<!-- commentspopup -->
+<ng-template #commentspopup let-modal>
 
+  <div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between popup-header-border p-4">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Approver Comments</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div *ngIf="approverComments.length > 0; else noCommentsTemplate">
+      <div class=" mb-3" *ngFor="let comment of approverComments">
+        <!-- Hide the card if comment.comments is exactly "string" -->
+        <ng-container *ngIf="comment.comments !== 'string'">
+          <div class="cardd card">
+            <div class="row w-100 m-0 p-0">
+              <div class="col-md-8 p-0">
+                <div class="p-0">
+                  <p class="m-0 popupcomments">Comments: {{comment.comments}}</p>
+                </div>
+                <p class="m-0 popupcomments">Commented by: {{comment.addedName}}</p>
+              </div>
+              <div class="text-end col-md-4 p-0">
+                <p class="m-0 popupcomments">Date: {{comment.addedDate | date: 'short'}}</p>
+                <p class="m-0 popupcomments">Commented by ID: {{comment.addedByFusionEmpId}}</p>
+                <p class="m-0 popupcomments">Status: {{comment.action}}</p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <ng-template #noCommentsTemplate>
+      <p>No comments available.</p>
+    </ng-template>
+    
+  </div>
+
+</ng-template>
 
 <ng-template #viewDetailsModal let-modal>
   <div class="custom-main-popup-container">
@@ -63,26 +131,31 @@
       <table class="w-100">
         <thead>
           <tr>
-            <th>Item Name</th>
+            <th>Expense Type</th>
+            <th>Expense  Name</th>
             <th>Expense Date</th>
             <th>Total Amount</th>
             <th>Status</th>
-            <th>Actions</th>
+            <th>Receipt Number</th>
+            <th colspan="2">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
+            <td>{{ item?.expenseType }}</td>
             <td>{{ item?.item_Name }}</td>
             <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
             <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+          
             <td>{{ item?.status }}</td>
+            <td>{{ item?.receipt_Number }}</td>
             <td>
 
               <div class="d-flex gap-2">
-                <a type="button" class="me-2 dowload-text" (click)="onSelectDownload(item?.attachment_url)">
+                <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
                   <i class="bi bi-download me-2"></i>Download
                 </a>
-                <a type="button" class="view-text" (click)="onViewAttachement(item?.attachment_url)">
+                <a type="button" class="view-text text-nowrap" (click)="onViewAttachement(item?.attachment_url)">
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>

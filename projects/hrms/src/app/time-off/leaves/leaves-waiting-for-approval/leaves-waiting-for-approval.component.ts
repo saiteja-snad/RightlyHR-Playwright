@@ -8,11 +8,12 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-leaves-waiting-for-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './leaves-waiting-for-approval.component.html',
   styleUrl: './leaves-waiting-for-approval.component.scss'
 })

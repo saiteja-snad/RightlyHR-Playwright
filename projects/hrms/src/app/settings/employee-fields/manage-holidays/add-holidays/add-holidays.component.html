@@ -1,0 +1,71 @@
+<div class="custom-main-component-container w-100">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <p class="component-header mb-0" (click)="nagvition()">
+            <i class="bi bi-arrow-90deg-left me-2"></i>Add Holiday
+          </p>
+        </div>
+    </div>
+
+    <div class="custom-setting-right-content w-100 p-3">
+        <!--Select Fields-->
+        <div class="d-flex gap-3 mt-4">
+        
+          <div class="custom-p-select-content">
+              <p-select [options]="salaryHoldDetails" optionLabel="name"
+                  placeholder="Select year"
+                  class="form-select custom-select">
+              </p-select>
+          </div>
+          <div class="custom-p-select-content">
+            <p-select [options]="salaryHoldDetails" optionLabel="name"
+                placeholder="Select location"
+                class="form-select custom-select">
+            </p-select>
+        </div>
+        <div class="custom-p-select-content">
+          <p-select [options]="salaryHoldDetails" optionLabel="name"
+              placeholder="Select Sub-location "
+              class="form-select custom-select">
+          </p-select>
+      </div>
+        <div>
+          <button type="button" class="custom-btn btn-primary " >
+            <i class="bi bi-plus me-2"></i> Add Holidays
+        </button>
+        </div>
+        </div>
+        <div class="card custom-background-card p-3 mt-2">
+            <div class="row">
+              
+              <div class="col-md-5">
+                <label class="form-label custom-label">Holiday Name<span
+                        class="text-danger">*</span></label>
+                <input type="text" class="form-control custom-input" 
+                    placeholder="Please enter holiday name" />
+            </div>
+
+            <div class="col-md-5">
+              <label class="form-label custom-label"> Holiday Date<span
+                      class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input" 
+                  onkeypress="return false;" />
+
+
+          </div>
+          <div class="col-md-2">
+            <label class="form-label custom-label">Optional<span
+                    class="text-danger">*</span></label>
+                    <div class="form-check text-center">
+                      <input class="form-check-input mt-2" type="checkbox" id="noExpiry"
+                       />
+                   
+                  </div>
+
+
+        </div>
+
+            </div>
+        </div>
+    </div>
+</div>

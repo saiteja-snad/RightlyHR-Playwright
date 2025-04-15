@@ -8,7 +8,7 @@ import moment from 'moment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from "../../../../../hrms/src/app/pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../../hrms/src/app/Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { PopupService } from '../../common-services/popup.service';
 
@@ -399,9 +399,10 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       });
   }
 
-  getJobDetails(Employee: any) {
+   getJobDetails(Employee:any) {
     let EmployeeId = Employee.employeeId
     console.log(EmployeeId);
+    
     this.subscription = this.http.getData(`PreonboardingJobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -409,11 +410,11 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         let res = data[0];
         this.jobDeatils = res;
         console.log(this.jobDeatils);
-        this.traineeEmpData.reportingmanagerName = `${res?.fName ?? ''} ${res?.mName ?? ''} ${res?.lName ?? ''}`;
+        this.traineeEmpData.reportingmanagerName = `${res?.fName} ${res?.mName ?? ''} ${res?.lName}`;
         Employee.jobRole = res.jobRole;
 
         Employee.workLocation = res.lopcation;
-        Employee.subLocation = res.subLocation;
+        Employee.subLocation=res.subLocation;
         console.log(Employee.workLocation);
 
         console.log(Employee.jobRole);

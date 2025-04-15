@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IRoles } from '../permissions/permission.model';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -15,12 +15,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-role-assignee',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule],
   templateUrl: './role-assignee.component.html',
-  styleUrl: './role-assignee.component.scss'
+  styleUrl: './role-assignee.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 export class RoleAssigneeComponent implements OnInit, OnDestroy {
   roleId: string | undefined;
   userId: number | undefined;
-  selectedUsersCount!: number;;
+  selectedUsersCount!: number;
   customLabelTemplate: string | undefined;
   selectedRole: IRoles | undefined;
   usersList: IActiveEmployee[] = [];

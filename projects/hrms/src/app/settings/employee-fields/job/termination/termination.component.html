@@ -1,109 +1,97 @@
-<form [formGroup]="ExistForm" (ngSubmit)="addTerminationReason()">
-    <div class="card main-settings-layout p-4">
+<div class="custom-main-component-container">
+    <form [formGroup]="ExistForm" (ngSubmit)="addTerminationReason()">
         <!-- Add Input-->
-        <div>
-            <div class="custom-settings-add-input input-group mb-5">
-                <input type="text" class="form-control custom-input" placeholder="Please enter Exit Reason"
-                    formControlName="TERMINATION" aria-label="termination" aria-describedby="termination"  (keypress)="blockNonAlphabets($event)" >
+        <div class="mb-4">
+            <div class="custom-settings-add-input input-group">
+                <input type="text" class="form-control custom-input" placeholder="Please enter exist reason"
+                    formControlName="TERMINATION" aria-label="termination" aria-describedby="termination"
+                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="termination">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="ExistForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="ExistForm.invalid">{{'Add'|translate}}</button></span>
+            </div>
+            <div *ngIf="ExistForm.get('TERMINATION')?.touched && ExistForm.get('TERMINATION')?.invalid" class="error-msg mt-2">
+                <div *ngIf="ExistForm.get('TERMINATION')?.errors?.['required']">{{'Exit Reason is required'|translate}}</div>
             </div>
         </div>
-          <div *ngIf="ExistForm.get('TERMINATION')?.touched && ExistForm.get('TERMINATION')?.invalid">
-            <small style="color: red;font-size: 13px;" *ngIf="ExistForm.get('TERMINATION')?.errors?.['required']">
-              {{'Exit Reason is required'|translate}}
-            </small>
-            <!-- <small style="color: red;" *ngIf="locationForm.get('jobLocationName')?.errors?.['pattern']">
-               {{'Only alphabets and spaces are allowed'|translate}}
-            </small> -->
-          </div>
-          
-          
-        <!--Data Content-->
-         <div>
-            <div class="custom-settings-data-table">
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                            <th class="col-span-2"></th>                            
-                        </tr>
-
-                    </thead>
-                    <tbody>
-                         @for (termination of terminationDetails; track termination.id) {
-                        <tr *ngFor="let termination of terminationDetails">
-                             <tr>
-                            <td class="w-75">{{ termination.reason }}</td>                           
-                            <td class="w-25">
-                                <div class="d-flex gap-4">
-                                    <!--Update-->
-                                     <div>
-                                        <a (click)="openupdate(termination)"><img src="/settings-icon/edit.png" alt="edit icon"
-                                                class="settings-common-icon"></a>
-                                    </div> 
-                                    <!--Delete-->
-                                    <div>
-                                        <a (click)="opendelete(termination)"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                                class="settings-common-icon"></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div> 
-          
-    </div>
-</form>
-
-<!--Update popup-->
-<ng-template #updatepopup let-modal>
-     <form [formGroup]="updateForm">
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Exit Reason'|translate}}</p>
-            </div>
-            <div>
-                <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
-        </div>
-        <div class="custom-main-popup-content p-5">
-            <div class="mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Exit Reason'|translate}}<span
-                        class="error-msg">*</span></label>
-                <input type="text" class="form-control custom-input" formControlName="TERMINATION"
-                    placeholder="Please enter Exit Reason"  (keypress)="blockNonAlphabets($event)">
-            </div>
-            <div *ngIf="updateForm.get('TERMINATION')?.touched && updateForm.get('TERMINATION')?.invalid">
-                <small style="color: red;font-size: 13px;" *ngIf="updateForm.get('TERMINATION')?.errors?.['required']">
-                 {{'Exit Reason is required'|translate}}
-                </small>
-              </div>
-            <div class="d-flex gap-5 pt-4 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close'|translate}}</button>
-                <button class="custom-btn btn-primary w-50 py-3" (click)="updateTermination(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
-            </div>
-          
-        </div>
-    </div>
     </form>
-</ng-template>
-
-<!--Delete Confirmation popup-->
-<ng-template #deletepopup let-modal>
+  
+    <!--Data Content-->
+    <div class="custom-settings-data-table">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="col-span-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (termination of terminationDetails; track $index) {
+                <tr>
+                    <td class="w-75">{{ termination.reason}}</td>
+                    <td class="w-25">
+                        <div class="d-flex gap-4">
+                            <!--Update-->
+                            <div>
+                                <a (click)="openupdate(termination)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                        class="settings-common-icon"></a>
+                            </div>
+                            <!--Delete-->
+                            <div>
+                                <a (click)="opendelete(termination)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                        class="settings-common-icon"></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+  </div>
+  
+  <!--Update popup-->
+  <ng-template #updatepopup let-modal>
+    <form [formGroup]="updateForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-3">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Edit Reason'|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-4">
+                <div class="mb-4">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Gender'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="TERMINATION" placeholder="Please enter exit reason"
+                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    <div *ngIf="updateForm.get('TERMINATION')?.touched && updateForm.get('TERMINATION')?.invalid" class="error-msg mt-2">
+                        <div *ngIf="updateForm.get('TERMINATION')?.errors?.['required']">{{'Exit reason is required'|translate}}</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-5 w-100 pt-3">
+                    <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="updateTermination(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+  </ng-template>
+  
+  <!--Delete Confirmation popup-->
+  <ng-template #deletepopup let-modal>
     <div class="modal-body" ngbAutofocus>
         <div class="custom-main-popup-content text-center p-4">
-            <div class="py-5">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+            <div class="py-4">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
             <div class="d-flex gap-5 pt-2 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'yes'|translate}}</button>
+                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
     </div>
-</ng-template>
+  </ng-template>

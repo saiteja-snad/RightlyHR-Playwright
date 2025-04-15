@@ -1,7 +1,7 @@
 export interface Ipersonal {
   separationType: string;
     bgc: any;
-    status: any;
+    status?: any;
     remoteLogin: any;
     totalExperience: any;
     pt: any;
@@ -95,6 +95,7 @@ export interface Ipersonal {
     empType: string;
     employeeAddresses?: IAddress[]
     trainingEndDate: any;
+    durationOfTrainee:any;
 }
 export interface IStatus {
 

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IAddress, IDepartment, IemployeeDetails, IIssuelocation, IMake } from './appointment-letter-model';
 import { Subscription } from 'rxjs';
@@ -132,22 +132,7 @@ export class AppointmentLetterComponent {
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
-  // dataSuccessMsg(msg: string) {
-  //   this.Status = msg;
-  //   this.openmodel(this.successhide);
-  //   setTimeout(() => {
-  //     this.modalService.dismissAll();
-  //   }, 2000);
 
-  // }
-
-  // dataFailureMsg(msg: string) {
-  //   this.Status = msg;
-  //   this.openmodel(this.errorhide);
-  //   setTimeout(() => {
-  //     this.modalService.dismissAll();
-  //   }, 2000);
-  // }
   
   getAssertType() {
     this.subscription = this.http.getData(`AssetType`).subscribe({

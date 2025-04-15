@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Iactive } from './active-model';
-import { ActiveEmployeePipe } from "../../pipes/active-employee.pipe";
+import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 @Component({

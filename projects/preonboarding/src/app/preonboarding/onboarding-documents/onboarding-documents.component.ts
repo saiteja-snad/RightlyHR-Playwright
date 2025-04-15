@@ -9,10 +9,12 @@ import { HttpService } from '../../http-services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
 import { Location } from '@angular/common';
-import { DateFormatPipe } from "../../pipes/date-format.pipe";
+
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { PopupService } from '../../common-services/popup.service';
 import { Ipersonal } from '../../models/personal-details.model';
+import { DateFormatPipe } from '../../Pipes/date-format.pipe';
+
 @Component({
   selector: 'app-onboarding-documents',
   imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbTooltipModule, NgxDocViewerModule, RouterModule],

@@ -1,11 +1,11 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, NgForm} from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import moment from 'moment';
 import { HttpService } from '../../../services/http.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { IFormDetails, ISection } from './assessmentform';
@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-assessmentform',
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [FormsModule,CommonModule],
   templateUrl: './assessmentform.component.html',
   styleUrl: './assessmentform.component.scss'
 })
@@ -38,13 +38,6 @@ export class AssessmentformComponent {
   responseId!: number;
   displayTextArea = true;
   indexspace = 25;
-  rejectSeparationForm!: FormGroup;
-  rejectSubmitted = false; 
-  acceptForm!: FormGroup;
-  formSubmitted = false;
-  approve = false;
-  extend = false;
-  discontinue = false;
   loggedindata = {} as any;
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
@@ -53,8 +46,8 @@ export class AssessmentformComponent {
   @ViewChild('formsavepopup') formsavepopup!: ElementRef;
   Status: any;
 
-  constructor( private router: Router, private http: HttpService,private fb: FormBuilder,
-     private authService: AuthService,
+  constructor(private renderer: Renderer2, private elRef: ElementRef, private router: Router, private http: HttpService,
+    private route: ActivatedRoute, private authService: AuthService,
     config: NgbModalConfig, private modalService: NgbModal) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -67,56 +60,12 @@ export class AssessmentformComponent {
     if (data) {
       this.formemployeedetails = JSON.parse(data);
       console.log(this.formemployeedetails?.entity?.employeeId);
-      this.getFormDetails(3356);
+      this.getFormDetails(this.formemployeedetails?.entity?.employeeId);
       this.selected_approve = this.formemployeedetails.entity;
       console.log(this.formemployeedetails);
     }
-    this.rejectSeparationForm = this.fb.group({
-      rejectedReason: [this.selectedData?.rejectedReason || '', Validators.required]
-    });
   }
-  personalForm!: FormGroup;
-  initForm() {
-    this.personalForm = this.fb.group({
-      // section questions array
-      dynamicSections: this.fb.array(this.dynamicFormQuestions.map(section =>
-        this.fb.group(
-          (section.questions ?? []).map(question =>
-            this.fb.group({
-              EmployeeId: [''],
-              options: this.fb.array((question.options ?? []).map(option =>
-                this.fb.group({
-                  option: [option.option],
-                  optionId: [option.optionId],
-                  checked: [option.checked],
-                  optionWeightage: [option.optionWeightage],
-                  meta: [option.meta]
-                })
-              ))
-            })
-          )
-        )
-      )),
-  
-      // footer section
-      footer: this.fb.array((this.dynamicFormFooter[0]?.questions ?? []).map(item =>
-        this.fb.group({
-          question: [item.question],
-          options: this.fb.array((item.options ?? []).map(option =>
-            this.fb.group({
-              option: [option.option],
-              optionId: [option.optionId],
-              checked: [option.checked],
-              value: [''],
-              optionWeightage: [option.optionWeightage],
-              meta: [option.meta]
-            })
-          ))
-        })
-      ))
-    });
-  }
-  
+
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -341,23 +290,9 @@ export class AssessmentformComponent {
           ele.data.meta = meta;
         }
       });
-      // .forEach((ele:any)=>{
-
-      //     if(ele.id===sectionId){
-      //       ele.data.optionId=optionId
-      //     }
-
-      //   })
-      // .push({
-      //   id: sectionId,
-      //   data:  {"questionId":quetsionId,
-      //     "optionId": optionId,
-      //   "meta":meta,
-      // "sectionId":sectionId}
-      // }
-      //  )
+      
     } else {
-      // questions.forEach((ele:any)=>{
+      
       this.selected_questions.push({
         id: sectionId,
         data: {
@@ -367,29 +302,19 @@ export class AssessmentformComponent {
           sectionId: sectionId,
         },
       });
-      // })
+      
     }
-    // this.selected_questions.push({
-    //   id: sectionId,
-    //   data:  {"questionId":quetsionId,
-    //     "optionId": optionId,
-    //   "meta":meta,
-    // "sectionId":sectionId}
-    // }
-    //  )
+    
   }
 
   onCheckboxChangefooter(questions: any, rating: string, optionId: number, section: any, sectionId: number, quetsionId: number, meta: any): void {
-    // Initialize section rating for the current section if it's not set
+    
     if (!this.sectionRatings[sectionId]) {
       this.sectionRatings[sectionId] = 0;
     }
     // Reset section rating for the current section
     this.sectionRatings[sectionId] = 0;
-    // Iterate through sections to find the correct section based on sectionId
-    // section?.forEach((sec: any) => {
-    // if (sec.id === sectionId) {
-    // Iterate through questions in the current section
+    
     questions.forEach((optionsarray: any) => {
       optionsarray.options.forEach((element: any) => {
         if (element.optionId === optionId) {
@@ -434,19 +359,7 @@ export class AssessmentformComponent {
           ele.data.meta = meta;
         }
       });
-      // .forEach((ele:any)=>{
-      //     if(ele.id===sectionId){
-      //       ele.data.optionId=optionId
-      //     }
-      //   })
-      // .push({
-      //   id: sectionId,
-      //   data:  {"questionId":quetsionId,
-      //     "optionId": optionId,
-      //   "meta":meta,
-      // "sectionId":sectionId}
-      // }
-      //  )
+     
     } else {
       // questions.forEach((ele:any)=>{
       this.selected_questions.push({
@@ -589,29 +502,16 @@ export class AssessmentformComponent {
     }
     this.displayTextArea = !this.displayTextArea;
     this.indexspace = 25
-    // this.router.navigate(["/timeoffleaves/probation-approvals"])
+   
   }
 
-  get comments() {
-    return this.acceptForm.get('comments')!;
-  }
-  get extendDate() {
-    return this.acceptForm.get('extendDate')!;
-  }
-  get extendReason() {
-    return this.acceptForm.get('extendReason')!;
-  }
-  get rejectedReason() {
-    return this.rejectSeparationForm.get('rejectedReason')!;
-  }
   //to store file to the azure and return to the url
   AssessmentFormUpload(empId: number, file: File) {
     let filePath = `/FusionDocuments/Employee Documents/Probation Assessment Form/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
-          // this.postProbationDetails(empId, data.path);
-          //this.updateOfferDetails(data.path);
+          
           console.log(data);
         }
       },
@@ -621,14 +521,7 @@ export class AssessmentformComponent {
       },
     });
   }
-  onRejectSubmit() {
-    this.rejectSubmitted = true;
-    if (this.rejectSeparationForm.valid) {
-      const reason = this.rejectSeparationForm.value.rejectedReason;
-      this.selectedData.rejectedReason = reason;
-      // Proceed with submission logic here
-    }
-  }
+
   //function to upload the assesment form
   postProbationDetails() { }
 
@@ -929,8 +822,10 @@ export class AssessmentformComponent {
         },
       });
   }
-  
-  
+
+  discontinue: boolean = false;
+  extend: boolean = false;
+  approve: boolean = false;
   buttondisable: boolean = false;
   // Function to handle toggling Early Relieving option
   toggleApprove() {
@@ -944,11 +839,7 @@ export class AssessmentformComponent {
       this.clearExtendData();
       this.clearDiscontinueData();
     }
-    // else {
-    //   // Toggle off Early Relieving
-    //   this.approve = false;
-    //   this.clearApproveData();
-    // }
+    
   }
 
   // Function to handle toggling Extend option

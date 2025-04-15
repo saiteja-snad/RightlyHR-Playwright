@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,7 +12,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
   selector: 'app-roles',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule],
   templateUrl: './roles.component.html',
-  styleUrl: './roles.component.scss'
+  styleUrl: './roles.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 export class RolesComponent implements OnInit, OnDestroy {
   updateForm!: FormGroup;
@@ -102,7 +103,7 @@ export class RolesComponent implements OnInit, OnDestroy {
   openupdate(roles: any) {
     console.log(roles)
     this.rolesDeletedata = roles;
-    this.updateForm?.patchValue({ firstName: roles.normalizedName });
+    this.updateForm?.patchValue({ firstName: roles.name });
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
   }
 

@@ -1,0 +1,35 @@
+
+<div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <p class="component-header mb-0">Desk Management</p>
+        </div>
+        <div>
+          <button type="button" class="custom-btn btn-primary" ><i
+              class="bi bi-plus me-2"></i>Register an Desk</button>
+        </div>
+      </div>
+
+
+
+      
+<div class="component-nav-tabs-container card px-2">
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of navTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                        {{ tab.label }} ({{tab.count}})
+                    </a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
+</div>
+
+
+<div>
+    <router-outlet></router-outlet>
+</div>
+
+</div>

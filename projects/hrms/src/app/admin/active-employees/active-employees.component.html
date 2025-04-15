@@ -5,7 +5,8 @@
             <i class="bi bi-arrow-90deg-left me-2"></i>{{'Active Employees'|translate}}
           </p>
         </div>
-        <div class="dropdown">
+        @if(this.rbac.allowedToAccess('Active Generate documents.view')){
+          <div class="dropdown">
             <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-plus me-2"></i>{{'Generate Documents'|translate}}
             </button>
@@ -17,6 +18,7 @@
                 <li><a class="dropdown-item" [routerLink]="['/admin/letters/promotion-letter']" routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>{{'Promotion Letter'| translate}}</a></li>
             </ul>
         </div>
+        } 
     </div>
     <div>
         <!--Input search-->

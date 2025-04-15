@@ -28,7 +28,7 @@ export class SettingsJobTabsComponent {
     { label: 'Compensation Reason', route: '/settings/employee-fields/job/compensation-reason' },
     { label: 'Location', route: '/settings/employee-fields/job/location' },
     { label: 'Sub Location', route: '/settings/employee-fields/job/sub-location' },
-    { label: 'Pre Onboarding Documents', route: '/settings/employee-fields/personal/relationship' },
+    { label: 'Pre Onboarding Documents', route: '/settings/employee-fields/job/pre-on-boarding-documents' },
     { label: 'Serving period', route: '/settings/employee-fields/job/serving-period' },
     { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details' }
   ];

@@ -92,6 +92,8 @@
                         </tr>
                     </thead>
                     <tbody>
+
+                        
                         @if(attendanceData.value.length>0){
                             @for (item of attendanceData|async; track $index) {
                                 <tr >
@@ -143,12 +145,25 @@
         </div>
         <div class="col-3">
             <div class="custom-table-content ">
-                <table>
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                          <th>Status</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
                  <tbody>
-                    <tr>
-                        <td >present</td>
-                        <td class="text-end">20</td>
-                    </tr>
+                    <ng-container *ngIf="statusCounts$ | async as statusCounts">
+                        @for (status of statusCounts | keyvalue; track $index) {
+                          <tr>
+                            <td>{{ status.key }}</td>
+                            <td>{{ status.value }}</td>
+                          </tr>
+                        }
+                      </ng-container>
+                      <ng-container *ngIf="!(statusCounts$ | async)">
+                        <tr><td>No data available</td></tr>
+                      </ng-container>
                  </tbody>
                 </table>
             </div>

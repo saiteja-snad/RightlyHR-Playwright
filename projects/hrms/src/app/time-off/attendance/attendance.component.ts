@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
@@ -57,6 +57,7 @@ export class AttendanceComponent implements OnInit, OnDestroy{
   selectedMonth: any;
   selectedEmployee: any;
   empdate={} as Ipersonal;
+  statusCounts$!: Observable<Record<string, number>>;
   constructor(private authService: AuthService,
     private http: HttpService,
     private router: Router,
@@ -79,7 +80,8 @@ getAttendnaceData(employeeId:number){
  this.subscription= this.http.getData(`v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`).subscribe({
     next:(response:any)=>{
     console.log(response.data)
-    this.attendanceData.next(response.data)
+    this.attendanceData.next(response.data);
+    this.statusSummary();
     // this.attendanceData.next(response.data);
     },
     error:(err:any)=>{
@@ -88,6 +90,7 @@ getAttendnaceData(employeeId:number){
     }
   })
 }
+//function to bind color for the each status
   getStatusClass(status: string): string {
     switch (status?.toLowerCase()) {
       case 'present':
@@ -96,14 +99,22 @@ getAttendnaceData(employeeId:number){
       case 'absent(permission)':
         return 'status-absent';
       case 'leave':
+        return 'status-leave';
+        case 'half day leave':
+          return 'status-leave';
       case 'first half leave':
+        return 'status-leave';
       case 'second half leave':
         return 'status-leave';
       case 'wfh':
+        return 'status-wfh';
       case 'first half wfh':
+        return 'status-wfh';
       case 'second half wfh':
         return 'status-wfh';
-      case 'weekend':
+        case 'half day wfh':
+          return 'status-wfh';
+      case 'weekoff':
         return 'status-weekend';
         case 'half day remote':
           return 'status-remote';
@@ -113,6 +124,20 @@ getAttendnaceData(employeeId:number){
       default:
         return '';
     }
+  }
+  //function to get the count of the each status
+  statusSummary(){
+    this.statusCounts$ = this.attendanceData.pipe(
+      map(data => {
+        const counts: Record<string, number> = {};
+        data.forEach(item => {
+          if (item.status) {
+            counts[item.status] = (counts[item.status] || 0) + 1;
+          }
+        });
+        return counts;
+      })
+    );
   }
     // function to get the data of employees by hierarchy
     getAllEmployeeInfo = [] as any;

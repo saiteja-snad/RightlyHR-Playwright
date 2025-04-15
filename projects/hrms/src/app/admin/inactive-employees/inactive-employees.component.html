@@ -5,22 +5,24 @@
         <i class="bi bi-arrow-90deg-left me-2"></i>{{'Inactive Employees'| translate}}
       </p>
     </div>
-    <div class="dropdown">
-      <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-plus me-2"></i>{{'Generate Documents'| translate}}
-      </button>
-      <ul class="dropdown-menu custom-dropdown-menu">
-        <li><a class="dropdown-item" [routerLink]="['/admin/letters/relieving-letter']" routerLinkActive="active"><i
-              class="bi bi-file-earmark-text-fill me-2"></i>{{'Relieving Letter'| translate}}</a></li>
-      </ul>
-    </div>
+    @if(this.rbac.allowedToAccess('Inactive Generate documents.view')){
+      <div class="dropdown">
+        <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-plus me-2"></i>{{'Generate Documents'| translate}}
+        </button>
+        <ul class="dropdown-menu custom-dropdown-menu">
+          <li><a class="dropdown-item" [routerLink]="['/admin/letters/relieving-letter']" routerLinkActive="active"><i
+                class="bi bi-file-earmark-text-fill me-2"></i>{{'Relieving Letter'| translate}}</a></li>
+        </ul>
+      </div>
+    }
   </div>
   <div>
     <!--Input search-->
     <div class="input-group custom-search mb-4">
       <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
       <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-        placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+        placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">

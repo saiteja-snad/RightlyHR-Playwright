@@ -137,13 +137,13 @@
                               
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="addressLetterData.authorityName?.trim()">
-                                  <p style="font-weight: bold;">Authority Name</p>
-                                  <p style="font-weight: bold;">Designation</p>
+                                  <p class="m-0 paragraph boldsize1">Authority Name</p>
+                                  <p class="m-0 paragraph boldsize1">Designation</p>
                                 </div>
                               
                                 <!-- Signature in custom font (Only show when valid name exists) -->
                                 <div *ngIf="addressLetterData.authorityName?.trim()" 
-                                style="font-family: autographsignatureFont; font-size: xx-large;">
+                                style="font-family: Segoe script; font-size: large;">
                              {{ addressLetterData.authorityName }}
                            </div>
                               

@@ -558,10 +558,10 @@
                     <p class="mb-4">Yours Sincerely,</p>
                     <p class="mb-5 letter-sub-header">For RightlyHR </p>
                     <div class="stamp"></div>
-                    <p class="m-0 letter-signature">{{prospectiveEmpData.authorityName}} </p>
-                    <p class="m-0 letter-sub-header"> Authorized Signatory, </p>
-                    <p class="m-0 letter-sub-header">{{prospectiveEmpData.authorityName}} </p>
-                    <p class="m-0 mb-5 letter-sub-header">{{authorityDesignation}} </p>
+                    <p class="m-0 paragraph boldsize1" *ngIf="prospectiveEmpData.authorityName?.trim()" style="font-family: Segoe script; font-size: large;">{{prospectiveEmpData.authorityName}}</p>
+                    <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
+                    <p class="m-0 paragraph boldsize1">{{prospectiveEmpData.authorityName}} </p>
+                    <p class="m-0 paragraph boldsize1">{{authorityDesignation}} </p>
                     <p class=" mb-5">I accept this offer of employment. </p>
                     <div class="d-flex justify-content-between">
                       <div>

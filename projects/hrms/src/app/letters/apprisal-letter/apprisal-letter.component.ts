@@ -287,7 +287,7 @@ export class ApprisalLetterComponent {
   }
   onclickDesignation() {
     let signatureAuthorityDetails = this.authoritydetails.find(
-      (c: any) => c.employeeId == this.appraisalData.variablePayAmount.employeeId
+      (c: any) => c.employeeId == this.appraisalData.authorityid
     );
     console.log(signatureAuthorityDetails);
     if (signatureAuthorityDetails) {

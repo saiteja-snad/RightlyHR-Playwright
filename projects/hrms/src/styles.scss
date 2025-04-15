@@ -960,6 +960,43 @@ a {
     }
 }
 
+//holidays
+.holiday-card {
+    border: none;
+    border-left: 5px solid #06274F;
+    box-shadow: 0px 0px 6px 1px #2222221A;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    width: 100%;
+    vertical-align: middle;
+    background-color: var(--body-bg-color);
+
+    .holiday-icon-card {
+        padding: 0.5rem;
+        border: none;
+        background-color: #D7E7FA;
+
+        .holiday-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+
+    .holiday-name {
+        font-weight: 500;
+        font-size: var(--fontsize14);
+    }
+
+    .date {
+        font-weight: 500;
+        font-size: 12px;
+        color: #65778D;
+    }
+
+   
+
+   
+}
 // file styling
 input[type="file"] {
     &::-webkit-file-upload-button {

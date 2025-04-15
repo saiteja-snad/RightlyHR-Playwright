@@ -9,10 +9,11 @@ import { Location } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import {  NgxDocViewerModule } from 'ngx-doc-viewer';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule],
+  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule,Select],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
@@ -24,7 +25,8 @@ export class CompanypoliciesComponent {
   jobshiftdetials: any;
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
-  years: number[] = [];
+  years: { label: string; value: number }[] = [];
+
   filteredpolicy:any =[] 
   orgPolicyItemsArray: any[] = [];
   EduViewURL: string = ''; // URL for the document viewer
@@ -50,10 +52,15 @@ item: any;
       // Get the current year
       this.currentYear = new Date().getFullYear();
 
-      // Push the previous year, current year, and next year to the array
+      // // Push the previous year, current year, and next year to the array
+      // for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      //     this.years.push(i);
+      // }
       for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
-          this.years.push(i);
+        this.years.push({ label: i.toString(), value: i });
       }
+      
+
   
       // Set the selectedYear to the current year
       this.selectedYear = this.currentYear;

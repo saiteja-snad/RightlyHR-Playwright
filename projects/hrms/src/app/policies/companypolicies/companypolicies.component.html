@@ -20,11 +20,14 @@
         <div class="col-6 d-flex align-items-center">
             <span class="selectpo me-2">Select year :</span>
             <form [formGroup]="policiesform" class="mb-0">
-              <select formControlName="selectedYear" class="date" aria-label="Default select example">
+              <!-- <select formControlName="selectedYear" class="date" aria-label="Default select example">
                 <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-              </select>
+              </select> -->
+              <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year" optionLabel="label"
+               optionValue="value" class="date" aria-label="Default select example">
+              </p-select>
             </form>
-          </div>
+        </div>
           
       </div>
   
@@ -69,12 +72,7 @@
           <h1 class="modal-title fs-5" id="exampleModalLabel">Policy</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
         </div>
-  
-        
-          
         <div class="modal-body" style="text-align: center;">
-         
-          <!-- <div class="spinner-container" *ngIf="isLoading"> -->
             <div class="spinner-border text-primary d-inline-block ms-3" style="width: 2rem;height: 2rem;"
             role="status">
             <span class="sr-only"></span>

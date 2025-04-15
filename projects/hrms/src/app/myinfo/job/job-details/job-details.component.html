@@ -1,12 +1,9 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center">
-        <div> <span class="education-sub-header">Job Details</span></div>
-        <div class="plus-button">
-            <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
-                    (click)="openModal(addEducationmodal)" class="plus-text">Add
-                    New</span></span>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Job Details</span></div>
+        <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
     </div>
+
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
@@ -23,7 +20,6 @@
                     <th>SHIFT</th>
                     <th>JOB TYPE</th>
                     <th class="text-center">ACTIONS</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -92,7 +88,7 @@
                         </td>
 
                         <td class="text-center">
-                            <div class="dropdown"  >
+                            <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
@@ -123,16 +119,17 @@
 
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
+                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
                     </tr>
                 </ng-template>
             </tbody>
         </table>
     </div>
 </div>
+
 <ng-template #seprationModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
@@ -140,7 +137,7 @@
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content p-3">
             <form [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
                 <div class="row">
                     <div class="col-md-6">
@@ -202,10 +199,18 @@
                                 <span class="color">{{ separationRequestForm.get('description')?.value?.length || 0 }} /
                                     400</span>
                             </div>
-                            <div class="error-msg"
-                                *ngIf="separationRequestForm.get('description')?.invalid && separationRequestForm.get('description')?.touched">
-                                Reason for Separation is required
-                            </div>
+                            <small class="error-msg"
+                            *ngIf="separationRequestForm.get('description')?.touched && separationRequestForm.get('description')?.invalid">
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['required']">
+                              Reason for Separation is required
+                            </ng-container>
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['maxlength']">
+                              Maximum 400 characters allowed
+                            </ng-container>
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['pattern']">
+                              Reason for Separation should not start with a space.
+                            </ng-container>
+                          </small>
                         </div>
                     </div>
 
@@ -242,15 +247,23 @@
                                     separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }} /
                                     400</span>
                             </div>
-                            <div class="error-msg"
-                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.invalid && separationRequestForm.get('reasonForEarlyRelieving')?.touched">
-                                Reason for Early Relieving is required
-                            </div>
+                            <small class="error-msg"
+                      *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
+                        Reason for Early Relieving is required
+                      </ng-container>
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['maxlength']">
+                        Maximum 400 characters allowed
+                      </ng-container>
+                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['pattern']">
+                        Reason for Early Relieving should not start with a space.
+                      </ng-container>
+                    </small>
                         </div>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3 mt-4">
+                <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid||isLoading">
                         @if(!isLoading){
@@ -269,49 +282,46 @@
         </div>
     </div>
 </ng-template>
+
 <ng-template #addEducationmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add Job Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();jobDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss();jobDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content p-3">
             <form [formGroup]="jobDetailsForm" (ngSubmit)="postJobDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="effectiveDate"
-                            formControlName="effectiveDate">
+                        <input type="date" class="form-control custom-input" id="effectiveDate" formControlName="effectiveDate">
                         <div class="error-msg"
                             *ngIf="jobDetailsForm.get('effectiveDate')?.invalid && jobDetailsForm.get('effectiveDate')?.touched">
                             Effective Date is required
                         </div>
                     </div>
+        
                     <div class="col-md-6 mb-3">
                         <label for="jobRole" class="form-label custom-label mb-2">Job Role<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
-                                filterBy="designationName" formControlName="jobRole"
-                                placeholder="Please select job role" class="form-select custom-select"
-                                (onChange)="onDesignationChange($event.value)"></p-select>
+                                filterBy="designationName" formControlName="jobRole" placeholder="Please select job role"
+                                class="form-select custom-select" (onChange)="onDesignationChange($event.value)"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsForm.get('jobRole')?.invalid && jobDetailsForm.get('jobRole')?.touched">
                             Job Role is required
                         </div>
                     </div>
-                </div>
-                <div class="row">
+        
                     <div class="col-md-6 mb-3">
-                        <label for="grade" class="form-label custom-label mb-2">Grade<span
-                                class="text-danger">*</span></label>
+                        <label for="grade" class="form-label custom-label mb-2">Grade<span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="grade" formControlName="grade"
                             placeholder="Please enter grade">
                         <div class="error-msg"
@@ -319,13 +329,13 @@
                             Grade is required
                         </div>
                     </div>
+        
                     <div class="col-md-6 mb-3">
                         <label for="department" class="form-label custom-label mb-2">Department<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="departmentDetails" optionLabel="departmentName"
-                                formControlName="department" placeholder="Please select department"
-                                (onChange)="onDepartmentChange($event.value)"
+                            <p-select [options]="departmentDetails" optionLabel="departmentName" formControlName="department"
+                                placeholder="Please select department" (onChange)="onDepartmentChange($event.value)"
                                 class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
@@ -333,15 +343,12 @@
                             Department is required
                         </div>
                     </div>
-                </div>
-                <div class="row">
+        
                     <div class="col-md-6 mb-3">
-                        <label for="team" class="form-label custom-label mb-2">Team<span
-                                class="text-danger">*</span></label>
+                        <label for="team" class="form-label custom-label mb-2">Team<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName"
-                                formControlName="team" placeholder="Please select team"
-                                class="form-select custom-select"
+                            <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName" formControlName="team"
+                                placeholder="Please select team" class="form-select custom-select"
                                 (onChange)="onSubDepartmentNameChange($event.value)"></p-select>
                         </div>
                         <div class="error-msg"
@@ -349,27 +356,26 @@
                             Team is required
                         </div>
                     </div>
+        
                     <div class="col-md-6 mb-3">
                         <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <input type="text" class="form-control custom-input" id="teamManager"
-                                formControlName="teamManager" placeholder="Please enter team manager">
+                            <input type="text" class="form-control custom-input" id="teamManager" formControlName="teamManager"
+                                placeholder="Please enter team manager">
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsForm.get('teamManager')?.invalid && jobDetailsForm.get('teamManager')?.touched">
                             Team Manager is required
                         </div>
                     </div>
-                </div>
-                <div class="row">
+        
                     <div class="col-md-6 mb-3">
                         <label for="team" class="form-label custom-label mb-2">Reporting Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"
-                                filterBy="employee" formControlName="reportingManager"
-                                placeholder="Please select Reporting Manager"
+                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true" filterBy="employee"
+                                formControlName="reportingManager" placeholder="Please select Reporting Manager"
                                 (onChange)="onReportingManagerChange($event.value)"
                                 class="form-select custom-select"></p-select>
                         </div>
@@ -378,7 +384,7 @@
                             Reporting Manager is required
                         </div>
                     </div>
-
+        
                     <div class="col-md-6 mb-3">
                         <label for="location" class="form-label custom-label mb-2">Location<span
                                 class="text-danger">*</span></label>
@@ -393,9 +399,7 @@
                             Location is required
                         </div>
                     </div>
-
-                </div>
-                <div class="row">
+        
                     <div class="col-md-6 mb-3">
                         <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
                                 class="text-danger">*</span></label>
@@ -409,9 +413,9 @@
                             Sub Location is required
                         </div>
                     </div>
+        
                     <div class="col-md-6 mb-3">
-                        <label for="shift" class="form-label custom-label mb-2">Shift<span
-                                class="text-danger">*</span></label>
+                        <label for="shift" class="form-label custom-label mb-2">Shift<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="shiftDropdown" optionLabel="shiftName" formControlName="shift"
                                 placeholder="Please select shift" class="form-select custom-select"></p-select>
@@ -421,9 +425,8 @@
                             Shift is required
                         </div>
                     </div>
-
-                </div>
-                <div class="row">
+        
+        
                     <div class="col-md-6 mb-3">
                         <label for="jobType" class="form-label custom-label mb-2">Job Type<span
                                 class="text-danger">*</span></label>
@@ -439,27 +442,24 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="jobDetailsForm.invalid">Submit</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="jobDetailsForm.invalid">Submit</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
 
-
 <ng-template #updatejobmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Job Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();jobDetailsupdateForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss();jobDetailsupdateForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content p-3">
             <form [formGroup]="jobDetailsupdateForm">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -486,8 +486,7 @@
                             Job Role is required
                         </div>
                     </div>
-                </div>
-                <div class="row">
+
                     <div class="col-md-6 mb-3">
                         <label for="grade" class="form-label custom-label mb-2">Grade<span
                                 class="text-danger">*</span></label>
@@ -498,6 +497,7 @@
                             Grade is required
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
                         <label for="department" class="form-label custom-label mb-2">Department<span
                                 class="text-danger">*</span></label>
@@ -512,8 +512,7 @@
                             Department is required
                         </div>
                     </div>
-                </div>
-                <div class="row">
+
                     <div class="col-md-6 mb-3">
                         <label for="team" class="form-label custom-label mb-2">Team<span
                                 class="text-danger">*</span></label>
@@ -528,6 +527,7 @@
                             Team is required
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
                         <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span
                                 class="text-danger">*</span></label>
@@ -540,8 +540,7 @@
                             Team Manager is required
                         </div>
                     </div>
-                </div>
-                <div class="row">
+ 
                     <div class="col-md-6 mb-3">
                         <label for="team" class="form-label custom-label mb-2">Reporting Manager<span
                                 class="text-danger">*</span></label>
@@ -602,8 +601,6 @@
                         </div>
                     </div>
 
-                </div>
-                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="jobType" class="form-label custom-label mb-2">Job Type<span
                                 class="text-danger">*</span></label>
@@ -627,7 +624,6 @@
     </div>
 </ng-template>
 
-
 <ng-template #seprationModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
@@ -638,7 +634,7 @@
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content p-3">
             <form [formGroup]="separationRequestForm">
                 <div class="row">
                     <div class="col-md-6">
@@ -748,7 +744,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3 mt-4">
+                <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary">Submit</button>
                 </div>
@@ -757,19 +753,15 @@
     </div>
 </ng-template>
 
-
-
-
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
             <p class="confirmation-text mb-4">Are you sure you want to delete the Job Details?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
+        <div class="d-flex justify-content-center gap-3">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="jobdetailsdelte()">Yes</button>
         </div>
     </div>
-
 </ng-template>

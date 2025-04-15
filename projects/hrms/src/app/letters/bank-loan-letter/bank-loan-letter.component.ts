@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
 import { CommonModule } from '@angular/common';

@@ -3,13 +3,16 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IJob } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../environments/environment.dev';
+import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 @Component({
   selector: 'app-probation-details',
-  imports: [CommonModule, DateformatPipe],
+  standalone: true,
+  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })
@@ -31,6 +34,9 @@ export class ProbationDetailsComponent implements OnInit {
     this.loggedinuser = this.authService.getToken();
     this.getEmployeeId();
     this.getProbationRequest();
+    this.getProbationExtendDays()
+    console.log(this.probationProbationNotiperiodDuration);
+    
   }
 
   getEmployeeId(): void {
@@ -58,7 +64,24 @@ export class ProbationDetailsComponent implements OnInit {
     const shouldShow = (this.isprobationEndDateComplete(probationEndDate));
     return shouldShow;
   }
-
+  getProbationExtendDays() {
+    const probationnoticeperiodId = environment.ProbationbuttonbeforeId;
+    const probtimesextended = environment.ProbationExtendPeriodTimes
+    this.subscription = this.http.getData(`ProbationFlow/settingsprobationconfiggetall`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        const duration = data.find((ele: any) => {
+          return ele.configValueId === probationnoticeperiodId;
+        })
+        console.log(duration);
+        this.probationProbationNotiperiodDuration = duration.noOfDays;
+        const probExtendTimes = data.find((ele: any) => {
+          return ele.configValueId === probtimesextended;
+        })
+        this.probationExtendTimes = probExtendTimes.noOfDays;
+      }
+    })
+  }
   isprobationEndDateComplete(probationEndDate: string) {
     console.log(probationEndDate);
     if (probationEndDate) {
@@ -124,14 +147,34 @@ export class ProbationDetailsComponent implements OnInit {
       }
     })
   }
-
+  closeModel() {
+    const modalElement = document.getElementById('probationCommentsPopup');
+    if (modalElement) {
+      modalElement.classList.remove('show');
+      modalElement.style.display = 'none';
+    }
+  }
+  openview() {
+    this.closeModel();
+    const modalElement = document.getElementById('probationformView');
+    if (modalElement) {
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
+    }
+  }
+  close(){
+    window.location.reload();
+  }
+  setformView(employeeId: number, responseId: number) {
+    this.http.communicationService.next({ employeeId, responseId });
+  }
   probationCommentsFunction(Value: any) {
-    // const modalElement = document.getElementById('probationCommentsPopup');
-    // if (modalElement) {
-    //   modalElement.classList.add('show');
-    //   modalElement.style.display = 'block';
-    // }
-    // console.log(Value)
+    const modalElement = document.getElementById('probationCommentsPopup');
+    if (modalElement) {
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
+    }
+    console.log(Value)
     this.appcomment = Value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.metaData);

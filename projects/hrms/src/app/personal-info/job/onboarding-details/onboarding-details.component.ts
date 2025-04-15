@@ -14,7 +14,7 @@ import moment from 'moment';
 
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule, ReactiveFormsModule, Select],
+  imports: [CommonModule,ReactiveFormsModule,Select],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss'
 })
@@ -33,6 +33,8 @@ export class OnboardingDetailsComponent {
   noticeDetails: INotice[] = []
   selectedEmployeeId: any;
   onboardingForm!: FormGroup;
+  traineeForm!: FormGroup;
+  isEditing = false;
   noticePeriodStatus = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -83,6 +85,7 @@ export class OnboardingDetailsComponent {
     this.getprobation();
     this.remoteLoginChange();
     this.getWorkfromhomeManager();
+    this.initializeTrainee();
     this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
   }
 
@@ -105,9 +108,16 @@ export class OnboardingDetailsComponent {
       wfhmanger: [{ value: "", disabled: true }],
     });
   }
-
-
-
+  
+  initializeTrainee(){
+    this.traineeForm = this.fb.group({
+      empType: [ { value: "", disabled: true }],
+      dateOfJoining: [{ value: "", disabled: true }],
+      durationOfTrainee: [{ value: "", disabled: true }],
+      trainingEndDate: [{ value: "", disabled: true }]
+    });
+  }
+  
   remoteLoginChange() {
     // Initialize filteredWorkLocations if remoteLogin has a default
     const initialWFH = this.onboardingForm.get('remoteLogin')?.value;
@@ -144,26 +154,41 @@ export class OnboardingDetailsComponent {
   }
   
   patchForm(data: any): void {
+    // Patching values for onboardingForm
     this.onboardingForm.patchValue({
-      status: this.Statusdetails.find((item: any) => item.statusname === data.empstatus),
+      status: this.Statusdetails.find((item: any) => item.statusname === data?.empstatus),
       dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
-      branchLocation: this.branchLocations.find((item: any) => item.branchCode === data.branchCode),
+      branchLocation: this.branchLocations.find((item: any) => item.branchCode === data?.branchCode),
       probationEndDate: data.probationEndDate ? moment(data.probationEndDate).format('yyyy-MM-DD') : null,
-      probationStatus: this.probation.find((item: any) => item.probationstatus1 === data.probationStatus),
+      probationStatus: this.probation.find((item: any) => item.probationstatus1 === data?.probationStatus),
       noticePeriodStatus: this.noticePeriod.find((item: any) => item.name === data.noticePeriod),
-      backgroundCheckStatus: this.backgroundDetails.find((item: any) => item.backgroundcheckstatus1 === data.backgroundCheckStatus),
-      salaryHold: this.salaryHoldDetails.find((item: any) => item.value === data.issalaryhold),
-      pf: this.pfdata.find((item: any) => item.value === data.pf),
-      esic: this.esicdata.find((item: any) => item.value === data.esic),
-      pt: this.ptdata.find((item: any) => item.value === data.pt),
+      backgroundCheckStatus: this.backgroundDetails.find((item: any) => item.backgroundcheckstatus1 === data?.backgroundCheckStatus),
+      salaryHold: this.salaryHoldDetails.find((item: any) => item.value === data?.issalaryhold),
+      pf: this.pfdata.find((item: any) => item.value === data?.pf),
+      esic: this.esicdata.find((item: any) => item.value === data?.esic),
+      pt: this.ptdata.find((item: any) => item.value === data?.pt),
       totalExperience: data.totalYearsOfExperience,
       remoteLogin: this.remoteLogin.find((item: any) => item.value === data.allowWFH),
       workLocation: this.worklocation.find((item: any) => item.value === data.workLocation),
       wfhmanger: this.Manager.find((item: any) => item.value === data.wfhManagerId),
+      trainingEndDate: moment(data.trainingEndDate).format('yyyy-MM-DD'),
+      empType: data.empType,
+      durationOfTrainee: data.durationOfTrainee
     });
-    console.log(this.onboardingForm.value);
-
+    
+    console.log(this.onboardingForm.value); // Check values in the onboardingForm
+  
+    // Patching values for traineeForm
+    this.traineeForm.patchValue({
+      empType: data.empType,
+      dateOfJoining: moment(data.dateOfJoining).isValid() ? moment(data.dateOfJoining).format('yyyy-MM-DD') : null,
+      durationOfTrainee: data.durationOfTrainee,
+      trainingEndDate: moment(data.trainingEndDate).isValid() ? moment(data.trainingEndDate).format('yyyy-MM-DD') : null
+    });
+    
+    console.log(this.traineeForm.value); // Check values in the traineeForm
   }
+  
 
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
@@ -201,6 +226,39 @@ export class OnboardingDetailsComponent {
           });
           console.log(filteredData);
           this.Statusdetails = filteredData;
+        }
+        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee') {
+          const filteredData = data.filter((status: IStatus) => {
+            const lowerCaseStatusName = status.statusname.toLowerCase();
+            return lowerCaseStatusName === 'trainee active' 
+            || lowerCaseStatusName === 'inactive' 
+            || lowerCaseStatusName === 'trainee';
+          });
+          this.Statusdetails = filteredData
+        }
+        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee prospective') {
+          const filteredData = data.filter((status: IStatus) => {
+            const lowerCaseStatusName = status.statusname.toLowerCase();
+            return lowerCaseStatusName === 'trainee active' || lowerCaseStatusName === 'trainee prospective';
+          });
+
+          this.Statusdetails = filteredData
+        }
+        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee active') {
+          const filteredData = data.filter((status: IStatus) => {
+            const lowerCaseStatusName = status.statusname.toLowerCase();
+            return lowerCaseStatusName === 'trainee active';
+          });
+          this.Statusdetails = filteredData
+
+        }
+        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee inactive') {
+          const filteredData = data.filter((status: IStatus) => {
+            const lowerCaseStatusName = status.statusname.toLowerCase();
+            return lowerCaseStatusName === 'trainee inactive';
+          });
+          //console.log(filteredData);
+          this.Statusdetails = filteredData
         }
       },
     });
@@ -280,6 +338,7 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.markAllAsTouched();
       return;
     }
+    
     const payload = {
       employeeId: this.empinfo.employeeId,
       title: this.empinfo.title,
@@ -320,12 +379,19 @@ export class OnboardingDetailsComponent {
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empinfo.workLocation,
       wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empinfo.wfhManagerId,
       empType : this.empinfo.empType,
+      substatus : this.empinfo.substatus,
+
+      
     };
+    if (payload.empstatus === 'Active' && payload.substatus === 'Offer Letter Accepted') {
+      payload.substatus = 'Probation'
+      payload.empType = 'Probation'
+    }
     this.subscription = this.http
       .postdata(`Employeedata/UPDATER`, payload)
       .subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully',);
+          this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
           this.getEmployeeId();
           this.onboardingForm.disable();
           console.log('Data updated successfully:', data);
@@ -353,6 +419,18 @@ export class OnboardingDetailsComponent {
     }
   }
 
+  letters(event: KeyboardEvent): boolean {
+    const charCode = event.key.charCodeAt(0);
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 32
+    ) {
+      return false;
+    }
+    return true;
+  }
+  
 }
 
 

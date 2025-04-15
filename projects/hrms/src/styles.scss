@@ -177,6 +177,7 @@ body {
         border-radius: 50%;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -227,7 +228,7 @@ body {
     }
 
     .bi-person-vcard {
-        font-size: 18px;
+        font-size: var(--fontsize18);
     }
 
     .sidenav-footer-content {
@@ -236,7 +237,7 @@ body {
 
     .logout-text {
         font-weight: 700;
-        font-size: 14px;
+        font-size: var(--fontsize16);
         line-height: 20px;
         color: var(--side-nav-item-color);
     }
@@ -284,6 +285,99 @@ body {
     }
 }
 
+// compments Nav Tabs stylings
+.component-nav-tabs-container {
+    border-radius: 0.5rem;
+    border: none !important;
+
+    .nav-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 400;
+        font-size: var(--fontsize15);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        padding: 0.75rem 1rem 0.5rem;
+    }
+
+    .nav-tab-active {
+        border-bottom: 0.25rem solid rgba(6, 39, 79, 1);
+        font-weight: 700;
+    }
+
+    a {
+        color: var(--primary-color) !important;
+
+        &:hover {
+            color: var(--primary-color) !important;
+        }
+
+        &:focus {
+            color: var(--primary-color) !important;
+        }
+    }
+
+    .p-tablist-tab-list {
+        gap: 0rem !important;
+        border: none !important;
+    }
+
+    .p-tab {
+        padding: 0rem !important;
+        border: none !important;
+        transition: none !important;
+    }
+}
+
+// Component Side Nav tabs stylings
+.component-side-nav-tabs-container {
+    .nav-item {
+        border-bottom: 1px solid #efefef !important;
+    }
+
+    .nav-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 400;
+        font-size: var(--fontsize15);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        padding: 1rem;
+    }
+
+    .active-nav-link {
+        color: var(--primary-color);
+        font-weight: 700;
+        background-color: var(--body-bg-color);
+        border-right: 0.25rem solid var(--primary-color);
+    }
+
+    .nav-tab-active {
+        border-bottom: 0.25rem solid rgba(6, 39, 79, 1);
+        font-weight: 700;
+    }
+}
+
+//styles for sub tabs and component display content
+.custom-component-left-content {
+    width: 25rem;
+    height: calc(100dvh - 12rem);
+    border-radius: 0.5rem;
+    overflow-y: auto;
+    background-color: var(--white-color);
+    border: 1px solid #CCDAEC;
+}
+
+.custom-component-right-content {
+    width: 100%;
+    height: calc(100dvh - 12rem);
+    overflow-y: auto;
+    border-radius: 0.5rem;
+    border: 1px solid #CCDAEC;
+}
+
 // Component stylings
 .component-header {
     font-family: var(--font-family);
@@ -292,6 +386,7 @@ body {
     line-height: 100%;
     letter-spacing: 0%;
     vertical-align: middle;
+    color: var(--primary-color);
 }
 
 .component-sub-header {
@@ -301,19 +396,19 @@ body {
     line-height: 100%;
     letter-spacing: 0%;
     vertical-align: middle;
+    color: var(--primary-color);
 }
 
-.custom-background-card{
+.custom-background-card {
     border: none;
-    border-radius: 0.8rem;
     background-color: var(--body-bg-color);
 }
 
-.bi-arrow-90deg-left{
+.bi-arrow-90deg-left {
     cursor: pointer;
 }
 
-.omponent-edit-icon{
+.omponent-edit-icon {
     font-size: var(--fontsize16);
 }
 
@@ -329,7 +424,7 @@ a {
 // button stylings
 .custom-btn {
     padding: 0.5rem 1rem;
-    border-radius: 0.6rem;
+    border-radius: 0.5rem;
     font-size: var(--fontsize14);
     border: 1px solid var(--btn-primary-color);
     font-weight: 500;
@@ -423,7 +518,8 @@ a {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -517,6 +613,40 @@ a {
     }
 }
 
+//multiselect
+.custom-p-multiSelect-content {
+    .p-multiselect {
+        border: 1px solid #DEE8F3 !important;
+        background-color: #F8FBFF !important;
+        border-radius: 0.5rem !important;
+        padding: 0px !important;
+    }
+
+    .p-multiSelect-option.p-multiSelect-option-selected {
+        background-color: #e8f0fb !important;
+        color: #222222 !important;
+    }
+    
+    .p-multiSelect:hover {
+        border: 1px solid #DEE8F3 !important;
+    }
+
+    .p-multiSelect-label.p-placeholder {
+        color: #A1A1A1 !important;
+    }
+
+    .p-iconfield {
+        margin: 0.5rem 0rem !important;
+    }
+
+    .p-inputtext:focus {
+        border: 1px solid #DEE8F3 !important;
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        vertical-align: middle;
+        color: #222222;
+    }
+}
 
 // My Info Stylings
 
@@ -638,13 +768,17 @@ a {
 
 // salary details table
 .salary-details-table {
-    table, th, td {
+
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th, td {
+    th,
+    td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -719,6 +853,7 @@ a {
         border: none;
         padding: 0.625rem 1rem;
         font-size: var(--fontsize14);
+        background-color: transparent;
     }
 
     .custom-search-input {
@@ -736,6 +871,12 @@ a {
 }
 
 // custom -select dropdown
+.dropdown {
+    .dropdown-click {
+        color: #000 !important;
+    }
+}
+
 .custom-dropdown-menu {
     border: 1px solid #305889;
     background-color: #F0F4F8;
@@ -744,7 +885,7 @@ a {
     .dropdown-item {
         padding: 0.625rem;
         font-weight: 600;
-        font-size: var(--fontsize12);
+        font-size: var(--fontsize14);
         color: #305889;
         border-bottom: 1px solid #C8D5E4;
     }
@@ -763,30 +904,6 @@ a {
     .note {
         font-size: var(--fontsize14) !important;
         font-weight: 700;
-    }
-}
-
-//custom component naviagtion nav tabs
-.custom-nav-tab-card {
-    border-radius: 0.5rem;
-    border: none !important;
-
-    .nav-tabs-main-content {
-        display: flex;
-        gap: 0.625rem;
-        list-style: none;
-    }
-
-    .nav-item {
-        cursor: pointer;
-        padding: 0.625rem 1rem 0.5rem;
-        font-weight: 700;
-        font-size: var(--fontsize14);
-        vertical-align: middle;
-    }
-
-    .nav-tab-active {
-        border-bottom: 3px solid var(--navtab-item-color);
     }
 }
 
@@ -828,7 +945,7 @@ a {
 
     .event-content-text {
         font-weight: 400;
-        font-size: var(font-size);
+        font-size: var(--fontsize13);
         color: #808E9D;
     }
 
@@ -838,11 +955,48 @@ a {
     }
 
     .event-image {
-        height: 8rem;
+        height: 14rem;
         border-radius: 0.75rem;
     }
 }
 
+//holidays
+.holiday-card {
+    border: none;
+    border-left: 5px solid #06274F;
+    box-shadow: 0px 0px 6px 1px #2222221A;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    width: 100%;
+    vertical-align: middle;
+    background-color: var(--body-bg-color);
+
+    .holiday-icon-card {
+        padding: 0.5rem;
+        border: none;
+        background-color: #D7E7FA;
+
+        .holiday-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+
+    .holiday-name {
+        font-weight: 500;
+        font-size: var(--fontsize14);
+    }
+
+    .date {
+        font-weight: 500;
+        font-size: 12px;
+        color: #65778D;
+    }
+
+   
+
+   
+}
 // file styling
 input[type="file"] {
     &::-webkit-file-upload-button {
@@ -1003,7 +1157,7 @@ input[type="file"] {
     }
 
     .content-text {
-        font-size: 2.5rem;
+        font-size: 2.25rem;
         font-weight: 500;
     }
 }
@@ -1123,26 +1277,6 @@ input[type="file"] {
     }
 }
 
-.main-settings-layout {
-    border: 1px solid #CCDAEC;
-    border-radius: 0.8rem;
-}
-
-.custom-settings-add-input {
-    max-width: 40rem;
-    border-radius: 0.8rem;
-    border: 0.5px solid #CCDAEC;
-
-    .custom-input {
-        border: none !important;
-    }
-
-    .input-group-text {
-        padding: 0px !important;
-        border: none;
-    }
-}
-
 input:focus {
     outline: none !important;
     box-shadow: none !important;
@@ -1154,22 +1288,8 @@ input:focus {
     cursor: pointer;
 }
 
-.custom-settings-data-table {
-    width: 50rem;
-
-    td {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 100%;
-        letter-spacing: 0%;
-        padding: 1rem;
-        color: #305889;
-        border-bottom: 1px solid #E8E8E8;
-    }
-}
-
 .confirmation-icon {
-    width: 5rem;
+    width: 3rem;
 }
 
 .confirmation-text {
@@ -1180,51 +1300,64 @@ input:focus {
 }
 
 //stylesfor expenses
-// .custom-table {
-//     width: 100%;
-//     overflow: auto;
-//     background-color: #FFFFFF;
-//     border: 1px solid #E7E7ED;
-//     border-radius: 1.2rem;
-//     position: relative;
+.custom-table {
+    width: 100%;
+    overflow: auto;
+    background-color: #FFFFFF;
+    border: 1px solid #E7E7ED;
+    border-radius: 1.2rem;
+    position: relative;
 
 
-//     thead {
-//         top: 0%;
-//         position: sticky;
-//         z-index: 1;
-//     }
+    thead {
+        top: 0%;
+        position: sticky;
+        z-index: 1;
+    }
 
-//     th,
-//     td {
-//         font-weight: 400;
-//         font-size: var(--fontsize14);
-//         line-height: 100%;
-//         letter-spacing: 0%;
-//         vertical-align: middle;
-//         padding: 1.6rem;
-//     }
+    th,
+    td {
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        padding: 1.6rem;
+    }
 
-//     th {
-//         background-color: var(--table-header-bg-color);
-//         color: var(--table-header-color);
-//         text-wrap: nowrap;
-//         text-transform: uppercase;
-//     }
+    th {
+        background-color: var(--table-header-bg-color);
+        color: var(--table-header-color);
+        text-wrap: nowrap;
+        text-transform: uppercase;
+    }
 
-//     th:first-child {
-//         border-top-left-radius: 1.2rem;
-//     }
+    th:first-child {
+        border-top-left-radius: 1.2rem;
+    }
 
-//     th:last-child {
-//         border-top-right-radius: 1.2rem;
-//     }
+    th:last-child {
+        border-top-right-radius: 1.2rem;
+    }
 
-//     tr:nth-child(even) {
-//         background-color: var(--table-data-bg-even-color);
-//     }
+    tr:nth-child(even) {
+        background-color: var(--table-data-bg-even-color);
+    }
 
-// }
+}
+
+// loader
+.loader-placeholder-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100dvh - 18rem);
+
+    .sand-clock {
+        width: 16rem;
+        height: 12rem;
+    }
+}
 
 // .expenses-title-text {
 //     font-weight: 700;
@@ -1234,3 +1367,154 @@ input:focus {
 //     vertical-align: middle;
 //     color: #222B45;
 // }
+
+
+// success icon
+.succes-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+}
+
+//error icon
+.error-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+}
+
+// Settings Stylings
+.custom-setting-right-content {
+    width: 100%;
+    height: calc(100dvh - 12rem);
+    overflow-y: auto;
+    border: 1px solid #CCDAEC;
+    border-radius: 0.5rem;
+    background-color: var(--white-color);
+    border: 1px solid #CCDAEC;
+}
+
+.custom-setting-right-content {
+    .custom-settings-add-input {
+        max-width: 25rem;
+        border-radius: 0.5rem;
+        border: 0.25px solid #CCDAEC;
+
+        .custom-input {
+            border: none !important;
+        }
+
+        .input-group-text {
+            padding: 0px !important;
+            border: none;
+        }
+    }
+
+    .custom-settings-data-table {
+        width: 30rem;
+        height: calc(100vh - 25rem);
+        overflow-y: auto;
+
+        td {
+            font-weight: 400;
+            font-size: var(--fontsize14);
+            line-height: 100%;
+            letter-spacing: 0%;
+            padding: 1rem;
+            color: #305889;
+            border-bottom: 1px solid #E8E8E8;
+        }
+
+        .settings-common-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+    }
+}
+
+/* Global override styles for PrimeNG tabs to ensure white background */
+.p-tabview .p-tabview-nav,
+.p-tabview .p-tabview-nav li,
+.p-tabview .p-tabview-nav li .p-tabview-nav-link,
+.p-tabview .p-tabview-panels,
+.p-tab,
+.p-tablist,
+.p-tablist-tab-list,
+.component-nav-tabs-container.card {
+    background-color: #ffffff !important;
+    color: #06274F !important;
+}
+
+.card.component-nav-tabs-container {
+    background-color: #ffffff !important;
+    border-color: #ccdaec !important;
+}
+
+/* Direct style override to target the navigation buttons by tag and class */
+button.p-tablist-prev-button,
+button.p-tablist-next-button,
+button.p-tabview-nav-prev,
+button.p-tabview-nav-next,
+.component-nav-tabs-container button,
+.p-tabview button,
+.p-tablist button {
+    background-color: #ffffff !important;
+    color: #06274F !important;
+    border: none !important;
+}
+
+/* Fix for dark SVG icons in buttons */
+button.p-tabview-nav-prev svg,
+button.p-tabview-nav-next svg,
+button.p-tablist-prev-button svg,
+button.p-tablist-next-button svg {
+    fill: #06274F !important;
+    stroke: #06274F !important;
+}
+
+/* Specific fix for the tab navigation arrow buttons */
+.p-tabview-nav-container,
+.p-tablist-container,
+.p-tabview-nav-content {
+    background-color: #ffffff !important;
+}
+
+/* Fix for arrow navigation in PrimeNG tabs */
+.p-tabview-nav-prev,
+.p-tabview-nav-next,
+.p-tablist-prev-button,
+.p-tablist-next-button,
+.p-element.p-tabview-nav-prev,
+.p-element.p-tabview-nav-next,
+.p-element.p-tablist-prev-button,
+.p-element.p-tablist-next-button {
+    background-color: #ffffff !important;
+
+    &::before,
+    &::after,
+    & *,
+    & *::before,
+    & *::after {
+        background-color: #ffffff !important;
+    }
+
+    /* Force any chevron/icon element to have white background */
+    & span,
+    & i,
+    & svg,
+    & path,
+    & g {
+        background-color: #ffffff !important;
+    }
+
+    & .p-icon {
+        background-color: #ffffff !important;
+    }
+}
+
+/* Direct selector for arrow icons */
+.pi-chevron-left,
+.pi-chevron-right {
+    background-color: #ffffff !important;
+}

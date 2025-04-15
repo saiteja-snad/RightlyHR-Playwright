@@ -7,6 +7,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { IServingPeriod } from './servingPeriod.model';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-serving-period',
@@ -20,38 +21,33 @@ export class ServingPeriodComponent {
   JobroleDetails = [] as any;
   isEditMode = false;
   selectedId: number | null = null;
-  selectedDeleteRole: any = null;
+  selectedDeleteserving: any = null;
   @ViewChild('addpopup') addpopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   @ViewChild('deletepopup') deletepopup: any;
   AddForm!: FormGroup;
   updateForm!: FormGroup;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService,
+  ) {
 
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      Addgrade: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      jobgrade: ['', Validators.required],
+      addServingPeriod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      Duration: ['', Validators.required],
     });
 
     this.updateForm = this.fb.group({
-      Updatejobrole: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      updategraderole: ['', Validators.required],
+      UpdateServingPeriod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      UpdateDuration: ['', Validators.required],
     });
-    this.getgradeid();
+    this.getServingPeriod();
    
-  }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
   }
  
   // // Method to open the add modal dialog
@@ -61,7 +57,7 @@ export class ServingPeriodComponent {
       centered: true
     });
   }
-  getgradeid() {
+  getServingPeriod() {
     this.subscription = this.http.getData('ServingPeriods').subscribe({
       next: (data: any) => {
         console.log(data);
@@ -74,13 +70,13 @@ export class ServingPeriodComponent {
     const request: IServingPeriod = {
       servingPeriodType: this.AddForm.value.addServingPeriod.trim(),
       duration: this.AddForm.value.Duration,
-      isDeleted: true
+      isDeleted: false
     };
 
     this.subscription = this.http.postdata('ServingPeriods', request).subscribe({
       next: () => {
 
-        this.getgradeid();
+        this.getServingPeriod();
         modal.close();
         this.conformationPopup.openSuccessModal('Serving period added successfully');
         
@@ -100,7 +96,7 @@ export class ServingPeriodComponent {
   openupdateDialog(servingPeriodList: any) {
     this.selectedId = servingPeriodList.id;
     this.updateForm.patchValue({ UpdateServingPeriod: servingPeriodList.servingPeriodType });
-    this.updateForm.patchValue({ UpdateServingPeriod: servingPeriodList.duration });
+    this.updateForm.patchValue({ UpdateDuration: servingPeriodList.duration });
     this.modalService.open(this.updatepopup, {
     backdrop: 'static',
     centered: true
@@ -111,17 +107,17 @@ export class ServingPeriodComponent {
     if (this.updateForm.valid && this.selectedId) {
       const request: IServingPeriod = {
         id: this.selectedId,
-        servingPeriodType: this.updateForm.value.Updatejobrole.trim(),
-        duration: this.updateForm.value.updategraderole,
-        isDeleted: true
+        servingPeriodType: this.updateForm.value.UpdateServingPeriod.trim(),
+        duration: this.updateForm.value.UpdateDuration,
+        isDeleted: false
       };
 
-      this.subscription = this.http.postdata('GradeTable/UPDATER', request).subscribe({
+      this.subscription = this.http.postdata('ServingPeriods/UPDATER', request).subscribe({
         next: () => {
 
-          this.getgradeid();
+          this.getServingPeriod();
           modal.close();
-          this.conformationPopup.openSuccessModal('GreadeDetails  Updated Successfully');
+          this.conformationPopup.openSuccessModal('Serving period updated successfully');
            this.resetForm();
         },
         error: (error: any) => {
@@ -133,24 +129,24 @@ export class ServingPeriodComponent {
   }
   // Method to open the delete modal dialog
   // DELETE
-  opendelete(jobroletypelist: any) {
-    this.selectedDeleteRole = jobroletypelist;
+  opendelete(servingPeriodList: any) {
+    this.selectedDeleteserving = servingPeriodList;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
    onDelete(modal: any) {
-      if (!this.selectedDeleteRole) return;
+      if (!this.selectedDeleteserving) return;
       const deleteRequest: IServingPeriod = {
-        id: this.selectedDeleteRole.gradeId,
-        servingPeriodType: this.selectedDeleteRole.gradeName.trim(),
-        duration: this.selectedDeleteRole.jobGrade,
-        isDeleted: false
+        id: this.selectedDeleteserving.id,
+        servingPeriodType: this.selectedDeleteserving.servingPeriodType.trim(),
+        duration: this.selectedDeleteserving.duration,
+        isDeleted: true
       };
   
-      this.http.postdata('GradeTable/UPDATER', deleteRequest).subscribe({
+      this.http.postdata('ServingPeriods/UPDATER', deleteRequest).subscribe({
         next: () => {
-         this.getgradeid();
+         this.getServingPeriod();
           modal.close();
-          this.conformationPopup.openSuccessModal('GreadeDetails Deleted successfully');
+          this.conformationPopup.openSuccessModal('Serving period deleted successfully');
         },
         error: () => {
           this.conformationPopup.openErrorModal('Failed to delete the frequency');

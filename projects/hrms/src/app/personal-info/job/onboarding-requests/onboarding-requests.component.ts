@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import moment from 'moment';
-import { Subscription } from 'rxjs';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -10,16 +10,18 @@ import { FormGroup } from '@angular/forms';
 import { Ipersonal } from '../../../Interfaces/members-model';
 import { CommonModule } from '@angular/common';
 import { IJob } from '../../../Interfaces/onboarding-documents';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-onboarding-requests',
-  imports: [DateformatPipe,CommonModule],
+  imports: [DateformatPipe, CommonModule, NoDataFoundComponent],
   templateUrl: './onboarding-requests.component.html',
   styleUrl: './onboarding-requests.component.scss'
 })
 export class OnboardingRequestsComponent {
   empdata = {} as any;
-  dynamicData: any;
+  dynamicData=new BehaviorSubject<any>([]);
   currentdateformate!: string
   empinfo = {} as IJob;
   onboardDuration: any;
@@ -36,18 +38,24 @@ export class OnboardingRequestsComponent {
   previousEmpData = {} as any;
   loggedinuser = {} as any;
   offboradingchanges = [] as any;
-  jobPostData:any
+  jobPostData: any
   changes = [] as any
   imgurl!: string;
   isEditing: boolean = false;
-  
-  constructor(private authService: AuthService, private router: Router, private http: HttpService, private conformationPopup: OpenModalService,) {
+
+  constructor(private authService: AuthService, private router: Router, private http: HttpService, private conformationPopup: OpenModalService,private modalService: NgbModal) {
 
   }
-
+  ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+    this.loggedinuser = this.authService.getToken();
+    console.log(this.empinfo);
+    this.getEmployeeId();
+    this.getOnboardrequest();
+  }
   isStatusAllowed(): boolean {
     const allowedStatuses = ['waiting for approval', 'approved', 'processed'];
-    const hasAllowedStatus = this.dynamicData.some((ele: any) => allowedStatuses.includes(ele.status?.toLowerCase()));
+    const hasAllowedStatus = this.dynamicData.value.some((ele: any) => allowedStatuses.includes(ele.status?.toLowerCase()));
     return hasAllowedStatus;
   }
   isTrainingEndDateComplete() {
@@ -102,18 +110,29 @@ export class OnboardingRequestsComponent {
     this.http.postdata('onboardRequest', requestBody).subscribe({
       next: (response: any) => {
         this.conformationPopup.openSuccessModal("Onboard Request submitted successfully")
-        setTimeout(() => {
-          localStorage.setItem("ReadyforOnboard", 'true');
-          this.redirectTo(this.router.url)
-        }, 2000);
+        this.modalService.dismissAll();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message)
-        setTimeout(() => {
-          this.redirectTo(this.router.url)
-        }, 3000);
       }
     });
+  }
+
+  requestforOnboard() {
+    const trainee = {
+      RequestedBy: this.empdata.employeeId,
+      moduleId: 15
+    };
+    this.subscription = this.http.postdata("TraineeAppointmentLetter/OnBoardingPendingApprovals", trainee).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.conformationPopup.openSuccessModal('Request for onboard successfully')
+      },
+      error: (reason: any) => {
+        console.log(reason);
+        this.conformationPopup.openErrorModal(reason.error.Message)
+      },
+    })
   }
 
   redirectTo(uri: string) {
@@ -149,7 +168,7 @@ export class OnboardingRequestsComponent {
         this.disablebuttonforonboard = filtereddata
         this.buttonviewwhenExtended = data.some((ele: any) => ele.status?.toLowerCase() === 'extended');
         console.log(this.buttonviewwhenExtended)
-        this.isTrainingEndDateComplete();
+        // this.isTrainingEndDateComplete();
         this.getonboardPeriodData();
         this.isStatusAllowed();
         console.log(this.isStatusAllowed())
@@ -201,8 +220,8 @@ export class OnboardingRequestsComponent {
     this.appcomment = Value.map((ele: any) => {
       const parsedMetaData = JSON.parse(ele.metaData);
       return {
-        ...ele, 
-        metadata: parsedMetaData 
+        ...ele,
+        metadata: parsedMetaData
       };
     });
     console.log(this.appcomment)
@@ -214,16 +233,16 @@ export class OnboardingRequestsComponent {
       let EventsData = {
         firstName: this.empinfo.firstName,
         lastName: this.empinfo.lastName,
-        middleName:this.empinfo.middleName,
+        middleName: this.empinfo.middleName,
         senderEmail: this.loggedinuser.workEmail,
-        senderName: this.loggedinuser.firstName + " "+this.loggedinuser.middleName+" " + this.loggedinuser.lastName,
+        senderName: this.loggedinuser.firstName + " " + this.loggedinuser.middleName + " " + this.loggedinuser.lastName,
         issalaryhold: this.empdata.issalaryhold,
         employeeId: this.empinfo.employeeId
       }
-      if(this.loggedinuser.middleName){
-        EventsData.senderName =`${this.loggedinuser.firstName} ${this.loggedinuser.middleName} ${this.loggedinuser.lastName}`
-      }else{
-        EventsData.senderName =`${this.loggedinuser.firstName} ${this.loggedinuser.lastName}`
+      if (this.loggedinuser.middleName) {
+        EventsData.senderName = `${this.loggedinuser.firstName} ${this.loggedinuser.middleName} ${this.loggedinuser.lastName}`
+      } else {
+        EventsData.senderName = `${this.loggedinuser.firstName} ${this.loggedinuser.lastName}`
       }
       console.log(EventsData);
       this.subscription = this.http.postdata(`CustomEmail/Issalary`, EventsData).subscribe({
@@ -239,55 +258,47 @@ export class OnboardingRequestsComponent {
         }
       })
     }
-    this.empdata.generateOffer=false
-    if(this.empdata.empstatus=='Active' && this.empdata?.substatus=='Offer Letter Accepted'){
-      this.empdata.substatus='Probation'
-      this.empdata.empType='Probation'
+    this.empdata.generateOffer = false
+    if (this.empdata.empstatus == 'Active' && this.empdata?.substatus == 'Offer Letter Accepted') {
+      this.empdata.substatus = 'Probation'
+      this.empdata.empType = 'Probation'
     }
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
       next: (data: any) => {
         console.log(data);
-        if(data.statusCode===409){
+        if (data.statusCode === 409) {
           const modalElement = document.getElementById('successhide');
           this.conformationPopup.openSuccessModal(data.message)
-          setTimeout(function () {
-            location.reload();
-          }, 2000);
           window.location.reload();
-         }
-         else if(data.statusCode===200){
-          if(data.employeeData.empstatus == 'Active'){
+        }
+        else if (data.statusCode === 200) {
+          if (data.employeeData.empstatus == 'Active') {
             this.updateOnboardingStatustoOnboard(data);
           }
-          const modalElement1 = document.getElementById('offerLetterModal');
-          if (modalElement1) {
-            modalElement1.classList.remove('show');
-            modalElement1.style.display = 'none';
-          }
           this.conformationPopup.openSuccessModal(data.message)
-         }
-         localStorage.setItem("ReadyforOnboard", 'false');
+        }
+        localStorage.setItem("ReadyforOnboard", 'false');
         this.router.navigate(["/admin/job"]);
         this.getEmployeeId();
         this.WebNotificationForOnboarding();
         this.WebNotificationForOffboarding();
-        setTimeout(() =>{
-          if( this.previousEmpData.empstatus!=  data.employeeData.empstatus){
-            this.router.navigate(["/admin/traineeactiveemployee"]);
-           }
-           else{
+        setTimeout(() => {
+          if (this.previousEmpData.empstatus != data.employeeData.empstatus) {
+            this.router.navigate(["/admin/active-interns"]);
+          }
+          else {
             window.location.reload();
-           }
-      }, 2000);
+          }
+        }, 2000);
       },
       error: (reason: any) => {
         console.log(reason);
-        if(reason.status===400){
+        if (reason.status === 400) {
           this.conformationPopup.openErrorModal(reason.message)
           setTimeout(function () {
             location.reload();
           }, 2000);
-         }
+        }
       },
       complete: () => job.reset()
     })
@@ -297,48 +308,48 @@ export class OnboardingRequestsComponent {
     window.location.reload();
   }
 
-updateOnboardingStatustoOnboard(Value:any){
-  let data={
-    employeeId:Value.employeeData.employeeId,
-    status: "Onboarded",
-   
-  }
-  console.log(data);
-  
-  this.subscription = this.http.postdata('JobApplicantsData/UPDATERbyEmployeeId',data).subscribe({
-    next: (data: any) => {
-      console.log(data);
-      if(this.jobPostData.id){
-        this.updateJobapplicantdata();
-      }
-    },
-  })
-}
-updateJobapplicantdata(){
-  const empData = JSON.parse(localStorage.getItem('personaldata') || '{}');
-  const data = {
-    status: "Onboarded",
-    employeeId: parseInt(empData.employeeId),
-     id:this.jobPostData.id,
-     firstName:empData.firstName,
-     lastName:empData.lastName,
-     jobId:this.jobPostData.jobId,
-     emailid:empData.emailaddress,
-     mobileNumber:empData.contactnumber,
-     resume:'demo',
-     gender:empData.gender,
-  }
-  this.subscription = this.http
-    .postdata('JobApplicantsData/UPDATER', data)
-    .subscribe({
-      next: (data: any) => {
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+  updateOnboardingStatustoOnboard(Value: any) {
+    let data = {
+      employeeId: Value.employeeData.employeeId,
+      status: "Onboarded",
 
-}
+    }
+    console.log(data);
+
+    this.subscription = this.http.postdata('JobApplicantsData/UPDATERbyEmployeeId', data).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        if (this.jobPostData.id) {
+          this.updateJobapplicantdata();
+        }
+      },
+    })
+  }
+  updateJobapplicantdata() {
+    const empData = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    const data = {
+      status: "Onboarded",
+      employeeId: parseInt(empData.employeeId),
+      id: this.jobPostData.id,
+      firstName: empData.firstName,
+      lastName: empData.lastName,
+      jobId: this.jobPostData.jobId,
+      emailid: empData.emailaddress,
+      mobileNumber: empData.contactnumber,
+      resume: 'demo',
+      gender: empData.gender,
+    }
+    this.subscription = this.http
+      .postdata('JobApplicantsData/UPDATER', data)
+      .subscribe({
+        next: (data: any) => {
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+
+  }
   //function to get webnotification
   WebNotificationForOnboarding() {
     let loggedInUser = this.authService.getToken();
@@ -480,49 +491,78 @@ updateJobapplicantdata(){
 
     }
   }
-  
- getEmployeeId() {
 
-    let employeeId = parseInt(this.empinfo.employeeId);
+  // getEmployeeId() {
+
+  //   let employeeId = parseInt(this.empinfo.employeeId);
+  //   console.log(this.empinfo);
+
+  //   this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+  //     next: (data: any) => {
+  //       console.log(data);
+  //       this.previousEmpData = JSON.parse(JSON.stringify(data))
+  //       this.empdata = data as Ipersonal
+  //       this.previousEmpData.lastworkingday = this.formatDate(this.previousEmpData.lastworkingday);
+  //       this.previousEmpData.dateOfJoining = this.formatDate(this.previousEmpData.dateOfJoining);
+  //       this.previousEmpData.probationEndDate = this.formatDate(this.previousEmpData.probationEndDate);
+  //       this.previousEmpData.offerIssueddate = this.formatDate(this.previousEmpData.offerIssueddate);
+  //       this.empdata.lastworkingday = this.formatDate(this.empdata.lastworkingday);
+  //       this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
+  //       this.empdata.probationEndDate = this.formatDate(this.empdata.probationEndDate);
+  //       this.empdata.offerIssueddate = this.formatDate(this.empdata.offerIssueddate);
+  //       this.empdata.trainingEndDate = this.formatDate(this.empdata.trainingEndDate)
+
+  //       console.log(this.empdata);
+  //       this.imgurl = this.empdata.profilePic;
+  //       console.log(this.imgurl);
+
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //       this.conformationPopup.openErrorModal("Insertion of data failed")
+  //       setTimeout(function () {
+  //         location.reload();
+  //       }, 2000);
+
+  //     }
+  //   });
+
+  //   if (employeeId) {
+  //     this.subscription = this.http.getData(`JobApplicantsData/getByEmployeeId/${employeeId}`).subscribe({
+  //       next: (data: any) => {
+  //         if (data) {
+  //           this.jobPostData = data;
+  //           console.log(this.jobPostData);
+  //         }
+  //       }
+  //     })
+  //   }
+  // }
+
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
     console.log(this.empinfo);
 
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.previousEmpData = JSON.parse(JSON.stringify(data))
-        this.empdata = data as Ipersonal
-        this.previousEmpData.lastworkingday = this.formatDate(this.previousEmpData.lastworkingday);
-        this.previousEmpData.dateOfJoining = this.formatDate(this.previousEmpData.dateOfJoining);
-        this.previousEmpData.probationEndDate = this.formatDate(this.previousEmpData.probationEndDate);
-        this.previousEmpData.offerIssueddate = this.formatDate(this.previousEmpData.offerIssueddate);
-        this.empdata.lastworkingday = this.formatDate(this.empdata.lastworkingday);
-        this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
-        this.empdata.probationEndDate = this.formatDate(this.empdata.probationEndDate);
-        this.empdata.offerIssueddate = this.formatDate(this.empdata.offerIssueddate);
-        this.empdata.trainingEndDate  = this.formatDate(this.empdata.trainingEndDate)
-
-        console.log(this.empdata);
-        this.imgurl = this.empdata.profilePic;
-        console.log(this.imgurl);
-
+        this.empdata = data;
+        // this.patchForm(data);
       },
       error: (err: any) => {
         console.log(err);
-        this.conformationPopup.openErrorModal("Insertion of data failed")
-        setTimeout(function () {
-          location.reload();
-        }, 2000);
-
       }
     });
 
-    if(employeeId){
-      this.subscription = this.http.getData(`JobApplicantsData/getByEmployeeId/${employeeId}`).subscribe({next:(data:any)=>{
-        if(data){
-          this.jobPostData = data;
-          console.log(this.jobPostData);
+    if (employeeId) {
+      this.subscription = this.http.getData(`JobApplicantsData/getByEmployeeId/${employeeId}`).subscribe({
+        next: (data: any) => {
+          if (data) {
+            this.jobPostData = data;
+            console.log(this.jobPostData);
+          }
         }
-       }})
+      })
     }
   }
 

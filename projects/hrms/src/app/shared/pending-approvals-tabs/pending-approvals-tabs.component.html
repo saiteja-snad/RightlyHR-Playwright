@@ -1,42 +1,25 @@
-<div class="card tabs-container">
-  <ul class="nav flex-column gap-2">
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['time-off-request']"
-      routerLinkActive="active-nav-link">Time-Off ({{countEmp + countRole}})</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['wfh']"
-      routerLinkActive="active-nav-link">WFH (12)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['comp-off']"
-      routerLinkActive="active-nav-link">Comp-Off (12)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['permissions']"
-      routerLinkActive="active-nav-link">Permissions (12)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['attendance-request']"
-      routerLinkActive="active-nav-link">Attendance Regularization  (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['separation-request']" routerLinkActive="active-nav-link">Separation Requests (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['recall-request']" routerLinkActive="active-nav-link">Recall Requests (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['trainee']"
-      routerLinkActive="active-nav-link">Trainee Details (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['nodue']"
-      routerLinkActive="active-nav-link">No Due Clearance Requests (9)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['probation-request']"
-      routerLinkActive="active-nav-link">Probation Details (0)</a>
-    </li>
-  </ul>
-</div>
+<div class="component-side-nav-tabs-container py-3">
+    <ul class="nav flex-column">
+      <li class="nav-item" *ngFor="let link of navLinks">
+        <a class="nav-link d-flex justify-content-between align-items-center"
+           [routerLink]="[link.route]"
+           routerLinkActive="active-nav-link">
+          <span>
+            {{ link.label }} 
+            @if(link.count && link.count > 0) {
+              <span>( {{ link.count }})</span>
+            }
+            @else if(link.label=='No Due Clearance Requests'){
+              <span>({{nodue_Request_data.length}})</span>
+            }
+            @else {
+              <span>(0)</span>
+            }
+        
+        </span>
+         </a>
+      </li>
+    </ul>
+  </div>
+  
+  

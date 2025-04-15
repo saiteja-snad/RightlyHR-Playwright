@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-  ApiUrl: 'https://fusionplusqaapi.onpremise.snadhr.com/api/',
-  webSocketUrl: 'ws://fusionplusqaapi.onpremise.snadhr.com',
+  ApiUrl: 'https://rightlyhrnewversionapi.rightlyhr.com/api/',
+  webSocketUrl: 'ws://rightlyhrnewversionapi.rightlyhr.com',
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
   modules: [
     { id: 18, moduleName: 'Probation ' },
@@ -20,14 +20,24 @@ export const environment = {
 
 
   dateformat: 'dd-MMM-yyyy',
-  paidLeaveCategoryId: 264,
-  mandatoryLeaveCategoryId: 269,
+  paidLeaveCategoryId: 172,
+  wfhModuleId:2,
+  compoffModuleId:3,
+  traineeoffboardingModuleId:15,
+  leavesModuleId:1,
+  claimsModuleId:4,
+  nodueModuleId:16,
+  permissionsModuleId:18,
+  attendanceRegularizationModuleId:17,
+  mandatoryLeaveCategoryId: 173,
   SeparationrequestmoduleId: 13,
   RecallrequestmoduleId: 14,
   ProbationrequestmoduleId: 18,
   ProbationExtensionId: 2,
   ProbationNoticePeriodId: 0,
-  ProbationbuttonbeforeId: 1,
-  ProbationExtendPeriodTimes: 3,
-  PMSrequestmoduleId: 23,
+  ProbationbuttonbeforeId: 3,
+  ProbationExtendPeriodTimes: 2,
+  PMSrequestmoduleId:24,
+  deskAllocationModuleId:23,
+  expensesModuleId:19
 };

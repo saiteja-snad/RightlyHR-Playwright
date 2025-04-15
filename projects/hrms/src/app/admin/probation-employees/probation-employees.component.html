@@ -27,7 +27,7 @@
                 placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
-        <!-- <div class="custom-table-content">
+      <div class="custom-table-content"> 
             <table class="w-100">
                 <thead>
                     <tr>
@@ -42,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let item of probationemp | probationEmp:searchValue " (click)="select(item)">
+                    <tr *ngFor="let item of probationemp | probationpipe : searchValue">
                         <td>
                             <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
                             <ng-template #fusionid>
@@ -66,7 +66,7 @@
                             </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | dataformat
+                            <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | date
                                 }}</span>
                             <ng-template #prostartdate>
                                 -
@@ -74,14 +74,14 @@
                         </td>
                         <td>
                             <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate |
-                                dataformat}}</span>
+                                date}}</span>
                             <ng-template #proenddate>
                                 -
                             </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate |
-                                dataformat}}</span>
+                                date}}</span>
                             <ng-template #proextenddate>
                                 -
                             </ng-template>
@@ -95,6 +95,6 @@
                     </tr>
                 </tbody>
             </table>
-        </div> -->
+        </div>
     </div>
 </div>

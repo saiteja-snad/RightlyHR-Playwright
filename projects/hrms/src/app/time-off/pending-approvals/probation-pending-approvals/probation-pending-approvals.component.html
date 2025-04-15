@@ -4,8 +4,8 @@
         <div class="input-group custom-search mb-4">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
         <div class="custom-table-content">
@@ -22,61 +22,46 @@
                 </thead>
                 <tbody>
 
-                    @if (((probationDetails | async) ?? []).length > 0) {
-                        @for (item of ((probationDetails | async) ?? []) | probationdetails : searchValue; track item.approvalHeader.id){
-                            <tr>
-                                <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
-                                <td>{{item.entity?.employeeName ?? '-'}}</td>
-                                <td>{{item.entity?.probationStartDate ?? '-'}}</td>
-                                <td>{{item.entity?.probationEndDate ?? '-'}}</td>
-                                <td class="text-center">
-                                    <div class="mt-2">
-                                        <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
-                                            <span id="tooltip">
-                                                <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
-                                                <div data-bs-toggle="modal" (click)="handleData(item)"
-                                                    (click)="approverComments(item.entity?.prApproverComments)">
-                                                    <i style="position:relative;z-index: -1;"
-                                                        class="bi bi-info-circle-fill "></i></div>
-                                                <!-- </div> -->
-                                            </span>
-                                        </span>
-                                        <ng-template #approvercomments>-</ng-template>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <div>
-                                        <button class="Approve-btn me-3 mb-3"
-                                            (click)="handleRequests(item); getComments(item.entity?.prApproverComments)"
-                                            *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#ProbationProcess">Process</button>
-                                        <button class="resend-btn me-3 mb-3"
-                                            *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                            [routerLink]="['/timeoffleaves/assessmetform']"
-                                            (click)="setData(item)">Assessment form</button>
-                                        <!-- <button class="Approve-btn me-3 mb-3" data-bs-toggle="modal"*ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                             (click)="handleRequests(item)" data-bs-target="#ProbationApprove" 
-                                            >Approve</button>
-                                        <button class="reject-btn me-3 mb-3"  *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"           
-                                                data-bs-toggle="modal"  (click)="handleRequests(item)"
-                                                data-bs-target="#probationreject">Reject</button> -->
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a type="button" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </a>
-                                        <ul class="dropdown-menu py-0">
-                                            <li><a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a></li>
-                                            <li><a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    
+                    @if ((probationDetails).length > 0) {
+                    @for (item of ((probationDetails ) ?? []) | probationdetails : searchValue; track
+                    item.approvalHeader.id){
+                    <tr>
+                        <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
+                        <td>{{item.entity?.employeeName ?? '-'}}</td>
+                        <td>{{item.entity?.probationStartDate ?? '-' | date}}</td>
+                        <td>{{item.entity?.probationEndDate ?? '-' | date}}</td>
+                        <td class="cursor">
+                            <div class="mt-2">
+                                <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
+                                    <span id="tooltip">
+                                        <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
+                                        <div data-bs-toggle="modal" (click)="handleData(item)"
+                                            (click)="approverComments(item.entity?.prApproverComments)">
+                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                        </div>
+                                        <!-- </div> -->
+                                    </span>
+                                </span>
+                                <ng-template #approvercomments>-</ng-template>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div>
+                                <button class="custom-btn btn-primary"
+                                    (click)="handleRequests(item); getComments(item.entity?.prApproverComments)"
+                                    *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage"
+                                    data-bs-toggle="modal" data-bs-target="#ProbationProcess">Process</button>
+                                <button class="custom-btn btn-primary"
+                                    *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
+                                    [routerLink]="['/time-off/pending-approvals/assessmentform']"
+                                    (click)="setData(item)">Assessment form</button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                    }
+
                     }
                     @else{
                     <tr>
@@ -122,66 +107,221 @@
                 <button type="button" class="btn-close me-2" data-bs-dismiss="modal" (click)="closeModel()"
                     aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="card mb-3">
-                    <table class="w-100">
-                        <thead>
-                            <tr>
-                                <th class="text-nowrap">Approver Role</th>
-                                <th class="text-nowrap">Over all Rating</th>
-                                <th class="text-nowrap">Status</th>
-                                <th class="text-nowrap">Extended Date</th>
-                                <th class="text-nowrap">comments </th>
-                                <th class="text-nowrap">Commented Date</th>
-                                <th class="text-nowrap">Commented by</th>
-                                <th class="text-nowrap">Attachment</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let comment of myApproverComments">
-                                <td>
-                                    <span *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
-                                    <ng-template #approverrole>NA</ng-template>
-                                </td>
-                                <td><span>{{comment.metadata.Overallrating|number : '1.2-2' }}</span></td>
-                                <td>
-                                    <span *ngIf="comment?.metadata?.status;else status">{{comment.metadata.status}}</span>
-                                    <ng-template #status>NA</ng-template>
-                                </td>
-                                <td>
-                                    <span *ngIf="comment?.metadata?.PrExtendedDate;else extenddate">{{comment.metadata.PrExtendedDate | date}}</span>
-                                    <ng-template #extenddate>NA</ng-template>
-                                </td>
-                                <td class="">
-                                    <div class="text-center" *ngIf="comment?.comments;else popupcomments">
-                                        
-                                        <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
-                                            ngbPopover="{{comment?.comments}}"> </i>
-                                    </div>
-                                    <ng-template #popupcomments>NA</ng-template>
-                                </td>
-                                <td><span *ngIf="comment.addedDate;else addeddate">
-                                        {{comment.addedDate | date}}</span>
-                                    <ng-template #addeddate>NA</ng-template>
-                                </td>
-                                <td><span *ngIf="comment.addedName;else addedname">
-                                        {{comment.addedName}} ({{comment.addedByFusionEmpId}})</span>
-                                    <ng-template #addedname>NA</ng-template>
-                                </td>
-                                <td>
-                                    <a type="button" style="color: blue;" (click)="openview()"
-                                        (click)="setformView(this.selectedData.employeeId,comment?.metadata?.responseId)">
-                                        <i class="bi bi-paperclip"></i>View
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="modal-body" ngbAutofocus>
+                <div class="custom-main-component-container">
+                    <div class="custom-table-content mt-2">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap">Approver Role</th>
+                                    <th class="text-nowrap">Over all Rating</th>
+                                    <th class="text-nowrap">Status</th>
+                                    <th class="text-nowrap">Extended Date</th>
+                                    <th class="text-nowrap">Comments </th>
+                                    <th class="text-nowrap">Commented Date</th>
+                                    <th class="text-nowrap">Commented by</th>
+                                    <th class="text-nowrap">Attachment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let comment of myApproverComments">
+                                    <td>
+                                        <span
+                                            *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
+                                        <ng-template #approverrole>NA</ng-template>
+                                    </td>
+                                    <td><span>{{comment.metadata.Overallrating|number : '1.2-2' }}</span></td>
+                                    <td>
+                                        <span
+                                            *ngIf="comment?.metadata?.status;else status">{{comment.metadata.status}}</span>
+                                        <ng-template #status>NA</ng-template>
+                                    </td>
+                                    <td>
+                                        <span
+                                            *ngIf="comment?.metadata?.PrExtendedDate;else extenddate">{{comment.metadata.PrExtendedDate
+                                            | date}}</span>
+                                        <ng-template #extenddate>NA</ng-template>
+                                    </td>
+                                    <td class="">
+                                        <div class="text-center" *ngIf="comment?.comments;else popupcomments">
+
+                                            <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
+                                                ngbPopover="{{comment?.comments}}"> </i>
+                                        </div>
+                                        <ng-template #popupcomments>NA</ng-template>
+                                    </td>
+                                    <td><span *ngIf="comment.addedDate;else addeddate">
+                                            {{comment.addedDate | date}}</span>
+                                        <ng-template #addeddate>NA</ng-template>
+                                    </td>
+                                    <td><span *ngIf="comment.addedName;else addedname">
+                                            {{comment.addedName}} ({{comment.addedByFusionEmpId}})</span>
+                                        <ng-template #addedname>NA</ng-template>
+                                    </td>
+                                    <td>
+                                        <a type="button" style="color: blue;" (click)="openview()"
+                                            (click)="setformView(this.selectedData.employeeId,comment?.metadata?.responseId)">
+                                            <i class="bi bi-paperclip"></i>View
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
                     (click)="closeModel()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bgfade " id="ProbationProcess" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable" style="min-width: 30vw;">
+        <div class="modal-content">
+            <!-- <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i> -->
+            <div class=" text-center mt-4 mb-3">
+                <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+            </div>
+            <h4 class="text-center ps-3 pe-3 inactive-poptext"> Are you sure you want to Process? </h4>
+            <form name="ProcessacceptForm" class="ps-5 w-100" #ProcessacceptForm="ngForm"
+                (ngSubmit)="ProcessacceptForm.valid && handleProcess(ProcessacceptForm)">
+
+                <div class="col-11 ">
+                    <div class="mb-3">
+                        <label for="selct option">Whose approval form would you like to proceed with?<span
+                                class="error-msg">*</span></label>
+                        <select class="form-select" aria-label="Default select example" id="selectoption"
+                            name="selectoption" #processoption="ngModel" [(ngModel)]="selectedData.proccesoption"
+                            (change)="onclickproceevalue(selectedData.proccesoption)" required>
+                            <option [ngValue]="undefined">Please select</option>
+                            <option Value="RM">Reporting Manager</option>
+                            <option Value="TM">Team Manager</option>
+                        </select>
+                        <small class="error-msg"
+                            *ngIf="(processoption.touched && processoption.invalid) || (processoption.invalid && ProcessacceptForm.submitted)">
+                            Selection is required
+                        </small>
+                    </div>
+                    <div class="form-outline p-2 mb-1 d-flex justify-content-center align-items-center">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioEarly"
+                                (click)="toggleApprove()">
+                            <label class="form-check-label ms-2" for="flexRadioEarly">Process</label>
+                        </div>
+                        <div class="form-check form-check-inline ms-3">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
+                                (click)="toggleExtend()">
+                            <label class="form-check-label ms-2" for="flexRadioExtend">Extend</label>
+                        </div>
+                        <div class="form-check form-check-inline ms-3">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                id="flexRadioDiscontinue" (click)="toggleDiscontinue()">
+                            <label class="form-check-label ms-2" for="flexRadioDiscontinue">Reject</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3 mt-2" *ngIf="approve">
+                            <label for="exampleFormControlTextarea1" class="form-label ">Comments<span
+                                    class="error-msg">*</span></label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1"
+                                placeholder="Please provide comments" name="earlyrelievingreason"
+                                #earlyrelievingreason="ngModel" maxlength="250" [(ngModel)]="selectedData.comments"
+                                (ngModelChange)="ifreasonnull(selectedData.comments)" required rows="3"></textarea>
+                            <div>
+                                <span
+                                    class="color">{{selectedData.comments?.length?selectedData.comments?.length:0}}/250</span>
+                            </div>
+
+                            <small class="error-msg"
+                                *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && ProcessacceptForm.submitted) ">
+                                Comments is required</small>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3" *ngIf="extend">
+                            <label for="exampleFormControlInput1" class="form-label">Extend Date<span
+                                    class="error-msg">*</span>
+                            </label>
+                            <input class="form-control" type="date" aria-label="Default select example" id="extenddate"
+                                placeholder="" name="extenddate" #extenddate="ngModel" (keypress)="letters($event)"
+                                [min]="getBlockedFutureDate(selectedData.probationEndDate)"
+                                [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration)"
+                                [(ngModel)]="selectedData.extenddate" required
+                                [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
+                            <small class="error-msg"
+                                *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && ProcessacceptForm.submitted)">Extend
+                                date is required
+                            </small>
+                            <small class="error-msg" *ngIf="!isempeffectivevaild">Extend Date
+                                cannot be
+                                less than Training End date</small>
+                        </div>
+
+                        <div class="mb-3 mt-2" *ngIf="extend">
+                            <label for="exampleFormControlTextarea1" class="form-label ">Feedback for Extend<span
+                                    class="error-msg">*</span></label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1"
+                                placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
+                                [(ngModel)]="selectedData.comments" maxlength="250"
+                                (ngModelChange)="ifreasonnull(selectedData.comments)" required rows="3"></textarea>
+                            <div>
+                                <span class="color">{{selectedData.comments?.length?selectedData.comments?.length:0}}
+                                    /250</span>
+                            </div>
+
+                            <small class="error-msg"
+                                *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && ProcessacceptForm.submitted) || (Extendreason.errors?.['pattern']) ">
+                                Feedback for Extend is required</small>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="mb-3" *ngIf="discontinue">
+                            <label for="Descriptiondetails" type="Notes">Reject Reason <span
+                                    class="error-msg">*</span></label>
+                            <textarea type="text" class="form-control" id="Descriptiondetails" name="Descriptiondetails"
+                                aria-label="Description" rows="3" maxlength="250" placeholder="Please Provide Reason"
+                                #Descriptiondetails="ngModel" autocomplete="off"
+                                (ngModelChange)="ifreasonnull(selectedData.rejectedReason)"
+                                [(ngModel)]="selectedData.rejectedReason" required></textarea>
+                            <div>
+                                <span class="color">{{selectedData.rejectedReason?.length ?
+                                    selectedData.rejectedReason.length : 0}} /250</span>
+                            </div>
+                            <small class="error-msg"
+                                *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && ProcessacceptForm.submitted)">
+                                Reason is required
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100 button-center">
+                    <button type="reset" class="btn cancel-button" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="reset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary save-button" aria-label="Close"
+                        [disabled]="ProcessacceptForm.invalid ||issubmitdiable||!buttondisable" data-bs-dismiss="modal">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- model start to view reason -->
+<div class="modal fade" id="rolereq" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: fit-content;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" (click)="close()"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <app-probationform-view></app-probationform-view>
             </div>
         </div>
     </div>

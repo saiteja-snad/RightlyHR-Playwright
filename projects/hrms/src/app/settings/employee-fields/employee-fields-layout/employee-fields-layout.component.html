@@ -1,1 +1,51 @@
-<router-outlet/>
+<div>
+    @if (router.url !== '/settings/employee-fields/addholidays') {
+    <!--header-->
+    <div class="mb-3">
+        <div class="component-header">Settings</div>
+    </div>
+    
+    <!--tabs content-->
+    <div class="mb-3">
+        <div>
+            <app-settings-employee-fields-module-tabs/>
+        </div>
+    </div>
+    }
+    <!--Content-->
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
+        @if ((router.url !== '/settings/employee-fields/addholidays' ) && (router.url !== '/settings/employee-fields/addshifts') && (router.url !== '/settings/employee-fields/addpolices') && (router.url !== '/settings/employee-fields/no-due-clearnce') ) {
+        <!--sub tabs Content-->
+        <div class="custom-component-left-content">
+            <div *ngIf="isActive('/settings/employee-fields/personal')">
+                <app-settings-personal-tabs />
+            </div>
+        
+            <div *ngIf="isActive('/settings/employee-fields/job')">
+                <app-settings-job-tabs />
+            </div>
+
+            <div *ngIf="isActive('/settings/employee-fields/manage-shifts')">
+                <app-manage-shifts-tabs/>
+            </div>
+            <div *ngIf="isActive('/settings/employee-fields/manage-holidays')">
+                <app-manage-holidays-tabs></app-manage-holidays-tabs>
+            </div>
+            <div *ngIf="isActive('/settings/employee-fields/manage-policies')">
+                <app-manage-policies-tabs></app-manage-policies-tabs>
+            </div>
+            <div *ngIf="isActive('/settings/employee-fields/expenes')">
+             <app-settings-expenes-configurtions-tabs/>
+            </div>
+        </div>
+        
+        <div class="custom-setting-right-content p-3">
+            <router-outlet />
+        </div>
+        } @else {
+        <div class="w-100">
+            <router-outlet />
+        </div>
+        }
+    </div>
+</div>

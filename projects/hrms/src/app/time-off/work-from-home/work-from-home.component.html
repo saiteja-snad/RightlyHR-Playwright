@@ -1,37 +1,35 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <p class="component-header cursor mb-0">WHF</p>
+            <p class="component-header mb-0">WHF</p>
         </div>
-        <div class="d-flex gap-3">
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"><i
-                    class="bi bi-plus me-2"></i>Request WFH</button>
+        <div>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"><i class="bi bi-plus me-2"></i>Request WFH</button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-4">
-            <app-wfh-approvaltabs></app-wfh-approvaltabs>
-
+    <div class=" employee-fields-main-container d-flex gap-3 w-100">
+        <div class="custom-component-left-content">
+            <app-wfh-approvaltabs/>
         </div>
-        <div class=" col-8">
-            <router-outlet></router-outlet>
+        <div class="custom-setting-right-content p-3">
+            <router-outlet/>
         </div>
     </div>
 </div>
 
-
+<!--Add Work Form Home-->
 <ng-template #addwfh let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request WFH</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();addWFHForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();addWFHForm.reset();availablebalance = 0"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content p-3">
             <form [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form">
                 <!-- Worked Date -->
                 <div class="row">
@@ -39,20 +37,29 @@
                         <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
-                            formControlName="workedDate" required>
+                            formControlName="workedDate"
+                            (change)="getWFHBal(addWFHForm.get('workedDate')?.value)">
+                            <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid" class="error-msg">
+                                Worked Date is required.
+                              </div>
+                              <!-- <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']" class="error-msg">
+                                Selected date is not eligible for WFH
+                              </div> -->
+                              
+                              <div class="error-msg" *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
+                              
                     </div>
-                </div>
 
-                <!-- Availing -->
-                <div class="row">
+                    <!-- Availing -->
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-3">Availing<span class="text-danger">*</span></label>
                         <div class="d-flex gap-3">
                             <div class="form-check">
                                 <input type="radio" class="form-check-input" id="halfDay" value="Half Day"
                                     formControlName="availing">
+                                    
                                 <label class="form-check-label custom-label" for="halfDay">Half Day</label>
-
+            
                                 <!-- Half Day Selection -->
                                 <div class="row" *ngIf="addWFHForm.get('availing')?.value === 'Half Day'">
                                     <div class="col-md-12 mb-3">
@@ -65,7 +72,7 @@
                                                 <label class="form-check-label" for="firstHalf">First Half</label>
                                             </div>
                                             <div class="form-check">
-                                                <input type="radio" class="form-check-input" id="secondHalf"[value]="3"
+                                                <input type="radio" class="form-check-input" id="secondHalf" [value]="3"
                                                     formControlName="halfType">
                                                 <label class="form-check-label" for="secondHalf">Second Half</label>
                                             </div>
@@ -80,28 +87,45 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Reason -->
-                <div class="row">
+            
+                    <!-- Reason -->
                     <div class="col-md-12 mb-3">
-                        <label for="reason" class="form-label custom-label mb-2">Reason<span
-                                class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
+                        <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3" maxlength="250"
                             placeholder="Type here"></textarea>
+
+                                 <!-- Character counter -->
+                        <div class="text-end small text-muted">
+                            {{ addWFHForm.get('reason')?.value?.length || 0 }}/250
+                        </div>
+                        <div class="error-msg" *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">
+                            <div *ngIf="addWFHForm.get('reason')?.errors?.['required']">
+                                Reason is required.
+                            </div>
+                            <div *ngIf="addWFHForm.get('reason')?.errors?.['maxlength']">
+                                Reason cannot exceed 250 characters.
+                            </div>
+                          </div>
+
+                    </div>
+
+                    <div class="col-md-12 mb-3" *ngIf="availablebalance">
+                        <b>Balance:{{availablebalance}}</b>
+                      
                     </div>
                 </div>
-
+            
                 <!-- Action Buttons -->
-                <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();this.addWFHForm.reset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="addWFHForm.invalid || spinnerLoader">
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="modal.dismiss();this.addWFHForm.reset();availablebalance = 0">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addWFHForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span >{{'Loading..'}}...</span>
-                            }@else {
-                            <span>{{'Request'}}</span>
-                            }</button>
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Request'}}</span>
+                        }</button>
                 </div>
             </form>
         </div>

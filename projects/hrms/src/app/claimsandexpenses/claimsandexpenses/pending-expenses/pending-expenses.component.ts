@@ -7,12 +7,14 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../../../services/http.service';
 
 import { CommonModule } from '@angular/common';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { FormsModule } from '@angular/forms';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule,DateformatPipe,NgxDocViewerModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })
@@ -25,48 +27,38 @@ export class PendingExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
+  searchTerm:any=''
+  approverComments = [] as any[];
+  
+  @ViewChild('commentspopup') modalContent: any;
   constructor( 
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
  
-  expenesEmplyeedata: IExpense[] = [];
+    expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   draftsCount: number = 0;
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid(this.empinfo.employeeId);
+    this.getexpensesheaderbyemployeeid();
   }
 
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
 
-
-
-  getexpensesheaderbyemployeeid(_employeeId: number): void {
-    //params
-    const params = this.empinfo.employeeId;
-
+  getexpensesheaderbyemployeeid(): void {
+    const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Waiting for Approval&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata = data as IExpense[];
-          this.filterWaitingforApprovalExpenses();
+          this.expenesEmplyeedata.next(data) 
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
-
-  filterWaitingforApprovalExpenses() {
-    const draftExpenses = this.expenesEmplyeedata
-      .filter((expense) => expense.status === 'Waiting for Approval')
-      .reverse();
-    this.flitredWaitingforApprovalExpenses.next(draftExpenses);
-    this.draftsCount = draftExpenses.length;
-  }
-
-  
 
   viewItem(expid: number,) {
     console.log(expid);
@@ -82,7 +74,16 @@ export class PendingExpensesComponent {
       });
 
   }
-
+  comments(value: any, commentspopup: any) {
+    this.modalService.open(commentspopup, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
+    this.approverComments = value;
+    console.log(this.approverComments);
+  }
+  
   onSelectDownload(file: any): void {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).subscribe({
       next: (res: any) => {

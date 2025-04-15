@@ -1,362 +1,330 @@
-<!-- <ng-template #nodata>
-    <div class="loader"><h3>Loading ...</h3></div>
-  </ng-template> -->
-  <p *ngIf="dynamicFormHeader.length === 0" class="text-center mt-4">No Data Found</p>
-  <div class="container-fluid info-container pt-3 ">
-    <div>
-      <div *ngIf="dynamicFormHeader.length > 0">
-        <div class="container-fluid page-div" id="content">
-          <div class="text-center mt-4">
-            <b>{{dynamicFormDetails?.formName}}</b>
-          </div>
-  
-          <div class="mt-4">
-            <div *ngFor="let item of dynamicFormHeader" class="row row-cols-2">
-              <div *ngFor="let question of item.questions" class="col">
-                <p class="m-0 mb-1">{{question.question}}
-                  <span *ngIf="question.question === 'Emp.ID:'">{{dynamicFormDetails.fusionEmployeeId}}</span>
-                  <span *ngIf="question.question === 'Emp.Name:'">{{dynamicFormDetails.employeeName}}</span>
-                  <span *ngIf="question.question === 'Designation:'">{{dynamicFormDetails.designation}}</span>
-                  <span *ngIf="question.question === 'Location:'">{{dynamicFormDetails.sublocation}},
-                    {{dynamicFormDetails.location}} </span>
-                  <span *ngIf="question.question === 'DOJ:'">{{dynamicFormDetails.dateOfJoining }}</span>
-                  <span *ngIf="question.question === 'Department:'">{{dynamicFormDetails.departmentname}}</span>
-                  <span *ngIf="question.question === 'Reviewer ID:'">{{loggedindata.fusionEmpId}}</span>
-                  <span *ngIf="question.question === 'Reviewer Name:'">{{loggedindata.firstName??''
-                    }}{{loggedindata.middleName??'' }}{{loggedindata.lastName??'' }}</span>
-                  <span *ngIf="question.question === 'Reporting Manager Name:'">{{dynamicFormDetails.rmName}}</span>
-                  <span *ngIf="question.question === 'Team Manager Name:'">{{dynamicFormDetails.tmName}}</span>
-                </p>
-              </div>
+<ng-template #nodata>
+  <div class="loader"><h3>Loading ...</h3></div>
+</ng-template>
+
+<div class="assessmentform-container pt-3">
+  <div>
+    <div *ngIf="dynamicFormHeader.length > 0 , else nodata">
+      <div class="container-fluid page-div" id="content">
+        <div class="text-center mt-4">
+          <b>{{dynamicFormDetails.formName}}</b>
+        </div>
+
+        <div class="mt-4">
+          <div *ngFor="let item of dynamicFormHeader" class="row row-cols-2">
+            <div *ngFor="let question of item.questions" class="col">
+              <p class="m-0 mb-1">{{question.question}}
+                <span *ngIf="question.question === 'Emp.ID:'">{{dynamicFormDetails.fusionEmployeeId}}</span>
+                <span *ngIf="question.question === 'Emp.Name:'">{{dynamicFormDetails.employeeName}}</span>
+                <span *ngIf="question.question === 'Designation:'">{{dynamicFormDetails.designation}}</span>
+                <span *ngIf="question.question === 'Location:'">{{dynamicFormDetails.sublocation}},
+                  {{dynamicFormDetails.location}} </span>
+                <span *ngIf="question.question === 'DOJ:'">{{dynamicFormDetails.dateOfJoining | date}}</span>
+                <span *ngIf="question.question === 'Department:'">{{dynamicFormDetails.departmentname}}</span>
+                <span *ngIf="question.question === 'Reviewer ID:'">{{loggedindata.fusionEmpId}}</span>
+                <span *ngIf="question.question === 'Reviewer Name:'">{{loggedindata.firstName??''
+                  }}{{loggedindata.middleName??'' }}{{loggedindata.lastName??'' }}</span>
+                <span *ngIf="question.question === 'Reporting Manager Name:'">{{dynamicFormDetails.rmName}}</span>
+                <span *ngIf="question.question === 'Team Manager Name:'">{{dynamicFormDetails.tmName}}</span>
+              </p>
             </div>
           </div>
-  
-          <div>
-            <form [formGroup]="personalForm">
-                <div class="document-header-div" *ngFor="let section of dynamicFormQuestions; let i = index" [formGroupName]="i">
-                  <div class="space" [ngClass]="{ 'set-height': i === indexspace }"></div>
-                  <div class="mb-1 mt-2">
-                    <span class="job-header bold">
-                      {{section.sectionName}} 
-                      <span class="text-danger" *ngIf="displayTextArea">*</span>
-                    </span>
-                  </div>
-                  <div class="row mt-2">
-                    <div class="col-md-8 col-lg-10" *ngFor="let questions of section.questions; let questionIndex = index">
-                      <div class="mb-6">
-                        <label for="exampleFormControlInput1" class="form-label">{{questions.question}}</label>
-                      </div>
-                    </div>
-              
-                    <div *ngFor="let questions of section.questions; let qIndex = index" [formGroupName]="qIndex">
-                      <div *ngIf="questions.type === 'checkbox'; else another">
-                        <div formArrayName="options">
-                          <div *ngFor="let options of questions.options; let optionIndex = index" [formGroupName]="optionIndex">
-                            <div class="d-flex">
-                              <input type="checkbox" class="me-2"
-                                [formControlName]="'checked'"
-                                id="checkformheader"
-                                (change)="onCheckboxChange(section.questions, options.optionWeightage, options.optionId, dynamicFormQuestions, section.id, questions.id, options.meta)">
-                              <span>{{options.option}}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <ng-template #another>
-                        <textarea type="text" class="form-control" placeholder="EmployeeId"
-                          formControlName="EmployeeId" rows="3"></textarea>
-                        <label class="form-label" for="textAreaExample"></label>
-                      </ng-template>
-                    </div>
-                  </div>
-                  <hr>
-                </div>
-              
-                <div class="mt-4" [formGroupName]="'footer'">
-                  <p class="bold">{{dynamicFormFooter[0]?.sectionName}}</p>
-                  <div *ngFor="let item of dynamicFormFooter[0]?.questions; let itemIndex = index" [formGroupName]="itemIndex">
-                    <p>{{item.question}} <span class="text-danger" *ngIf="displayTextArea">*</span></p>
-              
-                    <div formArrayName="options">
-                      <div *ngFor="let options of item.options; let optionIndex = index" [formGroupName]="optionIndex">
-                        <div *ngIf="item.type === 'text area' && options.optionId">
-                          <textarea placeholder="Text area" class="form-control text-wrap"
-                            minlength="0" maxlength="250" rows="3"
-                            *ngIf="displayTextArea"
-                            formControlName="value"
-                            (change)="onCheckboxforfootertext(dynamicFormFooter[0]?.questions, options.optionWeightage, options.optionId, dynamicFormQuestions, dynamicFormFooter[0].id, item.id, dynamicformSubmit.textarea)"
-                            required></textarea>
-                          <p class="card p-2" *ngIf="!displayTextArea">{{ formatText(dynamicformSubmit.textarea) }}</p>
-                          <p *ngIf="dynamicformSubmit.textarea && displayTextArea">
-                            {{dynamicformSubmit.textarea?.length}}/250
-                          </p>
-                        </div>
-                        <div *ngIf="item.type === 'checkbox' && options.optionId">
-                          <input type="checkbox" class="me-2"
-                            formControlName="checked"
-                            (change)="onCheckboxChangefooter(dynamicFormFooter[0]?.questions, options.optionWeightage, options.optionId, dynamicFormQuestions, dynamicFormFooter[0].id, item.id, options.meta)"
-                            required>
-                          <span>{{options.option}}</span>
-                        </div>
-                      </div>
-                    </div>
-              
-                    <div *ngFor="let options of item.options">
-                      <div *ngIf="item.type === 'textarea'; else none">
-                        <textarea rows="3" formControlName="value"></textarea>
-                      </div>
-                      <ng-template #none>
-                        <div *ngIf="item.type === 'checkbox'; else another">
-                          <div class="d-flex"></div>
-                        </div>
-                        <ng-template #another></ng-template>
-                      </ng-template>
-                    </div>
-                  </div>
-                  <p>Over all rating: {{overallRatingcount | number: '1.2-2'}}</p>
-                </div>
-              </form>
-              
-          </div>
         </div>
-  
-        <div class="text-center no-print mt-4 mb-4">
-          <div>
-            <p class="text-danger"><span>Note:</span> Please fill all the fields</p>
-          </div>
-          <button class="btn inactive-no" data-bs-toggle="modal" data-bs-target="#conformadd"
-            (click)="cancel()">Cancel</button>
-          <button class="btn inactive-success ms-4" (click)="textArea()"
-            [disabled]='this.selected_questions.length<36'>Save</button>
-          <!-- <button class="btn inactive-success ms-4" [disabled]="overallRating<dynamicFormDetails.cutOffRating" (click)="FormDownload()">Download</button> -->
-          <!-- [disabled]="overallRating<dynamicFormDetails.cutOffRating" -->
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- popup for reject start -->
-  <div class="modal fade" id="Reject" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable" style="min-width: 30vw;">
-      <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
-        <div class="mt-4 mb-3">
-          <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-        </div>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext"> Are you sure you want to Reject?
-        </h4>
-        <form [formGroup]="rejectSeparationForm" class="ps-5 w-100" (ngSubmit)="onRejectSubmit()">
-            <div class="col-11">
-              <div class="mb-3 mt-2">
-                <label for="exampleFormControlTextarea1" class="form-label labell">
-                  Enter reason <span class="text-danger">*</span>
-                </label>
-                <textarea class="form-control"
-                  id="exampleFormControlTextarea1"
-                  placeholder="Please enter reject reason"
-                  formControlName="rejectedReason"
-                  maxlength="250"
-                  rows="3">
-                </textarea>
-                <div>
-                  <span>{{ rejectSeparationForm.get('rejectedReason')?.value?.length || 0 }}/250</span>
-                </div>
-                <small class="text-danger" *ngIf="rejectedReason.invalid && (rejectedReason.touched || rejectSubmitted)">
-                  Reason is required
-                </small>
+
+        <div>
+          <form name="personal" #personal="ngForm">
+            <div class="document-header-div" *ngFor="let section of dynamicFormQuestions;let i=index">
+              <div class="space" [ngClass]="{ 'set-height': i === indexspace }"></div>
+              <div class="mb-1 mt-2">
+                <span class="job-header bold">{{section.sectionName}} <span class="text-danger" *ngIf="displayTextArea">
+                    *</span></span>
               </div>
+              <div class="row mt-2">
+                <div class="col-md-8 col-lg-10" *ngFor="let questions of section.questions let questionIndex=index">
+                  <div class="mb-6">
+                    <label for="exampleFormControlInput1" class="form-label">{{questions.question}}</label>
+                  </div>
+                </div>
+                <div *ngFor="let questions of section.questions">
+                  <div *ngIf="questions.type=='checkbox';else another">
+                    <div *ngFor="let options of questions.options ; let optionIndex = index">
+                      <div class="d-flex">
+                        <input type="checkbox" class="me-2" [checked]="options.checked" id="checkformheader"
+                          name="checkformheader"
+                          (change)="onCheckboxChange(section.questions, options.optionWeightage,options.optionId,dynamicFormQuestions,section.id,questions.id,options.meta)"
+                          ngModel required> <span>{{options.option}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <ng-template #another>
+                    <textarea type="text" class="form-control" id="EmployeeId" placeholder="EmployeeId"
+                      name="EmployeeId" rows="3"></textarea>
+                    <label class="form-label" for="textAreaExample"></label>
+                  </ng-template>
+                </div>
+              </div>
+              <hr>
             </div>
-          
-            <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-              <button type="button" class="btn inactive-no" data-bs-dismiss="modal" type="reset">Cancel</button>
-              <div>
-                <button type="submit" class="btn inactive-success" data-bs-dismiss="modal"
-                  [disabled]="rejectSeparationForm.invalid">Submit</button>
+
+            <div class="mt-4">
+              <p class="bold">{{dynamicFormFooter[0].sectionName}}</p>
+              <div *ngFor="let item of dynamicFormFooter[0]?.questions">
+                <p>{{item.question}} <span class="text-danger" *ngIf="displayTextArea"> *</span> </p>
+               
+                <div class="mb-2 w-100" *ngFor="let options of item.options;let optionIndex = index">
+                  <div *ngIf="item.type=='text area' && options.optionId">
+                    <textarea placeholder="Text area" class="form-control text-wrap" name="textarea" id="textarea"
+                      minlength="0" maxlength="250" rows="3" *ngIf="displayTextArea"
+                      (change)="onCheckboxforfootertext(dynamicFormFooter[0].questions, options.optionWeightage,options.optionId,dynamicFormQuestions,dynamicFormFooter[0].id,item.id,dynamicformSubmit.textarea)"
+                      [(ngModel)]="dynamicformSubmit.textarea" required></textarea>
+                    <p class="card p-2" *ngIf="!displayTextArea">{{ formatText(dynamicformSubmit.textarea)}}</p>
+                    <p *ngIf="dynamicformSubmit.textarea && displayTextArea">{{dynamicformSubmit.textarea.length}}/250
+                    </p>
+                  </div>
+                  <div *ngIf="item.type=='checkbox' && options.optionId">
+                    <input type="checkbox" class="me-2" [checked]="options.checked" id="checkformfooter"
+                      name="checkformfooter"
+                      (change)="onCheckboxChangefooter(dynamicFormFooter[0].questions, options.optionWeightage,options.optionId,dynamicFormQuestions,dynamicFormFooter[0].id,item.id,options.meta)"
+                      ngModel required> <span>{{options.option}}</span>
+                  </div>
+                </div>
+                <div *ngFor="let options of item.options">
+                  <div *ngIf="item.type=='textarea';else none"><textarea name="" id="" rows="3"></textarea></div>
+                  <ng-template #none>
+                    <div *ngIf="item.type=='checkbox';else another">
+                      <div class="d-flex">
+                        <!-- <input type="checkbox" class="me-2" ><span> {{options.option}} </span> -->
+                      </div>
+                    </div>
+                    <ng-template #another></ng-template>
+                  </ng-template>
+                </div>
               </div>
+              <p>Over all rating: {{overallRatingcount|number : '1.2-2'}}</p>
             </div>
           </form>
-          
-      </div>
-    </div>
-  </div>
-  <!-- popup for reject end  -->
-  
-  <div class="modal fade" id="conformadd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-body text-center">
-          <div class="mb-4">
-            <i class="bi bi-exclamation-circle-fill mt-3 mb-2"></i>
-          </div>
-          <h3 class="text-center inactive-poptext">Are you sure you want to cancel?</h3>
-          <div class="d-flex mb-4 pb-2 mt-2 justify-content-between w-100 gap-5 px-5 pt-4">
-            <button type="button" class="btn inactive-no" data-bs-dismiss="modal">No</button>
-            <button type="button" class="btn inactive-success" data-bs-dismiss="modal" (click)="close()">Yes</button>
-          </div>
         </div>
       </div>
-    </div>
-  </div>
-  
-  <!-- popup for approve start-->
-  <ng-template #formsavepopup let-modal>
-    <div class="modal-body">
-      <div class="d-flex flex-column justify-content-center align-items-center">
-        <div class="mt-4  mb-3">
-          <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-        </div>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext mb-3"> Are you sure you want to Save?
-        </h4>
-        <div class="d-flex mb-4 pb-2 mt-2 justify-content-between w-100 gap-5 px-5">
-          <button type="button" class="btn inactive-no" data-bs-dismiss="modal" aria-label="Close" type="reset"
-            (click)="cancel()">No</button>
-          <div>
-            <button type="submit" class="btn inactive-success" data-bs-dismiss="modal" (click)="formSubmit()">Yes</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-  
-  <!-- popup for approve start-->
-  <ng-template #loaderpopup let-modal>
-    <div class="modal-body p-5 text-center">
-      <h4>Saving ...</h4>
-    </div>
-  </ng-template>
-  
-  <!-- Modal -->
-  <ng-template #successpopup let-modal>
-    <div class="modal-body mt-4 text-center">
-      <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-      <h4 class="text-center ps-3 pe-3 inactive-poptext mb-3"> Data Saved Successfully!
-      </h4>
-      <div class="text-center mb-4">
+
+      <div class="text-center no-print mt-4 mb-4">
         <div>
-          <button type="submit" class="btn save pt-2 pb-2" (click)="openModal(formapprovals)">OK</button>
+          <p class="text-danger"><span>Note:</span> Please fill all the fields</p>
         </div>
+        <button class="btn cancel-button" data-bs-toggle="modal" data-bs-target="#conformadd"
+          (click)="cancel()">Cancel</button>
+        <button class="custom-btn btn-primary save-button ms-4" (click)="textArea()"
+          [disabled]='!personal.valid || this.selected_questions.length<36'>Save</button>
+        
       </div>
     </div>
-  </ng-template>
-  
-  <ng-template #formapprovals let-modal>
-    <div class="modal-body" ngbAutofocus>
-      <div class="mt-4 mb-3 text-center">
+  </div>
+</div>
+
+<!-- popup for reject start -->
+<div class="modal fade" id="Reject" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable" style="min-width: 30vw;">
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+      <div class="mt-4 mb-3">
         <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
       </div>
-      <div>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext text-center">Confirm Probation status?</h4>
-        <form *ngIf="formemployeedetails.approvalHeader?.currentapprovalStage !== formemployeedetails.approvalHeader?.finalapprovalStage"
-      [formGroup]="acceptForm"
-      class="w-100"
-      (ngSubmit)="handleAccept($event)">
-
-  <div class="form-outline p-2 mb-1 d-flex justify-content-center align-items-center">
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" formControlName="decision" id="flexRadioEarly" value="approve" (change)="toggleApprove()">
-      <label class="form-check-label ms-2" for="flexRadioEarly">Confirmed</label>
-    </div>
-    <div class="form-check form-check-inline ms-3">
-      <input class="form-check-input" type="radio" formControlName="decision" id="flexRadioExtend" value="extend" (change)="toggleExtend()">
-      <label class="form-check-label ms-2" for="flexRadioExtend">Extend</label>
-    </div>
-    <div class="form-check form-check-inline ms-3">
-      <input class="form-check-input" type="radio" formControlName="decision" id="flexRadioDiscontinue" value="discontinue" (change)="toggleDiscontinue()">
-      <label class="form-check-label ms-2" for="flexRadioDiscontinue">Reject</label>
-    </div>
-  </div>
-
-  <!-- Approve (Confirmed) Section -->
-  <div class="mb-3 mt-2 px-3" *ngIf="approve">
-    <label class="form-label">Comments <span class="text-danger">*</span></label>
-    <textarea class="form-control"
-              formControlName="comments"
-              maxlength="250"
-              rows="3"
-              placeholder="Please Provide Comments"></textarea>
-    <div>
-      <span class="color">{{ acceptForm.get('comments')?.value?.length || 0 }}/250</span>
-    </div>
-    <small class="text-danger" *ngIf="comments.invalid && (comments.touched || formSubmitted)">
-      Comment is required
-    </small>
-  </div>
-
-  <!-- Extend Section -->
-  <div *ngIf="extend">
-    <div class="mb-3 px-3">
-      <label class="form-label">Extend Date <span class="text-danger">*</span></label>
-      <input type="date"
-             class="form-control"
-             formControlName="extendDate"
-             [min]="getBlockedFutureDate(selected_approve.probationEndDate)"
-             [max]="getBlockedFutureDateupto(selected_approve.probationEndDate, probationExtensionDuration)"
-             [ngClass]="{'is-invalid': !isempeffectivevaild}">
-      <small class="text-danger" *ngIf="extendDate.invalid && (extendDate.touched || formSubmitted)">
-        Extend date is required
-      </small>
-      <small class="text-danger" *ngIf="!isempeffectivevaild">
-        Extend Date cannot be less than Training End date
-      </small>
-    </div>
-
-    <div class="mb-3 mt-2 px-3">
-      <label class="form-label">Feedback for Extend <span class="text-danger">*</span></label>
-      <textarea class="form-control"
-                formControlName="extendReason"
-                maxlength="250"
-                rows="3"
-                placeholder="Please Provide Feedback"></textarea>
-      <div>
-        <span class="color">{{ acceptForm.get('extendReason')?.value?.length || 0 }}/250</span>
-      </div>
-      <small class="text-danger" *ngIf="extendReason.invalid && (extendReason.touched || formSubmitted)">
-        Feedback for Extend is required
-      </small>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext"> Are you sure you want to Reject?
+      </h4>
+      <form name="rejectSeparation" class="ps-5 w-100" #rejectSeparation="ngForm" (ngSubmit)="rejectSeparation.valid ">
+        <div class="col-11 ">
+          <div class="mb-3 mt-2">
+            <label for="exampleFormControlTextarea1" class="form-label labell">Enter reason<span
+                class="text-danger">*</span></label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please enter reject reason"
+              name="notes" #notes="ngModel" [maxLength]="250" [(ngModel)]="selectedData.rejectedReason" required
+              rows="3"></textarea>
+            <div>
+              <span>{{selectedData?.rejectedReason?.length?selectedData?.rejectedReason?.length:0}}/250</span>
+            </div>
+            <small class="text-danger"
+              *ngIf="(notes.touched && notes.invalid) || (notes.invalid && rejectSeparation.submitted) || (notes.errors?.['pattern']) ">
+              Reason is required</small>
+          </div>
+        </div>
+        <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
+          <button type="button" class="btn cancel-button" data-bs-dismiss="modal" aria-label="Close"
+            type="reset">Cancel</button>
+          <div>
+            <button type="submit" class="custom-btn btn-primary save-button" aria-label="Close" [disabled]="rejectSeparation.invalid"
+              data-bs-dismiss="modal">Submit</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
+</div>
+<!-- popup for reject end  -->
 
-  <!-- Reject Section -->
-  <div class="mb-3 px-3" *ngIf="discontinue">
-    <label class="form-label">Reject Reason <span class="text-danger">*</span></label>
-    <textarea class="form-control"
-              formControlName="rejectedReason"
-              maxlength="250"
-              rows="3"
-              placeholder="Please Provide Reason"></textarea>
-    <div>
-      <span class="color">{{ acceptForm.get('rejectedReason')?.value?.length || 0 }}/250</span>
-    </div>
-    <small class="text-danger" *ngIf="rejectedReason.invalid && (rejectedReason.touched || formSubmitted)">
-      Reason is required
-    </small>
-  </div>
-
-  <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
-    <button type="reset" class="btn inactive-no" (click)="reset(); modal.dismiss()">Close</button>
-    <button type="submit"
-            class="btn inactive-success"
-            [disabled]="acceptForm.invalid || issubmitdiable || !buttondisable">
-      Submit
-    </button>
-  </div>
-</form>
-
+<div class="modal fade" id="conformadd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <div class="mb-4">
+          <i class="bi bi-exclamation-circle-fill mt-3 mb-2"></i>
+        </div>
+        <h3 class="text-center inactive-poptext">Are you sure you want to cancel?</h3>
+        <div class="d-flex mb-4 pb-2 mt-2 justify-content-between w-100 gap-5 px-5 pt-4">
+          <button type="button" class="btn cancel-button" data-bs-dismiss="modal">No</button>
+          <button type="button" class="custom-btn btn-primary save-button" data-bs-dismiss="modal" (click)="close()">Yes</button>
+        </div>
       </div>
     </div>
-  </ng-template>
-  
-  <ng-template #successhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-      <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
+  </div>
+</div>
+
+<!-- popup for approve start-->
+<ng-template #formsavepopup let-modal>
+  <div class="modal-body">
+    <div class="d-flex flex-column justify-content-center align-items-center">
+      <div class="mt-4  mb-3">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+      </div>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext mb-3"> Are you sure you want to Save?
+      </h4>
+      <div class="d-flex mb-4 pb-2 mt-2 justify-content-between w-100 gap-5 px-5">
+        <button type="button" class="btn cancel-button" data-bs-dismiss="modal" aria-label="Close" type="reset"
+          (click)="cancel()">No</button>
+        <div>
+          <button type="submit" class="btn custom-btn btn-primary save-button" data-bs-dismiss="modal" (click)="formSubmit()">Yes</button>
+        </div>
+      </div>
     </div>
-  </ng-template>
-  
-  <ng-template #errorhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-      <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
+  </div>
+</ng-template>
+
+<!-- popup for approve start-->
+<ng-template #loaderpopup let-modal>
+  <div class="modal-body p-5 text-center">
+    <h4>Saving ...</h4>
+  </div>
+</ng-template>
+
+<!-- Modal -->
+<ng-template #successpopup let-modal>
+  <div class="modal-body mt-4 text-center">
+    <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
+    <h4 class="text-center ps-3 pe-3 inactive-poptext mb-3"> Data Saved Successfully!
+    </h4>
+    <div class="text-center mb-4">
+      <div>
+        <button type="submit" class="btn save pt-2 pb-2" (click)="openModal(formapprovals)">OK</button>
+      </div>
     </div>
-  </ng-template>
+  </div>
+</ng-template>
+
+<ng-template #formapprovals let-modal>
+  <div class="modal-body" ngbAutofocus>
+    <div class="mt-4 mb-3 text-center">
+      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+    </div>
+    <div>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext text-center">Confirm Probation status?</h4>
+      <form
+        *ngIf="formemployeedetails.approvalHeader?.currentapprovalStage != formemployeedetails.approvalHeader?.finalapprovalStage"
+        name="acceptForm" class=" w-100" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
+          <div class="form-outline p-2 mb-1 d-flex justify-content-center align-items-center">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioEarly" (click)="toggleApprove()">
+              <label class="form-check-label ms-2" for="flexRadioEarly">Confirmed</label>
+            </div>
+            <div class="form-check form-check-inline ms-3">
+              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend" (click)="toggleExtend()">
+              <label class="form-check-label ms-2" for="flexRadioExtend">Extend</label>
+            </div>
+            <div class="form-check form-check-inline ms-3">
+              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
+                (click)="toggleDiscontinue()">
+              <label class="form-check-label ms-2" for="flexRadioDiscontinue">Reject</label>
+            </div>
+          </div>
+
+          <div class="mb-3 mt-2 px-3" *ngIf="approve">
+            <label for="exampleFormControlTextarea1" class="form-label">Comments<span class="text-danger">*</span></label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please Provide Comments"
+              name="earlyrelievingreason" #earlyrelievingreason="ngModel" maxlength="250" [(ngModel)]="selected_approve.comments"
+              (ngModelChange)="ifreasonnull(selected_approve?.comments)" required rows="3"></textarea>
+            <div>
+              <span class="color">{{selected_approve.comments?.length?selected_approve.comments?.length:0}}/250</span>
+            </div>
+            <small class="text-danger"
+              *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && rejectSeparation.submitted)">
+              Comment is required</small>
+          </div>
+
+          <div class="mb-3 px-3" *ngIf="extend">
+            <label for="exampleFormControlInput1" class="form-label">Extend Date<span class="text-danger">*</span>
+            </label>
+            <input class="form-control" type="date" aria-label="Default select example" id="extenddate" placeholder=""
+              name="extenddate" #extenddate="ngModel" (keypress)="letters($event)" [(ngModel)]="selected_approve.extenddate"
+              [min]="getBlockedFutureDate(selected_approve.probationEndDate)"
+              [max]="getBlockedFutureDateupto(selected_approve.probationEndDate,probationExtensionDuration)" required
+              [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
+            <small class="text-danger"
+              *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && rejectSeparation.submitted)">Extend
+              date is required
+            </small>
+            <small class="text-danger" *ngIf="!isempeffectivevaild">Extend Date cannot be less than Training End
+              date</small>
+          </div>
+          
+          <div class="mb-3 mt-2 px-3" *ngIf="extend">
+            <label for="exampleFormControlTextarea1" class="form-label ">Feedback for Extend<span
+                class="text-danger">*</span></label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please Provide Feedback"
+              name="Extendreason" #Extendreason="ngModel" [(ngModel)]="selected_approve.reasonForExtend" maxlength="250"
+              (ngModelChange)="ifreasonnull(selected_approve.reasonForExtend)" required rows="3"></textarea>
+            <div>
+              <span
+                class="color">{{selected_approve.reasonForExtend?.length?selected_approve.reasonForExtend?.length:0}}/250</span>
+            </div>
+            <small class="text-danger"
+              *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && rejectSeparation.submitted) || (Extendreason.errors?.['pattern']) ">
+              Feedback for Extend is required</small>
+          </div>
+
+          <div class="mb-3 px-3" *ngIf="discontinue">
+            <label for="Descriptiondetails" class="form-label">Reject Reason <span class="text-danger">*</span></label>
+            <textarea type="text" class="form-control" id="Descriptiondetails" name="Descriptiondetails" aria-label="Description"
+              rows="3" maxlength="250" placeholder="Please Provide Reason" #Descriptiondetails="ngModel" autocomplete="off"
+              (ngModelChange)="ifreasonnull(selected_approve.rejectedReason)" [(ngModel)]="selected_approve.rejectedReason"
+              required></textarea>
+            <div>
+              <span class="color">{{selected_approve.rejectedReason?.length ?
+                selected_approve.rejectedReason.length : 0}} /250</span>
+            </div>
+            <small class="text-danger"
+              *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && selectedData.submitted)">
+              Reason is required
+            </small>
+          </div>
+
+          <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+            <button type="reset" class="btn cancel-button" aria-label="Close" (click)="reset();modal.dismiss()">Close</button>
+            <button type="submit" class="custom-btn btn-primary save-button" aria-label="Close" [disabled]="acceptForm.invalid|| issubmitdiable||!buttondisable">
+              Submit</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #successhide let-model>
+  <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+    <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
+    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
+  </div>
+</ng-template>
+
+<ng-template #errorhide let-model>
+  <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+    <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
+    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
+  </div>
+</ng-template>

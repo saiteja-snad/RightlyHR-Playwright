@@ -11,8 +11,14 @@
                 <div *ngIf="isActive('myinfo')">
                     <app-myinfo-header-tabs />
                 </div>
+                <div *ngIf="isActive('calendar')">
+                    <app-calendar-header-tabs/>
+                </div>
                 <div *ngIf="isActive('personalinfo')">
                     <app-personalinfo-header-tabs />
+                </div>
+                <div *ngIf="isActive('settings')">
+                    <app-settings-main-header-tabs/>
                 </div>
             </div>
             <div *ngIf="isActive('pms')">

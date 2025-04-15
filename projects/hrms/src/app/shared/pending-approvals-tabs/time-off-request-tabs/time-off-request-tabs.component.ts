@@ -5,10 +5,11 @@ import { Subscription } from 'rxjs';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-time-off-request-tabs',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,TabsModule],
   templateUrl: './time-off-request-tabs.component.html',
   styleUrl: './time-off-request-tabs.component.scss'
 })
@@ -17,14 +18,16 @@ export class TimeOffRequestTabsComponent {
   subscription!: Subscription;
   leavesEmp = [] as LeaveApproval[];
   leavesRole = [] as LeaveApproval[];
-  countEmp: any;
-  countRole: any;
-
+  countEmp: any = 0;
+  countRole: any = 0;
+  navTabs: any[] = [
+    { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
+    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
+   
+  ];
   constructor(public readonly router: Router, private http: HttpService, private modalService: NgbModal) { }
 
-  isActive(route: string): boolean {
-    return this.router.isActive(route, true);
-  }
+
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsEMP();
@@ -38,6 +41,13 @@ export class TimeOffRequestTabsComponent {
         console.log(response);
         this.leavesEmp = response.data as LeaveApproval[];
         this.countEmp = this.leavesEmp.length ?? 0;
+        this.navTabs = [
+          { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
+          { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
+         
+        ];
+        console.log(this.countEmp);
+        
         console.log(this.leavesEmp);
       },
       error: (reason) => console.log(reason),
@@ -52,7 +62,13 @@ export class TimeOffRequestTabsComponent {
         console.log(response);
         this.leavesRole = response.data as LeaveApproval[];
         this.countRole = this.leavesRole.length ?? 0;
+        this.navTabs = [
+          { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
+          { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
+         
+        ];
         console.log(this.leavesRole);
+        console.log(this.countRole);
       },
       error: (reason) => console.log(reason),
     });

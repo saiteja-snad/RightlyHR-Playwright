@@ -15,16 +15,16 @@ import { MsalService } from '@azure/msal-angular';
 })
 export class UserValidationComponent {
   subscription!: Subscription;
-  name!:string
+  name!: string
 
   constructor(
     private _msalService: MsalService,
     private router: Router,
     private http: HttpService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {
-    this.postLogin();
+  async ngOnInit() {
+    await this.postLogin();
   }
   async postLogin() {
     await this._msalService.instance.initialize();
@@ -39,12 +39,12 @@ export class UserValidationComponent {
     }
     const response = await this._msalService.instance.acquireTokenSilent({
       account: account,
-      
+
       scopes: ['user.read'],
     });
     const token = response.accessToken;
     //console.log(token);
-    
+
     this.name = account?.name as string;
     this.getUserDetails(account?.username);
   }
@@ -52,11 +52,11 @@ export class UserValidationComponent {
     this.subscription = this.http.getUserDetails(email).subscribe({
       next: (response: any) => {
         if (response.empdatum) {
-          this.name = `${response.empdatum.firstName} ${response.empdatum.middleName??''} ${response.empdatum.lastName ?? ''}`;	
+          this.name = `${response.empdatum.firstName} ${response.empdatum.middleName ?? ''} ${response.empdatum.lastName ?? ''}`;
           localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
           localStorage.setItem('rightlyHrUser', JSON.stringify(response.empdatum));
           localStorage.setItem('rightlyHrUserRoles', JSON.stringify(response.roles));
-  
+
           setTimeout(() => {
             if (response.roles.length <= 0) {
               this.router.navigate(['/unauthorized']);
@@ -66,9 +66,9 @@ export class UserValidationComponent {
               this.router.navigate(['/myinfo']);
             }
           }, 2000);
-  
+
         } else {
-          this.router.navigate(['/admin-dashboard']);
+          this.router.navigate(['/myinfo']);
         }
       },
       error: (err) => {
@@ -77,7 +77,7 @@ export class UserValidationComponent {
       },
     });
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
   }

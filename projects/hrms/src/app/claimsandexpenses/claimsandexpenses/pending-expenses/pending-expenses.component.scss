@@ -6,7 +6,7 @@
     border-radius: 1.2rem;
     position: relative;
 
- 
+
     thead {
         top: 0%;
         position: sticky;
@@ -56,4 +56,22 @@
 .modal-image {
     max-width: 100%;
     max-height: 100%;
-  }
+}
+
+
+.status-colour {
+    color: #EE8B30;
+
+}
+
+.cardd {
+    border: 1px solid rgb(192, 192, 192);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.popupcomments {
+    font-size: 15px;
+    font-weight: 500;
+    color: #767676;
+}

@@ -4,10 +4,13 @@ import { Router, RouterModule } from '@angular/router';
 import { OpenModalService } from '../../services/open-modal.service';
 import { HttpService } from '../../services/http.service';
 import { CommonModule } from '@angular/common';
+import { TabsModule } from 'primeng/tabs';
+import { Select } from 'primeng/select';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-optionalholidays',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule,TabsModule, Select, NoDataFoundComponent],
   templateUrl: './optionalholidays.component.html',
   styleUrl: './optionalholidays.component.scss'
 })
@@ -25,6 +28,11 @@ export class OptionalholidaysComponent {
   jobshiftdetails: any;
   years: number[] = [];
   empinfo = {} as any;
+  navTabs: any[] = [
+    { label: 'Public Holidays', link: '/holidays/public-holidays' },
+    { label: 'Optional Holidays', link: '/holidays/optional-holidays' },
+   
+  ];
   
 
   constructor(public router: Router, private fb: FormBuilder, private conformationPopup: OpenModalService,
@@ -79,6 +87,10 @@ export class OptionalholidaysComponent {
           },
           error: (reason: any) => console.log(reason)
       });
+  }
+  onYearChange() {
+    this.selectedYear = this.optionalholidaysform.get('selectedYear')?.value;
+    this.getHoliday(this.jobshiftdetails);
   }
   ngOnInit(): void {
     this.optionalholidaysform = new FormGroup({

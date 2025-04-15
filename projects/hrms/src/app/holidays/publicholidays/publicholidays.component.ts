@@ -38,20 +38,39 @@ export class PublicholidaysComponent {
   constructor(public router: Router, private fb: FormBuilder, private conformationPopup: OpenModalService,
     private http: HttpService) { }
     ngOnInit(): void {
+      this.currentYear = new Date().getFullYear();
+      this.selectedYear = this.currentYear; // Move this up
+    
+      // Populate years list
+      for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+        this.years.push(i);
+      }
+    
+      // Now initialize the form with the selectedYear
       this.holidaysform = new FormGroup({
         selectedYear: new FormControl(this.selectedYear)
       });
+    
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       console.log(this.empinfo.employeeId);
       this.getjobDetails();
-       this.currentYear = new Date().getFullYear();
-       for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
-           this.years.push(i);
-       }
-       this.selectedYear = this.currentYear;
-     
-     
     }
+    
+    // ngOnInit(): void {
+    //   this.holidaysform = new FormGroup({
+    //     selectedYear: new FormControl(this.selectedYear)
+    //   });
+    //   this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    //   console.log(this.empinfo.employeeId);
+    //   this.getjobDetails();
+    //    this.currentYear = new Date().getFullYear();
+    //    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    //        this.years.push(i);
+    //    }
+    //    this.selectedYear = this.currentYear;
+     
+     
+    // }
   
     getjobDetails() {
       let EmployeeId = this.empinfo.employeeId;
@@ -65,44 +84,87 @@ export class PublicholidaysComponent {
           }
       });
     }
-    getHoliday(jobshiftdetails:any) {
+    onYearChange() {
+      this.selectedYear = this.holidaysform.get('selectedYear')?.value;
+      this.getHoliday(this.jobshiftdetails);
+    }
+    
+  //   getHoliday(jobshiftdetails:any) {
       
-      this.orgHolidayItemsArrayTrue = [];
-      this.orgHolidayItemsArrayFalse = [];
-      this.length = 0;
-      this.optional = 0;
+  //     this.orgHolidayItemsArrayTrue = [];
+  //     this.orgHolidayItemsArrayFalse = [];
+  //     this.length = 0;
+  //     this.optional = 0;
   
      
   
-      let holiday = {
-          locationId: jobshiftdetails[0].locationid,
-          subLocationId:jobshiftdetails[0].sublocationid ,
-          shiftId: jobshiftdetails[0].shiftId,
-          Applicableyear: this.selectedYear
-      }
-      console.log(holiday);
+  //     let holiday = {
+  //         locationId: jobshiftdetails[0].locationid,
+  //         subLocationId:jobshiftdetails[0].sublocationid ,
+  //         shiftId: jobshiftdetails[0].shiftId,
+  //         Applicableyear: this.selectedYear
+  //     }
+  //     console.log(holiday);
   
-      this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
-          next: (response: any) => {
-              this.Policies = response;
-              console.log(this.Policies);
+  //     this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
+  //         next: (response: any) => {
+  //             this.Policies = response;
+  //             console.log(this.Policies);
               
-              this.orgHolidayItemsArray = response[0].orgHolidaysItems;
-              console.log(this.orgHolidayItemsArray);
-              this.orgHolidayItemsArray.forEach(item => {
-                if (item.isOptional) {
-                    this.orgHolidayItemsArrayTrue.push(item);
-                    this.length = this.orgHolidayItemsArrayTrue.length
-                } else {
-                   this.orgHolidayItemsArrayFalse.push(item);
-                   this.optional = this.orgHolidayItemsArrayFalse.length
-                }
-            });
+  //             this.orgHolidayItemsArray = response[0].orgHolidaysItems;
+  //             console.log(this.orgHolidayItemsArray);
+  //             this.orgHolidayItemsArray.forEach(item => {
+  //               if (item.isOptional) {
+  //                   this.orgHolidayItemsArrayTrue.push(item);
+  //                   this.length = this.orgHolidayItemsArrayTrue.length
+  //               } else {
+  //                  this.orgHolidayItemsArrayFalse.push(item);
+  //                  this.optional = this.orgHolidayItemsArrayFalse.length
+  //               }
+  //           });
               
-          },
-          error: (reason: any) => console.log(reason)
-      });
+  //         },
+  //         error: (reason: any) => console.log(reason)
+  //     });
+  // }
+  getHoliday(jobshiftdetails: any) {
+    this.orgHolidayItemsArrayTrue = [];
+    this.orgHolidayItemsArrayFalse = [];
+    this.length = 0;
+    this.optional = 0;
+  
+    const selectedYearFromForm = this.holidaysform.get('selectedYear')?.value;
+  
+    let holiday = {
+      locationId: jobshiftdetails[0].locationid,
+      subLocationId: jobshiftdetails[0].sublocationid,
+      shiftId: jobshiftdetails[0].shiftId,
+      Applicableyear: selectedYearFromForm
+    };
+  
+    console.log("Holiday Query:", holiday);
+  
+    this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
+      next: (response: any) => {
+        this.Policies = response;
+        console.log(this.Policies);
+  
+        this.orgHolidayItemsArray = response[0].orgHolidaysItems;
+        console.log(this.orgHolidayItemsArray);
+  
+        this.orgHolidayItemsArray.forEach(item => {
+          if (item.isOptional) {
+            this.orgHolidayItemsArrayTrue.push(item);
+            this.length = this.orgHolidayItemsArrayTrue.length;
+          } else {
+            this.orgHolidayItemsArrayFalse.push(item);
+            this.optional = this.orgHolidayItemsArrayFalse.length;
+          }
+        });
+      },
+      error: (reason: any) => console.log(reason)
+    });
   }
-
+  
 }
 

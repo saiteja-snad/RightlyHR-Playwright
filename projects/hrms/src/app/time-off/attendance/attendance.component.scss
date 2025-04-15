@@ -14,7 +14,10 @@
     color: green;
     font-weight: 700;
   }
-  
+  .status-halfdaypresent {
+    color: rgb(243, 109, 234);
+    font-weight: 700;
+  }
   .status-absent {
     color:  #D8332A;
     
@@ -28,6 +31,10 @@
   
   .status-wfh {
     color: #BF8534;
+    font-weight: 700;
+  }
+  .status-compoff {
+    color: #bf6734;
     font-weight: 700;
   }
   .status-remote {

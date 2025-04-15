@@ -96,9 +96,9 @@ export const permissionsData = [
     { fields: 'Documents Upload Button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Expenses Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Invoices Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Select Employee', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Select Employee For Manager', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Inactive Button', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Select All Employees', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Select Employee For HR', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Active Employee', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Inactive Employee', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Prospective Employee', View: false, Update: false, Create: false, Delete: false },
@@ -134,7 +134,7 @@ export const permissionsData = [
     { fields: 'Assessor Configuration Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Welcome Letter', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Monthly Attandance Report', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Regularization Button', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Regularization Button', View: false, Update: false, Create: false, Delete: false },
 
     // Settings sidebar    
     { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },

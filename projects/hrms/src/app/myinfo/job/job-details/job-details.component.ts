@@ -13,6 +13,7 @@ import moment from 'moment';
 import { environment } from '../../../../environments/environment.dev';
 import { AuthService } from '../../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-job-details',
@@ -78,7 +79,8 @@ export class JobDetailsComponent {
     private authService: AuthService,
     private fb: FormBuilder,
     private conformationPopup: OpenModalService,
-    private http: HttpService
+    private http: HttpService,
+    public rbac:RbacService
   ) {}
 
   ngOnInit(): void {

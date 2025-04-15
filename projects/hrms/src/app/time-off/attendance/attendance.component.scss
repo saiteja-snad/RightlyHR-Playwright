@@ -12,7 +12,7 @@
 }
 .status-present {
     color: green;
-    font-weight: 7-0;
+    font-weight: 700;
   }
   
   .status-absent {
@@ -30,7 +30,10 @@
     color: #BF8534;
     font-weight: 700;
   }
-  
+  .status-remote {
+    color: #348abf;
+    font-weight: 700;
+  }
   .status-weekend {
     color: #D31973;
     font-weight:700;

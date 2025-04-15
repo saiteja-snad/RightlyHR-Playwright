@@ -10,9 +10,10 @@ import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PmsTabsComponent } from "../pms-tabs/pms-tabs.component";
 import { SettingsMainHeaderTabsComponent } from "../settings-tabs/settings-main-header-tabs/settings-main-header-tabs.component";
+import { CalendarHeaderTabsComponent } from "../calendar-header-tabs/calendar-header-tabs.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PmsTabsComponent, SettingsMainHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PmsTabsComponent, SettingsMainHeaderTabsComponent, CalendarHeaderTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

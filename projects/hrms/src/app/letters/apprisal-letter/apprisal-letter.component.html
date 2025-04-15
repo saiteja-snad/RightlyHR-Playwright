@@ -134,7 +134,7 @@
               <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name' |
                 translate }}<span class="error-msg">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please Select Authority Name"
+                <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId" placeholder="Please Select Authority Name"
                   class="form-select custom-select" formControlName="authorityid"
                   [(ngModel)]="appraisalData.authorityid" (onChange)="onclickDesignation()" />
               </div>

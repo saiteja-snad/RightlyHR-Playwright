@@ -8,8 +8,9 @@ import { MsalGuard } from "@azure/msal-angular";
 import { PersonalinfoLayoutComponent } from "../../personal-info/personalinfo-layout/personalinfo-layout.component";
 import { PmsLayoutComponent } from "../../pms/pms-layout/pms-layout.component";
 import { CalendarViewComponent } from "../../calendar/calendar-view/calendar-view.component";
-import { HolidayslayoutComponent } from "../../holidays/holidayslayout/holidayslayout.component";
+
 import { DeskAlloctionLayoutComponent } from "../../desk-allocation/desk-alloction-layout/desk-alloction-layout.component";
+import { CalenderLayOutComponent } from "../../calendar/calender-lay-out/calender-lay-out.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -21,8 +22,8 @@ export default [
     { path: 'events', component: EventsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../events/events.route') },
     { path: 'claimsandexpenses', component: ClaimsandexpensesLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../claimsandexpenses/claimsandexpenses.route') },
     { path: 'pms', component: PmsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../pms/pms.route') },
-    { path: 'calendar', component: CalendarViewComponent},
-    { path: 'holidays', component: HolidayslayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../holidays/holidays.route') },
+    { path: 'calendar', component: CalenderLayOutComponent,canActivate: [MsalGuard],loadChildren: () => import('../../calendar/calendar.route')},
+   
 
     { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../desk-allocation/desk.route')}
 ] as Route[];

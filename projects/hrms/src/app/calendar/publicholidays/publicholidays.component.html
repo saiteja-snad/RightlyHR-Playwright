@@ -1,0 +1,104 @@
+<div class="custom-main-component-container  ">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <p class="component-header cursor mb-0"> Holidays</p>
+    </div>
+    <div class="d-flex align-items-center ms-2">
+      <span class="me-2">Select year:</span>
+      <form [formGroup]="holidaysform" class="m-0">
+        <select formControlName="selectedYear" class="form-select form-select-sm" style="width: auto;"
+    (change)="onYearChange()" aria-label="Default select example">
+      <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+
+      
+    </select>
+      </form>
+    </div>
+  </div>
+
+
+<div class="component-nav-tabs-container card px-2 mb-3 mt-2">
+<p-tabs value="0" scrollable>
+  <p-tablist>
+    <ng-container *ngFor="let tab of navTabs;">
+      <p-tab [value]="tab.link">
+        <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+          {{ tab.label }}
+        </a> 
+      </p-tab>
+    </ng-container>
+  </p-tablist>
+</p-tabs>
+</div>
+ <div class="custom-events-main-content">
+
+  <div class="d-flex ">
+    <div class="card holiday-card mb-3">
+      <div class="d-flex justify-content-between">
+        <div class="d-flex gap-3 align-items-center">
+          <div class="card holiday-icon-card">
+            <img src="icons\event-icon.png" alt="Event Icon" class="holiday-icon">
+          </div>
+          <div>
+            <p class="holiday-name mb-0">Tech Treck</p>
+            <p class="date mb-0">08-Jan-2025</p>
+          </div>
+        </div>
+  
+      </div>
+  
+    </div>
+  </div>
+  
+
+    
+     
+
+      <div class="d-flex ">
+        <div class="card holiday-card mb-3">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex gap-3 align-items-center">
+              <div class="card holiday-icon-card">
+                <img src="icons\event-icon.png" alt="Event Icon" class="holiday-icon">
+              </div>
+              <div>
+                <p class="holiday-name mb-0">Tech Treck</p>
+                <p class="date mb-0">08-Jan-2025</p>
+              </div>
+            </div>
+      
+          </div>
+      
+        </div>
+      </div>
+ 
+</div>
+
+
+  <!-- <div class="custom-table-content">
+
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th> Date</th>
+
+
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="orgHolidayItemsArrayFalse.length > 0; else noDataFound">
+          <tr *ngFor="let item of orgHolidayItemsArrayFalse">
+            <td>{{item.holidayName}}</td>
+            <td>{{item.holidayDate}}</td>
+          </tr>
+        </ng-container>
+        <ng-template #noDataFound>
+          <tr>
+            <td colspan="2" class="text-center"><app-no-data-found></app-no-data-found></td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div> -->
+</div>

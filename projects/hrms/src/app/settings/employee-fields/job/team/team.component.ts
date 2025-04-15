@@ -88,7 +88,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     });
   }
   getTeam() {
-    this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
         console.log(data);
         if (data) {
@@ -103,7 +103,7 @@ export class TeamComponent implements OnInit, OnDestroy {
             };
           });
         }
-        console.log(this.teamdetails)
+        console.log("Team details"+this.teamdetails)
       },
       error: (reason: any) => {
         console.log(reason);

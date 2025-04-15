@@ -169,14 +169,14 @@
                 <img src="icons\succes.png" alt="succues" class="succes-icon">
             </div>
             <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">Are you sure you want to approve this request?</h4>
+                <h4 class="text-center">Are you sure you want to approve Separation Request?</h4>
             </div>
             <form name="acceptForm" class="ps-5 mb-3 w-100" #acceptForm="ngForm"
                 (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
                 <div class="col-11">
                     @if(selectedSpRequestData.spIsEarlyRelieveing){
                     <div class="mb-3 mt-3 text-center">
-                        <label class="text-center"><b>The employee has opted for an early Relieving!</b></label>
+                        <label class="text-center"><b>This employee has opted for an early Relieving!</b></label>
                     </div>
                     }
                     @if(selectedSpRequestData.spearlyReliveingDate){
@@ -190,7 +190,7 @@
                                 [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" #isaccept="ngModel"
                                 (click)="toggleEarly()"
                                 (ngModelChange)="extendCondition(selectedSpRequestData.spIsAcceptEarlyrelievingcheck)">
-                            <label class="form-check-label" for="earlyrelieving">
+                            <label class="form-check-label ms-2" for="earlyrelieving">
                                 Yes
                             </label>
                         </div>
@@ -332,7 +332,7 @@
                 <!-- Buttons -->
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="resetForm();modal.dismiss()">{{'Cancel'|translate}}</button>
+                        (click)="modal.dismiss(); resetForm();">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid||isLoading">
                         @if(!isLoading){
                         {{'Approve'|translate}}
@@ -592,7 +592,7 @@
                 </div>
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="resetForm();modal.dismiss()">{{'Cancel'|translate}}</button>
+                        (click)="resetForm(); modal.dismiss()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="acceptFormforprocess.invalid||isLoading">
                         @if(!isLoading){

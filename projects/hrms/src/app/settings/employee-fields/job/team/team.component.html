@@ -53,7 +53,7 @@
           <div class="custom-p-select-content">
             <select title="text" class="form-control custom-input" formControlName="teamManager" id="teamManager">
               <option value="" disabled>Please select team manager</option>
-              <option *ngFor="let manager of teamdetails" [value]="manager.reportingmanagerId">
+              <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
                 {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
               </option>
             </select>

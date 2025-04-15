@@ -108,6 +108,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
+    this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
     this.modalService.open(content, {
       centered: true,
       size: 'lg',

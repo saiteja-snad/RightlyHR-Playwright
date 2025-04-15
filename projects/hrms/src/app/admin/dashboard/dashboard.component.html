@@ -5,7 +5,9 @@
     </div>
     <div class="d-flex gap-3">
       <button type="button" class="custom-btn btn-secondary">Current Openings</button>
-      <button type="button" class="custom-btn btn-primary" (click)="generateDocument()">Generate Documents</button>
+      @if(this.rbac.allowedToAccess('Generate Documents.view')){
+        <button type="button" class="custom-btn btn-primary" (click)="generateDocument()">Generate Documents</button>
+      } 
     </div>
   </div>
 

@@ -107,7 +107,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
     let moduleId=environment.RecallrequestmoduleId
     this.subscription = this.http
       .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}}&approvedType=EMP`
+        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`
       )
       .subscribe({
         next: (data: any) => {

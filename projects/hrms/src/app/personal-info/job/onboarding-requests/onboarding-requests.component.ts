@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { IJob } from '../../../Interfaces/onboarding-documents';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-onboarding-requests',
@@ -43,7 +44,8 @@ export class OnboardingRequestsComponent {
   imgurl!: string;
   isEditing: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router, private http: HttpService, private conformationPopup: OpenModalService,private modalService: NgbModal) {
+  constructor(private authService: AuthService, private router: Router, private http: HttpService, 
+    private conformationPopup: OpenModalService,private modalService: NgbModal,public rbac:RbacService) {
 
   }
   ngOnInit(): void {

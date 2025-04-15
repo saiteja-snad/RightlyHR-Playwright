@@ -8,6 +8,7 @@ import { Iinactive } from './inactive-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { InactiveEmployeePipe } from '../../Pipes/inactive-employee.pipe';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-inactive-employees',
   imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule],
@@ -20,7 +21,7 @@ export class InactiveEmployeesComponent {
   InActive = [] as any;
   emp = {} as any;
   searchValue: any;
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal,public rbac:RbacService) { }
 
   ngOnInit(): void {
     this.empdata();

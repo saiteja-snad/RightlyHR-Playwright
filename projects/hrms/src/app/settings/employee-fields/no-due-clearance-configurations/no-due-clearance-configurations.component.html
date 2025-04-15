@@ -68,11 +68,11 @@
           <label class="form-label custom-label mb-2">Select Type</label>
           <div class="d-flex gap-3">
             <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" value="DEPT" formControlName="selectedType">
+              <input type="radio" class="form-check-input cursor" value="DEPT" formControlName="selectedType">
               <label class="form-check-label">Department</label>
             </div>
             <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" value="EMPMNGR" formControlName="selectedType">
+              <input type="radio" class="form-check-input cursor" value="EMPMNGR" formControlName="selectedType">
               <label class="form-check-label">Employee Manager</label>
             </div>
           </div>
@@ -97,7 +97,7 @@
             </div>
             <!-- Validation Error -->
             <div *ngIf="noDueForm.get('department')?.touched && noDueForm.get('department')?.invalid">
-              <div *ngIf="noDueForm.get('department')?.errors?.['text-danger']">
+              <div *ngIf="noDueForm.get('department')?.errors?.['required']">
                 Please select department
               </div>
             </div>
@@ -134,7 +134,7 @@
             </div>
             <!-- Validation Error -->
             <div class="error-msg" *ngIf="noDueForm.get('employee')?.touched && noDueForm.get('employee')?.invalid">
-              <div  class="error-msg" *ngIf="noDueForm.get('employee')?.errors?.['text-danger']">
+              <div  class="error-msg" *ngIf="noDueForm.get('employee')?.errors?.['required']">
                 Please select employee
               </div>
             </div>
@@ -158,7 +158,7 @@
             </div>
             <!-- Validation Error -->
             <div  class="error-msg" *ngIf="noDueForm.get('role')?.touched && noDueForm.get('role')?.invalid">
-              <div   class="error-msg" *ngIf="noDueForm.get('role')?.errors?.['text-danger']">
+              <div   class="error-msg" *ngIf="noDueForm.get('role')?.errors?.['required']">
                 Please select role
               </div>
             </div>
@@ -182,7 +182,7 @@
               </p-select>
             </div>
             <div  class="error-msg"  *ngIf="noDueForm.get('managerType')?.touched && noDueForm.get('managerType')?.invalid">
-              <div class="error-msg" *ngIf="noDueForm.get('managerType')?.errors?.['text-danger']">
+              <div class="error-msg" *ngIf="noDueForm.get('managerType')?.errors?.['required']">
                 Please select manager type
               </div>
             </div>

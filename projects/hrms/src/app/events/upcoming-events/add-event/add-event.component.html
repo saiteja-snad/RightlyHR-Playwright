@@ -13,7 +13,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="eventDate" class="form-label custom-label mb-2">Event Date<span class="text-danger">*</span></label>
                     <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
-                    <div *ngIf="customEventForm.get('eventDate')?.touched" class="error-msg">Event date is required.</div>
+                    <div *ngIf="customEventForm.get('required')?.touched" class="error-msg">Event date is required.</div>
                     <div *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')"
                         class="error-msg">Event date cannot be in the past.
                     </div>

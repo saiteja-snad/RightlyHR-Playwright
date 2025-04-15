@@ -7,10 +7,11 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { IProbationEmployees } from './probation-emp-module';
 import { FormsModule } from '@angular/forms';
+import { ProbationpipePipe } from "../../Pipes/probationpipe.pipe";
 // import * as moment from 'moment';
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ProbationpipePipe],
   templateUrl: './probation-employees.component.html',
   styleUrl: './probation-employees.component.scss'
 })

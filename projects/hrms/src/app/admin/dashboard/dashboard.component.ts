@@ -5,6 +5,7 @@ import { DocumentHistoryLayoutComponent } from '../document-history/document-his
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -37,7 +38,7 @@ export class DashboardComponent {
   constructor(
     private router: Router,
     private http: HttpService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,public rbac:RbacService
   ) {}
 
   ngOnInit(): void {

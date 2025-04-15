@@ -38,7 +38,13 @@ export class TeamComponent implements OnInit, OnDestroy {
   sortedDesignations: any[] = [];
   selectedId: boolean | undefined;
  
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService,public formValidations: FormValidationsService,) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService,
+  ) {
  
   }
   onDepartmentChange(event: Event) {
@@ -48,42 +54,29 @@ export class TeamComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getTable() 
     this.AddForm = this.fb.group({
-      teamName: ['', Validators.required],
-      departmentId:[null,Validators.required],
+      teamName: ['', [Validators.required]],
+      departmentId:[null,[Validators.required]],
       teamManager: ['', [Validators.required]],
 
     });
  
     this.updateForm = this.fb.group({
-      updateddepartmentId: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      UpdatedTeamName: ['', Validators.required],
-      updatedteamManager: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      updateddepartmentId: ['', [Validators.required]],
+      UpdatedTeamName: ['', [Validators.required]],
+      updatedteamManager: ['', [Validators.required]]
     });
     this.getTeam();
     this.getDepartmentName()
   }
-  // alphabet allowed only
-  blockNonAlphabets(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.keyCode);
-    const char = String.fromCharCode(event.keyCode);
-    // const pattern = /^[a-zA-Z][a-zA-Z ]*$/;
-    const pattern = /^[a-zA-Z ]$/;
-    const input = (event.target as HTMLInputElement).value;
-    if (!pattern.test(char) || (char === ' ' && input.length === 0)) {
-      event.preventDefault();
-    }
-  }
+
   getDepartmentName() {
     this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
       next: (data: any) => {
-        console.log(data);
-        alert("hello");
         this.deptdetails = data as [];
         console.log(this.deptdetails)
       },
       error: (reason: any) => {
         console.log(reason);
-        alert("Insertion of data is failed")
       }
     });
   }
@@ -157,7 +150,6 @@ export class TeamComponent implements OnInit, OnDestroy {
       },
       error: (reason: any) => {
         console.log(reason);
-        alert("Insertion of data is failed")
       }
     })
   }
@@ -168,7 +160,6 @@ export class TeamComponent implements OnInit, OnDestroy {
  
       // Create payload according to Swagger API specification
       const request = {
-        subdepartmentId: 0, // This will be assigned by the API
         subdepartmentName: this.AddForm.get('teamName')?.value,
         departmentId: this.AddForm.get('departmentId')?.value, // This should be the sno value
         reportingmanagerId: Number(this.AddForm.get('teamManager')?.value) || null,
@@ -179,6 +170,7 @@ export class TeamComponent implements OnInit, OnDestroy {
  
       this.subscription = this.http.postdata('Subdepartments', request).subscribe({
         next: (response) => {
+          this.getDepartmentName()
           console.log('Team added successfully, response:', response);
           modal.close();
           this.conformationPopup.openSuccessModal('Team added successfully');
@@ -203,32 +195,15 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.resetForm();
   }
  
-  // Method to open the update modal dialog
   openupdateDialog(team: any) {
-    console.log('Opening update dialog for team:', team);
     this.updateDepartmentDetails = team;
- 
-    // Reset form first to clear any previous values
-    this.updateForm.reset({
-      departmentId: '',
-      teamName: '',
-      teamManagerId: ''
+  
+    this.updateForm.patchValue({
+      updateddepartmentId: team.departmentId,       // Should match dept.departmentId
+      UpdatedTeamName: team.subdepartmentName,      // Text input
+      updatedteamManager: team.reportingmanagerId   // Should match manager.employeeId
     });
- 
-    // Set values with a slight delay to ensure form controls are ready
-    setTimeout(() => {
-      // Convert IDs to strings to match HTML select behavior
-      const departmentId = team.departmentId ? String(team.departmentId) : '';
-      const reportingManagerId = team.reportingmanagerId ? String(team.reportingmanagerId) : '';
- 
-      this.updateForm.patchValue({
-        departmentId: departmentId,
-        teamName: team.subdepartmentName || '',
-        teamManagerId: reportingManagerId
-      });
-      console.log('Update form patched with values:', this.updateForm.value);
-    }, 100);
- 
+  
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
       centered: true
@@ -236,25 +211,26 @@ export class TeamComponent implements OnInit, OnDestroy {
   }
   //  UPDATE
   updateTeam(modal: any) {
-    if (this.updateForm.valid) {
+    if (this.updateForm.valid && this.updateDepartmentDetails?.subdepartmentId) {
       console.log('Update form values:', this.updateForm.value);
       // Create payload according to Swagger API specification
       const request = {
         subdepartmentId: this.updateDepartmentDetails.subdepartmentId,
-        subdepartmentName: this.updateForm.get('teamName')?.value,
-        departmentId: this.updateDepartmentDetails.get('departmentId').value, // This should be the sno value
-        reportingmanagerId: Number(this.updateForm.get('teamManagerId')?.value) || null,
+        subdepartmentName: this.updateForm.value.UpdatedTeamName?.trim(),
+        departmentId: this.updateForm.value.updateddepartmentId,       
+        reportingmanagerId: Number(this.updateForm.value.updatedteamManager) || null, 
         isdeleted: false
       };
- 
+  
       console.log('Updating team with request:', request);
- 
+  
       this.subscription = this.http.postdata('Subdepartments/Update', request).subscribe({
         next: (response) => {
           console.log('Team updated successfully, response:', response);
           modal.close();
           this.conformationPopup.openSuccessModal('Team updated successfully');
           this.resetForm();
+          this.getTable(); 
         },
         error: (error: any) => {
           console.error('Error updating team:', error);
@@ -262,12 +238,7 @@ export class TeamComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      console.warn('Update form is invalid:', this.updateForm.errors);
-      // Mark all fields as touched to trigger validation errors
-      // Object.keys(this.updateForm.controls).forEach(key => {
-      //   const control = this.updateForm.get(key);
-      //   control?.markAsTouched();
-      // });
+      console.warn('Update form is invalid or selected ID is missing:', this.updateForm.errors, this.updateDepartmentDetails?.subdepartmentId);
     }
   }
  
@@ -331,6 +302,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     console.log(this.updateDepartmentDetails)
     this.subscription = this.http.getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.subdepartmentId}`).subscribe({
       next: () => {
+        this.getDepartmentName()
         modal.close();
         this.conformationPopup.openSuccessModal('Team deleted successfully');
       },

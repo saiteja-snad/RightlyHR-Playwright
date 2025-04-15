@@ -347,4 +347,36 @@ export class HttpService {
       { params }
     );
   }
+
+
+  deskTotalCountSubject = new BehaviorSubject<number>(0);
+  deskAvailableCountSubject = new BehaviorSubject<number>(0);
+
+  deskAllocatedCountSubject = new BehaviorSubject<number>(0);
+  deskUndermaindanaenceCountSubject = new BehaviorSubject<number>(0);
+  deskinactiveCountSubject = new BehaviorSubject<number>(0);
+  deskWiatingforapprovalCountsubject = new BehaviorSubject<number>(0);
+  setTotalDeskCount(count: number) {
+    this.deskTotalCountSubject.next(count);
+  }
+
+  setAllocatedDeskCount(count: number) {
+    this.deskAllocatedCountSubject.next(count);
+  }
+
+  setAvailableDeskCount(count: number) {
+    this.deskAvailableCountSubject.next(count);
+  }
+
+  setundermatinaceDeskCount(count: number) {
+    this.deskUndermaindanaenceCountSubject.next(count);
+  }
+
+  setinactiveSubjectDeskCount(count: number) {
+    this.deskinactiveCountSubject.next(count);
+  }
+  setWFASubjectDeskCount(count: number) {
+    this.deskWiatingforapprovalCountsubject.next(count);
+  }
+
 }

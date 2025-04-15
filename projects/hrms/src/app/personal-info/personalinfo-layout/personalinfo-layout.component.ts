@@ -594,7 +594,7 @@ initialzerevoke() {
         this.router.navigate(['/admin/prospective-interns'])
         break;
       case 'Trainee Active':
-        this.router.navigate(['/admin/traineeactiveemployee'])
+        this.router.navigate(['/admin/active-interns'])
         break;
       case 'Trainee Inactive':
         this.router.navigate(['admin/inactive-interns'])
@@ -629,13 +629,13 @@ initialzerevoke() {
         this.headerName = "Inactive Employees"
         break;
       case 'Trainee Prospective':
-        this.headerName = "Prospective Trainees"
+        this.headerName = "Prospective Interns"
         break;
       case 'Trainee Active':
-        this.headerName = "Active Trainees"
+        this.headerName = "Active Interns"
         break;
       case 'Trainee Inactive':
-        this.headerName = "Inactive Trainees"
+        this.headerName = "Inactive Interns"
         break;
       case 'External Prospective':
         this.headerName = "External Prospective "

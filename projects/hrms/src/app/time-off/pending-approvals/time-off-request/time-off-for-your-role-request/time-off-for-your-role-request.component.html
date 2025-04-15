@@ -4,7 +4,7 @@
         <div class="input-group custom-search mb-4">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here"
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
                 aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
@@ -26,46 +26,54 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let item of leaves">
-                        <td>{{item.entity.leavefusionempId}}</td>
-                        <td>{{item.entity.employeeName}}</td>
-                        <td>{{item.entity.leaveCategoryName}}</td>
-                        <td>{{item.entity.leaveDuration}}</td>
-                        <td>{{item.entity.leaveDurationType}}</td>
-                        <td>{{item.entity.appliedDate | dateformat}}</td>
-                        <td>{{item.entity.leaveStartDate | dateformat}}</td>
-                        <td>{{item.entity.leaveEndDate | dateformat}}</td>
-                        <td>  <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">{{item.entity.leaveDescription}}</p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div></td>
-                        <td>  <div>
-                            <span>
-                                <a type="button" placement="top" >
-                                    <img src="images\info-fill.png" alt="info icon" (click)="openModal(commentspopup)" (click)="comments(item.entity.leaveApproverComments)" class="info-icon">
-                                </a>
-                            </span>
-                        </div></td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu py-0">
-                                    <li><a class="dropdown-item" (click)="processleave(item)"><i class="bi bi-check-circle me-2"></i>Process</a></li>
-                                    <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"><i class="bi bi-x-circle me-2"></i>Reject</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
+                    @if (leaves.length > 0) {
+                        <tr *ngFor="let item of leaves| leavesPendingapprovals : searchValue">
+                            <td>{{item.entity.leavefusionempId}}</td>
+                            <td>{{item.entity.employeeName}}</td>
+                            <td>{{item.entity.leaveCategoryName}}</td>
+                            <td>{{item.entity.leaveDuration}}</td>
+                            <td>{{item.entity.leaveDurationType}}</td>
+                            <td>{{item.entity.appliedDate | dateformat}}</td>
+                            <td>{{item.entity.leaveStartDate | dateformat}}</td>
+                            <td>{{item.entity.leaveEndDate | dateformat}}</td>
+                            <td>  <div>
+                                <span>
+                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                    <ng-template #reason>
+                                        <div>
+                                            <p class="mb-0">{{item.entity.leaveDescription}}</p>
+                                        </div>
+                                    </ng-template>
+                                </span>
+                            </div></td>
+                            <td>  <div>
+                                <span>
+                                    <a type="button" placement="top" >
+                                        <img src="images\info-fill.png" alt="info icon" (click)="openModal(commentspopup)" (click)="comments(item.entity.leaveApproverComments)" class="info-icon">
+                                    </a>
+                                </span>
+                            </div></td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu py-0">
+                                        <li><a class="dropdown-item" (click)="processleave(item)"><i class="bi bi-check-circle me-2"></i>Process</a></li>
+                                        <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"><i class="bi bi-x-circle me-2"></i>Reject</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @else {
+                        <tr>
+                            <app-no-data-found></app-no-data-found>
+        
+                        </tr>
+                    }
                   
                 </tbody>
             </table>

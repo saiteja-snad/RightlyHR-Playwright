@@ -172,6 +172,9 @@ export class ApprisalLetterComponent {
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
     this.getDesignationwithGradeid();
+    this.employeeForm.get('variablePayAmount')?.disable();
+    this.employeeForm.get('variablePayAmount')?.setValue(0);
+    this.appraisalData.variablePayAmount = '0';
   }
 
   //function for issed by
@@ -284,7 +287,7 @@ export class ApprisalLetterComponent {
   }
   onclickDesignation() {
     let signatureAuthorityDetails = this.authoritydetails.find(
-      (c: any) => c.employeeId == this.appraisalData.variablePayAmount.employeeId
+      (c: any) => c.employeeId == this.appraisalData.authorityid
     );
     console.log(signatureAuthorityDetails);
     if (signatureAuthorityDetails) {

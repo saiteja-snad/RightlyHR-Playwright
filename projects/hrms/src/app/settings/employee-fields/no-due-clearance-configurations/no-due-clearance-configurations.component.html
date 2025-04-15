@@ -49,28 +49,30 @@
 
 <ng-template #addnodue let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-4">
+ 
+
+    <div class="d-flex justify-content-between popup-header-border p-3" ngbAutofocus>
       <div class="pt-2">
-        <h1 class="modal-title fs-5">Add No Due Approver</h1>
+          <p class="popup-heading mb-0">Add No Due Approver</p>
       </div>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+          <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
-    </div>
-    <div class="custom-main-popup-content p-4">
+  </div>
+    <div class="custom-main-popup-content p-3">
 
       <form [formGroup]="noDueForm" (ngSubmit)="addNoDue(noDueForm)">
 
         <!-- Select Type -->
         <div class="form-outline p-2 mb-1">
-          <label class="form-label">Select Type</label>
+          <label class="form-label custom-label mb-2">Select Type</label>
           <div class="d-flex gap-3">
             <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" value="DEPT" formControlName="selectedType">
+              <input type="radio" class="form-check-input cursor" value="DEPT" formControlName="selectedType">
               <label class="form-check-label">Department</label>
             </div>
             <div class="form-check form-check-inline">
-              <input type="radio" class="form-check-input" value="EMPMNGR" formControlName="selectedType">
+              <input type="radio" class="form-check-input cursor" value="EMPMNGR" formControlName="selectedType">
               <label class="form-check-label">Employee Manager</label>
             </div>
           </div>
@@ -80,10 +82,10 @@
         @if(noDueForm.get('selectedType')?.value === 'DEPT'){
           <div class="mb-3">
             <label for="dispatcher" class="form-label custom-label mb-2">Department <span
-                class="required">*</span></label>
-            <div class="custom-select-dropdown">
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
               <p-select [options]="departmentList" optionLabel="departmentName" filter="departmentName"
-                filterBy="departmentName" [showClear]="true" formControlName="department"
+                filterBy="departmentName"  class="form-select custom-select" formControlName="department"
                 placeholder="Please select department">
                 <ng-template #selectedItem let-selectedOption>
                   {{ selectedOption.departmentName }}
@@ -94,7 +96,7 @@
               </p-select>
             </div>
             <!-- Validation Error -->
-            <div *ngIf="noDueForm.get('department')?.touched && noDueForm.get('department')?.invalid">
+            <div class="error-msg" *ngIf="noDueForm.get('department')?.touched && noDueForm.get('department')?.invalid">
               <div *ngIf="noDueForm.get('department')?.errors?.['required']">
                 Please select department
               </div>
@@ -120,10 +122,10 @@
           <!-- Employee -->
           @if(noDueForm.get('selectedEmpRole')?.value === 'EMPLOYEE'){
           <div class="mb-3">
-            <label for="dispatcher" class="form-label custom-label mb-2">Role <span class="required">*</span></label>
-            <div class="custom-select-dropdown">
-              <p-multiSelect formControlName="employee" [options]="usersList" name="user" id="user" optionLabel="fullName"
-                placeholder="Search User" field="selectedUser" class="w-100" [selectedItemsLabel]="customLabelTemplate"
+            <label for="dispatcher" class="form-label custom-label mb-2">Employee <span class="text-danger">*</span></label>
+            <div class="custom-p-multiSelect-content">
+              <p-multiSelect formControlName="employee" [options]="usersList" name="user" id="user"  optionLabel="fullName"
+                placeholder="Select employee" field="selectedUser" class="form-select custom-select" [selectedItemsLabel]="customLabelTemplate"
                 (ngModelChange)="selectedUserDetails($event)">
                 <ng-template let-user pTemplate="item">
                   <div>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</div>
@@ -131,8 +133,8 @@
               </p-multiSelect>
             </div>
             <!-- Validation Error -->
-            <div *ngIf="noDueForm.get('employee')?.touched && noDueForm.get('employee')?.invalid">
-              <div *ngIf="noDueForm.get('employee')?.errors?.['required']">
+            <div class="error-msg" *ngIf="noDueForm.get('employee')?.touched && noDueForm.get('employee')?.invalid">
+              <div  class="error-msg" *ngIf="noDueForm.get('employee')?.errors?.['required']">
                 Please select employee
               </div>
             </div>
@@ -142,10 +144,10 @@
           <!-- Role -->
           @if(noDueForm.get('selectedEmpRole')?.value === 'ROLE'){
           <div class="mb-3">
-            <label for="dispatcher" class="form-label custom-label mb-2">Role <span class="required">*</span></label>
-            <div class="custom-select-dropdown">
-              <p-select [options]="roles" optionLabel="name" filter="name" filterBy="name" [showClear]="true"
-                formControlName="role" placeholder="Please select role">
+            <label for="dispatcher" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="roles" optionLabel="name" filter="name" filterBy="name"
+                formControlName="role" placeholder="Please select role" class="form-select custom-select">
                 <ng-template #selectedItem let-selectedOption>
                   {{ selectedOption.name }}
                 </ng-template>
@@ -155,8 +157,8 @@
               </p-select>
             </div>
             <!-- Validation Error -->
-            <div *ngIf="noDueForm.get('role')?.touched && noDueForm.get('role')?.invalid">
-              <div *ngIf="noDueForm.get('role')?.errors?.['required']">
+            <div  class="error-msg" *ngIf="noDueForm.get('role')?.touched && noDueForm.get('role')?.invalid">
+              <div   class="error-msg" *ngIf="noDueForm.get('role')?.errors?.['required']">
                 Please select role
               </div>
             </div>
@@ -167,10 +169,10 @@
         <!-- Manager Type -->
         @if (noDueForm.get('selectedType')?.value === 'EMPMNGR') {
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Manager <span class="required">*</span></label>
-            <div class="custom-select-dropdown">
+            <label class="form-label custom-label mb-2">Manager <span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
               <p-select [options]="managerOptions" optionLabel="label" formControlName="managerType"
-                placeholder="Please select manager type" value="selectedOption.value">
+                placeholder="Please select manager type" value="selectedOption.value"  class="form-select custom-select">
                 <ng-template #selectedItem let-selectedOption>
                   {{ selectedOption.label }}
                 </ng-template>
@@ -179,16 +181,16 @@
                 </ng-template>
               </p-select>
             </div>
-            <div *ngIf="noDueForm.get('managerType')?.touched && noDueForm.get('managerType')?.invalid">
-              <div *ngIf="noDueForm.get('managerType')?.errors?.['required']">
+            <div  class="error-msg"  *ngIf="noDueForm.get('managerType')?.touched && noDueForm.get('managerType')?.invalid">
+              <div class="error-msg" *ngIf="noDueForm.get('managerType')?.errors?.['required']">
                 Please select manager type
               </div>
             </div>
           </div>
         }
 
-        <div>
-          <button type="submit" class="custom-btn btn-primary py-2 px-4" [disabled]="noDueForm.invalid">Add</button>
+        <div class="d-flex justify-content-end gap-3 mt-4">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="noDueForm.invalid">Add</button>
         </div>
 
       </form>

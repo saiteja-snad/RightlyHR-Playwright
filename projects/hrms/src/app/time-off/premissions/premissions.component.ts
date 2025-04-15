@@ -61,7 +61,7 @@ export class PremissionsComponent implements OnInit,OnDestroy{
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeeHolidays();
     this.getEmployeeeWeekends();
-    this.getDuration();
+    // this.getDuration();
     this.getPermissionTypes()
     this.formintions()
     this.getEAVData()
@@ -142,7 +142,7 @@ export class PremissionsComponent implements OnInit,OnDestroy{
   }
 
   getPermissionTypes(){
-    this.http.getData(`PermissionTypes?type=${'permissions'}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PermissionTypes?type=${'Permissions'}`).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response: any) =>{
         console.log(response)
           this.leaveTypes = response as LeaveType[]

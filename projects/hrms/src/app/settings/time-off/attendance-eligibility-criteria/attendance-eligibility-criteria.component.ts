@@ -14,6 +14,7 @@ export class AttendanceEligibilityCriteriaComponent {
     { label: 'Comp Off Entitlement Criteria', route: '/settings/timeoff-configurations/eligibility-criterias/comp-off' },
     { label: 'WFH Entitlement Criteria', route: '/settings/timeoff-configurations/eligibility-criterias/wfh' },
     { label: 'Permissions', route: '/settings/timeoff-configurations/eligibility-criterias/permissions' },
+    { label: 'Permissions Eligibilty Criteria', route: '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria' },
    
   ];
 }

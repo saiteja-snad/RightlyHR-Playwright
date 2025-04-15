@@ -1,0 +1,78 @@
+<div class="mt-4">
+    <div class="custom-table-content mt-2">
+        <ng-container *ngIf="regularizationvalue!.length > 0; else noDataTemplate">
+            <table class="w-50">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor=" let permi of regularizationvalue ;let i = index">
+                        <td>{{ permi.attribute }}</td>
+                        <!-- <td class="table-text">{{permi.value}}</td> -->
+                        <td>
+                            <ng-container *ngIf="editingIndex !== i">
+                                {{ permi.value }}
+                            </ng-container>
+
+                            <ng-container *ngIf="editingIndex === i">
+                                <input class="form-control" type="text"
+                                    [(ngModel)]="temporaryValue"
+                                    (keypress)="validateDecimal($event, permi.attribute)"
+                                    (keydown.tab)="editingIndex === i"
+                                     />
+                            </ng-container>
+                        </td>
+
+                        <td>
+                            <ng-container *ngIf="editingIndex !== i; else editingMode">
+                                <div ngbDropdown  placement="left">
+                                    <a class="nav-link edit-buttons" ngbDropdownToggle>
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+
+                                    <div ngbDropdownMenu>
+                                        <div>
+                                            <a class="edit-buttons w-100"
+                                                (click)="enableEditForPermissionRegulization(i, permi.id, permi.value, permi.entity)">
+                                                <i class="bi bi-pencil-fill px-2"></i>Update
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <ng-template #editingMode>
+                                <div class="d-flex gap-2">
+                                    <button class="submit-btn" type="button" 
+                                    (click)="submitPermissionEligibilityValue(i, temporaryValue)">
+                                        Update
+                                    </button>
+                                    <button class="cancel-btn" type="button" (click)="disableEdit()">
+                                        <!-- <i class="bi bi-x-circle-fill"></i> -->
+                                        Cancel
+                                    </button>
+                                </div>
+
+                            </ng-template>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </ng-container>
+    </div>
+
+
+</div>
+
+<ng-template #noDataTemplate>
+    <tr>
+        <td colspan="2">
+            <app-no-data-found></app-no-data-found>
+        </td>
+    </tr>
+</ng-template>
+
+

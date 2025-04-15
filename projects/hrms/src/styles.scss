@@ -613,6 +613,40 @@ a {
     }
 }
 
+//multiselect
+.custom-p-multiSelect-content {
+    .p-multiselect {
+        border: 1px solid #DEE8F3 !important;
+        background-color: #F8FBFF !important;
+        border-radius: 0.5rem !important;
+        padding: 0px !important;
+    }
+
+    .p-multiSelect-option.p-multiSelect-option-selected {
+        background-color: #e8f0fb !important;
+        color: #222222 !important;
+    }
+    
+    .p-multiSelect:hover {
+        border: 1px solid #DEE8F3 !important;
+    }
+
+    .p-multiSelect-label.p-placeholder {
+        color: #A1A1A1 !important;
+    }
+
+    .p-iconfield {
+        margin: 0.5rem 0rem !important;
+    }
+
+    .p-inputtext:focus {
+        border: 1px solid #DEE8F3 !important;
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        vertical-align: middle;
+        color: #222222;
+    }
+}
 
 // My Info Stylings
 

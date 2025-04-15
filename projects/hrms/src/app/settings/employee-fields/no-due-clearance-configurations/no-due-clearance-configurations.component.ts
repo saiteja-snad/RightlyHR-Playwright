@@ -43,7 +43,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   ngOnInit(): void {
     this.employeeData = JSON.parse(localStorage.getItem('rightlyHrUser')||'{}')
     this.getAllNoDues();
-    this.watchTypeChange();
+    
   }
 
   getAllNoDues() {
@@ -59,6 +59,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
 
   openModal(content: any) {
     this.intializeForm();
+    this.watchTypeChange();
     this.getAllRoles();
     this.getAllDepartments();
     this.getUsers();
@@ -69,7 +70,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
 
   intializeForm() {
     this.noDueForm = this.fb.group({
-      selectedType: [''],
+      selectedType: ['', Validators.required],
       department: [''],
       managerType: [''],
       selectedEmpRole: [''],
@@ -127,18 +128,25 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   }
 
   watchTypeChange() {
-    this.noDueForm.get('selectedType')?.valueChanges.subscribe(value => {
-      const deptControl = this.noDueForm.get('department');
-      const managerControl = this.noDueForm.get('managerType');
+    const deptControl = this.noDueForm.get('department');
+    const managerControl = this.noDueForm.get('managerType');
 
+    const roleControl = this.noDueForm.get('role');
+    const employeeControl = this.noDueForm.get('employee');
+
+    this.noDueForm.get('selectedType')?.valueChanges.subscribe(value => {
       if (value === 'DEPT') {
         deptControl?.setValidators(Validators.required);
         managerControl?.clearValidators();
         managerControl?.reset();
+
       } else if (value === 'EMPMNGR') {
         managerControl?.setValidators(Validators.required);
         deptControl?.clearValidators();
         deptControl?.reset();
+        roleControl?.reset();
+        employeeControl?.reset();
+        this.noDueForm.get('selectedEmpRole')?.reset();
       }
 
       deptControl?.updateValueAndValidity();
@@ -146,18 +154,18 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     });
 
     this.noDueForm.get('selectedEmpRole')?.valueChanges.subscribe(value => {
-      const deptControl = this.noDueForm.get('role');
-      const managerControl = this.noDueForm.get('employee');
-
       if (value === 'EMPLOYEE') {
-        deptControl?.setValidators(Validators.required);
-        managerControl?.clearValidators();
-        managerControl?.reset();
+        employeeControl?.setValidators(Validators.required);
+        employeeControl?.clearValidators();
+        roleControl?.reset();
       } else if (value === 'ROLE') {
-        managerControl?.setValidators(Validators.required);
-        deptControl?.clearValidators();
-        deptControl?.reset();
+        roleControl?.setValidators(Validators.required);
+        roleControl?.clearValidators();
+        employeeControl?.reset();
       }
+
+      roleControl?.updateValueAndValidity();
+      employeeControl?.updateValueAndValidity();
     });
   }
 

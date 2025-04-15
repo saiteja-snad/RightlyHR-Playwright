@@ -1,43 +1,41 @@
-<div class="container-fluid ">
-    <div class="item">
-      <ul class="nav nav-tabs pt-2">
-        <!-- <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/admin/holiday']" routerLinkActive="active"
-          *ngIf="checkaccess('Holidays Tab.view')">Holiday</a>
-        </li> -->
-        <!-- <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/policies']" routerLinkActive="active"
-          >Policies</a>
-        </li> -->
-       
-      </ul>
-  
+<div class="custom-main-component-container  ">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <p class="component-header cursor mb-0"><i class="bi bi-arrow-90deg-left me-2"></i> Policies</p>
+    </div>
+  <div class="d-flex align-items-center ms-2">
+    <span class="me-2">Select year:</span>
+    <form [formGroup]="policiesform" class="m-0">
+      
+      <p-select formControlName="selectedYear" [options]="years" 
+       [style]="{ width: 'auto' }" class="form-select form-select-sm">
+      </p-select>
+    </form>
   </div>
-  
-  
-    <div class="mt-4 mb-4" >
-      <div class="d-flex">
+</div>
+    <!-- <div class="mt-4 mb-4" > -->
+      <!-- <div class="d-flex">
         <div class="col-6 d-flex align-items-center">
             <span class="selectpo me-2">Select year :</span>
             <form [formGroup]="policiesform" class="mb-0">
-              <!-- <select formControlName="selectedYear" class="date" aria-label="Default select example">
-                <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-              </select> -->
+              
               <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year" optionLabel="label"
                class="form-select custom-select">
               </p-select>
             </form>
         </div>
           
-      </div>
+      </div> -->
   
-      <div class="custom-table-content">
+      <!-- <div class="custom-table-content">
         <table class="w-100">
           <thead>
-            <th>Policy Name</th>
-            <th>Description</th>
-            <th>Attachment</th>
-            <!-- <th>Download</th> -->
+            <tr>
+              <th>Policy Name</th>
+              <th>Description</th>
+              <th>Attachment</th>
+            </tr>
+            
           </thead>
           <tbody>
             <ng-container *ngIf="(orgPolicyItemsArray).length; else noResults">
@@ -59,10 +57,53 @@
           </ng-template>
           </tbody>
         </table>
-      </div>
-    </div>
-  
+      </div> -->
+    <!-- </div> -->
+    <!-- <ng-template #viewDetailsModal let-modal> -->
+    <div class="custom-table-content">
+      <table class="w-100">
+          <thead>
+              <tr>
+                <th>Policy Name</th>
+                <th>Description</th>
+                <th>Attachment</th>
+
+              </tr>
+          </thead>
+          <tbody>
+              <ng-container *ngIf="((orgPolicyItemsArray) ?? []).length > 0; else noDataTemplate">
+                  <tr *ngFor="let item of orgPolicyItemsArray">
+                    <td>{{item.policyName}}</td>
+                    <td>{{item.policyDescription}}</td>
+                    <td data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      <!-- <a class="dropdown-item" (click)="onViewClick(item.policyAttachment)">
+                        <i class="bi bi-paperclip me-2"></i>View
+                      </a> -->
+
+                      
+                        <!-- <li><a class="dropdown-item" (click)="onViewClick(item.policyAttachment)"><i
+                              class="bi bi-paperclip me-2"></i>View</a>
+                        </li> -->
+                        <a type="button" class="view-text text-nowrap" (click)="onViewClick(item.policyAttachment)">
+                          <i class="bi bi-paperclip"></i>View
+                        </a>
+                     
+                    </td>
+                  </tr>
+              </ng-container>
+              <!-- No Data Found Template -->
+              <ng-template #noDataTemplate>
+                  <tr>
+                      <td>
+                          <app-no-data-found />
+                      </td>
+                  </tr>
+              </ng-template>
+          </tbody>
+      </table>
   </div>
+<!-- </ng-template> -->
+  <!-- </div> -->
   
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -77,7 +118,6 @@
             role="status">
             <span class="sr-only"></span>
           </div>
-          <p class="mb-4">Loading...</p>
         </div>
           
          

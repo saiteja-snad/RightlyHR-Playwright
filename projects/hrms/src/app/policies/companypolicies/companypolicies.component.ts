@@ -10,10 +10,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import {  NgxDocViewerModule } from 'ngx-doc-viewer';
 import { Select } from 'primeng/select';
+import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule,Select],
+  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule,Select,NoDataFoundComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
@@ -29,14 +30,15 @@ export class CompanypoliciesComponent {
 
   filteredpolicy:any =[] 
   orgPolicyItemsArray: any[] = [];
-  EduViewURL: string = ''; // URL for the document viewer
-  EduImageUrl: string = '';
+  EduViewURL: any; // URL for the document viewer
+  EduImageUrl: any;
   attachmentUrl: any;
 item: any;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location, private sanitizer: DomSanitizer) { }
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   ngOnInit(): void {
+    this.selectedYear = this.currentYear;
     this.policiesform = this.fb.group({
       selectedYear: [this.currentYear]
     });
@@ -49,8 +51,7 @@ item: any;
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.empinfo.employeeId);
     this.getjobDetails();
-      // Get the current year
-      this.currentYear = new Date().getFullYear();
+    this.currentYear = new Date().getFullYear();
 
       // // Push the previous year, current year, and next year to the array
       // for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
@@ -59,13 +60,8 @@ item: any;
       for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
         this.years.push({ label: i.toString(), value: i });
       }
-      
-
-  
-      // Set the selectedYear to the current year
-      this.selectedYear = this.currentYear;
-
   }
+  
   private handleImage(url: string) {
     const baseUrl = this.location.normalize('/');
     const imageUrl = `${baseUrl}${url}`;
@@ -91,18 +87,33 @@ item: any;
     this.modalService.dismissAll();
     this.openModal(this.viewattamchment)
   }
+  // onViewClick(attachmentUrl: string) {
+  //   debugger;
+  //   // Check if the file is a PDF or an image (or other types)
+  //   if (attachmentUrl.endsWith('.pdf')) {
+  //     this.EduViewURL = attachmentUrl;  // for PDF viewing
+  //     this.EduImageUrl = '';  // clear any image URL
+  //   } else {
+  //     this.EduImageUrl = attachmentUrl;  // for image viewing
+  //     this.EduViewURL = '';  // clear any PDF URL
+  //   }
+  // }
   onViewClick(attachmentUrl: string) {
-    // Check if the file is a PDF or an image (or other types)
-    if (attachmentUrl.endsWith('.pdf')) {
-      this.EduViewURL = attachmentUrl;  // for PDF viewing
-      this.EduImageUrl = '';  // clear any image URL
+    const isImage = attachmentUrl.match(/\.(jpg|jpeg|png)$/i);
+    const isPDF = attachmentUrl.toLowerCase().endsWith('pdf');
+
+    if (isImage) {
+     
+      this.handleImage(attachmentUrl);
+    } else if (isPDF) {
+      
+      this.handlePDF(attachmentUrl);
     } else {
-      this.EduImageUrl = attachmentUrl;  // for image viewing
-      this.EduViewURL = '';  // clear any PDF URL
+     
+      console.log(`Unsupported file type: ${attachmentUrl}`);
     }
   }
-  
-  
+ 
   
   getjobDetails() {
     let EmployeeId = this.empinfo.employeeId;

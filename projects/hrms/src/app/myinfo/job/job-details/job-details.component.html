@@ -98,7 +98,7 @@
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li> -->
-                                    @if (first && showSaperationDots ) {
+                                    @if (first && showSaperationDots && this.rbac.allowedToAccess('Separation Request.view')) {
                                         <li (click)="openModalforSeparationupdate(seprationModal, item)">
                                             <a class="dropdown-item">
                                                 Separation Request

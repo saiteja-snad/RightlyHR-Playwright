@@ -56,7 +56,7 @@ export class PendingApprovalsTabsComponent {
       route: '/time-off/pending-approvals/recall-request',
       moduleId: environment.RecallrequestmoduleId,
     },
-    { label: 'Trainee Details', route: '/time-off/pending-approvals/trainee',moduleId: environment.traineeoffboardingModuleId },
+    { label: 'Trainee Details', route: '/time-off/pending-approvals/trainee-approvals',moduleId: environment.traineeoffboardingModuleId },
     {
       label: 'No Due Clearance Requests',
       route: '/time-off/pending-approvals/nodue-request',

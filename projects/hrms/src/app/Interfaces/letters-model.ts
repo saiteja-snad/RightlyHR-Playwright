@@ -434,7 +434,8 @@ export interface IEmployee {
     empType:string;
     employeeAddresses:string
     trainingEndDate:any;
-    jobDetails?:IJobdetails[] ;
+    probationExtendedDate :any;
+    jobDetails?:IJobdetails;
   }
   export interface IJobdetails {
     subdeptId: any;

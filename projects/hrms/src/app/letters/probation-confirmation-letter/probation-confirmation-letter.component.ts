@@ -26,7 +26,7 @@ export class ProbationConfirmationLetterComponent {
   authorityDetails = [] as any;
   Employeeinfo = {} as any;
   probationFile!: File;
-  disableFieldsForApproval: boolean = true;
+  disableFieldsForApproval: boolean = false;
   loading: boolean = false;
   Status: any;
   probationConfirmationForm!: FormGroup;
@@ -114,7 +114,7 @@ export class ProbationConfirmationLetterComponent {
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);
     console.log(data);
-    const pdfContent = document.getElementById('pdfContent');
+    const pdfContent = document.getElementById('pdfContent1');
     if (pdfContent) {
       html2canvas(pdfContent, { scale: 3 }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
@@ -158,21 +158,44 @@ export class ProbationConfirmationLetterComponent {
       next: (response: any) => {
         console.log(response);
         this.getProbationDetails = response.find((ele: any) => {
-          return (ele.status?.toLowerCase() === 'processed');
+          return (ele.status === 'Processed');
         });
       }
     })
   }
 
   Documenturlresult: any;
-  postProbationDetails(docurl: string) {
-    this.getProbationDetails.documentURL = docurl;
-    this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', this.getProbationDetails).subscribe({
+  postProbationDetails(path:any) {
+    let payload = {
+      probationId : this.getProbationDetails.probationId,
+      formId : this.getProbationDetails.formId,
+      employeeId : this.getProbationDetails.employeeId,
+      responseId : this.getProbationDetails.responseId,
+      probationStartDate : this.getProbationDetails.probationStartDate,
+      probationEndDate : this.getProbationDetails.probationEndDate,
+      probationExtendedDate : this.getProbationDetails.probationExtendedDate,
+      status : this.getProbationDetails.status,
+      createdBy : this.getProbationDetails.createdBy,
+      updatedBy : this.getProbationDetails.updatedBy,
+      probationDays : this.getProbationDetails.probationDays,
+      raisedBy : this.getProbationDetails.raisedBy,
+      documentURL : path,
+      parentId : this.getProbationDetails.parentId,
+      probationExtendedCount : this.getProbationDetails.probationExtendedCount,
+      meta : this.getProbationDetails.meta,
+      appliedDate : this.getProbationDetails.appliedDate,
+      comments : this.getProbationDetails.comments
+
+
+
+    }
+    this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
       next: (data: any) => {
         this.Documenturlresult = data.documentURL;
-        this.disableFieldsForApproval = false;
+        this.disableFieldsForApproval = true;
         this.loading = false;
         this.openModalService.openSuccessModal("Probation Extension Letter Generated Successfully");
+        this.probationConfirmationemail();
       },
       error: (reason: any) => {
         console.log(reason);
@@ -194,7 +217,10 @@ export class ProbationConfirmationLetterComponent {
     this.probationLetterData.effectiveDate = formValues.effectiveDate,
     this.probationLetterData.Copys = formValues.Documenttype;
     this.probationLetterData.authorityName = formValues.authorityid?.fullName,
-    this.probationLetterData.authorityDesignation = formValues.authorityid?.designation
+    this.probationLetterData.authorityDesignation = formValues.authorityid?.designation,
+    this.probationLetterData.employeeId = formValues.employeeId?.employeeId
+
+    
   }
 
   //to post probation letter email Details to the offerletter table

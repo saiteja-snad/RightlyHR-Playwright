@@ -2,7 +2,7 @@
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
-                <tr >
+                <tr>
                     <th>Date</th>
                     <th>Leave Type</th>
                     <th>Duration</th>
@@ -14,39 +14,48 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of lpdata">
-                    <td>{{item.date| dateformat}}</td>
-                    <td>{{item.categoryName}}</td>
-                    <td>{{item.duration}}</td>
-                    <td>
-                        {{ item.durationType == 1 ? 'First Half' : 
-                           item.durationType == 2 ? 'Full Day' : 
-                           item.durationType == 3 ? 'Second Half' : 'Unknown' 
-                        }}
-                    </td>
-                    <td>{{item.startdate| dateformat}}</td>
-                    <td>{{item.enddate| dateformat}}</td>
+                @if(lpdata.length > 0){
+                    <tr *ngFor="let item of lpdata">
+                        <td>{{item.date| dateformat}}</td>
+                        <td>{{item.categoryName}}</td>
+                        <td>{{item.duration}}</td>
+                        <td>
+                            {{ item.durationType == 1 ? 'First Half' :
+                            item.durationType == 2 ? 'Full Day' :
+                            item.durationType == 3 ? 'Second Half' : 'Unknown'
+                            }}
+                        </td>
+                        <td>{{item.startdate| dateformat}}</td>
+                        <td>{{item.enddate| dateformat}}</td>
     
-                    <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">{{item.notes}}</p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div>
-                    </td>
+                        <td>
+                            <div>
+                                <span>
+                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                    <ng-template #reason>
+                                        <div>
+                                            <p class="mb-0">{{item.notes}}</p>
+                                        </div>
+                                    </ng-template>
+                                </span>
+                            </div>
+                        </td>
     
-                    <td>{{item.status}}</td>
+                        <td>{{item.status}}</td>
     
     
-                </tr>
+                    </tr>
+                }
+                @else {
+                    <tr>
+                        <app-no-data-found></app-no-data-found>
     
+                    </tr>
+                }
+                
+
             </tbody>
         </table>
     </div>
@@ -55,14 +64,15 @@
             <!-- Dropdown for Rows per Page -->
             <div class="d-flex align-items-center gap-3 p-2">
                 <!-- Bootstrap Select -->
-                <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
+                <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onRowsChange()">
                     <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
                     </option>
                 </select>
                 <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
                     totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
             </div>
-    
+
             <!-- Pagination -->
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
                 (onPageChange)="onPageChange($event)"></p-paginator>

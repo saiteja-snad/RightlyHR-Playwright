@@ -95,6 +95,7 @@ export interface Ipersonal {
     empType: string;
     employeeAddresses?: IAddress[]
     trainingEndDate: any;
+    durationOfTrainee:any;
 }
 export interface IStatus {
 

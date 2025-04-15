@@ -517,7 +517,7 @@ export class DraftsExpensesComponent {
     console.log('Matching Expense:', this.matchingExpense);
     this.newExpenseForm.patchValue({
       expensesTitle: data.expenses_Title,
-      approvalemail: data.approverEmail,
+      approvalemail: this.emails.find((email:any) => email.value === data.approverEmail),
       // expense: matchingExpense ? matchingExpense.expenseId : null,
       additional_details: data.additional_details
     });

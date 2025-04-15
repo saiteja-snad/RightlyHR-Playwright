@@ -131,7 +131,7 @@
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center"
                             *ngIf="per.fields === 'Settings' || per.fields === 'Request Document'|| per.fields === 'Invite New User'|| per.fields === 'Documents Upload Button'
-                        || per.fields === 'Pending Approvals' || per.fields === 'Permissions' || per.fields === 'Regularizations' || per.fields === 'Timeoff Tab' || per.fields === 'Compoff Tab'|| per.fields === 'Workfromhome Tab' || per.fields === 'Permissions Tab' || per.fields === 'Regularization Tab' ||  per.fields === 'Select Employee' ||  per.fields === 'Select All Employees' || per.fields === 'Active Employee' 
+                        || per.fields === 'Pending Approvals' || per.fields === 'Permissions' || per.fields === 'Regularizations' || per.fields === 'Timeoff Tab' || per.fields === 'Compoff Tab'|| per.fields === 'Workfromhome Tab' || per.fields === 'Permissions Tab' || per.fields === 'Regularization Tab' ||  per.fields === 'Attendance Select Employee For Manager' ||  per.fields === 'Attendance Select Employee For HR' || per.fields === 'Active Employee' 
                         || per.fields === 'Inactive Employee' ||per.fields === 'Prospective Employee' || per.fields === 'Current Openings' || per.fields === 'Expenses Tab'
                         || per.fields === 'Add Trainee' ||per.fields === 'Trainee Active' ||per.fields === 'Trainee Inactive' ||per.fields === 'Current Openings Button' || per.fields === 'Invoices Tab' || per.fields === 'Separation Requests Tab' || per.fields === 'Trainee Tab'
                         || per.fields === 'Generate Documents' ||per.fields === 'Employee Personal' || per.fields === 'Employee Job' || per.fields === 'Inactive Button'
@@ -139,7 +139,7 @@
                         || per.fields === 'Document History' || per.fields === 'Help Desk Employee'|| per.fields === 'Help Desk Department'|| per.fields === 'Offer Letter Approval'
                         || per.fields === 'Add Employee' || per.fields === 'Employee Documents Upload Button' || per.fields === 'Standard Reports'
                         || per.fields === 'Custom Reports'|| per.fields === 'Attendance Reports' || per.fields === 'CEO Approvals Tab' || per.fields === 'No Due Clearance Tab' || per.fields === 'Probation Employees' || per.fields === 'Probation Details Tab' || per.fields === 'My Performance Tab' || per.fields === 'My Team Performance Tab'|| per.fields === 'Review Cycle List Tab'
-                        || per.fields === 'Review Cycle Employee List Tab' || per.fields === 'Increment Percentage Tab'|| per.fields === 'Assessor Configuration Tab' || per.fields === 'Welcome Letter' || per.fields==='Monthly Attandance Report' || per.fields === 'Regularization Button'">
+                        || per.fields === 'Review Cycle Employee List Tab' || per.fields === 'Increment Percentage Tab'|| per.fields === 'Assessor Configuration Tab' || per.fields === 'Welcome Letter' || per.fields==='Monthly Attandance Report' || per.fields === 'Attendnace Regularization Button'">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

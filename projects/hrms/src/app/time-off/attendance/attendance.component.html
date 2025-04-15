@@ -30,6 +30,9 @@
               </p-dropdown>
             </div>
           <!-- select all employees drop down for HR code start -->
+           @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
+
+          
             <label class="employee-lable" for="">Select Employee</label>
             <div>
               <p-dropdown 
@@ -44,8 +47,12 @@
                 class="custom-select">
               </p-dropdown>
             </div>
+        }
             <!-- select all employees drop down for HR code end -->
              <!-- select all employees drop down for team manager code start -->
+              @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
+
+            
             <label class="employee-lable" for="">Select Employee</label>
           
             <div>
@@ -61,6 +68,7 @@
                 class="custom-select">
               </p-dropdown>
             </div>
+        }
             <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdate.employeeId)">
               <i class="bi bi-plus me-2"></i>My Attendance
             </button>
@@ -95,7 +103,10 @@
                                     <td [ngClass]="getStatusClass(item.status)">{{item.status}}
                                         @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdate.employeeId){
                                            <a href="" class="ms-2"><u>Leave</u> </a>
-                                           <a href="" class="ms-2"><u>Regularization</u> </a>
+                                           @if(this.rbac.allowedToAccess('Attendnace Regularization Button.view')){
+                                            <a href="" class="ms-2"><u>Regularization</u> </a>                 
+                                           }
+                                           
                                         }
                                     </td>
                                     <td>

@@ -14,6 +14,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { IAttendance } from './attendance-modal';
 import { Ipersonal } from '../../Interfaces/personal-modal';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-attendance',
@@ -60,7 +61,7 @@ export class AttendanceComponent implements OnInit, OnDestroy{
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal){
+    private modalService: NgbModal,public rbac:RbacService){
 
   }
 

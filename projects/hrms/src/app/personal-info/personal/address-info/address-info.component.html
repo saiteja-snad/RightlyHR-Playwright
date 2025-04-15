@@ -4,10 +4,10 @@
             <div>
                 <span class="address-sub-header">Current Address</span>
             </div>
-            @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective')){
+            @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective' && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
                 <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
             }
-            @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective')){
+            @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective' && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
                 <div class="d-flex justify-content-end gap-3" >
                     <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid" (click)="updateAddressInfo()">Save</button>

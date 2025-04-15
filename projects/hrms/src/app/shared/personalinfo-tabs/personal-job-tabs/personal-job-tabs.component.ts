@@ -23,7 +23,7 @@ export class PersonalJobTabsComponent implements OnInit {
     { label: 'Past Experiences', link: '/personalinfo/job/past-experiences' },
     { label: 'Certifications', link: '/personalinfo/job/certifications' },
     { label: 'Probation Details', link: '/personalinfo/job/probation-details' },
-    { label: 'Onboarding Request', link: '/personalinfo/job/onboarding-requests' },
+    { label: 'Onboarding Request', link: '/personalinfo/job/onboarding-requests',permission: { feature: 'Employee Onboarding Request', action: 'view' }},
   
   ];
   constructor(public rbac: RbacService) { }

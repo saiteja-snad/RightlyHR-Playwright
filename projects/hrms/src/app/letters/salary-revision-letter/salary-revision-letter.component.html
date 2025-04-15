@@ -414,10 +414,10 @@
                                 <div class="img-space "></div>
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <p class="paragraph family2">{{appraisalData.authorityName}}</p>
-                                        <p class="letter-heading unerlineo d-black">Authorized Signatory</p>
-                                        <p class="letter-heading unerlineo d-black">{{appraisalData.authorityName}}</p>
-                                        <p class="letter-heading unerlineo d-black">{{authorityDesignation}}</p>
+                                        <p class="m-0 paragraph boldsize1" *ngIf="appraisalData.authorityName?.trim()" style="font-family: Segoe script; font-size: large;">{{appraisalData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1">Authorized Signatory</p>
+                                        <p class="m-0 paragraph boldsize1">{{appraisalData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1">{{authorityDesignation}}</p>
                                     </div>
                                     <div>
                                         <p class="letter-heading unerlineo d-black">Employee Name:

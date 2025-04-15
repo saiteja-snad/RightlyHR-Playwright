@@ -156,9 +156,9 @@
                             <p class="paragraph mb-4">Sincerely, </p>
                             <p class="sndname">for RightlyHR,</p>
                             <div class="signature"></div>
-                            <p class="paragraph mb-2  family2">{{relievingLetterData.authorityName}} </p>
-                            <p class="paragraph mb-2 family"><strong>Authorized Signatory</strong></p>
-                            <p class="paragraph mb-2 family"><strong>{{relievingLetterData.authorityName}}</strong></p>
+                            <p class="m-0 paragraph boldsize1" *ngIf="relievingLetterData.authorityName?.trim()" style="font-family: Segoe script; font-size: large;">{{relievingLetterData.authorityName}}</p>
+                            <p class="m-0 paragraph boldsize1"><strong>Authorized Signatory</strong></p>
+                            <p class="m-0 paragraph boldsize1"><strong>{{relievingLetterData.authorityName}}</strong></p>
                             <p class="paragraph mb-3 family"> <strong>{{authorityDesignation}}</strong> </p>
                         </div>
                         <div class="letter-footer text-center">

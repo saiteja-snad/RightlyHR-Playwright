@@ -88,6 +88,10 @@ export class OptionalholidaysComponent {
           error: (reason: any) => console.log(reason)
       });
   }
+  onYearChange() {
+    this.selectedYear = this.optionalholidaysform.get('selectedYear')?.value;
+    this.getHoliday(this.jobshiftdetails);
+  }
   ngOnInit(): void {
     this.optionalholidaysform = new FormGroup({
       selectedYear: new FormControl(this.selectedYear)

@@ -10,7 +10,7 @@
     <span class="me-2">Select year:</span>
     <form [formGroup]="holidaysform" class="m-0">
       <select formControlName="selectedYear" class="form-select form-select-sm" style="width: auto;"
-        (change)="getHoliday(jobshiftdetails)" aria-label="Default select example">
+      (change)="onYearChange()" aria-label="Default select example">
         <option *ngFor="let year of years" [value]="year">{{ year }}</option>
       </select>
     </form>

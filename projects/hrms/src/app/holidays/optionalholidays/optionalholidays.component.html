@@ -8,9 +8,9 @@
         <span class="me-2">Select year:</span>
         <form [formGroup]="optionalholidaysform" class="m-0">
           <select formControlName="selectedYear" class="form-select form-select-sm" style="width: auto;"
-            (change)="getHoliday(jobshiftdetails)" aria-label="Default select example">
-            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-          </select>
+      (change)="onYearChange()" aria-label="Default select example">
+        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+      </select>
         </form>
       </div>
       <div class="component-nav-tabs-container card px-2 mb-3 mt-2">

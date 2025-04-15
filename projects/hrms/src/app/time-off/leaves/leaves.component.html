@@ -70,7 +70,7 @@
                 <p class="popup-heading mb-0">{{'Request Leave'| translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="cleardata()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -110,6 +110,7 @@
                                     <small class="error-message text-danger" *ngIf="isNonOptionalHolidaySelected">
                                         Selected date is a holiday
                                     </small>
+                                    
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'End Date'| translate}}<span class="text-danger">*</span></label>
@@ -215,7 +216,13 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'| translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="leaveForm.invalid || isWeekOffSelected || isHolidaySelected || isNonOptionalHolidaySelected">{{'Request'| translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="(leaveForm.invalid || isWeekOffSelected || isHolidaySelected || isNonOptionalHolidaySelected ) && isLoading" >
+                    <span *ngIf="!isLoading">
+                        {{'Request'| translate}}
+                    </span>
+                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">  
+                    </div>  
+                </button>
                 </div>
             </form>
         </div>

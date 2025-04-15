@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ManagePoliciesComponent } from './manage-policies.component';
+import { PermissionsComponent } from './permissions.component';
 
-describe('ManagePoliciesComponent', () => {
-  let component: ManagePoliciesComponent;
-  let fixture: ComponentFixture<ManagePoliciesComponent>;
+describe('PermissionsComponent', () => {
+  let component: PermissionsComponent;
+  let fixture: ComponentFixture<PermissionsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ManagePoliciesComponent]
+      imports: [PermissionsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ManagePoliciesComponent);
+    fixture = TestBed.createComponent(PermissionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

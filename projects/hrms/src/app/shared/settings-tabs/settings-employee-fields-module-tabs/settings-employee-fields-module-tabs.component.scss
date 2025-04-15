@@ -1,0 +1,69 @@
+/* Override styles for the top horizontal tabs to remove black background */
+:host {
+    .component-nav-tabs-container {
+        background-color: #ffffff !important;
+        border: 1px solid #ccdaec !important;
+
+        ::ng-deep .p-tablist,
+        ::ng-deep .p-tablist-tab-list,
+        ::ng-deep .p-tab,
+        ::ng-deep .p-tab .p-tabview-nav-content {
+            background-color: #ffffff !important;
+            border: none !important;
+        }
+
+        ::ng-deep a.nav-link {
+            background-color: #ffffff !important;
+            color: var(--primary-color) !important;
+        }
+
+        ::ng-deep .nav-tab-active {
+            background-color: #ffffff !important;
+            border-bottom-color: var(--primary-color) !important;
+        }
+
+        /* Target navigation arrow buttons */
+        ::ng-deep .p-tablist-prev-button,
+        ::ng-deep .p-tablist-next-button {
+            background-color: #ffffff !important;
+            color: var(--primary-color) !important;
+            border: none !important;
+        }
+
+        /* Fix container of navigation buttons */
+        ::ng-deep .p-tablist-container {
+            background-color: #ffffff !important;
+        }
+    }
+}
+
+/* Fix for PrimeNG tab styles */
+::ng-deep .p-tabview .p-tabview-nav {
+    background-color: #ffffff !important;
+    border: none !important;
+}
+
+::ng-deep .p-tabview .p-tabview-nav li {
+    background-color: #ffffff !important;
+}
+
+::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    background-color: #ffffff !important;
+}
+
+::ng-deep .p-tabview .p-tabview-panels {
+    background-color: #ffffff !important;
+}
+
+/* Target navigation arrow buttons */
+::ng-deep .p-tabview-nav-prev,
+::ng-deep .p-tabview-nav-next {
+    background-color: #ffffff !important;
+    color: var(--primary-color) !important;
+    border: none !important;
+}
+
+/* Navigation container */
+::ng-deep .p-tabview-nav-container {
+    background-color: #ffffff !important;
+}

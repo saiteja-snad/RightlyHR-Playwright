@@ -21,7 +21,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class RoleAssigneeComponent implements OnInit, OnDestroy {
   roleId: string | undefined;
   userId: number | undefined;
-  selectedUsersCount!: number;;
+  selectedUsersCount!: number;
   customLabelTemplate: string | undefined;
   selectedRole: IRoles | undefined;
   usersList: IActiveEmployee[] = [];

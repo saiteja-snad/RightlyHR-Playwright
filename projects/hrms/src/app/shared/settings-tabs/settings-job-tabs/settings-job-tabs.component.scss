@@ -1,0 +1,23 @@
+/* Override styles for the component side nav tabs to remove black background */
+.component-side-nav-tabs-container {
+    background-color: #ffffff !important;
+    /* White background */
+
+    .nav-item {
+        background-color: #ffffff !important;
+
+        .nav-link {
+            background-color: #ffffff !important;
+
+            &:hover {
+                background-color: #f8f9fa !important;
+                /* Light gray hover effect */
+            }
+        }
+
+        .active-nav-link {
+            background-color: #f0f4f8 !important;
+            /* Match the var(--body-bg-color) */
+        }
+    }
+}

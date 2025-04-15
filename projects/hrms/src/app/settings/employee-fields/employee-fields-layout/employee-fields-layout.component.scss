@@ -2,3 +2,47 @@
     border-top-right-radius: 0px !important;
     border-top-left-radius: 0px !important;
 }
+
+/* Override the left sidebar background color */
+.custom-component-left-content {
+    background-color: #ffffff !important;
+
+    /* Ensure all child components inherit white background */
+    ::ng-deep app-settings-job-tabs,
+    ::ng-deep app-settings-personal-tabs,
+    ::ng-deep .component-side-nav-tabs-container {
+        background-color: #ffffff !important;
+    }
+
+    /* Override the active tab styling */
+    ::ng-deep .active-nav-link {
+        background-color: #f0f4f8 !important;
+    }
+}
+
+/* Override for the top tab navigation */
+::ng-deep app-settings-employee-fields-module-tabs {
+    background-color: #ffffff !important;
+
+    .component-nav-tabs-container,
+    .p-tabview,
+    .p-tabview-nav,
+    .p-tabview-nav-container,
+    .p-tabview-nav-content,
+    .p-tab,
+    .p-tablist,
+    .p-tablist-tab-list {
+        background-color: #ffffff !important;
+        border-color: #ccdaec !important;
+    }
+
+    .p-tabview-panels,
+    .nav-link,
+    a.nav-link {
+        background-color: #ffffff !important;
+    }
+
+    .card {
+        background-color: #ffffff !important;
+    }
+}

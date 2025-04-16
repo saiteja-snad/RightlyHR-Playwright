@@ -17,7 +17,7 @@
                     <th>weekends</th>
                     <th>status</th>
                     <th>added by</th>
-                    <th>action(s)</th>
+                    <th class="text-center">action(s)</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,24 +28,15 @@
                     <td>{{ weekend.jobSubLocationName }}</td>
                     <td>{{ weekend.shiftName }}</td>
                     <td>
-                        <div class="d-flex justify-content-center">
-                            <div class="me-2">
-                                {{ weekend.orgWeekendItems.length }}
-                            </div>
-                            <div>
-                                <div>
-                                    <span id="tooltip">
-                                        <span id="tootipText">
-                                            {{ getShiftNames(weekend) }}
-                                        </span>
-                                        <span *ngIf="getShiftNames(weekend) === null" id="tootipText">
-                                            -
-                                        </span>
-                                        <div><i style="z-index: -1;" class="bi bi-info-circle-fill "></i></div>
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="d-flex align-items-center gap-1">
+                           <div>{{ weekend.orgWeekendItems.length }}</div>
+                           <div [ngbPopover]="popContent" *ngIf="getShiftNames(weekend) !== null"><i class="bi bi-info-circle-fill cursor"></i></div>
                         </div>
+                        <ng-template #popContent>
+                            <div >
+                                {{ getShiftNames(weekend) }}
+                            </div>
+                        </ng-template>
                     </td>
                     <td>{{ weekend.status }}</td>
                     <td>{{ weekend.firstName }} {{ weekend.middleName? weekend.middleName : '' }} {{ weekend.lastName }}</td>
@@ -63,9 +54,6 @@
                             </ul>
                         </div>
                     </td>
-                    <!-- <td>
-                        <button class="btn btn-sm btn-primary" (click)="openUpdate(weekend)">Edit</button>
-                    </td> -->
                 </tr>
                 }
             </tbody>

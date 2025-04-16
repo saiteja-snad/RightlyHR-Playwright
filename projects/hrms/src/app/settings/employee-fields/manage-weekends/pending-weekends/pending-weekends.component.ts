@@ -5,13 +5,13 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { IWeekends } from './weekends.model';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-
 @Component({
    selector: 'app-pending-weekends',
    imports: [CommonModule, NgbPopoverModule],
    templateUrl: './pending-weekends.component.html',
    styleUrl: './pending-weekends.component.scss'
 })
+
 export class PendingWeekendsComponent implements OnInit, OnDestroy {
    weekendsList: IWeekends[] = [];
    destroy$: Subject<boolean> = new Subject<boolean>();

@@ -4,21 +4,19 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { IWeekends } from '../pending-weekends/weekends.model';
 import { CommonModule } from '@angular/common';
-
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
    selector: 'app-published-weekends',
-   imports: [CommonModule],
+   imports: [CommonModule, NgbPopoverModule],
    templateUrl: './published-weekends.component.html',
    styleUrl: './published-weekends.component.scss'
 })
+
 export class PublishedWeekendsComponent {
    weekendsList: IWeekends[] = [];
    destroy$: Subject<boolean> = new Subject<boolean>();
 
-   constructor(
-      private router: Router,
-      private http: HttpService,
-   ) { }
+   constructor(private router: Router, private http: HttpService) { }
 
    ngOnInit(): void {
       this.getAllWeekend();

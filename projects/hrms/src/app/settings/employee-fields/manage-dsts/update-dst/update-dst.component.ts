@@ -199,49 +199,6 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     return `${yyyy}-${mm}-${dd}`;
   }
 
-  onSubmit(form: FormGroup): void {
-    if (form.invalid) {
-      form.markAllAsTouched();
-      return;
-    }
-
-    const { year, location, subLocation, shift, momentRows } = form.value;
-
-    const payload = {
-      addedDate: new Date(),
-      lastModifiedDate: new Date(),
-      addedBy: this.empinfo.employeeId,
-      lastModifiedBy: this.empinfo.employeeId,
-      status: 'Pending for submission',
-      applicableYear: year,
-      locationId: location.id,
-      sublocationId: subLocation.id,
-      shiftId: shift.id,
-      dayLight: momentRows.map((row: any) => ({
-        startDate: row.startDate,
-        endDate: row.endDate,
-        momentType: row.momentType,
-        duration: row.duration,
-      })),
-    };
-
-    this.http
-      .postdata('OrgDayLight/Post/Shift/OrgShift', payload)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          this.sharedModalService.openSuccessModal(
-            'Manage DST added Successfully'
-          );
-          this.navigate();
-        },
-        error: () => {
-          this.sharedModalService.openErrorModal(
-            'Shift already exists with the year, location and sub location'
-          );
-        },
-      });
-  }
 
 
   UpdateDST(dstForm: FormGroup) {

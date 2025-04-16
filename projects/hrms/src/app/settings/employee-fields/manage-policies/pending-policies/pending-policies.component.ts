@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
 import { IPolicies, Ipolicy } from '../../../../Interfaces/policies.model';
 import { HttpService } from '../../../../services/http.service';
 import { CommonModule } from '@angular/common';
@@ -20,7 +21,8 @@ export class PendingPoliciesComponent {
   Employeedetials = {} as any
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
-  years: number[] = [];
+  years: { name: string, value: number }[] = [];
+
   dataload = false;
   spinnerLoader=false
   selectedfileds = {} as any;
@@ -45,17 +47,24 @@ selectedItem: any;
 
   
 
-  constructor(public router: Router, private http: HttpService, private modalService: NgbModal,private fb: FormBuilder,) { }
+  constructor(public router: Router, private http: HttpService, private modalService: NgbModal,private fb: FormBuilder) { }
   ngOnInit(): void {
+    this.currentYear = new Date().getFullYear();
+  this.selectedYear = this.currentYear;
+
+  // Populate years dynamically
+  for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    this.years.push({ name: i.toString(), value: i });
+  }
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     const userDetails = localStorage.getItem("rightlyHrUser");
     this.Employeedetials = JSON.parse(userDetails || '{}');
     console.log(this.Employeedetials); 
     this.getlocation();  
     this.getAllPolicies();
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
-      this.years.push(i);
-    }
+    // for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    //   this.years.push(i);
+    // }
 
     this.policiesForm = this.fb.group({
       locationId: [null, Validators.required],

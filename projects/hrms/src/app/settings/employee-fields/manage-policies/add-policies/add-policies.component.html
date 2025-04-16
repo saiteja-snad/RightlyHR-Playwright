@@ -12,17 +12,27 @@
     <div class="d-flex gap-3 mt-4">
 
       <div class="custom-p-select-content">
-        <p-select [options]="salaryHoldDetails" optionLabel="name" placeholder="Select year"
+        <form [formGroup]="policyform" class="m-0">
+          <p-select 
+  [options]="years" 
+  optionLabel="name"
+  formControlName="selectedYear"
+  placeholder="Select year"
+  class="form-select custom-select"
+  (change)="onYearChange()">
+</p-select>
+
+        </form>
+        
+        
+      </div>
+      <div class="custom-p-select-content">
+        <p-select  optionLabel="name" placeholder="Select location"
           class="form-select custom-select">
         </p-select>
       </div>
       <div class="custom-p-select-content">
-        <p-select [options]="salaryHoldDetails" optionLabel="name" placeholder="Select location"
-          class="form-select custom-select">
-        </p-select>
-      </div>
-      <div class="custom-p-select-content">
-        <p-select [options]="salaryHoldDetails" optionLabel="name" placeholder="Select Sub-location "
+        <p-select  optionLabel="name" placeholder="Select Sub-location "
           class="form-select custom-select">
         </p-select>
       </div>

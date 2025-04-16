@@ -26,3 +26,14 @@ export interface IPolicyItem{
     policyDescription:string | null;
     PolicyAttachment:string | null;
 }
+export interface IPolicies{
+    empId: number;
+    subLocation: any;
+    location: string;
+    validupto: any;
+    id: number,
+    attachments: string,
+    attachmentName: string,
+    isdeleted: boolean
+
+}

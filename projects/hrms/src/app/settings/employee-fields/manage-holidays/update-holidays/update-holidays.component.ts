@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
-import { forkJoin, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { DropdownModule } from 'primeng/dropdown';
+import moment from 'moment';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-update-holidays',
@@ -30,7 +31,7 @@ export class UpdateHolidaysComponent {
   ]
 
 
-  constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService) { }
+  constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService,private modalService: NgbModal) { }
 
 
   ngOnInit(): void {
@@ -38,6 +39,9 @@ export class UpdateHolidaysComponent {
     this.updateHolidaysData = JSON.parse(localStorage.getItem('updateholidays') ?? '{}');
 
     this.getjobLocationList();
+
+    
+    
     this.holidayForm = this.fb.group({
       year: [null,Validators.required],
       location: [null,Validators.required],
@@ -45,9 +49,25 @@ export class UpdateHolidaysComponent {
       shift : [null,Validators.required],
       holidays: this.fb.array([])
     });
+    
 
-    this.addHolidayRow();
+    this.holidayForm.patchValue({
+      year: this.yearDetails.find((x:any) => x.value === this.updateHolidaysData.applicableyear),
+    });
+    this.updateHolidaysData.orgHolidaysItems.forEach((row:any) => {
+      this.holidays.push(
+        this.fb.group({
+          holidayName : row.holidayName,
+          holidayDate : moment(row.holidayDate).format('YYYY-MM-DD'),
+          isOptional  : row.isOptional
+        })
+      );
+    });
+  
+    console.log(this.updateHolidaysData);
   }
+
+
 
   get holidays(): FormArray {
     return this.holidayForm.get('holidays') as FormArray;
@@ -63,111 +83,164 @@ export class UpdateHolidaysComponent {
     this.holidays.push(holidayGroup);
   }
 
-  removeHolidayRow(index: number) {
-    this.holidays.removeAt(index);
+  removeHolidayRow(index: number): void {
+    if (this.holidays.length > 1) {
+      this.holidays.removeAt(index);
+    }
   }
-
   
+
+  hidePublishCloneButtons : boolean = false
   submit() {
     
     const formValue = this.holidayForm.value;
 
     const payload = {
-      locationId: formValue.location?.id,
-      subLocationId: formValue.subLocation,
-      applicableyear: formValue.year?.value,
-      addedby: parseInt(this.empinfo.employeeId),
-      addedDate: new Date().toISOString(),
-      status: 'Published',
-      authorizedDate: new Date().toISOString(),
-      authorizedstatus: 'string',
-      shiftID: formValue.shift,
+      locationId: formValue.location?.id ?? this.updateHolidaysData.locationId,
+      subLocationId: formValue.subLocation.id ?? this.updateHolidaysData.subLocationId,
+      applicableyear: formValue.year?.value ?? this.updateHolidaysData.applicableyear,
+      addedby: parseInt(this.empinfo.employeeId) ?? this.updateHolidaysData.addedby,
+      addedDate: new Date().toISOString() ?? this.updateHolidaysData.addedDate,
+      status: this.updateHolidaysData.status,
+      authorizedDate: new Date().toISOString() ?? this.updateHolidaysData.authorizedDate,
+      authorizedstatus: 'string' ,
+      shiftID: formValue.shift.id ?? this.updateHolidaysData.shiftID,
+      id : this.updateHolidaysData.id,
       orgHolidaysItems: formValue.holidays.map((item: any) => ({
         holidayName: item.holidayName,
         holidayDate: item.holidayDate,
         isOptional: item.isOptional,
-        status: 'Submitted',
-        holidayColor: 'string'
+        status: 'Published',
+        holidayColor: 'string',
+        headerID : this.updateHolidaysData?.orgHolidaysItems?.[0]?.headerID,
       }))
     };
-    this.subscription = this.http.postdata('orgHolidays/Post', payload).subscribe({
+    this.subscription = this.http.postdata('orgHolidays/Update', payload).subscribe({
       next: (response: any) => {
         console.log(response);
-        localStorage.setItem('personaldata', JSON.stringify(response))
-        this.confirmation.openSuccessModal('Holidays added successfully');
+        this.confirmation.openSuccessModal('Holidays updated successfully');
         
         
       },
       error: (err) => {
         console.log(err);
-        this.confirmation.openErrorModal('Holidays added failed');
+        this.confirmation.openErrorModal('Holidays update failed');
         
       }
     });
     console.log(payload);
     
   }
-  groupedLocationData: any[] = [];
+  
+  cancel(){
+    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+  }
+
+  openmodel(content: any) {
+    this.modalService.open(content, { centered: true })
+  }
+
+  clone(){
+    this.router.navigate(['/settings/employee-fields/cloneholidays']);
+  }
+
+  publish() {
+    const formValue = this.holidayForm.value;
+    const payload = {
+      locationId: formValue.location?.id ?? this.updateHolidaysData.locationId,
+      subLocationId: formValue.subLocation.id ?? this.updateHolidaysData.subLocationId,
+      applicableyear: formValue.year?.value ?? this.updateHolidaysData.applicableyear,
+      addedby: parseInt(this.empinfo.employeeId) ?? this.updateHolidaysData.addedby,
+      addedDate: new Date().toISOString() ?? this.updateHolidaysData.addedDate,
+      status: 'Published',
+      authorizedDate: new Date().toISOString() ?? this.updateHolidaysData.authorizedDate,
+      authorizedstatus: 'string' ,
+      shiftID: formValue.shift.id ?? this.updateHolidaysData.shiftID,
+      id : this.updateHolidaysData.id,
+      orgHolidaysItems: formValue.holidays.map((item: any) => ({
+        holidayName: item.holidayName,
+        holidayDate: item.holidayDate,
+        isOptional: item.isOptional,
+        status: 'Published',
+        holidayColor: 'string',
+        headerID : this.updateHolidaysData?.orgHolidaysItems?.[0]?.headerID,
+      }))
+    };
+    this.subscription = this.http.postdata('orgHolidays/Update', payload).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.confirmation.openSuccessModal('Holidays published successfully');
+        
+        
+      },
+      error: (err) => {
+        console.log(err);
+        this.confirmation.openErrorModal('Holidays published failed');
+        
+      }
+    });
+    console.log(payload);
+    
+  }
+
   getjobLocationList() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
-    next: (locations: any) => {
-      this.jobLocationDropDownData = locations;
+      next: (locations: any) => {
+        this.jobLocationDropDownData = locations;
+        console.log(this.jobLocationDropDownData);
+        this.holidayForm.patchValue({
+          location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updateHolidaysData.locationName),
+        });
+        this.getSubLocationByid(this.updateHolidaysData.locationId)
+      }
+    });
 
-      // Fetch sub-locations for each location
-      const subLocationRequests = locations.map((location: { id: any; }) =>
-        this.http.getData(`JobLocation/sub-location-by-joblocation/${location.id}`)
-      );
-
-      forkJoin(subLocationRequests).subscribe({
-        next: (subLocationResults: any) => {
-          this.groupedLocationData = locations.map((location: { jobLocationName: any; id: any; }, index: string | number) => ({
-            jobLocationName: location.jobLocationName,
-            jobLocationId: location.id,
-            subLocations: subLocationResults[index]?.jobSubLocations || []
-          }));
-
-          console.log('Grouped Dropdown:', this.groupedLocationData);
-        }
-      });
-    }
-  });
-  
   }
 
   
 
   getSubLocationByid(selectedLocation: any): void {
-    if (selectedLocation && selectedLocation.id) {
+    if (selectedLocation && selectedLocation) {
       this.subscription = this.http
         .getData(
-          `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
+          `JobLocation/sub-location-by-joblocation/${selectedLocation}`
         )
         .subscribe({
           next: (data: any) => {
             if (data.length === 0) {
               this.subLocationsDropdown = [];
             } else {
-              this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+              this.subLocationsDropdown = data.jobSubLocations; 
+             
             }
-  
+
             console.log(this.subLocationsDropdown);
+            this.holidayForm.patchValue({
+              subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updateHolidaysData.subLocationName),
+            });
+
+            const shiftdata  = {
+              locid : this.updateHolidaysData.locationId,
+              sublocid : this.updateHolidaysData.subLocationId
+            }
+            this.getShiftBYid(shiftdata);
           },
           error: (err: any) => {
-           
+
           },
         });
     } else {
       this.subLocationsDropdown = [];
-      
+
     }
   }
-  shiftDropdown: any[] = []; // To store the dynamically fetched shifts
+  shiftDropdown: any[] = []; 
 
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.holidayForm.value;
     if (selectedSubLocation && selectedSubLocation) {
-      const locationId = formValue.location?.id
-      const subLocationId = selectedSubLocation
+      const locationId =  formValue.location?.id
+      const subLocationId = this.updateHolidaysData.subLocationId ?? selectedSubLocation
 
       console.log('Location ID:', locationId);
       console.log('Sub Location ID:', subLocationId);
@@ -187,7 +260,10 @@ export class UpdateHolidaysComponent {
                 ...data.map((element: any) => element.orgShiftsItems)
               ); // Flatten the shift data
             }
-
+            
+            this.holidayForm.patchValue({
+              shift : this.shiftDropdown.find((x:any) => x.id === this.updateHolidaysData.shiftID),
+            });
             console.log('Shift Dropdown Values:', this.shiftDropdown);
           },
           error: (err: any) => {
@@ -199,6 +275,7 @@ export class UpdateHolidaysComponent {
       this.shiftDropdown = []; // Reset if no sub-location is selected
     }
   }
+
   nagvition(){
     this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
   }

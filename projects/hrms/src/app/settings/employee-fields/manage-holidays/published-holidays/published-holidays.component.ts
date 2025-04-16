@@ -110,16 +110,19 @@ export class PublishedHolidaysComponent {
     }
   
     viewPublishedholiday(holiday: any) {
-      this.publishedHolidayView = false
-      this.titlehide = false;
-      this.titlebackshoaw = true;
-      this.updateView = true;
-      this.viewlistbuttonInUpdate = true
-      this.selectedHoliday = holiday
-      console.log(this.selectedHoliday);
-      this.selectedHoliday.orgHolidaysItems.forEach((element: any) => {
-        element.holidayDate = element.holidayDate.substring(0, 10)
-      });
+      // this.publishedHolidayView = false
+      // this.titlehide = false;
+      // this.titlebackshoaw = true;
+      // this.updateView = true;
+      // this.viewlistbuttonInUpdate = true
+      // this.selectedHoliday = holiday
+      // console.log(this.selectedHoliday);
+      // this.selectedHoliday.orgHolidaysItems.forEach((element: any) => {
+      //   element.holidayDate = element.holidayDate.substring(0, 10)
+      // });
+      localStorage.setItem('viewholidays', JSON.stringify(holiday));
+      this.router.navigate(['/settings/employee-fields/viewholidays']);
+      
     }
 
   nagvition(){

@@ -71,6 +71,9 @@ export default [
 
     { path: 'addholidays', loadComponent: () => import('./manage-holidays/add-holidays/add-holidays.component').then((m) => m.AddHolidaysComponent) },
     { path: 'updateholidays', loadComponent: () => import('./manage-holidays/update-holidays/update-holidays.component').then((m) => m.UpdateHolidaysComponent) },
+    { path: 'cloneholidays', loadComponent: () => import('./manage-holidays/clone-holidays/clone-holidays.component').then((m) => m.CloneHolidaysComponent) },
+    { path: 'viewholidays', loadComponent: () => import('./manage-holidays/view-holidays/view-holidays.component').then((m) => m.ViewHolidaysComponent) },
+
     {
         path: 'manage-holidays',
         children: [

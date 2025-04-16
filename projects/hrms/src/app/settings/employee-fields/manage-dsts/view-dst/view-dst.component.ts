@@ -23,12 +23,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ManageDST } from '../dsts.modal';
 
-
 @Component({
   selector: 'app-view-dst',
   imports: [SelectModule, CommonModule, ReactiveFormsModule],
   templateUrl: './view-dst.component.html',
-  styleUrl: './view-dst.component.scss'
+  styleUrl: './view-dst.component.scss',
 })
 export class ViewDstComponent implements OnInit, OnDestroy {
   dstForm!: FormGroup;
@@ -68,7 +67,6 @@ export class ViewDstComponent implements OnInit, OnDestroy {
     }
 
     this.getAllLocations();
-
   }
 
   inititializeForm() {
@@ -178,16 +176,20 @@ export class ViewDstComponent implements OnInit, OnDestroy {
             this.publishedDST.dayLight.forEach((row) => {
               this.momentRows.push(
                 this.fb.group({
-                  startDate: {value:this.formatToDateInput(row.startDate),disabled:true},
-                  endDate: {value:this.formatToDateInput(row.endDate),disabled:true},
-                  momentType: {value:row.momentType,disabled:true},
-                  duration: {value:row.duration,disabled:true},
+                  startDate: {
+                    value: this.formatToDateInput(row.startDate),
+                    disabled: true,
+                  },
+                  endDate: {
+                    value: this.formatToDateInput(row.endDate),
+                    disabled: true,
+                  },
+                  momentType: { value: row.momentType, disabled: true },
+                  duration: { value: row.duration, disabled: true },
                 })
               );
             });
           }
-
-          console.log('Form Data', this.dstForm.value);
         },
         error: (err) => console.error('Error fetching locations:', err),
       });
@@ -200,11 +202,6 @@ export class ViewDstComponent implements OnInit, OnDestroy {
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   }
-
-
-
-
-
 
   navigate(): void {
     this.router.navigate(['/settings/employee-fields/manage-dsts']);

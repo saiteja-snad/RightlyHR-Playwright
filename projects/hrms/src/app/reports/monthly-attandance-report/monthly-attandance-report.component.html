@@ -1,1 +1,56 @@
 <p>monthly-attandance-report works!</p>
+
+      
+        <div class="col-md-11">
+            
+            <div class="col-md-3">
+                <div class="me-2 text-nowrap" style="margin-left: 1%;">
+                    <label for="" class="mt-2">Select Month</label>
+                </div>
+                <div>
+                    <!-- <select id="monthDropdown" class="form-select" style="margin-left: 1%; cursor: pointer;"
+                        (change)="onMonthChangeLeave($event)" >
+                        <option value="" disabled selected>Select Month</option>
+                        <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+                    </select> -->
+                    <p-select
+  [options]="months"
+ 
+  optionLabel="name"
+  optionValue="value"
+  placeholder="Select Month"
+  styleClass="form-select"
+  [style]="{ marginLeft: '1%', cursor: 'pointer' }"
+  (onChange)="onMonthChangeLeave($event)">
+</p-select>
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="me-2 text-nowrap" style="margin-left: 1%;">
+                    <label for="" class="mt-2">Select year</label>
+                </div>
+                <div>
+                    <p-select
+                    [options]="years"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select Year"
+                    styleClass="form-select"
+                    [style]="{ minWidth: '100px' }">
+                  </p-select>
+                  
+                </div>
+            </div>
+        
+        </div>
+        <div>
+            <div class="col-md-3">
+                <div class="mt-4">
+                    <input type="submit" class="btn save-btns btn-sm" value="Generate" (click)="generateReport()"
+                        [disabled]="!isFilterGiven">
+                </div>
+            </div>
+            
+        </div>
+    

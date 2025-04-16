@@ -20,6 +20,7 @@ export class TimeOffTabsComponent {
     { label: 'WFH', link: '/time-off/wfh/waiting-for-approval' },
     { label: 'Comp-Off', link: '/time-off/comp-off/waiting-for-approval' },
     { label: 'Permissions', link: '/time-off/premissions/waiting-for-approval' },
+    { label: 'Regularization', link: '/time-off/regularization/waiting-for-approval' },
     { label: 'Pending Approvals', link: '/time-off/pending-approvals/time-off-request/for-you' },
     { label: 'Attendance', link: '/time-off/attendance' },
     { label: 'On Behalf Of', link: '/time-off/on-behalf-of/waiting-for-approval' },

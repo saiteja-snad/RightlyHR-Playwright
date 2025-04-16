@@ -1,0 +1,63 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Manage DST</span></div>
+        <div class="custom-add-btn" (click)="addDST()">
+            <i class="bi bi-plus plus-icon me-1"></i>Add New
+        </div>
+    </div>
+
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                   <th>Year</th>
+                   <th>Location</th>
+                   <th>sub Location</th>
+                   <th>Shift Name</th>
+                   <th>status</th>
+                   <th>added by</th>
+                   <th>action(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="publishedDSTs!.length > 0; else noDataTemplate">
+                    <tr *ngFor="let publishedDST of publishedDSTs; let i = index">
+                      <td>{{publishedDST.applicableYear}} </td>
+                      <td>{{publishedDST.jobLocationName}} </td>
+                      <td>{{publishedDST.jobSubLocationName}}</td>
+                      <td>{{publishedDST.shiftName}}</td>
+                      <td>{{publishedDST.status}} </td>
+                      <td>{{publishedDST.firstName}} {{publishedDST.middleName}} {{publishedDST.lastName}}</td>
+                      <td class="text-center">
+                        <div class="dropdown">
+                          <span type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots-vertical"></i>
+                          </span>
+                          <ul class="dropdown-menu custom-dropdown-menu">
+                            <li >
+                              <a class="dropdown-item">
+                                <i class="bi bi-copy me-2"></i>Clone
+                              </a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">
+                                <i class="bi bi-eye-fill me-2"></i>View
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                
+                  <ng-template #noDataTemplate>
+                    <tr>
+                      <td colspan="7">
+                        <app-no-data-found></app-no-data-found>
+                      </td>
+                    </tr>
+                  </ng-template>
+              </tbody>
+        </table>
+    </div>
+</div>

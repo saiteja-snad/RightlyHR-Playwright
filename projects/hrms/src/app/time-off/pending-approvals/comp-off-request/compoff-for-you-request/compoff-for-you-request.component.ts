@@ -10,7 +10,7 @@ import {
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
@@ -89,7 +89,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=3&approvedType=EMP`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
@@ -130,7 +130,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.sharedModalService.openSuccessModal(
@@ -159,7 +159,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -193,7 +193,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();

@@ -10,7 +10,7 @@ import {
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import {
   AttendanceRequest,
@@ -89,7 +89,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=18&approvedType=EMP`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
@@ -135,6 +135,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
         )
+        .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -170,7 +171,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
           this.modalService.dismissAll();
@@ -207,7 +208,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();

@@ -19,7 +19,9 @@
         @if ((router.url !== '/settings/employee-fields/addholidays' ) && (router.url !== '/settings/employee-fields/addshifts') && 
         (router.url !== '/settings/employee-fields/addpolices') && (router.url !== '/settings/employee-fields/no-due-clearnce') && 
         (router.url !== '/settings/employee-fields/add-weekends') && (router.url !== '/settings/employee-fields/update-weekends') && 
-        (router.url !== '/settings/employee-fields/clone-weekends') && (router.url !== '/settings/employee-fields/view-weekends')) {
+        (router.url !== '/settings/employee-fields/clone-weekends') && (router.url !== '/settings/employee-fields/view-weekends') && 
+        (router.url !== '/settings/employee-fields/add-dst') && (router.url !== '/settings/employee-fields/update-dst') && 
+        (router.url !== '/settings/employee-fields/clone-dst') && (router.url !== '/settings/employee-fields/view-dst')) {
         <!--sub tabs Content-->
         <div class="custom-component-left-content">
             <div *ngIf="isActive('/settings/employee-fields/personal')">
@@ -44,6 +46,9 @@
             </div>
             <div *ngIf="isActive('/settings/employee-fields/manage-weekends')">
                 <app-manage-weekends-tabs />
+            </div>
+            <div *ngIf="isActive('/settings/employee-fields/manage-dsts')">
+                <app-manage-dst-tabs />
             </div>
         </div>
         <div class="custom-setting-right-content p-3">

@@ -142,7 +142,7 @@ export class PremissionsComponent implements OnInit,OnDestroy{
   }
 
   getPermissionTypes(){
-    this.http.getData(`PermissionTypes?type=${'Permissions'}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PermissionTypes?type=${'Permissions'}`).pipe(takeUntil(this.destroy$)).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response: any) =>{
         console.log(response)
           this.leaveTypes = response as LeaveType[]
@@ -187,7 +187,7 @@ export class PremissionsComponent implements OnInit,OnDestroy{
   };
   console.log(payLoad);
   this.spinnerLoader = true;
-  this.http.postdata('RegularizationRequests/create',payLoad).subscribe({
+  this.http.postdata('RegularizationRequests/create',payLoad).pipe(takeUntil(this.destroy$)).subscribe({
     next: (res:any) => {
      // this.getCompOffRequest();
      this.modalService.dismissAll();

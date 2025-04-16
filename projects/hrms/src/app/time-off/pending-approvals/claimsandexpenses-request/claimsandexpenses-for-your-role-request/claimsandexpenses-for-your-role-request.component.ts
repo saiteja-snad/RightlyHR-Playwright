@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -98,7 +98,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=ROLE`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
@@ -151,7 +151,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -190,7 +190,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -227,7 +227,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
           this.modalService.dismissAll();
@@ -262,7 +262,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   viewItem(expid: number) {
     console.log(expid);
     this.updataid = expid;
-    this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
+    this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.expenseheaderiteams = data;
       },
@@ -273,7 +273,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
 
   onSelectDownload(file: any): void {
-    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).subscribe({
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         // Check if the response body is of type Blob
         const blob: Blob = res.body as Blob;
@@ -320,7 +320,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   onViewAttachement(url: any) {
     if (url?.endsWith('jpg') || url?.endsWith('png') || url?.endsWith('jpeg')) {
       this.http
-        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
             const blob = new Blob([res['body']], { type: 'image/png' });

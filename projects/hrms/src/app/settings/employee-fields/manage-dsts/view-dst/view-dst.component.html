@@ -10,7 +10,7 @@
 
 
     <div class="custom-setting-right-content w-100 p-3">
-        <form [formGroup]="dstForm" >
+        <form [formGroup]="dstForm">
             <div class="card custom-background-card p-3 mt-2">
                 <div class="row mb-3">
                     <!-- Year -->
@@ -26,11 +26,6 @@
                                 <ng-template let-year #item>{{ year }}</ng-template>
                             </p-select>
                         </div>
-                        <!-- <div *ngIf="dstForm.get('year')?.touched && dstForm.get('year')?.invalid" class="error-msg">
-                    <div *ngIf="dstForm.get('year')?.errors?.['required']">
-                        Please select year
-                    </div>
-                </div> -->
                     </div>
 
                     <!-- Location -->
@@ -48,11 +43,6 @@
                                 <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                             </p-select>
                         </div>
-                        <!-- <div *ngIf="dstForm.get('location')?.touched && dstForm.get('location')?.invalid" class="error-msg">
-                    <div *ngIf="dstForm.get('location')?.errors?.['required']">
-                        Please select location
-                    </div>
-                </div> -->
                     </div>
 
                     <!-- Sub Location -->
@@ -70,12 +60,6 @@
                                 <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                             </p-select>
                         </div>
-                        <!-- <div *ngIf="dstForm.get('subLocation')?.touched && dstForm.get('subLocation')?.invalid"
-                    class="error-msg">
-                    <div *ngIf="dstForm.get('subLocation')?.errors?.['required']">
-                        Please select sub location
-                    </div>
-                </div> -->
                     </div>
 
                     <!-- Shifts -->
@@ -92,11 +76,6 @@
                                 <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                             </p-select>
                         </div>
-                        <!-- <div *ngIf="dstForm.get('shift')?.touched && dstForm.get('shift')?.invalid" class="error-msg">
-                    <div *ngIf="dstForm.get('shift')?.errors?.['required']">
-                        Please select shift
-                    </div>
-                </div> -->
                     </div>
                 </div>
             </div>
@@ -115,49 +94,26 @@
                     </thead>
                     <tbody formArrayName="momentRows">
                         <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
-                            <td><input type="date" class="form-control" formControlName="startDate" onkeydown="return false" /></td>
-                            <td><input type="date" class="form-control" formControlName="endDate" onkeydown="return false" /></td>
+                            <td><input type="date" class="form-control" formControlName="startDate"
+                                    onkeydown="return false" /></td>
+                            <td><input type="date" class="form-control" formControlName="endDate"
+                                    onkeydown="return false" /></td>
                             <td class="custom-p-select-content">
                                 <p-select [options]="momentType" [showClear]="false" formControlName="momentType"
-                                    placeholder="Select type" class="form-select custom-select" (onChange)="hidePublishCloneButtons=true">
+                                    placeholder="Select type" class="form-select custom-select"
+                                    (onChange)="hidePublishCloneButtons=true">
                                 </p-select>
                             </td>
                             <td class="custom-p-select-content">
                                 <p-select [options]="durations" [showClear]="false" formControlName="duration"
-                                    placeholder="Select duration" class="form-select custom-select" (onChange)="hidePublishCloneButtons=true">
+                                    placeholder="Select duration" class="form-select custom-select"
+                                    (onChange)="hidePublishCloneButtons=true">
                                 </p-select>
                             </td>
-                            <!-- <td>
-                                <button type="button" class="btn btn-danger btn-sm"
-                                    (click)="momentRows.length > 1 && removeMomentRow(i)">X</button>
-                            </td> -->
                         </tr>
                     </tbody>
                 </table>
-
-                <!-- <button type="button" class="custom-btn btn-primary" (click)="addMomentRow();hidePublishCloneButtons = true">+ Add Row</button> -->
             </div>
-            <!-- <span class="error-msg">Note: All Fields are Mandatory Fields</span>
-            <div class="save-button d-flex justify-content-end ">
-                <button class="custom-btn btn-secondary  me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" type="button"
-                    >
-                    Cancel
-                </button>
-                @if(!hidePublishCloneButtons){
-                <button class="btn btn-success me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" type="button"  (click)="publishDST()">
-                    Publish
-                </button>
-                <button class="btn btn-warning me-3 rounded-4 ps-4 pe-4 pt-2 pb-2"  type="button" (click)="navigateToCloneComponent()">
-                    Clone
-                </button>
-
-                }
-
-                <button class="custom-btn btn-primary me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" type="button" 
-                    [disabled]="dstForm.invalid" (click)="UpdateDST(dstForm)">
-                    Update
-                </button>
-            </div> -->
         </form>
 
     </div>

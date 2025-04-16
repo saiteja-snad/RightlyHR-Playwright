@@ -5,65 +5,64 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { ManageDST } from '../dsts.modal';
-import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pending-dsts',
-  imports: [NoDataFoundComponent,CommonModule],
+  imports: [NoDataFoundComponent, CommonModule],
   templateUrl: './pending-dsts.component.html',
-  styleUrl: './pending-dsts.component.scss'
+  styleUrl: './pending-dsts.component.scss',
 })
-export class PendingDstsComponent implements OnInit,OnDestroy{
-pendingDSTs = [] as ManageDST [] ;
-allDSTs = [] as ManageDST [] ;
-destroy$: Subject<boolean> = new Subject<boolean>();
+export class PendingDstsComponent implements OnInit, OnDestroy {
+  pendingDSTs = [] as ManageDST[];
+  allDSTs = [] as ManageDST[];
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private http: HttpService,
-     private sharedModalService: OpenModalService,
-     private modalService: NgbModal,
-     private router: Router
-  ) { }
-
+    private sharedModalService: OpenModalService,
+    private modalService: NgbModal,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.getAllDayLight();
   }
- 
 
-  addDST(){
-     this.router.navigate(['/settings/employee-fields/add-dst']);
+  addDST() {
+    this.router.navigate(['/settings/employee-fields/add-dst']);
   }
 
   getAllDayLight() {
-     this.http.getData('OrgDayLight/getAll').pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.allDSTs = data;
-        this.filterPendingDSTs();
-      }
-    })
+    this.http
+      .getData('OrgDayLight/getAll')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.allDSTs = data;
+          this.filterPendingDSTs();
+        },
+      });
   }
-
 
   navigateToUpdateDSTComponent(pendingDST: ManageDST) {
     localStorage.setItem('pendingDST', JSON.stringify(pendingDST));
     this.router.navigate(['/settings/employee-fields/update-dst']);
   }
-  
-
 
   filterPendingDSTs() {
-    this.pendingDSTs = this.allDSTs.filter(
-      (status: { status: string; }) => status.status === 'Pending for submission'
-    ).reverse();
-
+    this.pendingDSTs = this.allDSTs
+      .filter(
+        (status: { status: string }) =>
+          status.status === 'Pending for submission'
+      )
+      .reverse();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

@@ -199,14 +199,9 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     return `${yyyy}-${mm}-${dd}`;
   }
 
-
-
   UpdateDST(dstForm: FormGroup) {
-    console.log(dstForm);
-    
     if (dstForm.valid) {
       const formValue = dstForm.value;
-    
       const holidays = {
         lastModifiedDate: new Date(),
         addedDate: new Date(),
@@ -226,53 +221,60 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
           headerId: this.pendingDST?.dayLight?.[0]?.headerId,
         })),
       };
-    
-      console.log('holidays payload:', holidays);
+      this.http
+        .postdata('OrgDayLight/Update/Shift/OrgShift', holidays)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            if (response.statusCode === 400) {
+              this.sharedModalService.openErrorModal(
+                'Error: Shift already exists.'
+              );
+            }
 
-    this.http
-      .postdata('OrgDayLight/Update/Shift/OrgShift', holidays).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          if (response.statusCode === 400) {
-            this.sharedModalService.openErrorModal(
-              'Error: Shift already exists.'
+            this.sharedModalService.openSuccessModal(
+              'Manage DST updated successfully'
             );
-          }
-
-          this.sharedModalService.openSuccessModal('Manage DST updated successfully')
-          this.navigate();
-        },
-        error: (err) => {
-          if (err.error) {
-            this.sharedModalService.openErrorModal(
-              'Error: ' + err.error.Message
-            );
-          }
-          // alert()
-          // <insert code for what to do on failure>
-        },
-      });
+            this.navigate();
+          },
+          error: (err) => {
+            if (err.error) {
+              this.sharedModalService.openErrorModal(
+                'Error: ' + err.error.Message
+              );
+            }
+          },
+        });
     }
   }
 
   publishDST() {
     let publishItem = {
       Category: 'Daylightsaving',
-      refentityId: this.pendingDST?.dayLight[0].headerId
-    }
-   this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).pipe(takeUntil(this.destroy$))
-   .subscribe({
-      next: (respnose: any) => {
-        this.sharedModalService.openSuccessModal('Manage DST Published Successfully');
-        this.navigate();
-      },error:(err) =>  {
-        if(err.error){
-          this.sharedModalService.openErrorModal(err.error);
-        }
-        this.sharedModalService.openErrorModal('Error occured while publishing manage dst')
-      },
-    })
+      refentityId: this.pendingDST?.dayLight[0].headerId,
+    };
+    this.http
+      .postdata(
+        `CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`,
+        { params: publishItem }
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respnose: any) => {
+          this.sharedModalService.openSuccessModal(
+            'Manage DST Published Successfully'
+          );
+          this.navigate();
+        },
+        error: (err) => {
+          if (err.error) {
+            this.sharedModalService.openErrorModal(err.error);
+          }
+          this.sharedModalService.openErrorModal(
+            'Error occured while publishing manage dst'
+          );
+        },
+      });
   }
   navigate(): void {
     this.router.navigate(['/settings/employee-fields/manage-dsts']);

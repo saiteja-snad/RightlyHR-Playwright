@@ -10,28 +10,65 @@
         <table class="w-100">
             <thead>
                 <tr>
-                   <th>Year</th>
-                   <th>Location</th>
-                   <th>sub Location</th>
-                   <th>Shifts</th>
-                   <th>weekends</th>
-                   <th>status</th>
-                   <th>added by</th>
-                   <th>action(s)</th>
+                    <th>Year</th>
+                    <th>Location</th>
+                    <th>sub Location</th>
+                    <th>Shifts</th>
+                    <th>weekends</th>
+                    <th>status</th>
+                    <th>added by</th>
+                    <th>action(s)</th>
                 </tr>
             </thead>
             <tbody>
+                @for(weekend of weekendsList; track weekend){
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ weekend.applicableyear }}</td>
+                    <td>{{ weekend.jobLocationName }}</td>
+                    <td>{{ weekend.jobSubLocationName }}</td>
+                    <td>{{ weekend.shiftName }}</td>
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            <div class="me-2">
+                                {{ weekend.orgWeekendItems.length }}
+                            </div>
+                            <div>
+                                <div>
+                                    <span id="tooltip">
+                                        <span id="tootipText">
+                                            {{ getShiftNames(weekend) }}
+                                        </span>
+                                        <span *ngIf="getShiftNames(weekend) === null" id="tootipText">
+                                            -
+                                        </span>
+                                        <div><i style="z-index: -1;" class="bi bi-info-circle-fill "></i></div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ weekend.status }}</td>
+                    <td>{{ weekend.firstName }} {{ weekend.middleName? weekend.middleName : '' }} {{ weekend.lastName }}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li (click)="openUpdate(weekend)">
+                                    <a class="dropdown-item">
+                                        <i class="bi bi-pencil me-2"></i>Update
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                    <!-- <td>
+                        <button class="btn btn-sm btn-primary" (click)="openUpdate(weekend)">Edit</button>
+                    </td> -->
                 </tr>
-              </tbody>
+                }
+            </tbody>
         </table>
     </div>
 </div>

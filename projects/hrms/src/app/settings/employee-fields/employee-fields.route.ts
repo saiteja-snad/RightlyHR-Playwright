@@ -88,4 +88,7 @@ export default [
         ]
     },
     { path: 'add-weekends', loadComponent: () => import('./manage-weekends/add-weekend/add-weekend.component').then((m) => m.AddWeekendComponent) },
+    { path: 'update-weekends', loadComponent: () => import('./manage-weekends/update-weekends/update-weekends.component').then((m) => m.UpdateWeekendsComponent) },
+    { path: 'clone-weekends', loadComponent: () => import('./manage-weekends/clone-weekends/clone-weekends.component').then((m) => m.CloneWeekendsComponent) },
+    { path: 'view-weekends', loadComponent: () => import('./manage-weekends/view-weekends/view-weekends.component').then((m) => m.ViewWeekendsComponent) },
 ] as Route[];

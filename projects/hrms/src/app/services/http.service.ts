@@ -38,7 +38,8 @@ export class HttpService {
     expenses: false,
     nodue:false,
   });
-
+  desklocationIdSubject = new BehaviorSubject<string | null>(null);
+  desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -55,6 +56,17 @@ export class HttpService {
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }
+  desklocationId$ = this.desklocationIdSubject.asObservable();
+  desksublocationId$ = this.desksublocationIdSubject.asObservable();
+    //function to update the desk Updatelocation
+    deskUpdateLocationId(id: string | null) {
+      this.desklocationIdSubject.next(id);
+    }
+    //function to update the desk sublocation
+    deskUpdateSubLocationId(id: string | null) {
+      this.desksublocationIdSubject.next(id);
+    }
+
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
@@ -167,6 +179,38 @@ export class HttpService {
   createExpense(url: string, data: any): Observable<any> {
     return this.http.post<any>(`${this.ApiUrl}${url}`, data);
   }
+
+  getstatusdesk(
+    url: string,
+    selectedLocationId: any,
+    selectedSubLocationId: any,
+    status: string,
+    page: number,
+    pageSize: number,
+    searchQuery: string
+  ): any {
+    const params: { [key: string]: any } = {
+      locationid: selectedLocationId,
+      sublocationid: selectedSubLocationId,
+      DeskStatus: status,
+      pageNumber: page,
+      pageSize: pageSize,
+      searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
+    };
+
+    // Build the query string dynamically, excluding null or undefined values
+    const queryString = Object.entries(params)
+      .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    // Construct the full URL
+    const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
+
+    // Make the HTTP GET request
+    return this.http.get(dataUrl);
+  }
+
 
   postProbation(
     url: string,

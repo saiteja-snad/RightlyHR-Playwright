@@ -302,7 +302,12 @@ export class DraftsExpensesComponent {
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-          }
+            this.spinnerLoader=false
+          },
+
+          complete:()=> {
+            this.spinnerLoader=false
+          },
         });
       } else {
         // No file to upload, directly post the payload
@@ -317,8 +322,11 @@ export class DraftsExpensesComponent {
           error: (error: any) => {
             console.log("error" + error)
             this.conformationPopup.openErrorModal(error.error.message)
-
-          }
+            this.spinnerLoader=false
+          },
+          complete:()=> {
+            this.spinnerLoader=false
+          },
         });
       }
     } else {
@@ -390,7 +398,11 @@ export class DraftsExpensesComponent {
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-          }
+            this.saveasDraftloder=false
+          },
+          complete:()=> {
+            this.saveasDraftloder=false
+          },
         });
       } else {
         // No file to upload, directly post the payload
@@ -408,8 +420,12 @@ export class DraftsExpensesComponent {
           error: (error: any) => {
             console.log("error" + error)
             this.conformationPopup.openErrorModal(error.error.message)
+            this.saveasDraftloder=false
 
-          }
+          },
+          complete:()=> {
+            this.saveasDraftloder=false
+          },
         });
       }
     } else {

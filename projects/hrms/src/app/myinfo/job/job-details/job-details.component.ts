@@ -31,6 +31,8 @@ export class JobDetailsComponent {
   separationRequestForm!: FormGroup;
   jobDetailsupdateForm!: FormGroup;
   jobdetails = new BehaviorSubject<any[]>([]);
+  
+  subLocationsDropdown: any = []; 
   teamDropdownValues: any[] = [];
   teamManagerDropdownValues: any[] = [];
   selectedDepartmentId: number = 0;
@@ -395,7 +397,6 @@ export class JobDetailsComponent {
       });
   }
 
-  subLocationsDropdown: any = []; // To store the dynamically fetched sub-locations
 
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation.id) {

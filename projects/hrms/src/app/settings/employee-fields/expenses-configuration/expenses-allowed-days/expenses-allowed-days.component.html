@@ -10,13 +10,14 @@
 
             </thead>
             <tbody>
+                @if (!rbac.allowedToAccess('Expenses Type.Update')) {}
                 <tr >
                     <td class="w-50">{{attribute}}</td>
                     <td class="W-25">{{value}}</td>
                     <td class="text-center">
                          <!--Update-->
                          <div>
-                            <a type="button" (click)="openModal(expensesallowmodal)"><img
+                            <a type="button" (click)="openModal(expensesallowmodal)" *ngIf="!rbac.allowedToAccess('Expenses Type.Create')"><img
                                     src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
                         </div>
                     

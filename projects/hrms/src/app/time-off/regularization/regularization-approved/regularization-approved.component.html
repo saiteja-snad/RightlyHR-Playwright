@@ -13,6 +13,7 @@
                 </tr>
             </thead>
             <tbody>
+                @if (!rbac.allowedToAccess('Regularization Tab.View')) {
                 <ng-container *ngIf="approvedPerimisions!.length > 0; else noDataTemplate">
                 <tr *ngFor="let permissionRequest of approvedPerimisions; let i = index">
                     <td>{{permissionRequest.createdDate | dateformat}}</td>
@@ -57,6 +58,7 @@
                       </td>
                     </tr>
                   </ng-template>
+                }
             </tbody>
         </table>
     </div>

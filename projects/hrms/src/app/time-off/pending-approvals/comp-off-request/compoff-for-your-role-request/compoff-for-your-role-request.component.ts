@@ -15,6 +15,7 @@ import {
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-compoff-for-your-role-request',
   imports: [
@@ -55,7 +56,8 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

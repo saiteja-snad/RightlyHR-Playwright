@@ -4,7 +4,8 @@
             <p class="component-header mb-0">WHF</p>
         </div>
         <div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"><i class="bi bi-plus me-2"></i>Request WFH</button>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)" 
+            *ngIf="!rbac.allowedToAccess('Workfromhome Tab.Create')"><i class="bi bi-plus me-2"></i>Request WFH</button>
         </div>
     </div>
     <div class=" employee-fields-main-container d-flex gap-3 w-100">
@@ -30,7 +31,7 @@
         </div>
 
         <div class="custom-main-popup-content p-3">
-            <form [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form">
+            <form [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form" *ngIf="!rbac.allowedToAccess('Workfromhome Tab.Create')">
                 <!-- Worked Date -->
                 <div class="row">
                     <div class="col-md-12 mb-3">

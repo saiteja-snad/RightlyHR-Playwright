@@ -19,6 +19,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { environment } from '../../../../environments/environment.dev';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-separation-for-your-role-request',
@@ -78,7 +79,8 @@ export class SeparationForYourRoleRequestComponent {
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.getseparationforrolerequests();

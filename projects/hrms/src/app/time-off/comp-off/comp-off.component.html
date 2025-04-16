@@ -4,7 +4,7 @@
             <p class="component-header cursor mb-0">Comp-Off</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary"><i
+            <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary" *ngIf="!rbac.allowedToAccess('Compoff Tab.Create')"><i
                     class="bi bi-plus me-2"></i>Request Comp-Off</button>
         </div>
     </div>
@@ -31,7 +31,7 @@
         </div>
 
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="addCompOffForm" (ngSubmit)="applyCompOff(addCompOffForm)" class="custom-form">
+            <form [formGroup]="addCompOffForm" (ngSubmit)="applyCompOff(addCompOffForm)" class="custom-form" *ngIf="!rbac.allowedToAccess('Compoff Tab.Create')">
                 <!-- Worked Date -->
                 <div class="row">
                     <div class="col-md-12 mb-3">

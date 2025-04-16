@@ -28,6 +28,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                  @if (!rbac.allowedToAccess('Recall Tab.View')) {
                     @if(((recall_For_You_Details | async) ?? []).length > 0) {
 
                     <tr *ngFor="let item of recall_For_You_Details|async">
@@ -104,20 +105,20 @@
                                 <ul class="dropdown-menu py-0">
                                     @if(item.approvalHeader?.currentapprovalStage !=
                                     item.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModal(approval);handleRequest(item)"><a class="dropdown-item"><i
+                                    <li (click)="openModal(approval);handleRequest(item)" *ngIf="!rbac.allowedToAccess('Recall Tab.Update')"><a class="dropdown-item"><i
                                                 class="bi bi-check-circle me-2"></i>Approve</a></li>
                                     }
 
                                     @if((item.approvalHeader?.currentapprovalStage !=
                                     item.approvalHeader?.finalapprovalStage)||(item.approvalHeader?.currentapprovalStage
                                     == item.approvalHeader?.finalapprovalStage)){
-                                    <li (click)="openModal(rejectmodal);handleRequest(item)"><a class="dropdown-item"><i
+                                    <li (click)="openModal(rejectmodal);handleRequest(item)" *ngIf="!rbac.allowedToAccess('Recall Tab.Delete')"><a class="dropdown-item"><i
                                                 class="bi bi-x-circle me-2"></i>Reject</a></li>
                                     }
 
                                     @if(item?.approvalHeader?.currentapprovalStage ==
                                     item?.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModal(processmodal);handleRequest(item)"><a
+                                    <li (click)="openModal(processmodal);handleRequest(item)" *ngIf="!rbac.allowedToAccess('Recall Tab.Update')"><a
                                             class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
                                     </li>
                                     }
@@ -135,6 +136,7 @@
                         </td>
                     </tr>
                     }
+                  }
                 </tbody>
             </table>
         </div>

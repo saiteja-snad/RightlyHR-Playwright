@@ -16,6 +16,7 @@ import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model'
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { RbacService } from '../../../../services/rbac.service';
 
 
 @Component({
@@ -68,7 +69,8 @@ export class ClaimsandexpensesForYouRequestComponent
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

@@ -80,6 +80,7 @@ export const permissionsData = [
     // View Modules
     { fields: 'Invite New User', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Permissions', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Recall Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Regularizations', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Timeoff Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Compoff Tab', View: false, Update: false, Create: false, Delete: false },

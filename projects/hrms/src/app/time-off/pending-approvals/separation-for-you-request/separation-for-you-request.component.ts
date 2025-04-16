@@ -16,6 +16,7 @@ import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { environment } from '../../../../environments/environment.dev';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-separation-for-you-request',
@@ -75,7 +76,8 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public rbac: RbacService
   ) {}
   ngOnInit(): void {
     this.getseparationforyourequests();

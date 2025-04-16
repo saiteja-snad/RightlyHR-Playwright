@@ -23,6 +23,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if (!rbac.allowedToAccess('Trainee Tab.View')) {
                     @if(((Trainees | async) ?? []).length > 0) {
                     <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
                         <td ><span
@@ -68,25 +69,26 @@
                                     trn.approvalHeader.finalapprovalStage){
                                     <li>
                                         <button class="dropdown-item" type="button" data-bs-toggle="modal"
-                                            (click)="openModal(PermissionsApprove);handleRequests(trn)">
+                                            (click)="openModal(PermissionsApprove);handleRequests(trn)" *ngIf="!rbac.allowedToAccess('Trainee Tab.Update')">
                                             Approve</button>
                                     </li>
                                     }
                                     @if(trn.approvalHeader.currentapprovalStage !=
                                     trn.approvalHeader.finalapprovalStage){
-                                    <li><button class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"> Reject</button>
+                                    <li><button class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)" 
+                                        *ngIf="!rbac.allowedToAccess('Trainee Tab.Delete')"> Reject</button>
                                     </li>}
                                     @if(trn.approvalHeader.currentapprovalStage ==
                                     trn.approvalHeader.finalapprovalStage){
                                     <li>
-                                        <button class="dropdown-item" (click)="handleProcess(trn)" *ngIf="">
+                                        <button class="dropdown-item" (click)="handleProcess(trn)" *ngIf="!rbac.allowedToAccess('Trainee Tab.Update')">
                                             Process</button>
                                     </li>
                                     }
                                     @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
                                     <li>
                                         <button class="dropdown-item" data-bs-toggle="modal"  (click)="openModal(RejectTrainee);handleRequests(trn)"
-                                           >  Reject</button>
+                                        *ngIf="!rbac.allowedToAccess('Trainee Tab.Delete')" >  Reject</button>
                                     </li>
                                     }
                                 </ul>
@@ -101,6 +103,7 @@
                         </td>
                     </tr>
                     }
+                }
                 </tbody>
             </table>
         </div>

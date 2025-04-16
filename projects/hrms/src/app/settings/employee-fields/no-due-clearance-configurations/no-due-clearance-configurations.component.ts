@@ -121,7 +121,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   }
 
   selectedUserDetails(event: any) {
-    this.selectedUsersCount = event.length;
+    this.selectedUsersCount = event?.length;
     if (this.selectedUsersCount > 0) {
       this.customLabelTemplate = `${this.selectedUsersCount} ${this.selectedUsersCount === 1 ? 'user' : 'users'} selected`;
     } else {

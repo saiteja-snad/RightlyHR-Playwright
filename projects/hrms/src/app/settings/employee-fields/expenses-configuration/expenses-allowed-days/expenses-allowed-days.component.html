@@ -1,13 +1,10 @@
 <div class="custom-main-component-container">
-    <!-- Add Input-->
-
-    <div class="custom-table-content mt-2">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <th class="col-span-2">Name</th>
                 <th class="col-span-2">Expense Duration (Days)</th>
                 <th class="text-center">Action</th>
-
             </thead>
             <tbody>
                 @if (!rbac.allowedToAccess('Expenses Type.Update')) {}
@@ -20,50 +17,46 @@
                             <a type="button" (click)="openModal(expensesallowmodal)" *ngIf="!rbac.allowedToAccess('Expenses Type.Create')"><img
                                     src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
                         </div>
-                    
                     </td>
                 </tr>
-
             </tbody>
         </table>
     </div>
 </div>
 
-
-
 <ng-template #expensesallowmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Expense Allowed Days</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();resetform()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();resetform()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="dateconfigurationForm" (ngSubmit)="updatedate(dateconfigurationForm);modal.dismiss()">
-
-                <div class="mb-2">
-                  <label for="value" class="form-label custom-label mb-2">Duration <span class="text-danger">*</span></label>
-                  <input type="text" id="value" formControlName="value" placeholder="Please enter Duration" class="form-control custom-input" maxlength="3" (keypress)="validateNumberInput($event)">
-                  <div class="error-msg" *ngIf="dateconfigurationForm.controls['value'].invalid && 
-                    (dateconfigurationForm.controls['value'].touched || dateconfigurationForm.controls['value'].dirty)">
-                    <span class="error-msg" *ngIf="dateconfigurationForm.controls['value'].errors?.['required']">
-                      Duration is required
-                    </span>
-                   
-                    <span class="error-msg" *ngIf="dateconfigurationForm.controls['value'].errors?.['maxlength']">
-                      Duration must be less than 3 digits
-                    </span>
-                  </div>
+                <div class="mb-3">
+                    <label for="value" class="form-label custom-label mb-2">Duration <span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="value" formControlName="value" placeholder="Please enter Duration"
+                        class="form-control custom-input" maxlength="3" (keypress)="validateNumberInput($event)">
+                    <div class="error-msg" *ngIf="dateconfigurationForm.controls['value'].invalid && (dateconfigurationForm.controls['value'].touched || 
+                       dateconfigurationForm.controls['value'].dirty)">
+                        <span class="error-msg" *ngIf="dateconfigurationForm.controls['value'].errors?.['required']">
+                            Duration is required
+                        </span>
+                        <span class="error-msg" *ngIf="dateconfigurationForm.controls['value'].errors?.['maxlength']">
+                            Duration must be less than 3 digits
+                        </span>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" (click)="modal.dismiss();resetform()">Close</button>
-                  <button type="submit" class="btn btn-primary" [disabled]="dateconfigurationForm.invalid">Update</button>
+                <div class="d-flex justify-content-end gap-3 pt-4">
+                    <button type="button" class="btn btn-secondary" (click)="modal.dismiss();resetform()">Close</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="dateconfigurationForm.invalid">Update</button>
                 </div>
-              </form>
-
+            </form>
         </div>
     </div>
 </ng-template>

@@ -16,7 +16,7 @@
     <div class="employee-fields-main-container d-flex gap-3 w-100">
         @if ((router.url !== '/settings/employee-fields/addholidays' ) && (router.url !==
         '/settings/employee-fields/addshifts') && (router.url !== '/settings/employee-fields/addpolices') && (router.url
-        !== '/settings/employee-fields/no-due-clearnce') && (router.url !== '/settings/employee-fields/add-weekends')) {
+        !== '/settings/employee-fields/no-due-clearnce') && (router.url !== '/settings/employee-fields/add-weekends') && (router.url !== '/settings/employee-fields/add-dst') && (router.url !== '/settings/employee-fields/update-dst')) {
         <!--sub tabs Content-->
         <div class="custom-component-left-content">
             <div *ngIf="isActive('/settings/employee-fields/personal')">
@@ -41,6 +41,9 @@
             </div>
             <div *ngIf="isActive('/settings/employee-fields/manage-weekends')">
                 <app-manage-weekends-tabs />
+            </div>
+            <div *ngIf="isActive('/settings/employee-fields/manage-dsts')">
+                <app-manage-dst-tabs />
             </div>
         </div>
         <div class="custom-setting-right-content p-3">

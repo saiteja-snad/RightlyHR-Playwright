@@ -13,7 +13,7 @@ import { ILocation, IShiftHeader, ISubLocation } from '../flexible-leave-allocat
 
 @Component({
   selector: 'app-manage-dst',
-  imports: [SelectModule, CommonModule,ReactiveFormsModule,],
+  imports: [SelectModule, CommonModule,ReactiveFormsModule],
   templateUrl: './manage-dst.component.html',
   styleUrl: './manage-dst.component.scss',
   encapsulation: ViewEncapsulation.None,

@@ -22,7 +22,7 @@ export class SettingsEmployeeFieldsModuleTabsComponent implements AfterViewInit 
     { label: 'Manage Holidays', link: '/settings/employee-fields/manage-holidays' },
     { label: 'Manage Weekends', link: '/settings/employee-fields/manage-weekends' },
     { label: 'Expense Configurations', link: '/settings/employee-fields/expenes' },
-    { label: 'Manage DST', link: '/settings/employee-fields/job' },
+    { label: 'Manage DST', link: '/settings/employee-fields/manage-dsts' },
     { label: 'No Due Clearance', link: '/settings/employee-fields/no-due-clearnce' }
   ];
 

@@ -37,8 +37,9 @@ export default [
             { path: 'notice', loadComponent: () => import('./job/notice/notice.component').then((m) => m.NoticeComponent) },
             { path: 'grade', loadComponent: () => import('./job/grade/grade.component').then((m) => m.GradeComponent) },
             { path: 'serving-period', loadComponent: () => import('./job/serving-period/serving-period.component').then((m) => m.ServingPeriodComponent) },
-            { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => (m.ProbationDetailsComponent)) },
+            { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent) },
             { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent) },
+            { path: 'pre-on-boarding-documents', loadComponent: () => import('./job/pre-on-boarding-documents/pre-on-boarding-documents.component').then((m) => m.PreOnBoardingDocumentsComponent) }
         ]
     },
     {

@@ -18,6 +18,7 @@ import { AuthService } from '../../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-nodue-approval-details',
@@ -57,7 +58,8 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private http: HttpService,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.formInializer();

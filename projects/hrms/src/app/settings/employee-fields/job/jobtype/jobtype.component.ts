@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import {JobtypeData } from './jobtype-module';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-jobtype',
@@ -30,7 +31,8 @@ export class JobtypeComponent {
     private fb: FormBuilder, 
     private http: HttpService, 
     private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -19,6 +19,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { environment } from '../../../../environments/environment.dev';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-separation-for-your-role-request',
@@ -39,6 +40,7 @@ import { environment } from '../../../../environments/environment.dev';
 export class SeparationForYourRoleRequestComponent {
   subscription!: Subscription;
   separation_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
+  @ViewChild('acceptForm') acceptForm!: NgForm;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -77,14 +79,37 @@ export class SeparationForYourRoleRequestComponent {
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.getseparationforrolerequests();
   }
   resetForm() {
-    this.selectedSpRequestData = {};
+    this.acceptForm.resetForm();
+
+    // Clear the selected data structure completely and set defaults
+    this.selectedSpRequestData = {
+      spIsAcceptEarlyrelievingcheck: false,
+      spMangerEarlyreliveingDate: null,
+      spearlyReliveingDate: null,
+      comments: '',
+      extenddate: null,
+      spRequestAppliedDate: null,
+      spRequestLastWorkingDate: null,
+      spIsEarlyRelieveing: false,
+      // Add any other keys your form uses here
+    };
+  
+    // Reset condition flags
+    this.regular = true;
+    this.early = false;
+    this.extend = false;
+  
+    // Close the modal
+    this.modalService.dismissAll();
   }
+  
   //function to get the separation request based on the for you
   getseparationforrolerequests() {
     let loggedInUser = this.authService.getToken();

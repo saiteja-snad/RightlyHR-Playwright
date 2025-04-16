@@ -13,6 +13,7 @@ import { ProbationdetailsPipe } from "../../../Pipes/probationdetails.pipe";
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
+import { RbacService } from '../../../services/rbac.service';
 
 
 @Component({
@@ -37,7 +38,11 @@ export class ProbationPendingApprovalsComponent {
       { label: 20, value: 20 },
       { label: 25, value: 25 }
     ];
-    constructor(private modalService: NgbModal, private http: HttpService) {}
+    constructor(
+      private modalService: NgbModal, 
+      private http: HttpService,
+      public rbac: RbacService,
+    ) {}
   
     openModal(content: any) {
       this.modalService.open(content, {centered: true,backdrop: 'static' });

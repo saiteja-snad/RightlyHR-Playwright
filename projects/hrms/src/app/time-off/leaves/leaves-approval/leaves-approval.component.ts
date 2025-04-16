@@ -10,6 +10,7 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-leaves-approval',
@@ -43,7 +44,11 @@ export class LeavesApprovalComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService) {
+  constructor(
+    private http: HttpService, 
+    private authService: AuthService,
+    public rbac: RbacService,
+  ) {
 
   }
   ngOnInit(): void {

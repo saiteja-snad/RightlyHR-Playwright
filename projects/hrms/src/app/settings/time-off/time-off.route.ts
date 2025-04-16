@@ -20,7 +20,7 @@ export default [
           { path: 'comp-off',loadComponent: () => import('./attendance-eligibility-criteria/comp-off-entitlement-criteria/comp-off-entitlement-criteria.component').then((m) => m.CompOffEntitlementCriteriaComponent) },
          { path: 'wfh',loadComponent: () => import('./attendance-eligibility-criteria/wfh-entitlemen-criteria/wfh-entitlemen-criteria.component').then((m) => m.WFHEntitlemenCriteriaComponent)  },
           { path: 'permissions', loadComponent: () => import('./attendance-eligibility-criteria/permissions/permissions.component').then((m) => m.PermissionsComponent)  },
-          { path: 'permissions-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/permission-eligibility-criteria/permission-eligibility-criteria.component').then((m) => m.PermissionEligibilityCriteriaComponent)  },
+          { path: 'permissions-eligibility-criteria', loadComponent: () => import('./manage-dst/manage-dst.component').then((m) => m.ManageDstComponent)  },
         ]
     }
 

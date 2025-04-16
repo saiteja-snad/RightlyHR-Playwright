@@ -13,7 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (!rbac.allowedToAccess('Permissions Tab.View')) {
+                @if (rbac.allowedToAccess('Permissions Tab.view')) {
                 <ng-container *ngIf="rejectedPerimisions!.length > 0; else noDataTemplate">
                 <tr *ngFor="let permissionRequest of rejectedPerimisions; let i = index">
                     <td>{{permissionRequest.createdDate | dateformat}}</td>

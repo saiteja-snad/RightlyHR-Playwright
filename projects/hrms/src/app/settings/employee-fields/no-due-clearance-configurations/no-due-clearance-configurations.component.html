@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">No Due Clearnce</span></div>
-    <div class="custom-add-btn cursor" (click)="openModal(addnodue)" *ngIf="!rbac.allowedToAccess('No Due Clearance.Create')">
+    <div class="custom-add-btn cursor" (click)="openModal(addnodue)" *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
       <i class="bi bi-plus plus-icon me-1"></i>Add New
     </div>
   </div>
@@ -62,7 +62,7 @@
   </div>
     <div class="custom-main-popup-content p-3">
 
-      <form [formGroup]="noDueForm" (ngSubmit)="addNoDue(noDueForm)" *ngIf="!rbac.allowedToAccess('No Due Clearance.Create')">
+      <form [formGroup]="noDueForm" (ngSubmit)="addNoDue(noDueForm)" *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
 
         <!-- Select Type -->
         <div class="form-outline p-2 mb-1">

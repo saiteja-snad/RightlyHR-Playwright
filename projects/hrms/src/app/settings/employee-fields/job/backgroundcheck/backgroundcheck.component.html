@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-  <form [formGroup]="BackgroundCheckForm" (ngSubmit)="addBackgroundCheckType()" *ngIf="!rbac.allowedToAccess('Background check Status.Create')">
+  <form [formGroup]="BackgroundCheckForm" (ngSubmit)="addBackgroundCheckType()" *ngIf="rbac.allowedToAccess('Background check Status.create')">
       <!-- Add Input-->
       <div class="mb-4">
           <div class="custom-settings-add-input input-group">
@@ -25,7 +25,7 @@
               </tr>
           </thead>
           <tbody>
-            @if(!rbac.allowedToAccess('Background check Status.View')) {
+            @if(rbac.allowedToAccess('Background check Status.view')) {
               @for (back of BackgroundCheckDetail; track $index) {
               <tr>
                   <td class="w-75">{{ back.backgroundcheckstatus1}}</td>
@@ -33,12 +33,12 @@
                       <div class="d-flex gap-4">
                           <!--Update-->
                           <div>
-                              <a (click)="openupdate(back)" *ngIf="!rbac.allowedToAccess('Background check Status.Update')"><img src="/settings-icon/edit.png" alt="edit icon"
+                              <a (click)="openupdate(back)" *ngIf="rbac.allowedToAccess('Background check Status.update')"><img src="/settings-icon/edit.png" alt="edit icon"
                                       class="settings-common-icon"></a>
                           </div>
                           <!--Delete-->
                           <div>
-                              <a (click)="opendelete(back)" *ngIf="!rbac.allowedToAccess('Background check Status.Update')"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                              <a (click)="opendelete(back)" *ngIf="rbac.allowedToAccess('Background check Status.update')"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                       class="settings-common-icon"></a>
                           </div>
                       </div>

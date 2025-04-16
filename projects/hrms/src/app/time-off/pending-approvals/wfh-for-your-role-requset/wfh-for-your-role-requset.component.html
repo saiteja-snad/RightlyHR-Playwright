@@ -24,7 +24,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!rbac.allowedToAccess('Workfromhome Tab.View')) {
+                    @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
                     @if (((leaves | async) ?? []).length > 0) {
                         @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ;  track leave.approvalHeader.id){
                     <tr>
@@ -63,16 +63,16 @@
                                     </a>
                                     <ul class="dropdown-menu py-0">
                                         @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="openApproveModal(approval,leave)" *ngIf="!rbac.allowedToAccess('Workfromhome Tab.Update')"><a class="dropdown-item"><i
+                                        <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')"><a class="dropdown-item"><i
                                                     class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                         </li>
                                         }
                                         @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="handleProcess(leave)" *ngIf="!rbac.allowedToAccess('Workfromhome Tab.Update')"><a class="dropdown-item"><i
+                                        <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')"><a class="dropdown-item"><i
                                                     class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                         </li>
                                         }
-                                        <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="!rbac.allowedToAccess('Workfromhome Tab.Delete')"><a class="dropdown-item"><i
+                                        <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.delete')"><a class="dropdown-item"><i
                                                     class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a></li>
                                     </ul>
                                 </div>

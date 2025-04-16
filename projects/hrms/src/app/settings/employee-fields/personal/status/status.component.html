@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="statusForm" (ngSubmit)="onSubmit()" *ngIf="!rbac.allowedToAccess('Status.Create')">
+    <form [formGroup]="statusForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Status.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -25,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if(!rbac.allowedToAccess('Status.View')) {
+                @if(rbac.allowedToAccess('Status.view')) {
                 @for (status of statusdetails; track $index) {
                 <tr>
                     <td class="w-75">{{status.statusname}}</td>
@@ -33,12 +33,12 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(status)" *ngIf="!rbac.allowedToAccess('Status.Update')"><img src="/settings-icon/edit.png" alt="edit icon"
+                                <a (click)="openupdate(status)" *ngIf="rbac.allowedToAccess('Status.update')"><img src="/settings-icon/edit.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(status)" *ngIf="!rbac.allowedToAccess('Status.Delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                <a (click)="opendelete(status)" *ngIf="rbac.allowedToAccess('Status.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                         </div>

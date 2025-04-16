@@ -21,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!rbac.allowedToAccess('Permissions.View')) {
+                    @if (rbac.allowedToAccess('Permissions.view')) {
                     @if ((probationDetails).length > 0) {
                     @for (item of ((probationDetails ) ?? []) | probationdetails : searchValue; track
                     item.approvalHeader.id){
@@ -49,10 +49,10 @@
                             <div>
                                 <button class="custom-btn btn-primary"
                                     (click)="handleRequests(item); getComments(item.entity?.prApproverComments)"
-                                    *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage && !rbac.allowedToAccess('Permissions.View')"
+                                    *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage && rbac.allowedToAccess('Permissions.view')"
                                     data-bs-toggle="modal" data-bs-target="#ProbationProcess">Process</button>
                                 <button class="custom-btn btn-primary"
-                                    *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage && !rbac.allowedToAccess('Permissions.View')"
+                                    *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage && rbac.allowedToAccess('Permissions.view')"
                                     [routerLink]="['/time-off/pending-approvals/assessmentform']"
                                     (click)="setData(item)">Assessment form</button>
 

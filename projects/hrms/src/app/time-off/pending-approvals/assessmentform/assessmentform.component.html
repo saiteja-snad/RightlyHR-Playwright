@@ -4,7 +4,7 @@
 
 <div class="assessmentform-container pt-3">
   <div>
-    @if (!rbac.allowedToAccess('Regularization Tab.View')) {
+    @if (rbac.allowedToAccess('Regularization Tab.view')) {
     <div *ngIf="dynamicFormHeader.length > 0 , else nodata">
       <div class="container-fluid page-div" id="content">
         <div class="text-center mt-4">

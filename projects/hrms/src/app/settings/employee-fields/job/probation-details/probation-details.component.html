@@ -1,4 +1,4 @@
-<button type="button" (click)="openDialog()" class="custom-btn btn-primary" *ngIf="!rbac.allowedToAccess('Probation Details.Create')">{{'Add' | translate}}</button>
+<button type="button" (click)="openDialog()" class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Probation Details.create')">{{'Add' | translate}}</button>
 
 <!-- Add Popup Modal -->
 
@@ -77,7 +77,7 @@
           </tr>
         </thead>
         <tbody>
-          @if (!rbac.allowedToAccess('Probation Details.View')) {
+          @if (rbac.allowedToAccess('Probation Details.view')) {
           <ng-container>
             <tr *ngFor="let pro of ProbationDetails">
               <td>{{pro.value}}</td>
@@ -88,12 +88,12 @@
                     <i class="bi bi-three-dots-vertical"></i>
                   </span>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    <li (click)="openupdateDialog(pro)" *ngIf="!rbac.allowedToAccess('Probation Details.Update')">
+                    <li (click)="openupdateDialog(pro)" *ngIf="rbac.allowedToAccess('Probation Details.update')">
                       <a class="dropdown-item">
                         <i class="bi bi-pencil me-2"></i>Update
                       </a>
                     </li>
-                    <li (click)="opendelete(pro)" *ngIf="!rbac.allowedToAccess('Probation Details.Delete')">
+                    <li (click)="opendelete(pro)" *ngIf="rbac.allowedToAccess('Probation Details.delete')">
                       <a class="dropdown-item">
                         <i class="bi bi-trash3 me-2"></i>Delete
                       </a>

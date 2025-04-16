@@ -23,7 +23,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!rbac.allowedToAccess('Compoff Tab.View')) {
+                    @if (rbac.allowedToAccess('Compoff Tab.view')) {
                     <ng-container *ngIf="leaves!.length > 0; else noDataTemplate">
                     <tr *ngFor="let leave of leaves; let i = index">
                         <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
@@ -74,16 +74,16 @@
                             </a>
                             <ul class="dropdown-menu py-0">
                                 @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                <li (click)="openApproveModal(approval,leave)" *ngIf="!rbac.allowedToAccess('Compoff Tab.Update')"><a class="dropdown-item"><i
+                                <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')"><a class="dropdown-item"><i
                                             class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                 </li>
                                 }
                                 @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                                <li (click)="handleProcess(leave)" *ngIf="!rbac.allowedToAccess('Compoff Tab.Update')"><a class="dropdown-item"><i
+                                <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')"><a class="dropdown-item"><i
                                             class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                 </li>
                                 }
-                                <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="!rbac.allowedToAccess('Compoff Tab.Delete')"><a class="dropdown-item"><i
+                                <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.delete')"><a class="dropdown-item"><i
                                             class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a></li>
                             </ul>
                         </div>

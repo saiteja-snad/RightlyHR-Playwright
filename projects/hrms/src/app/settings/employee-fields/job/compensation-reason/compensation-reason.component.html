@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="CompensationForm" (ngSubmit)="addReason()" *ngIf="!rbac.allowedToAccess('Compensation Reason.Create')">
+    <form [formGroup]="CompensationForm" (ngSubmit)="addReason()" *ngIf="rbac.allowedToAccess('Compensation Reason.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -25,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (!rbac.allowedToAccess('Compensation Reason.View')) {
+                @if (rbac.allowedToAccess('Compensation Reason.view')) {
                 @for (reason of CompensationReason; track $index) {
                 <tr>
                     <td class="w-75">{{ reason.reason}}</td>
@@ -33,12 +33,12 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(reason)" *ngIf="!rbac.allowedToAccess('Compensation Reason.Update')"><img src="/settings-icon/edit.png" alt="edit icon"
+                                <a (click)="openupdate(reason)" *ngIf="rbac.allowedToAccess('Compensation Reason.update')"><img src="/settings-icon/edit.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(reason)" *ngIf="!rbac.allowedToAccess('Compensation Reason.Delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                <a (click)="opendelete(reason)" *ngIf="rbac.allowedToAccess('Compensation Reason.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                         </div>

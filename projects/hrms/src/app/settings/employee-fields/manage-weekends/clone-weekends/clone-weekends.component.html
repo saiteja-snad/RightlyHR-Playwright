@@ -155,10 +155,13 @@
 
 <ng-template #confirmation let-modal>
     <div class="result-popup-content text-center" ngbAutofocus>
-        <p class="confirmation-text mb-5">Are you sure want to close?</p>
-        <div class="d-flex justify-content-center w-100 gap-5">
-            <button class="custom-btn btn-secondary w-50 py-3 px-5" (click)="modal.dismiss()">No</button>
-            <button class="custom-btn btn-primary w-50 py-3 px-5" (click)="closeWeekend()">Yes</button>
+        <div class="mt-2">
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+            <p class="confirmation-text">{{'Are you sure want to close?'|translate}}</p>
+        </div>
+        <div class="d-flex gap-5 pt-2 w-100">
+            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">No</button>
+            <button class="custom-btn btn-primary w-50  py-2" (click)="closeWeekend()">Yes</button>
         </div>
     </div>
 </ng-template>

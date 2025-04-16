@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ManageDST } from '../dsts.modal';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { CommonModule } from '@angular/common';
+import { FormGroup } from '@angular/forms';
 
 
 @Component({
@@ -38,13 +39,22 @@ export class PublishedDstsComponent implements OnInit,OnDestroy{
     }
   
     getAllDayLight() {
-       this.http.getData('OrgDayLight/getAll').subscribe({
+       this.http.getData('OrgDayLight/getAll').pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           console.log(data);
           this.allDSTs = data;
           this.filterPublishedDSTs();
         }
       })
+    }
+
+    navigateToCloneComponent(publishedDST:ManageDST): void {
+      localStorage.setItem('cloneDST', JSON.stringify(publishedDST));
+      this.router.navigate(['/settings/employee-fields/clone-dst']);
+    }
+    navigateToViewDSTComponent(publishedDST:ManageDST): void {
+      localStorage.setItem('publishedDST', JSON.stringify(publishedDST));
+      this.router.navigate(['/settings/employee-fields/view-dst']);
     }
   
   

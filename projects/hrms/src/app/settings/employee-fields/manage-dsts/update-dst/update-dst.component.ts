@@ -230,7 +230,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       console.log('holidays payload:', holidays);
 
     this.http
-      .postdata('OrgDayLight/Update/Shift/OrgShift', holidays)
+      .postdata('OrgDayLight/Update/Shift/OrgShift', holidays).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
@@ -256,8 +256,31 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     }
   }
 
+  publishDST() {
+    let publishItem = {
+      Category: 'Daylightsaving',
+      refentityId: this.pendingDST?.dayLight[0].headerId
+    }
+   this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).pipe(takeUntil(this.destroy$))
+   .subscribe({
+      next: (respnose: any) => {
+        this.sharedModalService.openSuccessModal('Manage DST Published Successfully');
+        this.navigate();
+      },error:(err) =>  {
+        if(err.error){
+          this.sharedModalService.openErrorModal(err.error);
+        }
+        this.sharedModalService.openErrorModal('Error occured while publishing manage dst')
+      },
+    })
+  }
   navigate(): void {
     this.router.navigate(['/settings/employee-fields/manage-dsts']);
+  }
+
+  navigateToCloneComponent(): void {
+    localStorage.setItem('cloneDST', JSON.stringify(this.pendingDST));
+    this.router.navigate(['/settings/employee-fields/clone-dst']);
   }
 
   ngOnDestroy(): void {

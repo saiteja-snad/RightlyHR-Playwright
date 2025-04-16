@@ -122,7 +122,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
       };
       console.log(payload);
       this.spinnerLoader = true;
-      this.http.postdata('AttendanceRequests', payload).subscribe({
+      this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // this.getCompOffRequest();
           this.modalService.dismissAll();

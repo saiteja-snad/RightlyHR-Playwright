@@ -10,10 +10,11 @@ import { ManageHolidaysTabsComponent } from "../../../shared/manage-holidays-tab
 import { ManagePoliciesTabsComponent } from "../../../shared/manage-policies-tabs/manage-policies-tabs.component";
 import { SettingsExpenesConfigurtionsTabsComponent } from "../../../shared/settings-expenes-configurtions-tabs/settings-expenes-configurtions-tabs.component";
 import { ManageWeekendsTabsComponent } from "../../../shared/settings-tabs/manage-weekends-tabs/manage-weekends-tabs.component";
+import { ManageDstTabsComponent } from "../../../shared/settings-tabs/manage-dst-tabs/manage-dst-tabs.component";
 
 @Component({
   selector: 'app-employee-fields-layout',
-  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent, ManageShiftsTabsComponent, ManageHolidaysTabsComponent, ManagePoliciesTabsComponent, SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent],
+  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent, ManageShiftsTabsComponent, ManageHolidaysTabsComponent, ManagePoliciesTabsComponent, SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })

@@ -232,7 +232,6 @@ export class CloneDstComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.sharedModalService.openSuccessModal(
             'Manage DST added Successfully'
           );
@@ -248,8 +247,6 @@ export class CloneDstComponent implements OnInit, OnDestroy {
   }
 
   UpdateDST(dstForm: FormGroup) {
-    console.log(dstForm);
-
     if (dstForm.valid) {
       const formValue = dstForm.value;
 

@@ -40,7 +40,6 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.allDSTs = data;
           this.filterPendingDSTs();
         },

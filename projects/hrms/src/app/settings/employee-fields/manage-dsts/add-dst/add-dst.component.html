@@ -96,9 +96,11 @@
                     <tbody formArrayName="momentRows">
                         <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
                             <td><input type="date" class="form-control" formControlName="startDate"
-                                    onkeydown="return false" /></td>
+                                    onkeydown="return false" [min]="minDate"
+                                    (ngModelChange)="onStartDateChange($event, row)" [min]="minDate" [max]="maxDate" /></td>
                             <td><input type="date" class="form-control" formControlName="endDate"
-                                    onkeydown="return false" /></td>
+                                    onkeydown="return false"  [min]="minDate" [max]="maxDate"
+                                    (ngModelChange)="onEndDateChange($event, row)"/></td>
                             <td class="custom-p-select-content">
                                 <p-select [options]="momentType" [showClear]="false" formControlName="momentType"
                                     placeholder="Select type" class="form-select custom-select">

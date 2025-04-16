@@ -190,8 +190,6 @@ export class ViewDstComponent implements OnInit, OnDestroy {
               );
             });
           }
-
-          console.log('Form Data', this.dstForm.value);
         },
         error: (err) => console.error('Error fetching locations:', err),
       });

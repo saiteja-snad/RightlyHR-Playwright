@@ -36,6 +36,11 @@ export class AddDstComponent implements OnInit, OnDestroy {
   shiftDetails = [] as IShiftHeader[];
   momentType: string[] = ['Forward', 'Backward'];
   durations: number[] = [1, 1.5, 2, 2.5, 3];
+  blockedDates: any = [];
+  minDate!: string | null;
+  maxDate!: string | null;
+  currentYear: number = new Date().getFullYear();
+  selectedYear = this.currentYear;
 
   constructor(
     private fb: FormBuilder,
@@ -47,6 +52,8 @@ export class AddDstComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.yearsList = this.getYears();
+    this.minDate = `${this.selectedYear}-01-01`;
+    this.maxDate = `${this.selectedYear}-12-31`;
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.inititializeForm();
     this.getAllLocations();
@@ -119,6 +126,43 @@ export class AddDstComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  isBlocked(date: any) {
+    for (let range of this.blockedDates) {
+      if (date >= range.startDate && date <= range.endDate) {
+        return true;
+      }
+    }
+    return false;
+  }
+  onStartDateChange(event: any, row: any) {
+    this.minDate = event;
+    if (this.isBlocked(event)) {
+     
+      row.startDate = '';
+      this.sharedModalService.openErrorModal('The selected start date is within a range that has already been selected. Please choose a different date.');
+    } else {
+      if (row.endDate) {
+        this.blockedDates.push({ startDate: row.startDate, endDate: row.endDate });
+      } else {
+        this.blockedDates.push({ startDate: row.startDate, endDate: row.startDate });
+      }
+    }
+  }
+
+  onEndDateChange(event: any, row: any) {
+    if (this.isBlocked(event)) {
+      row.endDate = '';
+      this.sharedModalService.openErrorModal('The selected end date is within a range that has already been selected. Please choose a different date.');
+    } else {
+      if (row.startDate) {
+        this.blockedDates.push({ startDate: row.startDate, endDate: row.endDate });
+      } else {
+        this.blockedDates.push({ startDate: row.endDate, endDate: row.endDate });
+      }
+    }
+  }
+
   getAllShifts(subLocation: ISubLocation): void {
     const params = {
       locationId: subLocation.jobLocationId,
@@ -169,15 +213,11 @@ export class AddDstComponent implements OnInit, OnDestroy {
         duration: row.duration,
       })),
     };
-
-    console.log('Payload:', manageDST);
-
     this.http
       .postdata('OrgDayLight/Post/Shift/OrgShift', manageDST)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.sharedModalService.openSuccessModal(
             'Manage DST added Successfully'
           );

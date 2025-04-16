@@ -1,0 +1,18 @@
+<div class="component-side-nav-tabs-container py-3">
+    <ul class="nav flex-column gap-2" >
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/regularization/waiting-for-approval']"   routerLinkActive="active-nav-link">Waiting For Approval ({{waitingForApprovalregularizationCount}})</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/regularization/approved']"  routerLinkActive="active-nav-link">Approved ({{approvalregularizationRequestsCount}})</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/regularization/process']"  routerLinkActive="active-nav-link">Process ({{processregularizationRequestsCount}})</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/regularization/rejected']"  routerLinkActive="active-nav-link">Rejected ({{rejectedregularizationRequestsCount}})</a>
+      </li>
+      
+    </ul>
+
+  </div>

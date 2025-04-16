@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { subLocationData } from './sub-location-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-sub-location',
@@ -33,7 +34,8 @@ export class SubLocationComponent {
     private fb: FormBuilder, 
     private http: HttpService, 
     private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }

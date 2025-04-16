@@ -1,4 +1,4 @@
-<button type="button" (click)="openDialog()" class="custom-btn btn-primary">{{'Add' | translate}}</button>
+<button type="button" (click)="openDialog()" class="custom-btn btn-primary" *ngIf="!rbac.allowedToAccess('Grade Details.Create')">{{'Add' | translate}}</button>
 
 <!-- Add Popup Modal -->
 
@@ -40,13 +40,6 @@
               {{ 'Job Grade' | translate }} <span class="error-msg">*</span>
             </label>
             <div class="custom-p-select-content">
-              <!-- <select class="form-control custom-input" formControlName="gradeId">
-                <option value="" disabled selected>Please select gradename</option>
-                <option *ngFor="let grade of gradedetails" [value]="grade.gradeId">
-                  {{ grade.gradeName }}
-                </option>
-              </select> -->
-
             <input type="text"class="form-control custom-input" formControlName="jobgrade" placeholder="Please enter job grade" 
             (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" />
             </div>
@@ -81,6 +74,7 @@
         </thead>
         <tbody>
           <ng-container>
+            @if (!rbac.allowedToAccess('Grade Details.View')) {
             <tr *ngFor="let roles of gradedetails"> 
               <td>{{roles.gradeName}}</td>
               <td>{{roles.jobGrade}}</td>
@@ -90,12 +84,12 @@
                     <i class="bi bi-three-dots-vertical"></i>
                   </span>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    <li (click)="openupdateDialog(roles)">
+                    <li (click)="openupdateDialog(roles)" *ngIf="!rbac.allowedToAccess('Grade Details.Update')">
                       <a class="dropdown-item">
                         <i class="bi bi-pencil me-2"></i>Update
                       </a>
                     </li>
-                    <li (click)="opendelete(roles)">
+                    <li (click)="opendelete(roles)" *ngIf="!rbac.allowedToAccess('Grade Details.Delete')">
                       <a class="dropdown-item">
                         <i class="bi bi-trash3 me-2"></i>Delete
                       </a>
@@ -104,6 +98,7 @@
                 </div>
               </td>
             </tr>
+          }
           </ng-container>
           <!-- No Data Found Template -->
           <!-- <ng-template #noDataTemplate>

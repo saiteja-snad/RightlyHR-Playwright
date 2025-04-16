@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="PaytypeForm" (ngSubmit)="addPaytype()">
+    <form [formGroup]="PaytypeForm" (ngSubmit)="addPaytype()" *ngIf="!rbac.allowedToAccess('Paytype.Create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -32,12 +32,12 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(type)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                <a (click)="openupdate(type)" *ngIf="!rbac.allowedToAccess('Paytype.Update')"><img src="/settings-icon/edit.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(type)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                <a (click)="opendelete(type)" *ngIf="!rbac.allowedToAccess('Paytype.Delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                         </div>

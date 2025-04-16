@@ -1,4 +1,4 @@
-<button type="button" (click)="openDialog()" class="custom-btn btn-primary">{{'Add' |
+<button type="button" (click)="openDialog()" class="custom-btn btn-primary" *ngIf="!rbac.allowedToAccess('Pre Onboard Documents.Create')">{{'Add' |
     translate}}</button>
 <!-- Add Popup Modal -->
 <ng-template #addpopup let-modal>
@@ -107,8 +107,9 @@
                 </tr>
             </thead>
             <tbody>
+                @if (!rbac.allowedToAccess('Pre Onboard Documents.View')) {
                 <ng-container *ngFor="let preonboarding of preonboardingDetails">
-                    <tr *ngIf="rbac.allowedToAccess('Pre OnBoarding Documentes.view')">
+                    <tr>
                         <td>{{ preonboarding.documentName }}</td>
 
                         <!-- isAppilicable logic -->
@@ -138,12 +139,12 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openupdateDialog(preonboarding)">
+                                    <li (click)="openupdateDialog(preonboarding)" *ngIf="!rbac.allowedToAccess('Pre Onboard Documents.Update')">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
-                                    <li (click)="opendelete(preonboarding)">
+                                    <li (click)="opendelete(preonboarding)" *ngIf="!rbac.allowedToAccess('Pre Onboard Documents.Delete')">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
@@ -153,6 +154,7 @@
                         </td>
                     </tr>
                 </ng-container>
+            }
             </tbody>
         </table>
     </div>

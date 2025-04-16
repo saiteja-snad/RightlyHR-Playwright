@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-degree',
   imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
@@ -23,7 +24,14 @@ export class DegreeComponent implements OnInit {
   subscription!: Subscription;
   degree= {} as any;
 
-constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder, public formValidations:FormValidationsService) { }
+constructor(
+  private modalService: NgbModal,
+  private conformationPopup: OpenModalService,
+  private http: HttpService, 
+  private fb:FormBuilder, 
+  public formValidations:FormValidationsService,
+  public rbac:RbacService,
+) { }
   
 degreeFrom!: FormGroup;
   updateForm!: FormGroup;

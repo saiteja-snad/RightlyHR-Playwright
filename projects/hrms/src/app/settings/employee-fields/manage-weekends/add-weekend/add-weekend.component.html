@@ -1,0 +1,75 @@
+<div class="custom-main-component-container w-100">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <p class="component-header mb-0" (click)="navigate()">
+            <i class="bi bi-arrow-90deg-left me-2"></i>Add Weekends
+          </p>
+        </div>
+    </div>
+
+    <div class="custom-setting-right-content w-100 p-3">
+        <!--Select dropdown Content-->
+        <div>
+
+        </div>
+
+        <!--table Content-->
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Days</th>
+                        <th>1st</th>
+                        <th>2nd</th>
+                        <th>3rd</th>
+                        <th>4th</th>
+                        <th>5th</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="custom-p-select-content">
+                                <p-select   optionLabel="designationName"
+                                    [filter]="true" filterBy="designationName" [showClear]="true"
+                                     placeholder="Please select designation"
+                                    formControlName="designation" class="custom-select w-100">
+                                </p-select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-end gap-3 py-3">
+            <button class="custom-btn btn-secondary px-4">Cancel</button>
+            <button class="custom-btn btn-primary px-4">Save</button>
+        </div>
+    </div>
+</div>
+

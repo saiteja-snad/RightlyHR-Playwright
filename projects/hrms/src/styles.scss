@@ -408,7 +408,7 @@ body {
     cursor: pointer;
 }
 
-.omponent-edit-icon {
+.component-edit-icon {
     font-size: var(--fontsize16);
 }
 
@@ -419,6 +419,19 @@ a {
 
 .cursor {
     cursor: pointer;
+}
+
+.custom-add-btn {
+    font-weight: 700;
+    font-size: var(--fontsize16);
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #305889;
+    cursor: pointer;
+
+    .plus-icon{
+        font-size: var(--fontsize18) !important;
+    }
 }
 
 // button stylings

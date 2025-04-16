@@ -37,8 +37,9 @@ export default [
             { path: 'notice', loadComponent: () => import('./job/notice/notice.component').then((m) => m.NoticeComponent) },
             { path: 'grade', loadComponent: () => import('./job/grade/grade.component').then((m) => m.GradeComponent) },
             { path: 'serving-period', loadComponent: () => import('./job/serving-period/serving-period.component').then((m) => m.ServingPeriodComponent) },
-            { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => (m.ProbationDetailsComponent)) },
+            { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent) },
             { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent) },
+            { path: 'pre-on-boarding-documents', loadComponent: () => import('./job/pre-on-boarding-documents/pre-on-boarding-documents.component').then((m) => m.PreOnBoardingDocumentsComponent) }
         ]
     },
     {
@@ -79,5 +80,23 @@ export default [
         ]
     },
     { path: 'no-due-clearnce', loadComponent: () => import('./no-due-clearance-configurations/no-due-clearance-configurations.component').then((m) => m.NoDueClearanceConfigurationsComponent) },
-
+    {
+        path: 'manage-weekends',
+        children: [
+            { path: '', redirectTo: 'pending-for-submission', pathMatch: 'full' },
+            { path: 'pending-for-submission', loadComponent: () => import('./manage-weekends/pending-weekends/pending-weekends.component').then((m) => m.PendingWeekendsComponent) },
+            { path: 'published-weekends', loadComponent: () => import('./manage-weekends/published-weekends/published-weekends.component').then((m) => m.PublishedWeekendsComponent) },
+        ]
+    },
+    { path: 'add-dst', loadComponent: () => import('./manage-dsts/add-dst/add-dst.component').then((m) => m.AddDstComponent) },
+    { path: 'update-dst', loadComponent: () => import('./manage-dsts/update-dst/update-dst.component').then((m) => m.UpdateDstComponent) },
+    {
+        path: 'manage-dsts',
+        children: [
+            { path: '', redirectTo: 'pending-for-submission', pathMatch: 'full' },
+            { path: 'pending-for-submission', loadComponent: () => import('./manage-dsts/pending-dsts/pending-dsts.component').then((m) => m.PendingDstsComponent) },
+            { path: 'published-dsts', loadComponent: () => import('./manage-dsts/published-dsts/published-dsts.component').then((m) => m.PublishedDstsComponent) },
+        ]
+    },
+    { path: 'add-weekends', loadComponent: () => import('./manage-weekends/add-weekend/add-weekend.component').then((m) => m.AddWeekendComponent) },
 ] as Route[];

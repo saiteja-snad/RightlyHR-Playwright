@@ -1,0 +1,82 @@
+<div>
+    <div class="custom-table-content ">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Requested Date</th>
+                    <th>Permission Date</th>
+                    <th>Duration(In Hours)</th>
+                    <th>Reason</th>
+                    <th>Approval Reason</th>
+                    <th>Permission Type</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="approvedPerimisions!.length > 0; else noDataTemplate">
+                <tr *ngFor="let permissionRequest of approvedPerimisions; let i = index">
+                    <td>{{permissionRequest.createdDate | dateformat}}</td>
+                    <td>{{permissionRequest.requestedDate | dateformat}}</td>
+                    <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+                    <td>
+                        <div>
+                            <span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <div>
+                                        <p class="mb-0">{{permissionRequest.notes}} </p>
+                                    </div>
+                                </ng-template>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <div>
+                                        <p class="mb-0">{{permissionRequest.regularizationApproverComments[0].comments}} </p>
+                                    </div>
+                                </ng-template>
+                            </span>
+                        </div>
+                    </td>
+                    <td>{{permissionRequest.type}}</td>
+                    <td>{{permissionRequest.status}}</td>
+                </tr>
+            </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                      <td colspan="6">
+                        <app-no-data-found></app-no-data-found>
+                      </td>
+                    </tr>
+                  </ng-template>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-content pt-2 w-100">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <!-- Dropdown for Rows per Page -->
+            <div class="d-flex align-items-center gap-3 p-2">
+                <!-- Bootstrap Select -->
+                <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onRowsChange()">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                    </option>
+                </select>
+                <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                    totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+            </div>
+
+            <!-- Pagination -->
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+</div>

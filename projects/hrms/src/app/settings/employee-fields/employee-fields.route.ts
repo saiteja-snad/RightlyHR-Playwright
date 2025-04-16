@@ -73,8 +73,8 @@ export default [
         path: 'manage-holidays',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
-            { path: 'pending-for-submit', loadComponent: () => import('./manage-holidays/published-holidays/published-holidays.component').then((m) => m.PublishedHolidaysComponent) },
-            { path: 'published-holidays', loadComponent: () => import('./manage-holidays/pending-holidays/pending-holidays.component').then((m) => m.PendingHolidaysComponent) },
+            { path: 'pending-for-submit', loadComponent: () => import('./manage-holidays/pending-holidays/pending-holidays.component').then((m) => m.PendingHolidaysComponent) },
+            { path: 'published-holidays', loadComponent: () => import('./manage-holidays/published-holidays/published-holidays.component').then((m) => m.PublishedHolidaysComponent) },
         ]
     },
     { path: 'no-due-clearnce', loadComponent: () => import('./no-due-clearance-configurations/no-due-clearance-configurations.component').then((m) => m.NoDueClearanceConfigurationsComponent) },

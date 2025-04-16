@@ -41,9 +41,10 @@ export class PendingApprovalsTabsComponent {
     { label: 'WFH', route: '/time-off/pending-approvals/wfh', moduleId: environment.wfhModuleId },
     { label: 'Comp-Off', route: '/time-off/pending-approvals/comp-off', moduleId: environment.compoffModuleId },
     { label: 'Permissions', route: '/time-off/pending-approvals/permissions', moduleId: environment.permissionsModuleId },
+    { label: 'Regularization', route: '/time-off/pending-approvals/regularization', moduleId: environment.attendanceRegularizationModuleId },
     {
       label: 'Attendance Regularization',
-      route: '/time-off/pending-approvals/attendance-request',
+      route: '/time-off/pending-approvals/regularization-request',
       moduleId: environment.attendanceRegularizationModuleId,
     },
     {

@@ -10,7 +10,7 @@ import { RouterModule } from '@angular/router';
 })
 export class ManageWeekendsTabsComponent {
   navLinks = [
-    { label: 'Pending for submission', route: '/settings/employee-fields/manage-weekends/pending-for-submission' },
-    { label: 'Published', route: '/settings/employee-fields/manage-weekends/published-weekends' },
+    { label: 'Pending for submission', route: '/settings/employee-fields/manage-dst/pending-for-submission' },
+    { label: 'Published', route: '/settings/employee-fields/manage-dsts/published-weekends' },
   ];
 }

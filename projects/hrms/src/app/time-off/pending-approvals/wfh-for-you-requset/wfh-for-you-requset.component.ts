@@ -18,7 +18,7 @@ import { LeaveApproval, LeaveApproverComment } from '../../../Interfaces/pending
 import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
 
@@ -89,7 +89,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=EMP`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.leaves.next(response.data);
@@ -134,7 +134,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -172,7 +172,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -209,7 +209,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
           this.modalService.dismissAll();

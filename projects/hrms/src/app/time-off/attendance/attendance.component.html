@@ -69,7 +69,7 @@
               </p-dropdown>
             </div>
         }
-            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdate.employeeId)">
+            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId)">
               <i class="bi bi-plus me-2"></i>My Attendance
             </button>
           </div>
@@ -103,12 +103,14 @@
                                     <td>{{(item.lastLogout|dateformat)??'-'}}</td>
                                     <td>{{item.duration?.totalDuration??'-'}}</td>
                                     <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
-                                        @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdate.employeeId){
-                                           <a href="" class="ms-2"><u>Leave</u> </a>
-                                           @if(this.rbac.allowedToAccess('Attendnace Regularization Button.view')){
-                                            <a href="" class="ms-2"><u>Regularization</u> </a>                 
-                                           }
+                                        @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
+                                           <a  class="ms-2"><u>Leave</u> </a>
                                         }
+                                           @if(item.duration.totalDuration!='00:00:00' && 
+                                            ( (item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && (item.duration.totalDuration|tohours)< shiftDetails.fullDayMinHrs) 
+                                           &&currentMonth==selectedMonth&&this.rbac.allowedToAccess('Attendance Regularization Button.view')){
+                                            <a class="ms-2" (click)="openModal(raiseregularization)"><u>Regularization</u> </a>                 
+                                           }
                                     </td>
                                     <td>
                                         <div>
@@ -155,17 +157,103 @@
                     <ng-container *ngIf="statusCounts$ | async as statusCounts">
                         @for (status of statusCounts | keyvalue; track $index) {
                           <tr>
-                            <td>{{ status.key }}</td>
+                            <td>{{ status.key.toUpperCase() }}</td>
                             <td>{{ status.value }}</td>
                           </tr>
                         }
                       </ng-container>
-                      <ng-container *ngIf="!(statusCounts$ | async)">
+                      @if (!(statusCounts$ | async)) {
                         <tr><td>No data available</td></tr>
-                      </ng-container>
+                      }
                  </tbody>
                 </table>
             </div>
         </div>
-    </div>
+    </div><ng-template #raiseregularization let-modal>
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-4">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">Request Premission</p>
+                </div>
+                <div>
+                    <a (click)="modal.dismiss();this.regularizationForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-4">
+                <form [formGroup]="regularizationForm" (ngSubmit)="applyRgularization(regularizationForm)">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="Date" class="form-label custom-label mb-2">Date<span
+                                    class="text-danger">*</span></label>
+                            <input type="date" class="form-control custom-input" formControlName="permissionDate"  id="Date"
+                                onkeydown="return false" placeholder="Select Date" />
+                                <div *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid" class="error-msg">
+                                    Permission Date is required.
+                                  </div>
+    
+                        </div>
+                    </div>
+                    <div class="row">
+    
+                        <div class="col-md-6 mb-3">
+                            <label for="duration" class="form-label custom-label mb-2">Duration<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="duration" optionLabel="name"  id="duration" formControlName="duration" placeholder="Please select duration"
+                                class="form-select custom-select" />
+                                <div *ngIf="regularizationForm.get('duration')?.touched && regularizationForm.get('duration')?.invalid" class="error-msg">
+                                    Duration is required.
+                                  </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="leaveType" class="form-label custom-label mb-2">Regularization Type<span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="regularizationTypes" optionLabel="name" formControlName="leaveType"
+                                    placeholder="Please select regularization type" id="leaveType" class="form-select custom-select" />
+                                    <div *ngIf="regularizationForm.get('leaveType')?.touched && regularizationForm.get('leaveType')?.invalid" class="error-msg">
+                                        Regularization Type is required.
+                                      </div>
+                            </div>
+                        </div>
+    
+                    </div>
+    
+    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="reason" class="form-label custom-label mb-2">Reason <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control custom-input" formControlName="reason" id="reason"  rows="3"
+                            placeholder="Type here" maxlength="250"
+                                placeholder="Type Here"></textarea>
+                                <div class="text-end small text-muted">
+                                    {{ regularizationForm.get('reason')?.value?.length || 0 }}/250
+                                </div>
+                                <div class="error-msg" *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
+                                    <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
+                                      Reason is required.
+                                    </div>
+                                    <div *ngIf="regularizationForm.get('reason')?.errors?.['maxlength']">
+                                        Reason cannot exceed 250 characters.
+                                    </div>
+                                  </div>
+                        </div>
+    
+                    </div>
+                    <div class="d-flex justify-content-end gap-3 mt-4">
+                        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();this.regularizationForm.reset()">Close</button>
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="regularizationForm.invalid || spinnerLoader">
+                             @if(spinnerLoader){
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span >{{'Loading..'}}...</span>
+                            }@else {
+                            <span>{{'Request'}}</span>
+                            }</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </ng-template>
 </div>

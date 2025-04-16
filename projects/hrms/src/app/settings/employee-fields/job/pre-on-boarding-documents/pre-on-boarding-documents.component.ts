@@ -8,6 +8,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { PreOnBoardingDocumentsData } from './pre-on-boarding.model';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
     selector: 'app-pre-on-boarding-documents',
@@ -22,10 +23,14 @@ export class PreOnBoardingDocumentsComponent {
     preonboardingDetails = [] as any;
     isEditMode = false;
     selectedId: number | null = null;
+    displayforbothforfresher: number | null = null;
+    displayforbothforexperience: number | null = null;
+    displayforbothfortrainee: number | null = null;
     selectedDeleteRole: any = null;
     @ViewChild('addpopup') addpopup: any;
     @ViewChild('updatepopup') updatepopup: any;
     @ViewChild('deletepopup') deletepopup: any;
+    getid: any;
     AddForm!: FormGroup;
     updateForm!: FormGroup;
     constructor(
@@ -33,7 +38,8 @@ export class PreOnBoardingDocumentsComponent {
         private fb: FormBuilder,
         private http: HttpService,
         private conformationPopup: OpenModalService,
-        public formValidations: FormValidationsService
+        public formValidations: FormValidationsService,
+        public rbac: RbacService,
     ) {
 
     }
@@ -58,7 +64,7 @@ export class PreOnBoardingDocumentsComponent {
                 Validators.maxLength(100)
             ]]
         });
-        // this.getgradeid();
+        this.getid = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
         this.getPreonboarding();
     }
 
@@ -81,36 +87,64 @@ export class PreOnBoardingDocumentsComponent {
     }
    
     //ADD
+    // Click handlers (used for toggling logic and setting display flags)
+    onClickFresherToggle() {
+        const isChecked = this.AddForm.value.isApplicableFresher;
+        this.displayforbothforfresher = isChecked ? 0 : 1;
+        this.AddForm.patchValue({ isApplicableFresher: !isChecked });
+    }
+    
+    onClickExperiencedToggle() {
+        const isChecked = this.AddForm.value.isApplicableExperienced;
+        this.displayforbothforexperience = isChecked ? 0 : 1;
+        this.AddForm.patchValue({ isApplicableExperienced: !isChecked });
+    }
+    
+    onClickTraineeToggle() {
+        const isChecked = this.AddForm.value.isApplicableTrainee;
+        this.displayforbothfortrainee = isChecked ? 0 : 1;
+        this.AddForm.patchValue({ isApplicableTrainee: !isChecked });
+    }
+  
+  // Uncheck/reset logic when modal closes
+  uncheckMandatory() {
+    this.AddForm.patchValue({
+      isIdentityDocument: false,
+      isManadatory: false,
+      isApplicableExperienced: false,
+      isApplicableTrainee: false,
+      isApplicableFresher: false
+    });
+    this.displayforbothforfresher = null;
+    this.displayforbothforexperience = null;
+    this.displayforbothfortrainee = null;
+  }
     addPreonboarding(modal: any) {
-        // Determine isApplicable value based on checkboxes
-        let isApplicable = "0"; 
+        let isApplicable = "0";
+    
+        // Determine numeric mapping
+        const applicableCodes = [];
 
-        const isApplicableFresher = this.AddForm.value.isApplicableFresher;
-        const isApplicableTrainee = this.AddForm.value.isApplicableTrainee;
-        const isApplicableExperienced = this.AddForm.value.isApplicableExperienced;
+        if (this.AddForm.value.isApplicableFresher) applicableCodes.push("1");
+        if (this.AddForm.value.isApplicableExperienced) applicableCodes.push("2");
+        if (this.AddForm.value.isApplicableTrainee) applicableCodes.push("3");
 
-        // If any specific option is selected, create a comma-separated string
-        if (isApplicableFresher || isApplicableTrainee || isApplicableExperienced) {
-            const applicableValues = [];
-            if (isApplicableFresher) applicableValues.push("Fresher");
-            if (isApplicableTrainee) applicableValues.push("Trainee");
-            if (isApplicableExperienced) applicableValues.push("Experienced");
-
-            if (applicableValues.length > 0) {
-                isApplicable = applicableValues.join(",");
-            }
+        if (applicableCodes.length === 3) {
+        isApplicable = "4";
+        } else if (applicableCodes.length > 0) {
+        isApplicable = applicableCodes.join(",");
         }
-
+    
         const request: PreOnBoardingDocumentsData = {
             documentName: this.AddForm.value.PreOnboardDocuments.trim(),
-            createdBy: 12443,  // You might want to get this from your user session
+            createdBy: this.getid.employeeId,
             isAppilicable: isApplicable,
             isDeleted: false,
             isIdentityDocument: this.AddForm.value.isIdentityDocument,
             isManadatory: this.AddForm.value.isManadatory,
-            updatedBy: 12443   // You might want to get this from your user session
+            updatedBy: this.getid.employeeId
         };
-
+    
         this.subscription = this.http.postdata('OnboardingDocumentsList', request).subscribe({
             next: () => {
                 this.getPreonboarding();
@@ -126,6 +160,7 @@ export class PreOnBoardingDocumentsComponent {
     }
 
     close(modal: any) {
+        this.uncheckMandatory();
         modal.close();
     }
 
@@ -145,7 +180,7 @@ export class PreOnBoardingDocumentsComponent {
     //  UPDATE
     updatePreOnboarding(modal: any) {
         if (this.updateForm.valid && this.selectedId) {
-            // Find the current document to preserve existing values
+
             const currentDocument = this.preonboardingDetails.find((doc: any) => doc.id === this.selectedId);
 
             if (!currentDocument) {
@@ -156,13 +191,12 @@ export class PreOnBoardingDocumentsComponent {
             const request: PreOnBoardingDocumentsData = {
                 id: this.selectedId,
                 documentName: this.updateForm.value.UpdatePreOnboardDocuments.trim(),
-                // Preserve existing values for these fields
                 isAppilicable: currentDocument.isAppilicable,
                 isDeleted: currentDocument.isDeleted || false,
                 isIdentityDocument: currentDocument.isIdentityDocument,
                 isManadatory: currentDocument.isManadatory,
-                createdBy: 12443,
-                updatedBy: 12443
+                createdBy: this.getid.employeeId,
+                updatedBy: this.getid.employeeId,
             };
 
             this.subscription = this.http.postdata('OnboardingDocumentsList/update', request).subscribe({

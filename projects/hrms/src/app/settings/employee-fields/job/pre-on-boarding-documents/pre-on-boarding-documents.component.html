@@ -1,19 +1,8 @@
 <button type="button" (click)="openDialog()" class="custom-btn btn-primary">{{'Add' |
     translate}}</button>
-
 <!-- Add Popup Modal -->
-
-
-
 <div class="custom-main-component-container">
-    <!-- <div class="d-flex justify-content-between align-items-center">
-      <div> <span class="education-sub-header">Education Details</span></div>
-      <div class="plus-button">
-        <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
-            (click)="openModal(addEducationmodal)" class="plus-text">Add
-            New</span></span>
-      </div>
-    </div> -->
+   
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
@@ -59,7 +48,6 @@
     </div>
 
 </div>
-
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
@@ -74,7 +62,7 @@
                     </a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-5">
+            <div class="custom-main-popup-content p-4">
                 <div class="mb-4">
                     <label for="Update Document" class="form-label custom-label mb-2">
                         {{'Update Document' | translate}} <span class="error-msg">*</span>
@@ -96,7 +84,7 @@
                 <div class="d-flex gap-5 pt-4 w-100">
                     <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
                         translate}}</button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
+                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updatePreOnboarding(modal)"
                         [disabled]="updateForm.invalid">
                         {{'update' | translate}}
                     </button>
@@ -105,8 +93,6 @@
         </div>
     </form>
 </ng-template>
-
-
 <ng-template #addpopup let-modal>
     <form [formGroup]="AddForm">
         <div class="custom-main-popup-container" ngbAutofocus>
@@ -120,8 +106,7 @@
                     </a>
                 </div>
             </div>
-
-            <div class="custom-main-popup-content p-5">
+        <div class="custom-main-popup-content p-4">
                 <!-- document name Field -->
                 <div class="mb-4">
                     <label for="Document Type" class="form-label custom-label mb-2">
@@ -141,8 +126,7 @@
                             Type required'|translate}}</div>
                     </div>
                 </div>
-
-                <!-- Checkbox Fields -->
+     <!-- Checkbox Fields -->
                 <div class="mb-4">
                     <label class="form-label custom-label mb-2">{{'Applicable To' | translate}}</label>
                     <div class="d-flex flex-column gap-2">
@@ -179,8 +163,7 @@
                         </label>
                     </div>
                 </div>
-
-                <div class="mb-4">
+                  <div class="mb-4">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" formControlName="isIdentityDocument"
                             id="isIdentityDocument">

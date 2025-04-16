@@ -7,18 +7,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
-
-// Define interface directly in component file to avoid import issues
-export interface PreOnBoardingDocumentsData {
-    id?: number;
-    documentName: string;
-    isAppilicable: string;
-    isDeleted: boolean;
-    isIdentityDocument: boolean;
-    isManadatory: boolean;
-    createdBy: number;
-    updatedBy: number;
-}
+import { PreOnBoardingDocumentsData } from './pre-on-boarding.model';
 
 @Component({
     selector: 'app-pre-on-boarding-documents',
@@ -90,27 +79,11 @@ export class PreOnBoardingDocumentsComponent {
             centered: true
         });
     }
-    // getgradeid() {
-    //   this.subscription = this.http.getData('GradeTable').subscribe({
-    //     next: (data: any) => {
-    //       console.log(data);
-    //       this.gradedetails = data;
-    //     },
-    //   });
-    // }
-    // sortedDesignations: any[] = [];
-    // sortDesignations() {
-    //   // Sort designations alphabetically based on the 'designation' field
-    //   this.sortedDesignations = this.JobroleDetails.sort((a: { designationName: number; }, b: { designationName: number; }) => {
-    //     if (a.designationName < b.designationName) return -1;
-    //     if (a.designationName > b.designationName) return 1;
-    //     return 0;
-    //   });
-    // }
+   
     //ADD
     addPreonboarding(modal: any) {
         // Determine isApplicable value based on checkboxes
-        let isApplicable = "0"; // Default "All"
+        let isApplicable = "0"; 
 
         const isApplicableFresher = this.AddForm.value.isApplicableFresher;
         const isApplicableTrainee = this.AddForm.value.isApplicableTrainee;
@@ -170,7 +143,7 @@ export class PreOnBoardingDocumentsComponent {
         });
     }
     //  UPDATE
-    updateJobroletype(modal: any) {
+    updatePreOnboarding(modal: any) {
         if (this.updateForm.valid && this.selectedId) {
             // Find the current document to preserve existing values
             const currentDocument = this.preonboardingDetails.find((doc: any) => doc.id === this.selectedId);
@@ -205,8 +178,8 @@ export class PreOnBoardingDocumentsComponent {
                 }
             });
         }
-    }
-    // Method to open the delete modal dialog
+     }
+    
     // DELETE
     opendelete(jobroletypelist: any) {
         this.selectedDeleteRole = jobroletypelist;

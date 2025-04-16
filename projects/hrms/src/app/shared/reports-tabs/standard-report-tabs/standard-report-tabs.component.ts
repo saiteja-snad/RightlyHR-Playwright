@@ -12,7 +12,7 @@ export class StandardReportTabsComponent {
   navLinks = [
     { label: 'Employee Master Data', route: '/reports/standard-reports/employee-data' },
     { label: 'Job Location wise Data', route: '/reports/standard-reports/job-data' },
-    { label: 'branch Location Wise Data', route: '/reports/standard-reports/branch-data' },
+    { label: 'Branch Location Wise Data', route: '/reports/standard-reports/branch-data' },
     { label: 'Family Members Data', route: '/reports/standard-reports/family-data' },
   ];
 }

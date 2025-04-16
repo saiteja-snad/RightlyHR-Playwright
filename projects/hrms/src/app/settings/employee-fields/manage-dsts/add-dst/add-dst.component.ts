@@ -40,9 +40,7 @@ export class AddDstComponent implements OnInit,OnDestroy{
 
 
 
-  navigate() {
-    this.router.navigate(['/settings/employee-fields/manage-dsts']);
-  }
+
 
   ngOnInit(): void {
     this.yearsList = this.getYears();
@@ -53,7 +51,9 @@ export class AddDstComponent implements OnInit,OnDestroy{
   }
 
 
-
+  navigate() {
+    this.router.navigate(['/settings/employee-fields/manage-dsts']);
+  }
   inititializeForm() {
     this.dstForm = this.fb.group({
       year: ['', Validators.required],
@@ -171,11 +171,11 @@ export class AddDstComponent implements OnInit,OnDestroy{
   
     console.log('Payload:', manageDST);
   
-     this.http.postdata('OrgDayLight/Post/Shift/OrgShift', manageDST).subscribe({
+     this.http.postdata('OrgDayLight/Post/Shift/OrgShift', manageDST).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log(response);
       this.sharedModalService.openSuccessModal("Manage DST added Successfully")
-        
+        this.navigate()
       },
       error: (err) => {
         this.sharedModalService.openErrorModal('Shift already exists with the year , location and sub location')
@@ -185,7 +185,7 @@ export class AddDstComponent implements OnInit,OnDestroy{
       }
     });
   }
-  
+
 
   
   ngOnDestroy(): void {

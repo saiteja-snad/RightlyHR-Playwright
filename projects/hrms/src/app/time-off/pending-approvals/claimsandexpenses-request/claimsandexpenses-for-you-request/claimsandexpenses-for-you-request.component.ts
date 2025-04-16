@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -93,7 +93,7 @@ export class ClaimsandexpensesForYouRequestComponent
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=EMP`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
@@ -146,7 +146,7 @@ export class ClaimsandexpensesForYouRequestComponent
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -185,7 +185,7 @@ export class ClaimsandexpensesForYouRequestComponent
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -222,7 +222,7 @@ export class ClaimsandexpensesForYouRequestComponent
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
           this.modalService.dismissAll();
@@ -257,7 +257,7 @@ export class ClaimsandexpensesForYouRequestComponent
   viewItem(expid: number) {
     console.log(expid);
     this.updataid = expid;
-    this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
+    this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.expenseheaderiteams = data;
       },
@@ -315,7 +315,7 @@ export class ClaimsandexpensesForYouRequestComponent
   onViewAttachement(url: any) {
     if (url?.endsWith('jpg') || url?.endsWith('png') || url?.endsWith('jpeg')) {
       this.http
-        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
             const blob = new Blob([res['body']], { type: 'image/png' });

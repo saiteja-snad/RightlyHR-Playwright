@@ -111,8 +111,8 @@
             </thead>
             <tbody formArrayName="momentRows">
                 <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
-                    <td><input type="date" class="form-control" formControlName="startDate" /></td>
-                    <td><input type="date" class="form-control" formControlName="endDate" /></td>
+                    <td><input type="date" class="form-control" formControlName="startDate"  onkeydown="return false"/></td>
+                    <td><input type="date" class="form-control" formControlName="endDate"  onkeydown="return false"/></td>
                     <td class="custom-p-select-content">
                         <p-select [options]="momentType" [showClear]="false" formControlName="momentType" placeholder="Select type"
                         class="form-select custom-select">

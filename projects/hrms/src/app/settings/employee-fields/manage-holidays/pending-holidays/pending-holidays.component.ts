@@ -65,27 +65,8 @@ export class PendingHolidaysComponent {
   }
 
   updateHoliday(holiday: any) {
-    // this.disableUpdate= true;
-    // this.titlehide = false;
-    // this.titlebackshoaw = true;
-    this.updateView = true;
-    this.allowedtoUpdate = false
-    this.viewlistbuttonInUpdate = true
-    this.selectedHoliday = holiday;
-    this.objectforUpdate = holiday;
-    
-    console.log(this.selectedHoliday);
-    this.initialLength = this.selectedHoliday.orgHolidaysItems.length;
-    console.log(this.initialLength);
-
-    this.minDate = `${this.selectedHoliday.applicableyear}-01-01`;
-    this.maxDate = `${this.selectedHoliday.applicableyear}-12-31`;
-    this.selectedHoliday.orgHolidaysItems.forEach((element: any) => {
-      element.holidayDate = element.holidayDate.substring(0, 10);
-      this.selectedcode.push(element.holidayName);
-      this.selectedDates.push(element.holidayDate);
-    });
-    this.selectedHoliday.applicableyear = this.selectedHoliday.applicableyear.substring(0, 10)
+    localStorage.setItem('updateholidays', JSON.stringify(holiday));
+    this.router.navigate(['/settings/employee-fields/updateholidays'])
   }
 
   

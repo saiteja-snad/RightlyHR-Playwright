@@ -69,6 +69,7 @@ export default [
     },
 
     { path: 'addholidays', loadComponent: () => import('./manage-holidays/add-holidays/add-holidays.component').then((m) => m.AddHolidaysComponent) },
+    { path: 'updateholidays', loadComponent: () => import('./manage-holidays/update-holidays/update-holidays.component').then((m) => m.UpdateHolidaysComponent) },
     {
         path: 'manage-holidays',
         children: [

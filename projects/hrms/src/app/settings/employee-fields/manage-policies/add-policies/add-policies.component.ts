@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import moment from 'moment';
 import { Select } from 'primeng/select';
 import { IPolicies } from '../../../../Interfaces/policies.model';
+import { Subject, takeUntil } from 'rxjs';
+import { ILocation, IShiftHeader, ISubLocation } from '../../../time-off/flexible-leave-allocation/leave-allocation.model';
 
 @Component({
   selector: 'app-add-policies',
@@ -14,16 +16,23 @@ import { IPolicies } from '../../../../Interfaces/policies.model';
   styleUrl: './add-policies.component.scss'
 })
 export class AddPoliciesComponent {
-  ppolicyform!: FormGroup;
+  policyform!: FormGroup;
+  yearsList: number[] = [];
+  locationDetails!: ILocation[];
+  subLocationDetails = [] as ISubLocation[];
+  shiftDetails = [] as IShiftHeader[];
   orgHolidayItemsArrayTrue:any = [];
   orgHolidayItemsArrayFalse:any =[];
   empinfo: any;
   subscription: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
   http: any;
   jobshiftdetails: any;
   length: number = 0;
   optional:number = 0;
   selectedfileds = {} as any;
+  sharedModalService: any;
+  fb: any;
   constructor( public router:Router) { }
   ngOnInit(): void {
     this.policyform = new FormGroup({
@@ -47,12 +56,9 @@ export class AddPoliciesComponent {
   //   { name: 'Yes', value: true },
   //   { name: 'No', value: false },
   // ]
- 
-
   navigation(){
     this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
   }
-  policyform!: FormGroup;
   policiesdata = {} as IPolicies;
   years: { name: string, value: number }[] = [];
 
@@ -71,6 +77,61 @@ export class AddPoliciesComponent {
         }
     });
   }
+  onLocationChange(location: ILocation): void {
+    if (location?.jobSubLocations?.length) {
+      this.subLocationDetails = location.jobSubLocations;
+      this.policyform.get('subLocation')?.enable();
+    } else {
+      this.subLocationDetails = [];
+      this.policyform.get('subLocation')?.enable();
+      this.policyform.get('subLocation')?.reset();
+    }
+  }
+  getAllShifts(subLocation: ISubLocation): void {
+    const params = {
+      locationId: subLocation.jobLocationId,
+      subLocationId: subLocation.id,
+    };
+
+    this.http
+      .getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.shiftDetails = res.flatMap(
+            (header: any) => header.orgShiftsItems || []
+          );
+          this.policyform.get('shift')?.enable();
+        },
+        error: (err: any) => {
+          console.error('Error fetching shifts:', err);
+          this.shiftDetails = [];
+          this.policyform.get('shift')?.reset();
+          this.policyform.get('shift')?.disable();
+        },
+      });
+  }
+  get momentRows(): FormArray {
+    return this.policyform.get('momentRows') as FormArray;
+  }
+
+  addMomentRow() {
+    if (this.momentRows.length < 4) {
+      this.momentRows.push(this.createMomentRow());
+    } else {
+    }
+  }
+  createMomentRow(): FormGroup {
+    return this.fb.group({
+      policyName: ['', Validators.required],
+      policyAttachment: ['', Validators.required],
+      description: [null, Validators.required],
+    });
+  }
+  removeMomentRow(index: number) {
+    this.momentRows.removeAt(index);
+  }
+
   onYearChange() {
     this.selectedYear = this.policyform.get('selectedYear')?.value;
     this.getPolicy(this.jobshiftdetails);
@@ -130,6 +191,53 @@ export class AddPoliciesComponent {
       }
     })
   }
+  navigate() {
+    this.router.navigate(['/settings/employee-fields/manage-dsts']);
+  }
+   onSubmit(policyform: FormGroup) {
+      if (policyform.invalid) {
+        this.policyform.markAllAsTouched();
+        return;
+      }
+  
+      const formValue = this.policyform.value;
+  
+      const policydata = {
+        lastModifiedDate: new Date(),
+        addedDate: new Date(),
+        status: 'Pending for submission',
+        addedBy: this.empinfo.employeeId,
+        lastModifiedBy: this.empinfo.employeeId,
+        applicableYear: formValue.year,
+        sublocationId: formValue.subLocation.id,
+        shiftId: formValue.shift.id,
+        locationId: formValue.location.id,
+        dayLight: formValue.momentRows.map((row: any) => ({
+          startDate: row.startDate,
+          endDate: row.endDate,
+          momentType: row.momentType,
+          duration: row.duration,
+        })),
+      };
+      this.http
+        .postdata('orgPolicies/Post', policydata)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.sharedModalService.openSuccessModal(
+              'Manage DST added Successfully'
+            );
+            this.navigate();
+          },
+          error: (err: any) => {
+            this.sharedModalService.openErrorModal(
+              'Shift already exists with the year , location and sub location'
+            );
+          },
+          complete: () => {},
+        });
+    }
+  
 
   OnClickLocation() {
     if (this.policiesdata.location) {

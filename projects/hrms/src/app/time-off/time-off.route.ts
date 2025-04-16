@@ -15,7 +15,6 @@ import { PremissionsWaitingForApprovalComponent } from './premissions/premission
 import { PremissionsApprovedComponent } from './premissions/premissions-approved/premissions-approved.component';
 import { PremissionsRejectedComponent } from './premissions/premissions-rejected/premissions-rejected.component';
 import { OnBeHalfOfComponent } from './on-be-half-of/on-be-half-of.component';
-
 import { AttendanceComponent } from './attendance/attendance.component';
 import { OnBeHalfOfWaitingForApprovalComponent } from './on-be-half-of/on-be-half-of-waiting-for-approval/on-be-half-of-waiting-for-approval.component';
 import { OnBeHalfOfApprovalComponent } from './on-be-half-of/on-be-half-of-approval/on-be-half-of-approval.component';
@@ -50,7 +49,6 @@ import { RecallForYourRoleRequestComponent } from './pending-approvals/recall-fo
 import { RecallRequestsComponent } from './pending-approvals/recall-requests/recall-requests.component';
 import { TraineeApprovalsComponent } from './pending-approvals/trainee-approvals/trainee-approvals.component';
 import { NodueApprovalDetailsComponent } from './pending-approvals/nodue-approval-details/nodue-approval-details.component';
-import { ClaimsandexpensesComponent } from '../claimsandexpenses/claimsandexpenses/claimsandexpenses.component';
 import { ClaimsandexpensesRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-request.component';
 import { ClaimsandexpensesForYouRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-for-you-request/claimsandexpenses-for-you-request.component';
 import { ClaimsandexpensesForYourRoleRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-for-your-role-request/claimsandexpenses-for-your-role-request.component';
@@ -74,7 +72,6 @@ export default [
       { path: 'approved', component: WfhApprovedComponent },
       { path: 'processed', component: WfhProcessedComponent },
       { path: 'rejected', component: WfhRejectedComponent },
-
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -151,9 +148,9 @@ export default [
       {
         path: 'claimsandexpenses-request', component: ClaimsandexpensesRequestComponent,
         children: [
-          { path: 'for-you', component:ClaimsandexpensesForYouRequestComponent , },
+          { path: 'for-you', component: ClaimsandexpensesForYouRequestComponent, },
           { path: 'for-your-role', component: ClaimsandexpensesForYourRoleRequestComponent },
-       
+
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
@@ -200,10 +197,8 @@ export default [
         ],
       },
       { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section
-      
-      {path:'trainee-approvals', component:TraineeApprovalsComponent,
-      
-      }
+
+      { path: 'trainee-approvals', component: TraineeApprovalsComponent,  }
     ],
   },
 ] as Route[];

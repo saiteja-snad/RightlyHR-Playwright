@@ -1,63 +1,70 @@
-<div>
-    <div class="custom-table-content ">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Leave Type</th>
-                    <th>Duration</th>
-                    <th>Availed</th>
-                    <th>Reason</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>20/3/3023</td>
-                    <td>Sick Leave</td>
-                    <td>1</td>
-                    <td>5</td>
-                    <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">Feaver </p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div>
-                    </td>
-                    <td>20/9/2024</td>
-                    <td>20/9/2024</td>
-                    <td>Processed</td>
-                </tr>
+<div class="custom-table-content mt-2">
+    <table class="w-100">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Leave Type</th>
+                <th>Duration</th>
+                <th>Availed</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th>Approved Reason</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(waitingForApprovalLeaves.length === 0){
+            <tr *ngFor="let lev of waitingForApprovalLeaves">
+                <td>{{lev.date | dateformat}}</td>
+                <td>{{lev.categoryName}}</td>
+                <td>{{lev.duration}}</td>
+                <td>
+                    {{ lev.durationType == 1 ? 'First Half' : 
+                       lev.durationType == 2 ? 'Full Day' : 
+                       lev.durationType == 3 ? 'Second Half' : 'Unknown' 
+                    }}
+                </td>
+                <td>{{lev.startdate | dateformat}}</td>
+                <td>{{lev.enddate | dateformat}}</td>
+                <td>
+                    <div>
+                        <span>
+                            <a type="button" placement="top" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <div>
+                                    <p class="mb-0">{{lev.notes}}</p>
+                                </div>
+                            </ng-template>
+                        </span>
+                    </div>
+                </td>
+                <td>{{lev.status}}</td>
+            </tr>
+            }
+            @else {
+            <tr>
+                <app-no-data-found></app-no-data-found>
 
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination-content pt-2 w-100">
-        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-            <!-- Dropdown for Rows per Page -->
-            <div class="d-flex align-items-center gap-3 p-2">
-                <!-- Bootstrap Select -->
-                <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                    (ngModelChange)="onRowsChange()">
-                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                    </option>
-                </select>
-                <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                    totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-            </div>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
-            <!-- Pagination -->
-            <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                (onPageChange)="onPageChange($event)"></p-paginator>
+<div class="pagination-content pt-2 w-100">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+            <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
+                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                </option>
+            </select>
+            <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
         </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+            (onPageChange)="onPageChange($event)"></p-paginator>
     </div>
 </div>

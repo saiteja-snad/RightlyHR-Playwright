@@ -15,7 +15,6 @@ import { PremissionsWaitingForApprovalComponent } from './premissions/premission
 import { PremissionsApprovedComponent } from './premissions/premissions-approved/premissions-approved.component';
 import { PremissionsRejectedComponent } from './premissions/premissions-rejected/premissions-rejected.component';
 import { OnBeHalfOfComponent } from './on-be-half-of/on-be-half-of.component';
-
 import { AttendanceComponent } from './attendance/attendance.component';
 import { OnBeHalfOfWaitingForApprovalComponent } from './on-be-half-of/on-be-half-of-waiting-for-approval/on-be-half-of-waiting-for-approval.component';
 import { OnBeHalfOfApprovalComponent } from './on-be-half-of/on-be-half-of-approval/on-be-half-of-approval.component';
@@ -79,7 +78,6 @@ export default [
       { path: 'approved', component: WfhApprovedComponent },
       { path: 'processed', component: WfhProcessedComponent },
       { path: 'rejected', component: WfhRejectedComponent },
-
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -176,9 +174,9 @@ export default [
       {
         path: 'claimsandexpenses-request', component: ClaimsandexpensesRequestComponent,
         children: [
-          { path: 'for-you', component:ClaimsandexpensesForYouRequestComponent , },
+          { path: 'for-you', component: ClaimsandexpensesForYouRequestComponent, },
           { path: 'for-your-role', component: ClaimsandexpensesForYourRoleRequestComponent },
-       
+
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
@@ -215,10 +213,8 @@ export default [
         ],
       },
       { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section
-      
-      {path:'trainee-approvals', component:TraineeApprovalsComponent,
-      
-      }
+
+      { path: 'trainee-approvals', component: TraineeApprovalsComponent,  }
     ],
   },
 ] as Route[];

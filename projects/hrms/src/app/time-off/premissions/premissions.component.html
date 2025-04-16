@@ -4,7 +4,7 @@
             <p class="component-header cursor mb-0">Permission</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addpremission)"><i
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addpremission)" *ngIf="!rbac.allowedToAccess('Permissions Tab.Create')"><i
                     class="bi bi-plus me-2"></i>Request
                 Permission</button>
         </div>

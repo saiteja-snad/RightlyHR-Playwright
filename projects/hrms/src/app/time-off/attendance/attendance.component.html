@@ -69,7 +69,7 @@
               </p-dropdown>
             </div>
         }
-            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId)">
+            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId)" *ngIf="rbac.allowedToAccess('Monthly Attandance Report.create')">
               <i class="bi bi-plus me-2"></i>My Attendance
             </button>
           </div>
@@ -93,7 +93,7 @@
                     </thead>
                     <tbody>
 
-
+                        @if (!rbac.allowedToAccess('Monthly Attandance Report.View')) {
                         @if(attendanceData.value.length>0){
                             @for (item of attendanceData|async; track $index) {
                                 <tr >
@@ -139,7 +139,7 @@
                         <app-no-data-found/>
                        }
                      
-
+                    }
                     </tbody>
                 </table>
             </div>

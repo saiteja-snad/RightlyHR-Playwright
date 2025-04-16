@@ -22,6 +22,7 @@
           </tr>
         </thead>
         <tbody>
+          @if (rbac.allowedToAccess('Expenses Tab.view')) {
           <ng-container *ngIf="expenseheaderpending!.length > 0; else noDataTemplate">
             <tr *ngFor="let leave of expenseheaderpending; let i = index">
               <td>{{ leave.entity.employeeName }}</td>
@@ -39,7 +40,7 @@
                       <a class="dropdown-item" (click)="
                           openModal(viewDetailsModal);
                           viewItem(leave.entity.expenses_ID)
-                        "><i class="bi bi-paperclip me-2"></i>View</a>
+                        " *ngIf="rbac.allowedToAccess('Expenses Tab.view')"><i class="bi bi-paperclip me-2"></i>View</a>
                     </li>
                   </ul>
                 </div>
@@ -69,16 +70,16 @@
                   <ul class="dropdown-menu py-0">
                     @if( leave.approvalHeader.currentapprovalStage !=
                     leave.approvalHeader.finalapprovalStage){
-                    <li (click)="openApproveModal(approval, leave)">
+                    <li (click)="openApproveModal(approval, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
                       <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
                     </li>
                     } @if( leave.approvalHeader.currentapprovalStage ==
                     leave.approvalHeader.finalapprovalStage){
-                    <li (click)="handleProcess(leave)">
+                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
                       <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
                     </li>
                     }
-                    <li (click)="openRejectModal(rejectmodal, leave)">
+                    <li (click)="openRejectModal(rejectmodal, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.delete')">
                       <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
                     </li>
                   </ul>
@@ -93,6 +94,7 @@
               </td>
             </tr>
           </ng-template>
+        }
         </tbody>
       </table>
     </div>

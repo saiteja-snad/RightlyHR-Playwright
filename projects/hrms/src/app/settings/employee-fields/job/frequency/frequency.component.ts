@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { frequenceData } from './frequency-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-frequency',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
@@ -31,6 +32,7 @@ export class FrequencyComponent {
     private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) { }
 
   ngOnInit(): void {

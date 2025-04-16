@@ -1,23 +1,22 @@
 <div class="custom-main-component-container">
-  <div class="custom-setting-right-content p-3">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div><span class="component-sub-header">No Due Clearnce</span></div>
-      <div class="custom-add-btn cursor" (click)="openModal(addnodue)">
-        <i class="bi bi-plus plus-icon me-1"></i>Add New
-      </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><span class="component-sub-header">No Due Clearnce</span></div>
+    <div class="custom-add-btn cursor" (click)="openModal(addnodue)" *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
+      <i class="bi bi-plus plus-icon me-1"></i>Add New
     </div>
 
-    <div class="custom-table-content">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Department/Employee Manager</th>
-            <th>Employee Name</th>
-            <th>Role Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if (noDueList.length > 0) {
+  <div class="custom-table-content">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Department/Employee Manager</th>
+          <th>Employee Name</th>
+          <th>Role Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (!rbac.allowedToAccess('No Due Clearance.View')) {}
+        @if (noDueList.length > 0) {
           @for (item of noDueList; track item.id) {
           <tr>
             <td>
@@ -58,9 +57,11 @@
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
-    </div>
-    <div class="custom-main-popup-content p-4">
-      <form [formGroup]="noDueForm" (ngSubmit)="addNoDue(noDueForm)">
+  </div>
+    <div class="custom-main-popup-content p-3">
+
+      <form [formGroup]="noDueForm" (ngSubmit)="addNoDue(noDueForm)" *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
+
         <!-- Select Type -->
         <div class="form-outline p-2 mb-1">
           <label class="form-label custom-label mb-2">Select Type</label>

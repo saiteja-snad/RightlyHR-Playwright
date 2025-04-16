@@ -489,7 +489,7 @@
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss(); separationRequestForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-3">
@@ -549,7 +549,8 @@
                             <label for="description" class="form-label custom-label mb-2">Reason for Separation <span
                                     class="text-danger">*</span></label>
                             <textarea class="form-control custom-input" id="description" formControlName="description"
-                                rows="3" placeholder="Please provide separation reason..."></textarea>
+                                rows="3" maxlength="400" placeholder="Please provide separation reason..."
+                                (keydown)="formValidations.restrictInitialSpace($event)"></textarea>
                             <div>
                                 <span class="color">{{ separationRequestForm.get('description')?.value?.length || 0 }} /
                                     400</span>
@@ -596,7 +597,8 @@
                                 Relieving <span class="text-danger">*</span></label>
                             <textarea class="form-control custom-input" id="reasonForEarlyRelieving"
                                 formControlName="reasonForEarlyRelieving" rows="3"
-                                placeholder="Please provide early relieving reason..."></textarea>
+                                placeholder="Please provide early relieving reason..." 
+                                (keydown)="formValidations.restrictInitialSpace($event)"></textarea>
                             <div>
                                 <span class="color">{{
                                     separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }} /

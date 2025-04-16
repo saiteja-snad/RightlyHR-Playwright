@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-eligible-for-rehire',
@@ -30,7 +31,8 @@ export class EligibleForRehireComponent {
     private fb: FormBuilder, 
     private http: HttpService, 
     private conformationPopup: OpenModalService,
-    public formValidations : FormValidationsService
+    public formValidations : FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }

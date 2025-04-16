@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
@@ -14,7 +15,7 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule,Select,NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule, Select,NoDataFoundComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
@@ -30,13 +31,18 @@ export class CompanypoliciesComponent {
 
   filteredpolicy:any =[] 
   orgPolicyItemsArray: any[] = [];
-  EduViewURL: any; // URL for the document viewer
+  EduViewURL: any; 
   EduImageUrl: any;
   attachmentUrl: any;
-item: any;
+  item: any;
+  showViewDetailsModal = false;
+  isViewingAttachment = false;
+  shouldOpenModal = false;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location, private sanitizer: DomSanitizer) { }
-  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef) { }
+  @ViewChild('viewattamchment') private viewattamchment!: TemplateRef<any>;
+
   ngOnInit(): void {
     this.selectedYear = this.currentYear;
     this.policiesform = this.fb.group({
@@ -61,6 +67,18 @@ item: any;
         this.years.push({ label: i.toString(), value: i });
       }
   }
+  // openModal(content: any) {
+  //   this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
+  // }
+
+  openModal(content: any) {
+    this.modalService.open(this.viewattamchment, {
+      size: 'xl', // optional, helps initially
+      centered: true,
+      windowClass: 'wide-modal'
+    });
+    
+  }
   
   private handleImage(url: string) {
     const baseUrl = this.location.normalize('/');
@@ -80,41 +98,79 @@ item: any;
     // Log pdfUrl to console
     console.log(`PDF URL: ${this.EduViewURL}`);
   }
-  openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
-  }
-  toggleViewModal() {
-    this.modalService.dismissAll();
-    this.openModal(this.viewattamchment)
-  }
+  
+  
   // onViewClick(attachmentUrl: string) {
-  //   debugger;
-  //   // Check if the file is a PDF or an image (or other types)
-  //   if (attachmentUrl.endsWith('.pdf')) {
-  //     this.EduViewURL = attachmentUrl;  // for PDF viewing
-  //     this.EduImageUrl = '';  // clear any image URL
+  //   // Clear existing URLs
+  //   this.EduImageUrl = '';
+  //   this.EduViewURL = '';
+  
+  //   const isImage = /\.(jpg|jpeg|png)$/i.test(attachmentUrl);
+  //   const isPDF = attachmentUrl.toLowerCase().endsWith('.pdf');
+  
+  //   if (isImage) {
+  //     this.handleImage(attachmentUrl);
+  //     this.toggleViewModal();
+  //   } else if (isPDF) {
+  //     this.handlePDF(attachmentUrl);
+  //     this.toggleViewModal();
   //   } else {
-  //     this.EduImageUrl = attachmentUrl;  // for image viewing
-  //     this.EduViewURL = '';  // clear any PDF URL
+  //     console.log(`Unsupported file type: ${attachmentUrl}`);
   //   }
   // }
   onViewClick(attachmentUrl: string) {
-    const isImage = attachmentUrl.match(/\.(jpg|jpeg|png)$/i);
-    const isPDF = attachmentUrl.toLowerCase().endsWith('pdf');
+    console.log('Opening modal');
+    this.shouldOpenModal = true;
+    this.EduImageUrl = '';
+    this.EduViewURL = '';
+
+    const isImage = /\.(jpg|jpeg|png)$/i.test(attachmentUrl);
+    const isPDF = attachmentUrl.toLowerCase().endsWith('.pdf');
+
+    console.log('Dismiss all modals');
+    this.modalService.dismissAll();
 
     if (isImage) {
-     
-      this.handleImage(attachmentUrl);
+        this.handleImage(attachmentUrl);
     } else if (isPDF) {
-      
-      this.handlePDF(attachmentUrl);
+        this.handlePDF(attachmentUrl);
     } else {
-     
-      console.log(`Unsupported file type: ${attachmentUrl}`);
+        console.log(`Unsupported file type: ${attachmentUrl}`);
+        return;
     }
-  }
- 
+
+    console.log('Opening modal again');
+    this.openModal(this.viewattamchment);
+}
+
+
+
+  handleClose(modal: any) {
+    this.shouldOpenModal = false; 
+    this.EduViewURL = null;
+    this.EduImageUrl = null;
+    modal.dismiss();
+    
+    
+    this.cdr.detectChanges();
+}
   
+  // toggleViewModal() {
+  //   this.modalService.dismissAll();
+  //   if (this.viewattamchment) {
+  //     this.openModal(this.viewattamchment);
+  //   } else {
+  //     console.warn('Modal template reference is not available.');
+  //   }
+  // }
+  
+  toggleViewModal() {
+    this.modalService.dismissAll(); // Close all modals immediately
+    if (this.isViewingAttachment && this.viewattamchment) {
+      this.openModal(this.viewattamchment); // Open the modal again
+    }
+}
+
   getjobDetails() {
     let EmployeeId = this.empinfo.employeeId;
     console.log(EmployeeId);

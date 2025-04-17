@@ -7,10 +7,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { ManageDST } from '../dsts.modal';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pending-dsts',
-  imports: [NoDataFoundComponent, CommonModule],
+  imports: [NoDataFoundComponent, CommonModule,TranslateModule],
   templateUrl: './pending-dsts.component.html',
   styleUrl: './pending-dsts.component.scss',
 })

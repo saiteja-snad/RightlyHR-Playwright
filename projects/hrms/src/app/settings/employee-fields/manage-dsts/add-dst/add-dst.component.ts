@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
@@ -19,10 +19,11 @@ import { IJob } from '../../../../Interfaces/letters-model';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-dst',
-  imports: [SelectModule, CommonModule, ReactiveFormsModule],
+  imports: [SelectModule, CommonModule, ReactiveFormsModule,TranslateModule],
   templateUrl: './add-dst.component.html',
   styleUrl: './add-dst.component.scss',
 })
@@ -42,6 +43,7 @@ export class AddDstComponent implements OnInit, OnDestroy {
   currentYear: number = new Date().getFullYear();
   selectedYear = this.currentYear;
 
+  @ViewChild('confirmation') confirmation!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -57,6 +59,7 @@ export class AddDstComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.inititializeForm();
     this.getAllLocations();
+    this.handleFormValueChanges();
   }
 
   navigate() {
@@ -124,6 +127,40 @@ export class AddDstComponent implements OnInit, OnDestroy {
       this.dstForm.get('subLocation')?.enable();
       this.dstForm.get('subLocation')?.reset();
     }
+  }
+
+  openConfirmation(){
+    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
+  }
+
+  private handleFormValueChanges(): void {
+    const form = this.dstForm;
+
+    const resetAndDisable = (controls: string[]) => {
+      controls.forEach(control => {
+        form.get(control)?.reset();
+        form.get(control)?.disable();
+      });
+    };
+
+    form.get('year')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        form.get('location')?.reset();
+        resetAndDisable(['subLocation', 'shift']);
+      });
+
+    form.get('location')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        resetAndDisable(['subLocation', 'shift']);
+      });
+
+    form.get('subLocation')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        resetAndDisable(['shift']);
+      });
   }
 
 
@@ -231,7 +268,10 @@ export class AddDstComponent implements OnInit, OnDestroy {
         complete: () => {},
       });
   }
-
+ closeAddDST(){
+  this.modalService.dismissAll();
+  this.navigate();
+ }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

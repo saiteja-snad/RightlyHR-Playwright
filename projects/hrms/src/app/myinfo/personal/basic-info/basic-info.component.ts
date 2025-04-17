@@ -8,6 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-basic-info',
@@ -15,7 +16,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
-export class BasicInfoComponent implements OnInit,OnDestroy{
+export class BasicInfoComponent implements OnInit, OnDestroy {
   basicInfoForm!: FormGroup;
   subscription!: Subscription
   emsployedata: any
@@ -34,7 +35,8 @@ export class BasicInfoComponent implements OnInit,OnDestroy{
   Titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
   buttons = false
-  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService,
+    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -130,13 +132,13 @@ export class BasicInfoComponent implements OnInit,OnDestroy{
       probationStatus: this.empinfo.probationStatus,
       noticePeriod: this.empinfo.noticePeriod,
       backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-      issalaryhold:this.empinfo.issalaryhold,
+      issalaryhold: this.empinfo.issalaryhold,
       pf: this.empinfo.pf,
-      esic:this.empinfo.esic,
+      esic: this.empinfo.esic,
       pt: this.empinfo.pt,
       totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
       allowWFH: this.empinfo.allowWFH,
-      workLocation:this.empinfo.workLocation,
+      workLocation: this.empinfo.workLocation,
       wfhManagerId: this.empinfo.wfhManagerId
 
     };

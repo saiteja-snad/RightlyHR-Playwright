@@ -3,10 +3,12 @@ import { OnBeHalfOfApprovalTabsComponent } from "../../shared/on-be-half-of-appr
 import { RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-on-be-half-of',
-  imports: [OnBeHalfOfApprovalTabsComponent,RouterModule,Select],
+  imports: [OnBeHalfOfApprovalTabsComponent,RouterModule,Select, CommonModule],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss'
 })
@@ -17,7 +19,10 @@ export class OnBeHalfOfComponent {
     { id: 3, name: 'Casual' },
     { id: 4, name: 'Earned'  }
   ];
-  constructor(private modalService: NgbModal) {}
+  constructor(
+    private modalService: NgbModal,
+    public rbac: RbacService,
+  ) {}
 
   openModal(content: any) {
     this.modalService.open(content, {centered: true,backdrop: 'static'});

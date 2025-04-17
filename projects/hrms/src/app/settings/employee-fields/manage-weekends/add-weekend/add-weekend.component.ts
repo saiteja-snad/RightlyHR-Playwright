@@ -76,8 +76,12 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     return this.weekendForm.get('weekends') as FormArray;
   }
 
-  addWeekend() {
-    this.weekends.push(this.createWeekend());
+  addWeekend(): void {
+    if (this.weekends.length < 7) {
+      this.weekends.push(this.createWeekend());
+    } else {
+      console.warn('Maximum of 7 weekends can be added.');
+    }
   }
 
   removeWeekend(index: number): void {

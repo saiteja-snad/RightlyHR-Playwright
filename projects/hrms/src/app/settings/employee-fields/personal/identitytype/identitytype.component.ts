@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-identitytype',
@@ -31,6 +32,7 @@ export class IdentitytypeComponent {
     private http: HttpService, 
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }

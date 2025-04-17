@@ -80,6 +80,7 @@ export const permissionsData = [
     // View Modules
     { fields: 'Invite New User', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Permissions', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Recall Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Regularizations', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Timeoff Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Compoff Tab', View: false, Update: false, Create: false, Delete: false },
@@ -174,7 +175,7 @@ export const permissionsData = [
     { fields: 'Sub Location', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Pre Onboard Documents', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Serving Period', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Interview Rounds', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
 
     //Status tab 

@@ -174,7 +174,6 @@ export class ViewWeekendsComponent {
       });
   }
 
-
   openConfirmation() {
     this.modalService.open(this.confirmation, { centered: true, backdrop: 'static' })
   }

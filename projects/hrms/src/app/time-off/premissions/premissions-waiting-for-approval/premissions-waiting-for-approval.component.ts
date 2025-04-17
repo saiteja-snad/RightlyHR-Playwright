@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { RegularizationRequest } from '../../../Interfaces/timoff-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-premissions-waiting-for-approval',
@@ -36,7 +37,8 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
   ];
 
   constructor(
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {

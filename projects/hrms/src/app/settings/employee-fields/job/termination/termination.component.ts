@@ -7,6 +7,7 @@ import { Termination } from './terminationModule';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-termination',
@@ -30,6 +31,7 @@ export class TerminationComponent {
     private http: HttpService, 
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }

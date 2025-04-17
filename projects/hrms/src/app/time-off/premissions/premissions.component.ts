@@ -11,6 +11,7 @@ import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
 import { Subject, takeUntil } from 'rxjs';
 import { IEAV, LeaveType } from '../../Interfaces/timoff-model';
 import { CommonModule } from '@angular/common';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-premissions',
@@ -53,7 +54,9 @@ export class PremissionsComponent implements OnInit,OnDestroy{
   constructor(    private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService) {
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
+  ) {
 
 
     }

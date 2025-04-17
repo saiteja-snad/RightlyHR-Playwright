@@ -99,7 +99,7 @@
                 !recallandearlyrelievingbuttonConditions){
                 <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
                   <a class="dropdown-item">
-                    <i class="bi bi-trash3 me-2"></i>Early relieving
+                    <i class="bi bi-trash3 me-2"></i>Early Relieving
                   </a>
                 </li>
                 }
@@ -260,12 +260,12 @@
       <!-- <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img" /> -->
     </div>
     <h4 class="text-center">
-      Are you sure you want to recall the {{this.selectRecallrequest?.requestType?.toLowerCase() ?? 'early relieving'}}
-      request?
+      Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}}
+      Request?
     </h4>
     <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
       <div class="mb-3">
-        <label class="form-label custom-label mb-2">Enter recall reason <span class="error-msg">*</span></label>
+        <label class="form-label custom-label mb-2">Reason For Recall <span class="error-msg">*</span></label>
         <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
           placeholder="Please enter recall reason" name="recallReason" formControlName="recallReason"></textarea>
 
@@ -292,11 +292,11 @@
 
       <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-          {{'Cancle'|translate}}
+          {{'No'|translate}}
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
           @if(!isLoading){
-          {{'Submit'|translate}}
+          {{'Yes'|translate}}
           }
           @else {
           <div class="d-flex">
@@ -324,7 +324,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="Effective Date ">Early relieving date <span class="error-msg">*</span></label>
+            <label for="Effective Date ">Early Relieving Date <span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
               id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
             <small class="error-msg"
@@ -336,7 +336,7 @@
         <div class="col-md-12">
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Reason for
-              early Relieving <span class="error-msg">*</span></label>
+              Early Relieving <span class="error-msg">*</span></label>
             <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*"
               placeholder="Please provide early relieving reason...." name="Reason"
               formControlName="earlyReleivingReason"></textarea>
@@ -365,7 +365,7 @@
       </div>
       <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-          {{'Cancle'|translate}}
+          {{'Close'|translate}}
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
           @if(!isLoading){

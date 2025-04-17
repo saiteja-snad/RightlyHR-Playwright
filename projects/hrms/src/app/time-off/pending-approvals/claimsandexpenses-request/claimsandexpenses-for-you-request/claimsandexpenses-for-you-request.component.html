@@ -29,6 +29,7 @@
           </tr>
         </thead>
         <tbody>
+          @if (rbac.allowedToAccess('Expenses Tab.view')) {
           <ng-container
             *ngIf="expenseheaderpending!.length > 0; else noDataTemplate"
           >
@@ -51,7 +52,7 @@
                           openModal(viewDetailsModal);
                           viewItem(leave.entity.expenses_ID)
                         "
-                        ><i class="bi bi-paperclip me-2"></i>View</a
+                        *ngIf="rbac.allowedToAccess('Expenses Tab.view')"><i class="bi bi-paperclip me-2"></i>View</a
                       >
                     </li>
                   </ul>
@@ -87,7 +88,7 @@
                   <ul class="dropdown-menu py-0">
                     @if( leave.approvalHeader.currentapprovalStage !=
                     leave.approvalHeader.finalapprovalStage){
-                    <li (click)="openApproveModal(approval, leave)">
+                    <li (click)="openApproveModal(approval, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
                       <a class="dropdown-item"
                         ><i class="bi bi-check-circle me-2"></i
                         >{{ "Approve" | translate }}</a
@@ -95,14 +96,14 @@
                     </li>
                     } @if( leave.approvalHeader.currentapprovalStage ==
                     leave.approvalHeader.finalapprovalStage){
-                    <li (click)="handleProcess(leave)">
+                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
                       <a class="dropdown-item"
                         ><i class="bi bi-check-circle me-2"></i
                         >{{ "Process" | translate }}</a
                       >
                     </li>
                     }
-                    <li (click)="openRejectModal(rejectmodal, leave)">
+                    <li (click)="openRejectModal(rejectmodal, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.delete')">
                       <a class="dropdown-item"
                         ><i class="bi bi-x-circle me-2"></i
                         >{{ "Reject" | translate }}</a
@@ -120,6 +121,7 @@
               </td>
             </tr>
           </ng-template>
+        }
         </tbody>
       </table>
     </div>
@@ -235,7 +237,7 @@
           {{ "Are you sure you want to Reject?" | translate }}
         </h4>
       </div>
-      <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
+      <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
         <div class="row">
           <div class="col-md-12 mb-3">
             <label for="comments" class="form-label custom-label mb-2"

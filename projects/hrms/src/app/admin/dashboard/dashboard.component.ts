@@ -196,56 +196,56 @@ export class DashboardComponent {
         link: '/admin/prospective-employees',
         count: this.ACTDATA,
         backgroundColor: '#E1E8FE',
-        profileColor: '#06274F',
+        profileColor: '#06274F', permission: { feature: 'Prospective Employee', action: 'view' }
       },
       {
         label: 'Active Employees',
         link: '/admin/active-employees',
         count: this.Active,
         backgroundColor: '#FEEFE1',
-        profileColor: '#A95200',
+        profileColor: '#A95200',permission: { feature: 'Active Employee', action: 'view' }
       },
       {
         label: 'Inactive Employees',
         link: '/admin/inactive-employees',
         count: this.Inactive,
         backgroundColor: '#E1FEF4',
-        profileColor: '#2B8D6B',
+        profileColor: '#2B8D6B',permission: { feature: 'Inactive Employee', action: 'view' }
       },
       {
         label: 'Prospective Interns',
         link: '/admin/prospective-interns',
         count: this.Trainee,
         backgroundColor: '#FEE1F7',
-        profileColor: '#95267A',
+        profileColor: '#95267A',permission: { feature: 'Add Trainee', action: 'view' }
       },
       {
         label: 'Active Interns',
         link: '/admin/active-interns',
         count: this.traineeactive,
         backgroundColor: '#FEE7E1',
-        profileColor: '#994530',
+        profileColor: '#994530',permission: { feature: 'Trainee Active', action: 'view' }
       },
       {
         label: 'Inactive Interns',
         link: '/admin/inactive-interns',
         count: this.traineeInactive,
         backgroundColor: '#FEE1F1',
-        profileColor: '#760C46',
+        profileColor: '#760C46',permission: { feature: 'Trainee Inactive', action: 'view' }
       },
       {
         label: 'Current Openings',
         link: '/admin/timeoff',
         count: this.activeCount,
         backgroundColor: '#FEEFE1',
-        profileColor: '#A95200',
+        profileColor: '#A95200',permission: { feature: 'Current Openings', action: 'view' }
       },
       {
         label: 'Probation Employees',
         link: '/admin/probation-employees',
         count: this.PROBDATA,
         backgroundColor: '#E1FEE1',
-        profileColor: '#0A850A',
+        profileColor: '#0A850A',permission: { feature: 'Probation Employees', action: 'view' }
       },
     ];
     this.cdr.detectChanges();

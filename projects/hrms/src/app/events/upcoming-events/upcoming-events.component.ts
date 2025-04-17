@@ -10,6 +10,7 @@ import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-upcoming-events',
@@ -31,7 +32,8 @@ export class UpcomingEventsComponent {
   spinnerLoader=false
   Employeeinfo: any;
   selectedImagePreview: any;
-  constructor(private router: Router, private modalService: NgbModal, private http: HttpService, private conformationPopup: OpenModalService, private fb: FormBuilder) { }
+  constructor(private router: Router, private modalService: NgbModal, private http: HttpService, 
+    private conformationPopup: OpenModalService, private fb: FormBuilder,public rbac: RbacService,) { }
   ngOnInit(): void {
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.getCustomEvents()

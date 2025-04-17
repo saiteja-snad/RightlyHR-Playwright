@@ -8,10 +8,11 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import moment from 'moment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clone-holidays',
-  imports: [CommonModule,Select,ReactiveFormsModule],
+  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule],
   templateUrl: './clone-holidays.component.html',
   styleUrl: './clone-holidays.component.scss'
 })

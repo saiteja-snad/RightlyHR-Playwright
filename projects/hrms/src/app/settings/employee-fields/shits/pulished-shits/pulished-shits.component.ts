@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pulished-shits',
-  imports: [NoDataFoundComponent,CommonModule,TranslateModule,RouterModule,NgIf, NgFor],
+  imports: [NoDataFoundComponent,CommonModule,TranslateModule,RouterModule,NgFor,NgIf],
   templateUrl: './pulished-shits.component.html',
   styleUrl: './pulished-shits.component.scss'
 })

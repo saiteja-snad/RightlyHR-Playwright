@@ -8,10 +8,11 @@ import { ManageDST } from '../dsts.modal';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-published-dsts',
-  imports: [NoDataFoundComponent, CommonModule],
+  imports: [NoDataFoundComponent, CommonModule,TranslateModule],
   templateUrl: './published-dsts.component.html',
   styleUrl: './published-dsts.component.scss',
 })

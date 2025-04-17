@@ -12,15 +12,14 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th >Employee ID</th>
-                        <th >Employee Name</th>
-                        <th >Requested Date</th>
-                        <th >Permission Date</th>
-                        <th >Duration(InHours)</th>
-                        <th >Permission Type</th>
-                        <th >Reason</th>
-                        <!-- <th >Approver Comments</th> -->
-                        <th >Action(s)</th>
+                        <th>{{'Employee ID' | translate}} </th>
+                        <th>{{'Employee Name' | translate}}</th>
+                        <th>{{'Requested Date' | translate}}</th>
+                        <th>{{'Permission Date' | translate}}</th>
+                        <th>{{'Duration(InHours)' | translate}}</th>
+                        <th>{{'Permission Type' | translate}}</th>
+                        <th>{{'Reason' | translate}}</th>
+                        <th>{{'Action(s)' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,7 +71,7 @@
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
-                      <td colspan="4">
+                      <td colspan="8">
                         <app-no-data-found></app-no-data-found>
                       </td>
                     </tr>

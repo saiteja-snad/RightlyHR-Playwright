@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class UpdateWeekendsComponent {
   weekendForm!: FormGroup;
   weekendDataLM!: IWeekends;
-  showbtn= false;
+  showbtn = false;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
@@ -53,7 +53,7 @@ export class UpdateWeekendsComponent {
     this.router.navigate(['/settings/employee-fields/manage-weekends']);
   }
 
-  navigateToClone(){
+  navigateToClone() {
     this.router.navigate(['/settings/employee-fields/clone-weekends']);
   }
 
@@ -83,7 +83,7 @@ export class UpdateWeekendsComponent {
   }
 
   addWeekend() {
-    if (this.weekends.length < 7) {
+    if (this.weekends.length < 3) {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');
@@ -93,6 +93,19 @@ export class UpdateWeekendsComponent {
   removeWeekend(index: number): void {
     this.weekends.removeAt(index);
   }
+
+  getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
+    const selectedDays = this.weekends.controls
+      .map((group, i) => i !== index ? group.get('day')?.value : null)
+      .filter(Boolean);
+
+    return this.daysList.map(day => ({
+      label: day,
+      value: day,
+      disabled: selectedDays.includes(day)
+    }));
+  }
+
 
   get isInitialRowOnly(): boolean {
     return this.weekends.length === this.weekendDataLM.orgWeekendItems.length;
@@ -247,7 +260,7 @@ export class UpdateWeekendsComponent {
       subLocationId: this.weekendDataLM.subLocationId,
       shiftID: this.weekendDataLM.shiftID,
       applicableyear: this.weekendDataLM.applicableyear,
-      status:  this.weekendDataLM.status,
+      status: this.weekendDataLM.status,
       addedby: this.employeedetails.employeeId,
       addedDate: new Date(),
       authorizedby: this.employeedetails.employeeId,
@@ -295,7 +308,7 @@ export class UpdateWeekendsComponent {
         error: (err: any) => {
           this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to publish weekends!')
         }
-    })
+      })
   }
 
   openConfirmation() {

@@ -12,13 +12,13 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Employee ID </th>
-                        <th>Employee Name</th>
-                        <th>Requested Date</th>
-                        <th>Department</th>
-                        <th>Status</th>
-                        <th>Employee Emails</th>
-                        <th>Actions</th>
+                        <th>{{'Employee ID'|translate}}</th>
+                        <th>{{'Employee Name' | translate}}</th>
+                        <th>{{'Requested Date' |translate}}</th>
+                        <th>{{'Department' |translate}}</th>
+                        <th>{{'Status' |translate}}</th>
+                        <th>{{'Employee Emails' |translate}}</th>
+                        <th>{{'Actions' |translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,9 +48,9 @@
                                 </a>
                                 <ul class="dropdown-menu py-0">
                                     <li><a class="dropdown-item" (click)="openModal(item,approval)" *ngIf="rbac.allowedToAccess('No Due Clearance Tab.update')"><i
-                                                class="bi bi-check-circle me-2"></i>Approve</a></li>
+                                                class="bi bi-check-circle me-2"></i>{{'Approve' |translate}}</a></li>
                                     <li><a class="dropdown-item" (click)="openModal(item,rejectmodal)" *ngIf="rbac.allowedToAccess('No Due Clearance Tab.delete')"><i
-                                                class="bi bi-x-circle me-2"></i>Reject</a></li>
+                                                class="bi bi-x-circle me-2"></i>{{'Reject' |translate}}</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -99,7 +99,7 @@
             <div class="d-flex justify-content-center align-items-center">
                 <img src="icons\succes.png" alt="succues" class="succes-icon">
             </div>
-            <h4 class="text-center ps-3 pe-3 inactive-poptext"> Are you sure you want to Approve? </h4>
+            <h4 class="text-center ps-3 pe-3 inactive-poptext">{{'Are you sure you want to Approve?' |translate}}</h4>
             <form [formGroup]="AcceptForm" (ngSubmit)="handleAccept()" class="ps-5 mb-3 w-100">
                 <div class="col-11">
                     <div class="mb-3 mt-2">
@@ -157,12 +157,12 @@
                 <img src="icons\reject.png" alt="succues" class="succes-icon">
             </div>
             <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">Are you sure you want to reject this request?</h4>
+                <h4 class="text-center">{{'Are you sure you want to reject this request?' |translate}}</h4>
             </div>
             <form [formGroup]="rejectForm" (ngSubmit)="rejectNodue()" class="ps-5 w-100">
                 <div class="col-11">
                     <div class="mb-3 mt-2">
-                        <label for="exampleFormControlTextarea1" class="form-label labell">Enter reason
+                        <label for="exampleFormControlTextarea1" class="form-label labell">{{'Enter reason' |translate}}
                             <span class="error-msg">*</span>
                         </label>
                         <textarea class="form-control" id="exampleFormControlTextarea1"

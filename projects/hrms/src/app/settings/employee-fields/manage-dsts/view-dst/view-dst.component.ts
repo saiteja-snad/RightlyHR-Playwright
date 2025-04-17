@@ -22,10 +22,11 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ManageDST } from '../dsts.modal';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-dst',
-  imports: [SelectModule, CommonModule, ReactiveFormsModule],
+  imports: [SelectModule, CommonModule, ReactiveFormsModule,TranslateModule],
   templateUrl: './view-dst.component.html',
   styleUrl: './view-dst.component.scss',
 })

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -22,10 +22,11 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ManageDST } from '../dsts.modal';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clone-dst',
-  imports: [SelectModule, CommonModule, ReactiveFormsModule],
+  imports: [SelectModule, CommonModule, ReactiveFormsModule,TranslateModule],
   templateUrl: './clone-dst.component.html',
   styleUrl: './clone-dst.component.scss',
 })
@@ -41,7 +42,7 @@ export class CloneDstComponent implements OnInit, OnDestroy {
   durations: number[] = [1, 1.5, 2, 2.5, 3];
   clonedDST: ManageDST | null = null;
   hidePublishCloneButtons: boolean = false;
-
+  @ViewChild('confirmation') confirmation!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -298,6 +299,14 @@ export class CloneDstComponent implements OnInit, OnDestroy {
           },
         });
     }
+  }
+
+  closeCloneDST(){
+    this.modalService.dismissAll();
+    this.navigate();
+   }
+   openConfirmation(){
+    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
   }
 
   publishDST() {

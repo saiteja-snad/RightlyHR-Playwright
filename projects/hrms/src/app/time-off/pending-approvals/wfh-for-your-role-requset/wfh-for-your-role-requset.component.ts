@@ -27,7 +27,7 @@ import { RbacService } from '../../../services/rbac.service';
     DateformatPipe,
     TranslateModule,
     ReactiveFormsModule,
-    WfhsearchfilterPipe
+    WfhsearchfilterPipe,
 ],
   templateUrl: './wfh-for-your-role-requset.component.html',
   styleUrl: './wfh-for-your-role-requset.component.scss',

@@ -63,7 +63,6 @@ export class EmployeeMasterDataComponent implements OnInit,OnDestroy {
 
   //method to get All the reports
 getStandardReports() {
-  debugger
   this.isLoading = true;
   
   const request:IStandardReportRequest = {

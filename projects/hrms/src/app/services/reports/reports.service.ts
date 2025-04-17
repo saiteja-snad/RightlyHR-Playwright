@@ -10,6 +10,7 @@ export class ReportsService {
   constructor(private http: HttpService) {}
 
   getStandardReports(request: IStandardReportRequest) {
+    
     const params = new HttpParams();
     if (request.employeeStatus) {
       params.set('EmployeeStatus', request.employeeStatus.toString());

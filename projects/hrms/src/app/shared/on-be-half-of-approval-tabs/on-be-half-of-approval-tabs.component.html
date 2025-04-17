@@ -1,9 +1,9 @@
 <div class="component-side-nav-tabs-container py-3">
-    <ul class="nav flex-column">
-      <li class="nav-item" *ngFor="let tab of statusTabs;">
-        <a class="nav-link d-flex justify-content-between align-items-center" [routerLink]="tab.link" routerLinkActive="nav-tab-active" >
-          {{ tab.label }}({{ tab.count ?? 0 }})
-        </a>
-      </li>
-    </ul>
+  <ul class="nav flex-column">
+    <li class="nav-item" *ngFor="let link of navLinks">
+      <a class="nav-link" [routerLink]="[link.route]" routerLinkActive="active-nav-link">
+        {{ link.label }}
+      </a>
+    </li>
+  </ul>
 </div>

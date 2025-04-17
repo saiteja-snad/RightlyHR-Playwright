@@ -1,67 +1,46 @@
-<div class="custom-main-component-container mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header cursor mb-0">On Behalf Of</p>
         </div>
-        <div class="d-flex gap-3">
-            <label class="form-label custom-label mt-2">Select Employee</label>
+        <div class="d-flex align-items-center gap-3">
+            <div class="pt-3">
+                <label class="form-label custom-label">Select Employee</label>
+            </div>
             <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                    filterBy="name" [showClear]="true" placeholder="Please select employee" (onChange)="Onclick($event)"
+                    filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="Onclick($event)"
                     formControlName="fusionEmpId" class="custom-select w-100">
                 </p-select>
             </div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)"><i
-                    class="bi bi-plus me-2"></i>Apply Leave On Behalf
-                Of</button>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">
+                <i class="bi bi-plus me-2"></i>Apply Leave On Behalf Of</button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card-container">
-                <button *ngIf="categoryDetails && categoryDetails.length > 0" class="arrow left-arrow"
-                    style="color: #fff;">&lt;</button>
-                <div #cardWrapper class="card-wrapper">
-                    <div class="row d-flex card-row ms-2">
-                        <div class="">
-                            <div class="row">
-                                <div class="column" *ngFor="let box of categoryDetails; trackBy: colorTrackBy">
-                                    <div class="card2">
-                                        <div class="days">{{ box.category.name }}</div>
-                                        <div class="headeer mt-2">
-                                            <div>
-                                                Entitled: {{box.allowedDays}}</div>
-                                            <div>
-                                                Booked: {{box.booked}}
-                                            </div>
-                                            <div>
-                                                Processed: {{box.utilizedDays }}
-                                            </div>
-                                            <div
-                                                *ngIf="(box.category.isProbationAllowed &&box.probationLeaves > 0);else  untilizeddays">
-                                                Available: {{ box.probationLeaves - box.utilizedDays }}
-                                            </div>
-                                            <ng-template #untilizeddays>
-                                                <div>
-                                                    Available: {{ box.allowedDays - box.utilizedDays }}
-                                                </div>
-                                            </ng-template>
-                                            <div *ngIf="box.category.isProbationAllowed && box.probationLeaves > 0">
-                                                Probation Leaves: {{ box.probationLeaves }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    
+    <div class="leave-cards-grid-container">
+        <div class="card leaves-card" *ngFor="let box of categoryDetails;">
+            <div class="leave-type-content text-center p-3">
+                <div class="leave-type-heading mb-3">{{ box.category.name }}</div>
+                <div class="card leave-type-card" [ngStyle]="{'background': box.categoryColor}">
+                    <i class="bi bi-house-door"></i>
                 </div>
-                <button *ngIf="categoryDetails && categoryDetails.length > 0" class="arrow right-arrow"
-                    style="color: #fff;">&gt;</button>
+            </div>
+            <div class="leave-content mb-3">
+                <div>Entitled: {{box.allowedDays}}</div>
+                <div>Booked: {{box.booked}}</div>
+                <div>Processed: {{box.utilizedDays }}</div>
+                @if(box.category.isProbationAllowed && box.probationLeaves > 0){
+                <div>Available: {{ box.probationLeaves - box.utilizedDays }}</div>
+                }
+                @else {
+                <div>Available: {{ box.allowedDays - box.utilizedDays }}</div>
+                }
+                <div *ngIf="box.category.isProbationAllowed && box.probationLeaves > 0">Probation Leaves: {{ box.probationLeaves }}</div>
             </div>
         </div>
-
     </div>
+
     <div class="employee-fields-main-container d-flex gap-3 w-100">
         <div class="custom-component-left-content">
             <app-on-be-half-of-approval-tabs></app-on-be-half-of-approval-tabs>
@@ -74,7 +53,7 @@
 
 <ng-template #addleave let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request Leave On Behalf Of</p>
             </div>
@@ -86,120 +65,74 @@
             <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Leave Type'| translate}}<span
-                                class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Leave Type'| translate}}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="categoryDetails" name="leaveType" optionLabel="category.name"
                                 optionValue="category.id" placeholder="Please select leave type"
                                 class="form-select custom-select" formControlName="leaveType"
                                 (onChange)="onleaveSelect($event.value)"></p-select>
                         </div>
-                        <small class="error-message text-danger"
-                            *ngIf="leaveForm.get('leaveType')?.invalid && leaveForm.get('leaveType')?.touched">
-                            Leave Type is required</small>
-
+                        <div class="error-msg" *ngIf="leaveForm.get('leaveType')?.invalid && leaveForm.get('leaveType')?.touched">
+                            Leave Type is required</div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Start Date'| translate}}<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" formControlName="startdate"
-                            (keypress)="false" (ngModelChange)="onstartdate('add')"
-                            (ngModelChange)="onStartDateChange()">
-                        <div class="error-message text-danger" class="invalid-feedback"
-                            *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
-                            Start Date is required
+                        <label class="form-label custom-label mb-2">{{'Start Date'| translate}}<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="startdate" (keypress)="false"
+                            (ngModelChange)="onstartdate('add')" (ngModelChange)="onStartDateChange()">
+                        <div class="error-msg">
+                            <div *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">Start Date is required</div>
+                            <div *ngIf="(isHolidaySelected)">Selected date is a holiday</div>
+                            <div *ngIf="(isWeekOffSelected)">Selected date is a weekend</div>
+                            <div *ngIf="!startdatevalid && leaveFormData.startdate">Start Date should be less than End Date</div>
+                            <div *ngIf="!isstimeoffValid && leaveFormData.startdate">The start date must be after the date of joining.</div>
+                            <div *ngIf="isNonOptionalHolidaySelected">Selected date is a holiday</div>
                         </div>
-                        <div class="error-message text-danger" *ngIf="(isHolidaySelected)">
-                            Selected date is a holiday
-                        </div>
-                        <div class="error-message text-danger" *ngIf="(isWeekOffSelected)">
-                            Selected date is a weekend
-                        </div>
-                        <div class="error-message text-danger" style="margin-left: -10%;"
-                            *ngIf="!startdatevalid && leaveFormData.startdate">
-                            Start Date should be less than End Date
-                        </div>
-                        <div class="error-message text-danger" style="margin-left: -10%;"
-                            *ngIf="!isstimeoffValid && leaveFormData.startdate">
-                            The start date must be after the date of joining.
-                        </div>
-                        <div class="error-message text-danger" *ngIf="isNonOptionalHolidaySelected">
-                            Selected date is a holiday
-                        </div>
-
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'End Date'| translate}}<span
-                                class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'End Date'| translate}}<span class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="enddate"
                             [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
-                        <div class="error-message text-danger"
-                            *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched) || 
-                                        (leaveFormData.startdate && leaveFormData.enddate && leaveFormData.enddate < leaveFormData.startdate)">
-                            End Date is required or cannot be before Start Date
-                        </div>
-
-                        <!-- Weekend Error -->
-                        <div class="error-message text-danger" *ngIf="(isWeekOffSelectedEndate)">
-                            Selected date is a weekend
-                        </div>
-
-                        <div class="error-message text-danger"
-                            *ngIf="((leaveForm.get('enddate')?.invalid || leaveForm.get('enddate')?.touched) && 
-                                        (this.selectedleave && this.selectedleave.category && 
-                                        this.selectedleave.category.excludeWeekends)) && isWeekOffSelectedEndate && isWeekOffSelected" role="alert">
-                            Please select the working days
-                        </div>
-
-                        <div class="error-message text-danger" *ngIf="leaveFormData.enddate && !issEndDategreater">
-                            End Date is less than Start Date
-                        </div>
-
-                        <div class="error-message text-danger" *ngIf="isHolidaySelectedEndate">
-                            Selected date is a holiday
+                        <div class="error-msg">
+                            <div *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched) || 
+                                (leaveFormData.startdate && leaveFormData.enddate && leaveFormData.enddate < leaveFormData.startdate)">
+                                End Date is required or cannot be before Start Date
+                            </div>
+                            <div *ngIf="(isWeekOffSelectedEndate)">Selected date is a weekend</div>
+                            <div *ngIf="((leaveForm.get('enddate')?.invalid || leaveForm.get('enddate')?.touched) && (this.selectedleave && 
+                             this.selectedleave.category && this.selectedleave.category.excludeWeekends)) && isWeekOffSelectedEndate && isWeekOffSelected" role="alert">
+                                Please select the working days
+                            </div>
+                            <div *ngIf="leaveFormData.enddate && !issEndDategreater">End Date is less than Start Date</div>
+                            <div *ngIf="isHolidaySelectedEndate">Selected date is a holiday</div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-3">
-                            {{ 'Availing' | translate }}<span class="text-danger">*</span>
-                        </label>
-
+                        <label class="form-label custom-label mb-2">{{ 'Availing' | translate }}<span class="text-danger">*</span></label>
                         <div class="d-flex gap-3">
-
                             <!-- Half Day Selection -->
                             <div id="halfDayCheck">
-                                <div class="form-check form-check-inline"
-                                    [class.no-pointer-events]="!enableHalfDayOptions">
-                                    <label class="form-check-label" for="halfday" style="font-size: 14px;">
-                                        <input type="radio" class="form-check-input" id="halfday"
-                                            formControlName="availingType" value="half" (change)="chooseDayType('half')"
-                                            required />
-                                        {{ 'Half Day' | translate }}
+                                <div class="form-check form-check-inline mb-3" [class.no-pointer-events]="!enableHalfDayOptions">
+                                    <label class="form-check-label" for="halfday">
+                                        <input type="radio" class="form-check-input" id="halfday" formControlName="availingType" value="half" 
+                                        (change)="chooseDayType('half')" required />{{ 'Half Day' | translate }}
                                     </label>
                                 </div>
-
                                 <!-- Show Half Day Options (First/Second Half) -->
-                                <ul class="select-ul"
-                                    *ngIf="enableButton && leaveForm.get('availingType')?.value === 'half'">
-                                    <li class="list-content">
+                                <ul class="list-style-none ps-1" *ngIf="enableButton && leaveForm.get('availingType')?.value === 'half'">
+                                    <li>
                                         <label class="form-check-label" for="firsthalf">
-                                            <input class="form-check-input" type="radio" id="firsthalf"
-                                                formControlName="availing" value="firsthalf" name="halfdayoptions" />
-                                            {{ 'First Half' | translate }}
+                                            <input class="form-check-input" type="radio" id="firsthalf" formControlName="availing" value="firsthalf" 
+                                             name="halfdayoptions" />{{ 'First Half' | translate }}
                                         </label>
                                     </li>
 
-                                    <li class="list-content">
+                                    <li>
                                         <label class="form-check-label" for="secondhalf">
-                                            <input class="form-check-input" type="radio" id="secondhalf"
-                                                formControlName="availing" value="secondhalf" name="halfdayoptions" />
-                                            {{ 'Second Half' | translate }}
+                                            <input class="form-check-input" type="radio" id="secondhalf" formControlName="availing" value="secondhalf" 
+                                              name="halfdayoptions" />{{ 'Second Half' | translate }}
                                         </label>
                                     </li>
                                 </ul>
@@ -207,49 +140,39 @@
 
                             <!-- Full Day Selection -->
                             <div class="form-check form-check-inline">
-                                <label class="form-check-label" for="fullDay" style="font-size: 14px;">
-                                    <input type="radio" class="form-check-input" id="fullDay"
-                                        formControlName="availingType" value="full" (change)="chooseDayType('full')"
-                                        required />
-                                    {{ 'Full Day' | translate }}
+                                <label class="form-check-label" for="fullDay">
+                                    <input type="radio" class="form-check-input" id="fullDay" formControlName="availingType" value="full" 
+                                      (change)="chooseDayType('full')" required />{{ 'Full Day' | translate }}
                                 </label>
                             </div>
                         </div>
 
                         <!-- Validation Message -->
-                        <div class="text-danger"
-                            *ngIf="leaveForm.get('availingType')?.invalid && leaveForm.get('availingType')?.touched">
+                        <div class="error-msg" *ngIf="leaveForm.get('availingType')?.invalid && leaveForm.get('availingType')?.touched">
                             Please select Availing option
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-12 mb-4">
                         <label class="form-label custom-label mb-2">Reason <span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" placeholder="Please enter reason"
                             formControlName="reason"></textarea>
-                        <div *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched">
-                            <div class="error-msg">Reason is required</div>
+                        <div *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched" class="error-msg">
+                            Reason is required
                         </div>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
-                        translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="leaveForm.invalid || !issEndDategreater  || !isstimeoffValid
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">{{'Close'| translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="leaveForm.invalid || !issEndDategreater  || !isstimeoffValid
                     || !startdatevalid || isHolidaySelected ||!isDayTypeselected|| isWeekOffSelected || isWeekOffSelectedEndate|| isoptionalnotallowedatWorkingdate ||
                     (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) && isLoading">
-                        <span *ngIf="!isLoading">
-                            Apply
-                        </span>
-                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-                        </div>
+                        <span *ngIf="!isLoading">Apply</span>
+                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 </ng-template>

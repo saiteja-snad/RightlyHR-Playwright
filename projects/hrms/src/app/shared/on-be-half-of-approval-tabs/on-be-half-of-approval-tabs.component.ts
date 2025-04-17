@@ -6,33 +6,35 @@ import { Ilpid } from '../../Interfaces/timoff-model';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
 import { TabsModule } from 'primeng/tabs';
-
 @Component({
   selector: 'app-on-be-half-of-approval-tabs',
-  imports: [CommonModule,RouterModule,TabsModule],
+  imports: [CommonModule, RouterModule, TabsModule],
   templateUrl: './on-be-half-of-approval-tabs.component.html',
   styleUrl: './on-be-half-of-approval-tabs.component.scss'
 })
+
 export class OnBeHalfOfApprovalTabsComponent {
   loggedinuser = {} as any;
-      empdata = {} as any;
-      subscription!: Subscription;
-      lpdata = [] as Ilpid[];
-      processedCount: any;
-      waitingForApprovalCount: any;
-      approvedCount: any;
-      rejectedCount: any;
-      statusTabs: any[] = [
-        { label: 'Waiting For Approval', link: 'waiting-for-approval', },
-        { label: 'Approved', link: 'approved', },
-        { label: 'Processed', link: 'processed', },
-        { label: 'Rejected', link: 'rejected', }
-      ];
-  constructor(public readonly router: Router,private http: HttpService, private authService: AuthService) {}
+  empdata = {} as any;
+  subscription!: Subscription;
+  lpdata = [] as Ilpid[];
+  processedCount: any;
+  waitingForApprovalCount: any;
+  approvedCount: any;
+  rejectedCount: any;
+  navLinks: any[] = [
+    { label: 'Waiting For Approval', route: 'waiting-for-approval', },
+    { label: 'Approved', route: 'approved', },
+    { label: 'Processed', route: 'processed', },
+    { label: 'Rejected', route: 'rejected', }
+  ];
+
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }
 
   isActive(route: string): boolean {
     return this.router.isActive(route, true);
   }
+
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -50,13 +52,12 @@ export class OnBeHalfOfApprovalTabsComponent {
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
-
           // Set counts
-          this.statusTabs = [
-            { label: 'Waiting For Approval', link: 'waiting-for-approval', count: waiting.length },
-            { label: 'Approved', link: 'approved', count: approved.length },
-            { label: 'Processed', link: 'processed', count: processed.length },
-            { label: 'Rejected', link: 'rejected', count: rejected.length }
+          this.navLinks = [
+            { label: 'Waiting For Approval', route: 'waiting-for-approval', count: waiting.length },
+            { label: 'Approved', route: 'approved', count: approved.length },
+            { label: 'Processed', route: 'processed', count: processed.length },
+            { label: 'Rejected', route: 'rejected', count: rejected.length }
           ];
         } else {
           console.error("Invalid response format");
@@ -65,5 +66,4 @@ export class OnBeHalfOfApprovalTabsComponent {
       error: (reason: any) => console.log(reason)
     });
   }
-
 }

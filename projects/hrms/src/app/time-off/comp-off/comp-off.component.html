@@ -4,7 +4,7 @@
             <p class="component-header cursor mb-0">Comp-Off</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary" *ngIf="!rbac.allowedToAccess('Compoff Tab.Create')"><i
+            <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Compoff Tab.create')"><i
                     class="bi bi-plus me-2"></i>Request Comp-Off</button>
         </div>
     </div>

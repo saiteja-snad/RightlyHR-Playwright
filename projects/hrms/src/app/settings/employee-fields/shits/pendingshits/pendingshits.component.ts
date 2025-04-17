@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { HttpService } from '../../../../services/http.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pendingshits',
-  imports: [NoDataFoundComponent, CommonModule],
+  imports: [NoDataFoundComponent, CommonModule,TranslateModule,RouterModule],
   templateUrl: './pendingshits.component.html',
   styleUrl: './pendingshits.component.scss'
 })

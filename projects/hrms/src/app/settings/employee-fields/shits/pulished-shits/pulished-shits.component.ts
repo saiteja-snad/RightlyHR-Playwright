@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../../../services/http.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pulished-shits',
-  imports: [NoDataFoundComponent,CommonModule],
+  imports: [NoDataFoundComponent,CommonModule,TranslateModule,RouterModule,NgIf, NgFor],
   templateUrl: './pulished-shits.component.html',
   styleUrl: './pulished-shits.component.scss'
 })
@@ -16,12 +17,12 @@ export class PulishedShitsComponent {
   empinfo: any
   pendingsubmittedshifts: any = [];
   publishedshifts: any = [];
+  publishedCount :any;
   viewClicked: boolean | undefined;
-  constructor( public router:Router, private http: HttpService) { 
-
-
+  constructor( public router:Router, private http: HttpService) {
 
   }
+  
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
@@ -32,6 +33,7 @@ export class PulishedShitsComponent {
       next: (data: any) => {
         this.shiftsData = data;
         this.publishedshifts = data.filter((item: any) => item.status === "Published");
+        this.publishedCount = this.publishedshifts.length;
         console.log(" this.publishedshifts", this.publishedshifts);
         this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
 

@@ -35,7 +35,8 @@ export class AddShitsComponent {
     { label: 'Create Shifts', link: '/claimsandexpenses/addexpens' },
 
   ];
-
+  isDuplicateCodeName: boolean[] = [];
+  isDuplicateCodeName1: boolean[] = [];
   constructor(
     public router: Router,
     private fb: FormBuilder,
@@ -60,7 +61,7 @@ export class AddShitsComponent {
 
   initializeForm() {
     this.shiftForm = this.fb.group({
-      year: ['', Validators.required],
+      year: [new Date().getFullYear(), Validators.required],
       location: ['', Validators.required],
       subLocation: ['', Validators.required],
       shifts: this.fb.array([this.createShift()])
@@ -110,8 +111,8 @@ export class AddShitsComponent {
         addedDate: new Date(),
         orgShiftsItems: formValue.shifts.map((shift: any) => ({
           shiftName: shift.shiftName,
-          shiftStartTime: shift.startTime + ':' + shift.endTime,
-          shiftEndTime: shift.startTime + ':' + shift.endTime,
+          shiftStartTime: shift.startTime,
+          shiftEndTime: shift.endTime,
           shiftDescription: "hi",
           status: "Submitted",
           code: shift.shiftCode,
@@ -123,9 +124,11 @@ export class AddShitsComponent {
           fullDayMinHrs: shift.fullDayMinHrs,
         }))
       };
-      
+      // shiftStartTime: shift.startTime + ':' + shift.endTime,
+          // shiftEndTime: shift.startTime + ':' + shift.endTime,
       this.http.postdata(`orgShifts/Post/Shift/OrgShift`, payload).subscribe({
         next: (data: any) => {
+          this.conformationPopup.openSuccessModal('Shift Added successfully');
           this.nagvition()
         },
         error: (error: any) => {
@@ -166,6 +169,39 @@ export class AddShitsComponent {
       subLocationControl?.disable();
       this.subLocations = [];
     }
+  }
+  //check for same shift code
+  isDuplicateShift(index: number): boolean {
+    const shiftArray = this.shiftForm.get('shifts') as FormArray;
+    const currentShift = shiftArray.at(index).value;
+  
+    return shiftArray.controls.some((ctrl, i) => {
+      if (i === index) return false;
+      const shift = ctrl.value;
+      return (
+        shift.shiftCode?.trim().toLowerCase() === currentShift.shiftCode?.trim().toLowerCase()
+        // shift.shiftName?.trim().toLowerCase() === currentShift.shiftName?.trim().toLowerCase()
+      );
+    });
+  }
+  isDuplicateShift1(index: number): boolean {
+    const shiftArray = this.shiftForm.get('shifts') as FormArray;
+    const currentShift = shiftArray.at(index).value;
+  
+    return shiftArray.controls.some((ctrl, i) => {
+      if (i === index) return false;
+      const shift = ctrl.value;
+      return (
+        // shift.shiftCode?.trim().toLowerCase() === currentShift.shiftCode?.trim().toLowerCase() &&
+        shift.shiftName?.trim().toLowerCase() === currentShift.shiftName?.trim().toLowerCase()
+      );
+    });
+  }
+  checkDuplicate(index: number): void {
+    this.isDuplicateCodeName[index] = this.isDuplicateShift(index);
+  }
+  checkDuplicate1(index: number): void {
+    this.isDuplicateCodeName1[index] = this.isDuplicateShift1(index);
   }
   onDelete(modal:any){
     modal.dismiss();

@@ -13,13 +13,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-update-shifts',
-  imports: [
-    RouterModule,
-    Select,
-    ReactiveFormsModule,
-    CommonModule,
-    TabsModule,TranslateModule
-  ],
+  imports: [RouterModule, Select,ReactiveFormsModule,CommonModule, TabsModule,TranslateModule],
   templateUrl: './update-shifts.component.html',
   styleUrl: './update-shifts.component.scss'
 })
@@ -41,31 +35,27 @@ export class UpdateShiftsComponent {
   selectedLocation:any;
   shiftid:any;
   hideBUTTON = false;
+  updategetdata:any;
+  isDuplicateCodeName: boolean[] = [];
+  isDuplicateCodeName1: boolean[] = [];
   navTabs: any[] = [
     { label: 'Update Shifts', link: '/claimsandexpenses/addexpens' },
   ];
 
   constructor(
-    private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private router: Router,
-    private http: HttpService,
-   private conformationPopup: OpenModalService,
-   private modalService: NgbModal
-  ) { }
+  private route: ActivatedRoute,private fb: FormBuilder,private router: Router,private http: HttpService,
+   private conformationPopup: OpenModalService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-
     const shiftId = this.route.snapshot.paramMap.get('id');
     if (shiftId) {
       this.getShiftById(shiftId);
     }
   }
-
 
   yearsList() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
@@ -83,12 +73,20 @@ export class UpdateShiftsComponent {
     });
   }
 
-
-  addShift() {
-    this.shifts.push(this.createShift());
-    this.hideBUTTON = true;
+  // addShift() {
+  //   this.shifts.push(this.createShift());
+  //   this.hideBUTTON = true;
+  // }
+  addShift(): void {
+    if (this.shifts.length < 3) {
+      this.shifts.push(this.createShift());
+      this.hideBUTTON = true;
+    } else {
+      // Optional: show a message to the user
+      // this.toastr.warning('You can only add up to 3 shifts.');
+    }
   }
-
+  
   get shifts(): FormArray {
     return this.shiftForm.get('shifts') as FormArray;
   }
@@ -118,15 +116,14 @@ export class UpdateShiftsComponent {
           subLocation: data.subLocationId,
           id:data.id,
         });
+        this.updategetdata = data;
         this.shiftDATA = data.subLocationId;
         this.selectedLocationId = data.locationId;
         console.log("Selected Locationid:", this.selectedLocationId);
         console.log(this.shiftDATA);
-       
          this.onLocationChange(data.locationId); // to load sublocations
         const shiftArray = this.shiftForm.get('shifts') as FormArray;
         shiftArray.clear(); // remove any existing default shift
-
         data.orgShiftsItems.forEach((item: any) => {
           shiftArray.push(this.fb.group({
             shiftCode: [item.code],
@@ -144,6 +141,7 @@ export class UpdateShiftsComponent {
             
           }));
         });
+      
         this.shiftid =data.orgShiftsItems.forEach((items: any) => {
           console.log('this.shiftid ',items.id );
 
@@ -160,14 +158,8 @@ export class UpdateShiftsComponent {
   hoildaylist: any;
   updateshift(f: FormGroup){
    
- 
     if (this.shiftForm.valid) {
       const formValue = this.shiftForm.value;
-      // formValue.shifts.forEach((shift: any, index: number) => {
-      //   if (!shift.id) {
-      //     shift.id = shift.id+ index; // or any logic to get next unique ID
-      //    }
-      // });
       const payload = {
         id: this.route.snapshot.paramMap.get('id'),
         locationId: formValue.location,
@@ -196,16 +188,16 @@ export class UpdateShiftsComponent {
       };
       
       this.http.postdata(`orgShifts/Update/Shift/OrgShift`, payload).subscribe({
-        next: (data: any) => {
+          next: (data: any) => {
           console.log('updaTE DATA',data);
           if (data.statusCode === 400) {
             alert('Error: Shift already exists.');
           } else {
             this.hoildaylist = data;
-  console.log('  this.hoildaylist ',  this.hoildaylist );
-  this.conformationPopup.openSuccessModal('Shift Updated successfully');
-  this.nagvition();
-           }
+           console.log('  this.hoildaylist ',  this.hoildaylist );
+           this.conformationPopup.openSuccessModal('Shift Updated successfully');
+           this.nagvition();
+          }
         },
         error: (error: any) => {
           console.log("error" + error)
@@ -214,6 +206,39 @@ export class UpdateShiftsComponent {
     }
   
    }
+   isDuplicateShift(index: number): boolean {
+    const shiftArray = this.shiftForm.get('shifts') as FormArray;
+    const currentShift = shiftArray.at(index).value;
+  
+    return shiftArray.controls.some((ctrl, i) => {
+      if (i === index) return false;
+      const shift = ctrl.value;
+      return (
+        shift.shiftCode?.trim().toLowerCase() === currentShift.shiftCode?.trim().toLowerCase()
+        // shift.shiftName?.trim().toLowerCase() === currentShift.shiftName?.trim().toLowerCase()
+      );
+    });
+  }
+  isDuplicateShift1(index: number): boolean {
+    const shiftArray = this.shiftForm.get('shifts') as FormArray;
+    const currentShift = shiftArray.at(index).value;
+  
+    return shiftArray.controls.some((ctrl, i) => {
+      if (i === index) return false;
+      const shift = ctrl.value;
+      return (
+        // shift.shiftCode?.trim().toLowerCase() === currentShift.shiftCode?.trim().toLowerCase() &&
+        shift.shiftName?.trim().toLowerCase() === currentShift.shiftName?.trim().toLowerCase()
+      );
+    });
+  }
+  checkDuplicate(index: number): void {
+    this.isDuplicateCodeName[index] = this.isDuplicateShift(index);
+  }
+  checkDuplicate1(index: number): void {
+    this.isDuplicateCodeName1[index] = this.isDuplicateShift1(index);
+  }
+  
 Cancel(){
   this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
 }
@@ -221,38 +246,33 @@ cloneshiftsPolicy1(id: any): void {
   this.router.navigate(['/settings/employee-fields/cloneshifts',this.route.snapshot.paramMap.get('id')]);
 }
 publish() {
-  let publishItem = {
+    let publishItem = {
     Category: 'shifts',
     refentityId: this.shiftForm.value.shifts[0].headerID
-  }
+    }
   this.subscription = this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).subscribe({
     next: (respnose: any) => {
       console.log(respnose);
-      const modalElement = document.getElementById('successhide');
+       const modalElement = document.getElementById('successhide');
       if (modalElement) {
         modalElement.classList.add('show');
         modalElement.style.display = 'block';
         this.Status = 'Shift Published successfully'
-       
       }
       this.conformationPopup.openSuccessModal('Shift Published successfully');
       setTimeout( () => {
         this.nagvition();
       }, 2000);
-      
-
     }
   })
 }
   onLocationChange(selectedLocationId: number | null) {
     const subLocationControl = this.shiftForm.get('subLocation');
-    // subLocationControl?.reset();
-
     if (selectedLocationId) {
       subLocationControl?.enable();
       const selectedLocation = this.locations.find(loc => loc.id === selectedLocationId);
       this.subLocations = selectedLocation?.subLocations||[];
-      this.selectdata = this.subLocations.find(loc => loc.id === this.shiftDATA);
+      this.selectdata = this.subLocations.find(loc => loc.id === this.selectedLocationId);
       if (this.selectdata) {
         subLocationControl?.setValue(this.selectdata.id); // ensure `optionValue="id"` is used in p-select
       }
@@ -264,7 +284,7 @@ publish() {
     }
   }
  
-  sublocation:any;
+  // sublocation:any;
   geAllLocations() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
@@ -272,9 +292,8 @@ publish() {
         this.selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
         console.log(this.selectedLocation);
         console.log("Selected Location:", this.selectedLocation);
-        this.sublocation = this.selectedLocation.subLocations;
-        // console.log("Selected sublocation:", sublocation);
-        const sublocationdata = this.sublocation.find(
+        this.subLocations = this.selectedLocation.subLocations;
+        const sublocationdata = this.subLocations.find(
           (sub: any) => sub.id === this.shiftDATA
         );
         
@@ -285,7 +304,6 @@ publish() {
             if (this.matchedSubLocation) {
              // Set the value to form
               this.shiftForm.patchValue({ subLocation: this.matchedSubLocation.id });
-      
               // Optionally store matched name for display/logging
               this.matchedSubLocation = this.matchedSubLocation.jobSubLocationName;
             }

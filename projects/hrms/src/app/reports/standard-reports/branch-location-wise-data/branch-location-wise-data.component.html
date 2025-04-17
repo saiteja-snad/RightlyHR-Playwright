@@ -8,14 +8,20 @@
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex gap-3">
                 <div class="d-flex gap-2 align-items-center">
-                    <div><span class="component-sub-header">Employee Status</span></div>
+                    <div><span class="component-sub-header">Branch Location</span></div>
                     <div class="custom-p-select-content">
-                        <p-select [options]="empStatusList" optionLabel="empStatusList" [filter]="false"
-                            [showClear]="false" class="form-select custom-select" formControlName="status"
-                            placeholder="Please select status">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-                            <ng-template let-year #item>{{ year }}</ng-template>
+                        <p-select [options]="branchLocations" optionLabel="branchLocation1" optionValue="branchLocation1" [filter]="false"
+                            [showClear]="false" class="form-select custom-select" formControlName="location" placeholder="Please select branch">
+                        
+                            <ng-template let-option pTemplate="item">
+                                {{ option.branchLocation1 }}
+                            </ng-template>
+                        
+                            <ng-template let-selectedOption pTemplate="selectedItem">
+                                {{ selectedOption.branchLocation1 }}
+                            </ng-template>
                         </p-select>
+
                     </div>
                 </div>
                 <div class="d-flex gap-2">

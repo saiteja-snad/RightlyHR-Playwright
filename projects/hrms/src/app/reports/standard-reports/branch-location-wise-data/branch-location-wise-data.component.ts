@@ -11,7 +11,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
-import { EmployeeDetails, IFamilyDetails } from '../../../Interfaces/reports.model';
+import { Branch, EmployeeDetails, IFamilyDetails } from '../../../Interfaces/reports.model';
 import { Subject, takeUntil } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -38,6 +38,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   familydata = [] as IFamilyDetails[];
   destroy$: Subject<boolean> = new Subject<boolean>();
   standardReportData = [] as EmployeeDetails [];
+  branchLocations= [] as Branch [];
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -47,12 +48,13 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.getBranchLocations();
     this.getBranchWiseData();
   }
 
   initializeForm() {
     this.reportForm = this.fb.group({
-      status: ['All Employees', Validators.required],
+      location: ['', Validators.required],
     });
   }
 
@@ -105,6 +107,32 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
 
     // Set minimum width to 10
     return Math.max(10, maxWidth);
+  }
+
+  getBranchLocations() {
+  this.http.getData('BranchLocation').subscribe({
+      next: (res: any) => {
+        if (res) {
+          this.branchLocations = res;
+          if (this.branchLocations.length > 0) {
+            this.branchLocations.unshift({
+              sno: -1,
+              branchCode: 'ALL',
+              branchLocation1: 'All Branch Locations',
+              isDeleted: false
+            });
+            this.reportForm.patchValue({
+              location: this.branchLocations[0] 
+            });
+          }
+          
+        }
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+      complete: () => {},
+    });
   }
 
   exportAsExcelFile(): void {

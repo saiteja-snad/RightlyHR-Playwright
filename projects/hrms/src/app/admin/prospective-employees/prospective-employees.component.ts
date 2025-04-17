@@ -10,18 +10,21 @@ import { Iprospective } from './Prospective-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProspectivePipe } from '../../Pipes/prospective.pipe';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-prospective-employees',
-  imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './prospective-employees.component.html',
   styleUrl: './prospective-employees.component.scss'
 })
+
 export class ProspectiveEmployeesComponent implements OnInit {
   Prospective = new BehaviorSubject<Iprospective[]>([]);
   searchValue: any;
   subscription!: Subscription;
   jobLocationDropDownData = {} as any;
   emp = {} as any;
+  loader = false;
 
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
 
@@ -29,16 +32,16 @@ export class ProspectiveEmployeesComponent implements OnInit {
     this.empdata();
     this.jobLocationList();
     this.http.activeTabSubject.subscribe((selectedObj) => {
-      console.log('Received designation from child via Observable:', selectedObj);
       this.empdata();
     });
   }
 
   empdata() {
+    this.loader = true;
     this.subscription = this.http.getData(`Employeedata/ProspectiveEmployees`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.Prospective.next(data);
+        this.loader = false;
       },
       error: (reason: any) => console.log(reason),
     });
@@ -47,7 +50,6 @@ export class ProspectiveEmployeesComponent implements OnInit {
   jobLocationList() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.jobLocationDropDownData = data;
       },
     });

@@ -5,11 +5,10 @@
     </div>
     @if(this.rbac.allowedToAccess('Add Employee.view')){
       <div class="d-flex" >
-        <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
-            class="bi bi-plus me-2"></i>{{'Add Prospective Intern'| translate}}</button>
+        <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
+          <i class="bi bi-plus me-2"></i>{{'Add Prospective Intern'| translate}}</button>
       </div>
     }
-   
   </div>
   <div>
     <!--Input search-->

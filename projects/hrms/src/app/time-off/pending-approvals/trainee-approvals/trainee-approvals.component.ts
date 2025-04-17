@@ -16,6 +16,7 @@ import { TraineesearchfilterPipe } from "../../../Pipes/traineesearchfilter.pipe
 import { ITrainee } from '../../../admin/prospective-interns/Prospective-interns-modules';
 import { TraineeApprovalsTabsComponent } from "../../../shared/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-trainee-approvals',
@@ -57,7 +58,14 @@ export class TraineeApprovalsComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-  constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,private authService: AuthService,) {
+  constructor(
+    private conformationPopup: OpenModalService, 
+    private http: HttpService, 
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    private authService: AuthService,
+    public rbac: RbacService,
+  ) {
     this.customsetup = environment.dateformat;
     this.datePipe = new DatePipe('en-US');
   }

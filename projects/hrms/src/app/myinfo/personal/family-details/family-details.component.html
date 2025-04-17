@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div> <span class="component-sub-header">Family Details</span></div>
-        <div class="custom-add-btn" (click)="openModal(addFamilyModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+        <div class="custom-add-btn" (click)="openModal(addFamilyModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
+        </div>
     </div>
     <div class="custom-table-content">
         <table class="w-100">
@@ -67,45 +68,60 @@
         <div class="custom-main-popup-content p-3">
             <form [formGroup]="familyDetailsForm" (ngSubmit)="postFamilyDetails()">
                 <div class="row">
+                    @if(this.rbac.allowedToAccess('Family Details.view')){
                     <div class="col-md-6 mb-3">
-                        <label for="memberName" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="memberName" formControlName="memberName"
-                            placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
+                        <label for="memberName" class="form-label custom-label mb-2">Name<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="memberName"
+                            formControlName="memberName" placeholder="Please enter name"
+                            (keypress)="formValidation.restrictInput($event)">
                         <div class="error-msg"
                             *ngIf="familyDetailsForm.get('memberName')?.invalid && familyDetailsForm.get('memberName')?.touched">
-                            <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['required']">Name is required</div>
-                            <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['pattern']">Name must contain only letters</div>
+                            <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['required']">Name is required
+                            </div>
+                            <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['pattern']">Name must contain only
+                                letters</div>
                         </div>
                     </div>
-                
+                    } 
+                    @if(this.rbac.allowedToAccess('Family Details.view')){
                     <div class="col-md-6 mb-3">
-                        <label for="dateOfBirth" class="form-label custom-label mb-2">Date of Birth<span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="dateOfBirth" formControlName="dateOfBirth">
-                        <div class="error-msg" *ngIf="familyDetailsForm.get('dateOfBirth')?.invalid && familyDetailsForm.get('dateOfBirth')?.touched">
+                        <label for="dateOfBirth" class="form-label custom-label mb-2">Date of Birth<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="dateOfBirth"
+                            formControlName="dateOfBirth">
+                        <div class="error-msg"
+                            *ngIf="familyDetailsForm.get('dateOfBirth')?.invalid && familyDetailsForm.get('dateOfBirth')?.touched">
                             Date of Birth is required
                         </div>
                     </div>
-
+                }
+                    @if(this.rbac.allowedToAccess('Family Details.view')){
                     <div class="col-md-12 mb-3">
-                        <label for="relationShipId" class="form-label custom-label mb-2">Relationship<span class="text-danger">*</span></label>
+                        <label for="relationShipId" class="form-label custom-label mb-2">Relationship<span
+                                class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="relationShipId"
-                                placeholder="Please select relationship" class="form-select custom-select"></p-select>
+                            <p-select [options]="familyRelations" optionLabel="relationship1"
+                                formControlName="relationShipId" placeholder="Please select relationship"
+                                class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="familyDetailsForm.get('relationShipId')?.invalid && familyDetailsForm.get('relationShipId')?.touched">
                             Relationship is required
                         </div>
                     </div>
-                
+                }
+                    @if(this.rbac.allowedToAccess('Family Details.view')){
                     <div class="col-md-6">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="isDependent" formControlName="isDependent">
+                                <input class="form-check-input" type="checkbox" id="isDependent"
+                                    formControlName="isDependent">
                             </div>
                             <label for="isDependent" class="form-label custom-label mb-0">Dependent</label>
                         </div>
                     </div>
+                }
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
@@ -130,52 +146,67 @@
         <div class="custom-main-popup-content p-3">
             <form [formGroup]="familyDetailsupdateForm" (ngSubmit)="updatefamilyDetails()">
                 <div class="row">
+                    @if(this.rbac.allowedToAccess('Family Details.view')){
                     <div class="col-md-6 mb-3">
-                        <label for="memberNameupdate" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="memberNameupdate" formControlName="memberNameupdate" 
-                          placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
+                        <label for="memberNameupdate" class="form-label custom-label mb-2">Name<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" id="memberNameupdate"
+                            formControlName="memberNameupdate" placeholder="Please enter name"
+                            (keypress)="formValidation.restrictInput($event)">
                         <div class="error-msg"
                             *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.invalid && familyDetailsupdateForm.get('memberNameupdate')?.touched">
-                            <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['required']">Name is required</div>
-                            <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['pattern']">Name must contain only letters</div>
+                            <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['required']">Name is
+                                required</div>
+                            <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['pattern']">Name must
+                                contain only letters</div>
                         </div>
                     </div>
-
+                }
+                    @if(this.rbac.allowedToAccess('Family Details.view')){
                     <div class="col-md-6 mb-3">
-                        <label for="dateOfBirthupdate" class="form-label custom-label mb-2">Date of Birth<span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="dateOfBirthupdate" formControlName="dateOfBirthupdate">
+                        <label for="dateOfBirthupdate" class="form-label custom-label mb-2">Date of Birth<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="dateOfBirthupdate"
+                            formControlName="dateOfBirthupdate">
                         <div class="error-msg"
                             *ngIf="familyDetailsupdateForm.get('dateOfBirthupdate')?.invalid && familyDetailsupdateForm.get('dateOfBirthupdate')?.touched">
                             Date of Birth is required
                         </div>
                     </div>
-
+                }
+                    @if(this.rbac.allowedToAccess('Family Details.view')){
                     <div class="col-md-12 mb-3">
                         <label for="relationShipIdupdate" class="form-label custom-label mb-2">Relationship<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="relationShipIdupdate" 
-                             placeholder="Please select relationship" class="form-select custom-select"></p-select>
+                            <p-select [options]="familyRelations" optionLabel="relationship1"
+                                formControlName="relationShipIdupdate" placeholder="Please select relationship"
+                                class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="familyDetailsupdateForm.get('relationShipIdupdate')?.invalid && familyDetailsupdateForm.get('relationShipIdupdate')?.touched">
                             Relationship is required
                         </div>
                     </div>
-
+                }
+                    @if(this.rbac.allowedToAccess('Family Details.view')){
                     <div class="col-md-6 mb-3">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="isDependentupdate" formControlName="isDependentupdate">
+                                <input class="form-check-input" type="checkbox" id="isDependentupdate"
+                                    formControlName="isDependentupdate">
                             </div>
                             <label for="isDependentupdate" class="form-label custom-label mb-0">Dependent</label>
                         </div>
                     </div>
+                }
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();familyDetailsupdateForm.reset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="familyDetailsupdateForm.invalid">Update</button>
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="modal.dismiss();familyDetailsupdateForm.reset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="familyDetailsupdateForm.invalid">Update</button>
                 </div>
             </form>
         </div>

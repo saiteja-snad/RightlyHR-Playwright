@@ -1,17 +1,18 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header cursor mb-0" (click)="navigateDashboard()">
               <i class="bi bi-arrow-90deg-left me-2"></i>{{'Prospective Employees'| translate}}</p>
         </div>
+        @if(this.rbac.allowedToAccess('Add Employee.view')){
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
               <i class="bi bi-plus me-2"></i>{{'Add Prospective Employee'| translate}}</button>
-        </div>
+        </div>}
     </div>
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" 
             placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
@@ -19,57 +20,59 @@
 
         <div class="custom-table-content">
             <table class="w-100">
-                <thead>
-                    <tr>
-                      <th>{{'ID'|translate}}</th>
-                      <th>{{'EmployeeName'|translate}}</th>
-                      <th>{{'Personal Email'|translate}}</th>
-                      <th>{{'Phone Number'|translate}}</th>
-                      <th>{{'Location'|translate}}</th>
-                      <th>{{'Sub Location'|translate}}</th>
-                      <th>{{'Designation'|translate}}</th>
-                      <th>{{'Sub Status'|translate}}</th>
-                    </tr>
-                </thead>
-                 <tbody>
-                  @if( ((Prospective | async) ?? []).length > 0){
-                  @for (act of ((Prospective | async) ?? []) | prospective : searchValue; track act.id) {
-                  <tr >
-                    <td>{{act.employeeId}}</td>
-                    <td><span *ngIf="act.firstName ; else firstname"><a class="select-item" (click)="select(act)">{{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}</a></span></td>
-                    <ng-template #firstname>
-                      -
-                    </ng-template>
-                    <td>{{act.emailaddress?act.emailaddress:'-'}}</td>
-                    <td> {{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}
-                    </td>
-                    <td>
-                      @for(jobDetail of act?.jobDetails;track jobDetail.id){
-                        {{ jobDetail?.lopcation?jobDetail?.lopcation:'-' }}
-                      }
-                    </td>
-                    <td>
-                      @for(jobDetail of act?.jobDetails;track jobDetail.id){
-                        {{ jobDetail?.subLocation?jobDetail?.subLocation:'-'}}}
-                    </td>
-                    <td>
-                        @for(jobDetail of act?.jobDetails; track jobDetail.id){
-                          {{ jobDetail?.jobRole?jobDetail?.jobRole:'-'}} 
-                        }
-                    </td>
-                    <td>{{act.substatus?act.substatus:'-'}}
-                    </td>
-                  </tr>
-                  }
-                  }
-                  @else{
-                  <tr>
-                    <td>
-                      <app-no-data-found />
-                    </td>
-                  </tr>
-                  }
-        </tbody>
+              <thead>
+                <tr>
+                  <th>{{'ID'|translate}}</th>
+                  <th>{{'EmployeeName'|translate}}</th>
+                  <th>{{'Personal Email'|translate}}</th>
+                  <th>{{'Phone Number'|translate}}</th>
+                  <th>{{'Location'|translate}}</th>
+                  <th>{{'Sub Location'|translate}}</th>
+                  <th>{{'Designation'|translate}}</th>
+                  <th>{{'Sub Status'|translate}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if( ((Prospective | async) ?? []).length > 0){
+                @for (act of ((Prospective | async) ?? []) | prospective : searchValue; track act.id) {
+                <tr class="cursor" (click)="select(act)">
+                  <td>{{act.employeeId}}</td>
+                  <td>
+                    <span *ngIf="act.firstName ; else firstname">
+                      <a class="select-item" >
+                        {{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}
+                      </a>
+                    </span>
+                  <ng-template #firstname>-</ng-template></td>
+                  <td>{{act.emailaddress?act.emailaddress:'-'}}</td>
+                  <td>{{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}</td>
+                  <td>
+                    @for(jobDetail of act?.jobDetails;track jobDetail.id){
+                    {{ jobDetail?.lopcation?jobDetail?.lopcation:'-' }}
+                    }
+                  </td>
+                  <td>
+                    @for(jobDetail of act?.jobDetails;track jobDetail.id){
+                    {{ jobDetail?.subLocation?jobDetail?.subLocation:'-'}}
+                    }
+                  </td>
+                  <td>
+                    @for(jobDetail of act?.jobDetails; track jobDetail.id){
+                    {{ jobDetail?.jobRole?jobDetail?.jobRole:'-'}}
+                    }
+                  </td>
+                  <td>{{act.substatus?act.substatus:'-'}}</td>
+                </tr>
+                }
+                }
+                @else{
+                <tr>
+                  <td>
+                    <app-no-data-found />
+                  </td>
+                </tr>
+                }
+              </tbody>
             </table>
         </div>
     </div>

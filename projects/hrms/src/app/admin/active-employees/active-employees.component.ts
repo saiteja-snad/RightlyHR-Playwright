@@ -8,6 +8,7 @@ import { Iactive } from './active-model';
 import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-active-employees',
   imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule],
@@ -20,7 +21,7 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
   Active = [] as Iactive[];
   searchValue: any;
   emp = {} as any;
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal,public rbac:RbacService) { }
 
   ngOnInit(): void {
     this.empdata();

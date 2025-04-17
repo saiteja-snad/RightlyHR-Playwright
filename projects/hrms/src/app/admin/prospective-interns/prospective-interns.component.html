@@ -1,12 +1,15 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <p class="component-header mb-0" (click)="navigateDashboard()"><i class="bi bi-arrow-90deg-left me-2 cursor"></i>{{'Prospective Interns'|translate}}</p>
+      <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i class="bi bi-arrow-90deg-left me-2"></i>{{'Prospective Interns'|translate}}</p>
     </div>
-    <div class="d-flex">
-      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
-          class="bi bi-plus me-2"></i>{{'Add Prospective Intern'| translate}}</button>
-    </div>
+    
+      <div class="d-flex" >
+        <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
+            class="bi bi-plus me-2"></i>{{'Add Prospective Intern'| translate}}</button>
+      </div>
+    <!-- } -->
+   
   </div>
   <div>
     <!--Input search-->

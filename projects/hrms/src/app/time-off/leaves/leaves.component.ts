@@ -15,6 +15,7 @@ import moment from 'moment';
 import { environment } from '../../../environments/environment.dev';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-leaves',
@@ -154,7 +155,14 @@ export class LeavesComponent {
       this.mm = false;
     }
   }
-  constructor(private http: HttpService, private conformationPopup: OpenModalService,private modalService: NgbModal,private authService: AuthService,private fb: FormBuilder) {}
+  constructor(
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    private modalService: NgbModal,
+    private authService: AuthService,
+    private fb: FormBuilder,
+    public rbac: RbacService,
+  ) {}
 
   openModal(content: any) {
     this.modalService.open(content, {centered: true,backdrop: 'static'});

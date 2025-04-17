@@ -11,9 +11,10 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { PmsTabsComponent } from "../pms-tabs/pms-tabs.component";
 import { SettingsMainHeaderTabsComponent } from "../settings-tabs/settings-main-header-tabs/settings-main-header-tabs.component";
 import { CalendarHeaderTabsComponent } from "../calendar-header-tabs/calendar-header-tabs.component";
+import { ReportsMainTabsComponent } from "../reports-tabs/reports-main-tabs/reports-main-tabs.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PmsTabsComponent, SettingsMainHeaderTabsComponent, CalendarHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PmsTabsComponent, SettingsMainHeaderTabsComponent, CalendarHeaderTabsComponent, ReportsMainTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

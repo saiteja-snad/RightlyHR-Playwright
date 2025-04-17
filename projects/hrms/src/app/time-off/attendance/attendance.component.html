@@ -113,22 +113,16 @@
                                            }
                                     </td>
                                     <td>
-                                        <div>
-                                            <span>
-                                                <a type="button" placement="top" [ngbPopover]="reason">
-                                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                                </a>
-                                                <ng-template #reason>
-                                                    @for (item of item.dayLogs; track $index) {
-                                                        <div class="d-flex">
-                                                            <p class="mb-0">{{item?.direction ??'-'}} </p>
-                                                            <p class="mb-0">{{item?.punchTime ??'-'}} </p>
-                                                        </div>
-                                                    }
-                                                    
-                                                </ng-template>
-                                            </span>
-                                        </div>
+                                        @if((item?.dayLogs??[]).length>0){
+                                            <div>
+                                                <span>
+                                                    <a type="button"  (click)="openModal(punchintimes);dayLogsData(item.dayLogs,item.date)" >
+                                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        }
+                                        @else{-}
                                     </td>
                                     <td></td>
                                 </tr>
@@ -257,3 +251,33 @@
         </div>
     </ng-template>
 </div>
+<ng-template #punchintimes let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Punch in-Out Timings ({{selectedDate|dateformat}})</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <div class="custom-table-content time-custom mt-2">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>In</th>
+                            <th>Out</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of punchPairs">
+                            <td>{{ item.in ??'-' }}</td>
+                            <td>{{ item.out ??'-' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-template>

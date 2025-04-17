@@ -4,7 +4,7 @@
             <p class="component-header cursor mb-0">Leave Balance</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary" *ngIf="!rbac.allowedToAccess('Timeoff Tab.Create')"><i
+            <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Timeoff Tab.create')"><i
                     class="bi bi-plus me-2"></i>Request Leave</button>
         </div>
     </div>

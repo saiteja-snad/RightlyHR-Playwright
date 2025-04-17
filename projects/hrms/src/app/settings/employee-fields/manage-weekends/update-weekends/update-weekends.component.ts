@@ -83,7 +83,7 @@ export class UpdateWeekendsComponent {
   }
 
   addWeekend() {
-    if (this.weekends.length < 7) {
+    if (this.weekends.length < 3) {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');

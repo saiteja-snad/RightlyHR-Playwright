@@ -5,9 +5,10 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { IWeekends } from './weekends.model';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
    selector: 'app-pending-weekends',
-   imports: [CommonModule, NgbPopoverModule],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule],
    templateUrl: './pending-weekends.component.html',
    styleUrl: './pending-weekends.component.scss'
 })

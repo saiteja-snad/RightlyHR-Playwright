@@ -98,6 +98,7 @@ export class AddShitsComponent {
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
      
   }
+  // submit button click
   Addshift(): void {
     if (this.shiftForm.valid) {
       const formValue = this.shiftForm.value;
@@ -146,7 +147,7 @@ export class AddShitsComponent {
       error: (reason: any) => console.log(reason)
     });
   }
-
+// location changes
   onLocationChange(selectedLocationId: number | null) {
     const subLocationControl = this.shiftForm.get('subLocation');
   

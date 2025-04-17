@@ -38,6 +38,8 @@ export class UpdateShiftsComponent {
   updategetdata:any;
   isDuplicateCodeName: boolean[] = [];
   isDuplicateCodeName1: boolean[] = [];
+  Status: any;
+  hoildaylist: any;
   navTabs: any[] = [
     { label: 'Update Shifts', link: '/claimsandexpenses/addexpens' },
   ];
@@ -154,8 +156,7 @@ export class UpdateShiftsComponent {
     });
   }
 
-  Status: any;
-  hoildaylist: any;
+//  call update time
   updateshift(f: FormGroup){
    
     if (this.shiftForm.valid) {
@@ -206,6 +207,7 @@ export class UpdateShiftsComponent {
     }
   
    }
+   //shiftname duplicate
    isDuplicateShift(index: number): boolean {
     const shiftArray = this.shiftForm.get('shifts') as FormArray;
     const currentShift = shiftArray.at(index).value;
@@ -242,6 +244,7 @@ export class UpdateShiftsComponent {
 Cancel(){
   this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
 }
+// clone button click
 cloneshiftsPolicy1(id: any): void {
   this.router.navigate(['/settings/employee-fields/cloneshifts',this.route.snapshot.paramMap.get('id')]);
 }
@@ -266,6 +269,7 @@ publish() {
     }
   })
 }
+// location change
   onLocationChange(selectedLocationId: number | null) {
     const subLocationControl = this.shiftForm.get('subLocation');
     if (selectedLocationId) {
@@ -312,6 +316,7 @@ publish() {
       error: (reason: any) => console.log(reason)
      });
   }
+  // cancel button click
   onDelete(modal:any){
     modal.dismiss();
 this.nagvition();

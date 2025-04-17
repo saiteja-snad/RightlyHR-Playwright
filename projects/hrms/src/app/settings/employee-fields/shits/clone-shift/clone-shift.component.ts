@@ -177,6 +177,7 @@ export class CloneShiftComponent {
       error: (err: any) => console.error('Error loading shift data', err)
     });
   }
+  // submit button click
   Addshift(): void {
     if (this.shiftForm.valid && this.isAllShiftsValid) {
       const formValue = this.shiftForm.value;
@@ -252,7 +253,7 @@ export class CloneShiftComponent {
   checkDuplicate1(index: number): void {
     this.isDuplicateCodeName1[index] = this.isDuplicateShift1(index);
   }
-  
+  // cancel button click
   onDelete(modal: any) {
     modal.dismiss();
     this.nagvition();
@@ -260,6 +261,7 @@ export class CloneShiftComponent {
   closeDelete(modal: any) {
     modal.dismiss();
   }
+  // location changes
   onLocationChange(selectedLocationId: number | null) {
     const subLocationControl = this.shiftForm.get('subLocation');
     if (selectedLocationId) {
@@ -278,7 +280,7 @@ export class CloneShiftComponent {
       this.subLocations = [];
     }
   }
-
+// sublocation
   sublocation: any;
   geAllLocations() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({

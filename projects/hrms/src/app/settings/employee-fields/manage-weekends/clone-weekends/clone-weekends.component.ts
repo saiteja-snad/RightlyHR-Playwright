@@ -90,6 +90,18 @@ export class CloneWeekendsComponent {
     this.weekends.removeAt(index);
   }
 
+  getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
+    const selectedDays = this.weekends.controls
+      .map((group, i) => i !== index ? group.get('day')?.value : null)
+      .filter(Boolean);
+  
+    return this.daysList.map(day => ({
+      label: day,
+      value: day,
+      disabled: selectedDays.includes(day)
+    }));
+  }
+
   patchWeekendForm(data: any) {
     if (!data) return;
     this.weekendForm.get('year')?.enable();

@@ -97,7 +97,8 @@
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="custom-btn btn-primary" (click)="addWeekend()" [disabled]="weekends.length >= 3">+ Add Row</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="addWeekend()"
+                        [disabled]="weekends.length >= 3">+ Add Row</button>
                 </div>
             </div>
 
@@ -124,13 +125,15 @@
                                             {{ "Day" | translate }}<span class="text-danger">*</span>
                                         </label>
                                         <div class="custom-p-select-content">
-                                            <p-select [options]="daysList" [filter]="true" [showClear]="false"
+                                            <p-select [options]="getAvailableDays(i)" optionLabel="label"
+                                                optionValue="value" [filter]="true" [showClear]="false"
                                                 formControlName="day" placeholder="Please select day"
                                                 class="form-select custom-select">
-                                                <ng-template #selectedItem let-selectedOption>{{ selectedOption
+                                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.label
                                                     }}</ng-template>
-                                                <ng-template let-option #item>{{ option }}</ng-template>
+                                                <ng-template let-option #item>{{ option.label }}</ng-template>
                                             </p-select>
+
                                         </div>
                                         <div *ngIf="weekend.get('day')?.touched && weekend.get('day')?.invalid"
                                             class="error-msg">
@@ -160,12 +163,11 @@
 
             <div class="d-flex justify-content-end gap-3 pt-4">
                 @if(isInitialRowOnly){
-                <button type="button" class="custom-btn btn-primary px-4" (click)="publishWeekends()">{{"Publish" | translate}}</button>
-                <button type="button" class="custom-btn btn-primary px-4" (click)="navigateToClone()">{{"Clone" | translate}}</button>
+                <button type="button" class="custom-btn publish-btn px-4" (click)="publishWeekends()">{{"Publish" | translate}}</button>
+                <button type="button" class="custom-btn clone-btn px-4" (click)="navigateToClone()">{{"Clone" | translate}}</button>
                 }
                 <button type="button" class="custom-btn btn-secondary px-4" (click)="openConfirmation()">{{"Cancel" | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary px-4"
-                    [disabled]="weekendForm.invalid">{{"Update" | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="weekendForm.invalid">{{"Update" | translate}}</button>
             </div>
         </form>
     </div>

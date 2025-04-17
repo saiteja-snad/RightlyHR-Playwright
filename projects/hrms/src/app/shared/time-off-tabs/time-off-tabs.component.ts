@@ -5,9 +5,9 @@ import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-time-off-tabs',
-  imports: [CommonModule,RouterModule,TabsModule],
+  imports: [CommonModule, RouterModule, TabsModule],
   templateUrl: './time-off-tabs.component.html',
-  styleUrl: './time-off-tabs.component.scss'
+  styleUrl: './time-off-tabs.component.scss',
 })
 export class TimeOffTabsComponent {
   constructor(public readonly router: Router) {}
@@ -15,6 +15,7 @@ export class TimeOffTabsComponent {
   isActive(route: string): boolean {
     return this.router.isActive(route, true);
   }
+
   navTabs: any[] = [
     { label: 'Time-Off', link: '/time-off/leaves/waiting-for-approval',permission: { feature: 'Timeoff Tab', action: 'view' } },
     { label: 'WFH', link: '/time-off/wfh/waiting-for-approval', permission: { feature: 'Workfromhome Tab', action: 'view' }},
@@ -24,7 +25,6 @@ export class TimeOffTabsComponent {
     { label: 'Pending Approvals', link: '/time-off/pending-approvals/time-off-request/for-you', },
     { label: 'Attendance', link: '/time-off/attendance' },
     { label: 'On Behalf Of', link: '/time-off/on-behalf-of/waiting-for-approval',permission: { feature: 'On Behalf Of Tab', action: 'view' } },
-    { label: 'On Behalf Of Approvals', link: '/user/assignee',permission: { feature: 'On Behalf Of Approvals Tab', action: 'view' } }
+    { label: 'On Behalf Of Approvals', link: '/time-off/on-behalf-of-approvals',permission: { feature: 'On Behalf Of Approvals Tab', action: 'view' } }
   ];
-  
 }

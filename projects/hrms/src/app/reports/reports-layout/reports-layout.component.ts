@@ -5,7 +5,11 @@ import { StandardReportTabsComponent } from "../../shared/reports-tabs/standard-
 
 @Component({
   selector: 'app-reports-layout',
-  imports: [RouterModule, CommonModule, StandardReportTabsComponent],
+  imports: [
+    RouterModule, 
+    CommonModule, 
+    StandardReportTabsComponent
+  ],
   templateUrl: './reports-layout.component.html',
   styleUrl: './reports-layout.component.scss'
 })

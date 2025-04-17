@@ -79,7 +79,7 @@ export class CloneWeekendsComponent {
   }
 
   addWeekend() {
-    if (this.weekends.length < 7) {
+    if (this.weekends.length < 3) {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');
@@ -88,6 +88,18 @@ export class CloneWeekendsComponent {
 
   removeWeekend(index: number): void {
     this.weekends.removeAt(index);
+  }
+
+  getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
+    const selectedDays = this.weekends.controls
+      .map((group, i) => i !== index ? group.get('day')?.value : null)
+      .filter(Boolean);
+  
+    return this.daysList.map(day => ({
+      label: day,
+      value: day,
+      disabled: selectedDays.includes(day)
+    }));
   }
 
   patchWeekendForm(data: any) {

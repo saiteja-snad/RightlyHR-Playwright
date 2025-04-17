@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ProspectivePipe } from '../../Pipes/prospective.pipe';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-prospective-employees',
   imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
@@ -26,7 +27,7 @@ export class ProspectiveEmployeesComponent implements OnInit {
   emp = {} as any;
   loader = false;
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.empdata();

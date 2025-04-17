@@ -1,25 +1,28 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i class="bi bi-arrow-90deg-left me-2"></i>{{'Prospective Interns'|translate}}</p>
+      <p class="component-header cursor mb-0">
+        <i class="bi bi-arrow-90deg-left me-2" (click)="navigateDashboard()"></i>{{'Prospective Interns'|translate}}
+      </p>
     </div>
-    @if(this.rbac.allowedToAccess('Add Employee.view')){
-      <div class="d-flex" >
-        <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
-          <i class="bi bi-plus me-2"></i>{{'Add Prospective Intern'| translate}}</button>
-      </div>
-    }
+
+    <div class="d-flex">
+      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
+        <i class="bi bi-plus me-2"></i>{{'Add Prospective Intern'| translate}}</button>
+    </div>
   </div>
+
   <div>
     <!--Input search-->
-    <div class="input-group custom-search mb-4">
+    <div class="input-group custom-search mb-3">
       <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
       <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
         placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
-      <table class="w-100" >
+      @if (!loader) {
+      <table class="w-100">
         <thead>
           <tr>
             <th>{{'ID'|translate}}</th>
@@ -34,7 +37,6 @@
           </tr>
         </thead>
         <tbody>
-
           <tr *ngFor="let act of Trainee | activeEmployee : searchValue" class="hover cursor" (click)="select(act)">
             <td>{{act.employeeId}}</td>
             <td><span *ngIf="act.firstName ; else firstname">{{act.firstName}} {{act.middleName}} {{act.lastName}}
@@ -50,7 +52,7 @@
             </td>
             <td>
               <div *ngFor="let jobDetail of act?.jobDetails">
-                <span *ngIf="jobDetail?.lopcation; else locationColumn" >
+                <span *ngIf="jobDetail?.lopcation; else locationColumn">
                   {{ jobDetail?.lopcation }}
                 </span>
                 <ng-template #locationColumn>
@@ -58,18 +60,22 @@
                 </ng-template>
               </div>
             </td>
-            <td > <div *ngFor="let jobDetail of act?.jobDetails">
-              <span *ngIf="jobDetail?.subLocation ; else sublocation">{{ jobDetail?.subLocation}} </span> </div> 
+            <td>
+              <div *ngFor="let jobDetail of act?.jobDetails">
+                <span *ngIf="jobDetail?.subLocation ; else sublocation">{{ jobDetail?.subLocation}} </span>
+              </div>
               <ng-template #sublocation>
                 -
-            </ng-template>
-          </td>
-            <td > <div *ngFor="let jobDetail of act?.jobDetails">
-              <span *ngIf="jobDetail?.jobRole ; else jobrole">{{ jobDetail?.jobRole}} </span> </div> 
+              </ng-template>
+            </td>
+            <td>
+              <div *ngFor="let jobDetail of act?.jobDetails">
+                <span *ngIf="jobDetail?.jobRole ; else jobrole">{{ jobDetail?.jobRole}} </span>
+              </div>
               <ng-template #jobrole>
                 -
-            </ng-template>
-          </td>
+              </ng-template>
+            </td>
             <td><span *ngIf="act?.durationOfTrainee; else notice">{{act?.durationOfTrainee}}</span>
               <ng-template #notice>-</ng-template>
             </td>
@@ -79,6 +85,9 @@
           </tr>
         </tbody>
       </table>
+    } @else {
+      <app-data-loader-content/>
+    }
     </div>
   </div>
 </div>

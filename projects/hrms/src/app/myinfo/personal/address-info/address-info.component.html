@@ -18,6 +18,7 @@
         <div class="myinfo-input-content">
             <form [formGroup]="addressForm">
                 <div class="row">
+                    @if(this.rbac.allowedToAccess('Current Address')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                                 class="text-danger">*</span></label>
@@ -29,13 +30,15 @@
                                 required</div>
                         </div>
                     </div>
-
+                    }
+                    @if(this.rbac.allowedToAccess('Basic Information.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
                         <input type="text" class="form-control custom-input" id="currentAddressLine2"
                             formControlName="currentAddressLine2" placeholder="Please enter address line">
                     </div>
-
+                    }
+                    @if(this.rbac.allowedToAccess('Basic Information.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentCity" class="form-label custom-label mb-2">City<span
                                 class="text-danger">*</span></label>
@@ -47,7 +50,8 @@
                             <div *ngIf="addressForm.get('currentCity')?.errors?.['required']">City is required</div>
                         </div>
                     </div>
-
+                    }
+                    @if(this.rbac.allowedToAccess('Basic Information.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentState" class="form-label custom-label mb-2">State<span
                                 class="text-danger">*</span></label>
@@ -59,7 +63,8 @@
                             <div *ngIf="addressForm.get('currentState')?.errors?.['required']">State is required</div>
                         </div>
                     </div>
-
+                    }
+                    @if(this.rbac.allowedToAccess('Basic Information.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentCountry" class="form-label custom-label mb-2">Country<span
                                 class="text-danger">*</span></label>
@@ -72,7 +77,8 @@
                             </div>
                         </div>
                     </div>
-
+                    }
+                    @if(this.rbac.allowedToAccess('Basic Information.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
                                 class="text-danger">*</span></label>
@@ -80,10 +86,13 @@
                             formControlName="currentZipCode" placeholder="Please enter zip code/post code">
                         <div class="error-msg"
                             *ngIf="addressForm.get('currentZipCode')?.invalid && addressForm.get('currentZipCode')?.touched">
-                            <div *ngIf="addressForm.get('currentZipCode')?.errors?.['required']">Zip Code is required</div>
-                            <div *ngIf="addressForm.get('currentZipCode')?.errors?.['pattern']">Zip Code must be a valid 5-6 digit number</div>
+                            <div *ngIf="addressForm.get('currentZipCode')?.errors?.['required']">Zip Code is required
+                            </div>
+                            <div *ngIf="addressForm.get('currentZipCode')?.errors?.['pattern']">Zip Code must be a valid
+                                5-6 digit number</div>
                         </div>
                     </div>
+                    }
                 </div>
             </form>
         </div>
@@ -106,6 +115,7 @@
         <!-- Reactive Form -->
         <form [formGroup]="addressForm">
             <div class="row">
+                @if(this.rbac.allowedToAccess('Basic Information.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                             class="text-danger">*</span></label>
@@ -117,12 +127,14 @@
                             required
                         </div>
                     </div>
-                </div>
+                </div>}
+                @if(this.rbac.allowedToAccess('Basic Information.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
                     <input type="text" class="form-control custom-input" id="permanentAddressLine2"
                         formControlName="permanentAddressLine2" placeholder="Please enter address line">
-                </div>
+                </div>}
+                @if(this.rbac.allowedToAccess('Basic Information.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentCity" class="form-label custom-label mb-2">City<span
                             class="text-danger">*</span></label>
@@ -133,7 +145,8 @@
                         *ngIf="addressForm.get('permanentCity')?.invalid && addressForm.get('permanentCity')?.touched">
                         <div *ngIf="addressForm.get('permanentCity')?.errors?.['required']">City is required</div>
                     </div>
-                </div>
+                </div>}
+                @if(this.rbac.allowedToAccess('Basic Information.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentState" class="form-label custom-label mb-2">State<span
                             class="text-danger">*</span></label>
@@ -144,7 +157,8 @@
                         *ngIf="addressForm.get('permanentState')?.invalid && addressForm.get('permanentState')?.touched">
                         <div *ngIf="addressForm.get('permanentState')?.errors?.['required']">State is required</div>
                     </div>
-                </div>
+                </div>}
+                @if(this.rbac.allowedToAccess('Basic Information.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
                             class="text-danger">*</span></label>
@@ -155,7 +169,8 @@
                         *ngIf="addressForm.get('permanentCountry')?.invalid && addressForm.get('permanentCountry')?.touched">
                         <div *ngIf="addressForm.get('permanentCountry')?.errors?.['required']">Country is required</div>
                     </div>
-                </div>
+                </div>}
+                @if(this.rbac.allowedToAccess('Basic Information.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
                             class="text-danger">*</span></label>
@@ -163,10 +178,12 @@
                         formControlName="permanentZipCode" placeholder="Please enter zip code/post code">
                     <div class="error-msg"
                         *ngIf="addressForm.get('permanentZipCode')?.invalid && addressForm.get('permanentZipCode')?.touched">
-                        <div *ngIf="addressForm.get('permanentZipCode')?.errors?.['required']">Zip Code is required</div>
-                        <div *ngIf="addressForm.get('permanentZipCode')?.errors?.['pattern']">Zip Code must be a valid 5-6 digit number</div>
+                        <div *ngIf="addressForm.get('permanentZipCode')?.errors?.['required']">Zip Code is required
+                        </div>
+                        <div *ngIf="addressForm.get('permanentZipCode')?.errors?.['pattern']">Zip Code must be a valid
+                            5-6 digit number</div>
                     </div>
-                </div>
+                </div>}
             </div>
         </form>
     </div>

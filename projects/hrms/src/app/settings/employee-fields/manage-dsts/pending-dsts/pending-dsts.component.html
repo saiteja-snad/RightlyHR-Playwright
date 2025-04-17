@@ -10,13 +10,13 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Year</th>
-                    <th>Location</th>
-                    <th>sub Location</th>
-                    <th>Shift Name</th>
-                    <th>status</th>
-                    <th>added by</th>
-                    <th class="text-center">action(s)</th>
+                    <th>{{'Year' | translate}}</th>
+                    <th>{{"Location" | translate}}</th>
+                    <th>{{"sub Location" | translate}}</th>
+                    <th>{{"shift name" | translate}}</th>
+                    <th>{{'status' | translate}}</th>
+                    <th>{{'added by' | translate}}</th>
+                    <th class="text-center">{{'action(s)' | translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,7 +36,7 @@
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" (click)="navigateToUpdateDSTComponent(pendingDST)">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
                                         </a>
                                     </li>
                                 </ul>

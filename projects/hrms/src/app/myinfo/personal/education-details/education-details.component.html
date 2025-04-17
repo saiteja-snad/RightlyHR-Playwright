@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Education Details</span></div>
-    <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+    <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
+    </div>
   </div>
   <div class="custom-table-content">
     <table class="w-100">
@@ -74,6 +75,7 @@
     <div class="custom-main-popup-content p-3">
       <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
         <div class="row">
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
@@ -86,8 +88,8 @@
               *ngIf="educationForm.get('education')?.invalid && educationForm.get('education')?.touched">
               Education is required
             </div>
-          </div>
-
+          </div>}
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
@@ -98,7 +100,7 @@
               University is required
             </div>
           </div>
-
+          }@if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
@@ -109,7 +111,7 @@
               Specialization is required
             </div>
           </div>
-
+          }@if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" id="gpa" formControlName="gpa"
@@ -118,7 +120,7 @@
               GPA is required and should be between 1 and 10
             </div>
           </div>
-
+          }@if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
@@ -129,7 +131,7 @@
               From Date is required
             </div>
           </div>
-
+          }@if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
@@ -138,8 +140,8 @@
               *ngIf="educationForm.get('degreeEndDate')?.invalid && educationForm.get('degreeEndDate')?.touched">
               To Date is required
             </div>
-          </div>
-
+          </div>}
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-12 mb-3">
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
@@ -153,7 +155,7 @@
               <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                 The file size should be less than 25MB.</p>
             </div>
-          </div>
+          </div>}
         </div>
 
         <div class="d-flex justify-content-end gap-3">
@@ -171,7 +173,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Add Education Details</p>
+        <p class="popup-heading mb-0">Update Education Details</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -180,6 +182,7 @@
     <div class="custom-main-popup-content p-4">
       <form [formGroup]="educationupdateForm" (ngSubmit)="updateEducation()">
         <div class="row">
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
@@ -193,7 +196,9 @@
               Education is required
             </div>
           </div>
+        }
 
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
@@ -204,18 +209,23 @@
               University is required
             </div>
           </div>
+        }
 
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization"
-              formControlName="specializationupdate" placeholder="Please enter specialization" (keypress)="formValidation.restrictInput($event)">
+              formControlName="specializationupdate" placeholder="Please enter specialization"
+              (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('specializationupdate')?.invalid && educationupdateForm.get('specializationupdate')?.touched">
               Specialization is required
             </div>
           </div>
+        }
 
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" id="gpa" formControlName="gpaupdate"
@@ -225,7 +235,9 @@
               GPA is required and should be between 1 and 10
             </div>
           </div>
- 
+        }
+
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
@@ -236,7 +248,9 @@
               From Date is required
             </div>
           </div>
+        }
 
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
@@ -247,7 +261,9 @@
               To Date is required
             </div>
           </div>
+        }
 
+          @if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-12 mb-3">
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
@@ -257,14 +273,16 @@
               *ngIf="educationupdateForm.get('attachmentupdate')?.invalid && educationupdateForm.get('attachmentupdate')?.touched">
               File is required
             </div>
-            <div *ngIf="displalyeducationattachment" class="custom-file-name my-2">{{ displalyeducationattachment?.name || displalyeducationattachment }}</div>
+            <div *ngIf="displalyeducationattachment" class="custom-file-name my-2">{{ displalyeducationattachment?.name
+              || displalyeducationattachment }}</div>
             <div class="d-flex justify-content-between align-items-center mt-3">
               <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                 The file size should be less than 25MB.</p>
             </div>
           </div>
-        </div>
+        }
         
+        </div>
         <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationupdateForm.reset();modal.dismiss()">Close</button>

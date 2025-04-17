@@ -26,9 +26,11 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
   currentYear: number = new Date().getFullYear();
   employeedetails = {} as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  daysList: string[] = [
+  daysList = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ];
+  
+  
 
   @ViewChild('confirmation') confirmation!: TemplateRef<any>
   constructor(
@@ -77,7 +79,7 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
   }
 
   addWeekend(): void {
-    if (this.weekends.length < 7) {
+    if (this.weekends.length < 3) {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');
@@ -94,6 +96,18 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     }
   }
 
+  getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
+    const selectedDays = this.weekends.controls
+      .map((group, i) => i !== index ? group.get('day')?.value : null)
+      .filter(Boolean);
+  
+    return this.daysList.map(day => ({
+      label: day,
+      value: day,
+      disabled: selectedDays.includes(day)
+    }));
+  }
+  
   private getAllLocations(): void {
     this.http.getData('JobLocation')
       .pipe(takeUntil(this.destroy$))

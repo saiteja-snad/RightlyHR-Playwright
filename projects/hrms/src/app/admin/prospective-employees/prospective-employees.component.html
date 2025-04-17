@@ -5,10 +5,11 @@
               <i class="bi bi-arrow-90deg-left cursor me-2" (click)="navigateDashboard()"></i>{{'Prospective Employees'| translate}}
             </p>
         </div>
+        @if(this.rbac.allowedToAccess('Add Employee.view')){
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
               <i class="bi bi-plus me-2"></i>{{'Add Prospective Employee'| translate}}</button>
-        </div>
+        </div>}
     </div>
     <div>
         <!--Input search-->
@@ -36,16 +37,15 @@
               <tbody>
                 @if( ((Prospective | async) ?? []).length > 0){
                 @for (act of ((Prospective | async) ?? []) | prospective : searchValue; track act.id) {
-                <tr>
+                <tr class="cursor" (click)="select(act)">
                   <td>{{act.employeeId}}</td>
                   <td>
                     <span *ngIf="act.firstName ; else firstname">
-                      <a class="select-item" (click)="select(act)">
+                      <a class="select-item" >
                         {{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}
                       </a>
                     </span>
-                  </td>
-                  <ng-template #firstname>-</ng-template>
+                  <ng-template #firstname>-</ng-template></td>
                   <td>{{act.emailaddress?act.emailaddress:'-'}}</td>
                   <td>{{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}</td>
                   <td>

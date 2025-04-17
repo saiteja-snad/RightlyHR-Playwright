@@ -5,9 +5,10 @@ import { HttpService } from '../../../../services/http.service';
 import { IWeekends } from '../pending-weekends/weekends.model';
 import { CommonModule } from '@angular/common';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
    selector: 'app-published-weekends',
-   imports: [CommonModule, NgbPopoverModule],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule],
    templateUrl: './published-weekends.component.html',
    styleUrl: './published-weekends.component.scss'
 })

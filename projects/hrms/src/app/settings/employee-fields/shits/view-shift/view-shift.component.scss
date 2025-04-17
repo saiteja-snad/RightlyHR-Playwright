@@ -1,0 +1,5 @@
+.readonly-style[readonly] {
+    background-color: #e9ecef !important;
+    opacity: 1; /* make sure it's not faded like disabled */
+    cursor: not-allowed;
+  }

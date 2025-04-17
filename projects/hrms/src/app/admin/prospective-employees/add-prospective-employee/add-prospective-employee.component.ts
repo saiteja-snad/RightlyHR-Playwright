@@ -8,6 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-add-prospective-employee',
   imports: [CommonModule, ReactiveFormsModule, FormsModule, Select, TranslateModule],
@@ -41,7 +42,7 @@ export class AddProspectiveEmployeeComponent {
   @ViewChild('success') success: any;
 
   constructor(private router: Router, private authService: AuthService, private conformationPopup: OpenModalService, 
-    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
+    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.getJobrole();

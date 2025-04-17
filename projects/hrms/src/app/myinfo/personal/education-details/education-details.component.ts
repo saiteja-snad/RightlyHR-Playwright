@@ -10,6 +10,7 @@ import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-education-details',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
@@ -36,7 +37,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   buttondisable = true;
   empinfo: any = {}
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,   public formValidation: FormValidationService,) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();

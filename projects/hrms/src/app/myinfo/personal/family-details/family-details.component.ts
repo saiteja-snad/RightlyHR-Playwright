@@ -10,6 +10,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-family-details',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
@@ -30,7 +31,8 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   educationtypes = [
     { label: 'Select', value: null },]
 
-  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder,   public formValidation: FormValidationService,) { }
+  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService,
+     private fb: FormBuilder,public formValidation: FormValidationService,public rbac: RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeFamilyDetailsForm();

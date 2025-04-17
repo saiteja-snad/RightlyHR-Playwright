@@ -1,4 +1,4 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container mt-3" >
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <p class="component-header cursor mb-0">Attendance</p>
@@ -69,7 +69,7 @@
               </p-dropdown>
             </div>
         }
-            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId)" *ngIf="rbac.allowedToAccess('Monthly Attandance Report.create')">
+            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId)" >
               <i class="bi bi-plus me-2"></i>My Attendance
             </button>
           </div>
@@ -93,7 +93,7 @@
                     </thead>
                     <tbody>
 
-                        @if (!rbac.allowedToAccess('Monthly Attandance Report.View')) {
+                        
                         @if(attendanceData.value.length>0){
                             @for (item of attendanceData|async; track $index) {
                                 <tr >
@@ -133,7 +133,7 @@
                         <app-no-data-found/>
                        }
                      
-                    }
+                    
                     </tbody>
                 </table>
             </div>

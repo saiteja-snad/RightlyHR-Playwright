@@ -230,7 +230,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
-          console.log(response.data);
+          console.log(response.data.attendanceData);
           this.attendanceData.next(response.data.attendanceData);
           this.statusCounts$.next(response.data.summary);
           this.shiftDetails = response.data.shiftDetails;

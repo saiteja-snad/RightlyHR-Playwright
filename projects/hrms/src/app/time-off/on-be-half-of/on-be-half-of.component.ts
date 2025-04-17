@@ -7,7 +7,6 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { ICategoryDetails } from '../../Interfaces/onbehalfof.model';
 import { ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
 import { environment } from '../../../environments/environment';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,13 +14,14 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { IJobdetails } from '../../Interfaces/job-model';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { RbacService } from '../../services/rbac.service';
+import { ICategoryDetails } from '../../interfaces/onbehalfof.model';
 @Component({
   selector: 'app-on-be-half-of',
   imports: [CommonModule, OnBeHalfOfApprovalTabsComponent, RouterModule, TranslateModule, Select, ReactiveFormsModule,],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss'
 })
+
 export class OnBeHalfOfComponent {
   @ViewChild('halfDayRadio') halfDayRadio: any;
   @ViewChild('fullDayRadio') fullDayRadio: any;
@@ -132,7 +132,6 @@ export class OnBeHalfOfComponent {
     this.getallpolicy();
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-
   }
 
   initializeForm() {
@@ -146,19 +145,17 @@ export class OnBeHalfOfComponent {
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
-
   }
+
   updateHalfDayOptions() {
     const start = this.leaveForm.get('startdate')?.value;
     const end = this.leaveForm.get('enddate')?.value;
-
     if (start && end) {
       this.leaveForm.get('halfDay')?.enable();
       this.leaveForm.get('availing')?.enable();
     } else {
       this.leaveForm.get('halfDay')?.disable();
       this.leaveForm.get('availing')?.disable();
-
     }
   }
 
@@ -167,35 +164,26 @@ export class OnBeHalfOfComponent {
     this.showcontent = true;
     this.showbutton = true;
     this.fusionEmployeeId = fusionemployeeId;
-    console.log(fusionemployeeId);
-    this.leaveapplication = {}
+    this.leaveapplication = {};
     this.leaveapplication = this.employeeiddetails.find(
       (c: any) => c.employeeId == fusionemployeeId.value
     );
-    this.disablebuttonforemployeeid = true
-    this.leaveapplication.dateOfJoining = this.formatDatewithDate(this.leaveapplication?.dateOfJoining)
-    console.log(this.leaveapplication);
-    this.getCategoryDetails(fusionemployeeId.value)
-    console.log(fusionemployeeId.value)
-    this.getDataByLPID(fusionemployeeId.value)
+    this.disablebuttonforemployeeid = true;
+    this.leaveapplication.dateOfJoining = this.formatDatewithDate(this.leaveapplication?.dateOfJoining);
+    this.getCategoryDetails(fusionemployeeId.value);
+    this.getDataByLPID(fusionemployeeId.value);
     this.cadidateEmployeeId = fusionemployeeId.value;
     this.getOrgHolidaysByEmpId(fusionemployeeId.value)
     this.getholidaybyempid(fusionemployeeId.value)
     this.getcustompolicybyempid(fusionemployeeId.value);
     this.getLeavesData(fusionemployeeId.value);
-    this.onselectdropdownclose();
-
   }
 
   onleaveSelect(categoryId: number) {
     this.leaveFormData.categoryId = categoryId;
-    console.log(this.leaveFormData.categoryId);
-
     this.isSubmitted = false;
     this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails
-    console.log(this.selectedleave);
     this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
-    console.log(this.enableHalfDayOptions)
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeHolidays) {
       this.getholidaybyempid(this.empdata.employeeId);
     }
@@ -207,12 +195,9 @@ export class OnBeHalfOfComponent {
     const booked = this.selectedleave?.booked; // If no booked days, default to 0
     // Calculate remaining leaves by subtracting utilized and booked days from allowed days
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked;
-    // Log the result for debugging
-    console.log(`Max days: ${maxDays}, Leaves taken: ${leavesTaken ? leavesTaken : 0}, Booked days: ${booked}, Remaining leaves: ${this.remainingLeaves}`);
     // Handle probation leave balance if applicable
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
       const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
-
       // Update remaining leaves for probation
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
@@ -245,17 +230,11 @@ export class OnBeHalfOfComponent {
     let loggedInUser = this.authService.getToken();
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.employeeiddetails = data
-          .filter((element: any) => element.employeeId != loggedInUser.employeeId)
+        this.employeeiddetails = data.filter((element: any) => element.employeeId != loggedInUser.employeeId)
           .map((employee: any) => ({
             ...employee,
-            fullName: [
-              employee.firstName,
-              employee.middleName,
-              employee.lastName].filter(Boolean).join(' ')
-          }));
-        console.log(this.employeeiddetails);
+            fullName: [ employee.firstName, employee.middleName, employee.lastName].filter(Boolean).join(' ')
+        }));
       },
       error: (reason: any) => {
         console.log(reason);
@@ -263,41 +242,22 @@ export class OnBeHalfOfComponent {
     });
   }
 
-
   cadidateEmployeeId!: number;
   Onclickemployeeid(Value: any) {
-    console.log(Value);
-    console.log(this.showcontent)
     if (Value == "") {
-      this.disablebuttonforemployeeid = true
+      this.disablebuttonforemployeeid = true;
     }
     else {
-      this.disablebuttonforemployeeid = false
+      this.disablebuttonforemployeeid = false;
     }
     let employeeinfo = this.employeeiddetails.find(
       (c: any) => c.fusionEmpId == Value
     );
-    console.log(employeeinfo);
     if (Value != employeeinfo && employeeinfo != undefined) {
-      this.disablebuttonforemployeeid = false
+      this.disablebuttonforemployeeid = false;
     }
   }
 
-  onselectdropdownclose() {
-    this.toggleDropdown('empid');
-  }
-
-  toggleDropdown(dropcategory: any) {
-
-    if (dropcategory == 'empid') {
-      this.isDropdownOpen = !this.isDropdownOpen;
-      if (this.isDropdownOpen) {
-
-      } else {
-        this.filteredOptions = [];
-      }
-    }
-  }
 
   private formatDatewithDate(date: Date): string | void {
     if (date) {
@@ -312,8 +272,6 @@ export class OnBeHalfOfComponent {
       next: (response: any) => {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[]
-          console.log(this.categoryDetails);
-          console.log("this is details");
 
           this.calculateProbationLeavs(this.categoryDetails)
         }
@@ -327,10 +285,9 @@ export class OnBeHalfOfComponent {
 
   getholidaybyempid(employeeId: number) {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    console.log(empdata);
     this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
+
         this.orgholidays = data;
       },
       error: (err: any) => {
@@ -342,14 +299,9 @@ export class OnBeHalfOfComponent {
 
   getweekendbyempid(employeeId: number) {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    console.log(empdata);
-
     this.subscription = this.http.getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.orgweekend = data;
-        console.log(this.orgweekend);
-
       },
       error: (err: any) => {
         console.log(err);
@@ -362,10 +314,7 @@ export class OnBeHalfOfComponent {
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empId}`).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.lpdata = response;
-        console.log(this.lpdata);
-
         this.waitingforapprovalCount = this.lpdata.filter((element: any) => {
           return element.status === 'Waiting for Approval';
         }).length;
@@ -399,18 +348,13 @@ export class OnBeHalfOfComponent {
   blockedData: any;
   getOrgHolidaysByEmpId(employeeId: number): any {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    console.log(empdata.employeeId);
     this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.custompolicyleaves = data;
         this.blockDates = this.custompolicyleaves?.orgHolidaysItems.map((item: { holidayDate: any }) => item.holidayDate);
         this.blockDates.find((item: any) => {
           this.blockedData = this.formatDate(item)
-          console.log(this.blockedData);
         })
-        console.log(this.blockDates)
-        console.log(this.custompolicyleaves);
       }
     })
   }
@@ -419,7 +363,6 @@ export class OnBeHalfOfComponent {
   getallpolicy() {
     this.subscription = this.http.getData("LeavePolicy/getall").subscribe({
       next: (data: any) => {
-        console.log(data);
         this.allPolicy = data as ILeaves[];
         localStorage.setItem("getGradedata", JSON.stringify(data));
 
@@ -431,8 +374,6 @@ export class OnBeHalfOfComponent {
   getEmployementTypeByempId(empid: number) {
     this.subscription = this.http.getData(`Employementtype/${empid}`).subscribe({
       next: (res: any) => {
-
-        console.log(res);
         let sortedresponse = res.sort((a: any, b: any) => {
           if (a.empEffectiveDate < b.empEffectiveDate) {
             return -1;
@@ -442,9 +383,7 @@ export class OnBeHalfOfComponent {
           }
           return 0;
         })
-        console.log(sortedresponse);
         let gradeid = sortedresponse[sortedresponse.length - 1].gradeId
-        console.log(gradeid);
         this.getLeavePoliciesbygradeId(gradeid)
       }
     })
@@ -457,7 +396,6 @@ export class OnBeHalfOfComponent {
         var joiningDate = new Date(this.empdata.dateOfJoining)
         const joiningYear = joiningDate.getFullYear()
         const presentDate = new Date();
-
         const presentYear = presentDate.getFullYear()
         if (presentYear == joiningYear) {
           const joiningMonth = (joiningDate.getMonth() + 1);
@@ -473,16 +411,10 @@ export class OnBeHalfOfComponent {
 
   getLeaveTakenByEmpId() {
     let LBEId = this.empdata.employeeId;
-
     this.subscription = this.http.getData(`LeaveBalance/getbyid/${LBEId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         // Group leave taken data by leavePolicyId and sum up leavesTaken for each leavePolicyId
         const groupedData = data.reduce((acc: any, curr: any) => {
-          console.log(acc);
-          console.log(curr);
-
-
           if (acc[curr.leavePolicyId]) {
             acc[curr.leavePolicyId].leavesTaken += curr.leavesTaken;
           } else {
@@ -490,11 +422,7 @@ export class OnBeHalfOfComponent {
           }
           return acc;
         }, {});
-
         this.Leavestaken = Object.values(groupedData) as ILeavesTaken[];
-        console.log(this.Leavestaken);
-        console.log(this.leavedata);
-
         this.leavedata.forEach((leaves: ILeaves) => {
           this.Leavestaken.forEach((leavetaken: ILeavesTaken) => {
             if (leavetaken.leavesTaken && leaves.lpId == leavetaken.leavePolicyId) {
@@ -504,27 +432,19 @@ export class OnBeHalfOfComponent {
             }
           })
         })
-
         this.fusionMadatoryLeavsValidation()
-
-        console.log(this.Leavestaken);
-
         // Assuming the `leavedata` variable contains an array of objects with `maxDays` and `leavesTaken` properties
         let maxDaysTotal = 0;
         let leavesTakenTotal = 0;
-
         for (let i = 0; i < this.leavedata.length; i++) {
           const { maxDays, leavesTaken } = this.leavedata[i];
-
           maxDaysTotal += maxDays;
           if (typeof leavesTaken === 'number' && !isNaN(leavesTaken)) {
             leavesTakenTotal += leavesTaken;
           }
         }
         this.maxDays = maxDaysTotal;
-
         this.leavesRemaining = maxDaysTotal - leavesTakenTotal
-
       },
       error: (error: any) => console.log(error)
     });
@@ -533,12 +453,9 @@ export class OnBeHalfOfComponent {
   custompolicyleaves: any;
   getcustompolicybyempid(employeeId: number) {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    console.log(empdata.employeeId);
     this.subscription = this.http.getData(`LeavePolicy/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.custompolicyleaves = data;
-        console.log(this.custompolicyleaves);
       }
     })
   }
@@ -547,56 +464,39 @@ export class OnBeHalfOfComponent {
   leavedatas: any;
   getLeavesData(employeeId: number) {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    console.log(empdata.employeeId);
     this.subscription = this.http.getData(`Timeoff/${employeeId}`).subscribe({
       next: (response: any) => {
-        console.log(response);
 
         this.leavedatatimeoff = response;
-        console.log(this.leavedatas);
-
         this.getDataByLPID(this.leaveapplication.employeeId)
       },
       error: (reason: any) => console.log(reason)
-
     })
   }
 
   calculateProbationLeavs(categoryDetails: ICategoryDetails[]) {
-
     if (this.leaveapplication.probationEndDate) {
       // Check if the employee is still on probation
       let currentDate = moment();
-      console.log('Current Date:', currentDate);
-
       let probationEndDate = moment(this.leaveapplication.probationEndDate);
-      console.log('Probation End Date:', probationEndDate);
-
       // Create new Moment objects without time information
       let currentDateWithoutTime = currentDate.startOf('day');
       let probationEndDateWithoutTime = probationEndDate.startOf('day');
 
       if (currentDateWithoutTime.isSameOrBefore(probationEndDateWithoutTime)) {
         // The employee is still on probation
-        console.log('Employee is still on probation.');
-
         // Calculate the number of probation days
         let dateOfJoining = moment(this.leaveapplication.dateOfJoining);
-        console.log('Date of Joining:', dateOfJoining);
 
         let probationDays = currentDate.diff(dateOfJoining, 'days');
-        console.log('Probation Days:', probationDays);
 
         // Divide by 30 and round down to the nearest 0.5 or whole number
         let months = 1;
         months += Math.floor(probationDays / 30);
-        console.log('month Leaves:', months);
 
         let probationCategoryDetails: ICategoryDetails[] = categoryDetails.filter(e => e.category.isProbationAllowed)
-
         probationCategoryDetails.forEach(e => {
           e.probationLeaves = months * e.category.probationDays
-
           if (e.probationLeaves >= e.allowedDays) {
             e.probationLeaves = e.allowedDays
           }
@@ -610,19 +510,13 @@ export class OnBeHalfOfComponent {
   }
 
   fusionMadatoryLeavsValidation() {
-
     const PAID_LEAVE_CATAGOEY_ID = environment.paidLeaveCategoryId
     const MANDATORY_LEAVE_CATAGOEY_ID = environment.mandatoryLeaveCategoryId
-    console.log(this.leavedata);
-
     let paidLeaveCategory = this.leavedata.find((leave: ILeaves) => leave.categoryId === PAID_LEAVE_CATAGOEY_ID) as ILeaves
     let isPaidLeavesExpired = paidLeaveCategory?.leavesTaken == paidLeaveCategory?.maxDays
-
-    console.log(isPaidLeavesExpired);
     if (!isPaidLeavesExpired) {
       this.leavedata = this.leavedata.filter((leave: ILeaves) => leave.categoryId != MANDATORY_LEAVE_CATAGOEY_ID)
     }
-
   }
 
   onSubmit() {
@@ -636,50 +530,40 @@ export class OnBeHalfOfComponent {
       this.leaveFormData.employeeId = this.leaveapplication.employeeId
       this.leaveFormData.durationType = this.selectedValue;
       this.leaveFormData.duration = this.dateDiff
-
       this.leaveFormData.requestedBy = loggedInUser.employeeId
       this.leaveFormData.date = moment();
       this.leaveFormData.isdeleted = true
       this.leaveFormData.startdate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.enddate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value
-
-      console.log(this.leaveFormData);
       if (this.leaveapplication.probationEndDate) {
         // Check if the employee is still on probation
         this.getDataByLPID(this.leaveapplication.employeeId);
-        console.log(this.lpdata);
         let currentDate = moment();
-        console.log('Current Date:', currentDate);
-
         let probationEndDate = moment(this.leaveapplication.probationEndDate);
-        console.log('Probation End Date:', probationEndDate);
-
         // Create new Moment objects without time information
         let currentDateWithoutTime = currentDate.startOf('day');
         let probationEndDateWithoutTime = probationEndDate.startOf('day');
 
         if (currentDateWithoutTime.isSameOrBefore(probationEndDateWithoutTime)) {
           // The employee is still on probation
-          console.log('Employee is still on probation.');
-
           // Calculate the number of probation days
           let dateOfJoining = moment(this.leaveapplication.dateOfJoining);
-          console.log('Date of Joining:', dateOfJoining);
+
           let startdate = moment(this.startDate);
-          console.log('Startdate:', startdate)
+    
           let enddate = moment(this.endDate)
-          console.log('enddate:', enddate)
+       
           let Duration = this.leaveFormData.duration
-          console.log('Duration:', Duration)
+         
           // console.log('Duration:',duration);
           let probationDaysDiff = startdate.diff(dateOfJoining, 'days');
-          console.log('Probation Days:', probationDaysDiff);
+        
 
           // Divide by 30 and round down to the nearest 0.5 or whole number
           let months = 1;
           months += Math.floor(probationDaysDiff / 30);
-          console.log('month Leaves:', months);
+     
           let totalAppliedLeaves = this.lpdata
             .filter(element => element.status !== 'rejected')  // Exclude rejected leaves
             .reduce((acc, element) => {
@@ -693,8 +577,6 @@ export class OnBeHalfOfComponent {
           let isProbationLeave = probationCategoryDetails.some(e => e.category.id == leaveCategory);
           this.DisableSubmitButton = false
           if (isProbationLeave) {
-
-
             let probationmonths = this.getMonthsArray(new Date(this.empdata.dateOfJoining), new Date(this.empdata.probationEndDate));
             let filterPayrollmonths = probationmonths.filter(x => months >= x.id);
             var prbmnthstartdate = filterPayrollmonths.length == 0 ? filterPayrollmonths[0].startDate : filterPayrollmonths[0].startDate;
@@ -704,8 +586,6 @@ export class OnBeHalfOfComponent {
             probationCategoryDetails.forEach(e => {
               e.probationLeaves = months * e.category.probationDays
               if (e.probationLeaves >= Duration) {
-
-
                 if (this.isWithinExistingRanges(prbmnthstartdate, prbmnthenddate, e.probationLeaves, Duration)) {
                   this.DisableSubmitButton = true
                 }
@@ -716,7 +596,6 @@ export class OnBeHalfOfComponent {
               else {
                 this.DisableSubmitButton = true;
               }
-
             })
             if (this.DisableSubmitButton) {
               this.conformationPopup.openErrorModal('Leave application exceeds the allowed limit for the probation Leaves')
@@ -725,15 +604,9 @@ export class OnBeHalfOfComponent {
           }
         }
       }
-
-      console.log('Exclude weekends for selected leave category:', this.selectedleave.category.excludeWeekends);
       const differenceInDays = this.calculateDifferenceInDays(this.leaveFormData.startdate, this.leaveFormData.enddate, this.selectedleave.category.excludeWeekends);
-      console.log('Difference in days:', differenceInDays);
-
       // Add the difference to the existing booked days
       const totalBookedDays = this.selectedleave.booked + differenceInDays;
-      console.log('Total booked days:', totalBookedDays);
-
       // Check if the total booked days exceed the allowed limit
       if (totalBookedDays <= this.selectedleave.allowedDays) {
         this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
@@ -751,7 +624,6 @@ export class OnBeHalfOfComponent {
                 this.leaveForm.reset();
                 window.location.reload();
               }, 2000);
-
               this.startdatevalid = true
               this.disableSubmitButton = true
               this.issEndDategreater = true
@@ -764,10 +636,8 @@ export class OnBeHalfOfComponent {
               this.enableButton = false
               this.dateDiff = 0;
             }
-            this.toggleDropdown('empid');
           },
           error: (err: any) => {
-            console.log(err);
             this.conformationPopup.openErrorModal(err.error.message)
             setTimeout(() => {
               this.modalService.dismissAll();
@@ -785,29 +655,23 @@ export class OnBeHalfOfComponent {
           this.modalService.dismissAll();
         }, 2000);
       }
-
     }
   }
 
   leaveBalance(Values: any) {
     let data = {
-
       empId: Values.employeeId,
       isdeleted: "Active",
       leavesTaken: this.leaveFormData.duration,
       categoryId: this.leaveFormData.categoryId
-
     }
     this.leaveFormData.employeeId = this.leaveapplication.employeeId
-    console.log(this.Leavestaken)
-
     this.subscription = this.http.postdata(`LeaveBalance`, data).subscribe({
       next: (data: any) => {
-        console.log(data)
-        this.getCategoryDetails(data.empId)
+        this.getCategoryDetails(data.empId);
         // this.onleaveSelect(this.categoryId)
         // this.Onclick(this.empiIdAftersubmission);
-        this.getDataByLPID(data.empId)
+        this.getDataByLPID(data.empId);
       }
 
     })
@@ -818,14 +682,11 @@ export class OnBeHalfOfComponent {
     // Convert input dates to Date objects if they are not already
     startDate = new Date(startDate);
     endDate = new Date(endDate);
-
     const months = [];
-
     // Set the initial start date to the 11th of the start month
     let currentStart = new Date(startDate);
     // Calculate the first end date as the day before the same day next month
     let currentEnd = new Date(currentStart.getFullYear(), currentStart.getMonth() + 1, currentStart.getDate() - 1);
-
     // Adjust if the initial end date exceeds the given endDate
     if (currentEnd > endDate) {
       currentEnd = endDate;
@@ -839,16 +700,13 @@ export class OnBeHalfOfComponent {
       // Move to the next month
       currentStart.setMonth(currentStart.getMonth() + 1);
       currentStart.setDate(startDate.getDate());  // Reset the date to the 11th of the next month
-
       // Calculate the end date as the day before the same day next month
       currentEnd = new Date(currentStart.getFullYear(), currentStart.getMonth() + 1, currentStart.getDate() - 1);
-
       // Adjust if the current end date exceeds the given endDate
       if (currentEnd > endDate) {
         currentEnd = endDate;
       }
     }
-
     return months;
   }
 
@@ -864,8 +722,7 @@ export class OnBeHalfOfComponent {
 
   isWithinExistingRanges(startDate: any, endDate: any, leavebal: any, applyingleavescount: any) {
     let response = false;
-    let data = this.lpdata.filter(record =>
-      record.status !== 'Rejected' &&  // Exclude rejected leaves in range checking
+    let data = this.lpdata.filter(record => record.status !== 'Rejected' &&  // Exclude rejected leaves in range checking
       (
         (new Date(record.startdate) >= new Date(startDate) && new Date(record.startdate) <= new Date(endDate)) ||
         (new Date(record.enddate) >= new Date(startDate) && new Date(record.enddate) <= new Date(endDate)) ||
@@ -874,21 +731,16 @@ export class OnBeHalfOfComponent {
       )
     );
     const totalLeavesTaken = data.reduce((acc, current) => acc + current.duration, 0);
-
     if ((totalLeavesTaken + applyingleavescount) > leavebal) {
       response = true;
     }
     return response;
   }
 
-
   calculateDateDifference(startDate: string, endDate: string) {
     var date1 = moment(startDate, 'YYYY-MM-DD');
     var date2 = moment(endDate, 'YYYY-MM-DD');
-
     var days = date2.diff(date1, 'days');
-    console.log(days);
-
     const start = moment(startDate);
     const end = moment(endDate);
     let diff = days + 1;
@@ -900,14 +752,11 @@ export class OnBeHalfOfComponent {
             diff -= 1;
           }
         }
-        console.log(this.orgholidays?.orgHolidaysItems);
-
         if (this.selectedleave?.category.excludeHolidays && !this.selectedleave.category.isOptionalHoliday) {
           this.isoptionalnotallowedatWorkingdate = false;
           let filteredholidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => {
             return ele.isOptional != true
           })
-
           if (filteredholidays.some((holiday: any) => moment(holiday.holidayDate).isSame(currentDate))) {
             diff -= 1;
           }
@@ -920,7 +769,6 @@ export class OnBeHalfOfComponent {
         } else {
           this.isNonOptionalHolidaySelected = false;
         }
-
         let nonOptionalHolidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => ele.isOptional === false || ele.isOptional == null);
         if (nonOptionalHolidays.some((holiday: any) => moment(holiday.holidayDate).isSame(endDate, 'day'))) {
           this.isHolidaySelectedEndate = true;
@@ -965,7 +813,6 @@ export class OnBeHalfOfComponent {
     }
     if (endDate != null) {
       this.dateDifference = diff;
-      console.log(this.dateDifference);
       if (this.dateDifference > 1) {
         this.chooseDayType('full')
       }
@@ -975,8 +822,6 @@ export class OnBeHalfOfComponent {
         this.enableButton = false;
       }
       this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
-      console.log(this.dateDiff);
-
     }
   }
 
@@ -1002,11 +847,9 @@ export class OnBeHalfOfComponent {
       currentApprover: this.empdata.employeeId,
       appliedDate: this.leaveFormData.date
     }
-    console.log(emaildetails);
     //Third Step is to send the email and attachment to Directreportee
     this.subscription = this.http.postdata(`CustomEmail/LeaveConfirmationToEmp`, emaildetails).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.conformationPopup.openSuccessModal('Email Sent Successfully')
       },
     })
@@ -1016,7 +859,6 @@ export class OnBeHalfOfComponent {
     const startMoment = moment(startDate);
     const endMoment = moment(endDate);
     let differenceInDays = endMoment.diff(startMoment, 'days') + 1;
-
     if (excludeWeekends) {
       const startDay = startMoment.day();
       const endDay = endMoment.day();
@@ -1024,12 +866,7 @@ export class OnBeHalfOfComponent {
       differenceInDays -= weekends * 2;
       if (startDay === 0 && endDay === 6) differenceInDays--;
     }
-
     return differenceInDays;
-  }
-
-  colorTrackBy(index: any, color: any) {
-    return color.hex;
   }
 
   cleardata() {
@@ -1075,7 +912,6 @@ export class OnBeHalfOfComponent {
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     this.calculateDateDifference(this.startDate, this.endDate);
-    console.log(this.selectedFields.isDaytype);
     if (this.startDate && this.endDate) {
       // Check if End Date is before Start Date
       this.isEndDateBeforeStart = new Date(this.endDate) < new Date(this.startDate);
@@ -1087,23 +923,15 @@ export class OnBeHalfOfComponent {
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     if (action === 'add') {
-      console.log(this.startDate);
       selectedDate = moment(this.startDate);
-      console.log(selectedDate.day());
     }
     if (action === 'update') {
-      console.log(this.startDate);
       // selectedDate = moment(this.selectedfields.startdate);
-      console.log(selectedDate.day());
     }
     let dayOfMonth = selectedDate.date();
-    console.log(dayOfMonth);
     let weekNumber = Math.ceil(dayOfMonth / 7);
-    console.log(weekNumber);
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
-    console.log(this.selectedDay);
-    console.log(this.orgweekend.orgWeekendItems);
     let captureHoliday: any;
     const dayPresent = this.orgweekend.orgWeekendItems.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
@@ -1113,7 +941,6 @@ export class OnBeHalfOfComponent {
       this.isWeekOffSelected = false;
       return false;
     });
-    console.log(captureHoliday);
     if (captureHoliday && dayPresent) {
       if (weekNumber === 1 && dayPresent) {
         if (captureHoliday.firstweek) {
@@ -1121,38 +948,32 @@ export class OnBeHalfOfComponent {
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("First week of the month");
       } else if (weekNumber === 2 && dayPresent) {
         if (captureHoliday.secondweek) {
           this.isWeekOffSelected = true;
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("Second week of the month");
       } else if (weekNumber === 3) {
         if (captureHoliday.thirdweek) {
           this.isWeekOffSelected = true;
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("Third week of the month");
       } else if (weekNumber === 4) {
         if (captureHoliday.fourthweek) {
           this.isWeekOffSelected = true;
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("Fourth week of the month");
       } else if (weekNumber === 5) {
         if (captureHoliday.fifthweek) {
           this.isWeekOffSelected = true;
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("Fifth week of the month");
       }
     }
-    console.log(this.isWeekOffSelected);
   }
 
   dateCheckWithHolidayOrWeekend(action: string) {
@@ -1161,7 +982,6 @@ export class OnBeHalfOfComponent {
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     if (action == 'add') {
-
       if (this.startDate) {
         selectedDate = moment(this.startDate);
       }
@@ -1190,7 +1010,6 @@ export class OnBeHalfOfComponent {
       let isWorkingDayBetweenDates = dateRange.some(date => {
         return this.orgholidays.orgHolidaysItems.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
-      console.log(this.isHolidaySelected);
     }
     if (this.orgholidays?.orgHolidaysItems && this.selectedleave?.category?.isOptionalHoliday) {
       let filteredData = this.orgholidays.orgHolidaysItems.forEach((element: any) => {
@@ -1228,9 +1047,7 @@ export class OnBeHalfOfComponent {
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     if (this.endDate < this.startDate) {
       this.issEndDategreater = false;
-
     } else {
-
       this.issEndDategreater = true;
     }
   }
@@ -1240,28 +1057,15 @@ export class OnBeHalfOfComponent {
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     if (action === 'add') {
-      console.log(this.endDate);
       selectedDate = moment(this.endDate);
-      console.log(selectedDate.day());
     }
-
     if (action === 'update') {
-      console.log(this.endDate);
       // selectedDate = moment(this.selectedfields.startdate);
-      console.log(selectedDate.day());
     }
-
     let dayOfMonth = selectedDate.date();
-    console.log(dayOfMonth);
     let weekNumber = Math.ceil(dayOfMonth / 7);
-    console.log(weekNumber);
-
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
-
-    console.log(this.selectedDay);
-    console.log(this.orgweekend.orgWeekendItems);
-
     let captureHoliday: any;
     const dayPresent = this.orgweekend.orgWeekendItems.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
@@ -1271,8 +1075,6 @@ export class OnBeHalfOfComponent {
       this.isWeekOffSelectedEndate = false;
       return false;
     });
-
-    console.log(captureHoliday);
     if (captureHoliday && dayPresent) {
       if (weekNumber === 1 && dayPresent) {
         if (captureHoliday.firstweek) {
@@ -1280,38 +1082,32 @@ export class OnBeHalfOfComponent {
         } else {
           this.isWeekOffSelectedEndate = false;
         }
-        console.log("First week of the month");
       } else if (weekNumber === 2 && dayPresent) {
         if (captureHoliday.secondweek) {
           this.isWeekOffSelectedEndate = true;
         } else {
           this.isWeekOffSelectedEndate = false;
         }
-        console.log("Second week of the month");
       } else if (weekNumber === 3) {
         if (captureHoliday.thirdweek) {
           this.isWeekOffSelectedEndate = true;
         } else {
           this.isWeekOffSelectedEndate = false;
         }
-        console.log("Third week of the month");
       } else if (weekNumber === 4) {
         if (captureHoliday.fourthweek) {
           this.isWeekOffSelectedEndate = true;
         } else {
           this.isWeekOffSelectedEndate = false;
         }
-        console.log("Fourth week of the month");
       } else if (weekNumber === 5) {
         if (captureHoliday.fifthweek) {
           this.isWeekOffSelectedEndate = true;
         } else {
           this.isWeekOffSelectedEndate = false;
         }
-        console.log("Fifth week of the month");
       }
     }
-    console.log(this.isWeekOffSelectedEndate);
   }
 
   onStartDateChange() {
@@ -1323,12 +1119,10 @@ export class OnBeHalfOfComponent {
     if (!this.startDate) {
       // Clear the end date if start date is cleared
       this.endDate = null;
-
       // Reset end date related errors
       this.isWeekOffSelectedEndate = false;
       this.isHolidaySelectedEndate = false;
       this.issEndDategreater = true;
     }
   }
-
 }

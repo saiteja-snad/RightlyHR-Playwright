@@ -10,13 +10,13 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Ilpid } from '../../../Interfaces/timoff-model';
-
 @Component({
   selector: 'app-on-be-half-of-waiting-for-approval',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './on-be-half-of-waiting-for-approval.component.html',
   styleUrl: './on-be-half-of-waiting-for-approval.component.scss'
 })
+
 export class OnBeHalfOfWaitingForApprovalComponent {
   loggedinuser = {} as any;
   empdata = {} as any;
@@ -36,15 +36,15 @@ export class OnBeHalfOfWaitingForApprovalComponent {
   
   onRowsChange() {
     this.first = 0;
-
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
   }
-  constructor(private http: HttpService, private authService: AuthService,) {
 
-  }
+  constructor(private http: HttpService, private authService: AuthService,) { }
+
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('onbehalfof') || '{}');

@@ -1,0 +1,60 @@
+<div class="custom-main-component-container">
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Location</th>
+                    <th>sub Location</th>
+                    <th>Shift</th>
+                    <th>weekends</th>
+                    <th>status</th>
+                    <th>added by</th>
+                    <th class="text-center">action(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(weekend of weekendsList; track weekend){
+                <tr>
+                    <td>{{ weekend.applicableyear }}</td>
+                    <td>{{ weekend.jobLocationName }}</td>
+                    <td>{{ weekend.jobSubLocationName }}</td>
+                    <td>{{ weekend.shiftName }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-1">
+                            <div>{{ weekend.orgWeekendItems.length }}</div>
+                            <div [ngbPopover]="popContent" *ngIf="getShiftNames(weekend) !== null">
+                                <i class="bi bi-info-circle-fill cursor"></i>
+                            </div>
+                        </div>
+                        <ng-template #popContent>
+                            <div>{{ getShiftNames(weekend) }}</div>
+                        </ng-template>
+                    </td>
+                    <td>{{ weekend.status }}</td>
+                    <td>{{ weekend.firstName }} {{ weekend.lastName }}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" (click)="navigateToClone(weekend)">
+                                        <i class="bi bi-copy me-2"></i>Clone
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" (click)="navigateToView(weekend)">
+                                        <i class="bi bi-eye-fill me-2"></i>View
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

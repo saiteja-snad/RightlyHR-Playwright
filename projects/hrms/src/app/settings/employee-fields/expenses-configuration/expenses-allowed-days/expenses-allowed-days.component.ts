@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-expenses-allowed-days',
@@ -21,8 +22,13 @@ export class ExpensesAllowedDaysComponent {
   attribute!: string;
   id!: number;
   value: any;
-  constructor( private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
-    private http: HttpService) { }
+  constructor( 
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
+    public rbac: RbacService,
+  ) { }
     ngOnInit(): void {
      this.dateconfigurtionintialdata()
      this.getdatabyentriy()

@@ -20,6 +20,9 @@
                 <div *ngIf="isActive('settings')">
                     <app-settings-main-header-tabs/>
                 </div>
+                <div *ngIf="isActive('/reports')">
+                    <app-reports-main-tabs/>
+                </div>
             </div>
             <div *ngIf="isActive('pms')">
                 <app-pms-tabs/>

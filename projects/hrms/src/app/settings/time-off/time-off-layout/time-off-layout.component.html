@@ -1,36 +1,27 @@
 <div>
-    
     <!--header-->
     <div class="mb-3">
         <div class="component-header">Settings</div>
     </div>
     
-    <!--tabs content-->
-    <!-- <div class="mb-3">
-        <div>
-          
-        </div>
-    </div> -->
+    <!--sub module tabs-->
+    <div class="mb-3">
+        <app-settings-time-off-tabs></app-settings-time-off-tabs>
+    </div>
     
     <!--Content-->
     <div class="employee-fields-main-container d-flex gap-3 w-100">
-        @if ((router.url !== '/settings/employee-fields/addholidays' ) && (router.url !== '/settings/employee-fields/addshifts') && (router.url !== '/settings/employee-fields/addpolices') && (router.url !== '/settings/employee-fields/no-due-clearnce') ) {
+        @if (router.url === '/settings/timeoff-configurations/leave-categoery' || router.url === '/settings/timeoff-configurations/eligibility-criterias/comp-off'
+        || router.url === '/settings/timeoff-configurations/eligibility-criterias/wfh' || router.url === '/settings/timeoff-configurations/eligibility-criterias/permissions'
+        || router.url === '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria') {
         <!--sub tabs Content-->
         <div class="custom-component-left-content">
-            <div *ngIf="isActive('/settings/timeoff-configurations')">
-                <app-settings-time-off-tabs></app-settings-time-off-tabs>
-            </div>
-        
-           
+            <app-attendance-eligibility-criteria-tabs/>
         </div>
+        }
         
         <div class="custom-setting-right-content p-3">
             <router-outlet />
         </div>
-        } @else {
-        <div class="w-100">
-            <router-outlet />
-        </div>
-        }
     </div>
 </div>

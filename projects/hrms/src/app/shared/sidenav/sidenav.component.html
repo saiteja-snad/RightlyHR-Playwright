@@ -1,6 +1,6 @@
 <div class="sidenav-main-container">
     <div class="sidenav-header text-center w-100 px-0">
-        <img src="logos/snad-logo.png" alt="company logo" class="logo-img">
+        <img src="logos/rightlyhr-logo.png" alt="company logo" class="logo-img">
     </div>
     <hr class="white-line">
     <div class="sidnav-main-content px-3">
@@ -23,6 +23,10 @@
                 <i class="bi bi-currency-dollar custom-icon"></i>Expenses
             </li>
 
+            <li class="nav-item p-2 mb-3" [routerLink]="['/reports']" routerLinkActive="active-nav-link">
+                <i class="bi bi-currency-dollar custom-icon"></i>Reports
+            </li>
+
             <li class="nav-item p-2 mb-3" [routerLink]="['/pms']" routerLinkActive="active-nav-link">
                 <i class="bi bi-currency-dollar custom-icon"></i>PMS
             </li>
@@ -33,7 +37,6 @@
          
             <li class="nav-item p-2 mb-3" [routerLink]="['/desk']" routerLinkActive="active-nav-link">
                 <i class="bi bi-pc-display custom-icon"></i>Desk Allocation
-
             </li>
          </ul>
     </div>

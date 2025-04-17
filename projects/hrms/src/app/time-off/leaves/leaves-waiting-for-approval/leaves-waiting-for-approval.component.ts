@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-leaves-waiting-for-approval',
@@ -41,7 +42,11 @@ export class LeavesWaitingForApprovalComponent {
     this.first = event.first;
     this.rows = event.rows;
   }
-  constructor(private http: HttpService, private authService: AuthService) {
+  constructor(
+    private http: HttpService, 
+    private authService: AuthService,
+    public rbac: RbacService,
+  ) {
     
   }
 

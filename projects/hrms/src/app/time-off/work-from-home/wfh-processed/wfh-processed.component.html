@@ -11,6 +11,7 @@
                 </tr>
             </thead>
             <tbody>
+                @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
                 <ng-container *ngIf="processedWFHs!.length > 0; else noDataTemplate">
                   <tr *ngFor="let wfhRequest of processedWFHs; let i = index">
                     <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
@@ -46,6 +47,7 @@
                     </td>
                   </tr>
                 </ng-template>
+            }
               </tbody>
         </table>
     </div>

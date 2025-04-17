@@ -11,6 +11,7 @@ import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingapprovals.pipe";
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-time-off-for-your-role-request',
@@ -46,7 +47,12 @@ export class TimeOffForYourRoleRequestComponent {
     this.rows = event.rows;
 
   }
-  constructor(private http: HttpService,private modalService: NgbModal,private conformationPopup: OpenModalService,) {  
+  constructor(
+    private http: HttpService,
+    private modalService: NgbModal,
+    private conformationPopup: OpenModalService,
+    public rbac: RbacService,
+  ) {  
     }
     
     ngOnInit(): void {

@@ -15,7 +15,6 @@ import { PremissionsWaitingForApprovalComponent } from './premissions/premission
 import { PremissionsApprovedComponent } from './premissions/premissions-approved/premissions-approved.component';
 import { PremissionsRejectedComponent } from './premissions/premissions-rejected/premissions-rejected.component';
 import { OnBeHalfOfComponent } from './on-be-half-of/on-be-half-of.component';
-
 import { AttendanceComponent } from './attendance/attendance.component';
 import { OnBeHalfOfWaitingForApprovalComponent } from './on-be-half-of/on-be-half-of-waiting-for-approval/on-be-half-of-waiting-for-approval.component';
 import { OnBeHalfOfApprovalComponent } from './on-be-half-of/on-be-half-of-approval/on-be-half-of-approval.component';
@@ -34,8 +33,6 @@ import { PremissionForYourRoleRequestComponent } from './pending-approvals/premi
 import { TimeOffRequestComponent } from './pending-approvals/time-off-request/time-off-request.component';
 import { TimeOffForYouRequestComponent } from './pending-approvals/time-off-request/time-off-for-you-request/time-off-for-you-request.component';
 import { TimeOffForYourRoleRequestComponent } from './pending-approvals/time-off-request/time-off-for-your-role-request/time-off-for-your-role-request.component';
-import { AttendanceRegularizationRequestComponent } from './pending-approvals/attendance-regularization-request/attendance-regularization-request.component';
-import { AttendanceRegularizationForYouRequestComponent } from './pending-approvals/attendance-regularization-request/attendance-regularization-for-you-request/attendance-regularization-for-you-request.component';
 import { LeavesWaitingForApprovalComponent } from './leaves/leaves-waiting-for-approval/leaves-waiting-for-approval.component';
 import { LeavesApprovalComponent } from './leaves/leaves-approval/leaves-approval.component';
 import { LeavesProcessedComponent } from './leaves/leaves-processed/leaves-processed.component';
@@ -50,10 +47,17 @@ import { RecallForYourRoleRequestComponent } from './pending-approvals/recall-fo
 import { RecallRequestsComponent } from './pending-approvals/recall-requests/recall-requests.component';
 import { TraineeApprovalsComponent } from './pending-approvals/trainee-approvals/trainee-approvals.component';
 import { NodueApprovalDetailsComponent } from './pending-approvals/nodue-approval-details/nodue-approval-details.component';
-import { ClaimsandexpensesComponent } from '../claimsandexpenses/claimsandexpenses/claimsandexpenses.component';
 import { ClaimsandexpensesRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-request.component';
 import { ClaimsandexpensesForYouRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-for-you-request/claimsandexpenses-for-you-request.component';
 import { ClaimsandexpensesForYourRoleRequestComponent } from './pending-approvals/claimsandexpenses-request/claimsandexpenses-for-your-role-request/claimsandexpenses-for-your-role-request.component';
+import { RegularizationComponent } from './regularization/regularization.component';
+import { RegularizationWaitingForApprovalComponent } from './regularization/regularization-waiting-for-approval/regularization-waiting-for-approval.component';
+import { RegularizationApprovedComponent } from './regularization/regularization-approved/regularization-approved.component';
+import { RegularizationRejectedComponent } from './regularization/regularization-rejected/regularization-rejected.component';
+import { RegularizationProcessedComponent } from './regularization/regularization-processed/regularization-processed.component';
+import { RegularizationRequestComponent } from './pending-approvals/regularization-request/regularization-request.component';
+import { RegularizationForYouRequestComponent } from './pending-approvals/regularization-for-you-request/regularization-for-you-request.component';
+import { RegularizationForYourRoleRequestComponent } from './pending-approvals/regularization-for-your-role-request/regularization-for-your-role-request.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -74,7 +78,6 @@ export default [
       { path: 'approved', component: WfhApprovedComponent },
       { path: 'processed', component: WfhProcessedComponent },
       { path: 'rejected', component: WfhRejectedComponent },
-
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -96,6 +99,17 @@ export default [
       { path: 'waiting-for-approval', component: PremissionsWaitingForApprovalComponent, },
       { path: 'approved', component: PremissionsApprovedComponent },
       { path: 'rejected', component: PremissionsRejectedComponent },
+      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    ],
+  },
+  {
+    path: 'regularization',
+    component: RegularizationComponent,
+    children: [
+      { path: 'waiting-for-approval', component: RegularizationWaitingForApprovalComponent, },
+      { path: 'approved', component: RegularizationApprovedComponent },
+      { path: 'rejected', component: RegularizationRejectedComponent },
+      { path: 'process', component: RegularizationProcessedComponent },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -149,22 +163,21 @@ export default [
         ],
       },
       {
-        path: 'claimsandexpenses-request', component: ClaimsandexpensesRequestComponent,
+        path: 'regularization-request',
+        component: RegularizationRequestComponent,
         children: [
-          { path: 'for-you', component:ClaimsandexpensesForYouRequestComponent , },
-          { path: 'for-your-role', component: ClaimsandexpensesForYourRoleRequestComponent },
-       
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+          { path: 'for-you', component: RegularizationForYouRequestComponent },
+          { path: 'for-your-role', component: RegularizationForYourRoleRequestComponent, },
+          { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
-
       {
-        path: 'attendance-request',
-        component: AttendanceRegularizationRequestComponent,
+        path: 'claimsandexpenses-request', component: ClaimsandexpensesRequestComponent,
         children: [
-          { path: 'for-you', component: AttendanceRegularizationForYouRequestComponent, },
-          { path: 'for-your-role', component: AttendanceRegularizationForYouRequestComponent, },
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+          { path: 'for-you', component: ClaimsandexpensesForYouRequestComponent, },
+          { path: 'for-your-role', component: ClaimsandexpensesForYourRoleRequestComponent },
+
+          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
       {
@@ -200,10 +213,8 @@ export default [
         ],
       },
       { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section
-      
-      {path:'trainee-approvals', component:TraineeApprovalsComponent,
-      
-      }
+
+      { path: 'trainee-approvals', component: TraineeApprovalsComponent,  }
     ],
   },
 ] as Route[];

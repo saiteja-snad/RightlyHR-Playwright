@@ -1,0 +1,62 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Manage Weekends</span></div>
+        <div class="custom-add-btn" (click)="addWeekends()">
+            <i class="bi bi-plus plus-icon me-1"></i>Add New
+        </div>
+    </div>
+
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Location</th>
+                    <th>sub Location</th>
+                    <th>Shift</th>
+                    <th>weekends</th>
+                    <th>status</th>
+                    <th>added by</th>
+                    <th class="text-center">action(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(weekend of weekendsList; track weekend){
+                <tr>
+                    <td>{{ weekend.applicableyear }}</td>
+                    <td>{{ weekend.jobLocationName }}</td>
+                    <td>{{ weekend.jobSubLocationName }}</td>
+                    <td>{{ weekend.shiftName }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-1">
+                           <div>{{ weekend.orgWeekendItems.length }}</div>
+                           <div [ngbPopover]="popContent" *ngIf="getShiftNames(weekend) !== null"><i class="bi bi-info-circle-fill cursor"></i></div>
+                        </div>
+                        <ng-template #popContent>
+                            <div >
+                                {{ getShiftNames(weekend) }}
+                            </div>
+                        </ng-template>
+                    </td>
+                    <td>{{ weekend.status }}</td>
+                    <td>{{ weekend.firstName }} {{ weekend.middleName? weekend.middleName : '' }} {{ weekend.lastName }}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li (click)="openUpdate(weekend)">
+                                    <a class="dropdown-item">
+                                        <i class="bi bi-pencil me-2"></i>Update
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

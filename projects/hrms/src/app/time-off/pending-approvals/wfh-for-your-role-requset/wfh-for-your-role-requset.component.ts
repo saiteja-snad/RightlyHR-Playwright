@@ -10,9 +10,10 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-wfh-for-your-role-requset',
@@ -56,7 +57,8 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -83,7 +85,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=ROLE`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
@@ -131,7 +133,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -169,7 +171,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -206,7 +208,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
           this.modalService.dismissAll();

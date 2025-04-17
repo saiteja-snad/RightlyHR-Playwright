@@ -1,0 +1,132 @@
+<div class="custom-main-component-container w-100">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header mb-0" (click)="navigate()">
+                <i class="bi bi-arrow-90deg-left me-2"></i>Add DST
+            </p>
+        </div>
+    </div>
+
+    <div class="custom-setting-right-content w-100 p-3">
+        <form [formGroup]="dstForm" (ngSubmit)="onSubmit(dstForm)">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-3">
+                      <!-- Year -->
+                      <div class="mb-3">
+                        <label for="year" class="form-label custom-label mb-2">
+                            {{ "Year" }}
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
+                                class="form-select custom-select" formControlName="year"
+                                placeholder="Please select year">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                                <ng-template let-year #item>{{ year }}</ng-template>
+                            </p-select>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="mb-3">
+                        <label for="location" class="form-label custom-label mb-2">
+                            {{ "Location" }}
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
+                                class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
+                                formControlName="location" placeholder="Please select location"
+                                (onChange)="onLocationChange($event.value)">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
+                                    }}</ng-template>
+                                <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
+                            </p-select>
+                        </div>
+                    </div>
+
+                    <!-- Sub Location -->
+                    <div class="mb-3">
+                        <label for="subLocation" class="form-label custom-label mb-2">
+                            {{ "Sub Location" }}
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
+                                class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
+                                formControlName="subLocation" placeholder="Please select sub location"
+                                (onChange)="getAllShifts($event.value)">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
+                                    }}</ng-template>
+                                <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
+                            </p-select>
+                        </div>
+                    </div>
+
+                    <!-- Shifts -->
+                    <div class="mb-3">
+                        <label for="shift" class="form-label custom-label mb-2">
+                            {{ "Shift" }}
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true"
+                                filterBy="shiftName" [showClear]="false" formControlName="shift"
+                                placeholder="Please select shift" class="form-select custom-select">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName
+                                    }}</ng-template>
+                                <ng-template let-location #item>{{ location.shiftName }}</ng-template>
+                            </p-select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div>
+                    <button type="button" class="custom-btn btn-primary" (click)="addMomentRow()">+ Add Row</button>
+                </div>
+            </div>
+
+            <!-- Table for Moment Rows -->
+            <div class="custom-table-content mt-2">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Moment Type</th>
+                            <th>Duration</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody formArrayName="momentRows">
+                        <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
+                            <td><input type="date" class="form-control custom-input" formControlName="startDate"
+                                    onkeydown="return false" [min]="minDate"
+                                    (ngModelChange)="onStartDateChange($event, row)" [min]="minDate" [max]="maxDate" /></td>
+                            <td><input type="date" class="form-control custom-input" formControlName="endDate"
+                                    onkeydown="return false"  [min]="minDate" [max]="maxDate"
+                                    (ngModelChange)="onEndDateChange($event, row)"/></td>
+                            <td class="custom-p-select-content">
+                                <p-select [options]="momentType" [showClear]="false" formControlName="momentType"
+                                    placeholder="Select type" class="form-select custom-select">
+                                </p-select>
+                            </td>
+                            <td class="custom-p-select-content">
+                                <p-select [options]="durations" [showClear]="false" formControlName="duration"
+                                    placeholder="Select duration" class="form-select custom-select">
+                                </p-select>
+                            </td>
+                            <td>
+                                <a (click)="momentRows.length > 1 && removeMomentRow(i)">
+                                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <span class="error-msg">Note: All Fields are Mandatory Fields</span>
+            <div class="d-flex gap-3 justify-content-end">
+                <button class="custom-btn btn-secondary px-4" type="button" id="submitButton">Cancel</button>
+                <button class="custom-btn btn-primary px-4" id="submitButton" [disabled]="dstForm.invalid">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

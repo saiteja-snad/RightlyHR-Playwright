@@ -4,6 +4,7 @@
 
 <div class="assessmentform-container pt-3">
   <div>
+    @if (rbac.allowedToAccess('Regularization Tab.view')) {
     <div *ngIf="dynamicFormHeader.length > 0 , else nodata">
       <div class="container-fluid page-div" id="content">
         <div class="text-center mt-4">
@@ -11,6 +12,7 @@
         </div>
 
         <div class="mt-4">
+          
           <div *ngFor="let item of dynamicFormHeader" class="row row-cols-2">
             <div *ngFor="let question of item.questions" class="col">
               <p class="m-0 mb-1">{{question.question}}
@@ -117,6 +119,7 @@
         
       </div>
     </div>
+  }
   </div>
 </div>
 

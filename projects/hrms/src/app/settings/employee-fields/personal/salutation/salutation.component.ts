@@ -8,6 +8,7 @@ import { Iroles } from '../../../roles-permissions/roles/roles.model';
 import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-salutation',
@@ -25,7 +26,14 @@ export class SalutationComponent implements OnInit {
   
 
 // salDeletedata: any;
-constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder, public formValidations:FormValidationsService) { }
+constructor(
+  private modalService: NgbModal,
+  private conformationPopup: OpenModalService,
+  private http: HttpService, 
+  private fb:FormBuilder, 
+  public formValidations:FormValidationsService,
+  public rbac:RbacService,
+) { }
   
   saluationForm!: FormGroup;
   updateForm!: FormGroup;

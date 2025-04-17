@@ -4,10 +4,11 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pending-holidays',
-  imports: [CommonModule,NoDataFoundComponent],
+  imports: [CommonModule,NoDataFoundComponent,TranslateModule],
   templateUrl: './pending-holidays.component.html',
   styleUrl: './pending-holidays.component.scss'
 })

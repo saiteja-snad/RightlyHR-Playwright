@@ -9,13 +9,13 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>Year</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Shift Name</th>
-          <th>Status</th>
-          <th>Added By</th>
-          <th>Action(s)</th>
+          <th>Year{{'Year' | translate}}</th>
+          <th>Location{{'Location' | translate}}</th>
+          <th>Sub Location{{'Sub Location' | translate}}</th>
+          <th>Shift Name{{'Shift Name' | translate}}</th>
+          <th>Status{{'Status' | translate}}</th>
+          <th>Added By{{'Added By' | translate}}</th>
+          <th>Action(s){{'Action(s)' | translate}}</th>
 
         </tr>
       </thead>
@@ -55,7 +55,7 @@
                 <li>
                   <a *ngIf="item.status === 'Published'"  class="dropdown-item cursor" data-bs-toggle="modal"
                     (click)="viewPublishedholiday(item)">
-                    <i class="bi bi-pencil-fill px-2"></i>View
+                    <i class="bi bi-pencil-fill px-2"></i>{{'View' | translate}}
                   </a>
                 </li>
               </ul>

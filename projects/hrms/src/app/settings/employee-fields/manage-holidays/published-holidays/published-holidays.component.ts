@@ -4,10 +4,11 @@ import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-published-holidays',
-  imports: [CommonModule,RouterModule, NoDataFoundComponent],
+  imports: [CommonModule,RouterModule, NoDataFoundComponent, TranslateModule],
   templateUrl: './published-holidays.component.html',
   styleUrl: './published-holidays.component.scss'
 })

@@ -6,10 +6,11 @@ import { HttpService } from '../../../../services/http.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-holidays',
-  imports: [CommonModule,Select,ReactiveFormsModule],
+  imports: [CommonModule,Select,ReactiveFormsModule, TranslateModule],
   templateUrl: './add-holidays.component.html',
   styleUrl: './add-holidays.component.scss'
 })

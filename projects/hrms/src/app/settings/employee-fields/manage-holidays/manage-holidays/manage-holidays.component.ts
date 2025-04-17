@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-manage-holidays',
-  imports: [RouterModule,],
+  imports: [RouterModule,TranslateModule],
   templateUrl: './manage-holidays.component.html',
   styleUrl: './manage-holidays.component.scss'
 })

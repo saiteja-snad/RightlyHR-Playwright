@@ -25,5 +25,4 @@ export class SettingsEmployeeFieldsModuleTabsComponent {
     { label: 'Manage DST', link: '/settings/employee-fields/manage-dsts' },
     { label: 'No Due Clearance', link: '/settings/employee-fields/no-due-clearnce' }
   ];
-
 }

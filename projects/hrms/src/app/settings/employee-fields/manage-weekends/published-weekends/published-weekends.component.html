@@ -3,14 +3,14 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Year</th>
-                    <th>Location</th>
-                    <th>sub Location</th>
-                    <th>Shift</th>
-                    <th>weekends</th>
-                    <th>status</th>
-                    <th>added by</th>
-                    <th class="text-center">action(s)</th>
+                    <th>{{"Year" | translate}}</th>
+                    <th>{{"Location" | translate}}</th>
+                    <th>{{"sub Location" | translate}}</th>
+                    <th>{{"Shift" | translate}}</th>
+                    <th>{{"weekends" | translate}}</th>
+                    <th>{{"status" | translate}}</th>
+                    <th>{{"added by" | translate}}</th>
+                    <th class="text-center">{{"action(s)" | translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@
                         </ng-template>
                     </td>
                     <td>{{ weekend.status }}</td>
-                    <td>{{ weekend.firstName }} {{ weekend.lastName }}</td>
+                    <td>{{ weekend.firstName }} {{ weekend.middleName? weekend.middleName : '' }} {{ weekend.lastName }}</td>
                     <td class="text-center">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
@@ -41,12 +41,12 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <li>
                                     <a class="dropdown-item" (click)="navigateToClone(weekend)">
-                                        <i class="bi bi-copy me-2"></i>Clone
+                                        <i class="bi bi-copy me-2"></i>{{"Clone" | translate}}
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" (click)="navigateToView(weekend)">
-                                        <i class="bi bi-eye-fill me-2"></i>View
+                                        <i class="bi bi-eye-fill me-2"></i>{{"View" | translate}}
                                     </a>
                                 </li>
                             </ul>

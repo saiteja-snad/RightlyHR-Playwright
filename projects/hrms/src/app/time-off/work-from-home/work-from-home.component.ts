@@ -8,8 +8,9 @@ import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-work-from-home',
@@ -40,7 +41,8 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -176,7 +178,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   getWFHBal(currentDate: any) {
     let empId = this.empinfo.employeeId;
     // let currentDate = new Date().toISOString().split('T')[0];
-  this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
+  this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log(response);
      
@@ -205,7 +207,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   getWorkfromhomeCriteria() {
-    this.http.getData(`WorkFromHomeEligibilityCriteria`).subscribe({
+    this.http.getData(`WorkFromHomeEligibilityCriteria`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log(response);
         this.Workfromhome = response;
@@ -304,7 +306,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       console.log(payload);
       
       this.spinnerLoader = true;
-      this.http.postdata('AttendanceRequests', payload).subscribe({
+      this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // this.getCompOffRequest();
           this.modalService.dismissAll();

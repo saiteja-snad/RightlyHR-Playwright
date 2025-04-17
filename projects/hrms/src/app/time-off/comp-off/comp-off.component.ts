@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 import { Ileavesdatas, IValidations } from '../../Interfaces/timoff-model';
 import moment from 'moment';
 import { OpenModalService } from '../../services/open-modal.service';
+import { RbacService } from '../../services/rbac.service';
 
 
 @Component({
@@ -53,7 +54,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService:OpenModalService
+    private sharedModalService:OpenModalService,
+    public rbac: RbacService,
   ) {}
 
   ngOnInit(): void {
@@ -122,7 +124,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
       };
       console.log(payload);
       this.spinnerLoader = true;
-      this.http.postdata('AttendanceRequests', payload).subscribe({
+      this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // this.getCompOffRequest();
           this.modalService.dismissAll();

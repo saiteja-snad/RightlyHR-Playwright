@@ -11,7 +11,7 @@
                     <option value="2">Two</option>
                     <option value="3">Three</option>
                 </select></div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)"><i
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)" *ngIf="!rbac.allowedToAccess('On Behalf Of Tab.Create')"><i
                     class="bi bi-plus me-2"></i>Apply Leave On Behalf
                 Of</button>
         </div>

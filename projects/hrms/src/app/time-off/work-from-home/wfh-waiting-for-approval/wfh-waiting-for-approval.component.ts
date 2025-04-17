@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-wfh-waiting-for-approval',
@@ -38,7 +39,8 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
 
 
   constructor(
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh) {

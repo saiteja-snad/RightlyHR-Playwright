@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { probitionData } from './provition-module';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 
 @Component({
@@ -33,6 +34,7 @@ export class ProbationstatusComponent {
     private http: HttpService, 
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }

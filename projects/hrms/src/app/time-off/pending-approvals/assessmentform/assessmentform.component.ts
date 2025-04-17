@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { IFormDetails, ISection } from './assessmentform';
 import { environment } from '../../../../environments/environment.dev';
 import { CommonModule } from '@angular/common';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-assessmentform',
@@ -46,9 +47,17 @@ export class AssessmentformComponent {
   @ViewChild('formsavepopup') formsavepopup!: ElementRef;
   Status: any;
 
-  constructor(private renderer: Renderer2, private elRef: ElementRef, private router: Router, private http: HttpService,
-    private route: ActivatedRoute, private authService: AuthService,
-    config: NgbModalConfig, private modalService: NgbModal) {
+  constructor(
+    private renderer: Renderer2, 
+    private elRef: ElementRef, 
+    private router: Router, 
+    private http: HttpService,
+    private route: ActivatedRoute, 
+    private authService: AuthService,
+    config: NgbModalConfig, 
+    private modalService: NgbModal,
+    public rbac: RbacService,
+  ) {
     config.backdrop = 'static';
     config.keyboard = false;
   }

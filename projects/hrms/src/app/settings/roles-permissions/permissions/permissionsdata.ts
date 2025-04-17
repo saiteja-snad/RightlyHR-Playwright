@@ -80,6 +80,7 @@ export const permissionsData = [
     // View Modules
     { fields: 'Invite New User', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Permissions', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Recall Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Regularizations', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Timeoff Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Compoff Tab', View: false, Update: false, Create: false, Delete: false },
@@ -96,9 +97,9 @@ export const permissionsData = [
     { fields: 'Documents Upload Button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Expenses Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Invoices Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Select Employee', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Select Employee For Manager', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Inactive Button', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Select All Employees', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Select Employee For HR', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Active Employee', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Inactive Employee', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Prospective Employee', View: false, Update: false, Create: false, Delete: false },
@@ -134,7 +135,7 @@ export const permissionsData = [
     { fields: 'Assessor Configuration Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Welcome Letter', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Monthly Attandance Report', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Regularization Button', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Regularization Button', View: false, Update: false, Create: false, Delete: false },
 
     // Settings sidebar    
     { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },
@@ -174,7 +175,7 @@ export const permissionsData = [
     { fields: 'Sub Location', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Pre Onboard Documents', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Serving Period', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Interview Rounds', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
 
     //Status tab 

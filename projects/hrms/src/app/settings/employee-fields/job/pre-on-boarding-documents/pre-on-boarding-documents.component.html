@@ -1,8 +1,100 @@
-<button type="button" (click)="openDialog()" class="custom-btn btn-primary">{{'Add' |
+<button type="button" (click)="openDialog()" class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Pre Onboard Documents.create')">{{'Add' |
     translate}}</button>
 <!-- Add Popup Modal -->
+<ng-template #addpopup let-modal>
+    <form [formGroup]="AddForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-4">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Pre Onboard Documents' | translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)">
+                        <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                    </a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-4">
+                <!-- document name Field -->
+                <div class="mb-4">
+                    <label for="Document Type" class="form-label custom-label mb-2">
+                        {{ 'Document Type' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <div class="position-relative">
+                        <input type="text" class="form-control custom-input" formControlName="PreOnboardDocuments"
+                            placeholder=" Enter document name " maxlength="100"
+                            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" />
+                        <small class="text-muted position-absolute end-0 bottom-0 pe-2">
+                            {{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100
+                        </small>
+                    </div>
+                    <div *ngIf="AddForm.get('PreOnboardDocuments')?.touched && AddForm.get('PreOnboardDocuments')?.invalid"
+                        class="error-msg mt-2">
+                        <div *ngIf="AddForm.get('PreOnboardDocuments')?.errors?.['required']">{{'Document name is required'|translate}}</div>
+                    </div>
+                </div>
+                <!-- Checkbox Fields -->
+                <div class="form-check">
+                    <input title="text" class="form-check-input" type="checkbox" [checked]="AddForm.value.isApplicableFresher"
+                        (change)="onClickFresherToggle()" />
+                    <label class="form-check-label">
+                        {{ 'Is applicable for Fresher' | translate }}
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input title="text" class="form-check-input" type="checkbox" [checked]="AddForm.value.isApplicableTrainee"
+                        (change)="onClickTraineeToggle()" />
+                    <label class="form-check-label">
+                        {{ 'Is applicable for Trainee' | translate }}
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input title="text" class="form-check-input" type="checkbox" [checked]="AddForm.value.isApplicableExperienced"
+                        (change)="onClickExperiencedToggle()" />
+                    <label class="form-check-label">
+                        {{ 'Is applicable for Experienced' | translate }}
+                    </label>
+                </div>
+
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="isManadatory"
+                            id="isManadatory">
+                        <label class="form-check-label" for="isManadatory">
+                            {{'Is Mandatory' | translate}}
+                        </label>
+                    </div>
+                </div>
+                <div class="m b-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" formControlName="isIdentityDocument"
+                            id="isIdentityDocument">
+                        <label class="form-check-label" for="isIdentityDocument">
+                            {{'Is Identity Document' | translate}}
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-5 pt-4 w-100">
+                    <button type="reset" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal); resetForm()">
+                        {{ 'Close' | translate }}
+                    </button>
+                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addPreonboarding(modal)"
+                        [disabled]="AddForm.invalid">
+                        {{ 'Add' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!-- Table -->
 <div class="custom-main-component-container">
-   
+
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
@@ -11,29 +103,48 @@
                     <th>Applicable To Experienced/Fresher/Trainee</th>
                     <th>Is Mandatory</th>
                     <th>Is Identity</th>
-
                     <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <ng-container>
-                    <tr *ngFor="let preonboarding of preonboardingDetails">
-                        <td>{{preonboarding.documentName}}</td>
-                        <td>{{preonboarding.isAppilicable === '0' ? 'All' : preonboarding.isAppilicable}}</td>
-                        <td>{{preonboarding.isManadatory ? 'Yes' : '-'}}</td>
-                        <td>{{preonboarding.isIdentityDocument ? 'Yes' : '-'}}</td>
+                @if (rbac.allowedToAccess('Pre Onboard Documents.view')) {
+                <ng-container *ngFor="let preonboarding of preonboardingDetails">
+                    <tr>
+                        <td>{{ preonboarding.documentName }}</td>
+
+                        <!-- isAppilicable logic -->
+                        <td>
+                            <ng-container [ngSwitch]="preonboarding.isAppilicable">
+                                <span *ngSwitchCase="'0'">All</span>
+                                <span *ngSwitchCase="'1'">Fresher</span>
+                                <span *ngSwitchCase="'2'">Experienced</span>
+                                <span *ngSwitchCase="'3'">Trainee</span>
+                                <span *ngSwitchCase="'1,2'">Fresher, Experienced</span>
+                                <span *ngSwitchCase="'1,3'">Fresher, Trainee</span>
+                                <span *ngSwitchCase="'2,3'">Trainee, Experienced</span>
+                                <span *ngSwitchDefault>-</span>
+                            </ng-container>
+                        </td>
+
+                        <!-- isManadatory logic -->
+                        <td>{{ preonboarding.isManadatory === 1 ? 'Yes' : '-' }}</td>
+
+                        <!-- isIdentityDocument logic -->
+                        <td>{{ preonboarding.isIdentityDocument === 1 ? 'Yes' : '-' }}</td>
+
+                        <!-- Actions dropdown -->
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openupdateDialog(preonboarding)">
+                                    <li (click)="openupdateDialog(preonboarding)" *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update')">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
-                                    <li (click)="opendelete(preonboarding)">
+                                    <li (click)="opendelete(preonboarding)" *ngIf="rbac.allowedToAccess('Pre Onboard Documents.delete')">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
@@ -43,11 +154,13 @@
                         </td>
                     </tr>
                 </ng-container>
+            }
             </tbody>
         </table>
     </div>
 
 </div>
+
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
@@ -77,7 +190,7 @@
                     </div>
                     <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.invalid && updateForm.get('UpdatePreOnboardDocuments')?.touched"
                         class="error-msg">
-                        {{' Document Name is required'|translate}}.
+                        {{' Document name is required'|translate}}.
                     </div>
                 </div>
 
@@ -87,100 +200,6 @@
                     <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updatePreOnboarding(modal)"
                         [disabled]="updateForm.invalid">
                         {{'update' | translate}}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
-</ng-template>
-<ng-template #addpopup let-modal>
-    <form [formGroup]="AddForm">
-        <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
-                    <p class="popup-heading mb-0">{{'Pre Onboard Documents' | translate}}</p>
-                </div>
-                <div>
-                    <a (click)="close(modal)">
-                        <img src="icons/close.png" alt="Close Icon" class="close-icon">
-                    </a>
-                </div>
-            </div>
-        <div class="custom-main-popup-content p-4">
-                <!-- document name Field -->
-                <div class="mb-4">
-                    <label for="Document Type" class="form-label custom-label mb-2">
-                        {{ 'Document Type' | translate }} <span class="error-msg">*</span>
-                    </label>
-                    <div class="position-relative">
-                        <input type="text" class="form-control custom-input" formControlName="PreOnboardDocuments"
-                            placeholder=" Enter Document Name " maxlength="100"
-                            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" />
-                        <small class="text-muted position-absolute end-0 bottom-0 pe-2">
-                            {{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100
-                        </small>
-                    </div>
-                    <div *ngIf="AddForm.get('PreOnboardDocuments')?.touched && AddForm.get('PreOnboardDocuments')?.invalid"
-                        class="error-msg mt-2">
-                        <div *ngIf="AddForm.get('PreOnboardDocuments')?.errors?.['required']">{{'Document
-                            Type required'|translate}}</div>
-                    </div>
-                </div>
-     <!-- Checkbox Fields -->
-                <div class="mb-4">
-                    <label class="form-label custom-label mb-2">{{'Applicable To' | translate}}</label>
-                    <div class="d-flex flex-column gap-2">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" formControlName="isApplicableFresher"
-                                id="isApplicableFresher">
-                            <label class="form-check-label" for="isApplicableFresher">
-                                {{'Is applicable for Fresher' | translate}}
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" formControlName="isApplicableTrainee"
-                                id="isApplicableTrainee">
-                            <label class="form-check-label" for="isApplicableTrainee">
-                                {{'Is applicable for Trainee' | translate}}
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" formControlName="isApplicableExperienced"
-                                id="isApplicableExperienced">
-                            <label class="form-check-label" for="isApplicableExperienced">
-                                {{'Is applicable for Experienced' | translate}}
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" formControlName="isManadatory"
-                            id="isManadatory">
-                        <label class="form-check-label" for="isManadatory">
-                            {{'Is Mandatory' | translate}}
-                        </label>
-                    </div>
-                </div>
-                  <div class="mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" formControlName="isIdentityDocument"
-                            id="isIdentityDocument">
-                        <label class="form-check-label" for="isIdentityDocument">
-                            {{'Is Identity Document' | translate}}
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="d-flex gap-5 pt-4 w-100">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
-                        {{ 'Close' | translate }}
-                    </button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addPreonboarding(modal)"
-                        [disabled]="AddForm.invalid">
-                        {{ 'Add' | translate }}
                     </button>
                 </div>
             </div>

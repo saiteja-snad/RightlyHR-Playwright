@@ -1,4 +1,4 @@
-<button type="button" (click)="openDialog()"  class="custom-btn btn-primary me-2">{{'Add' | translate}}</button>
+<button type="button" (click)="openDialog()"  class="custom-btn btn-primary me-2" *ngIf="rbac.allowedToAccess('Team.create')">{{'Add' | translate}}</button>
  
 <!-- Add Popup Modal  -->
 <ng-template #addpopup let-modal>
@@ -53,7 +53,7 @@
           <div class="custom-p-select-content">
             <select title="text" class="form-control custom-input" formControlName="teamManager" id="teamManager">
               <option value="" disabled>Please select team manager</option>
-              <option *ngFor="let manager of teamdetails" [value]="manager.reportingmanagerId">
+              <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
                 {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
               </option>
             </select>
@@ -93,6 +93,7 @@
         </tr>
       </thead>
       <tbody>
+        @if (rbac.allowedToAccess('Team.view')) {}
         <ng-container>
           <tr *ngFor="let teams of teamdetailsdata">
             <td>{{teams.departmentName}}</td>
@@ -104,12 +105,12 @@
                   <i class="bi bi-three-dots-vertical"></i>
                 </span>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <li (click)="openupdateDialog(teams)">
+                  <li (click)="openupdateDialog(teams)" *ngIf="rbac.allowedToAccess('Team.update')">
                     <a class="dropdown-item">
                       <i class="bi bi-pencil me-2"></i>Update
                     </a>
                   </li>
-                  <li (click)="opendelete(teams)">
+                  <li (click)="opendelete(teams)" *ngIf="rbac.allowedToAccess('Team.delete')">
                     <a class="dropdown-item">
                       <i class="bi bi-trash3 me-2"></i>Delete
                     </a>

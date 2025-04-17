@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { JobLocation } from './locationModule';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-location',
@@ -31,6 +32,7 @@ export class LocationComponent implements OnInit,OnDestroy {
     private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
    
    }

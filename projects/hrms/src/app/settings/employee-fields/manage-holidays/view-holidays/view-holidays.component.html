@@ -1,0 +1,106 @@
+<div class="custom-main-component-container w-100">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <p class="component-header mb-0" (click)="nagvition()">
+          <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add Holiday' | translate}}
+        </p>
+      </div>
+    </div>
+    <form [formGroup]="holidayForm" (ngSubmit)="submit()">
+      <div class="custom-setting-right-content w-100 p-3">
+        <!--Select Fields-->
+        <div class="d-flex gap-3 mt-4">
+          <div class="custom-p-select-content">
+            <p-select [options]="yearDetails" optionLabel="name" placeholder="Select year" formControlName="year"
+              class="form-select custom-select">
+            </p-select>
+          </div>
+          <div class="custom-p-select-content">
+            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" optionValue=""
+              formControlName="location" placeholder="Select location" class="form-select custom-select"
+              (onChange)="getSubLocationByid($event.value)">
+            </p-select>
+          </div>
+          <div class="custom-p-select-content">
+            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue=""
+              formControlName="subLocation" placeholder="Please select sub location" (onChange)="getShiftBYid($event)"
+              class="form-select custom-select"></p-select>
+          </div>
+          <div class="custom-p-select-content">
+            <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="" formControlName="shift"
+              placeholder="Select shift" class="form-select custom-select"></p-select>
+          </div>
+          <!-- <div>
+            <button type="button" class="custom-btn btn-primary" (click)="addHolidayRow();hidePublishCloneButtons = true" >
+              <i class="bi bi-plus me-2"></i> Add Row
+            </button>
+          </div> -->
+        </div>
+        <div class="card custom-background-card p-3 mt-2">
+          <div class="row">
+            <div class="card custom-background-card p-3 mt-2" formArrayName="holidays">
+              <div class="row mb-2" *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
+  
+                <div class="col-md-5">
+                  <label class="form-label custom-label">{{'Holiday Name' | translate}}<span class="text-danger">*</span></label>
+                  <input type="text" formControlName="holidayName" class="form-control custom-input"
+                    placeholder="Please enter holiday name" />
+                </div>
+                <div class="col-md-5">
+                  <label class="form-label custom-label">{{'Holiday Date' | translate}}<span class="text-danger">*</span></label>
+                  <input type="date" formControlName="holidayDate" class="form-control custom-input" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                  <div class="form-check">
+                    <input type="checkbox" formControlName="isOptional" class="form-check-input" />
+                    <label class="form-check-label">{{'Optional' | translate}}</label>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-danger ms-2" (click)="removeHolidayRow(i)"
+                    *ngIf="holidays.length > 1">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Submit Button -->
+            
+          </div>
+        </div>
+        <!-- @if(!hidePublishCloneButtons){
+            <button type="button" class="btn btn-danger me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" (click)="openmodel(cancelpopup)" id="submitButton">
+                Cancel
+            </button>
+            <button type="button" class="btn btn-warning me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" id="submitButton">
+                Clone
+            </button>
+            <button  type="button" class="btn btn-success me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" (click)="publish()" id="submitButton">
+                Publish
+            </button>
+            }
+            <button type ="submit" class="custom-btn btn-primary mt-3 me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" id="submitButton"
+                [disabled]="this.holidayForm.invalid">
+                Update
+            </button> -->
+        </div>
+      
+    </form>
+  </div>
+
+  <!-- <ng-template #cancelpopup let-model>
+    <div ngbAutofocus>
+        <div class="d-flex flex-column justify-content-cenetr align-items-center" >
+            <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+            <h4 class="text-center ps-3 pe-3 inactive-poptext">
+                Are you sure you want to cancel?
+            </h4>
+            <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+                <button type="button" class="custom-btn btn-primary-reject" (click)="model.dismiss()">
+                    No
+                </button>
+                <button type="button" class="custom-btn btn-primary" (click)="cancel();model.dismiss()">
+                    Yes
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template> -->

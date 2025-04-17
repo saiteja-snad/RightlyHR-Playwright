@@ -45,7 +45,7 @@
       <p-tablist>
         <ng-container *ngFor="let tab of navTabs;">
           <p-tab [value]="tab.route">
-            <a [routerLink]="tab.route" routerLinkActive="nav-tab-active" class="nav-link">
+            <a [routerLink]="tab.route" routerLinkActive="nav-tab-active" class="nav-link" (click)="onHitSubLocationChange()">
               {{ tab.label }} ({{ tab.count$ | async }})
             </a>
           </p-tab>

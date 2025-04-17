@@ -1,68 +1,156 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, ViewChild } from '@angular/core';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, FormBuilder,Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import moment from 'moment';
 import { Select } from 'primeng/select';
 import { IPolicies } from '../../../../Interfaces/policies.model';
 import { Subject, takeUntil } from 'rxjs';
 import { ILocation, IShiftHeader, ISubLocation } from '../../../time-off/flexible-leave-allocation/leave-allocation.model';
 
+import { TabsModule } from 'primeng/tabs';
+import { HttpService } from '../../../../services/http.service';
+import { Subscription } from 'rxjs';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-add-policies',
-  imports: [Select,CommonModule,FormsModule,
-    ReactiveFormsModule],
+  imports: [RouterModule,
+    Select,
+    CommonModule,
+    ReactiveFormsModule,TabsModule,TranslateModule],
   templateUrl: './add-policies.component.html',
   styleUrl: './add-policies.component.scss'
 })
 export class AddPoliciesComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   policyform!: FormGroup;
-  yearsList: number[] = [];
+
   locationDetails!: ILocation[];
   subLocationDetails = [] as ISubLocation[];
   shiftDetails = [] as IShiftHeader[];
   orgHolidayItemsArrayTrue:any = [];
   orgHolidayItemsArrayFalse:any =[];
   empinfo: any;
-  subscription: any;
+  years: number[] = [];
+  locations: any[] = [];
+  subLocations: any[] = [];
+  subscription!: Subscription;
+  Employeeinfo = {} as any;
+  currentYear: number = new Date().getFullYear();
+
   destroy$: Subject<boolean> = new Subject<boolean>();
-  http: any;
   jobshiftdetails: any;
   length: number = 0;
   optional:number = 0;
   selectedfileds = {} as any;
   sharedModalService: any;
-  fb: any;
-  constructor( public router:Router) { }
+
+  constructor( public router:Router,private fb: FormBuilder,
+    private http: HttpService,
+    private modalService: NgbModal,
+     private conformationPopup: OpenModalService,) { }
   ngOnInit(): void {
-    this.policyform = new FormGroup({
-      selectedYear: new FormControl(this.selectedYear)
-    });
-    
-    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-      console.log(this.empinfo.employeeId);
-      this.getjobDetails();
-    this.currentYear = new Date().getFullYear();
-    this.selectedYear = this.currentYear; // Move this up
-    
-  
-    // Populate years list
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
-      this.years.push({ name: i.toString(), value: i });
-    }
-    
+    this.initializeForm();
+    this.yearsList();
+    this.geAllLocations();
+    this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    // this.policyform = new FormGroup({
+    //   selectedYear: new FormControl(this.selectedYear)
+    // });
+
+    // this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    //   console.log(this.empinfo.employeeId);
+    //   this.getjobDetails();
+    // this.currentYear = new Date().getFullYear();
+    // this.selectedYear = this.currentYear; // Move this up
+    // // Populate years list
+    // for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    //   this.years.push({ name: i.toString(), value: i });
+    // }
+
   }
-  // salaryHoldDetails = [
-  //   { name: 'Yes', value: true },
-  //   { name: 'No', value: false },
-  // ]
+  initializeForm() {
+    this.policyform = this.fb.group({
+      year: ['', Validators.required],
+      location: ['', Validators.required],
+      subLocation: ['', Validators.required],
+      policies: this.fb.array([this.createPolicy()])
+    });
+  }
+  yearsList() {
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+  }
+  createPolicy(): FormGroup {
+    return this.fb.group({
+      policyName: ['', Validators.required],
+      policyDescription: ['', Validators.required],
+      policyAttachment:  ['', Validators.required],
+
+    });
+  }
+  get policies(): FormArray {
+    return this.policyform.get('policies') as FormArray;
+  }
+  addPolicy() {
+    this.policies.push(this.createPolicy());
+  }
+
+  deletePolicy(index: number) {
+    this.policies.removeAt(index);
+  }
+  Cancel(){
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+
+  }
+  Addpolicy(): void {
+    if (this.policyform.valid) {
+      const formValue = this.policyform.value;
+
+      const payload = {
+        locationId: formValue.location,
+        subLocationId: formValue.subLocation,
+        applicableyear: formValue.year,
+        status: "Pending for Submission",
+        addedby: this.Employeeinfo.employeeId,
+        addedDate: new Date(),
+        orgPolicyItems: formValue.policies.map((policy: any) => ({
+          policyName: policy.policyName,
+          policyDescription: policy.policyDescription,
+          policyAttachment: policy.policyAttachment,
+          status: "Submitted",
+
+        }))
+      };
+      
+      this.http.postdata(`orgPolicies/Post`, payload).subscribe({
+        next: (data: any) => {
+          this.navigation()
+        },
+        error: (error: any) => {
+          console.log("error" + error)
+        }
+      });
+    }
+  }
+  geAllLocations() {
+    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+      next: (data: any) => {
+        this.locations = data;
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
   navigation(){
     this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
   }
   policiesdata = {} as IPolicies;
-  years: { name: string, value: number }[] = [];
+  // years: { name: string, value: number }[] = [];
 
-  currentYear: number = new Date().getFullYear();
+  // currentYear: number = new Date().getFullYear();
   jobLocationDropDownData = {} as any;
   selectedYear: number = this.currentYear;
   getjobDetails() {
@@ -77,42 +165,78 @@ export class AddPoliciesComponent {
         }
     });
   }
-  onLocationChange(location: ILocation): void {
-    if (location?.jobSubLocations?.length) {
-      this.subLocationDetails = location.jobSubLocations;
-      this.policyform.get('subLocation')?.enable();
-    } else {
-      this.subLocationDetails = [];
-      this.policyform.get('subLocation')?.enable();
-      this.policyform.get('subLocation')?.reset();
-    }
+  getAllLocations() {
+    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+      next: (data: any) => {
+        this.locations = data;
+      },
+      error: (reason: any) => console.log(reason)
+    });
   }
-  getAllShifts(subLocation: ISubLocation): void {
-    const params = {
-      locationId: subLocation.jobLocationId,
-      subLocationId: subLocation.id,
-    };
+  // onLocationChange(location: ILocation): void {
+  //   if (location?.jobSubLocations?.length) {
+  //     this.subLocationDetails = location.jobSubLocations;
+  //     this.policyform.get('subLocation')?.enable();
+  //   } else {
+  //     this.subLocationDetails = [];
+  //     this.policyform.get('subLocation')?.enable();
+  //     this.policyform.get('subLocation')?.reset();
+  //   }
+  // }
+  // getAllShifts(subLocation: ISubLocation): void {
+  //   const params = {
+  //     locationId: subLocation.jobLocationId,
+  //     subLocationId: subLocation.id,
+  //   };
 
-    this.http
-      .getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.shiftDetails = res.flatMap(
-            (header: any) => header.orgShiftsItems || []
-          );
-          this.policyform.get('shift')?.enable();
-        },
-        error: (err: any) => {
-          console.error('Error fetching shifts:', err);
-          this.shiftDetails = [];
-          this.policyform.get('shift')?.reset();
-          this.policyform.get('shift')?.disable();
-        },
-      });
+  //   this.http
+  //     .getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (res: any) => {
+  //         this.shiftDetails = res.flatMap(
+  //           (header: any) => header.orgShiftsItems || []
+  //         );
+  //         this.policyform.get('shift')?.enable();
+  //       },
+  //       error: (err: any) => {
+  //         console.error('Error fetching shifts:', err);
+  //         this.shiftDetails = [];
+  //         this.policyform.get('shift')?.reset();
+  //         this.policyform.get('shift')?.disable();
+  //       },
+  //     });
+  // }
+  onLocationChange(selectedLocationId: number | null) {
+    const subLocationControl = this.policyform.get('subLocation');
+  
+    
+    subLocationControl?.reset();
+  
+    if (selectedLocationId) {
+      subLocationControl?.enable();
+  
+      
+      const selectedLocation = this.locations.find(
+        loc => loc.id === selectedLocationId
+      );
+  
+      this.subLocations = selectedLocation?.subLocations || [];
+    } else {
+      
+      subLocationControl?.disable();
+      this.subLocations = [];
+    }
   }
   get momentRows(): FormArray {
     return this.policyform.get('momentRows') as FormArray;
+  }
+  onDelete(modal:any){
+    modal.dismiss();
+this.navigation();
+  }
+  closeDelete(modal:any){
+    modal.dismiss();
   }
 
   addMomentRow() {
@@ -141,26 +265,26 @@ export class AddPoliciesComponent {
     this.orgHolidayItemsArrayFalse = [];
     // this.length = 0;
     // this.optional = 0;
-  
+
     const selectedYearFromForm = this.policyform.get('selectedYear')?.value;
-  
+
     let holiday = {
       locationId: jobshiftdetails[0].locationid,
       subLocationId: jobshiftdetails[0].sublocationid,
       shiftId: jobshiftdetails[0].shiftId,
       Applicableyear: selectedYearFromForm
     };
-  
+
     console.log("Holiday Query:", holiday);
-  
+
     // this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
     //   next: (response: any) => {
     //     this.Policies = response;
     //     console.log(this.Policies);
-  
+
     //     this.orgHolidayItemsArray = response[0].orgHolidaysItems;
     //     console.log(this.orgHolidayItemsArray);
-  
+
     //     this.orgHolidayItemsArray.forEach(item => {
     //       if (item.isOptional) {
     //         this.orgHolidayItemsArrayTrue.push(item);
@@ -199,9 +323,9 @@ export class AddPoliciesComponent {
         this.policyform.markAllAsTouched();
         return;
       }
-  
+
       const formValue = this.policyform.value;
-  
+
       const policydata = {
         lastModifiedDate: new Date(),
         addedDate: new Date(),
@@ -237,7 +361,7 @@ export class AddPoliciesComponent {
           complete: () => {},
         });
     }
-  
+
 
   OnClickLocation() {
     if (this.policiesdata.location) {
@@ -277,5 +401,5 @@ export class AddPoliciesComponent {
     })
 
   }
-  
+
 }

@@ -6,307 +6,174 @@
       </p>
     </div>
   </div>
+    
+    <!-- <div class="component-nav-tabs-container card px-2 mb-3">
+        <p-tabs value="0" scrollable>
+            <p-tablist>
+                <ng-container *ngFor="let tab of navTabs;">
+                    <p-tab [value]="tab.link">
+                        <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
+                            {{ tab.label }}
+                        </a>
+                    </p-tab>
+                </ng-container>
+            </p-tablist>
+        </p-tabs>
+    </div> -->
 
-  <!-- <div class="custom-setting-right-content w-100 p-3">
 
-    <div class="d-flex gap-3 mt-4">
+    <div class="card custom-card">
+        <div class="p-3">
+            <div>
+                <form [formGroup]="policyform" (ngSubmit)="Addpolicy()">
+                    <div class="row g-2 mb-3">
+                        <!-- Year -->
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label custom-label mb-2">Year <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select formControlName="year" placeholder="Select Year" [options]="years"
+                                    class="form-select custom-select"></p-select>
+                            </div>
 
-      <div class="custom-p-select-content">
-        <form [formGroup]="policyform" class="m-0">
-          <p-select 
-  [options]="years" 
-  optionLabel="name"
-  formControlName="selectedYear"
-  placeholder="Select year"
-  class="form-select custom-select"
-  (change)="onYearChange()">
-</p-select>
+                            <div class="error-msg"
+                                *ngIf="policyform.controls['year'].invalid && 
+                                                        (policyform.controls['year'].touched || policyform.controls['year'].dirty)">
+                                <div *ngIf="policyform.controls['year'].errors?.['required']">
+                                    Year is required
+                                </div>
+                            </div>
+                        </div>
 
-        </form>
-        
-        
-      </div>
-      <div class="custom-p-select-content">
-        <p-select  optionLabel="name" placeholder="Select location"
-          class="form-select custom-select">
-        </p-select>
-      </div>
-      <div class="custom-p-select-content">
-        <p-select  optionLabel="name" placeholder="Select Sub-location "
-          class="form-select custom-select">
-        </p-select>
-      </div>
+                        <!-- Location -->
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label custom-label mb-2">Location <span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select formControlName="location" placeholder="Select Sub Location" optionLabel="jobLocationName" optionValue="id"
+                                    class="form-select custom-select" (onChange)="onLocationChange($event.value)" [disabled]="!policyform.get('location')?.valid"
+                                    [options]="locations">
+                                </p-select>
+                            </div>
 
-      <div>
-        <button type="button" class="custom-btn btn-primary " >
-          <i class="bi bi-plus me-2"></i> Add Policies
-      </button>
-      </div>
+                            <div class="error-msg"
+                                *ngIf="policyform.controls['location'].invalid &&  (policyform.controls['location'].touched || policyform.controls['location'].dirty)">
+                                <div *ngIf="policyform.controls['location'].errors?.['required']">
+                                    Location is required
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sub Location -->
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label custom-label mb-2">Sub Location <span
+                                    class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                                <p-select formControlName="subLocation" placeholder="Select Sub Location" optionLabel="jobSubLocationName" optionValue="id"
+                                    class="form-select custom-select" [disabled]="!policyform.get('location')?.valid"
+                                    [options]="subLocations">
+                                </p-select>
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="policyform.controls['subLocation'].invalid && 
+                                                        (policyform.controls['subLocation'].touched || policyform.controls['subLocation'].dirty)">
+                                <div *ngIf="policyform.controls['subLocation'].errors?.['required']">
+                                    Sub Location is required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3 mt-5">
+                            <button type="button" class="custom-btn btn-primary" (click)="Addpolicy()">
+                                <i class="bi bi-plus me-2"></i> Add New
+                            </button>
+                        </div>
+                    </div>
+                    <div formArrayName="policies">
+                        <div *ngFor="let policy of policies.controls; let i = index" [formGroupName]="i"
+                            class="card p-3 mb-4 custom-policy-item-card">
+
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <label class="form-label custom-label">Policy Name<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control custom-input" formControlName="policyName"
+                                        placeholder="Please enter Policy Name" />
+                                    <div *ngIf="policy.get('policyName')?.invalid && (policy.get('policyName')?.dirty || policy.get('policyName')?.touched)"
+                                        class="error-msg">
+                                        <span *ngIf="policy.get('policyName')?.errors?.['required']">policy name is
+                                            required</span>
+                                    </div>
+                                </div>
+                                <!-- policy Code -->
+                                <div class="col-md-2">
+                                    <label class="form-label custom-label">Policy Attachment<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control custom-input" formControlName="policyAttachment"
+                                        placeholder="Please enter Policy Name" />
+                                    <div *ngIf="policy.get('policyAttachment')?.invalid && (policy.get('policyAttachment')?.dirty || policy.get('policyAttachment')?.touched)"
+                                        class="error-msg">
+                                        <span *ngIf="policy.get('policyAttachment')?.errors?.['required']">Policy Attachment is
+                                            required</span>
+                                    </div>
+                                </div>
+
+                                <!-- policy Name -->
+                                <div class="col-md-2">
+                                    <label class="form-label custom-label">Policy Description<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control custom-input" formControlName="policyDescription"
+                                        placeholder="Please enter Policy Description" />
+                                    <div *ngIf="policy.get('policyDescription')?.invalid && (policy.get('policyDescription')?.dirty || policy.get('policyDescription')?.touched)"
+                                        class="error-msg">
+                                        <span *ngIf="policy.get('policyDescriptione')?.errors?.['required']">policy Attachment is
+                                            required</span>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+                            
+
+                                <!-- Grace Period -->
+                                
+
+                                <!-- Delete Icon -->
+                                <div class="col-md-2 mt-4 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="custom-icon btn" (click)="policies.removeAt(i)">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </div>
+                          
+
+                        </div>
+
+                    </div>
+
+                    <div class=" d-flex justify-content-end gap-3 p-3">
+                        <button type="button" class="custom-btn btn-secondary" (click)="Cancel()">Cancel
+                    </button>
+                        <button type="submit" class="custom-btn btn-primary"  [disabled]="policyform.invalid" >Submit</button>
+                    </div>
+
+                </form>
+            </div>
+
+
+        </div>
+
     </div>
-    <div class="card custom-background-card p-3 mt-2">
-      <div class="row">
-
-        <div class="col-md-4">
-          <label class="form-label custom-label">Policy Name<span class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" placeholder="Please enter holiday name" />
-        </div>
-
-        <div class="col-md-4">
-          <label class="form-label custom-label"> Policy Description<span class="text-danger">*</span></label>
-          <textarea class="form-control custom-input" placeholder="Write description here..." rows="1"></textarea>
-
-
-
-        </div>
-        <div class="col-md-4">
-          <label class="form-label custom-label">Policy Attachmen<span class="text-danger">*</span></label>
-          <input type="file" class="form-control custom-input" accept=".pdf, image/*" />
-
-
-        </div>
-
-      </div>
-    </div>
-  </div> -->
-  <!-- <div class="custom-setting-right-content w-100 p-3">
-    <form [formGroup]="policyform" (ngSubmit)="onSubmit(policyform)">
-        <div class="card custom-background-card p-3 mt-2">
-            <div class="row mb-3">
-              
-                <div class="col-md-4 mb-3">
-                  <label for="year" class="form-label custom-label mb-2">
-                      {{ "Year" }}
-                  </label>
-                  <div class="custom-p-select-content">
-                      <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-                          class="form-select custom-select" formControlName="year"
-                          placeholder="Please select year">
-                          <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-                          <ng-template let-year #item>{{ year }}</ng-template>
-                      </p-select>
-                  </div>
-              </div>
-
-              
-                <div class="col-md-4 mb-3">
-                    <label for="location" class="form-label custom-label mb-2">
-                        {{ "Location" }}
-                    </label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
-                            class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
-                            formControlName="location" placeholder="Please select location"
-                            (onChange)="onLocationChange($event.value)">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
-                                }}</ng-template>
-                            <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
-                        </p-select>
-                    </div>
-                </div>
-
-                
-                <div class="col-md-4 mb-3">
-                    <label for="subLocation" class="form-label custom-label mb-2">
-                        {{ "Sub Location" }}
-                    </label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
-                            class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
-                            formControlName="subLocation" placeholder="Please select sub location"
-                            (onChange)="getAllShifts($event.value)">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
-                                }}</ng-template>
-                            <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
-                        </p-select>
-                    </div>
-                </div>
-
-               
-                <div class="col-md-4 mb-3">
-                    <label for="shift" class="form-label custom-label mb-2">
-                        {{ "Shift" }}
-                    </label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true"
-                            filterBy="shiftName" [showClear]="false" formControlName="shift"
-                            placeholder="Please select shift" class="form-select custom-select">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName
-                                }}</ng-template>
-                            <ng-template let-location #item>{{ location.shiftName }}</ng-template>
-                        </p-select>
-                    </div>
-
-                </div>
+</div>
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-content text-center p-4">
+            <div class="py-4">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+                <p class="confirmation-text">{{'Are you sure you want to Cancel?'|translate}}</p>
+            </div>
+            <div class="d-flex gap-5 pt-2 w-100">
+                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
-
-       
-        <div class="custom-table-content mt-2">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Policy Name</th>
-                        <th>Policy Attachement</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody formArrayName="momentRows">
-                    <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
-                        <td><input type="date" class="form-control" formControlName="policyName"/></td>
-                        <td><input type="date" class="form-control" formControlName="policyAttachment"/></td>  
-                        <td class="custom-p-select-content">
-                            <p-select  [showClear]="false" formControlName="policyDescription"
-                                placeholder="Select type" class="form-select custom-select">
-                            </p-select>
-                        </td>
-                        
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                (click)="momentRows.length > 1 && removeMomentRow(i)">X</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <button type="button" class="custom-btn btn-primary" (click)="addMomentRow()">+ Add Row</button>
-        </div>
-        <span class="error-msg">Note: All Fields are Mandatory Fields</span>
-        <div class="save-button d-flex justify-content-end ">
-            <button class="custom-btn btn-secondary me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" type="button"
-                id="submitButton">
-                Cancel
-            </button>
-            <button class="custom-btn btn-primary me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" id="submitButton"
-                [disabled]="policyform.invalid">
-                Save
-            </button>
-        </div>
-    </form>
-
-</div> -->
-<div class="custom-setting-right-content w-100 p-3">
-  <form [formGroup]="policyform" (ngSubmit)="onSubmit(policyform)">
-    <div class="card custom-background-card p-3 mt-2">
-      <div class="row mb-3">
-          <!-- Year -->
-          <div class="col-md-4 mb-3">
-              <label for="year" class="form-label custom-label mb-2">
-                  {{ "Year" }}
-              </label>
-              <div class="custom-p-select-content">
-                  <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-                      class="form-select custom-select" formControlName="year"
-                      placeholder="Please select year">
-                      <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-                      <ng-template let-year #item>{{ year }}</ng-template>
-                  </p-select>
-              </div>
-          </div>
-
-              <!-- Location -->
-              <div class="col-md-4 mb-3">
-                  <label for="location" class="form-label custom-label mb-2">
-                      {{ "Location" }}
-                  </label>
-                  <div class="custom-p-select-content">
-                      <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
-                          class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
-                          formControlName="location" placeholder="Please select location"
-                          (onChange)="onLocationChange($event.value)">
-                          <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
-                              }}</ng-template>
-                          <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
-                      </p-select>
-                  </div>
-              </div>
-
-              <!-- Sub Location -->
-              <div class="col-md-4 mb-3">
-                  <label for="subLocation" class="form-label custom-label mb-2">
-                      {{ "Sub Location" }}
-                  </label>
-                  <div class="custom-p-select-content">
-                      <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
-                          class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
-                          formControlName="subLocation" placeholder="Please select sub location"
-                          (onChange)="getAllShifts($event.value)">
-                          <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
-                              }}</ng-template>
-                          <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
-                      </p-select>
-                  </div>
-              </div>
-
-              <!-- Shifts -->
-              <div class="col-md-4 mb-3">
-                  <label for="shift" class="form-label custom-label mb-2">
-                      {{ "Shift" }}
-                  </label>
-                  <div class="custom-p-select-content">
-                      <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true"
-                          filterBy="shiftName" [showClear]="false" formControlName="shift"
-                          placeholder="Please select shift" class="form-select custom-select">
-                          <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName
-                              }}</ng-template>
-                          <ng-template let-location #item>{{ location.shiftName }}</ng-template>
-                      </p-select>
-                  </div>
-
-              </div>
-          </div>
-      </div>
-
-      <!-- Table for Moment Rows -->
-      <div class="custom-table-content mt-2">
-          <table class="w-100">
-              <thead>
-                  <tr>
-                      <th>Policy Name</th>
-                      <th>Policy Attachement (Image and PDF only)</th>
-                      <th>Description</th>
-                      <!-- <th>Duration</th> -->
-                      <!-- <th></th> -->
-                  </tr>
-              </thead>
-              <tbody formArrayName="momentRows">
-                  <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
-                      <td><input type="date" class="form-control" formControlName="policyName"
-                              onkeydown="return false"
-                               /></td>
-                      <td><input type="date" class="form-control" formControlName="endDate"
-                              onkeydown="return false" /></td>
-                      <td class="custom-p-select-content">
-                          <p-select  [showClear]="false" formControlName="momentType"
-                              placeholder="Select type" class="form-select custom-select">
-                          </p-select>
-                      </td>
-                      <td class="custom-p-select-content">
-                          <p-select [showClear]="false" formControlName="duration"
-                              placeholder="Select duration" class="form-select custom-select">
-                          </p-select>
-                      </td>
-                      <td>
-                          <button type="button" class="btn btn-danger btn-sm"
-                              (click)="momentRows.length > 1 && removeMomentRow(i)">X</button>
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
-
-          <button type="button" class="custom-btn btn-primary" (click)="addMomentRow()">+ Add Row</button>
-      </div>
-      <span class="error-msg">Note: All Fields are Mandatory Fields</span>
-      <div class="save-button d-flex justify-content-end ">
-          <button class="custom-btn btn-secondary me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" type="button"
-              id="submitButton">
-              Cancel
-          </button>
-          <button class="custom-btn btn-primary me-3 rounded-4 ps-4 pe-4 pt-2 pb-2" id="submitButton"
-              [disabled]="policyform.invalid">
-              Save
-          </button>
-      </div>
-  </form>
-
-</div>
-</div>
+    </div>
+  </ng-template>

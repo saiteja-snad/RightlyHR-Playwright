@@ -7,14 +7,14 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
+import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
 import { environment } from '../../../environments/environment';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IJobdetails } from '../../Interfaces/job-model';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { ICategoryDetails } from '../../interfaces/onbehalfof.model';
+
 @Component({
   selector: 'app-on-be-half-of',
   imports: [CommonModule, OnBeHalfOfApprovalTabsComponent, RouterModule, TranslateModule, Select, ReactiveFormsModule,],
@@ -132,6 +132,7 @@ export class OnBeHalfOfComponent {
     this.getallpolicy();
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getEmployementTypeByempId(this.empdata.employeeId)
   }
 
   initializeForm() {
@@ -233,7 +234,12 @@ export class OnBeHalfOfComponent {
         this.employeeiddetails = data.filter((element: any) => element.employeeId != loggedInUser.employeeId)
           .map((employee: any) => ({
             ...employee,
-            fullName: [ employee.firstName, employee.middleName, employee.lastName].filter(Boolean).join(' ')
+            // fullName: [  employee.employeeId ? employee.employeeId + ' - ' : '', employee.middleName, employee.lastName].filter(Boolean).join(' ')
+            fullName: `${
+              employee.employeeId ? employee.employeeId + ' - ' : ''
+            }${employee.firstName} ${
+              employee.middleName ? employee.middleName + ' ' : ''
+            }${employee.lastName}`,
         }));
       },
       error: (reason: any) => {

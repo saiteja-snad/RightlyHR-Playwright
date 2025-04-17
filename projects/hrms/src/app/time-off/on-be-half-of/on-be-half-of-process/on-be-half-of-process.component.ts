@@ -50,7 +50,6 @@ loggedinuser = {} as any;
   }
 
   getDataByLPID() {
-    let loggedInUser = this.authService.getToken();
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {

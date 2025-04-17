@@ -2,7 +2,7 @@
   <ul class="nav flex-column">
     <li class="nav-item" *ngFor="let link of navLinks">
       <a class="nav-link" [routerLink]="[link.route]" routerLinkActive="active-nav-link">
-        {{ link.label }}
+        {{ link.label }} ({{link.count}})
       </a>
     </li>
   </ul>

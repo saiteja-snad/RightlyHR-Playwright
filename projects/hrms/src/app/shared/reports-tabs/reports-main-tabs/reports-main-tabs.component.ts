@@ -11,9 +11,9 @@ import { TabsModule } from 'primeng/tabs';
 })
 export class ReportsMainTabsComponent {
   navTabs: any[] = [
-    { label: 'Standard Reports', link: '/reports/standard-reports/employee-data' },
-    { label: 'Custom Reports', link: '/reports/custom-reports' },
-    { label: 'Attendance Reports', link: '/settings/timeoff-configurations' },
-    { label: 'Monthly Attendance Report', link: '/reports/monthly-attandance-reports' },
+    { label: 'Standard Reports', link: '/reports/standard-reports/employee-data', permission: { feature: 'Standard Reports', action: 'view'}},
+    { label: 'Custom Reports', link: '/reports/custom-reports' ,permission: { feature: 'Custom Reports', action: 'view'}},
+    { label: 'Attendance Reports', link: '/settings/timeoff-configurations',permission: { feature: 'Attendance Reports', action: 'view' }},
+    { label: 'Monthly Attendance Report', link: '/reports/monthly-attandance-reports' ,permission: { feature: 'Monthly Attandance Report', action: 'view'}},
   ];
 }

@@ -52,6 +52,15 @@ export class HttpService {
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
 
+ private triggerSignal = signal(false);
+ readonly trigger = this.triggerSignal;
+ triggerActionSignal() {
+  this.triggerSignal.set(true);
+}
+resetTriggerSignal() {
+  this.triggerSignal.set(false);
+}
+
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }

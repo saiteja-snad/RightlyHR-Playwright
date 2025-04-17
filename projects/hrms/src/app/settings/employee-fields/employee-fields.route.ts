@@ -70,12 +70,16 @@ export default [
     },
 
     { path: 'addholidays', loadComponent: () => import('./manage-holidays/add-holidays/add-holidays.component').then((m) => m.AddHolidaysComponent) },
+    { path: 'updateholidays', loadComponent: () => import('./manage-holidays/update-holidays/update-holidays.component').then((m) => m.UpdateHolidaysComponent) },
+    { path: 'cloneholidays', loadComponent: () => import('./manage-holidays/clone-holidays/clone-holidays.component').then((m) => m.CloneHolidaysComponent) },
+    { path: 'viewholidays', loadComponent: () => import('./manage-holidays/view-holidays/view-holidays.component').then((m) => m.ViewHolidaysComponent) },
+
     {
         path: 'manage-holidays',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
-            { path: 'pending-for-submit', loadComponent: () => import('./manage-holidays/published-holidays/published-holidays.component').then((m) => m.PublishedHolidaysComponent) },
-            { path: 'published-holidays', loadComponent: () => import('./manage-holidays/pending-holidays/pending-holidays.component').then((m) => m.PendingHolidaysComponent) },
+            { path: 'pending-for-submit', loadComponent: () => import('./manage-holidays/pending-holidays/pending-holidays.component').then((m) => m.PendingHolidaysComponent) },
+            { path: 'published-holidays', loadComponent: () => import('./manage-holidays/published-holidays/published-holidays.component').then((m) => m.PublishedHolidaysComponent) },
         ]
     },
     { path: 'no-due-clearnce', loadComponent: () => import('./no-due-clearance-configurations/no-due-clearance-configurations.component').then((m) => m.NoDueClearanceConfigurationsComponent) },
@@ -87,10 +91,10 @@ export default [
             { path: 'published-weekends', loadComponent: () => import('./manage-weekends/published-weekends/published-weekends.component').then((m) => m.PublishedWeekendsComponent) },
         ]
     },
-    { path: 'add-dst', loadComponent: () => import('./manage-dsts/add-dst/add-dst.component').then((m) => m.AddDstComponent) },
-    { path: 'update-dst', loadComponent: () => import('./manage-dsts/update-dst/update-dst.component').then((m) => m.UpdateDstComponent) },
-    { path: 'clone-dst', loadComponent: () => import('./manage-dsts/clone-dst/clone-dst.component').then((m) => m.CloneDstComponent) },
-    { path: 'view-dst', loadComponent: () => import('./manage-dsts/view-dst/view-dst.component').then((m) => m.ViewDstComponent) },
+    { path: 'add-weekends', loadComponent: () => import('./manage-weekends/add-weekend/add-weekend.component').then((m) => m.AddWeekendComponent) },
+    { path: 'update-weekends', loadComponent: () => import('./manage-weekends/update-weekends/update-weekends.component').then((m) => m.UpdateWeekendsComponent) },
+    { path: 'clone-weekends', loadComponent: () => import('./manage-weekends/clone-weekends/clone-weekends.component').then((m) => m.CloneWeekendsComponent) },
+    { path: 'view-weekends', loadComponent: () => import('./manage-weekends/view-weekends/view-weekends.component').then((m) => m.ViewWeekendsComponent) },
     {
         path: 'manage-dsts',
         children: [
@@ -99,8 +103,8 @@ export default [
             { path: 'published-dsts', loadComponent: () => import('./manage-dsts/published-dsts/published-dsts.component').then((m) => m.PublishedDstsComponent) },
         ]
     },
-    { path: 'add-weekends', loadComponent: () => import('./manage-weekends/add-weekend/add-weekend.component').then((m) => m.AddWeekendComponent) },
-    { path: 'update-weekends', loadComponent: () => import('./manage-weekends/update-weekends/update-weekends.component').then((m) => m.UpdateWeekendsComponent) },
-    { path: 'clone-weekends', loadComponent: () => import('./manage-weekends/clone-weekends/clone-weekends.component').then((m) => m.CloneWeekendsComponent) },
-    { path: 'view-weekends', loadComponent: () => import('./manage-weekends/view-weekends/view-weekends.component').then((m) => m.ViewWeekendsComponent) },
+    { path: 'add-dst', loadComponent: () => import('./manage-dsts/add-dst/add-dst.component').then((m) => m.AddDstComponent) },
+    { path: 'update-dst', loadComponent: () => import('./manage-dsts/update-dst/update-dst.component').then((m) => m.UpdateDstComponent) },
+    { path: 'clone-dst', loadComponent: () => import('./manage-dsts/clone-dst/clone-dst.component').then((m) => m.CloneDstComponent) },
+    { path: 'view-dst', loadComponent: () => import('./manage-dsts/view-dst/view-dst.component').then((m) => m.ViewDstComponent) },
 ] as Route[];

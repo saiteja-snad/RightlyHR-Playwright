@@ -18,16 +18,16 @@ export class ManageDstTabsComponent implements OnInit, OnDestroy {
     {
       label: 'Pending for submission',
       route: '/settings/employee-fields/manage-dsts/pending-for-submission',
-      count:0
+      count: 0
     },
     {
       label: 'Published',
       route: '/settings/employee-fields/manage-dsts/published-dsts',
-      count:0
+      count: 0
     },
   ];
 
-  constructor(private http: HttpService) {}
+  constructor(private http: HttpService) { }
 
   ngOnInit(): void {
     this.getAllDayLight();
@@ -40,7 +40,6 @@ export class ManageDstTabsComponent implements OnInit, OnDestroy {
         this.allDSTs = data;
         const pendingCount = this.allDSTs.filter(dst => dst.status === 'Pending for submission').length;
         const publishedCount = this.allDSTs.filter(dst => dst.status === 'Published').length;
-  
         this.navLinks = [
           {
             label: 'Pending for submission',

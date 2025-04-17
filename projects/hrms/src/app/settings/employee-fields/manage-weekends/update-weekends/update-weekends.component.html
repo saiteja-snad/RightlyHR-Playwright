@@ -163,15 +163,11 @@
 
             <div class="d-flex justify-content-end gap-3 pt-4">
                 @if(isInitialRowOnly){
-                <button type="button" class="custom-btn btn-primary px-4" (click)="publishWeekends()">{{"Publish" |
-                    translate}}</button>
-                <button type="button" class="custom-btn btn-primary px-4" (click)="navigateToClone()">{{"Clone" |
-                    translate}}</button>
+                <button type="button" class="custom-btn publish-btn px-4" (click)="publishWeekends()">{{"Publish" | translate}}</button>
+                <button type="button" class="custom-btn clone-btn px-4" (click)="navigateToClone()">{{"Clone" | translate}}</button>
                 }
-                <button type="button" class="custom-btn btn-secondary px-4" (click)="openConfirmation()">{{"Cancel" |
-                    translate}}</button>
-                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="weekendForm.invalid">{{"Update" |
-                    translate}}</button>
+                <button type="button" class="custom-btn btn-secondary px-4" (click)="openConfirmation()">{{"Cancel" | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="weekendForm.invalid">{{"Update" | translate}}</button>
             </div>
         </form>
     </div>

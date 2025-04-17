@@ -1,15 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { OpenModalService } from '../../services/open-modal.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { HttpService } from '../../services/http.service';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SelectModule } from 'primeng/select';
+import * as XLSX from 'xlsx';
+import { AuthService } from '../../services/auth.service';
+import { Subject, takeUntil } from 'rxjs';
+import { Ipersonal } from './custom-model';
 
 @Component({
   selector: 'app-custom-reports',
-  imports: [CommonModule],
+  imports: [SelectModule, ReactiveFormsModule, CommonModule, FormsModule,],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss'
 })
 export class CustomReportsComponent {
+  empStatusList: string[] = ['All Employees', 'Active', 'Inactive'];
   showCard: boolean = false;
   JobShowCard: boolean = false;
+  loggedInUser = {} as any;
   selecteditem: string[] = [];
   fieldOptions: string[] = [
     'ID',
@@ -135,7 +146,9 @@ export class CustomReportsComponent {
     'Pay Type',
     'Yearly CTC',
   ];
-  //Basic Info
+  reportForm!: FormGroup;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+//Basic Info
   selectAllIsChecked__select: boolean = false;
   selectedFields__select: string[] = [];
 
@@ -199,6 +212,25 @@ export class CustomReportsComponent {
   selectAllIsChecked__selectCompensationDetails: boolean = false;
   selectedFields__selectCompensationDetails: string[] = [];
 
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private http: HttpService,
+    private sharedModalService: OpenModalService,
+    private modalService: NgbModal
+  ) { }
+  ngOnInit(): void {
+    this.initializeForm();
+    this.getCustomReportDetails();
+    this.loggedInUser = this.authService.getToken();
+    // this.getFamilyDetails();
+  }
+
+  initializeForm() {
+    this.reportForm = this.fb.group({
+      status: ['All Employees', Validators.required],
+    });
+  }
 
   selectAll(f: any, newData: any[], type: string) {
     console.log(f);
@@ -553,6 +585,345 @@ export class CustomReportsComponent {
         this.selectedFields__selectCompensationDetails.length ===
         this.compensationDetails.length;
     }
+  }
+  selectedFields = [] as any;
+  emp = [] as Ipersonal[]; 
+  onSubmit(form: FormGroup) {
+    
+      this.selectedData = [];
+      this.emp.forEach((user: Ipersonal) => {
+        const data: { [key: string]: any } = {};
+        this.selectedFields = [
+          ...this.selectedFields__select,
+          ...this.selectedFields__selectAddress,
+          ...this.selectedFields__selectAddress2,
+          ...this.selectedFields__selectContact,
+          ...this.selectedFields__selectContact1,
+          ...this.selectedFields__selectContact2,
+          ...this.selectedFields__selectEducationDetails,
+          ...this.selectedFields__selectVisaDetails,
+          ...this.selectedFields__selectIdentityDetails,
+          ...this.selectedFields__selectBankDetails,
+          ...this.selectedFields__selectPreOnboardingDetails,
+          ...this.selectedFields__selectOnboarding,
+          ...this.selectedFields__selectOffboarding,
+          ...this.selectedFields__selectEmploymentTypeDetails,
+          ...this.selectedFields__selectJobDetails,
+          ...this.selectedFields__selectCompensationDetails,
+        ];
+        console.log(this.selectedFields);
+        this.selectedFields.forEach((field: any) => {
+          //Basic
+          if (field === 'ID') {
+            data[field] = user.employeeId;
+          } else if (field === 'Employee ID') {
+            data[field] = user.fusionEmpId;
+          } else if (field === 'Salutation') {
+            data[field] = user.title;
+          } else if (field === 'First Name') {
+            data[field] = user.firstName;
+          } else if (field === 'Last Name') {
+            data[field] = user.lastName;
+          } else if (field === 'Middle Name') {
+            data[field] = user.middleName;
+          } else if (field === 'Status') {
+            data[field] = user.empstatus;
+          } else if (field === 'Marital Status') {
+            data[field] = user.maritalStatus;
+          } else if (field === 'Gender') {
+            data[field] = user.gender;
+          } else if (field === 'Date of Birth') {
+            data[field] = this.formatDate(user.dob);
+          } else if (field === 'Blood Group') {
+            data[field] = user.bloodGroup;
+          } else if (field === 'Secondary Language') {
+            data[field] = user.secondaryLanguage;
+          }
+          // else if (field === 'Contact Number') {
+          //   data[field] = user.contactnumber;
+          // }
+          //current Address
+          else if (field === 'Address Line 1(current)') {
+            data[field] = user.currentAddressLine1;
+          } else if (field === 'Address Line 2(current)') {
+            data[field] = user.currentAddressLine2;
+          } else if (field === 'City(current)') {
+            data[field] = user.currentCity;
+          } else if (field === 'State(current)') {
+            data[field] = user.currentState;
+          } else if (field === 'Country(current)') {
+            data[field] = user.currentCountry;
+          } else if (field === 'Zip Code/Post Code(current)') {
+            data[field] = user.currentZipCode;
+          }
+          //permanent address
+          else if (field === 'Address Line 1(permanemt)') {
+            data[field] = user.permanentAddressLine1;
+          } else if (field === 'Address Line 2(permanemt)') {
+            data[field] = user.permanentAddressLine2;
+          } else if (field === 'City(permanemt)') {
+            data[field] = user.permanentCity;
+          } else if (field === 'State(permanemt)') {
+            data[field] = user.permanentState;
+          } else if (field === 'Country(permanemt)') {
+            data[field] = user.permanentCountry;
+          } else if (field === 'Zip Code/Post Code(permanemt)') {
+            data[field] = user.permanentZipCode;
+          }
+          //Contact
+          else if (field === 'Work Number') {
+            data[field] = user.workPhone;
+          } else if (field === 'Mobile Phone') {
+            data[field] = user.contactnumber;
+          } else if (field === 'Work Mail-Id') {
+            data[field] = user.workEmail;
+          } else if (field === 'Home Mail-Id') {
+            data[field] = user.emailaddress;
+          }
+          //Emergency Contact 1
+          else if (field === 'Name(contact1)') {
+            data[field] = user.emergencyName;
+          } else if (field === 'Email-Id(contact1)') {
+            data[field] = user.emailId;
+          } else if (field === 'Email-Id(contact2)') {
+            data[field] = user.emergencyEmail1;
+          } else if (field === 'Phone Number(contact1)') {
+            data[field] = user.emergencynumber;
+          }
+          //Emergency Contact 2
+          else if (field === 'Name(contact2)') {
+            data[field] = user.emergencyName1;
+          } else if (field === 'Phone Number(contact2)') {
+            data[field] = user.emergencyNumber1;
+          } else if (field === 'Relationship(contact1)') {
+            data[field] = user.relationShip;
+          } else if (field === 'Relationship(contact2)') {
+            data[field] = user.relationship1;
+          }
+          //Education
+          else if (field === 'Degree') {
+            data[field] = user.degree;
+          } else if (field === 'Relationship(contact2)') {
+            data[field] = user.relationship1;
+          } else if (field === 'University') {
+            data[field] = user.university;
+          } else if (field === 'Specialization') {
+            data[field] = user.specialization;
+          } else if (field === 'GPA') {
+            data[field] = user.gpa;
+          } else if (field === 'Degree Start Date') {
+            data[field] = this.formatDate(user.degreeStartDate);
+          } else if (field === 'Degree End Date') {
+            data[field] = this.formatDate(user.degreeEndDate);
+          }
+          //visa Details
+          else if (field === 'Visa Type') {
+            data[field] = user.visatype;
+          } else if (field === 'Issued Country') {
+            data[field] = user.issuedcountry;
+          } else if (field === 'Issued Date') {
+            data[field] = this.formatDate(user.issueddate);
+          } else if (field === 'Expiry Date') {
+            data[field] = this.formatDate(user.expirydate);
+          }
+          //identity
+          else if (field === 'Aadhaar Number') {
+            data[field] = user.aadhaar;
+          } else if (field === 'PAN Number') {
+            data[field] = user.pan;
+          } else if (field === 'PF Number') {
+            data[field] = user.esic;
+          } else if (field === 'ESIC Number') {
+            data[field] = user.pf;
+          } else if (field === 'UAN Number') {
+            data[field] = user.uan;
+          }
+          //Bank
+          else if (field === 'Bank Name') {
+            data[field] = user.bankName;
+          } else if (field === 'Account Holders Name') {
+            data[field] = user.accountName;
+          } else if (field === 'Account Number') {
+            data[field] = user.accountNo;
+          } else if (field === 'IFSC Code') {
+            data[field] = user.ifscCode;
+          }
+          //preOnboarding
+          else if (field === 'Offer Sent Date') {
+            data[field] = this.formatDate(user.offerSentDate);
+          } else if (field === 'Offer Sent By') {
+            data[field] = user.offerSentBy;
+          } else if (field === 'Offer Sent Status') {
+            data[field] = user.offerSentStatus;
+          } else if (field === 'Appointment Sent Date') {
+            data[field] = this.formatDate(user.appointmentSentDate);
+          } else if (field === 'Appointment Sent By') {
+            data[field] = user.appointmentSenyBy;
+          } else if (field === 'Appointment Sent Status') {
+            data[field] = user.appointmentSentStatus;
+          }
+          //Onboarding
+          else if (field === 'Date Of Joining') {
+            data[field] = this.formatDate(user.dateOfJoining);
+          } else if (field === 'Probation End Date') {
+            data[field] = this.formatDate(user.probationEndDate);
+          } else if (field === 'Probation Status') {
+            data[field] = user.probationStatus;
+          } else if (field === 'Branch Code') {
+            data[field] = user.branchCode;
+          } else if (field === 'Notice Period') {
+            data[field] = user.noticePeriod;
+          } else if (field === 'Background Check Status') {
+            data[field] = user.backgroundCheckStatus;
+          } else if (field === 'Salary Hold') {
+            data[field] = user.salaryHold;
+          } else if (field === 'PT') {
+            data[field] = user.pt;
+          } else if (field === 'PF') {
+            data[field] = user.pfApplicable;
+          } else if (field === 'ESIC') {
+            data[field] = user.esicApplicable;
+          } else if (field === 'Insurance') {
+            data[field] = user.healthInsurance;
+          }
+          //Offboarding
+          else if (field === 'Last Working Day') {
+            data[field] = this.formatDate(user.lastworkingday);
+          } else if (field === 'Exit Reason') {
+            data[field] = user.termreasonoffboard;
+          } else if (field === 'Eligible For Rehire') {
+            data[field] = user.eligibleforrehire;
+          }
+          //Employment
+          else if (field === 'Job Type') {
+            data[field] = user.jobType;
+          } else if (field === 'Grade Name') {
+            data[field] = user.gradeName;
+          }
+          //jobDetails
+          else if (field === 'Job Effective Date') {
+            data[field] = this.formatDate(user.jobEffectiveDate);
+          } else if (field === 'Job Role') {
+            data[field] = user.jobRole;
+          } else if (field === 'Grade Name') {
+            data[field] = user.gradeName;
+          } else if (field === 'Department') {
+            data[field] = user.departmentName;
+          } else if (field === 'Team') {
+            data[field] = user.subdepartment_name;
+          } else if (field === 'Team Manager') {
+            data[field] = user.teamManager;
+          } else if (field === 'Reporting Manager') {
+            data[field] = user.reportingManager;
+          } else if (field === 'Location') {
+            data[field] = user.jobLocationName;
+          } else if (field === 'Sub Location') {
+            data[field] = user.jobSubLocationName;
+          } else if (field === 'Shift') {
+            data[field] = user.shiftName;
+          } else if (field === 'Shift Code') {
+            data[field] = user.shiftCode;
+          } else if (field === 'Job Type') {
+            data[field] = user.jobType;
+          }
+          //compensation
+          else if (field === 'Compensation Effective Date') {
+            data[field] = this.formatDate(user.compeffectivedate);
+          } else if (field === 'Overtime Eligibility') {
+            data[field] = user.overtimeeligibility;
+          } else if (field === 'Reason') {
+            data[field] = user.reason;
+          } else if (field === 'Pay Type') {
+            data[field] = user.paytype;
+          } else if (field === 'Yearly CTC') {
+            data[field] = user.compensationamount;
+          } else if (field === 'Frequency') {
+            data[field] = user.frequency;
+            // }else if (field === 'Yearly CTC') {
+            //   data[field] = user.compensationamount;
+          }
+        });
+        this.selectedData.push(data);
+        console.log(this.selectedData);
+        //this.exportButtonEnabled = false;
+      });
+    
+  }
+
+  private formatDate(dateString: string): string {
+    if (dateString) {
+      if (dateString != '') {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',];
+        const month = monthNames[date.getMonth()];
+        const year = date.getFullYear().toString();
+        return `${day}-${month}-${year}`;
+      }
+    }
+    return dateString;
+  }
+
+  reportdata !: [];
+  getCustomReportDetails() {
+    this.http
+      .getData('Employeedata/Reports/EmployeeData')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.reportdata = data;
+        },
+        error: (err: any) => {
+
+        },
+      });
+  }
+
+  selectedData: any[] = [];
+  generateExcel(): void {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.selectedData);
+    this.convertHeadersToUpperCase(ws);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    const wbout: ArrayBuffer = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    this.saveAsExcelFile(wbout);
+    window.location.reload();
+  }
+
+  private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
+      let cell = ws[cellAddress];
+      if (cell && cell.v) {
+        cell.v = cell.v.toString().toUpperCase(); // Convert to uppercase
+        cell.w = cell.v; // Ensure display is updated
+      }
+    }
+  }
+
+  reportfile = {} as any;
+  saveAsExcelFile(buffer: ArrayBuffer): void {
+    const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
+    const link: HTMLAnchorElement = document.createElement('a');
+    link.href = window.URL.createObjectURL(data);
+    link.download = `${this.loggedInUser.employeeId
+      }_${new Date().getTime()}_custom_reports.xlsx`;
+    link.click();
+    //creating form file to upload into AZure
+    this.reportfile = new File(
+      [data],
+      `${this.loggedInUser.employeeId
+      }_${new Date().getTime()}__custom_reports.xlsx`,
+      {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      }
+    );
+    // this.createReportLog();
+    // this.uploadReports();
   }
 }
 

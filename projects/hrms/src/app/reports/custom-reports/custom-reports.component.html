@@ -1,3 +1,30 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+        <!--header-->
+        <div>
+            <div class="component-header">Reports</div>
+        </div>
+        <!--right data-->
+        <form [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
+            <div class="d-flex gap-3">
+                <div class="d-flex gap-2 align-items-center">
+                    <div><span class="component-sub-header">Employee Status</span></div>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="empStatusList" optionLabel="empStatusList" [filter]="false"
+                            [showClear]="false" class="form-select custom-select" formControlName="status"
+                            placeholder="Please select status">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                            <ng-template let-year #item>{{ year }}</ng-template>
+                        </p-select>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="custom-btn btn-primary" [disabled]="reportForm.invalid">Generate</button>
+                    <button class="custom-btn btn-primary" 
+                        (click)="generateExcel()">Export</button>
+                </div>
+            </div>
+        </form>
+    </div>
 <div class="employee-fields-main-container d-flex gap-3 w-100">
     
     <!--sub tabs Content-->

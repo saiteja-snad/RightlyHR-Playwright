@@ -466,11 +466,13 @@ a {
 .btn-primary-approve {
     background-color: var(--btn-success);
     color: var(--btn-color-tp);
+    border-color: var(--btn-success);
 }
 
 .btn-primary-reject {
     background-color: var(--btn-failure);
     color: var(--btn-color-tp);
+    border-color: var(--btn-failure);
 }
 
 .btn-secondary {
@@ -827,11 +829,11 @@ a {
 }
 
 .hard-copy-letter {
-    margin-bottom: 5rem;
+    margin-bottom: 3rem;
 }
 
 .soft-copy-letter {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .list-style-none {

@@ -5,15 +5,10 @@ export interface IemployeeDetails {
     fusionEmployeeId:any;
     employeeId: any;
     accountNumber:number
-
     addressId:number
- 
     addressLine1:any
-
     addressLine2:any
-
     backgroundCheckStatus:string
-   
     bankName:string
    
     city:string

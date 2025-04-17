@@ -14,36 +14,28 @@
   <div>
     <form [formGroup]="locationfromdata">
 
+   
       <div class="row mb-3 ps-2 mt-2">
-        <div class="mb-3 col-md-4">
-          <label for="location" class="form-label custom-label mb-2">Location<span class="text-danger">*</span></label>
-          <div class="custom-p-select-content">
-            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName"  formControlName="locationId"
-              placeholder="Please select location" class="form-select custom-select"
-              (onChange)="getSubLocationByidfliters($event.value)">
-            </p-select>
-          </div>
-          <div *ngIf="locationfromdata.get('locationId')?.invalid && locationfromdata.get('locationId')?.touched"
-            class="error-msg">
-            Location is required
-          </div>
+        <div class="col-md-4 ">
+          <label for="location" class="form-label custom-label mb-2">Locations</label>
+          <select id="location" formControlName="locationId" class="form-select custom-input" (change)="onLocationChange()"  >
+            <option [ngValue]="null">All Locations</option>
+            <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{ location.jobLocationName }}</option>
+          </select>
         </div>
-
-
-        <div class="mb-3 col-md-4">
-          <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
-              class="text-danger">*</span></label>
-          <div class="custom-p-select-content">
-            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName"   formControlName="subLocationId"
-              placeholder="Please select sub location" class="form-select custom-select"></p-select>
-          </div>
-          <div *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
-            class="error-msg">
-            Sub Location is required
-          </div>
+  
+        <div class="col-md-4 ">
+          <label for="subLocation" class="form-label custom-label mb-2">Sub Locations</label>
+          <select id="subLocation" formControlName="subLocationId" class="form-select custom-input" (change)="onSubLocationChange()">
+            <option [ngValue]="null">All Sub Locations</option>
+            <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
+              {{ subLocation.jobSubLocationName }}
+            </option>
+          </select>
+  
         </div>
-
-
+  
+  
       </div>
     </form>
   </div>
@@ -52,9 +44,9 @@
     <p-tabs value="0" scrollable>
       <p-tablist>
         <ng-container *ngFor="let tab of navTabs;">
-          <p-tab [value]="tab.link">
-            <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-              {{ tab.label }} ({{tab.count}})
+          <p-tab [value]="tab.route">
+            <a [routerLink]="tab.route" routerLinkActive="nav-tab-active" class="nav-link">
+              {{ tab.label }} ({{ tab.count$ | async }})
             </a>
           </p-tab>
         </ng-container>

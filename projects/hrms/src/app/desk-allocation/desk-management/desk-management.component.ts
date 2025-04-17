@@ -15,15 +15,10 @@ import { OpenModalService } from '../../services/open-modal.service';
   templateUrl: './desk-management.component.html',
   styleUrl: './desk-management.component.scss'
 })
+
 export class DeskManagementComponent {
-  navTabs: any[] = [
-    { label: 'All Desks', link: '/desk/management/all-desks', },
-    { label: 'Available Desks', link: '/desk/management/available-desks', },
-    { label: 'Allocated Desks', link: '/desk/management/allocated-desk', },
-    { label: 'Under Maintenance', link: '/desk/management/under-maintenance-desk' },
-    { label: 'Inactive Desks', link: '/desk/management/inactive-desk', },
-    { label: 'Waiting for Approval', link: '/desk/management/waiting-for-approval-desks', }
-  ];
+
+  
   @ViewChild('createDeskModal') private readonly createDeskModal!: NgbModal;
   deskForm!: FormGroup;
   subscription!: Subscription;
@@ -38,20 +33,35 @@ export class DeskManagementComponent {
   empinfo: any
   desktype: any[] = []
   deskdataid: any[] = []
+  navTabs: any[] = [];
+  page = 1;
+  pageSize = 10;
+  collectionSize = 0;
 
   locationfromdata!:FormGroup
+  searchQuery='';
+  desklist = new BehaviorSubject<any[]>([])
   constructor(
     private readonly fb: FormBuilder,
     private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,) { }
-
+ 
   ngOnInit() {
+  
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.intialdesk()
     this.intiallocationandsublocation()
     this.getjobLocationList()
     this.getapproval()
     this.getdatabyentriy()
-
+    this.navTabs = [
+      { label: 'All', route: '/desk/management/all-desks', count$: this.http.deskTotalCountSubject },
+      { label: 'Available', route: '/desk/management/available-desks', count$: this.http.deskAvailableCountSubject },
+      { label: 'Allocated', route: '/desk/management/allocated-desk', count$: this.http.deskAllocatedCountSubject },
+      { label: 'Under Maintenance', route: '/desk/management/under-maintenance-desk', count$: this.http.deskUndermaindanaenceCountSubject },
+      { label: 'Inactive', route: '/desk/management/inactive-desk', count$: this.http.deskinactiveCountSubject },
+      { label: 'Waiting For Approval', route: '/desk/management/waiting-for-approval-desks', count$: this.http.deskWiatingforapprovalCountsubject }
+    ];
+ 
   }
 
   intiallocationandsublocation() {
@@ -87,10 +97,7 @@ export class DeskManagementComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.jobLocationDropDownData = [
-            { id: null, jobLocationName: 'All Locations' },
-            ...data
-          ];
+          this.jobLocationDropDownData = data
         },
       });
   }
@@ -99,17 +106,13 @@ export class DeskManagementComponent {
   getSubLocationByidfliters(selectedLocation: any): void {
     this.locationfromdata.get('subLocationId')?.enable();
   
-    if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http
-        .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`)
+        .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation}`)
         .subscribe({
           next: (data: any) => {
             if (data && data.jobSubLocations) {
               // Prepend 'All Sub Locations' option
-              this.subLocationsDropdown = [
-                { id: null, jobSubLocationName: 'All Sub Locations' },
-                ...data.jobSubLocations
-              ];
+              this.subLocationsDropdown =data.jobSubLocations
             } else {
               this.subLocationsDropdown = [];
             }
@@ -120,14 +123,12 @@ export class DeskManagementComponent {
             this.locationfromdata.patchValue({ subLocationId: null });
           }
         });
-    } else {
-      this.subLocationsDropdown = [];
-      this.locationfromdata.patchValue({ subLocationId: null });
-    }
+
+   
   }
   
   getSubLocationByid(selectedLocation: any): void {
-    this.locationfromdata.get('subLocationId')?.enable()
+
     this.deskForm.get('subLocationId')?.enable()
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http
@@ -393,4 +394,108 @@ export class DeskManagementComponent {
     }
   }
 
+
+  onLocationChange() {
+    const locationId = this.locationfromdata.get('locationId')?.value;
+    this.getSubLocationByidfliters(locationId);
+    localStorage.setItem('locationId', JSON.stringify(locationId))
+    console.log(locationId)
+    this.locationfromdata.get('subLocationId')?.reset()
+    localStorage.setItem('sublocationId', JSON.stringify(null))
+    this.http.deskUpdateLocationId(locationId);
+  
+    this.getcount(locationId,null)
+  }
+  onSubLocationChange() {
+    const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+  
+    if (subLocationId) {
+      const loctionid = this.locationfromdata.get('locationId')?.value
+      localStorage.setItem('sublocationId', JSON.stringify(subLocationId))
+      this.http.deskUpdateLocationId(loctionid);
+      console.log(loctionid)
+      this.getAllDesks(this.page, this.pageSize, loctionid, subLocationId,null);
+      this.getcount(loctionid,subLocationId)
+
+    }
+    else {
+      const loctionid = this.locationfromdata.get('locationId')?.value
+      localStorage.setItem('sublocationId', JSON.stringify(subLocationId))
+      this.http.deskUpdateLocationId(loctionid);
+    }
+  }
+
+  getAllDesks(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Deskstatus: any) {
+    const params = {
+      page: pagenum,
+      pageSize: pagesize,
+      locationid: locationid,
+      sublocationid: sublocationid,
+      status: Deskstatus,
+      searchQuery: this.searchQuery
+
+    };
+  
+    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.page, params.pageSize, params.searchQuery)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+         
+          this.desklist.next(data.items)
+          //this.getcount(this.selectedLocationId, this.selectedSubLocationId)
+          // Update the collection size (total records) for pagination
+        
+
+        },
+        error: (error: any) => {
+          console.error('Error fetching desk data', error);
+      
+        },
+       
+
+      });
+  }
+  getcount(locationId: string | null, subLocationId: string | null) {
+    const params = new URLSearchParams();
+    if (locationId) params.append('locationid', locationId);
+    if (subLocationId) params.append('sublocationid', subLocationId);
+  
+    this.http.getData(`DeskAllocationHeader/v1/statuscount?${params.toString()}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        const totalCount = data.totalCount || 0;
+      
+  
+        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+        const availableData = statusCounts.find((item: any) => item.status === "Available");
+        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
+        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
+        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
+        const waitingForApprovalData = statusCounts.find((item: any) => item.status === "Waiting for Approval");
+  
+        const availableCount = availableData?.count || 0;
+        const allocateCount = allocateData?.count || 0;
+        const inactiveCount = inactivedata?.count || 0;
+        const undermaintenceCount = undermaintence?.count || 0;
+        const waitingForApprovalCount = waitingForApprovalData?.count || 0;
+  
+        this.http.setTotalDeskCount(totalCount);
+        this.http.setAvailableDeskCount(availableCount);
+        this.http.setAllocatedDeskCount(allocateCount);
+        this.http.setundermatinaceDeskCount(undermaintenceCount);
+        this.http.setinactiveSubjectDeskCount(inactiveCount);
+        this.http.setWFASubjectDeskCount(waitingForApprovalCount);
+  
+        console.log('Available Count:', availableCount);
+        console.log('Allocated Count:', allocateCount);
+        console.log('Inactive Count:', inactiveCount);
+        console.log('Under Maintenance Count:', undermaintenceCount);
+        console.log('Waiting for Approval Count:', waitingForApprovalCount);
+      },
+      error: (error) => {
+        console.error('Error fetching count:', error);
+      }
+    });
+  }
 }

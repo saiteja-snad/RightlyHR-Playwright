@@ -3,9 +3,10 @@
   <div class="input-group custom-search mb-4">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" class="form-control custom-input custom-search-input" placeholder="search Here"
-      aria-label="Username" [(ngModel)]="searchQuery" aria-describedby="basic-addon1">
+      aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
+      aria-describedby="basic-addon1">
   </div>
-  <ng-container *ngIf="(desklist | async) === null; else maincontent">
+  <ng-container *ngIf="loading; else maincontent">
     <ng-template #loadingSpinner>
       <div class="loader-placeholder-content text-center">
         <div>
@@ -27,6 +28,7 @@
             <th>Allocated To</th>
             <th>Location</th>
             <th>Sub Location</th>
+
             <th>Desk Status</th>
             <th>Approver</th>
             <th class="text-center">Action(s)</th>
@@ -42,6 +44,7 @@
 
               <td>{{ desk.location?.jobLocationName }}</td>
               <td>{{ desk.subLocation?.jobSubLocationName }}</td>
+
               <td>{{ desk.deskStatus }}</td>
               <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
 
@@ -143,7 +146,7 @@
     </div>
     <div class="custom-main-popup-content p-3">
 
-      <form [formGroup]="reassiginForm" (ngSubmit)="postunAssignAssets(reassiginForm)">
+      <form [formGroup]="reassiginForm" (ngSubmit)="postReallocateAssets(reassiginForm)">
 
         <div class="row">
           <div class="col-md-6 mb-3">
@@ -206,112 +209,10 @@
 
 </ng-template>
 
-<ng-template #tranferaerasset let-modal>
-  <div ngbAutofocus>
-    <div class="modal-header">
-      <h2 class="heading">Transfer an Desk</h2>
-      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
-    </div>
-    <div class="modal-body">
-      <div class="row">
-        <div class="col-md-12">
-          <form [formGroup]="locationfromdata" (ngSubmit)="modal.dismiss()">
-            <div class="container">
-              <div class="row ">
-                <div class="col-md-6 mb-3">
-                  <label for="perlocation" class="form-label custom-label mb-2">Location<span
-                      class="text-danger">*</span></label>
-                  <input type="text" formControlName="perisionlocation" class="form-control custom-input"
-                    placeholder="Enter Location" />
 
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="persubLocation" class="form-label custom-label mb-2">Sub Location<span
-                      class="text-danger">*</span></label>
-                  <input type="text" formControlName="pervessublocation" class="form-control custom-input"
-                    placeholder="Enter Sub Location" />
-
-                </div>
-              </div>
-
-              <div class="row ">
-                <div class="col-md-6 mb-3">
-                  <label for="location" class="form-label custom-label mb-2">Transfer Location<span
-                      class="text-danger">*</span></label>
-                  <select id="location" formControlName="locationId" class="form-select">
-                    <option [ngValue]="null">Select Transfer Location</option>
-                    <option *ngFor="let location of locations" [value]="location.id">{{ location.jobLocationName }}
-                    </option>
-                  </select>
-                  <small
-                    *ngIf="locationfromdata.get('locationId')?.invalid && locationfromdata.get('locationId')?.touched"
-                    class="text-danger">
-                    Location is required.
-                  </small>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="subLocation" class="form-label custom-label mb-2">Transfer Sub Location<span
-                      class="text-danger">*</span></label>
-                  <select id="subLocation" formControlName="subLocationId" class="form-select">
-                    <option [ngValue]="null">Select Transfer Sub Location</option>
-                    <option *ngFor="let subLocation of subLocations" [value]="subLocation.id">
-                      {{ subLocation.jobSubLocationName }}
-                    </option>
-                  </select>
-                  <small
-                    *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
-                    class="text-danger">
-                    Sub location is required.
-                  </small>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-12">
-                  <label for="comments" class="form-label custom-label mb-2">
-                    Trasfer Reason <span class="text-danger">*</span>
-                  </label>
-                  <div class="textarea-container">
-                    <textarea class="form-control custom-input" formControlName="comments"
-                      (ngModelChange)="ifreasonnull($event)" placeholder="Please enter reason" maxlength="250"
-                      rows="3"></textarea>
-                    <!-- Error messages -->
-                    <div>
-                      <small class="text-danger"
-                        *ngIf="locationfromdata.get('comments')?.invalid && locationfromdata.get('comments')?.touched">
-                        <small *ngIf="locationfromdata.get('comments')?.errors?.['required']">
-                          Trasfer Reason is required.
-                        </small>
-                        <small *ngIf="locationfromdata.get('comments')?.errors?.['maxlength']">
-                          Trasfer Reason must not exceed 250 characters.
-                        </small>
-                      </small>
-                    </div>
-                    <!-- Character count -->
-                    <div class="character-count mt-2 text-end">
-                      {{ locationfromdata.get("comments")?.value?.length || 0 }}/250
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="modal.dismiss();resetForm()">Cancel</button>
-                <button type="submit" class="btn btn-primary" [disabled]="locationfromdata.invalid">Submit</button>
-              </div>
-            </div>
-
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-template>
 
 
 <ng-template #assigindesk let-modal>
-
-
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
@@ -325,45 +226,47 @@
 
     <div class="custom-main-popup-content p-3">
 
-      <form [formGroup]="assiginForm" (ngSubmit)="postAssignAssets(assiginForm);modal.dismiss();">
+      <form [formGroup]="assiginForm" (ngSubmit)="postAllocateAssets(assiginForm);modal.dismiss();">
 
         <div class="row">
-
-
           <div class="col-md-6 mb-3">
             <label for="subLocation" class="form-label custom-label mb-2">Select Shift<span
                 class="text-danger">*</span></label>
-            <select id="subLocation" formControlName="shifts" class="form-select">
-              <option [value]="null" disabled>Select Shift</option>
-              <option *ngFor="let shift of shiftOptions" [value]="shift.id">
-                {{ shift.shiftName }}
-              </option>
-            </select>
-            <small class="text-danger" *ngIf="assiginForm.get('shifts')?.invalid && assiginForm.get('shifts')?.touched">
-              Shift is required
-            </small>
+            <div class="custom-p-select-content">
+              <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shifts"
+                placeholder="Please select shift" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="assiginForm.get('shifts')?.invalid && assiginForm.get('shifts')?.touched">
+              shift is required
+            </div>
           </div>
 
           <div class="col-md-6 mb-3 ">
             <label for="asseTID" class="form-label custom-label mb-2">Select Employee<span
                 class="text-danger">*</span></label>
-
-            <small class="text-danger"
-              *ngIf="assiginForm.get('mReportingto')?.invalid && assiginForm.get('mReportingto')?.touched">
+            <div class="custom-p-select-content">
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+                (onChange)="onEmployeeSelect($event)" formControlName="employeeid" placeholder="Please select employee"
+                class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="assiginForm.get('employeeid')?.invalid && assiginForm.get('employeeid')?.touched">
               Employee is required
-            </small>
+            </div>
           </div>
-
 
           <div class="col-md-6 mb-3">
             <label for="Approval" class="form-label custom-label mb-2">
               Select Approver<span class="text-danger">*</span>
             </label>
-
-            <small class="text-danger"
-              *ngIf="assiginForm.get('approvid')?.invalid && assiginForm.get('approvid')?.touched">
+            <div class="custom-p-select-content">
+              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+                formControlName="approvid" placeholder="Please select approver" class="form-select custom-select"
+                (onChange)="onApprovalSelects($event)"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="assiginForm.get('approvid')?.invalid && assiginForm.get('approvid')?.touched">
               Approver is required
-            </small>
+            </div>
           </div>
         </div>
 
@@ -378,71 +281,67 @@
 
 
 <ng-template #relasedesk let-modal>
-  <div ngbAutofocus>
-    <div class="modal-header">
-      <h2 class="heading">Release an Desk</h2>
-      <button type="button" class="btn-close" (click)="openModal(realseconforamation);modal.dismiss()"></button>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Release an Desk</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss();realseForm.reset();openModal(realseconforamation)"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
+      </div>
     </div>
-    <div class="modal-body">
-      <div class="row">
-        <div class="col-md-12">
-          <form [formGroup]="realseForm" class="w-100 " (ngSubmit)="updatedeskitemrelease(realseForm)">
-            <div class="container">
-              <div class="row ">
-                <div class="col-md-12 mb-3">
-                  <label for="Department" class="form-label custom-label mb-2">Select Reason <span
-                      class="text-danger">*</span></label>
-                  <select class="form-select" formControlName="deskrealse">
-                    <option [ngValue]="null" disabled>Select Reason</option>
-                    <option *ngFor="let email of deskrealse | async" [value]="email">
-                      {{ email }}
-                    </option>
-                  </select>
-                  <small class="text-danger"
-                    *ngIf="realseForm.controls['deskrealse'].invalid && (realseForm.controls['deskrealse'].touched || realseForm.controls['deskrealse'].dirty)">
-                    <span class="text-danger" *ngIf="realseForm.controls['deskrealse'].errors?.['required']">
-                      Reason is required</span>
-                  </small>
-                </div>
-              </div>
 
-              <div class="row mb-2">
-                <div class="col-12">
-                  <label class="form-label custom-label mb-2 labell">
-                    Additional Comments
-                  </label>
-                  <div class="textarea-container">
-                    <textarea class="form-control custom-input" formControlName="reason"
-                      (ngModelChange)="ifreasonnull($event)" placeholder="Please enter additional comments"
-                      maxlength="250" rows="3"></textarea>
-                    <!-- Error messages -->
-                    <div>
-                      <small class="text-danger"
-                        *ngIf="realseForm.get('reason')?.invalid && realseForm.get('reason')?.touched">
-                        <small *ngIf="realseForm.get('reason')?.errors?.['required']">
-                          Additional Comments is required.
-                        </small>
-                        <small *ngIf="realseForm.get('reason')?.errors?.['maxlength']">
-                          Additional Comments must not exceed 250 characters.
-                        </small>
-                      </small>
-                    </div>
-                    <!-- Character count -->
-                    <div class="color mt-2 text-end">
-                      {{ realseForm.get("reason")?.value?.length || 0 }}/250
-                    </div>
+    <div class="custom-main-popup-content p-3">
+      <form [formGroup]="realseForm" (ngSubmit)="updatedeskitemrelease(realseForm)">
+
+        <div class="row ">
+          <div class="col-md-12 mb-3">
+            <label for="Department" class="form-label custom-label mb-2">Select Reason <span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="deskrealse" optionLabel="value" formControlName="deskrealse"
+                placeholder="Please select desk type" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="realseForm.controls['deskrealse'].invalid && (realseForm.controls['deskrealse'].touched || realseForm.controls['deskrealse'].dirty)">
+              <div class="error-msg" *ngIf="realseForm.controls['deskrealse'].errors?.['required']">
+                Reason is required</div>
+            </div>
+          </div>
+
+          <div class="col-12 mb-3">
+            <label class="form-label custom-label mb-2 ">
+              Additional Comments
+            </label>
+            <div class="textarea-container">
+              <textarea class="form-control custom-input" formControlName="reason"
+                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+              <!-- Error messages -->
+              <div>
+                <div class="error-msg" *ngIf="realseForm.get('reason')?.invalid && realseForm.get('reason')?.touched">
+                  <div *ngIf="realseForm.get('reason')?.errors?.['required']">
+                    Additional Comments is required.
+                  </div>
+                  <div *ngIf="realseForm.get('reason')?.errors?.['maxlength']">
+                    Additional Comments must not exceed 250 characters.
                   </div>
                 </div>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary mt-3"
-                  (click)="openModal(realseconforamation);modal.dismiss()">Cancel</button>
-                <button type="submit" class="btn btn-primary mt-3" [disabled]="realseForm.invalid">Submit</button>
+              <!-- Character count -->
+              <div class="mt-2 text-end">
+                {{ realseForm.get("reason")?.value?.length || 0 }}/250
               </div>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
+        <div class="d-flex justify-content-end gap-3">
+          <button type="button" class="custom-btn btn-secondary"
+            (click)="openModal(realseconforamation);modal.dismiss()">Cancel</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="realseForm.invalid">Submit</button>
+        </div>
+
+      </form>
     </div>
   </div>
 
@@ -454,7 +353,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4">Are you sure you want to submit?</p>
+      <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(relasedesk);modal.dismiss()">No</button>
@@ -465,41 +364,34 @@
 </ng-template>
 
 
-
-
-
-
-
 <ng-template #deleteasstes let-model>
-  <div ngbAutofocus>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-4">
-      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-      <h4 class="text-center ps-3 pe-3 inactive-poptext">
-        Are you sure you want to Inactive this Desk ?
-      </h4>
-      <form [formGroup]="inactiveForm" class="w-100 px-5" (ngSubmit)="removedesk(inactiveForm)">
+  <div class="custom-main-popup-container" ngbAutofocus>
 
+    <div class="text-center">
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
+    </div>
+    <div class="text-center">
+      <h5 class="confirmation-text mb-2"> Are you sure you want to Inactive this Desk ?</h5>
+    </div>
+    <div class="custom-main-popup-content  p-4">
+      <form [formGroup]="inactiveForm" (ngSubmit)="inactivedesk(inactiveForm)">
         <div class="row ">
           <div class="col-md-12 mb-3">
             <label for="Department" class="form-label custom-label mb-2">Select Reason <span
                 class="text-danger">*</span></label>
-            <select class="form-select" formControlName="assetinactive">
-              <option [ngValue]="null" disabled>Select Reason</option>
-              <option *ngFor="let email of assetinactive | async" [value]="email">
-                {{ email }}
-              </option>
-            </select>
-            <small class="text-danger"
+            <div class="custom-p-select-content">
+              <p-select [options]="deskinactive" optionLabel="value" formControlName="assetinactive"
+                placeholder="Please select reason" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg"
               *ngIf="inactiveForm.controls['assetinactive'].invalid && (inactiveForm.controls['assetinactive'].touched || inactiveForm.controls['assetinactive'].dirty)">
-              <span class="text-danger" *ngIf="inactiveForm.controls['assetinactive'].errors?.['required']">
+              <span class="error-msg" *ngIf="inactiveForm.controls['assetinactive'].errors?.['required']">
                 Reason is required</span>
-            </small>
+            </div>
           </div>
-        </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <label class="form-label custom-label mb-2 labell">
+          <div class="col-12 mb-3">
+            <label class="form-label custom-label mb-2 ">
               Additional Comments
             </label>
             <div class="textarea-container">
@@ -507,32 +399,31 @@
                 placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
               <!-- Error messages -->
               <div>
-                <small class="text-danger"
+                <div class="error-msg"
                   *ngIf="inactiveForm.get('reason')?.invalid && inactiveForm.get('reason')?.touched">
-                  <small *ngIf="inactiveForm.get('reason')?.errors?.['required']">
+                  <div *ngIf="inactiveForm.get('reason')?.errors?.['required']">
                     Additional Comments is required.
-                  </small>
-                  <small *ngIf="inactiveForm.get('reason')?.errors?.['maxlength']">
+                  </div>
+                  <div class="error-msg" *ngIf="inactiveForm.get('reason')?.errors?.['maxlength']">
                     Additional Comments must not exceed 250 characters.
-                  </small>
-                </small>
+                  </div>
+                </div>
               </div>
               <!-- Character count -->
-              <div class="color mt-2 text-end">
+              <div class="mt-2 text-end">
                 {{ inactiveForm.get("reason")?.value?.length || 0 }}/250
               </div>
             </div>
           </div>
         </div>
 
-        <div class="row mt-3">
-          <div class="col-12 d-flex justify-content-between">
-            <button type="button" class="btn btn-secondary inactive-no"
+       
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary"
               (click)="openModal(inativeconfromation);model.dismiss()">Cancel</button>
-            <button type="submit" class="btn btn-primary inactive-success"
-              [disabled]="inactiveForm.invalid">Submit</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
           </div>
-        </div>
+        
       </form>
 
     </div>
@@ -560,35 +451,36 @@
 
 
 <ng-template #undermaintance let-model>
-  <div ngbAutofocus>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-4">
-      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-      <h4 class="text-center ps-3 pe-3 inactive-poptext">
-        Are you sure you want to Mark as Maintenance?
-      </h4>
-      <form [formGroup]="undermaintancedata" class="w-100 px-5" (ngSubmit)="undermaintancedesk(undermaintancedata)">
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="text-center">
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
+    </div>
+    <div class="text-center">
+      <h5 class="confirmation-text mb-2"> Are you sure you want to Mark as Maintenance?</h5>
+    </div>
+    <div class="custom-main-popup-content  p-4">
+      
+      <form [formGroup]="undermaintancedata"  (ngSubmit)="undermaintancedesk(undermaintancedata)">
 
         <div class="row ">
           <div class="col-md-12 mb-3">
             <label for="Department" class="form-label custom-label mb-2">Select Reason <span
                 class="text-danger">*</span></label>
-            <select class="form-select" formControlName="assetundermatince">
-              <option [ngValue]="null" disabled>Select Reason</option>
-              <option *ngFor="let email of deskundermaintence | async" [value]="email">
-                {{ email }}
-              </option>
-            </select>
-            <small class="text-danger"
-              *ngIf="undermaintancedata.controls['assetundermatince'].invalid && (undermaintancedata.controls['assetundermatince'].touched || undermaintancedata.controls['assetundermatince'].dirty)">
-              <span class="text-danger" *ngIf="undermaintancedata.controls['assetundermatince'].errors?.['required']">
-                Reason is required</span>
-            </small>
-          </div>
-        </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <label class="form-label custom-label mb-2 labell">
+            <div class="custom-p-select-content">
+              <p-select [options]="deskundermaintence" optionLabel="value" formControlName="assetundermatince"
+                placeholder="Please select reason" class="form-select custom-select"></p-select>
+            </div>
+
+            <div class="error-msg"
+              *ngIf="undermaintancedata.controls['assetundermatince'].invalid && (undermaintancedata.controls['assetundermatince'].touched || undermaintancedata.controls['assetundermatince'].dirty)">
+              <div class="error-msg" *ngIf="undermaintancedata.controls['assetundermatince'].errors?.['required']">
+                Reason is required</div>
+            </div>
+          </div>
+        
+          <div class="col-12 ">
+            <label class="form-label custom-label mb-2">
               Additional Comments
             </label>
             <div class="textarea-container">
@@ -596,18 +488,18 @@
                 placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
               <!-- Error messages -->
               <div>
-                <small class="text-danger"
+                <div class="error-msg"
                   *ngIf="undermaintancedata.get('reason')?.invalid && undermaintancedata.get('reason')?.touched">
-                  <!-- <small *ngIf="undermaintancedata.get('reason')?.errors?.['required']">
+                  <!-- <div *ngIf="undermaintancedata.get('reason')?.errors?.['required']">
                       Additional Comments is required.
-                    </small> -->
-                  <!-- <small *ngIf="undermaintancedata.get('reason')?.errors?.['maxlength']">
+                    </div> -->
+                  <!-- <div *ngIf="undermaintancedata.get('reason')?.errors?.['maxlength']">
                       Additional Comments not exceed 250 characters.
-                    </small> -->
-                </small>
+                    </div> -->
+                </div>
               </div>
               <!-- Character count -->
-              <div class="color mt-2 text-end">
+              <div class="mt-2 text-end">
                 {{ undermaintancedata.get("reason")?.value?.length || 0 }}/250
               </div>
             </div>
@@ -616,34 +508,32 @@
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="startdate" class="form-label custom-label mb-2">Start Date</label>
-            <input id="startdate" type="date" [min]="getToday()" formControlName="startdate"
+            <input id="startdate"  class="form-control custom-input" type="date" [min]="getToday()" formControlName="startdate"
               class="form-control custom-input">
-            <small *ngIf="undermaintancedata.get('startdate')?.invalid && undermaintancedata.get('startdate')?.touched">
-              <small class="text-danger">Start date is required</small>
-            </small>
+            <div *ngIf="undermaintancedata.get('startdate')?.invalid && undermaintancedata.get('startdate')?.touched">
+              <div class="error-msg">Start date is required</div>
+            </div>
           </div>
 
-          <div class="col-md-6 mb-3 ">
+          <div class="col-md-6 mb-3">
             <label for="endate" class="form-label custom-label mb-2">End Date</label>
-            <input id="enddate" type="date" formControlName="enddate" [min]="getToday()"
+            <input id="enddate" type="date"  class="form-control custom-input" formControlName="enddate" [min]="undermaintancedata.get('startdate')?.value"
               class="form-control custom-input">
-            <small *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched">
-              <small class="text-danger">End date is required</small>
-            </small>
-            <small *ngIf="datesShouldNotBeEqual">
-              <small class="text-danger">End date must be greater than start date</small>
-            </small>
+            <div *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched">
+              <div class="error-msg">End date is required</div>
+            </div>
+            <div *ngIf="datesShouldNotBeEqual">
+              <div class="error-msg">End date must be greater than start date</div>
+            </div>
           </div>
         </div>
-
-        <div class="row mt-3">
-          <div class="col-12 d-flex justify-content-between">
-            <button type="button" class="btn btn-secondary inactive-no"
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary"
               (click)="openModal(conformationpopup);model.dismiss()">Cancel</button>
-            <button type="submit" class="btn btn-primary inactive-success"
+            <button type="submit" class="custom-btn btn-primary"
               [disabled]="undermaintancedata.invalid">Submit</button>
           </div>
-        </div>
+      
       </form>
 
     </div>
@@ -673,7 +563,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4">Are you sure you want to submit?</p>
+      <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

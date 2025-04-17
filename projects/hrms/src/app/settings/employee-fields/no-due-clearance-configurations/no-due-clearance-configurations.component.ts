@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-no-due-clearance-configurations',
@@ -37,7 +38,8 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     private modalService: NgbModal,
     private http: HttpService,
     private fb: FormBuilder,
-     private modal: OpenModalService,
+    private modal: OpenModalService,
+    public rbac: RbacService,
   ) { }
 
   ngOnInit(): void {
@@ -119,7 +121,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   }
 
   selectedUserDetails(event: any) {
-    this.selectedUsersCount = event.length;
+    this.selectedUsersCount = event?.length;
     if (this.selectedUsersCount > 0) {
       this.customLabelTemplate = `${this.selectedUsersCount} ${this.selectedUsersCount === 1 ? 'user' : 'users'} selected`;
     } else {

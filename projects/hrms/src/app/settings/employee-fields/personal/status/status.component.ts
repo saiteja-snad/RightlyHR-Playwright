@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-status',
@@ -29,7 +30,14 @@ export class StatusComponent implements OnInit{
     @ViewChild('updatepopup') updatepopup: any;
 
   
-    constructor(private fb: FormBuilder,private modalService: NgbModal,private http: HttpService,private conformationPopup: OpenModalService, public formValidations: FormValidationsService) {}
+    constructor(
+      private fb: FormBuilder,
+      private modalService: NgbModal,
+      private http: HttpService,
+      private conformationPopup: OpenModalService, 
+      public formValidations: FormValidationsService,
+      public rbac: RbacService,
+    ) {}
     
     ngOnInit(): void {
       this.statusForm = this.fb.group({

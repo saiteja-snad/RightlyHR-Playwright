@@ -10,6 +10,7 @@ import { RegularizationRequest } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-regularization-processed',
@@ -33,7 +34,8 @@ totalRecords = 100
   ];
 
   constructor(
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {}
 
 

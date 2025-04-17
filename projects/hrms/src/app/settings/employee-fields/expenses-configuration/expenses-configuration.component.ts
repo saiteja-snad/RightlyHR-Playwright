@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { IExpenses } from '../../../Interfaces/claimsandexpenses.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 
 @Component({
@@ -24,8 +25,14 @@ export class ExpensesConfigurationComponent {
   expenseForm!: FormGroup;
   expenseupdateForm!: FormGroup;
   subscription!: Subscription;
-  constructor(public router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
-    private http: HttpService) { }
+  constructor(
+    public router: Router, 
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
+    public rbac: RbacService,
+  ) { }
   ngOnInit(): void {
     this.getExpenses();
     this.intiationalfrom();

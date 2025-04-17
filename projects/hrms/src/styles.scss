@@ -33,6 +33,8 @@
     --btn-color-ts: #305889;
     --btn-success: #38930D;
     --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
     // button colors ends
 
     // colors
@@ -195,7 +197,7 @@ body {
     }
 
     .logo-img {
-        width: 3.25rem;
+        width: 4rem;
         height: 3rem;
         border-radius: 0.2rem;
     }
@@ -449,6 +451,18 @@ a {
     cursor: pointer;
 }
 
+.clone-btn {
+    background-color: var(--btn-clone);
+    color: var(--btn-color-tp);
+    border-color: var(--btn-clone);
+}
+
+.publish-btn {
+    background-color: var(--btn-publish);
+    color: var(--btn-color-tp);
+    border-color: var(--btn-publish);
+}
+
 .btn-primary-approve {
     background-color: var(--btn-success);
     color: var(--btn-color-tp);
@@ -523,7 +537,7 @@ a {
     overflow: auto;
     background-color: #FFFFFF;
     border: 1px solid #E7E7ED;
-    border-radius: 0.75rem;
+    border-radius: 0.55rem;
     position: relative;
 
     thead {
@@ -550,11 +564,11 @@ a {
     }
 
     th:first-child {
-        border-top-left-radius: 0.75rem;
+        border-top-left-radius: 0.5rem;
     }
 
     th:last-child {
-        border-top-right-radius: 0.75rem;
+        border-top-right-radius: 0.5rem;
     }
 
     tr:nth-child(even) {
@@ -563,7 +577,7 @@ a {
 
     .dropdown-item {
         font-weight: 400;
-        font-size: 14px;
+        font-size: var(--fontsize14);
         line-height: 100%;
         letter-spacing: 0%;
         color: #141414;
@@ -867,7 +881,7 @@ a {
         border: none;
         padding: 0.625rem 1rem;
         font-size: var(--fontsize14);
-        background-color: transparent;
+        background-color: #FFFFFF !important;
     }
 
     .custom-search-input {
@@ -1297,8 +1311,8 @@ input:focus {
 }
 
 .settings-common-icon {
-    width: 2rem;
-    height: 2rem;
+    width: 1.25rem;
+    height: 1.25rem;
     cursor: pointer;
 }
 
@@ -1321,7 +1335,6 @@ input:focus {
     border: 1px solid #E7E7ED;
     border-radius: 1.2rem;
     position: relative;
-
 
     thead {
         top: 0%;
@@ -1382,19 +1395,14 @@ input:focus {
 //     color: #222B45;
 // }
 
-
 // success icon
 .succes-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
+    width: 3rem;
 }
 
 //error icon
 .error-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
+    width: 3rem;
 }
 
 // Settings Stylings
@@ -1447,88 +1455,14 @@ input:focus {
     }
 }
 
-/* Global override styles for PrimeNG tabs to ensure white background */
-.p-tabview .p-tabview-nav,
-.p-tabview .p-tabview-nav li,
-.p-tabview .p-tabview-nav li .p-tabview-nav-link,
-.p-tabview .p-tabview-panels,
-.p-tab,
-.p-tablist,
-.p-tablist-tab-list,
-.component-nav-tabs-container.card {
-    background-color: #ffffff !important;
-    color: #06274F !important;
+// red trash icon
+.red-trash-icon{
+    width: 1rem;
+    height: 1.25rem;
 }
 
-.card.component-nav-tabs-container {
-    background-color: #ffffff !important;
-    border-color: #ccdaec !important;
-}
-
-/* Direct style override to target the navigation buttons by tag and class */
-button.p-tablist-prev-button,
-button.p-tablist-next-button,
-button.p-tabview-nav-prev,
-button.p-tabview-nav-next,
-.component-nav-tabs-container button,
-.p-tabview button,
-.p-tablist button {
-    background-color: #ffffff !important;
-    color: #06274F !important;
-    border: none !important;
-}
-
-/* Fix for dark SVG icons in buttons */
-button.p-tabview-nav-prev svg,
-button.p-tabview-nav-next svg,
-button.p-tablist-prev-button svg,
-button.p-tablist-next-button svg {
-    fill: #06274F !important;
-    stroke: #06274F !important;
-}
-
-/* Specific fix for the tab navigation arrow buttons */
-.p-tabview-nav-container,
-.p-tablist-container,
-.p-tabview-nav-content {
-    background-color: #ffffff !important;
-}
-
-/* Fix for arrow navigation in PrimeNG tabs */
-.p-tabview-nav-prev,
-.p-tabview-nav-next,
-.p-tablist-prev-button,
-.p-tablist-next-button,
-.p-element.p-tabview-nav-prev,
-.p-element.p-tabview-nav-next,
-.p-element.p-tablist-prev-button,
-.p-element.p-tablist-next-button {
-    background-color: #ffffff !important;
-
-    &::before,
-    &::after,
-    & *,
-    & *::before,
-    & *::after {
-        background-color: #ffffff !important;
-    }
-
-    /* Force any chevron/icon element to have white background */
-    & span,
-    & i,
-    & svg,
-    & path,
-    & g {
-        background-color: #ffffff !important;
-    }
-
-    & .p-icon {
-        background-color: #ffffff !important;
-    }
-}
-
-/* Direct selector for arrow icons */
-.pi-chevron-left,
-.pi-chevron-right {
-    background-color: #ffffff !important;
+input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
 }

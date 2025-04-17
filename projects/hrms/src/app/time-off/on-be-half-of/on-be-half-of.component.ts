@@ -111,6 +111,10 @@ export class OnBeHalfOfComponent {
   endDate: any;
   isLoading: boolean = false;
   isEndDateBeforeStart: boolean = false;
+  isoptionalnotallowedatWorkingdate: boolean = false;
+  isNonOptionalHolidaySelected: boolean = false;
+  isHolidaySelectedEndate: boolean = false;
+
   constructor(private conformationPopup: OpenModalService, private modalService: NgbModal,
     private fb: FormBuilder, private authService: AuthService, private router: Router,
     private http: HttpService,) {
@@ -182,6 +186,7 @@ export class OnBeHalfOfComponent {
     this.onselectdropdownclose();
 
   }
+
   onleaveSelect(categoryId: number) {
     this.leaveFormData.categoryId = categoryId;
     console.log(this.leaveFormData.categoryId);
@@ -250,7 +255,6 @@ export class OnBeHalfOfComponent {
               employee.middleName,
               employee.lastName].filter(Boolean).join(' ')
           }));
-
         console.log(this.employeeiddetails);
       },
       error: (reason: any) => {
@@ -279,8 +283,6 @@ export class OnBeHalfOfComponent {
     }
   }
 
-
-
   onselectdropdownclose() {
     this.toggleDropdown('empid');
   }
@@ -296,6 +298,7 @@ export class OnBeHalfOfComponent {
       }
     }
   }
+
   private formatDatewithDate(date: Date): string | void {
     if (date) {
 
@@ -467,6 +470,7 @@ export class OnBeHalfOfComponent {
       }
     });
   }
+
   getLeaveTakenByEmpId() {
     let LBEId = this.empdata.employeeId;
 
@@ -487,15 +491,9 @@ export class OnBeHalfOfComponent {
           return acc;
         }, {});
 
-        // Convert the groupedData object into an array and assign it to Leavestaken
         this.Leavestaken = Object.values(groupedData) as ILeavesTaken[];
         console.log(this.Leavestaken);
-
-        // this.custompolicyleaves.forEach((custompolicy: any) => {
-        //   this.leavedata.push(custompolicy)
-        // });
         console.log(this.leavedata);
-
 
         this.leavedata.forEach((leaves: ILeaves) => {
           this.Leavestaken.forEach((leavetaken: ILeavesTaken) => {
@@ -509,8 +507,6 @@ export class OnBeHalfOfComponent {
 
         this.fusionMadatoryLeavsValidation()
 
-
-        // Log the Leavestaken object to the console
         console.log(this.Leavestaken);
 
         // Assuming the `leavedata` variable contains an array of objects with `maxDays` and `leavesTaken` properties
@@ -529,11 +525,11 @@ export class OnBeHalfOfComponent {
 
         this.leavesRemaining = maxDaysTotal - leavesTakenTotal
 
-
       },
       error: (error: any) => console.log(error)
     });
   }
+
   custompolicyleaves: any;
   getcustompolicybyempid(employeeId: number) {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -617,21 +613,17 @@ export class OnBeHalfOfComponent {
 
     const PAID_LEAVE_CATAGOEY_ID = environment.paidLeaveCategoryId
     const MANDATORY_LEAVE_CATAGOEY_ID = environment.mandatoryLeaveCategoryId
-
     console.log(this.leavedata);
 
     let paidLeaveCategory = this.leavedata.find((leave: ILeaves) => leave.categoryId === PAID_LEAVE_CATAGOEY_ID) as ILeaves
-
     let isPaidLeavesExpired = paidLeaveCategory?.leavesTaken == paidLeaveCategory?.maxDays
 
     console.log(isPaidLeavesExpired);
-
     if (!isPaidLeavesExpired) {
       this.leavedata = this.leavedata.filter((leave: ILeaves) => leave.categoryId != MANDATORY_LEAVE_CATAGOEY_ID)
     }
 
   }
-
 
   onSubmit() {
     let loggedInUser = this.authService.getToken();
@@ -674,10 +666,10 @@ export class OnBeHalfOfComponent {
           // Calculate the number of probation days
           let dateOfJoining = moment(this.leaveapplication.dateOfJoining);
           console.log('Date of Joining:', dateOfJoining);
-           let startdate = moment(this.startDate);
-                      console.log('Startdate:', startdate)
-                      let enddate = moment(this.endDate)
-                      console.log('enddate:', enddate)
+          let startdate = moment(this.startDate);
+          console.log('Startdate:', startdate)
+          let enddate = moment(this.endDate)
+          console.log('enddate:', enddate)
           let Duration = this.leaveFormData.duration
           console.log('Duration:', Duration)
           // console.log('Duration:',duration);
@@ -753,7 +745,7 @@ export class OnBeHalfOfComponent {
               this.leaveBalance(data);
               this.leaveForm.reset();
               this.resetRadioButtons();
-              this.conformationPopup.openLoaderModal('Leave processed successfully')
+              this.conformationPopup.openSuccessModal('Leave processed successfully')
               setTimeout(() => {
                 this.modalService.dismissAll();
                 this.leaveForm.reset();
@@ -820,6 +812,7 @@ export class OnBeHalfOfComponent {
 
     })
   }
+
   monthsArray: { month: string, startDate: Date, endDate: Date }[] = [];
   getMonthsArray(startDate: Date, endDate: Date) {
     // Convert input dates to Date objects if they are not already
@@ -867,8 +860,8 @@ export class OnBeHalfOfComponent {
     if (this.fullDayRadio) {
       this.fullDayRadio.nativeElement.checked = false;
     }
-
   }
+
   isWithinExistingRanges(startDate: any, endDate: any, leavebal: any, applyingleavescount: any) {
     let response = false;
     let data = this.lpdata.filter(record =>
@@ -887,30 +880,24 @@ export class OnBeHalfOfComponent {
     }
     return response;
   }
-  isoptionalnotallowedatWorkingdate: boolean = false;
-  isNonOptionalHolidaySelected: boolean = false;
-  isHolidaySelectedEndate: boolean = false;
+
+
   calculateDateDifference(startDate: string, endDate: string) {
     var date1 = moment(startDate, 'YYYY-MM-DD');
     var date2 = moment(endDate, 'YYYY-MM-DD');
 
-    // Calculate the difference in days
     var days = date2.diff(date1, 'days');
     console.log(days);
 
     const start = moment(startDate);
     const end = moment(endDate);
     let diff = days + 1;
-    // console.log(diff);
-
-    // Loop through each day in the range and subtract any Saturdays, Sundays or Holidays
     let currentDate = start;
     while (currentDate <= end) {
       if (this.selectedleave && this.selectedleave.category) {
         if (this.selectedleave.category.excludeWeekends) {
-          // Check if the current day is a weekend based on the data from the API
           if (this.orgweekend?.orgWeekendItems.some((item: any) => item.weekday === currentDate.format('dddd'))) {
-            diff -= 1; // Subtract one day (in milliseconds) for each weekend day
+            diff -= 1;
           }
         }
         console.log(this.orgholidays?.orgHolidaysItems);
@@ -920,10 +907,9 @@ export class OnBeHalfOfComponent {
           let filteredholidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => {
             return ele.isOptional != true
           })
-          //  console.log(filteredholidays);
 
           if (filteredholidays.some((holiday: any) => moment(holiday.holidayDate).isSame(currentDate))) {
-            diff -= 1; // Subtract one day (in milliseconds) for each holiday
+            diff -= 1;
           }
         }
         else {
@@ -937,7 +923,7 @@ export class OnBeHalfOfComponent {
 
         let nonOptionalHolidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => ele.isOptional === false || ele.isOptional == null);
         if (nonOptionalHolidays.some((holiday: any) => moment(holiday.holidayDate).isSame(endDate, 'day'))) {
-          this.isHolidaySelectedEndate = true; // Set the flag if end date is a non-optional holiday
+          this.isHolidaySelectedEndate = true;
         } else {
           this.isHolidaySelectedEndate = false;
         }
@@ -945,30 +931,20 @@ export class OnBeHalfOfComponent {
           let filteredholidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => {
             return ele.isOptional == true
           })
-          // Create a range of dates from start to end
           let dateRange = [];
           for (let m = moment(startDate); m.diff(endDate, 'days') <= 0; m.add(1, 'days')) {
             dateRange.push(m.format('YYYY-MM-DD'));
           }
-
-          // Check if any date in the range is NOT an optional holiday (i.e., a working day)
           let isOptionalHolidayBetweenDates = dateRange.some(date => {
             return !filteredholidays.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
           });
-
-          //  Check if start date is an optional holiday
           const isStartOptionalHoliday = this.orgholidays?.orgHolidaysItems.some((holiday: any) => {
             return moment(holiday.holidayDate).isSame(startDate, 'day') && holiday.isOptional === true;
           });
-
-          //  Check if end date is an optional holiday
           const isEndOptionalHoliday = this.orgholidays?.orgHolidaysItems.some((holiday: any) => {
             return moment(holiday.holidayDate).isSame(endDate, 'day') && holiday.isOptional === true;
           });
-
-          // Check if either the start date or the end date is a working day when the other is selected as an optional holiday
           if (isOptionalHolidayBetweenDates) {
-            // Both start date and end date are working days, and end date is on or after start date, so throw an error
             this.isoptionalnotallowedatWorkingdate = true;
           }
           else if (!isStartOptionalHoliday) {
@@ -977,20 +953,13 @@ export class OnBeHalfOfComponent {
           else if (!isEndOptionalHoliday) {
             this.isoptionalnotallowedatWorkingdate = true;
           }
-          // else if(isOptionalHolidayBetweenDates && isStartOptionalHoliday && isEndOptionalHoliday){
-          //   this.isoptionalnotallowedatWorkingdate = true;
-          // }
           else {
-            // All other cases are allowed
             this.isoptionalnotallowedatWorkingdate = false;
           }
         }
         else {
           this.isoptionalnotallowedatWorkingdate = false;
         }
-
-
-
       }
       currentDate = currentDate.add(1, 'day');
     }
@@ -1001,13 +970,10 @@ export class OnBeHalfOfComponent {
         this.chooseDayType('full')
       }
       else if (this.dateDifference <= 1) {
-        // this.isDayTypeselected=false;
         this.isDayTypeselected = false;
         this.selectedValuehalf = '';
         this.enableButton = false;
       }
-
-      // Set the value of dateDiff based on isHalfDay
       this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
       console.log(this.dateDiff);
 
@@ -1027,6 +993,7 @@ export class OnBeHalfOfComponent {
       this.selectedValue = '2'
     }
   }
+
   generateEmail(Value: any) {
     let emaildetails = {
       employeeId: this.leaveapplication.employeeId,
@@ -1044,18 +1011,17 @@ export class OnBeHalfOfComponent {
       },
     })
   }
+
   calculateDifferenceInDays(startDate: Date, endDate: Date, excludeWeekends: boolean): number {
     const startMoment = moment(startDate);
     const endMoment = moment(endDate);
-    let differenceInDays = endMoment.diff(startMoment, 'days') + 1; // Adding 1 to include the end date
+    let differenceInDays = endMoment.diff(startMoment, 'days') + 1;
 
     if (excludeWeekends) {
-      // Exclude weekends from the total duration
-      const startDay = startMoment.day(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+      const startDay = startMoment.day();
       const endDay = endMoment.day();
-      const weekends = Math.floor((differenceInDays + startDay) / 7); // Calculate the number of weekends
-      differenceInDays -= weekends * 2; // Subtract weekends from the total duration
-      // Adjust if the end date is a Saturday and start date is a Sunday
+      const weekends = Math.floor((differenceInDays + startDay) / 7);
+      differenceInDays -= weekends * 2;
       if (startDay === 0 && endDay === 6) differenceInDays--;
     }
 
@@ -1065,10 +1031,12 @@ export class OnBeHalfOfComponent {
   colorTrackBy(index: any, color: any) {
     return color.hex;
   }
+
   cleardata() {
     this.leaveForm.reset();
     this.modalService.dismissAll();
   }
+
   onstartdate(action: string) {
     this.updateStartDateValidity1();
     this.vldateofjoin1();
@@ -1076,15 +1044,13 @@ export class OnBeHalfOfComponent {
     this.checkWeekends(action);
     this.dateCheckWithHolidayOrWeekend(action)
     if (!this.startDate) {
-      // Clear the end date when the start date is cleared
       this.endDate = null;
-
-      // Optionally reset any errors or validations tied to the end date
-      this.isWeekOffSelectedEndate = false; // Example: Resetting the weekend error
-      this.isHolidaySelectedEndate = false; // Example: Resetting the holiday error
-      this.issEndDategreater = true; // Example: Resetting "End Date should be greater than Start Date" error
+      this.isWeekOffSelectedEndate = false;
+      this.isHolidaySelectedEndate = false;
+      this.issEndDategreater = true;
     }
   }
+
   updateStartDateValidity1(): void {
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
@@ -1114,7 +1080,6 @@ export class OnBeHalfOfComponent {
       // Check if End Date is before Start Date
       this.isEndDateBeforeStart = new Date(this.endDate) < new Date(this.startDate);
     }
-
   }
 
   checkWeekends(action: string) {
@@ -1234,7 +1199,6 @@ export class OnBeHalfOfComponent {
           element.holidayDate = currentDate.format('YYYY-MM-DD');
         }
       });
-      // console.log(this.orgholidays.orgHolidaysItems);
       const isDatePresent = filteredData.some(
         (holiday: any) => holiday.holidayDate === selectedDate.format('YYYY-MM-DD')
       );
@@ -1245,7 +1209,6 @@ export class OnBeHalfOfComponent {
       for (let m = moment(selectedDate); m.diff(selectedendDate, 'days') <= 0; m.add(1, 'days')) {
         dateRange.push(m.format('YYYY-MM-DD'));
       }
-      // Check if any date in the range is NOT an optional holiday (i.e., a working day)
       let isWorkingDayBetweenDates = dateRange.some(date => {
         return filteredData.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
@@ -1259,6 +1222,7 @@ export class OnBeHalfOfComponent {
     this.checkWeekendsEndate(action);
     this.dateCheckWithHolidayOrWeekend(action);
   }
+
   updateEndDateValidity(): void {
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
@@ -1270,6 +1234,7 @@ export class OnBeHalfOfComponent {
       this.issEndDategreater = true;
     }
   }
+  
   checkWeekendsEndate(action: string) {
     let selectedDate: any;
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
@@ -1348,6 +1313,7 @@ export class OnBeHalfOfComponent {
     }
     console.log(this.isWeekOffSelectedEndate);
   }
+
   onStartDateChange() {
     // Set the min and max for the end date based on the selected start date
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
@@ -1364,4 +1330,5 @@ export class OnBeHalfOfComponent {
       this.issEndDategreater = true;
     }
   }
+
 }

@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { IMaritialStatus } from './maritalstatus.model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-maritalstatus',
@@ -26,7 +27,14 @@ export class MaritalstatusComponent {
   selectedId: number | null = null;
   selectedDeletestatus: any = null;
   subscription!: Subscription;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService, public formValidations: FormValidationsService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService, 
+    public formValidations: FormValidationsService,
+    public rbac: RbacService,
+  ) {
 
   }
   ngOnInit(): void {

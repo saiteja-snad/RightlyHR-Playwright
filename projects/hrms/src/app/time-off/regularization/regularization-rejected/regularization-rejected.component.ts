@@ -10,6 +10,7 @@ import { RegularizationRequest } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-regularization-rejected',
@@ -33,7 +34,8 @@ export class RegularizationRejectedComponent implements OnInit,OnDestroy {
   ];
 
   constructor(
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {}
 
 

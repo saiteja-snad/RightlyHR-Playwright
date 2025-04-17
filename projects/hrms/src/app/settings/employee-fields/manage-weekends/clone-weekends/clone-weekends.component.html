@@ -137,7 +137,9 @@
                             <td><input type="checkbox" class="form-check-input" formControlName="week5"></td>
                             @if(i>0){
                                 <td>
-                                    <button type="button" class="btn btn-danger btn-sm" (click)="weekends.length > 1 && removeWeekend(i)">X</button>
+                                    <a (click)="weekends.length > 1 && removeWeekend(i)">
+                                        <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
+                                    </a>
                                 </td>
                             }
                         </tr>                        

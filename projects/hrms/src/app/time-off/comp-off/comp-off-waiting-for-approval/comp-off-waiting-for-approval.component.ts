@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
@@ -40,7 +41,8 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {
     effect(() =>{
       if (this.http.tirggerCountSignal().compOff) {

@@ -10,6 +10,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-comp-off-approval',
@@ -41,7 +42,8 @@ export class CompOffApprovalComponent implements OnInit,OnDestroy {
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {}
 
 

@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { TeamData } from './team.model';
 import { SelectModule } from 'primeng/select';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
  
 @Component({
   selector: 'app-team',
@@ -44,6 +45,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     private http: HttpService, 
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
  
   }
@@ -88,7 +90,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     });
   }
   getTeam() {
-    this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
         console.log(data);
         if (data) {
@@ -103,7 +105,7 @@ export class TeamComponent implements OnInit, OnDestroy {
             };
           });
         }
-        console.log(this.teamdetails)
+        console.log("Team details"+this.teamdetails)
       },
       error: (reason: any) => {
         console.log(reason);

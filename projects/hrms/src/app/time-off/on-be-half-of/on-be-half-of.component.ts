@@ -15,7 +15,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { IJobdetails } from '../../Interfaces/job-model';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-on-be-half-of',
   imports: [CommonModule, OnBeHalfOfApprovalTabsComponent, RouterModule, TranslateModule, Select, ReactiveFormsModule,],

@@ -13,6 +13,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-regularization-for-your-role-request',
@@ -52,7 +53,8 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

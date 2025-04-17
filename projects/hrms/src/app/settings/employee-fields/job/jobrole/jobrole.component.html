@@ -1,18 +1,8 @@
-<button type="button" (click)="openDialog()" class="custom-btn btn-primary">{{'Add' | translate}}</button>
+<button type="button" (click)="openDialog()" class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Job Role.create')">{{'Add' | translate}}</button>
 
 <!-- Add Popup Modal -->
 
-
-  
 <div class="custom-main-component-container">
-    <!-- <div class="d-flex justify-content-between align-items-center">
-      <div> <span class="education-sub-header">Education Details</span></div>
-      <div class="plus-button">
-        <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
-            (click)="openModal(addEducationmodal)" class="plus-text">Add
-            New</span></span>
-      </div>
-    </div> -->
     <div class="custom-table-content mt-2">
       <table class="w-100">
         <thead>
@@ -24,6 +14,7 @@
         </thead>
         <tbody>
           <ng-container>
+            @if (rbac.allowedToAccess('Job Role.view')) {}
             <tr *ngFor="let roles of JobroleDetails">
               <td>{{roles.designationName}}</td>
               <td>{{roles.gradeName}}</td>
@@ -33,12 +24,12 @@
                     <i class="bi bi-three-dots-vertical"></i>
                   </span>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    <li (click)="openupdateDialog(roles)">
+                    <li (click)="openupdateDialog(roles)" *ngIf="rbac.allowedToAccess('Job Role.update')">
                       <a class="dropdown-item">
                         <i class="bi bi-pencil me-2"></i>Update
                       </a>
                     </li>
-                    <li (click)="opendelete(roles)">
+                    <li (click)="opendelete(roles)" *ngIf="rbac.allowedToAccess('Job Role.delete')">
                       <a class="dropdown-item">
                         <i class="bi bi-trash3 me-2"></i>Delete
                       </a>
@@ -48,12 +39,6 @@
               </td>
             </tr>
           </ng-container>
-          <!-- No Data Found Template -->
-          <!-- <ng-template #noDataTemplate>
-            <tr>
-              <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
-            </tr>
-          </ng-template> -->
         </tbody>
       </table>
     </div>

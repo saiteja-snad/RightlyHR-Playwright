@@ -21,6 +21,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-wfh-for-you-requset',
@@ -64,7 +65,8 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

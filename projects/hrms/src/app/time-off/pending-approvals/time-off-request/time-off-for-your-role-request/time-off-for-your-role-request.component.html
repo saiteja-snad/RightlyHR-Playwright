@@ -26,6 +26,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if (rbac.allowedToAccess('Timeoff Tab.view')) {
                     @if (leaves.length > 0) {
                         <tr *ngFor="let item of leaves| leavesPendingapprovals : searchValue">
                             <td>{{item.entity.leavefusionempId}}</td>
@@ -61,8 +62,8 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu py-0">
-                                        <li><a class="dropdown-item" (click)="processleave(item)"><i class="bi bi-check-circle me-2"></i>Process</a></li>
-                                        <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"><i class="bi bi-x-circle me-2"></i>Reject</a></li>
+                                        <li><a class="dropdown-item" (click)="processleave(item)"><i class="bi bi-check-circle me-2" *ngIf="rbac.allowedToAccess('Timeoff Tab.update')"></i>Process</a></li>
+                                        <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"><i class="bi bi-x-circle me-2" *ngIf="rbac.allowedToAccess('Timeoff Tab.delete')"></i>Reject</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -74,7 +75,7 @@
         
                         </tr>
                     }
-                  
+                }
                 </tbody>
             </table>
         </div>

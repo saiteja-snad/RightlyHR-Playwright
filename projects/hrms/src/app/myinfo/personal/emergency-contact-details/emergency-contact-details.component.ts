@@ -12,6 +12,7 @@ import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { IJob } from '../../../Interfaces/job-model';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-emergency-contact-details',
@@ -41,7 +42,8 @@ export class EmergencyContactDetailsComponent {
     mobileNumberData: IphoneNumberData | null = null;
     empinfo = {} as IJob; 
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private cd: ChangeDetectorRef,  public formValidation: FormValidationService, private conformationPopup: OpenModalService, public http: HttpService) { 
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private cd: ChangeDetectorRef, 
+     public formValidation: FormValidationService, private conformationPopup: OpenModalService, public http: HttpService,public rbac: RbacService) { 
     effect(() => {
 
       this.http.selectedCountryCodeSignal.set(this.selectedCountryCode)

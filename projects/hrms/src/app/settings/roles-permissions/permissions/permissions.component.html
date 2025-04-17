@@ -37,7 +37,7 @@
                         per.fields === 'Offboarding Details'|| per.fields === 'Employment Type'|| per.fields === 'Job Details'|| 
                         per.fields === 'Compensation Details'|| per.fields === 'Assets'|| per.fields === 'Certification Details'|| 
                         per.fields === 'Bank Details' || per.fields === 'Team Members' || per.fields === 'Separation Request' || 
-                        per.fields === 'Onboard Request'  || per.fields === 'No Due Clearance' || per.fields === 'Change RM button'">
+                        per.fields === 'Onboard Request'  || per.fields === 'No Due Clearance' || per.fields === 'Change RM button'|| per.fields === 'Probation Details'">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td>
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -72,7 +72,7 @@
                         || per.fields === 'Employee Offboarding Details'|| per.fields === 'Employee Employment Type'|| per.fields === 'Employee Job Details'|| per.fields === 'Employee Compensation Details'
                         || per.fields === 'Employee Assets'|| per.fields === 'Employee Certification Details'|| per.fields === 'Employee Bank Details'|| per.fields === 'Employee Team Members' 
                         || per.fields === 'Addsubfloder'|| per.fields === 'Employee Trainee Details' || per.fields === 'Last Working Day' || per.fields === 'Employee No Due Clearance'
-                        || per.fields === 'Employee No Due Request' || per.fields === 'Probation Details' || per.fields === 'Employee Change RM button'">
+                        || per.fields === 'Employee No Due Request' || per.fields === 'Employee Probation Details' || per.fields === 'Employee Change RM button'">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -135,7 +135,7 @@
                         || per.fields === 'Inactive Employee' ||per.fields === 'Prospective Employee' || per.fields === 'Current Openings' || per.fields === 'Expenses Tab'
                         || per.fields === 'Add Trainee' ||per.fields === 'Trainee Active' ||per.fields === 'Trainee Inactive' ||per.fields === 'Current Openings Button' || per.fields === 'Invoices Tab' || per.fields === 'Separation Requests Tab' || per.fields === 'Trainee Tab'
                         || per.fields === 'Generate Documents' ||per.fields === 'Employee Personal' || per.fields === 'Employee Job' || per.fields === 'Inactive Button'
-                        || per.fields === 'Employee Document' || per.fields === 'Active Generate documents' || per.fields === 'Inactive Generate documents'  || per.fields === 'On Behalf Of Tab' 
+                        || per.fields === 'Employee Document' || per.fields === 'Active Generate documents' || per.fields === 'Inactive Generate documents'  || per.fields === 'On Behalf Of Tab' || per.fields === 'On Behalf Of Approvals Tab'
                         || per.fields === 'Document History' || per.fields === 'Help Desk Employee'|| per.fields === 'Help Desk Department'|| per.fields === 'Offer Letter Approval'
                         || per.fields === 'Add Employee' || per.fields === 'Employee Documents Upload Button' || per.fields === 'Standard Reports'
                         || per.fields === 'Custom Reports'|| per.fields === 'Attendance Reports' || per.fields === 'CEO Approvals Tab' || per.fields === 'No Due Clearance Tab' || per.fields === 'Probation Employees' || per.fields === 'Probation Details Tab' || per.fields === 'My Performance Tab' || per.fields === 'My Team Performance Tab'|| per.fields === 'Review Cycle List Tab'

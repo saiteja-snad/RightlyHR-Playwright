@@ -23,7 +23,7 @@
     <div class="card custom-card">
         <div class="p-3">
             <div>
-                <form [formGroup]="shiftForm">
+                <form [formGroup]="shiftForm" (ngSubmit)="Addshift()">
                     <div class="row g-2 mb-3">
                         <!-- Year -->
                         <div class="col-md-3 mb-3">
@@ -196,7 +196,7 @@
                     </div>
 
                     <div class=" d-flex justify-content-end gap-3 p-3">
-                        <button type="button" class="custom-btn btn-secondary" [disabled]="shiftForm.invalid" (click)="saveasDraft()">Save as
+                        <button type="button" class="custom-btn btn-secondary" (click)="Cancel()">Save as
                             draft</button>
                         <button type="submit" class="custom-btn btn-primary"  [disabled]="shiftForm.invalid" >Submit</button>
                     </div>
@@ -209,3 +209,18 @@
 
     </div>
 </div>
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-content text-center p-4">
+            <div class="py-4">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+                <p class="confirmation-text">{{'Are you sure you want to Cancel?'|translate}}</p>
+            </div>
+            <div class="d-flex gap-5 pt-2 w-100">
+                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            </div>
+        </div>
+    </div>
+  </ng-template>

@@ -12,11 +12,17 @@
     <table class="w-100">
         <thead>
             <tr>
-                <th>Worked Date</th>
-                <th>Availed</th>
+                <!-- <th>Worked Date</th>
+                <th>Availed</th> -->
                 <!-- <th>Reason</th> -->
-                <th>Applied Date</th>
+                <!-- <th>Applied Date</th>
+                <th>Status</th> -->
+                <th>Year</th>
+                <th>Location</th>
+                <th>Sub Location</th>
                 <th>Status</th>
+                <th>Added By</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -35,13 +41,36 @@
           </tr>
         </ng-container> -->
 
-            <ng-template #noDataTemplate>
-                <tr>
-                    <td colspan="4">
-                        <app-no-data-found></app-no-data-found>
-                    </td>
-                </tr>
-            </ng-template>
+        <tbody>
+          <ng-container *ngIf="shiftsData!.length > 0; else noDataTemplate">
+            <tr class="hover" *ngFor="let shift of publishedshifts ">
+                  <td>{{ shift.applicableyear }}</td>
+                  <td>{{ shift.locationName }}</td>
+                  <td>{{ shift.subLocationName }}</td>
+                  <td>{{ shift.status}}</td>
+                  <td>{{ shift.addedbyName}}</td>
+                  <td class="text-center">
+                      <div class="dropdown">
+                          <a data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="bi bi-three-dots-vertical"></i>
+                          </a>
+                          <ul class="dropdown-menu custom-dropdown-menu">
+                              <li><a class="dropdown-item"><i class="bi bi-copy me-2 ms-2" (click)="cloneshiftsPolicy1(shift.id)"></i>Clone</a></li>
+                              <li><a class="dropdown-item"><i class="bi bi-eye-fill me-2" (click)="view(shift.id)"></i>View</a></li>
+                          </ul>
+                      </div>
+                  </td>
+              </tr>
+          </ng-container>
+
+          <ng-template #noDataTemplate>
+              <tr>
+                  <td colspan="4">
+                      <app-no-data-found></app-no-data-found>
+                  </td>
+              </tr>
+          </ng-template>
+      <!-- </tbody> -->
         </tbody>
 
     </table>

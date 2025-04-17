@@ -67,6 +67,24 @@ export default [
             { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
         ]
     },
+    { path: 'cloneshifts/:id', loadComponent: () => import('./shits/clone-shift/clone-shift.component').then((m) => m.CloneShiftComponent) },
+    {
+        path: 'manage-shifts',
+        children: [
+            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
+            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
+        ]
+    },
+    {  path: 'viewshifts/:id', loadComponent: () => import('./shits/view-shift/view-shift.component').then((m) => m.ViewShiftComponent) },
+    {
+        path: 'manage-shifts',
+        children: [
+            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
+            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
+        ]
+    },
     { path: 'addpolices', loadComponent: () => import('./manage-policies/add-policies/add-policies.component').then((m) => m.AddPoliciesComponent) },
     {
         path: 'manage-policies',

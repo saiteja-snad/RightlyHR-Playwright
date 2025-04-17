@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-shits',
@@ -14,12 +17,13 @@ import { Subscription } from 'rxjs';
     Select,
     ReactiveFormsModule,
     CommonModule,
-    TabsModule
+    TabsModule,TranslateModule
   ],
   templateUrl: './add-shits.component.html',
   styleUrl: './add-shits.component.scss'
 })
 export class AddShitsComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   shiftForm!: FormGroup;
   years: number[] = [];
   locations: any[] = [];
@@ -35,10 +39,13 @@ export class AddShitsComponent {
   constructor(
     public router: Router,
     private fb: FormBuilder,
-    private http: HttpService
+    private http: HttpService,
+    private modalService: NgbModal,
+     private conformationPopup: OpenModalService,
   ) { }
 
   ngOnInit(): void {
+    
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
@@ -86,8 +93,11 @@ export class AddShitsComponent {
   deleteShift(index: number) {
     this.shifts.removeAt(index);
   }
-
-  saveasDraft(): void {
+  Cancel(){
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+     
+  }
+  Addshift(): void {
     if (this.shiftForm.valid) {
       const formValue = this.shiftForm.value;
 
@@ -157,7 +167,13 @@ export class AddShitsComponent {
       this.subLocations = [];
     }
   }
-  
+  onDelete(modal:any){
+    modal.dismiss();
+this.nagvition();
+  }
+  closeDelete(modal:any){
+    modal.dismiss();
+  }
   nagvition() {
     this.router.navigate(['/settings/employee-fields/manage-shifts/pending-for-submit']);
   }

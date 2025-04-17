@@ -15,6 +15,7 @@ export class PendingshitsComponent {
   empinfo: any
   subscription!: Subscription;
   shiftsData: any[] = [];
+  pendingsubmittedshifts:any;
   constructor(
     public router: Router,
     private http: HttpService
@@ -29,6 +30,7 @@ export class PendingshitsComponent {
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {
         this.shiftsData = data;
+        this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
       }, error(err) {
         console.log("expensesheadererror", err)
       },

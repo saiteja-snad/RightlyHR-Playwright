@@ -23,7 +23,7 @@
         </thead>
         <tbody>
             <ng-container *ngIf="shiftsData!.length > 0; else noDataTemplate">
-                <tr *ngFor="let shift of shiftsData; let i = index">
+                <tr *ngFor="let shift of pendingsubmittedshifts; let i = index">
                     <td>{{ shift.applicableyear }}</td>
                     <td>{{ shift.locationName }}</td>
                     <td>{{ shift.subLocationName }}</td>

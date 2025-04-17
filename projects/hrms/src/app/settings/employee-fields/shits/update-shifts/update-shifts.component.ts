@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -15,14 +18,16 @@ import { Subscription } from 'rxjs';
     Select,
     ReactiveFormsModule,
     CommonModule,
-    TabsModule
+    TabsModule,TranslateModule
   ],
   templateUrl: './update-shifts.component.html',
   styleUrl: './update-shifts.component.scss'
 })
 export class UpdateShiftsComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   shiftForm!: FormGroup;
   years: { label: string; value: number }[] = [];
+  id:any;
   locations: any[] = [];
   subLocations: any[] = [];
   subscription!: Subscription;
@@ -34,6 +39,8 @@ export class UpdateShiftsComponent {
   selectedLocationId:any;
   matchedSubLocation:any;
   selectedLocation:any;
+  shiftid:any;
+  hideBUTTON = false;
   navTabs: any[] = [
     { label: 'Update Shifts', link: '/claimsandexpenses/addexpens' },
   ];
@@ -42,7 +49,9 @@ export class UpdateShiftsComponent {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private router: Router,
-    private http: HttpService
+    private http: HttpService,
+   private conformationPopup: OpenModalService,
+   private modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -69,6 +78,7 @@ export class UpdateShiftsComponent {
       year: ['', Validators.required],
       location: ['', Validators.required],
       subLocation: ['', Validators.required],
+       id:[this.route.snapshot.paramMap.get('id')],
       shifts: this.fb.array([this.createShift()])
     });
   }
@@ -76,45 +86,16 @@ export class UpdateShiftsComponent {
 
   addShift() {
     this.shifts.push(this.createShift());
+    this.hideBUTTON = true;
   }
-updateshift(f: FormGroup){
- // Create a new array with the properties from this.selectedshift.orgShiftsItems
-//  let updatedShift = {
-//   id: this.selectedshift.id,
-//   locationId: this.selectedshift.locationId,
-//   subLocationId: this.selectedshift.subLocationId,
-//   applicableyear: this.selectedshift.applicableyear,
-//   status: "Pending for Submission",
-//   addedby: this.Employeeinfo.employeeId,
-//   addedDate: this.selectedshift.addedDate,
-//   lastModifeddate:new Date(),
-  
-//   orgShiftsItems: this.selectedshift.orgShiftsItems.map((row: any) => ({
 
-//     shiftName: row.shiftName,
-//     id: row.id,
-//     headerID: this.selectedshift.id,
-//     shiftStartTime: row.shiftStartTime1 + ':' + row.shiftEndTime1,
-//     shiftEndTime: row.shiftStartTime2 + ':' + row.shiftEndTime2,
-//     shiftDescription: "hi",
-//     status: "Pending for Submission",
-//     code: row.code,
-//     color: row.color,
-//     allowedGracePeriod: row.allowedGracePeriod,
-//     latesAllowed: row.latesAllowed,
-//     allowedBreakTime: row.allowedBreakTime,
-//     halfDayMinHrs: row.halfDayMinHrs,
-//     fullDayMinHrs: row.fullDayMinHrs,
-//   }))
-// }
-
-}
   get shifts(): FormArray {
     return this.shiftForm.get('shifts') as FormArray;
   }
 
   createShift(shiftData: any = null): FormGroup {
     return this.fb.group({
+      id: this.route.snapshot.paramMap.get('id'),
       shiftCode: [shiftData?.code || '', Validators.required],
       shiftName: [shiftData?.shiftName || '', Validators.required],
       color: [shiftData?.color || '#00ff00'],
@@ -135,6 +116,7 @@ updateshift(f: FormGroup){
           year: data.applicableyear,
           location: data.locationId,
           subLocation: data.subLocationId,
+          id:data.id,
         });
         this.shiftDATA = data.subLocationId;
         this.selectedLocationId = data.locationId;
@@ -150,6 +132,8 @@ updateshift(f: FormGroup){
             shiftCode: [item.code],
             shiftName: [item.shiftName],
             color: [item.color],
+            id:[item.id],
+            headerID: [data.id],
             startTime: [item.shiftStartTime],
             endTime: [item.shiftEndTime],
             gracePeriod: [item.allowedGracePeriod],
@@ -157,8 +141,14 @@ updateshift(f: FormGroup){
             breakTime: [item.allowedBreakTime],
             halfDayMinHrs: [item.halfDayMinHrs],
             fullDayMinHrs: [item.fullDayMinHrs],
+            
           }));
         });
+        this.shiftid =data.orgShiftsItems.forEach((items: any) => {
+          console.log('this.shiftid ',items.id );
+
+        });
+        
       },
       // startTime: [item.shiftStartTime.split(':')[0]],
       //       endTime: [item.shiftEndTime.split(':')[1]],
@@ -166,7 +156,94 @@ updateshift(f: FormGroup){
     });
   }
 
+  Status: any;
+  hoildaylist: any;
+  updateshift(f: FormGroup){
+   
+ 
+    if (this.shiftForm.valid) {
+      const formValue = this.shiftForm.value;
+      // formValue.shifts.forEach((shift: any, index: number) => {
+      //   if (!shift.id) {
+      //     shift.id = shift.id+ index; // or any logic to get next unique ID
+      //    }
+      // });
+      const payload = {
+        id: this.route.snapshot.paramMap.get('id'),
+        locationId: formValue.location,
+        subLocationId: formValue.subLocation,
+        applicableyear: formValue.year,
+        status: "Pending for Submission",
+         addedby: this.Employeeinfo.employeeId,
+        addedDate: new Date(),
+        lastModifeddate:new Date(),
+        orgShiftsItems: formValue.shifts.map((shift: any,index:any) => ({
+          shiftName: shift.shiftName,
+          id:  shift.id,
+          headerID: this.route.snapshot.paramMap.get('id'),
+          shiftStartTime: shift.startTime,
+          shiftEndTime: shift.endTime,
+          shiftDescription: "hi",
+          status: "Submitted",
+          code: shift.shiftCode,
+          color: shift.color,
+          allowedGracePeriod: shift.gracePeriod,
+          latesAllowed: shift.latesAllowed,
+          allowedBreakTime: shift.breakTime,
+          halfDayMinHrs: shift.halfDayMinHrs,
+          fullDayMinHrs: shift.fullDayMinHrs,
+        }))
+      };
+      
+      this.http.postdata(`orgShifts/Update/Shift/OrgShift`, payload).subscribe({
+        next: (data: any) => {
+          console.log('updaTE DATA',data);
+          if (data.statusCode === 400) {
+            alert('Error: Shift already exists.');
+          } else {
+            this.hoildaylist = data;
+  console.log('  this.hoildaylist ',  this.hoildaylist );
+  this.conformationPopup.openSuccessModal('Shift Updated successfully');
+  this.nagvition();
+           }
+        },
+        error: (error: any) => {
+          console.log("error" + error)
+        }
+      });
+    }
+  
+   }
+Cancel(){
+  this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+}
+cloneshiftsPolicy1(id: any): void {
+  this.router.navigate(['/settings/employee-fields/cloneshifts',this.route.snapshot.paramMap.get('id')]);
+}
+publish() {
+  let publishItem = {
+    Category: 'shifts',
+    refentityId: this.shiftForm.value.shifts[0].headerID
+  }
+  this.subscription = this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).subscribe({
+    next: (respnose: any) => {
+      console.log(respnose);
+      const modalElement = document.getElementById('successhide');
+      if (modalElement) {
+        modalElement.classList.add('show');
+        modalElement.style.display = 'block';
+        this.Status = 'Shift Published successfully'
+       
+      }
+      this.conformationPopup.openSuccessModal('Shift Published successfully');
+      setTimeout( () => {
+        this.nagvition();
+      }, 2000);
+      
 
+    }
+  })
+}
   onLocationChange(selectedLocationId: number | null) {
     const subLocationControl = this.shiftForm.get('subLocation');
     // subLocationControl?.reset();
@@ -217,8 +294,15 @@ updateshift(f: FormGroup){
       error: (reason: any) => console.log(reason)
      });
   }
-
+  onDelete(modal:any){
+    modal.dismiss();
+this.nagvition();
+  }
+  closeDelete(modal:any){
+    modal.dismiss();
+  }
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/shits/published-shits']);
+    // this.router.navigate(['/settings/employee-fields/shits/published-shits']);
+    this.router.navigate(['/settings/employee-fields/manage-shifts/pending-for-submit']);
   }
 }

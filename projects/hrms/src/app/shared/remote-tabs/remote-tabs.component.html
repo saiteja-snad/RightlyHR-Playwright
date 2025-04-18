@@ -1,0 +1,17 @@
+
+<div class="component-side-nav-tabs-container py-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/remote/waiting-for-approval']" routerLinkActive="active-nav-link">Waiting For Approval ({{waitingForApprovalremoteCount}})</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/remote/approved']" routerLinkActive="active-nav-link">Approved ({{approvedremoteRequestsCount}})</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/remote/processed']" routerLinkActive="active-nav-link">Processed ({{processedremoteRequestsCount}})</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/remote/rejected']" routerLinkActive="active-nav-link">Rejected ({{rejectedremoteRequestsCount}})</a>
+      </li>
+    </ul>
+  </div>

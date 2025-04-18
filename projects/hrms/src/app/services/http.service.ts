@@ -15,11 +15,13 @@ export class HttpService {
     wfh: boolean;
     employeeId: number;
     permission: boolean;
+    remote:boolean;
   }>({
     compOff: false,
     wfh: false,
     employeeId: 0,
     permission: false,
+    remote:false
   });
   tirggerPendingApprovalCountSignal = signal<{
     compOff: boolean;

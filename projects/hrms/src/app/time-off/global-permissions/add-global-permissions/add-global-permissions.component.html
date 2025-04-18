@@ -1,1 +1,436 @@
-<p>add-global-permissions works!</p>
+<div class="custom-main-popup-container" ngbAutofocus>
+    <div class="d-flex justify-content-between align-items-center popup-header-border p-3">
+        <div>
+            <p class="popup-heading mb-0">{{'Add Global Permission'| translate}}</p>
+        </div>
+        <div>
+            <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+    </div>
+    <div class="custom-main-popup-content p-4">
+        <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-8 col-sm-12">
+                <!-- Request Type Dropdown -->
+                <div class="mb-3">
+                  <label for="selectType" class="form-label">Select Type <span class="text-danger">*</span></label>
+                  <select id="selectType" formControlName="selectType" class="form-select w-100" (change)="validationCheck()">
+                    <option [ngValue]="null">Select Type</option>
+                    <option *ngFor="let type of selectTypes" [value]="type.Value">{{ type.item_text }}</option>
+                  </select>
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('selectType')?.touched && requestForm.get('selectType')?.invalid">
+                  Select type is required
+                </small>
+                </div>
+                <!-- Multi-select Dropdown for Options -->
+                <ng-container *ngIf="requestForm.get('selectType')?.value==='Location/Sublocation'">
+                  <div class="mb-3">
+                    <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                    <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName" [filter]="true"
+                  filterBy="jobLocationName" [showClear]="true" placeholder="Select Location"
+                   formControlName="location" (change)="getSubLocationByid();" class="custom-select w-100">
+                </p-select>
+                   
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('location')?.touched && requestForm.get('location')?.invalid">
+                 Location is required
+                </small>
+                  </div>
+        
+                  <div class="mb-3">
+                    <label for="sublocation" class="form-label">Sub location <span class="text-danger">*</span></label>
+                    <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true"
+                  filterBy="name" [showClear]="true" placeholder="Select Sublocation"
+                   formControlName="sublocation" (change)="getEmployeesLocationwise()" class="custom-select w-100">
+                </p-select>
+                  
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('sublocation')?.touched && requestForm.get('sublocation')?.invalid">
+                Sub Location is required
+                </small>
+                  </div>
+        
+                  <div class="mb-3">
+                    <label for="employees" class="form-label">Employees <span class="text-danger">*</span></label>
+                   <p-select [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                  filterBy="fullName" [showClear]="true" placeholder="Select Employees"
+                   formControlName="selectedOptions"  class="custom-select w-100">
+                </p-select>
+                 
+                    <small class="text-danger"
+                    *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
+                   Employees are required
+                  </small>
+                  </div>
+                </ng-container>
+        
+                <ng-container *ngIf="requestForm.get('selectType')?.value==='Department/Team'">
+                  <div class="mb-3">
+                    <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
+                    <p-select [options]="departmentDetails" optionValue="sno" optionLabel="departmentName" [filter]="true"
+                  filterBy="departmentName" [showClear]="true" placeholder="Select Department"
+                   formControlName="department" (change)="getTeamData()" class="custom-select w-100">
+                </p-select>
+                 
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('department')?.touched && requestForm.get('department')?.invalid">
+                 Department is required
+                </small>
+                  </div>
+        
+                  <div class="mb-3">
+                    <label for="team" class="form-label">Team <span class="text-danger">*</span></label>
+                    <p-select [options]="teamDetails" optionValue="subdepartmentId" optionLabel="subdepartmentName" [filter]="true"
+                  filterBy="subdepartmentName" [showClear]="true" placeholder="Select team"
+                   formControlName="teamSelectedOptions" (change)="getEmployeesTeamwise()" class="custom-select w-100">
+                </p-select>
+                  
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('teamSelectedOptions')?.touched && requestForm.get('teamSelectedOptions')?.invalid">
+                 Team is required
+                </small>
+                  </div>
+        
+                  <div class="mb-3">
+                    <label for="teamemployee" class="form-label">Employees <span class="text-danger">*</span></label>
+                    <p-select [options]="teamWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                  filterBy="fullName" [showClear]="true" placeholder="Select Employees"
+                   formControlName="teamEmpselectedOptions" (change)="getTeamData()" class="custom-select w-100">
+                </p-select>
+                    
+                    <small class="text-danger"
+                    *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid">
+                   Employees are required
+                  </small>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="requestForm.get('selectType')?.value==='Employees'">
+                  <div class="mb-3">
+                    <label for="employees" class="form-label">Employees <span class="text-danger">*</span></label>
+                    <p-select [options]="getAllEmployeesDetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                    filterBy="fullName" [showClear]="true" placeholder="Select Employees"
+                     formControlName="selectedOptions"  class="custom-select w-100">
+                  </p-select>
+                    
+                    <small class="text-danger"
+                    *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
+                   Employees are required
+                  </small>
+                  </div>
+                </ng-container>
+                <div class="mb-3">
+                  <label for="requestType" class="form-label">Request Type <span
+                      class="text-danger">*</span></label>
+                  <select id="requestType" formControlName="requestType" class="form-select w-100" >
+                    <option [ngValue]="null">Select Request Type</option>
+                    <option *ngFor="let ptype of permissionTypes" [value]="ptype.item_text">{{ ptype.item_text }}</option>
+                  </select>
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('requestType')?.touched && requestForm.get('requestType')?.invalid">
+                  Request Type is required
+                </small>
+                </div>
+        
+                <!-- content -->
+                 <ng-container *ngIf="requestForm.get('requestType')?.value==='Permission'">
+                  <div class="mb-3">
+                    <label for="requsteddate">Permission Date<span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" formControlName="permissionDate" id="requsteddate"
+                      aria-label="Default select example" onkeydown="return false" autocomplete="off" startKey="start"
+                      (click)="setDateValidation()" [min]="minDate" [max]="maxDate" endKey="end" showCancel="true" />
+                    <small class="text-danger"
+                      *ngIf="requestForm.get('permissionDate')?.touched && requestForm.get('permissionDate')?.invalid">
+                      Permission Date is required
+                    </small>
+                  </div>
+          
+                  <div class="mb-3">
+                    <label for="Duration">Duration(In Hours)<span class="text-danger">*</span></label>
+                    <select class="form-select w-100" formControlName="duration" id="Duration">
+                      <option [ngValue]="null" disabled>Select</option>
+                      <option *ngFor="let duration of permissionHours" [value]="duration">{{duration}}</option>
+                    </select>
+                    <small class="text-danger"
+                      *ngIf="requestForm.get('duration')?.touched && requestForm.get('duration')?.invalid">
+                      Duration is required
+                    </small>
+                  </div>
+          
+                  <div class="mb-3">
+                    <label for="type"> Permission Type<span class="text-danger">*</span></label>
+                    <select class="form-select w-100" formControlName="name" id="type" (change)="onTypeChange()">
+                      <option [ngValue]="null" disabled>Select</option>
+                      <option *ngFor="let permission of permissionsType" [value]="permission.name">{{permission.name}}
+                      </option>
+                    </select>
+                    <small class="text-danger" *ngIf="requestForm.get('name')?.touched && requestForm.get('name')?.invalid">
+                      Permission Type is required
+                    </small>
+                  </div>
+          
+                  <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">Reason<span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" formControlName="notes"
+                      (input)="onReasonInput()" placeholder="Reason for Permission" maxlength="250"></textarea>
+                    <span class="color">
+                      {{requestForm.get('notes')?.value?.length || 0}}/250
+                    </span>
+                    <div>
+                      <small class="text-danger" *ngIf="requestForm.get('notes')?.touched && requestForm.get('notes')?.invalid">
+                        Reason is required
+                      </small>
+                    </div>
+                  </div>
+                 </ng-container>
+              
+              </div>
+            </div>
+          </form>
+    </div>
+</div>
+
+<!-- model popup to raise the request start -->
+<ng-template #raiserequest let-modal>
+    <div ngbAutofocus>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Global Permission Request</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closelist()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-8 col-sm-12">
+              <!-- Request Type Dropdown -->
+              <div class="mb-3">
+                <label for="selectType" class="form-label">Select Type <span class="text-danger">*</span></label>
+                <select id="selectType" formControlName="selectType" class="form-select w-100" (change)="validationCheck()">
+                  <option [ngValue]="null">Select Type</option>
+                  <option *ngFor="let type of selectTypes" [value]="type.Value">{{ type.item_text }}</option>
+                </select>
+                <small class="text-danger"
+                *ngIf="requestForm.get('selectType')?.touched && requestForm.get('selectType')?.invalid">
+                Select type is required
+              </small>
+              </div>
+              <!-- Multi-select Dropdown for Options -->
+              <ng-container *ngIf="requestForm.get('selectType')?.value==='Location/Sublocation'">
+                <div class="mb-3">
+                  <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                  <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName" [filter]="true"
+                  filterBy="name" [showClear]="true" placeholder="Select Location"
+                   formControlName="location" (change)="getSubLocationByid();" class="custom-select w-100">
+                </p-select>
+                
+                <small class="text-danger"
+                *ngIf="requestForm.get('location')?.touched && requestForm.get('location')?.invalid">
+               Location is required
+              </small>
+                </div>
+      
+                <div class="mb-3">
+                  <label for="sublocation" class="form-label">Sub location <span class="text-danger">*</span></label>
+                  <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true"
+                  filterBy="name" [showClear]="true" placeholder="Select Sublocation"
+                   formControlName="sublocation" (change)="getEmployeesLocationwise()" class="custom-select w-100">
+                </p-select>
+                
+                <small class="text-danger"
+                *ngIf="requestForm.get('sublocation')?.touched && requestForm.get('sublocation')?.invalid">
+              Sub Location is required
+              </small>
+                </div>
+      
+                <div class="mb-3">
+                  <label for="employees" class="form-label">Employees <span class="text-danger">*</span></label>
+                  <p-select [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                  filterBy="name" [showClear]="true" placeholder="Please select employee"
+                   formControlName="selectedOptions" class="custom-select w-100">
+                </p-select>
+                  
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
+                 Employees are required
+                </small>
+                </div>
+              </ng-container>
+      
+              <ng-container *ngIf="requestForm.get('selectType')?.value==='Department/Team'">
+                <div class="mb-3">
+                  <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
+                  <p-select [options]="departmentDetails" optionValue="sno" optionLabel="departmentName" [filter]="true"
+                  filterBy="departmentName" [showClear]="true" placeholder="Please select employee"
+                   formControlName="department" (change)="getTeamData()" class="custom-select w-100">
+                </p-select>
+                
+                <small class="text-danger"
+                *ngIf="requestForm.get('department')?.touched && requestForm.get('department')?.invalid">
+               Department is required
+              </small>
+                </div>
+      
+                <div class="mb-3">
+                  <label for="team" class="form-label">Team <span class="text-danger">*</span></label>
+                  <p-select [options]="teamDetails" optionValue="subdepartmentId" optionLabel="subdepartmentName" [filter]="true"
+                  filterBy="name" [showClear]="true" placeholder="Please select employee"
+                   formControlName="teamSelectedOptions" (change)="getEmployeesTeamwise()" class="custom-select w-100">
+                </p-select>
+                  
+                <small class="text-danger"
+                *ngIf="requestForm.get('teamSelectedOptions')?.touched && requestForm.get('teamSelectedOptions')?.invalid">
+               Team is required
+              </small>
+                </div>
+      
+                <div class="mb-3">
+                  <label for="teamemployee" class="form-label">Employees <span class="text-danger">*</span></label>
+                  <p-select [options]="teamWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                  filterBy="fullName" [showClear]="true" placeholder="Please select employee"
+                   formControlName="teamEmpselectedOptions" class="custom-select w-100">
+                </p-select>
+                 
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid">
+                 Employees are required
+                </small>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="requestForm.get('selectType')?.value==='Employees'">
+                <div class="mb-3">
+                  <label for="employees" class="form-label">Employees <span class="text-danger">*</span></label>
+                  <p-select [options]="getAllEmployeesDetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                  filterBy="fullName" [showClear]="true" placeholder="Please select employee"
+                   formControlName="selectedOptions" class="custom-select w-100">
+                </p-select>
+                 
+                  <small class="text-danger"
+                  *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
+                 Employees are required
+                </small>
+                </div>
+              </ng-container>
+              <div class="mb-3">
+                <label for="requestType" class="form-label">Request Type <span
+                    class="text-danger">*</span></label>
+                    <p-select [options]="permissionTypes" optionValue="item_text" optionLabel="item_text" [filter]="true"
+                    filterBy="item_text" [showClear]="true" placeholder="Please select employee"
+                     formControlName="requestType" class="custom-select w-100">
+                  </p-select>
+                <small class="text-danger"
+                *ngIf="requestForm.get('requestType')?.touched && requestForm.get('requestType')?.invalid">
+                Request Type is required
+              </small>
+              </div>
+      
+              <!-- content -->
+               <ng-container *ngIf="requestForm.get('requestType')?.value==='Permission'">
+                <div class="mb-3">
+                  <label for="requsteddate">Permission Date<span class="text-danger">*</span></label>
+                  <input type="date" class="form-control custom-input" formControlName="permissionDate" id="requsteddate"
+                    aria-label="Default select example" onkeydown="return false" autocomplete="off" startKey="start"
+                    (click)="setDateValidation()" [min]="minDate" [max]="maxDate" endKey="end" showCancel="true" />
+                  <small class="text-danger"
+                    *ngIf="requestForm.get('permissionDate')?.touched && requestForm.get('permissionDate')?.invalid">
+                    Permission Date is required
+                  </small>
+                </div>
+        
+                <div class="mb-3">
+                  <label for="Duration">Duration(In Hours)<span class="text-danger">*</span></label>
+                  <p-select [options]="permissionHours" optionValue="duration" optionLabel="duration" [filter]="true"
+                  filterBy="name" [showClear]="true" placeholder="Please select employee"
+                   formControlName="duration" class="custom-select w-100">
+                </p-select>
+                 
+                  <small class="text-danger"
+                    *ngIf="requestForm.get('duration')?.touched && requestForm.get('duration')?.invalid">
+                    Duration is required
+                  </small>
+                </div>
+        
+                <div class="mb-3">
+                  <label for="type"> Permission Type<span class="text-danger">*</span></label>
+                  <p-select [options]="permissionsType" optionValue="name" optionLabel="name" [filter]="true"
+                  filterBy="name" [showClear]="true" placeholder="Please select employee"
+                   formControlName="name" class="custom-select w-100">
+                </p-select>
+                  
+                  <small class="text-danger" *ngIf="requestForm.get('name')?.touched && requestForm.get('name')?.invalid">
+                    Permission Type is required
+                  </small>
+                </div>
+        
+                <div class="mb-3">
+                  <label for="exampleFormControlTextarea1" class="form-label">Reason<span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="exampleFormControlTextarea1" formControlName="notes"
+                    (input)="onReasonInput()" placeholder="Reason for Permission" maxlength="250"></textarea>
+                  <span class="color">
+                    {{requestForm.get('notes')?.value?.length || 0}}/250
+                  </span>
+                  <div>
+                    <small class="text-danger" *ngIf="requestForm.get('notes')?.touched && requestForm.get('notes')?.invalid">
+                      Reason is required
+                    </small>
+                  </div>
+                </div>
+               </ng-container>
+            
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="openconfirmationModel(confirmation)">{{'Cancel'|translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="requestForm.invalid||isLoader">
+            @if(!isLoader){
+            {{'Submit'|translate}}
+            }
+            @else {
+            <div class="d-flex">
+                <div *ngIf="isLoader" class="spinner-border spinner-border text-light" role="status">
+                </div>
+                <div> {{'Submitting'|translate}}</div>
+            </div>
+            }
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="requestForm.invalid||isLoader"
+           (click)="openconfirmationModel(sucessconfirmation)">Submit</button>
+      </div>
+    </div>
+  </ng-template>
+  <!-- model popup to the request end -->
+  
+  <!-- confirmation model popup start -->
+  <ng-template #confirmation let-modal>
+    <div class="modal-body mt-4 text-center">
+        <img src="assets/images/Vector@2x.png" alt="" style="width: 50px" class="imgg" />
+        <h6 class="want mt-4">Are you sure you want to cancel?</h6>
+        <div class="d-flex justify-content-center mt-4 mb-2">
+            <button type="button" class="btn btn-secondary me-3" (click)="modal.dismiss()">
+                No
+            </button>
+            <button type="button" class="btn btn-primary"
+              (click)="close()">
+                Yes
+            </button>
+        </div>
+    </div>
+  </ng-template>
+   <!-- confirmation model popup end -->
+    <!--sucess confirmation model popup start -->
+  <ng-template #sucessconfirmation let-modal>
+    <div class="modal-body mt-4 text-center">
+        <img src="assets/images/Vector@2x.png" alt="" style="width: 50px" class="imgg" />
+        <h6 class="want mt-4">Are you sure you want to submit?</h6>
+        <div class="d-flex justify-content-center mt-4 mb-2">
+            <button type="button" class="btn btn-secondary me-3" (click)="modal.dismiss()">
+                No
+            </button>
+            <button type="button" class="btn btn-primary"
+            (click)="onSubmit()">
+                Yes
+            </button>
+        </div>
+    </div>
+  </ng-template>
+   <!--sucess confirmation model popup end -->

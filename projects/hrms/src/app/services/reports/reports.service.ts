@@ -10,51 +10,53 @@ export class ReportsService {
   constructor(private http: HttpService) {}
 
   getStandardReports(request: IStandardReportRequest) {
-    const params = new HttpParams();
+    let params = new HttpParams();
+
     if (request.employeeStatus) {
-      params.set('EmployeeStatus', request.employeeStatus.toString());
+      params = params.set('EmployeeStatus', request.employeeStatus.toString());
     }
 
-    if (
-      request.dateRange &&
-      request.dateRange?.startDate &&
-      request.dateRange?.endDate
-    ) {
-      const startDate = this.parseDate(
-        request.dateRange?.startDate.format('YYYY-MM-DD')
+    if (request.dateRange?.startDate && request.dateRange?.endDate) {
+      params = params.append(
+        'DOJStart',
+        request.dateRange.startDate.format('YYYY-MM-DD')
       );
-      const endDate = this.parseDate(
-        request.dateRange?.endDate.format('YYYY-MM-DD')
+      params = params.append(
+        'DOJEnd',
+        request.dateRange.endDate.format('YYYY-MM-DD')
       );
-      params.append('DOJStart', this.formatDate(startDate));
-      params.append('DOJEnd', this.formatDate(endDate));
     }
 
     if (
       request.selectedBranchLocation &&
       request.selectedBranchLocation !== 'All Branch Locations'
     ) {
-      params.append('BranchCode', request.selectedBranchLocation);
-    }
-    if (
-      request.selectedJobLocation &&
-      request.selectedJobLocation != 'All Job Locations'
-    ) {
-      params.append('JobLocation', request.selectedJobLocation.toString());
-    }
-    if (
-      request.selectedJobSubLocation &&
-      request.selectedJobSubLocation != 'All Job Sub Locations'
-    ) {
-      params.append('SubLocation', request.selectedJobSubLocation.toString());
+      params = params.append('BranchCode', request.selectedBranchLocation);
     }
 
-    const options = {
-      params: params,
-    };
-    return options.params
-      ? this.http.get('Reports/standardReportsWithoutPagination', options)
-      : this.http.getData('Reports/standardReportsWithoutPagination');
+    if (
+      request.selectedJobLocation &&
+      request.selectedJobLocation !== 'All Job Locations'
+    ) {
+      params = params.append(
+        'JobLocation',
+        request.selectedJobLocation.toString()
+      );
+    }
+
+    if (
+      request.selectedJobSubLocation &&
+      request.selectedJobSubLocation !== 'All Job Sub Locations'
+    ) {
+      params = params.append(
+        'SubLocation',
+        request.selectedJobSubLocation.toString()
+      );
+    }
+
+    return this.http.get('Reports/standardReportsWithoutPagination', {
+      params,
+    });
   }
 
   getBranchLocations() {

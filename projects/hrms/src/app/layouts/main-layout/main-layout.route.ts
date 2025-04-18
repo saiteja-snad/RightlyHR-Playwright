@@ -25,7 +25,7 @@ export default [
     { path: 'calendar', component: CalenderLayOutComponent,canActivate: [MsalGuard],loadChildren: () => import('../../calendar/calendar.route')},
     { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../desk-allocation/desk.route')},
     { path: 'reports', component: ReportsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../reports/reports.routes')},
-    { path: 'assets-allocation', component: AssetsAllocationsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../assets-allocation/assets-allocation.route')},
+    { path: 'assets-management', component: AssetsAllocationsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../assets-allocation/assets-allocation.route')},
 
 
 ] as Route[];

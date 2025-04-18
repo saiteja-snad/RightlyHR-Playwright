@@ -1,0 +1,228 @@
+<div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header mb-0">Desk Management</p>
+        </div>
+        <div>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(createDeskModal)"><i
+                    class="bi bi-plus me-2"></i>Register an
+                Desk</button>
+        </div>
+    </div>
+
+
+    <div>
+        <form [formGroup]="locationfromdata">
+
+
+            <div class="row mb-3 ps-2 mt-2">
+
+
+                <div class="col-md-4 ">
+                    <label for="location" class="form-label custom-label mb-2">Locations</label>
+                    <select id="location" formControlName="locationId" class="form-select custom-input"
+                        (change)="onLocationChange()">
+                        <option [ngValue]="null">All Locations</option>
+                        <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
+                            location.jobLocationName }}</option>
+                    </select>
+                </div>
+
+
+                <div class="col-md-4 ">
+                    <label for="subLocation" class="form-label custom-label mb-2">Sub Locations</label>
+                    <select id="subLocation" formControlName="subLocationId" class="form-select custom-input"
+                        (change)="onSubLocationChange()">
+                        <option [ngValue]="null">All Sub Locations</option>
+                        <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
+                            {{ subLocation.jobSubLocationName }}
+                        </option>
+                    </select>
+
+                </div>
+
+
+            </div>
+
+        </form>
+    </div>
+    
+    <div class="component-nav-tabs-container card px-2">
+        <p-tabs value="0" scrollable>
+          <p-tablist>
+            <ng-container *ngFor="let tab of navTabs;">
+              <p-tab [value]="tab.route">
+                <a
+                  [routerLink]="tab.route"
+                  routerLinkActive="nav-tab-active"
+                  class="nav-link"
+                  (click)="onHitSubLocationChange()"
+                >
+                  {{ tab.label }} ({{ tab.count$ | async }})
+                </a>
+              </p-tab>
+            </ng-container>
+          </p-tablist>
+        </p-tabs>
+      </div>
+      
+</div>
+
+
+<div>
+    <router-outlet></router-outlet>
+</div>
+
+  
+
+
+
+
+<ng-template #createDeskModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Register an Desk</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss();deskForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-3">
+
+            <form [formGroup]="deskForm" (ngSubmit)="postdesk(deskForm)">
+                <div class="row">
+
+                    <div class="mb-3 col-md-6">
+                        <label for="location" class="form-label custom-label mb-2">Location<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName"
+                                formControlName="locationId" placeholder="Please select location"
+                                class="form-select custom-select" (onChange)="getSubLocationByid($event.value)">
+                            </p-select>
+                        </div>
+                        <div *ngIf="deskForm.get('locationId')?.invalid && deskForm.get('locationId')?.touched"
+                            class="error-msg">
+                            Location is required.
+                        </div>
+                    </div>
+
+                    <!-- Sub Location Field -->
+                    <div class="mb-3 col-md-6">
+                        <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName"
+                                formControlName="subLocationId" placeholder="Please select sub location"
+                                class="form-select custom-select"
+                                (onChange)="getShiftBYid($event.value);getdeskid()"></p-select>
+                        </div>
+                        <div *ngIf="deskForm.get('subLocationId')?.invalid && deskForm.get('subLocationId')?.touched"
+                            class="error-msg">
+                            Sub Location is required.
+                        </div>
+                    </div>
+
+
+                    <!-- Desk Name Field -->
+
+                    <div class="col-md-6 mb-3">
+                        <label for="assetId" class="form-label custom-label mb-2">Desk ID<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="deskdataid" optionLabel="deskId" optionValue="id"
+                                formControlName="deskid" placeholder="Please select desk id"
+                                class="form-select custom-select">
+                            </p-select>
+                        </div>
+                        <div *ngIf="deskForm.get('deskid')?.invalid && deskForm.get('deskid')?.touched">
+                            <div class="error-msg">Desk ID is required</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="Department" class="form-label custom-label mb-2">Desk Type <span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="desktype" optionLabel="value" formControlName="desktype"
+                                placeholder="Please select desk type" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="deskForm.controls['desktype'].invalid && (deskForm.controls['desktype'].touched || deskForm.controls['desktype'].dirty)">
+                            <span class="error-msg" *ngIf="deskForm.controls['desktype'].errors?.['required']">
+                                desk type is required</span>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="custom-toggle-btn">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isPrimary" [checked]="isToggled"
+                                        (change)="onToggleChange($event)">
+                                </div>
+                                <label for="isPrimary" class="form-label custom-label mb-0">Allocate To</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="subLocation" class="form-label custom-label mb-2">Select Shift<span
+                                class="text-danger" *ngIf="isToggled">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="shiftDropdown" optionLabel="shiftName" formControlName="shifts"
+                                placeholder="Please select shift" class="form-select custom-select"
+                                (onChange)="getEmployeedata()"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="deskForm.get('shifts')?.invalid && deskForm.get('shifts')?.touched">
+                            Shift is required
+                        </div>
+                    </div>
+                    <!-- Select Employee (Name) -->
+                    <div class="col-md-6 mb-3 d-colourdata">
+                        <label for="asseTID" class="form-label custom-label mb-2">Select Employee <span
+                                class="text-danger" *ngIf="isToggled">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
+                                filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
+                                formControlName="employeid" placeholder="Please select employee"
+                                class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="deskForm.get('employeid')?.invalid && deskForm.get('employeid')?.touched">
+                            Employee is required
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label for="Approval" class="form-label custom-label mb-2">
+                            Select Approver<span class="error-msg" *ngIf="isToggled">*</span>
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true"
+                                filterBy="employeeName" formControlName="deskapprovalid"
+                                placeholder="Please select approver" class="form-select custom-select"
+                                (onChange)="onApprovalSelects($event)"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="deskForm.get('deskapprovalid')?.invalid && deskForm.get('deskapprovalid')?.touched">
+                            Approver is required
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]=" deskForm.invalid">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

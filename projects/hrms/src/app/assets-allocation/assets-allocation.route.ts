@@ -3,10 +3,10 @@ import { AssetsManagmentComponent } from "./assets-managment/assets-managment.co
 
 
 export default [
-    { path: '', redirectTo: 'management', pathMatch: 'full' },
+    { path: '', redirectTo: '', pathMatch: 'full' },
 
     {
-        path: 'management', component: AssetsManagmentComponent,
+        path: '', component: AssetsManagmentComponent,
         children: [
             { path: '', redirectTo: 'all-assets', pathMatch: 'full' },
             { path: 'all-assets', loadComponent: () => import('./all-assets-list/all-assets-list.component').then((m) => m.AllAssetsListComponent) },

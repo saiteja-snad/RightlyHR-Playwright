@@ -1,1 +1,1087 @@
-<p>all-assets-list works!</p>
+<!-- <div class="custom-main-component-container mt-4">
+   
+    <div class="input-group custom-search mb-4">
+      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+      <input type="search" class="form-control custom-input custom-search-input" placeholder="search Here"
+        aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
+        aria-describedby="basic-addon1">
+    </div>
+    <ng-container *ngIf="loading; else maincontent">
+      <ng-template #loadingSpinner>
+        <div class="loader-placeholder-content text-center">
+          <div>
+            <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
+          </div>
+        </div>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+  
+    <ng-template #maincontent>
+  
+      <div class="custom-table-content">
+        <table class="w-100">
+          <thead>
+            <tr>
+               <th>Asset Category</th>
+              <th>Asset Sub Category</th>
+              <th>Serial Number</th>
+              <th>Asset Status</th>
+              <th>Allocated To</th>
+              <th>Asset ID</th>
+              <th>Location </th>
+              <th>Sub Location </th>
+              <th class="text-center">Action(s)</th>
+  
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
+              <tr *ngFor="let desk of assetslist | async">
+             
+              <td >{{ asset.assetCategory }}</td>
+              <td >{{  asset.assetCategory }}</td>
+              <td >{{ asset.serialNumber }}</td>
+              <td >{{ asset.status }}</td>
+              <td >
+                <ng-container *ngIf="asset.assignedTo; else unassigned">
+                  {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
+                  asset.assignedTo.lastName }}
+
+                </ng-container>
+                <ng-template #unassigned>
+                  N/A
+                </ng-template>
+              </td>
+              <td >{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
+              <td >{{ asset.locationName }}</td>
+              <td >{{ asset?.sublocationName || 'N/A' }}</td>
+              <td class="text-center">
+               <div class="dropdown">
+                  <a data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </a>
+                  <ul class="dropdown-menu custom-dropdown-menu">>
+                    <ng-container *ngIf="asset.status === 'Available'">
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(assiginassets); removeasset = asset.id; selectedAsset = asset;viewasetsdata(asset)">
+                          Allocate Asset
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(deleteasstes); removeasset = asset.id; selectedAsset = asset ">
+                          Inactive
+                        </a>
+                      </li>
+
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(underMaintenance); removeasset = asset.id; selectedAsset = asset">
+                          Mark as Maintenance
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(tranferaerasset); removeasset = asset.id; selectedAsset = asset;viewdatatrasfer(asset) ">
+                          Transfer Asset
+                        </a>
+                      </li>
+
+                    </ng-container>
+                    <ng-container *ngIf="asset.status === 'Allocated'">
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(updateanassets ); viewasset(asset.id); removeasset = asset.id; selectedAsset = asset;viewassetdata(asset.id); viewasetsdata(asset)">
+                          Reallocate Asset
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(releaseassets); viewasset(asset.id); removeasset = asset.id; selectedAsset = asset;viewassetdata(asset.id);viewasetsdata(asset)">
+                          Release Asset
+                        </a>
+                      </li>
+                    </ng-container>
+            
+                    <li *ngIf="asset.status === 'Under Maintenance'">
+                      <a class="dropdown-item"
+                        (click)="openModal(activeasstes); removeasset = asset.id; selectedAsset = asset">
+                        Mark as Available
+                      </a>
+                    </li>
+                    <li *ngIf="asset.status === 'Inactive'">
+                      <a class="dropdown-item"
+                        (click)="openModal(activeanasstes); removeasset = asset.id;removeasset = asset.id; selectedAsset = asset">
+                        Mark as Active
+                      </a>
+                    </li>
+                    <li>
+
+                      <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
+                        View Asset Details
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item"
+                        (click)="openmodal(addassetes); removeasset = asset.id;  viewupdate(asset);selectedAsset = asset">
+                        Update
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+              </tr>
+            </ng-container>
+        
+            <ng-template #noDataTemplate>
+              <tr>
+                <td>
+                  <app-no-data-found />
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+    </ng-template>
+  </div> -->
+
+
+
+  
+  
+  <ng-template #addassetes let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+
+      <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">Register an Asset</p>
+        </div>
+        <div>
+          <a (click)="modal.dismiss();assetForm.reset()"><img src="icons/close.png" alt="Close Icon"
+              class="close-icon"></a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content p-3">
+
+        <form [formGroup]="assetForm" >
+
+          <div class="row ">
+            <!-- Location Field -->
+            <div class=" col-md-6 mb-2">
+              <label for="location" class="form-label custom-label mb-2">Location<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName" formControlName="locationId"
+                  placeholder="Please select location" class="form-select custom-select"
+                  (onChange)="getSubLocationByid($event.value)">
+                </p-select>
+              </div>
+              <div *ngIf="assetForm.get('locationId')?.invalid && assetForm.get('locationId')?.touched"
+                class="error-msg">
+                Location is required.
+              </div>
+            </div>
+
+            <!-- Sub Location Field -->
+            <div class="col-md-6 mb-2">
+              <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
+                  formControlName="subLocationId" placeholder="Please select sub location"
+                  class="form-select custom-select"></p-select>
+              </div>
+              <div *ngIf="assetForm.get('subLocationId')?.invalid && assetForm.get('subLocationId')?.touched"
+                class="error-msg">
+                Sub Location is required.
+              </div>
+            </div>
+
+
+            <!-- Asset Category -->
+            <div class="col-md-6 mb-2">
+              <label for="assetCategory" class="form-label custom-label mb-2">Asset Category<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="assetCategorys" optionLabel="name" formControlName="assetCategory"
+                  placeholder="Please select asset category" class="form-select custom-select"
+                  (onChange)="onassetsubcategory()"></p-select>
+
+              </div>
+              <div *ngIf="assetForm.get('assetCategory')?.invalid && assetForm.get('assetCategory')?.touched">
+                <div class="error-msg">Asset category is required</div>
+              </div>
+
+            </div>
+
+            <!-- Asset Sub Category -->
+            <div class="col-md-6 mb-2">
+              <label for="assetSubCategorys" class="form-label custom-label mb-2">Asset Sub Category<span
+                  class="text-danger">*</span></label>
+
+              <div class="custom-p-select-content">
+                <p-select [options]="assetSubCategory" optionLabel="name" formControlName="assetSubCategory"
+                  placeholder="Please select asset sub category" class="form-select custom-select"></p-select>
+              </div>
+              <div *ngIf="assetForm.get('assetSubCategory')?.invalid && assetForm.get('assetSubCategory')?.touched">
+                <div class="error-msg">Asset sub category is required</div>
+              </div>
+            </div>
+
+
+            <!-- ASSET Model  -->
+            <div class="col-md-6 mb-2">
+              <label for="assetModel" class="form-label custom-label mb-2">Asset Model<span
+                  class="text-danger">*</span></label>
+              <input id="assetModel" formControlName="assetModel" class="form-control custom-input"
+                placeholder="Enter asset model">
+              <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
+                <div class="error-msg">Asset model is required</div>
+              </div>
+              <div *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
+                <div class="error-msg">Asset model cannot be more than 20 characters</div>
+              </div>
+            </div>
+
+            <div class="col-md-6  mb-2">
+              <label for="serialnumber" class="form-label custom-label mb-2">Serial Number<span
+                  class="text-danger">*</span></label>
+              <input id="serialnumber" formControlName="serialnumber" class="form-control custom-input"
+                placeholder="Enter serial number">
+              <div
+                *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
+                <div class="error-msg">Serial number is required</div>
+              </div>
+              <div
+                *ngIf="assetForm.get('serialnumber')?.hasError('maxlength') && assetForm.get('serialnumber')?.touched">
+                <div class="error-msg">Serial number cannot be more than 30 characters</div>
+              </div>
+
+            </div>
+
+            <div class="col-md-6 mb-2">
+              <label for="vendordetailes" class="form-label custom-label mb-2">Vendor Name<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="vendor" optionLabel="name" formControlName="vendordetailes"
+                  placeholder="Please select vendor name" class="form-select custom-select"></p-select>
+              </div>
+              <div *ngIf="assetForm.get('vendordetailes')?.touched && assetForm.get('vendordetailes')?.invalid">
+                <div class="error-msg">Vendor name is required</div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-2">
+              <label for="purchasedate" class="form-label custom-label mb-2">Purchase Date<span
+                  class="text-danger">*</span></label>
+              <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
+                class="form-control custom-input">
+              <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
+                <div class="error-msg">Purchase date is required</div>
+              </div>
+            </div>
+
+
+
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="custom-toggle-btn">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
+                      [checked]="isToggledWarranty" (change)="onToggleChangeWarranty($event)" />
+                  </div>
+                  <label for="isPrimary" class="form-label custom-label mb-0">Warranty Details</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-2">
+              <label for="warrantystartdate" class="form-label custom-label mb-2">Warranty Start Date<span
+                  class="text-danger" *ngIf="isToggledWarranty">*</span></label>
+              <input id="warrantystartdate" type="date" onkeypress="return false;" formControlName="warrantystartdate"
+                class="form-control custom-input" [min]="assetForm.get('purchasedate')?.value"
+                (change)="onStartDateChange()">
+              <div *ngIf="assetForm.get('warrantystartdate')?.invalid && assetForm.get('warrantystartdate')?.touched">
+                <div class="error-msg">Warranty start date is required</div>
+              </div>
+              <!-- Custom error message for mismatched dates -->
+              <div *ngIf="dateMismatch">
+                <div class="error-msg">Warranty Start date must be equal to the Purchase date</div>
+              </div>
+            </div>
+            <!-- Warranty date end -->
+            <div class="col-md-6 mb-2">
+              <label for="warrantyenddate" class="form-label custom-label mb-2">Warranty Expiry Date<span
+                  class="text-danger" *ngIf="isToggledWarranty">*</span></label>
+              <input id="warrantyenddate" type="date" onkeypress="return false;" formControlName="warrantyenddate"
+                class="form-control custom-input" [min]="assetForm.get('warrantystartdate')?.value"
+                (change)="checkDateMismatch()">
+              <div *ngIf="assetForm.get('warrantyenddate')?.invalid && assetForm.get('warrantyenddate')?.touched">
+                <div class="error-msg">Warranty expiry date is required</div>
+              </div>
+              <div *ngIf="warrantydateMismatch">
+                <div class="error-msg">Warranty expiry date must be greater than warranty start date</div>
+              </div>
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-6 mb-3">
+                <div class="custom-toggle-btn">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
+                      [checked]="isToggledamc" (change)="onToggleChangeamc($event)" />
+                  </div>
+                  <label for="isPrimary" class="form-label custom-label mb-0">AMC Details</label>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- AMC Start Date -->
+            <div class="col-md-6 mb-2">
+              <label for="amcstartdate" class="form-label custom-label mb-2">
+                AMC Start Date
+                <span class="text-danger" *ngIf="isToggledamc">*</span>
+              </label>
+              <input id="amcstartdate" type="date" onkeypress="return false;" formControlName="amcstartdate"
+                class="form-control custom-input" [min]="assetForm.get('warrantyenddate')?.value"
+                (change)="onStartDateChangeamc()" />
+              <div *ngIf="assetForm.get('amcstartdate')?.invalid && assetForm.get('amcstartdate')?.touched">
+                <div class="error-msg">AMC start date is required</div>
+              </div>
+              <div *ngIf="amcDateMismatch">
+                <div class="error-msg">AMC start date must be equal to or greater than the warranty expiry
+                  date</div>
+              </div>
+            </div>
+
+            <!-- AMC Expiry Date -->
+            <div class="col-md-6 mb-2 ">
+              <label for="amcenddate" class="form-label custom-label mb-2">
+                AMC Expiry Date
+                <span class="text-danger" *ngIf="isToggledamc">*</span>
+              </label>
+              <input id="amcenddate" type="date" formControlName="amcenddate" class="form-control custom-input"
+                onkeypress="return false;" [min]="assetForm.get('amcstartdate')?.value"
+                (change)="checkAmcDateMismatch()" />
+              <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
+                <div class="error-msg">AMC expiry date is required</div>
+              </div>
+              <div *ngIf="amcDateMismatch">
+                <div class="error-msg">AMC expiry date must be greater than AMC start date</div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-2">
+              <label for="vendordetailes" class="form-label custom-label mb-2">AMC Vendor Name<span class="text-danger"
+                  *ngIf="isToggledamc">*</span></label>
+              <input type="text" formControlName="vendorname" class="form-control custom-input" name="vendorname"
+                placeholder="AMC Vendor Name" autocomplete="off" />
+              <div *ngIf="assetForm.get('vendorname')?.invalid && assetForm.get('vendorname')?.touched">
+                <div class="error-msg">AMC Vendor Name is required</div>
+              </div>
+              <div class="error-msg" *ngIf="assetForm.get('vendorname')?.errors?.['maxlength'] ">
+                AMC Vendor Name cannot be more than 20 characters
+              </div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="vendor" class="form-label custom-label mb-2">AMC Vendor Contact<span class="text-danger"
+                  *ngIf="isToggledamc">*</span></label>
+              <input type="text" formControlName="contactnumber" class="form-control custom-input" maxlength="10"
+                minlength="10" placeholder="AMC Vendor Contact" />
+              <div class="error-msg"
+                *ngIf="assetForm.get('contactnumber')?.errors?.['required'] && assetForm.get('contactnumber')?.touched">
+                AMC vendor contact is required
+              </div>
+
+              <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['minlength'] ">
+                AMC vendor contact must be 10 digits
+              </div>
+              <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['maxlength'] ">
+                AMC vendor contact must be 10 digits
+              </div>
+
+            </div>
+
+
+          </div>
+
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">Close</button>
+            <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
+                                 ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
+                                 (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
+              Submit
+            </button>
+
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </ng-template>
+
+
+  <ng-template #conformationpopup let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to cancel?
+        </h4>
+        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+          <button type="button" class="btn inactive-no" (click)="openmodal(underMaintenance)">
+            No
+          </button>
+          <button type="submit" class="btn inactive-success" (click)="conformationpoppup();model.dismiss()">
+            Yes
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>
+  <!-- dELETE ASSETES -->
+  <ng-template #deleteasstes let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Do you want to Mark as Inactive?
+        </h4>
+        <form [formGroup]="inactiveForm" class="w-100 px-5" (ngSubmit)="postinactive(inactiveForm, removeasset)">
+          <div class="row mb-2">
+  
+            <div class="col-md-12 mb-2">
+              <label for="Department" class="form-label">Reason for Inactive <span class="redstar">*</span></label>
+              <select class="form-select" formControlName="assetsstatatues">
+                <option [ngValue]="null" disabled>Select Reason</option>
+                <option *ngFor="let email of assetinactive | async" [value]="email">
+                  {{ email }}
+                </option>
+              </select>
+              <small class="text-danger"
+                *ngIf="inactiveForm.controls['assetsstatatues'].invalid && (inactiveForm.controls['assetsstatatues'].touched || inactiveForm.controls['assetsstatatues'].dirty)">
+                <span class="text-danger" *ngIf="inactiveForm.controls['assetsstatatues'].errors?.['required']">
+                  Reason is required</span>
+              </small>
+            </div>
+  
+          </div>
+  
+          <div class="row ">
+            <div class="col-12  mb-2">
+              <label class="form-label labell">
+                Additional Comments
+              </label>
+              <div class="textarea-container">
+                <textarea class="form-control" formControlName="reason" (ngModelChange)="ifreasonnull($event)"
+                  placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+                <!-- Error messages -->
+                <div>
+                  <small class="text-danger"
+                    *ngIf="inactiveForm.get('reason')?.invalid && inactiveForm.get('reason')?.touched">
+                    <small *ngIf="inactiveForm.get('reason')?.errors?.['required']">
+                      Additional Comments is required.
+                    </small>
+                    <small *ngIf="inactiveForm.get('reason')?.errors?.['maxlength']">
+                      Additional Comments not exceed 250 characters.
+                    </small>
+                  </small>
+                </div>
+                <!-- Character count -->
+                <div class="character-count mt-2 text-end">
+                  {{ inactiveForm.get("reason")?.value?.length || 0 }}/250
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row mt-3">
+            <div class="col-12 d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary inactive-no"
+                (click)="openmodal(inativeconfromation);model.dismiss()">Cancel</button>
+              <button type="submit" class="btn btn-primary inactive-success"
+                [disabled]="inactiveForm.invalid||issubmitdiable">Submit</button>
+            </div>
+          </div>
+        </form>
+  
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #inativeconfromation let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to cancel?
+        </h4>
+        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+          <button type="button" class="btn inactive-no" (click)="openmodal(deleteasstes)">
+            No
+          </button>
+          <button type="submit" class="btn inactive-success" (click)="conformationpoppup();model.dismiss()">
+            Yes
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #releaseassets let-modal>
+    <div ngbAutofocus>
+      <div class="modal-header">
+        <h2 class="heading">Release an Asset</h2>
+        <button type="button" class="btn-close" (click)="openmodal(relaseconformation);modal.dismiss()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="releaseform" (ngSubmit)="updaterealse(releaseform,removeasset);modal.dismiss();">
+              <div class="container">
+                <div class="row">
+  
+                  <div class="col-md-6 mb-3">
+                    <label for="Department" class="form-label">Reason for Release <span class="redstar">*</span></label>
+                    <select class="form-select" formControlName="assetsstatatue">
+                      <option [ngValue]="null" disabled>Select Reason</option>
+                      <option *ngFor="let email of assetsrealse | async" [value]="email">
+                        {{ email }}
+                      </option>
+                    </select>
+                    <small class="text-danger"
+                      *ngIf="releaseform.controls['assetsstatatue'].invalid && (releaseform.controls['assetsstatatue'].touched || releaseform.controls['assetsstatatue'].dirty)">
+                      <span class="text-danger" *ngIf="releaseform.controls['assetsstatatue'].errors?.['required']">
+                        Reason is required</span>
+                    </small>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-12">
+                      <label class="form-label labell">
+                        Additional Comments
+                      </label>
+                      <div class="textarea-container">
+                        <textarea class="form-control" formControlName="reason" (ngModelChange)="ifreasonnull($event)"
+                          placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+                        <div>
+                          <small class="text-danger"
+                            *ngIf="releaseform.get('reason')?.invalid && releaseform.get('reason')?.touched">
+                            <small *ngIf="releaseform.get('reason')?.errors?.['required']">
+                              Additional Comments is required.
+                            </small>
+                            <small *ngIf="releaseform.get('reason')?.errors?.['maxlength']">
+                              Additional Comments not exceed 250 characters.
+                            </small>
+                          </small>
+                        </div>
+                        <!-- Character count -->
+                        <div class="character-count mt-2 text-end">
+                          {{ releaseform.get("reason")?.value?.length || 0 }}/250
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+  
+  
+                </div>
+  
+  
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary mt-3"
+                    (click)="openmodal(relaseconformation);modal.dismiss()">Cancel</button>
+                  <button type="submit" class="btn btn-primary mt-3" [disabled]="releaseform.invalid">Submit</button>
+                </div>
+  
+              </div>
+            </form>
+  
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #relaseconformation let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to cancel ?
+        </h4>
+        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+          <button type="button" class="btn inactive-no" (click)="openmodal(releaseassets)">
+            No
+          </button>
+          <button type="submit" class="btn inactive-success" (click)="model.dismiss()">
+            Yes
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>
+  <!-- assiginassets -->
+  
+  <ng-template #assiginassets let-modal>
+    <div ngbAutofocus>
+      <div class="modal-header">
+        <h2 class="heading">Allocate An Asset</h2>
+        <button type="button" class="btn-close" (click)="modal.dismiss();openmodal(assiginconformation)"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="assiginForm" (ngSubmit)="postAssignAssets(assiginForm,removeasset);modal.dismiss();">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="assetId" class="form-label">Asset ID<span class="redstar">*</span></label>
+                    <select class="form-select" formControlName="assetID">
+                      <option [ngValue]="null" disabled>Select </option>
+                      <option *ngFor="let item of Assetsid |async" [value]="item.id">
+                        {{ item.assetID }}
+                      </option>
+                    </select>
+                    <small *ngIf="assiginForm.get('assetID')?.invalid && assiginForm.get('assetID')?.touched">
+                      <small class="text-danger">Asset ID is required</small>
+                    </small>
+                  </div>
+                
+                  <div class="col-md-6 mb-3 d-colourdata">
+                    <label for="asseTID" class="form-label">Select Employee ID<span class="redstar">*</span></label>
+                    <ng-select [items]="employeeiddetails" bindValue="employeeId" bindLabel="displayText"
+                      [placeholder]="selectedEmployee ? selectedEmployee.fusionEmployeeId + ' ' + selectedEmployee.employeeName : 'Select Employee'"
+                      formControlName="mReportingto" [searchable]="true" [searchFn]="customSearchFn"
+                      [notFoundText]="'No data found'" (change)="onEmployeeSelect($event)" class="custom-dropdown">
+  
+                      <!-- Custom template for displaying employeeName and fusionEmployeeId -->
+                      <ng-template ng-option-tmp let-items="item">
+                        <span>{{ items.fusionEmployeeId }} - {{ items.employeeName }}</span>
+                      </ng-template>
+  
+                    </ng-select>
+                    <small *ngIf="assiginForm.get('mReportingto')?.invalid && assiginForm.get('mReportingto')?.touched">
+                      <small class="text-danger"> Employee ID is required</small>
+                    </small>
+                  </div>
+  
+                </div>
+  
+         
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary mt-3"
+                    (click)="modal.dismiss();openmodal(assiginconformation)">Cancel</button>
+                  <button type="submit" class="btn btn-primary mt-3" [disabled]="assiginForm.invalid">Submit</button>
+                </div>
+  
+              </div>
+            </form>
+  
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #assiginconformation let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to cancel ?
+        </h4>
+        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+          <button type="button" class="btn inactive-no" (click)="openmodal(assiginassets);model.dismiss()">
+            No
+          </button>
+          <button type="submit" class="btn inactive-success" (click)="resetassiginform();model.dismiss()">
+            Yes
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #updateanassets let-modal>
+    <div ngbAutofocus>
+      <div class="modal-header">
+        <h2 class="heading">Reallocate An Asset</h2>
+        <button type="button" class="btn-close" (click)="modal.dismiss();openmodal(updateconformation)"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="reassiginForm" (ngSubmit)="updatereallowed(reassiginForm,removeasset);modal.dismiss()">
+              <div class="container">
+                <div class="row">
+              
+                  <div class="col-md-6 mb-3">
+                    <label for="asseTID" class="form-label">Asset ID<span class="redstar">*</span></label>
+                    <input id="assetID" formControlName="assetid" class="form-control" placeholder="Enter asset ID">
+                    <small
+                      *ngIf="reassiginForm.get('assetid')?.hasError('required') && reassiginForm.get('assetid')?.touched">
+                      <small class="text-danger">Asset ID is required</small>
+                    </small>
+  
+                  </div>
+        
+                  <div class="col-md-6 mb-3 d-colourdata">
+                    <label for="asseTID" class="form-label">Select Employee ID<span class="redstar">*</span></label>
+                    <ng-select [items]="employeeiddetails" bindValue="employeeId" bindLabel="displayText" [notFoundText]="'No data found'"
+                      [placeholder]="selectedEmployee ? selectedEmployee.fusionEmployeeId + ' ' + selectedEmployee.employeeName : 'Select Employee'"
+                      formControlName="mReportingto" [searchable]="true" [searchFn]="customSearchFn"
+                      (change)="onEmployeeSelect($event)" class="custom-dropdown">
+  
+                      <!-- Custom template for displaying employeeName and fusionEmployeeId -->
+                      <ng-template ng-option-tmp let-items="item">
+                        <span>{{ items.fusionEmployeeId }} - {{ items.employeeName }}</span>
+                      </ng-template>
+  
+                    </ng-select>
+                    <small
+                      *ngIf="reassiginForm.get('mReportingto')?.invalid && reassiginForm.get('mReportingto')?.touched">
+                      <small class="text-danger">Employee ID is required</small>
+                    </small>
+                  </div>
+  
+                </div>
+  
+  
+  
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary mt-3"
+                    (click)="modal.dismiss();openmodal(updateconformation)">Cancel</button>
+                  <button type="submit" class="btn btn-primary mt-3" [disabled]="reassiginForm.invalid">Submit</button>
+                </div>
+  
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #updateconformation let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to cancel ?
+        </h4>
+        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+          <button type="button" class="btn inactive-no" (click)="openmodal(updateanassets);model.dismiss()">
+            No
+          </button>
+          <button type="submit" class="btn inactive-success" (click)="resetassiginform();model.dismiss()">
+            Yes
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>
+  
+  
+  <ng-template #tranferaerasset let-modal>
+    <div ngbAutofocus>
+      <div class="modal-header">
+        <h2 class="heading">Transfer An Asset</h2>
+        <button type="button" class="btn-close" (click)="modal.dismiss();openmodal(tranferconformation)"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="locationfromdata"
+              (ngSubmit)="updatetranferlocation(locationfromdata,removeasset);modal.dismiss()">
+              <div class="container">
+                <div class="row ">
+                  <div class="col-md-6 mb-3">
+                    <label for="perlocation" class="form-label">Location<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="perisionlocation" class="form-control"
+                      placeholder="Enter Location" />
+  
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="persubLocation" class="form-label">Sub Location<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="pervessublocation" class="form-control"
+                      placeholder="Enter Sub Location" />
+  
+                  </div>
+                </div>
+  
+                <div class="row ">
+                  <div class="col-md-6 mb-3">
+                    <label for="location" class="form-label">Transfer Location<span class="text-danger">*</span></label>
+                    <select id="location" formControlName="locationId" class="form-select">
+                      <option [ngValue]="null">Select Transfer Location</option>
+                      <option *ngFor="let location of locations" [value]="location.id">{{ location.jobLocationName }}
+                      </option>
+                    </select>
+                    <small
+                      *ngIf="locationfromdata.get('locationId')?.invalid && locationfromdata.get('locationId')?.touched"
+                      class="text-danger">
+                      Location is required.
+                    </small>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="subLocation" class="form-label">Transfer Sub Location<span
+                        class="text-danger">*</span></label>
+                    <select id="subLocation" formControlName="subLocationId" class="form-select">
+                      <option [ngValue]="null">Select Transfer Sub Location</option>
+                      <option *ngFor="let subLocation of subLocations" [value]="subLocation.id">
+                        {{ subLocation.jobSubLocationName }}
+                      </option>
+                    </select>
+                    <small
+                      *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
+                      class="text-danger">
+                      Sub location is required.
+                    </small>
+                  </div>
+                </div>
+  
+                <div class="row">
+                  <div class="col-12">
+                    <label for="comments" class="form-label">
+                      Transfer Reason
+                    </label>
+                    <div class="textarea-container">
+                      <textarea class="form-control" formControlName="comments" (ngModelChange)="ifreasonnull($event)"
+                        placeholder="Please enter reason" maxlength="250" rows="3"></textarea>
+                      <!-- Error messages -->
+                      <div>
+                        <small class="text-danger"
+                          *ngIf="locationfromdata.get('comments')?.invalid && locationfromdata.get('comments')?.touched">
+                          <small *ngIf="locationfromdata.get('comments')?.errors?.['required']">
+                            Transfer Reason is required.
+                          </small>
+                          <small *ngIf="locationfromdata.get('comments')?.errors?.['maxlength']">
+                            Transfer Reason must not exceed 250 characters.
+                          </small>
+                        </small>
+                      </div>
+                      <!-- Character count -->
+                      <div class="character-count mt-2 text-end">
+                        {{ locationfromdata.get("comments")?.value?.length || 0 }}/250
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary"
+                    (click)="modal.dismiss();openmodal(tranferconformation)">Cancel</button>
+                  <button type="submit" class="btn btn-primary" [disabled]="locationfromdata.invalid">Submit</button>
+                </div>
+              </div>
+  
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+  
+  <ng-template #tranferconformation let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to cancel ?
+        </h4>
+        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+          <button type="button" class="btn inactive-no" (click)="openmodal(tranferaerasset)">
+            No
+          </button>
+          <button type="submit" class="btn inactive-success" (click)="resetassiginform();model.dismiss()">
+            Yes
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #underMaintenance let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to Mark as Maintenance?
+        </h4>
+  
+        <form [formGroup]="undermainteenceForm" class="w-100 px-5 mb-5"
+          (ngSubmit)="postudermaitence(undermainteenceForm, removeasset); model.dismiss(); resetallform()">
+          <div class="container">
+            <div class="row ">
+              <div class="col-md-12 mb-3">
+  
+                <label for="Department" class="form-label">Select Reason <span class="redstar">*</span></label>
+                <select class="form-select" formControlName="assetsstatatues">
+                  <option [ngValue]="null" disabled>Select Reason</option>
+                  <option *ngFor="let email of assetsstatuses | async" [value]="email">
+                    {{ email }}
+                  </option>
+                </select>
+                <small class="text-danger"
+                  *ngIf="undermainteenceForm.controls['assetsstatatues'].invalid && (undermainteenceForm.controls['assetsstatatues'].touched || undermainteenceForm.controls['assetsstatatues'].dirty)">
+                  <span class="text-danger" *ngIf="undermainteenceForm.controls['assetsstatatues'].errors?.['required']">
+                    Reason is required</span>
+                </small>
+  
+              </div>
+            </div>
+  
+  
+            <div class="row">
+              <div class="col-12">
+                <label for="comments" class="form-label">
+                  Additional Comments
+                </label>
+                <div class="textarea-container">
+                  <textarea class="form-control" formControlName="comments" (ngModelChange)="ifreasonnull($event)"
+                    placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+                  <!-- Error messages -->
+                  <div>
+                    <small class="text-danger"
+                      *ngIf="undermainteenceForm.get('comments')?.invalid && undermainteenceForm.get('comments')?.touched">
+                      <small *ngIf="undermainteenceForm.get('comments')?.errors?.['required']">
+                        Additional Comments is required.
+                      </small>
+                      <small *ngIf="undermainteenceForm.get('comments')?.errors?.['maxlength']">
+                        Additional Comments must not exceed 250 characters.
+                      </small>
+                    </small>
+                  </div>
+                  <!-- Character count -->
+                  <div class="character-count mt-1 text-end">
+                    {{ undermainteenceForm.get("comments")?.value?.length || 0 }}/250
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+  
+              <div class="col-md-6">
+                <label for="startdate" class="form-label">Start Date</label>
+                <input id="startdate" type="date" onkeypress="return false;" [min]="getToday()" formControlName="startdate" class="form-control">
+                <small
+                  *ngIf="undermainteenceForm.get('startdate')?.invalid && undermainteenceForm.get('startdate')?.touched">
+                  <small class="text-danger">Start date is required</small>
+                </small>
+              </div>
+  
+              <div class="col-md-6 ">
+                <label for="endate" class="form-label">End Date</label>
+                <input id="enddate" type="date" onkeypress="return false;"  formControlName="enddate" [min]="getToday()" class="form-control">
+                <small *ngIf="undermainteenceForm.get('enddate')?.invalid && undermainteenceForm.get('enddate')?.touched">
+                  <small class="text-danger">End date is required</small>
+                </small>
+                <small *ngIf="datesShouldNotBeEqual">
+                  <small class="text-danger">End date must be greater than start date</small>
+                </small>
+              </div>
+  
+            </div>
+            <div class="row ">
+              <div class="col-md-12 mt-1">
+                <div class="mb-3 d-flex align-items-center">
+                  <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
+                      [checked]="isToggledvender" (change)="onToggleChangevender($event)" />
+                  </div>
+                  <label for="flexSwitchCheckCheckedIsPrimary" class=" mb-9"> Vendor Details </label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="vendordetailes" class="form-label">Contact Name<span class="redstar"
+                    *ngIf="isToggledvender">*</span></label>
+                <input type="text" formControlName="vendorname" class="form-control" placeholder="Contact Name"
+                   />
+                <small
+                  *ngIf="undermainteenceForm.get('vendorname')?.invalid && undermainteenceForm.get('vendorname')?.touched">
+                  <small class="text-danger">Contact Name is required</small>
+                </small>
+              </div>
+  
+              <div class="col-md-6 mb-3">
+                <label for="vendor" class="form-label">Contact Number<span class="redstar"
+                    *ngIf="isToggledvender">*</span></label>
+                <input type="text" formControlName="contactnumber" class="form-control" placeholder="Contact Number"
+                  maxlength="10" />
+                <small
+                  *ngIf="undermainteenceForm.get('contactnumber')?.invalid && undermainteenceForm.get('contactnumber')?.touched">
+                  <small class="text-danger">Contact Number is required</small>
+                </small>
+                <small *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['maxlength']" class="text-danger">
+                  Contact Number cannot exceed 10 digits
+                </small>
+              </div>
+            </div>
+  
+  
+          </div>
+  
+          <div class="row mt-3">
+            <div class="col-12 d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary inactive-no"
+                (click)="openmodal(conformationpopup);model.dismiss()">Cancel</button>
+              <button type="submit" class="btn btn-primary inactive-success"
+                [disabled]="undermainteenceForm.invalid">Submit</button>
+            </div>
+          </div>
+        </form>
+  
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #activeasstes let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to mark this Asset as Available? </h4>
+        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around ">
+          <button type="button" class="btn inactive-no me-4" (click)="model.dismiss()">
+            No
+          </button>
+          <button type="submit" class="btn inactive-success" (click)="avaliableassets(removeasset);model.dismiss()">
+            Yes
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #activeanasstes let-model>
+    <div ngbAutofocus>
+      <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">
+          Are you sure you want to mark this Asset as Active? </h4>
+        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around ">
+          <button type="button" class="btn inactive-no me-4" (click)="model.dismiss()">
+            No
+          </button>
+          <button type="submit" class="btn inactive-success" (click)="activeassets(removeasset);model.dismiss()">
+            Yes
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  </ng-template>

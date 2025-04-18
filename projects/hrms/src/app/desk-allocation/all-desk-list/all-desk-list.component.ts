@@ -619,7 +619,7 @@ export class AllDeskListComponent {
         error: (error) => {
           console.log('Error:', error);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(error.error?.Message || 'Error occurred during assignment.');
+          this.conformationPopup.openErrorModal(error.error?.Message || 'Error occurred during assignment.');
 
         }
       });

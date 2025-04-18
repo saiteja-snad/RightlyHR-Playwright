@@ -26,6 +26,7 @@ export class TimeOffTabsComponent {
     { label: 'Attendance', link: '/time-off/attendance' },
     { label: 'On Behalf Of', link: '/time-off/on-behalf-of/waiting-for-approval',permission: { feature: 'On Behalf Of Tab', action: 'view' } },
     { label: 'On Behalf Of Approvals', link: '/time-off/on-behalf-of-approvals',permission: { feature: 'On Behalf Of Approvals Tab', action: 'view' } },
-    {label:'Remote Login',link:'/time-off/remote'}
+    {label:'Remote Login',link:'/time-off/remote'},
+    {label:'Global-Permissions',link:'/time-off/global-permissions'}
   ];
 }

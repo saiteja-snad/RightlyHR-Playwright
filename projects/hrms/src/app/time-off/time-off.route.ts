@@ -68,6 +68,7 @@ import { RemoteWaitingForApprovalComponent } from './remote-login/remote-waiting
 import { RemoteApprovedComponent } from './remote-login/remote-approved/remote-approved.component';
 import { RemoteProcessedComponent } from './remote-login/remote-processed/remote-processed.component';
 import { RemoteRejectedComponent } from './remote-login/remote-rejected/remote-rejected.component';
+import { GlobalPermissionsComponent } from './global-permissions/global-permissions.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -281,5 +282,8 @@ export default [
       { path: 'wfh', component: WfhComponent },
       { path: 'permissions', component: PermissionsComponent },
     ],
+  },
+  { path: 'global-permissions', component: GlobalPermissionsComponent,
+   
   },
 ] as Route[];

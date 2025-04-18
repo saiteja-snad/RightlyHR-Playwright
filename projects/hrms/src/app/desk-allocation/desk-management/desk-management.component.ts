@@ -6,12 +6,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
-import { Select } from 'primeng/select';
+
 import { OpenModalService } from '../../services/open-modal.service';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-desk-management',
-  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule,Select ],
   templateUrl: './desk-management.component.html',
   styleUrl: './desk-management.component.scss'
 })

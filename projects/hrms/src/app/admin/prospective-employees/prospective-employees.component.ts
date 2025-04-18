@@ -10,6 +10,7 @@ import { Iprospective } from './Prospective-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProspectivePipe } from '../../Pipes/prospective.pipe';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-prospective-employees',
   imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent],
@@ -23,7 +24,7 @@ export class ProspectiveEmployeesComponent implements OnInit {
   jobLocationDropDownData = {} as any;
   emp = {} as any;
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService,private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.empdata();
@@ -54,8 +55,8 @@ export class ProspectiveEmployeesComponent implements OnInit {
   }
 
   openAddProspective() {
-    this.modalService.open(AddProspectiveEmployeeComponent, { centered: true, backdrop: 'static', size: 'lg' });
-  }
+      this.modalService.open(AddProspectiveEmployeeComponent, { centered: true, backdrop: 'static', size: 'lg' });
+    }
 
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])

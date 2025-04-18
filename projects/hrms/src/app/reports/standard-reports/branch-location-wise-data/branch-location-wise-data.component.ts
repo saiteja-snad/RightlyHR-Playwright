@@ -11,12 +11,16 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
-import { EmployeeDetails, IFamilyDetails } from '../../../Interfaces/reports.model';
+import { Branch, EmployeeDetails, IFamilyDetails } from '../../../Interfaces/reports.model';
 import { Subject, takeUntil } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx';
 import { StandardReportTabsComponent } from '../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component';
+import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
+import { environment } from '../../../../environments/environment';
+import dayjs, { Dayjs } from 'dayjs';
+import moment from 'moment';
 
 @Component({
   selector: 'app-branch-location-wise-data',
@@ -28,6 +32,7 @@ import { StandardReportTabsComponent } from '../../../shared/reports-tabs/standa
     NoDataFoundComponent,
     StandardReportTabsComponent,
     DateformatPipe,
+    NgxDaterangepickerBootstrapDirective,
   ],
   templateUrl: './branch-location-wise-data.component.html',
   styleUrl: './branch-location-wise-data.component.scss',
@@ -38,6 +43,25 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   familydata = [] as IFamilyDetails[];
   destroy$: Subject<boolean> = new Subject<boolean>();
   standardReportData = [] as EmployeeDetails [];
+  branchLocations= [] as Branch [];
+  localeOptions: any = {
+    applyLabel: 'ok',
+    format: environment.dateformat.toUpperCase(),
+    direction: 'ltr',
+    clearLabel: 'Clear', // could be rtl
+  };
+  branchLocationDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
+  ranges: any = {
+      Today: [dayjs(), dayjs()],
+      Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
+      'Last 7 Days': [dayjs().subtract(6, 'days'), dayjs()],
+      'Last 30 Days': [dayjs().subtract(29, 'days'), dayjs()],
+      'This Month': [dayjs().startOf('month'), dayjs().endOf('month')],
+      'Last Month': [
+        dayjs().subtract(1, 'month').startOf('month'),
+        dayjs().subtract(1, 'month').endOf('month'),
+      ],
+  };
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -47,12 +71,14 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.getBranchLocations();
     this.getBranchWiseData();
   }
 
   initializeForm() {
     this.reportForm = this.fb.group({
-      status: ['All Employees', Validators.required],
+      location: ['', Validators.required],
+      dateOfJoining:[null,Validators.required]
     });
   }
 
@@ -81,10 +107,31 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
 
   onSubmit(form: FormGroup) {
     if (form.valid) {
-      if (form.value.status === 'All Employees') this.getBranchWiseData();
-      else this.getBranchWiseData(form.value.status);
+      const formData = form.value;
+  
+      const startDate = moment(formData.dateOfJoining?.startDate).format('YYYY-MM-DD');
+      const endDate = moment(formData.dateOfJoining?.endDate).format('YYYY-MM-DD');
+  
+      const location = formData.location || '';
+  
+      const apiUrl = `Reports/standardReportsWithoutPagination?EmployeeStatus=&DOJStart=${startDate}&DOJEnd=${endDate}&BranchCode=${location}`;
+  
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.standardReportData = res.standardReports;
+            console.log(this.standardReportData);
+          }
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+        complete: () => {}
+      });
     }
   }
+  
+  
 
   getFileName(name: string | undefined) {
     let timeSpan = new Date().toISOString();
@@ -105,6 +152,32 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
 
     // Set minimum width to 10
     return Math.max(10, maxWidth);
+  }
+
+  getBranchLocations() {
+  this.http.getData('BranchLocation').subscribe({
+      next: (res: any) => {
+        if (res) {
+          this.branchLocations = res;
+          if (this.branchLocations.length > 0) {
+            this.branchLocations.unshift({
+              sno: -1,
+              branchCode: 'ALL',
+              branchLocation1: 'All Branch Locations',
+              isDeleted: false
+            });
+            this.reportForm.patchValue({
+              location: this.branchLocations[0] 
+            });
+          }
+          
+        }
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+      complete: () => {},
+    });
   }
 
   exportAsExcelFile(): void {

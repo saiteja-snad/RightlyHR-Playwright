@@ -112,3 +112,11 @@ export interface EmployeeDetails {
   gradeName: string;
 }
 
+
+export interface Branch {
+  sno: number;
+  branchCode: string;
+  isDeleted: boolean;
+  branchLocation1: string;
+}
+

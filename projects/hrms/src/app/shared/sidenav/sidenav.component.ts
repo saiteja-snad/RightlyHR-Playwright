@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -10,5 +11,7 @@ import { RouterModule } from '@angular/router';
 })
 
 export class SidenavComponent {
+  constructor(public rbac: RbacService,) {
 
+  }
 }

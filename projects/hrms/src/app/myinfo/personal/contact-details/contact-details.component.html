@@ -9,13 +9,15 @@
       </div>
       <div class="d-flex gap-3" *ngIf="buttons">
         <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid" (click)="updateAddressInfo()">Save</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid"
+          (click)="updateAddressInfo()">Save</button>
       </div>
     </div>
 
     <!-- Reactive Form -->
     <form [formGroup]="contactForm">
       <div class="row">
+        @if(this.rbac.allowedToAccess('Contact Details.view')){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="workNumber" class="form-label custom-label mb-2">Work Number<span
               class="text-danger">*</span></label>
@@ -36,8 +38,8 @@
             <div *ngIf="contactForm.get('workNumber')?.hasError('invalidPhoneNumber')">The phone number is not valid
               for the selected country.</div>
           </div>
-        </div>
-
+        </div>}
+        @if(this.rbac.allowedToAccess('Contact Details.view')){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
               class="text-danger">*</span></label>
@@ -60,8 +62,8 @@
             <div *ngIf="contactForm.get('phoneNumber')?.hasError('invalidPhoneNumber')">The phone number is not valid
               for the selected country.</div>
           </div>
-        </div>
-
+        </div>}
+        @if(this.rbac.allowedToAccess('Contact Details.view')){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="workMail" class="form-label custom-label mb-2">Work Mail<span class="text-danger">*</span></label>
           <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail"
@@ -71,7 +73,7 @@
             <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work email must be a valid email address</div>
           </div>
         </div>
-
+        } @if(this.rbac.allowedToAccess('Contact Details.view')){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span
               class="text-danger">*</span></label>
@@ -83,7 +85,7 @@
             <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email
               address</div>
           </div>
-        </div>
+        </div>}
       </div>
     </form>
   </div>

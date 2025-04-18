@@ -26,7 +26,8 @@ export const permissionsData = [
     {  fields: 'Onboard Request', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Change RM button', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'No Due Clearance', View: false, Update: false, Create: false, Delete: false },
-
+    // {  fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false},
+    
     //Employee Info Fields
     { fields: 'Employee Basic Information', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Current Address', View: false, Update: false, Create: false, Delete: false },
@@ -56,7 +57,7 @@ export const permissionsData = [
     { fields: 'Last Working Day', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Change RM button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee No Due Request', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Probation Details', View: false, Update: false, Create: false, Delete: false },
 
     //Dashboard menubar
     { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
@@ -118,6 +119,7 @@ export const permissionsData = [
     // {fields: 'Trainee Appointment Letter', View: false, Update: false, Create: false, Delete:false},
     { fields: 'Document History', View: false, Update: false, Create: false, Delete: false },
     { fields: 'On Behalf Of Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'On Behalf Of Approvals Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Separation Requests Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Documents Upload Button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Standard Reports', View: false, Update: false, Create: false, Delete: false },

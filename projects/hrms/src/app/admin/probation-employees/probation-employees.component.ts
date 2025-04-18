@@ -29,6 +29,7 @@ export class ProbationEmployeesComponent {
   ngOnInit(): void {
     this.getProbationEmployees()
   }
+  
   getProbationEmployees() {
     this.subscription = this.http.getData(`ProbationFlow/getProbationEmployeesStatus`).subscribe({
       next: (data: any) => {

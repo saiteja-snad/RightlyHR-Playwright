@@ -157,7 +157,7 @@ export class OnboardingDetailsComponent {
   patchForm(data: any): void {
     // Patching values for onboardingForm
     this.onboardingForm.patchValue({
-      status: this.Statusdetails.find((item: any) => item?.statusname === data?.empstatus),
+      status: this.Statusdetails?.find((item: any) => item?.statusname === data?.empstatus),
       dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
       branchLocation: this.branchLocations.find((item: any) => item.branchCode === data?.branchCode),
       probationEndDate: data.probationEndDate ? moment(data.probationEndDate).format('yyyy-MM-DD') : null,
@@ -196,9 +196,9 @@ export class OnboardingDetailsComponent {
       next: (data: any) => {
         this.Statusdetails = data as IStatus[];
         console.log(this.Statusdetails);
-        if (this.empinfo.empstatus == 'Prospective') {
-          const filteredData = data.filter((status: IStatus) => {
-            const lowerCaseStatusName = status.statusname.toLowerCase();
+        if (this.empinfo?.empstatus == 'Prospective') {
+          const filteredData = data?.filter((status: IStatus) => {
+            const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
               lowerCaseStatusName === 'active' ||
               lowerCaseStatusName === 'inactive' ||
@@ -207,9 +207,9 @@ export class OnboardingDetailsComponent {
           });
           console.log(filteredData);
           this.Statusdetails = filteredData;
-        } else if (this.empinfo.empstatus == 'Active') {
-          const filteredData = data.filter((status: IStatus) => {
-            const lowerCaseStatusName = status.statusname.toLowerCase();
+        } else if (this.empinfo?.empstatus == 'Active') {
+          const filteredData = data?.filter((status: IStatus) => {
+            const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
               lowerCaseStatusName === 'active' ||
               lowerCaseStatusName === 'inactive'
@@ -217,9 +217,9 @@ export class OnboardingDetailsComponent {
           });
           console.log(filteredData);
           this.Statusdetails = filteredData;
-        } else if (this.empinfo.empstatus.toLocaleLowerCase() == 'inactive') {
-          const filteredData = data.filter((status: IStatus) => {
-            const lowerCaseStatusName = status.statusname.toLowerCase();
+        } else if (this.empinfo?.empstatus?.toLowerCase() == 'inactive') {
+          const filteredData = data?.filter((status: IStatus) => {
+            const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
               lowerCaseStatusName === 'active' ||
               lowerCaseStatusName === 'inactive'
@@ -228,34 +228,34 @@ export class OnboardingDetailsComponent {
           console.log(filteredData);
           this.Statusdetails = filteredData;
         }
-        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee') {
-          const filteredData = data.filter((status: IStatus) => {
-            const lowerCaseStatusName = status.statusname.toLowerCase();
+        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee') {
+          const filteredData = data?.filter((status: IStatus) => {
+            const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active' 
             || lowerCaseStatusName === 'inactive' 
             || lowerCaseStatusName === 'trainee';
           });
           this.Statusdetails = filteredData
         }
-        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee prospective') {
-          const filteredData = data.filter((status: IStatus) => {
-            const lowerCaseStatusName = status.statusname.toLowerCase();
+        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee prospective') {
+          const filteredData = data?.filter((status: IStatus) => {
+            const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active' || lowerCaseStatusName === 'trainee prospective';
           });
 
           this.Statusdetails = filteredData
         }
-        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee active') {
-          const filteredData = data.filter((status: IStatus) => {
-            const lowerCaseStatusName = status.statusname.toLowerCase();
+        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee active') {
+          const filteredData = data?.filter((status: IStatus) => {
+            const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active';
           });
           this.Statusdetails = filteredData
 
         }
-        else if (this.empinfo.empstatus.toLocaleLowerCase() == 'trainee inactive') {
-          const filteredData = data.filter((status: IStatus) => {
-            const lowerCaseStatusName = status.statusname.toLowerCase();
+        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee inactive') {
+          const filteredData = data?.filter((status: IStatus) => {
+            const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee inactive';
           });
           //console.log(filteredData);

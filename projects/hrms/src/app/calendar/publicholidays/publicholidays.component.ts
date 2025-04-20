@@ -30,8 +30,8 @@ export class PublicholidaysComponent {
   years: number[] = [];
   empinfo = {} as any;
   navTabs: any[] = [
-    { label: 'Public Holidays', link: '/calendar/holiday/public-holidays' },
-    { label: 'Optional Holidays', link: '/calendar/holiday/optional-holidays' },
+    { label: 'Public Holidays', link: '/calendar/holiday/public-holidays',permission: { feature: 'Holidays', action: 'view' }},
+    { label: 'Optional Holidays', link: '/calendar/holiday/optional-holidays',permission: { feature: 'Holidays', action: 'view'} },
    
   ];
 

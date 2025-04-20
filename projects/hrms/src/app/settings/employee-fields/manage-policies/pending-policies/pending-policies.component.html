@@ -1,10 +1,111 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <div><span class="component-sub-header">Policies Management</span></div>
-      <div class="custom-add-btn">
-        <i class="bi bi-plus plus-icon me-1" (click)="nagvition()"></i>Add New
+      <div><span class="component-sub-header">Manage Policies</span></div>
+      <div class="custom-add-btn" (click)="nagvition()">
+        <i class="bi bi-plus plus-icon me-1"></i>Add Policy
       </div>
     </div>
   
-
+    <div class="custom-table-content">
+      <table class="w-100">
+          <thead>
+              <tr>
+                 <th>Year</th>
+                 <th>Location</th>
+                 <th>Sub Location</th>
+                 <th>Shift Name</th>
+                 <th>Status</th>
+                 <th>Added By</th>
+                 <th>Action(s)</th>
+              </tr>
+          </thead>
+          <tbody>
+            <ng-container>
+              <tr *ngFor="let item of policiesData">
+                <td>{{ item.applicableyear }}</td>
+                <td>{{item.locationName }}</td>
+                <td>{{ item.subLocationName }}</td>
+                <td>{{ item.shiftName }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.addedbyName }}</td>
+                <td class="text-center">
+                  <div class="dropdown">
+                      <a data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="bi bi-three-dots-vertical"></i>
+                      </a>
+                      <ul class="dropdown-menu custom-dropdown-menu">
+                          <li><a class="dropdown-item"
+                                  (click)="openModal(updateModal);onClick(item)"><i
+                                      class="bi bi-pencil me-2"></i>Update</a></li>
+                      </ul>
+                  </div>
+              </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        
+      </table>
   </div>
+
+</div>
+<ng-template #updateModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <!-- Modal Header -->
+    <div class="d-flex justify-content-between popup-header-border p-4">
+      <p class="popup-heading mb-0 pt-2">Update Policy</p>
+      <a (click)="modal.dismiss()">
+        <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+      </a>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="card custom-card p-3">
+      <form [formGroup]="policiesForm" (ngSubmit)="submitpolicy(policiesForm)">
+        <div class="row g-3">
+          <!-- Year -->
+          <div class="col-md-4">
+            <label class="form-label custom-label">Year</label>
+            <input type="text" class="form-control custom-input" [value]="selectedItem?.applicableyear" readonly />
+          </div>
+
+          <!-- Location -->
+          <div class="col-md-4">
+            <label class="form-label custom-label">Location</label>
+            <input type="text" class="form-control custom-input" [value]="selectedItem?.locationName" readonly />
+          </div>
+
+          <!-- Shift -->
+          <div class="col-md-4">
+            <label class="form-label custom-label">Shift</label>
+            <input type="text" class="form-control custom-input" [value]="selectedItem?.shiftName" readonly />
+          </div>
+
+          <!-- Policy Name -->
+          <div class="col-md-6">
+            <label class="form-label custom-label">Policy Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" formControlName="policyName" placeholder="Enter Policy Name" />
+          </div>
+
+          
+          <div class="col-md-6">
+            <label class="form-label custom-label">Policy Attachment (Image and PDF only)</label>
+            <input type="file" class="form-control custom-input" />
+          </div>
+
+         
+          <div class="col-md-12">
+            <label class="form-label custom-label">Description</label>
+            <textarea class="form-control custom-input" formControlName="description" rows="3" placeholder="Enter description..."></textarea>
+          </div>
+        </div>
+
+        
+        <div class="mt-4 d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary me-2" [disabled]="policiesForm.invalid">Update</button>
+          <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+

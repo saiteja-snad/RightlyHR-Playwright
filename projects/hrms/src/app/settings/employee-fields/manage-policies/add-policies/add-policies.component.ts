@@ -88,7 +88,7 @@ export class AddPoliciesComponent {
         authorizedDate: new Date().toISOString(),
         authorizedstatus: 'string',
         shiftID: formValue.shift,
-        orgHolidaysItems: formValue.policies.map((item: any) => ({
+        orgPolicyItems: formValue.policies.map((item: any) => ({
           policyName: item.policyName,
           policyDescription: item.policyDescription,
           policyAttachment: item.policyAttachment,

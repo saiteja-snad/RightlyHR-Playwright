@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 export class ManagePoliciesTabsComponent {
   navLinks = [
     { label: 'Pending For Submit', route: '/settings/employee-fields/manage-policies/pending-for-submit' },
-    { label: 'Published Shifts', route: '/settings/employee-fields//manage-policies/published-policies' },
+    { label: 'Published Policies', route: '/settings/employee-fields//manage-policies/published-policies' },
 
   ];
 }

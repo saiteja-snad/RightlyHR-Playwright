@@ -10,6 +10,9 @@ import { ILocation, ILocationReportData, ISubLocation } from './location-reports
 import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReportsService } from '../../../services/reports/reports.service';
+import { IStandardReportRequest } from '../../../Interfaces/reports.model';
+import * as XLSX from "xlsx";
+import { IJob } from '../../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-job-location-wise-data',
@@ -18,14 +21,18 @@ import { ReportsService } from '../../../services/reports/reports.service';
   styleUrls: ['./job-location-wise-data.component.scss']
 })
 export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
+  spinnerLoader = false;
   locationReportsForm!: FormGroup;
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
   locationReportList = [] as ILocationReportData[];
+  empinfo = {} as IJob;
+
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     // this.handleFormValueChanges();
     this.getStandardReports();
@@ -36,7 +43,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     private reports: ReportsService,
     private http: HttpService,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   initializeForm() {
     this.locationReportsForm = this.fb.group({
@@ -49,7 +56,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   get dateOfJoiningControl(): FormControl {
     return this.locationReportsForm.get('dateOfJoining') as FormControl;
   }
-  
+
   getAllLocations(): void {
     this.reports.getJobLocations().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => this.locationDetails = res.jobLocations || [],
@@ -139,22 +146,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   getStandardReports() {
     const params = new URLSearchParams();
-    const formData = this.locationReportsForm.value;
-
-    if (formData.dateOfJoining?.startDate && formData.dateOfJoining?.endDate) {
-      const startDate = dayjs(formData.dateOfJoining.startDate).format('YYYY-MM-DD');
-      const endDate = dayjs(formData.dateOfJoining.endDate).format('YYYY-MM-DD');
-      params.append('DOJStart', startDate);
-      params.append('DOJEnd', endDate);
-    }
-
-    if (formData.location && formData.location != "All Job Locations") {
-      params.append('JobLocation', formData.location.jobLocationName.toString());
-    }
-
-    if (formData.subLocation && formData.subLocation != "All Job Sub Locations") {
-      params.append('SubLocation', formData.subLocation.jobSubLocationName.toString());
-    }
 
     const endpoint = params.toString() ? `Reports/standardReportsWithoutPagination?${params.toString()}` : 'Reports/standardReportsWithoutPagination';
     this.http.getData(endpoint).pipe(takeUntil(this.destroy$))
@@ -166,6 +157,159 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
           console.log(err);
         }
       });
+  }
+
+  onSubmit(form: FormGroup) {
+    if (form.valid) {
+      const formData = form.value;
+
+      const request: IStandardReportRequest = {
+        dateRange: {
+          startDate: formData.dateOfJoining.startDate,
+          endDate: formData.dateOfJoining.endDate,
+        },
+        selectedJobLocation: formData.location.jobLocationName.toString(),
+        selectedJobSubLocation: formData.subLocation.jobSubLocationName.toString()
+
+      };
+      this.reports
+        .getStandardReports(request)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            if (res) {
+              this.locationReportList = res.standardReports || [];
+            }
+          },
+          error: (err: any) => {
+            console.log(err);
+          },
+        });
+    }
+  }
+
+  onClickJobLocationExport() {
+    this.spinnerLoader = true;
+    let { arrayBuffer, fileName } = this.exportTableToExcel("jobLocation", "Job_location_wise_data")
+
+    this.uploadReports(arrayBuffer, fileName)
+    this.createReportLog("Job Location Wise Data")
+  }
+
+  exportTableToExcel(tableId: string, name?: string) {
+    let { sheetName, fileName } = this.getFileName(name);
+    let targetTableElm = document.getElementById(tableId);
+    let wb = XLSX.utils.table_to_book(targetTableElm, <XLSX.Table2SheetOpts>{
+      sheet: sheetName
+    });
+    let ws = wb.Sheets[sheetName];
+    this.convertHeadersToUpperCase(ws);
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
+    let arrayBuffer = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    return { arrayBuffer, fileName }
+  }
+
+  getFileName(name: string | undefined) {
+    let timeSpan = new Date().toISOString();
+    let sheetName = name || "ExportResult";
+    let fileName = `${sheetName}-${timeSpan}`;
+    return {
+      sheetName,
+      fileName
+    }
+  }
+
+  private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
+      let cell = ws[cellAddress];
+
+      if (cell && cell.v) {
+        cell.v = cell.v.toString().toUpperCase(); // Convert to uppercase
+        cell.w = cell.v; // Ensure display is updated
+      }
+    }
+  }
+
+  uploadReports(reportsData: any, fileName: string) {
+    const reportFile = new File([reportsData], `${fileName}.xlsx`, {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }
+    );
+    let filePath = `/FusionDocuments/Employee Documents/Reports/${this.empinfo.employeeId}`;
+    this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, reportFile)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.ReportEmail(data.path, fileName);
+          //window.location.reload();
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          this.spinnerLoader = false;
+          alert('file upload  is failed');
+        },
+      });
+  }
+
+  ReportEmail(docUrl: string, fileName: string) {
+    let loggedInUser = this.empinfo;
+    //let filetitle = this.fileName.reports;
+    //console.log(filetitle);
+    const date = new Date();
+    let reportdata = {
+      employeeId: loggedInUser.employeeId,
+      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+      documentUrl: docUrl,
+      reporttitle: fileName,
+      date: date,
+      senderEmail: loggedInUser.workEmail,
+    };
+    if (loggedInUser.middleName) {
+
+      reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
+
+    } else {
+      reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
+
+    }
+    console.log(reportdata);
+
+    this.http
+      .postdata(`CustomEmail/Reports`, reportdata)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+        },error: (err: any) =>{
+          this.spinnerLoader = false;
+        }
+      });
+  }
+
+  createReportLog(reportName: string) {
+    const req = {
+
+      generatedBy: this.empinfo.employeeId,
+      reportsType: "Standard Reports",
+      reportsName: reportName
+    }
+
+    this.http.postdata("ReportsLog", req).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.spinnerLoader = false;
+      },
+      error: (err) => {
+        console.log(err);
+        this.spinnerLoader = false;
+      },
+      complete: () => { }
+    })
   }
 
   ngOnDestroy(): void {

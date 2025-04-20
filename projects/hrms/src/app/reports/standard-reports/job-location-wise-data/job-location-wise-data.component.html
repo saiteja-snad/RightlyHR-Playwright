@@ -1,17 +1,25 @@
 <div>
-    <form [formGroup]="locationReportsForm">
+    <form [formGroup]="locationReportsForm"  (ngSubmit)="onSubmit(locationReportsForm)">
         <div class="d-flex gap-5">
             <!-- Date of Joining -->
             <div class="d-flex mb-3">
                 <label class="mt-2 me-2 text-nowrap">{{"Date of Joining" | translate}}<span
                         class="text-danger">*</span></label>
                 <div>
-                    <input type="text" class="form-control w-100" ngxDaterangepickerBootstrap [autoApply]="true"
-                        [ranges]="ranges" [locale]="localeOptions" [alwaysShowCalendars]="true" [showClearButton]="true"
+                    <!-- <input type="text" class="form-control w-100" 
+                    ngxDaterangepickerBootstrap 
+                    [autoApply]="true"
+                        [ranges]="ranges" 
+                        [locale]="localeOptions" 
+                        [alwaysShowCalendars]="true" 
+                        [showClearButton]="true"
                         [formControl]="dateOfJoiningControl"
-                        placeholder="Please Select Date of Joining" />
+                        placeholder="Please Select Date of Joining" /> -->
 
-
+                    <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
+                        [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+                        formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
+                        class="form-control mb-2 w-100" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
                 </div>
                 <div>
                     <div *ngIf="locationReportsForm.get('dateOfJoining')?.touched && locationReportsForm.get('dateOfJoining')?.invalid"
@@ -69,8 +77,17 @@
             </div>
 
             <div class="d-flex">
-                <button type="button" class="btn btn-primary mt-1">Export</button>
-                <button type="button" class="btn btn-primary mt-1" (click)="getStandardReports()">Generate</button>
+                <button type="submit" class="btn btn-primary mt-1" [disabled]="locationReportsForm.invalid">Generate</button>
+                <!-- <button type="button" class="btn btn-primary mt-1" (click)="getStandardReports()">Generate</button> -->
+                <button class="custom-btn btn-primary" [disabled]="locationReportList.length === 0 || spinnerLoader"
+                    (click)="onClickJobLocationExport() ">
+
+                    @if(spinnerLoader){
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading..'}}...</span>
+                    }@else {
+                    <span>{{'Export'}}</span>
+                    }</button>
             </div>
         </div>
 
@@ -78,7 +95,7 @@
 </div>
 
 <div class="custom-table-content">
-    <table class="w-100">
+    <table class="w-100" id="jobLocation">
         <thead>
             <tr>
                 <th>ID</th>

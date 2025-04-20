@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 export class ManageHolidaysTabsComponent {
   navLinks = [
     { label: 'Pending For Submit', route: '/settings/employee-fields/manage-holidays/pending-for-submit' },
-    { label: 'Published Shifts', route: '/settings/employee-fields//manage-holidays/published-holidays' },
+    { label: 'Published Holidays', route: '/settings/employee-fields//manage-holidays/published-holidays' },
 
   ];
 }

@@ -59,7 +59,8 @@ export class AddGlobalPermissionsComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
     this.initalizingForm();
     this.getAllEmployees();
-    this.getEmployeesTeamwise();
+    this.getPermissionTypes();
+    this.permissionsDuration();
   }
   initalizingForm(){
     this.requestForm = this.fb.group({
@@ -187,6 +188,7 @@ getSubLocationByid() {
   this.requestForm.get('sublocation')?.setValue(null);
   this.requestForm.get('selectedOptions')?.setValue(null);
   const ValuesForSublocation=this.requestForm.get('location')?.value;
+  console.log(ValuesForSublocation);
   this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation} `).subscribe({
     next: (data: any) => {
       console.log(data);

@@ -14,10 +14,11 @@ import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
 import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
 import { IaddressemployeeDetails, IAuthority } from '../../Interfaces/letters-model';
+import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })

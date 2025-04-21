@@ -29,7 +29,7 @@
                     <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
                     <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName" [filter]="true"
                   filterBy="jobLocationName" [showClear]="true" placeholder="Select Location"
-                   formControlName="location" (change)="getSubLocationByid();" class="custom-select w-100">
+                   formControlName="location" (onChange)="getSubLocationByid();" class="custom-select w-100">
                 </p-select>
                    
                   <small class="text-danger"
@@ -42,7 +42,7 @@
                     <label for="sublocation" class="form-label">Sub location <span class="text-danger">*</span></label>
                     <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true"
                   filterBy="name" [showClear]="true" placeholder="Select Sublocation"
-                   formControlName="sublocation" (change)="getEmployeesLocationwise()" class="custom-select w-100">
+                   formControlName="sublocation" (onChange)="getEmployeesLocationwise()" class="custom-select w-100">
                 </p-select>
                   
                   <small class="text-danger"
@@ -70,7 +70,7 @@
                     <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
                     <p-select [options]="departmentDetails" optionValue="sno" optionLabel="departmentName" [filter]="true"
                   filterBy="departmentName" [showClear]="true" placeholder="Select Department"
-                   formControlName="department" (change)="getTeamData()" class="custom-select w-100">
+                   formControlName="department" (onChange)="getTeamData()" class="custom-select w-100">
                 </p-select>
                  
                   <small class="text-danger"
@@ -83,7 +83,7 @@
                     <label for="team" class="form-label">Team <span class="text-danger">*</span></label>
                     <p-select [options]="teamDetails" optionValue="subdepartmentId" optionLabel="subdepartmentName" [filter]="true"
                   filterBy="subdepartmentName" [showClear]="true" placeholder="Select team"
-                   formControlName="teamSelectedOptions" (change)="getEmployeesTeamwise()" class="custom-select w-100">
+                   formControlName="teamSelectedOptions" (onChange)="getEmployeesTeamwise()" class="custom-select w-100">
                 </p-select>
                   
                   <small class="text-danger"
@@ -96,7 +96,7 @@
                     <label for="teamemployee" class="form-label">Employees <span class="text-danger">*</span></label>
                     <p-select [options]="teamWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
                   filterBy="fullName" [showClear]="true" placeholder="Select Employees"
-                   formControlName="teamEmpselectedOptions" (change)="getTeamData()" class="custom-select w-100">
+                   formControlName="teamEmpselectedOptions" (onChange)="getTeamData()" class="custom-select w-100">
                 </p-select>
                     
                     <small class="text-danger"
@@ -159,7 +159,7 @@
           
                   <div class="mb-3">
                     <label for="type"> Permission Type<span class="text-danger">*</span></label>
-                    <select class="form-select w-100" formControlName="name" id="type" (change)="onTypeChange()">
+                    <select class="form-select w-100" formControlName="name" id="type" (onChange)="onTypeChange()">
                       <option [ngValue]="null" disabled>Select</option>
                       <option *ngFor="let permission of permissionsType" [value]="permission.name">{{permission.name}}
                       </option>

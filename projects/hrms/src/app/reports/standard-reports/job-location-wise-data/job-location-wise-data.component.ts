@@ -13,13 +13,14 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
 import * as XLSX from "xlsx";
 import { IJob } from '../../../Interfaces/letters-model';
-
+import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 @Component({
   selector: 'app-job-location-wise-data',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent],
   templateUrl: './job-location-wise-data.component.html',
   styleUrls: ['./job-location-wise-data.component.scss']
 })
+
 export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   locationReportsForm!: FormGroup;
@@ -28,8 +29,9 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   subLocationDetails = [] as ISubLocation[];
   locationReportList = [] as ILocationReportData[];
   empinfo = {} as IJob;
-
   destroy$: Subject<boolean> = new Subject<boolean>();
+
+  constructor(private reports: ReportsService,private http: HttpService,private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -38,12 +40,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.getStandardReports();
     this.getAllLocations();
   }
-
-  constructor(
-    private reports: ReportsService,
-    private http: HttpService,
-    private fb: FormBuilder
-  ) { }
 
   initializeForm() {
     this.locationReportsForm = this.fb.group({
@@ -111,26 +107,20 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   private handleFormValueChanges(): void {
     const form = this.locationReportsForm;
-
     const resetAndDisable = (controls: string[]) => {
       controls.forEach(control => {
         form.get(control)?.reset();
         form.get(control)?.disable();
       });
     };
+    form.get('dateOfJoining')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      form.get('location')?.reset();
+      resetAndDisable(['subLocation']);
+    });
 
-    form.get('dateOfJoining')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        form.get('location')?.reset();
-        resetAndDisable(['subLocation']);
-      });
-
-    form.get('location')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        resetAndDisable(['subLocation']);
-      });
+    form.get('location')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      resetAndDisable(['subLocation']);
+    });
   }
 
   parseDate(date: any): Date {
@@ -146,23 +136,20 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   getStandardReports() {
     const params = new URLSearchParams();
-
     const endpoint = params.toString() ? `Reports/standardReportsWithoutPagination?${params.toString()}` : 'Reports/standardReportsWithoutPagination';
-    this.http.getData(endpoint).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.locationReportList = res.standardReports || [];
-        },
-        error: (err: any) => {
-          console.log(err);
-        }
-      });
+    this.http.getData(endpoint).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.locationReportList = res.standardReports || [];
+      },
+      error: (err: any) => {
+        console.log(err);
+      }
+    });
   }
 
   onSubmit(form: FormGroup) {
     if (form.valid) {
       const formData = form.value;
-
       const request: IStandardReportRequest = {
         dateRange: {
           startDate: formData.dateOfJoining.startDate,
@@ -170,28 +157,23 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
         },
         selectedJobLocation: formData.location.jobLocationName.toString(),
         selectedJobSubLocation: formData.subLocation.jobSubLocationName.toString()
-
       };
-      this.reports
-        .getStandardReports(request)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            if (res) {
-              this.locationReportList = res.standardReports || [];
-            }
-          },
-          error: (err: any) => {
-            console.log(err);
-          },
-        });
+      this.reports.getStandardReports(request).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.locationReportList = res.standardReports || [];
+          }
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
     }
   }
 
   onClickJobLocationExport() {
     this.spinnerLoader = true;
     let { arrayBuffer, fileName } = this.exportTableToExcel("jobLocation", "Job_location_wise_data")
-
     this.uploadReports(arrayBuffer, fileName)
     this.createReportLog("Job Location Wise Data")
   }
@@ -224,11 +206,9 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {
     const range = XLSX.utils.decode_range(ws['!ref']!);
-
     for (let C = range.s.c; C <= range.e.c; ++C) {
       let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
       let cell = ws[cellAddress];
-
       if (cell && cell.v) {
         cell.v = cell.v.toString().toUpperCase(); // Convert to uppercase
         cell.w = cell.v; // Ensure display is updated
@@ -242,19 +222,15 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     }
     );
     let filePath = `/FusionDocuments/Employee Documents/Reports/${this.empinfo.employeeId}`;
-    this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, reportFile)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.ReportEmail(data.path, fileName);
-          //window.location.reload();
-        },
-        error: (reason: any) => {
-          console.log(reason);
-          this.spinnerLoader = false;
-          alert('file upload  is failed');
-        },
-      });
+    this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, reportFile).subscribe({
+      next: (data: any) => {
+        this.ReportEmail(data.path, fileName);
+        //window.location.reload();
+      },
+      error: (reason: any) => {
+        this.spinnerLoader = false;
+      },
+    });
   }
 
   ReportEmail(docUrl: string, fileName: string) {
@@ -271,41 +247,30 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       senderEmail: loggedInUser.workEmail,
     };
     if (loggedInUser.middleName) {
-
       reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
-
     } else {
       reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
-
     }
-    console.log(reportdata);
-
-    this.http
-      .postdata(`CustomEmail/Reports`, reportdata)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-        },error: (err: any) =>{
-          this.spinnerLoader = false;
-        }
-      });
+    this.http.postdata(`CustomEmail/Reports`, reportdata).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      }, error: (err: any) => {
+        this.spinnerLoader = false;
+      }
+    });
   }
 
   createReportLog(reportName: string) {
     const req = {
-
       generatedBy: this.empinfo.employeeId,
       reportsType: "Standard Reports",
       reportsName: reportName
     }
-
     this.http.postdata("ReportsLog", req).subscribe({
       next: (res: any) => {
-        console.log(res);
         this.spinnerLoader = false;
       },
       error: (err) => {
-        console.log(err);
         this.spinnerLoader = false;
       },
       complete: () => { }

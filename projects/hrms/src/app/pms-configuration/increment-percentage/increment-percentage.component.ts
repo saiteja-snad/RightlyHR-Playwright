@@ -10,14 +10,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { UpdateIncrementComponent } from './update-increment/update-increment.component';
 import { ViewIncrementComponent } from './view-increment/view-increment.component';
 
 @Component({
   selector: 'app-increment-percentage',
-  imports: [CommonModule,RouterModule,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent,],
+  imports: [CommonModule,RouterModule,NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,],
   templateUrl: './increment-percentage.component.html',
   styleUrl: './increment-percentage.component.scss'
 })

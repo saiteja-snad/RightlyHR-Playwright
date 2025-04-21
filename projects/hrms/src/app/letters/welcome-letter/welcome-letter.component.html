@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i
                     class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
@@ -7,133 +7,122 @@
     </div>
 
     <!--tabs content-->
-    <div class="my-4">
+    <div class="mb-3">
         <app-letters-tab />
     </div>
 
     <!--letter content-->
-    <div class="main-letter-content row">
-        <div class="col-sm-12 col-md-3 cols-lg-4 col-xl-4 col-xxl-5">
-            <div class="card letter-fields-content p-4">
-                <form [formGroup]="employeeForm" (ngSubmit)="postBankLoanLetterFormSubmit(employeeForm)">
-                    <div class="row">
-                        <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">Search Employee<span
-                                    class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
-                                    placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (onChange)="Onclick($event)">
-                                </p-select>
-                            </div>
-                            <small *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
-                                <small class="error-msg">Employee is required</small>
-                            </small>
-                        </div>
-                        <div class="col-md-12 mb-4">
-                            <label for="note" class="form-label custom-label mb-2">Key Responsibility
-                                <span class="error-msg">*</span></label>
-                            <textarea formControlName="note" placeholder="Please enter key responsibility" maxlength="250" autocomplete="off"
-                                class="form-control custom-textarea" id="note" rows="2" required></textarea>
-                            <span>{{ employeeForm.get('note')?.value?.length || 0 }}/250</span>
-                            <div>
-                                <small *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
-                                    <small class="error-msg">Key Responsibility is required</small>
-                                </small>
-                                <small class="error-msg" *ngIf="employeeForm.get('note')?.errors?.['maxlength']">
-                                    Roles and Responsibilities cannot exceed 250 characters
-                                </small>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                              Authority Name<span class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                                  class="form-select custom-select" formControlName="authorityid" (onChange)="onclickDesignation($event.value)">
-                                </p-select>
-                            </div>
-                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                                <div class="error-msg">Signature Authority Name is required</div>
-                              </div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-3 pt-4">
-                            <button type="submit" class="custom-btn btn-primary" >Generate Welcome Letter</button>
-                        </div>
+    <div class="main-letter-content gap-4 d-flex w-100">
+        <div class="card letter-fields-content p-4">
+            <form [formGroup]="employeeForm" (ngSubmit)="postBankLoanLetterFormSubmit(employeeForm)">
+                <div class="mb-3">
+                    <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
+                            class="custom-select w-100" (onChange)="Onclick($event)">
+                        </p-select>
                     </div>
-                </form>
-            </div>
+                    <div class="error-msg" *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                        Employee is required</div>
+                </div>
+                <div class="mb-3">
+                    <label for="note" class="form-label custom-label mb-2">Key Responsibility<span class="error-msg">*</span></label>
+                    <textarea formControlName="note" placeholder="Please enter key responsibility" maxlength="250"
+                        autocomplete="off" class="form-control custom-textarea" id="note" rows="2" required></textarea>
+                    <span>{{ employeeForm.get('note')?.value?.length || 0 }}/250</span>
+                    <div class="error-msg">
+                        <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">Key Responsibility is required</div>
+                        <div *ngIf="employeeForm.get('note')?.errors?.['maxlength']">Roles and Responsibilities cannot exceed 250 characters</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                            class="form-select custom-select" formControlName="authorityid" (onChange)="onclickDesignation($event.value)">
+                        </p-select>
+                    </div>
+                    <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched" class="error-msg">
+                        Signature Authority Name is required
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3 pt-4">
+                    <button type="submit" class="custom-btn btn-primary">Generate Welcome Letter</button>
+                </div>
+            </form>
         </div>
 
-        <div class="col-sm-12 col-md-9 cols-lg-8 col-xl-8 col-xxl-7">
-            <div class="card letter-data-content p-4">
-                <div class="d-flex justify-content-center">
-                    <div>
-                        <!--page-1-->
-                        <div class="letter-page-content" id="pdfContent1">
-                            <div class="letter-page-sub-content">
-                                <div class="mb-3 pt-5">
-                                    <img src="./public\images\Logo 3 (1).png" alt="Company Logo" class="header-image">
-                                </div>
-                                <div class="header-content">
-                                    <div class="logo-img-content">
-                                        <img src="./public\images\Logo 3 (1).png" alt="company logo" class="company-logo">
-                                    </div>
-                                    <div class="address-content mt-5 pt-4">
-                                        <ul class="px-0 header-text">
-                                            <li>RightlyHR</li>
-                                            <li>Vijaya Krishna Towers, Floor#16, <br>Madhava Reddy Colony, Gachibowli, HYD - 500032</li>
-                                            <li>+91 (703) 636-0933</li>
-                                            <li>admin&#64;rightlyhr.com</li>
-                                            <li>www.rightlyhr.com</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="header-container pt-3">
-                                    <p class="welcome-text">Welcome Letter</p>
-                                </div>
-                                <div class="dimcon-content">
-                                    <p class="content-text">Dear
-                                        <span class="ms-1">{{employeeFullname}},</span>
-                                    </p>
-                                    <p class="content-text"><b>Welcome to RightlyHR.!</b></p>
-                                    <p class="content-text">We are excited to have you onboard and look forward to the
-                                        remarkable contributions you will make as part of our team. As the new
-                                        <span><b>{{ bankloanLetterData.jobRole}}</b></span>,
-                                        you’ll be joining a group of dedicated and talented professionals committed
-                                        to delivering excellence in everything we do.
-                                    </p>
-                                    <p class="content-text">At RightlyHR, we pride ourselves on fostering a
-                                        positive, collaborative work environment where everyone can grow and succeed
-                                        together. With your expertise, we are confident that you will play a pivotal role in
-                                        shaping the future of our ERP Services.</p>
-                                    <p class="content-text" *ngIf="bankloanLetterData.note">{{bankloanLetterData.note}}</p>
-                                    <p class="content-text">We understand that starting a new position can sometimes
-                                        feel overwhelming, but please know that we are here to support you every step of the way.
-                                        If you have any questions or need guidance, feel free to reach out to me or your
-                                        colleagues.</p>
-                                    <p class="content-text">Once again, welcome to the team! We are thrilled to have you
-                                        with us and can’t wait to see what we will achieve together.</p>
-                                    <p class="content-text">Best wishes,</p>
-                                    <ul class="px-0 content-text">
-                                       
-                                        <li *ngIf="bankloanLetterData.authorityName && bankloanLetterData.authorityName.trim() !== ''" 
-                                            class="family2" 
-                                            style="font-family: Segoe script; font-size: large;">
-                                            {{ bankloanLetterData.authorityName }}
-                                        </li>
-                                        <li *ngIf="bankloanLetterData.authorityName && bankloanLetterData.designation && bankloanLetterData.designation.trim() !== ''">
-                                            {{ bankloanLetterData.designation }}
-                                        </li>    
-                                        <li *ngIf="bankloanLetterData.authorityName && bankloanLetterData.workEmail && bankloanLetterData.workEmail.trim() !== ''">
-                                            {{ bankloanLetterData.workEmail }}
-                                        </li>
-                                    </ul> 
-                                </div>
-                            <div class="letter-footer text-center">
-                                <p class="company-name">RightlyHR</p>
-                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+        <div class="card letter-data-content p-4">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <!--page-1-->
+                    <div class="letter-page-content" id="pdfContent1">
+                        <div class="letter-page-sub-content">
+                            <div class="mb-3 pt-5">
+                                <img src="./public\images\Logo 3 (1).png" alt="Company Logo" class="header-image">
                             </div>
+
+                            <div class="header-content">
+                                <div class="logo-img-content">
+                                    <app-lettersheader></app-lettersheader>
+                                </div>
+                                <div class="address-content mt-5 pt-4">
+                                    <ul class="list-style-none ps-0">
+                                        <li>RightlyHR</li>
+                                        <li>Vijaya Krishna Towers, Floor#16, <br>Madhava Reddy Colony, Gachibowli, HYD - 500032
+                                        </li>
+                                        <li>+91 (703) 636-0933</li>
+                                        <li>admin&#64;rightlyhr.com</li>
+                                        <li>www.rightlyhr.com</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="header-container pt-3">
+                                <p class="welcome-text">Welcome Letter</p>
+                            </div>
+                            <div>
+                                <p>Dear
+                                    <span class="ms-1">{{employeeFullname}},</span>
+                                </p>
+                                <p><b>Welcome to RightlyHR.!</b></p>
+                                <p>We are excited to have you onboard and look forward to the
+                                    remarkable contributions you will make as part of our team. As the new
+                                    <span><b>{{ bankloanLetterData.jobRole}}</b></span>,
+                                    you’ll be joining a group of dedicated and talented professionals committed
+                                    to delivering excellence in everything we do.
+                                </p>
+                                <p>At RightlyHR, we pride ourselves on fostering a
+                                    positive, collaborative work environment where everyone can grow and succeed
+                                    together. With your expertise, we are confident that you will play a pivotal role in
+                                    shaping the future of our ERP Services.</p>
+                                <p *ngIf="bankloanLetterData.note">{{bankloanLetterData.note}}</p>
+                                <p>We understand that starting a new position can sometimes
+                                    feel overwhelming, but please know that we are here to support you every step of the way.
+                                    If you have any questions or need guidance, feel free to reach out to me or your
+                                    colleagues.</p>
+                                <p>Once again, welcome to the team! We are thrilled to have you
+                                    with us and can’t wait to see what we will achieve together.</p>
+                                <p>Best wishes,</p>
+                                <ul class="px-0 content-text">
+                                    <li *ngIf="bankloanLetterData.authorityName && bankloanLetterData.authorityName.trim() !== ''"
+                                     style="font-family: Segoe script; font-size: large;">
+                                        {{ bankloanLetterData.authorityName }}
+                                    </li>
+                                    <li
+                                        *ngIf="bankloanLetterData.authorityName && bankloanLetterData.designation && bankloanLetterData.designation.trim() !== ''">
+                                        {{ bankloanLetterData.designation }}
+                                    </li>
+                                    <li
+                                        *ngIf="bankloanLetterData.authorityName && bankloanLetterData.workEmail && bankloanLetterData.workEmail.trim() !== ''">
+                                        {{ bankloanLetterData.workEmail }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
                 </div>
@@ -141,17 +130,3 @@
         </div>
     </div>
 </div>
-
-<ng-template #successhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-        <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-    </div>
-</ng-template>
-
-<ng-template #errorhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-        <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
-    </div>
-</ng-template>

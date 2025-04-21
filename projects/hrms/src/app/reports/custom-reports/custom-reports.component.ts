@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { OpenModalService } from '../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -10,8 +8,6 @@ import { AuthService } from '../../services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
 import { Ipersonal, IStatus } from './custom-model';
 import { CalendarModule } from 'primeng/calendar';
-import moment from 'moment';
-
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -24,6 +20,7 @@ interface FieldGroup {
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss'
 })
+
 export class CustomReportsComponent {
   reportForm: FormGroup;
   private destroy$ = new Subject<boolean>();
@@ -33,20 +30,18 @@ export class CustomReportsComponent {
   showCard = false;
   JobShowCard = false;
   loggedInUser: any = {};
-  
   // Data arrays
   empStatusList = ['All Employees', 'Active', 'Inactive'];
   selectedData: any[] = [];
   selectedFields: string[] = [];
   emp: Ipersonal[] = [];
   reportdata: any[] = [];
-  
   // Field groups
   fieldGroups: { [key: string]: FieldGroup } = {
     basicInfo: {
       name: 'Basic Information',
       fields: [
-        'ID', 'Employee ID', 'Salutation', 'First Name', 'Last Name', 'Middle Name', 
+        'ID', 'Employee ID', 'Salutation', 'First Name', 'Last Name', 'Middle Name',
         'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group', 'Secondary Language'
       ],
       selectedFields: [],
@@ -55,7 +50,7 @@ export class CustomReportsComponent {
     currentAddress: {
       name: 'Current Address',
       fields: [
-        'Address Line 1(current)', 'Address Line 2(current)', 'City(current)', 
+        'Address Line 1(current)', 'Address Line 2(current)', 'City(current)',
         'State(current)', 'Country(current)', 'Zip Code/Post Code(current)'
       ],
       selectedFields: [],
@@ -64,7 +59,7 @@ export class CustomReportsComponent {
     permanentAddress: {
       name: 'Permanent Address',
       fields: [
-        'Address Line 1(permanemt)', 'Address Line 2(permanemt)', 'City(permanemt)', 
+        'Address Line 1(permanemt)', 'Address Line 2(permanemt)', 'City(permanemt)',
         'State(permanemt)', 'Country(permanemt)', 'Zip Code/Post Code(permanemt)'
       ],
       selectedFields: [],
@@ -115,7 +110,7 @@ export class CustomReportsComponent {
     preOnboardingDetails: {
       name: 'Pre Onboarding Details',
       fields: [
-        'Offer Sent Date', 'Offer Sent By', 'Offer Sent Status', 
+        'Offer Sent Date', 'Offer Sent By', 'Offer Sent Status',
         'Appointment Sent Date', 'Appointment Sent By', 'Appointment Sent Status'
       ],
       selectedFields: [],
@@ -124,7 +119,7 @@ export class CustomReportsComponent {
     onboardingDetails: {
       name: 'Onboarding Details',
       fields: [
-        'Date Of Joining', 'Probation End Date', 'Probation Status', 'Branch Code', 
+        'Date Of Joining', 'Probation End Date', 'Probation Status', 'Branch Code',
         'Notice Period', 'Background Check Status', 'Salary Hold', 'PT', 'ESIC', 'PF', 'Insurance'
       ],
       selectedFields: [],
@@ -145,7 +140,7 @@ export class CustomReportsComponent {
     jobDetails: {
       name: 'Job Details',
       fields: [
-        'Job Effective Date', 'Job Role', 'Grade Name', 'Department', 'Team', 
+        'Job Effective Date', 'Job Role', 'Grade Name', 'Department', 'Team',
         'Team Manager', 'Reporting Manager', 'Location', 'Sub Location', 'Shift', 'Shift Code', 'Job Type'
       ],
       selectedFields: [],
@@ -154,21 +149,15 @@ export class CustomReportsComponent {
     compensationDetails: {
       name: 'Compensation Details',
       fields: [
-        'Compensation Effective Date', 'Overtime Eligibility', 'Reason', 
+        'Compensation Effective Date', 'Overtime Eligibility', 'Reason',
         'Frequency', 'Pay Type', 'Yearly CTC'
       ],
       selectedFields: [],
       selectAll: false
     }
   };
-  
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private http: HttpService,
-    private sharedModalService: OpenModalService,
-    private modalService: NgbModal
-  ) {
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private http: HttpService) {
     this.reportForm = this.fb.group({
       status: ['All Employees', Validators.required]
     });
@@ -178,91 +167,80 @@ export class CustomReportsComponent {
     this.loggedInUser = this.authService.getToken();
     this.getCustomReportDetails();
     this.getStatus();
+    this.showPersonalData();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
+  showPersonalData() {
+    this.showCard = true;
+    this.JobShowCard = false;
+  }
+
+  showJobData() {
+    this.showCard = false;
+    this.JobShowCard = true;
   }
 
   getCustomReportDetails(): void {
-    this.http.getData('Employeedata/Reports/EmployeeData')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.emp = data;
-          this.copyData = JSON.parse(JSON.stringify(this.emp));
-          this.filteredData = JSON.parse(JSON.stringify(this.emp));
-        },
-        error: (err: any) => {
-          console.error('Error fetching report data:', err);
-        }
-      });
+    this.http.getData('Employeedata/Reports/EmployeeData').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.emp = data;
+        this.copyData = JSON.parse(JSON.stringify(this.emp));
+        this.filteredData = JSON.parse(JSON.stringify(this.emp));
+      },
+      error: (err: any) => {
+        console.error('Error fetching report data:', err);
+      }
+    });
   }
-
 
   dateofJoiningRangeFilter(value: any) {
     if (value && value.length === 2) {
       const [startDate, endDate] = value;
-  
       this.emp = this.filteredData.filter(emp => {
         const doj = new Date(emp.dateOfJoining);
         return doj >= startDate && doj <= endDate;
       });
-  
-      console.log(this.emp);
     }
   }
 
   lastWorkingDayRangeFilter(value: any) {
     if (value) {
-      console.log(value);
-      this.emp = this.filteredData.filter(
-        (emp) =>
-          new Date(emp.lastworkingday) >= value &&
-          new Date(emp.lastworkingday) <= value
+      this.emp = this.filteredData.filter((emp) => 
+        new Date(emp.lastworkingday) >= value && new Date(emp.lastworkingday) <= value
       );
-      console.log(this.emp);
     }
   }
+
   toggleFieldSelection(field: string, groupKey: string): void {
     const group = this.fieldGroups[groupKey];
     const index = group.selectedFields.indexOf(field);
-    
     if (index === -1) {
       group.selectedFields.push(field);
     } else {
       group.selectedFields.splice(index, 1);
     }
-    
     // Update selectAll status
     group.selectAll = group.selectedFields.length === group.fields.length;
-    
     this.updateSelectedFields();
   }
 
   toggleSelectAll(event: Event, groupKey: string): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     const group = this.fieldGroups[groupKey];
-    
     group.selectAll = isChecked;
     group.selectedFields = isChecked ? [...group.fields] : [];
-    
     this.updateSelectedFields();
   }
 
   private updateSelectedFields(): void {
-    this.selectedFields = Object.values(this.fieldGroups)
-      .reduce((acc: string[], group) => [...acc, ...group.selectedFields], []);
+    this.selectedFields = Object.values(this.fieldGroups).reduce((acc: string[], group) => [...acc, ...group.selectedFields], []);
   }
 
   onSubmit(): void {
     if (this.reportForm.invalid) return;
-
     this.selectedData = [];
     this.emp.forEach((user: Ipersonal) => {
       const data: { [key: string]: any } = {};
-      
       this.selectedFields.forEach((field: string) => {
         // Basic Info
         if (field === 'ID') data[field] = user.employeeId;
@@ -277,7 +255,6 @@ export class CustomReportsComponent {
         else if (field === 'Date of Birth') data[field] = this.formatDate(user.dob);
         else if (field === 'Blood Group') data[field] = user.bloodGroup;
         else if (field === 'Secondary Language') data[field] = user.secondaryLanguage;
-        
         // Current Address
         else if (field === 'Address Line 1(current)') data[field] = user.currentAddressLine1;
         else if (field === 'Address Line 2(current)') data[field] = user.currentAddressLine2;
@@ -285,7 +262,6 @@ export class CustomReportsComponent {
         else if (field === 'State(current)') data[field] = user.currentState;
         else if (field === 'Country(current)') data[field] = user.currentCountry;
         else if (field === 'Zip Code/Post Code(current)') data[field] = user.currentZipCode;
-        
         // Permanent Address
         else if (field === 'Address Line 1(permanemt)') data[field] = user.permanentAddressLine1;
         else if (field === 'Address Line 2(permanemt)') data[field] = user.permanentAddressLine2;
@@ -293,25 +269,21 @@ export class CustomReportsComponent {
         else if (field === 'State(permanemt)') data[field] = user.permanentState;
         else if (field === 'Country(permanemt)') data[field] = user.permanentCountry;
         else if (field === 'Zip Code/Post Code(permanemt)') data[field] = user.permanentZipCode;
-        
         // Contact Details
         else if (field === 'Work Number') data[field] = user.workPhone;
         else if (field === 'Mobile Phone') data[field] = user.contactnumber;
         else if (field === 'Work Email') data[field] = user.workEmail;
         else if (field === 'Home Email') data[field] = user.emailaddress;
-        
         // Emergency Contact 1
         else if (field === 'Name(contact1)') data[field] = user.emergencyName;
         else if (field === 'Email(contact1)') data[field] = user.emailId;
         else if (field === 'Phone Number(contact1)') data[field] = user.emergencynumber;
         else if (field === 'Relationship(contact1)') data[field] = user.relationShip;
-        
         // Emergency Contact 2
         else if (field === 'Name(contact2)') data[field] = user.emergencyName1;
         else if (field === 'Email(contact2)') data[field] = user.emergencyEmail1;
         else if (field === 'Phone Number(contact2)') data[field] = user.emergencyNumber1;
         else if (field === 'Relationship(contact2)') data[field] = user.relationship1;
-        
         // Education
         else if (field === 'Degree') data[field] = user.degree;
         else if (field === 'University') data[field] = user.university;
@@ -319,26 +291,22 @@ export class CustomReportsComponent {
         else if (field === 'GPA') data[field] = user.gpa;
         else if (field === 'Degree Start Date') data[field] = this.formatDate(user.degreeStartDate);
         else if (field === 'Degree End Date') data[field] = this.formatDate(user.degreeEndDate);
-        
         // Visa Details
         else if (field === 'Visa Type') data[field] = user.visatype;
         else if (field === 'Issued Country') data[field] = user.issuedcountry;
         else if (field === 'Issued Date') data[field] = this.formatDate(user.issueddate);
         else if (field === 'Expiry Date') data[field] = this.formatDate(user.expirydate);
-        
         // Identity
         else if (field === 'Aadhaar Number') data[field] = user.aadhaar;
         else if (field === 'PAN Number') data[field] = user.pan;
         else if (field === 'PF Number') data[field] = user.esic;
         else if (field === 'ESIC Number') data[field] = user.pf;
         else if (field === 'UAN Number') data[field] = user.uan;
-        
         // Bank
         else if (field === 'Bank Name') data[field] = user.bankName;
         else if (field === 'Account Holders Name') data[field] = user.accountName;
         else if (field === 'Account Number') data[field] = user.accountNo;
         else if (field === 'IFSC Code') data[field] = user.ifscCode;
-        
         // Pre Onboarding
         else if (field === 'Offer Sent Date') data[field] = this.formatDate(user.offerSentDate);
         else if (field === 'Offer Sent By') data[field] = user.offerSentBy;
@@ -346,7 +314,6 @@ export class CustomReportsComponent {
         else if (field === 'Appointment Sent Date') data[field] = this.formatDate(user.appointmentSentDate);
         else if (field === 'Appointment Sent By') data[field] = user.appointmentSenyBy;
         else if (field === 'Appointment Sent Status') data[field] = user.appointmentSentStatus;
-        
         // Onboarding
         else if (field === 'Date Of Joining') data[field] = this.formatDate(user.dateOfJoining);
         else if (field === 'Probation End Date') data[field] = this.formatDate(user.probationEndDate);
@@ -359,16 +326,13 @@ export class CustomReportsComponent {
         else if (field === 'PF') data[field] = user.pfApplicable;
         else if (field === 'ESIC') data[field] = user.esicApplicable;
         else if (field === 'Insurance') data[field] = user.healthInsurance;
-        
         // Offboarding
         else if (field === 'Last Working Day') data[field] = this.formatDate(user.lastworkingday);
         else if (field === 'Exit Reason') data[field] = user.termreasonoffboard;
         else if (field === 'Eligible For Rehire') data[field] = user.eligibleforrehire;
-        
         // Employment
         else if (field === 'Job Type') data[field] = user.jobType;
         else if (field === 'Grade Name') data[field] = user.gradeName;
-        
         // Job Details
         else if (field === 'Job Effective Date') data[field] = this.formatDate(user.jobEffectiveDate);
         else if (field === 'Job Role') data[field] = user.jobRole;
@@ -380,7 +344,6 @@ export class CustomReportsComponent {
         else if (field === 'Sub Location') data[field] = user.jobSubLocationName;
         else if (field === 'Shift') data[field] = user.shiftName;
         else if (field === 'Shift Code') data[field] = user.shiftCode;
-        
         // Compensation
         else if (field === 'Compensation Effective Date') data[field] = this.formatDate(user.compeffectivedate);
         else if (field === 'Overtime Eligibility') data[field] = user.overtimeeligibility;
@@ -389,16 +352,14 @@ export class CustomReportsComponent {
         else if (field === 'Yearly CTC') data[field] = user.compensationamount;
         else if (field === 'Frequency') data[field] = user.frequency;
       });
-      
       this.selectedData.push(data);
     });
   }
 
   getStatus() {
-   this.http.getData(`Status`).subscribe({
+    this.http.getData(`Status`).subscribe({
       next: (data: any) => {
         this.Statusdetails = data as IStatus[];
-        console.log(this.Statusdetails);
       },
     });
   }
@@ -441,23 +402,20 @@ export class CustomReportsComponent {
       this.selectedFieldsOption = [];
     }
   }
+
   generateExcel(): void {
     if (this.selectedData.length === 0) {
       alert('No data to export. Please generate the report first.');
       return;
     }
-
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.selectedData);
     this.convertHeadersToUpperCase(ws);
-    
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    
     const wbout: ArrayBuffer = XLSX.write(wb, {
       bookType: 'xlsx',
       type: 'array',
     });
-    
     this.saveAsExcelFile(wbout);
   }
 
@@ -479,35 +437,32 @@ export class CustomReportsComponent {
     link.href = window.URL.createObjectURL(data);
     link.download = `${this.loggedInUser.employeeId}_${new Date().getTime()}_custom_reports.xlsx`;
     link.click();
-    
     // Create file for potential upload
     const reportFile = new File(
       [data],
       `${this.loggedInUser.employeeId}_${new Date().getTime()}__custom_reports.xlsx`,
       { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
     );
-    
     // You can use reportFile for upload if needed
   }
 
   private formatDate(dateString: string): string {
     if (!dateString) return '';
-    
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return dateString;
-      
       const day = date.getDate().toString().padStart(2, '0');
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       const month = monthNames[date.getMonth()];
       const year = date.getFullYear().toString();
-      
       return `${day}-${month}-${year}`;
     } catch {
       return dateString;
     }
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
 }
-
-
-

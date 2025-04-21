@@ -72,7 +72,7 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-3">
+    <div class="custom-main-popup-content p-4">
       <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
         <div class="row">
           @if(this.rbac.allowedToAccess('Education.view')){

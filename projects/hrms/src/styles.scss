@@ -180,7 +180,6 @@ body {
         border-radius: 50%;
     }
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -432,7 +431,7 @@ a {
     color: #305889;
     cursor: pointer;
 
-    .plus-icon{
+    .plus-icon {
         font-size: var(--fontsize18) !important;
     }
 }
@@ -467,11 +466,13 @@ a {
 .btn-primary-approve {
     background-color: var(--btn-success);
     color: var(--btn-color-tp);
+    border-color: var(--btn-success);
 }
 
 .btn-primary-reject {
     background-color: var(--btn-failure);
     color: var(--btn-color-tp);
+    border-color: var(--btn-failure);
 }
 
 .btn-secondary {
@@ -483,19 +484,6 @@ a {
 .btn-primary:disabled {
     opacity: 0.5;
 }
-
-// scroll bar stylings
-// ::-webkit-scrollbar {
-//     width: 6px;
-//     height: 6px;
-//     border-radius: 10px;
-// }
-
-// /* Handle */
-// ::-webkit-scrollbar-thumb {
-//     background: #d9d9d9;
-//     border-radius: 10px;
-// }
 
 //custom input stylings
 .custom-label {
@@ -547,8 +535,7 @@ a {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -655,7 +642,7 @@ a {
         background-color: #e8f0fb !important;
         color: #222222 !important;
     }
-    
+
     .p-multiSelect:hover {
         border: 1px solid #DEE8F3 !important;
     }
@@ -676,7 +663,6 @@ a {
         color: #222222;
     }
 }
-
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -740,7 +726,6 @@ a {
         color: #06274F;
     }
 }
-
 // My Info Stylings Ends
 
 // letter main content
@@ -797,17 +782,13 @@ a {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table, th, td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
+    th, td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -817,8 +798,7 @@ a {
         font-weight: bold;
     }
 
-    tr:nth-child(4),
-    tr:nth-child(9) {
+    tr:nth-child(4), tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -828,11 +808,11 @@ a {
 }
 
 .hard-copy-letter {
-    margin-bottom: 5rem;
+    margin-bottom: 3rem;
 }
 
 .soft-copy-letter {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .list-style-none {
@@ -869,7 +849,6 @@ a {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
-
 // letter stylings
 
 // custom search field
@@ -1021,11 +1000,8 @@ a {
         font-size: 12px;
         color: #65778D;
     }
-
-   
-
-   
 }
+
 // file styling
 input[type="file"] {
     &::-webkit-file-upload-button {
@@ -1146,10 +1122,7 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,
-        .p-paginator-prev,
-        .p-paginator-next,
-        .p-paginator-last {
+        .p-paginator-first,.p-paginator-prev,.p-paginator-next,.p-paginator-last {
             border-radius: 50%;
             width: 1.25rem;
             height: 1.25rem;
@@ -1158,17 +1131,13 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,
-        .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,
-        .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,.p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
-
 //pagenation stylings
 
 // login components stylings
@@ -1343,8 +1312,7 @@ input:focus {
         z-index: 1;
     }
 
-    th,
-    td {
+    th,td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1371,7 +1339,6 @@ input:focus {
     tr:nth-child(even) {
         background-color: var(--table-data-bg-even-color);
     }
-
 }
 
 // loader
@@ -1386,15 +1353,6 @@ input:focus {
         height: 12rem;
     }
 }
-
-// .expenses-title-text {
-//     font-weight: 700;
-//     font-size: 14px;
-//     line-height: 100%;
-//     letter-spacing: 0%;
-//     vertical-align: middle;
-//     color: #222B45;
-// }
 
 // success icon
 .succes-icon {
@@ -1457,7 +1415,7 @@ input:focus {
 }
 
 // red trash icon
-.red-trash-icon{
+.red-trash-icon {
     width: 1rem;
     height: 1.25rem;
 }

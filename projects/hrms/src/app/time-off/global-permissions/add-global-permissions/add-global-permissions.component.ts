@@ -13,10 +13,12 @@ import { IPermissionType } from '../../../Interfaces/timoff-model';
 import { IDepartment } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
+import { environment } from '../../../../environments/environment.dev';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-add-global-permissions',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, Select, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule,MultiSelectModule , FormsModule, Select, TranslateModule],
   templateUrl: './add-global-permissions.component.html',
   styleUrl: './add-global-permissions.component.scss'
 })
@@ -41,7 +43,7 @@ export class AddGlobalPermissionsComponent implements OnInit,OnDestroy {
     { item_id: 4, item_text: 'Option 4',selectedAllGroup: 'Group 1'  }
   ];
   dropdownSettings = {};
-  permissionHours: number[] = [];
+  permissionHours: { duration: number }[] = [];
   selectedPermissionId!: any;
   permissionsType = [] as IPermissionType[];
   jobLocationDropDownData = [] as any;
@@ -153,9 +155,11 @@ this.subscription = this.http.getData("entityAttributeValues?entity=Permissions"
 }
 //function to get the duration values splitwise
 generatePermissionHours(maxDuration: number) {
-for (let i = 0.5; i <= maxDuration; i += 0.5) {
-  this.permissionHours.push(i);
-}
+  this.permissionHours = []; // clear existing values
+  for (let i = 0.5; i <= maxDuration; i += 0.5) {
+    this.permissionHours.push({ duration: i });
+  }
+  console.log(this.permissionHours);
 }
 //function to check the null values
 onReasonInput() {
@@ -362,9 +366,9 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
         "type": formData.requestType,
         "permissionRequestedDate": formData.permissionDate,
   
-        "moduleId":21,
+        "moduleId":environment.globalPermissionsModuleID,
         "referenceTypeId": this.selectedPermissionId,
-        "duration": formData.duration, 
+        "duration": formData.duration?.toString(), 
         // "processedComment": formData.notes,
         "requestType": formData.name,
         "requestTypeEntityId": formData.sublocation  ? formData.location + "," + formData.sublocation : formData.department + "," + formData.teamSelectedOptions,
@@ -390,7 +394,10 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
           },
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           complete:()=> {
-            
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              global: true,
+            }));
             
           },
         })

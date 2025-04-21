@@ -55,13 +55,16 @@ export class GlobalPermissionsComponent {
     public rbac: RbacService,
   ) {  
     // Signal reaction for employee switch
-  effect(() => {
-    if (this.http.trigger()) {
-     
+    effect(() =>{
+      if (this.http.tirggerCountSignal().global) {
+        this.getAllGlobalPermissions();
+        this.http.tirggerCountSignal.update((status) => ({
+          ...status,
+          global: false,
+        }));
+      }
 
-      this.http.resetTriggerSignal(); 
-    }
-  });
+  })
   }
   
   ngOnInit(): void {

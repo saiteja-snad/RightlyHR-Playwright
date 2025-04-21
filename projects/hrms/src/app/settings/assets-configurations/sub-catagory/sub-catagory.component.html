@@ -1,13 +1,12 @@
 <div class="custom-main-component-container">
 
-  
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">{{'Asset Sub Catagory'|translate}}</span></div>
-    <div class="custom-add-btn"  (click)="openModal(addassetescataerys)"
-       >
-        <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
+    <div class="custom-add-btn" (click)="openModal(addassetescataerys)">
+      <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
     </div>
-</div>
+  </div>
 
   <div>
     <div class="custom-table-content mt-2">
@@ -31,17 +30,16 @@
                 <div class="d-flex gap-4">
 
                   <div>
-                      <a (click)="openupdate(updateassetescataerys, asset)"><img src="/settings-icon/edit.png"
-                              alt="edit icon" class="settings-common-icon">
-                      </a>
+                    <a (click)="openupdate(updateassetescataerys, asset)"><img src="/settings-icon/edit.png"
+                        alt="edit icon" class="settings-common-icon">
+                    </a>
                   </div>
 
                   <div>
-                      <a (click)="opendelete(deleteconformation,asset)"><img
-                              src="/settings-icon/trash-2.png" alt="edit icon"
-                              class="settings-common-icon"></a>
+                    <a (click)="opendelete(deleteconformation,asset)"><img src="/settings-icon/trash-2.png"
+                        alt="edit icon" class="settings-common-icon"></a>
                   </div>
-              </div>
+                </div>
               </td>
             </tr>
           </ng-container>
@@ -79,120 +77,122 @@
 
             <!-- Asset Category -->
             <div class="col-md-6 mb-3">
-              <label for="assetCategory" class="form-label custom-label mb-2">Asset Category<span class="text-danger">*</span></label>
+              <label for="assetCategory" class="form-label custom-label mb-2">Asset Category<span
+                  class="text-danger">*</span></label>
               <div class="custom-p-select-content">
-                <p-select [options]="assetCategorys" optionLabel="name" optionValue="id" formControlName="assetCategoryvalue"
-                  placeholder="Please select asset category" class="form-select custom-select"
-                  (onChange)="onassetsubcategory()" ></p-select>
+                <p-select [options]="assetCategorys" optionLabel="name" optionValue="id"
+                  formControlName="assetCategoryvalue" placeholder="Please select asset category"
+                  class="form-select custom-select" (onChange)="onassetsubcategory()"></p-select>
               </div>
-            <div
-              *ngIf="assetcataeryForm.get('assetCategoryvalue')?.invalid && assetcataeryForm.get('assetCategoryvalue')?.touched">
-              <div class="text-danger">Asset Category is required</div>
+              <div
+                *ngIf="assetcataeryForm.get('assetCategoryvalue')?.invalid && assetcataeryForm.get('assetCategoryvalue')?.touched">
+                <div class="text-danger">Asset Category is required</div>
+              </div>
+            </div>
+
+            <!-- Asset SubCategory -->
+            <div class="col-md-6 mb-3">
+              <label for="assetSubCategory" class="form-label custom-label mb-2">Asset Sub Category<span
+                  class="text-danger">*</span></label>
+              <input class="form-control custom-input" formControlName="assetSubCategory"
+                placeholder="Asset Sub Category" type="text" (keydown)="formValidation.restrictInput($event)" />
+
+              <div
+                *ngIf="assetcataeryForm.get('assetSubCategory')?.invalid && assetcataeryForm.get('assetSubCategory')?.touched">
+                <div class="text-danger" *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['required']">
+                  Asset Sub category is required
+                </div>
+                <div class="text-danger" *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['maxlength']">
+                  Asset Sub category must not exceed 30 characters
+                </div>
+
+              </div>
+
             </div>
           </div>
 
-          <!-- Asset SubCategory -->
-          <div class="col-md-6 mb-3">
-            <label for="assetSubCategory" class="form-label custom-label mb-2">Asset Sub Category<span class="text-danger">*</span></label>
-            <input    class="form-control custom-input"  formControlName="assetSubCategory" placeholder="Asset Sub Category" type="text"
-              (keydown)="formValidation.restrictInput($event)" />
-
-            <div
-              *ngIf="assetcataeryForm.get('assetSubCategory')?.invalid && assetcataeryForm.get('assetSubCategory')?.touched">
-              <div class="text-danger" *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['required']">
-                Asset Sub category is required
-              </div>
-              <div class="text-danger" *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['maxlength']">
-                Asset Sub category must not exceed 30 characters
-              </div>
-
-            </div>
-
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="assetcataeryForm.invalid">Submit</button>
           </div>
-      </div>
+        </form>
 
-      <div class="d-flex justify-content-end gap-3">
-        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="assetcataeryForm.invalid">Submit</button>
       </div>
-      </form>
-
     </div>
-</div>
 
-</ng-template>
+  </ng-template>
 
 
-<ng-template #updateassetescataerys let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-   
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
+  <ng-template #updateassetescataerys let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+
+      <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="pt-2">
           <p class="popup-heading mb-0">Update Asset Sub Category </p>
-      </div>
-      <div>
-          <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon"
-                  class="close-icon"></a>
-      </div>
-  </div>
-    <div class="custom-main-popup-content p-3">
-          <form [formGroup]="assetcataeryupdateForm" (ngSubmit)="updateastessubcategory(assetcataeryupdateForm);modal.dismiss()">
-            <div class="row">
-             
-                <!-- Asset Category -->
-                <div class="col-md-6 mb-3">
-                  <label for="assetCategory"  class="form-label custom-label mb-2">Asset Category<span class="text-danger">*</span></label>
-                  <div class="custom-p-select-content">
-                    <p-select [options]="assetCategorys" optionLabel="name" optionValue="id" formControlName="assetCategory"
-                      placeholder="Please select asset category" class="form-select custom-select"
-                      (onChange)="onassetsubcategory()" ></p-select>
-                  </div>
-                  <div
-                    *ngIf="assetcataeryupdateForm.get('assetCategory')?.invalid && assetcataeryupdateForm.get('assetCategory')?.touched">
-                    <div class="text-danger">Asset category is required</div>
-                  </div>
-                </div>
-
-                <!-- Asset SubCategory -->
-                <div class="col-md-6 mb-3">
-                  <label for="assetSubCategorys"  class="form-label custom-label mb-2">Asset Sub Category<span
-                      class="text-danger">*</span></label>
-                  <input class="form-control custom-input" formControlName="assetSubCategory"  (keydown)="formValidation.restrictInput($event)" />
-
-                  <div
-                    *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.invalid && assetcataeryupdateForm.get('assetSubCategory')?.touched">
-                    <div class="text-danger" *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.errors?.['required']">
-                      Asset Sub category is required
-                    </div>
-                    <div class="text-danger" *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.errors?.['maxlength']">
-                      Asset Sub category must not exceed 30 characters
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-        
-
-            <div  class="d-flex justify-content-end gap-3">
-              <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-              <button type="submit" class="custom-btn btn-primary" [disabled]="assetcataeryupdateForm.invalid">Update</button>
-            </div>
-          </form>
+        </div>
+        <div>
+          <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
       </div>
-    
-</ng-template>
+      <div class="custom-main-popup-content p-3">
+        <form [formGroup]="assetcataeryupdateForm"
+          (ngSubmit)="updateastessubcategory(assetcataeryupdateForm);modal.dismiss()">
+          <div class="row">
+
+            <!-- Asset Category -->
+            <div class="col-md-6 mb-3">
+              <label for="assetCategory" class="form-label custom-label mb-2">Asset Category<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="assetCategorys" optionLabel="name" optionValue="id" formControlName="assetCategory"
+                  placeholder="Please select asset category" class="form-select custom-select"
+                  (onChange)="onassetsubcategory()"></p-select>
+              </div>
+              <div
+                *ngIf="assetcataeryupdateForm.get('assetCategory')?.invalid && assetcataeryupdateForm.get('assetCategory')?.touched">
+                <div class="text-danger">Asset category is required</div>
+              </div>
+            </div>
+
+            <!-- Asset SubCategory -->
+            <div class="col-md-6 mb-3">
+              <label for="assetSubCategorys" class="form-label custom-label mb-2">Asset Sub Category<span
+                  class="text-danger">*</span></label>
+              <input class="form-control custom-input" formControlName="assetSubCategory"
+                (keydown)="formValidation.restrictInput($event)" />
+
+              <div
+                *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.invalid && assetcataeryupdateForm.get('assetSubCategory')?.touched">
+                <div class="text-danger" *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.errors?.['required']">
+                  Asset Sub category is required
+                </div>
+                <div class="text-danger" *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.errors?.['maxlength']">
+                  Asset Sub category must not exceed 30 characters
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+            <button type="submit" class="custom-btn btn-primary"
+              [disabled]="assetcataeryupdateForm.invalid">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </ng-template>
 
 
-<ng-template #deleteconformation let-modal>
-  <div class="result-popup-content" ngbAutofocus>
+  <ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
       <div>
-          <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-          <p class="confirmation-text mb-4">Are you sure you want to delete the Asset Category?</p>
+        <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+        <p class="confirmation-text mb-4">Are you sure you want to delete the Asset Category?</p>
       </div>
       <div class="d-flex justify-content-center gap-3 mt-4">
-          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-          <button type="submit" class="custom-btn btn-primary" (click)="deleteasstescatagorydata()">Yes</button>
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="deleteasstescatagorydata()">Yes</button>
       </div>
-  </div>
-</ng-template>
+    </div>
+  </ng-template>

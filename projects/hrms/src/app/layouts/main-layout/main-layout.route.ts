@@ -11,6 +11,7 @@ import { DeskAlloctionLayoutComponent } from "../../desk-allocation/desk-allocti
 import { CalenderLayOutComponent } from "../../calendar/calender-lay-out/calender-lay-out.component";
 import { ReportsLayoutComponent } from "../../reports/reports-layout/reports-layout.component";
 import { AssetsAllocationsLayoutComponent } from "../../assets-allocation/assets-allocations-layout/assets-allocations-layout.component";
+import { ItsupportLayOutComponent } from "../../ITsupport/itsupport-lay-out/itsupport-lay-out.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -26,6 +27,7 @@ export default [
     { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../desk-allocation/desk.route')},
     { path: 'reports', component: ReportsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../reports/reports.routes')},
     { path: 'assets-management', component: AssetsAllocationsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../assets-allocation/assets-allocation.route')},
+    { path: 'it-support', component: ItsupportLayOutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../ITsupport/itsupport.route')},
 
 
 ] as Route[];

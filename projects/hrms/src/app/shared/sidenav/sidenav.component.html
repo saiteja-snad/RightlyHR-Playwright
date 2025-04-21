@@ -55,6 +55,12 @@
                     <i class="bi bi-display  custom-icon"></i>Asset Allocation
                 </li>
                 }
+
+                @if(this.rbac.allowedToAccess('Assets Management.view')){
+                    <li class="nav-item p-2 mb-3" [routerLink]="['/it-support']" routerLinkActive="active-nav-link">
+                        <i class="bi bi-display  custom-icon"></i>IT Support
+                    </li>
+                    }
         </ul>
     </div>
     <div class="sidenav-footer-content text-center py-4">

@@ -33,7 +33,7 @@
                 <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
                 <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
                 <td class="text-center">
-                    <div>
+                    <div class="d-flex gap-2">
                         <button class="custom-btn btn-primary" (click)="onSelectDownload(offerLetter)">Download</button>
                         @if(offerLetter.status=='Approved'){
                         <button class="custom-btn btn-primary" (click)="releaseOfferletter(offerLetter)">Release Offer</button>

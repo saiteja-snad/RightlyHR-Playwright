@@ -1,52 +1,54 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <p class="component-header mb-0">It Support</p>
-      </div>
-     
         <div>
-          <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)"><i
-              class="bi bi-plus me-2"></i>Add  Ticket</button>
+            <p class="component-header mb-0">IT Support</p>
         </div>
-      
+
+        <div>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)"><i
+                    class="bi bi-plus me-2"></i>Add Ticket</button>
+        </div>
+
     </div>
     <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Expense Title</th>
-                    <th>Expense Date</th>
-                    <th>Total Amount</th>
+                    <th>Ticket ID</th>
+                    <th>Ticket Priority</th>
+                    <th>Subject</th>
+                    <th>Requested Date</th>
+                    <th>Assignee</th>
                     <th>Status</th>
-                    <th class="text-center">Actions</th>
-
+                    <th>Updated Date</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-                  lit data
-                </ng-container> -->
-                <!-- No Data Found Template -->
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                </ng-template>
+                @if (tickets.length > 0) {
+                <tr *ngFor="let ticket of tickets">
+                    <td>{{ticket.id}}</td>
+                    <td>{{ticket.priority ?? '-'}}</td>
+                    <td>{{ticket.subject ?? '-'}}</td>
+                    <td>{{ticket.createdAt | date}} </td>
+                    <td>{{ticket.assigneeName ?? '-'}}</td>
+                    <td>{{ticket.ticketStatus ?? '-'}}</td>
+                    <td>{{ticket.updatedAt | date}}</td>
+                </tr>
+                }
+                @else{
+                <tr>
+                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                </tr>
+                }
             </tbody>
         </table>
     </div>
-
-
-  
-  
-  </div>
+</div>
 
 
 
 
-  <ng-template #addtickets let-modal>
+<ng-template #addtickets let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
@@ -57,9 +59,133 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <!-- fromdata -->
+            <form [formGroup]="itSupportForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Ticket Raised For' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                                optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                                formControlName="employee" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                    }}</ng-template>
+                                <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                    }}</ng-template>
+                            </p-select>
+                        </div>
+                        <div *ngIf="itSupportForm.get('employee')?.invalid && itSupportForm.get('employee')?.touched">
+                            <div class="error-msg">{{'Ticket Raised For is required' | translate}}</div>
+                        </div>
+                    
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Name' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                                optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                                formControlName="name" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                    }}</ng-template>
+                                <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                    }}</ng-template>
+                            </p-select>
+                        </div>
+                        <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
+                            <div class="error-msg">{{'Employee is required' | translate}}</div>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Email' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <input type="text" class="form-control custom-input" formControlName="email"
+                            placeholder="Please enter email" onkeydown="return false;" />
+                          
+                        </div>
+                        <div *ngIf="itSupportForm.get('email')?.invalid && itSupportForm.get('email')?.touched">
+                            <div class="error-msg">{{'Email is required' | translate}}</div>
+                        </div>
+                    
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Phone Number' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <input type="number" class="form-control custom-input" formControlName="phoneNumber"
+                        placeholder="Please enter phonenumber" onkeydown="return false;" />
+                      
+                    </div>
+                    <div *ngIf="itSupportForm.get('phoneNumber')?.invalid && itSupportForm.get('phoneNumber')?.touched">
+                        <div class="error-msg">{{'Phone Number is required' | translate}}</div>
+                    </div>
 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Desk Details' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <input type="text" class="form-control custom-input" formControlName="deskdetails"
+                        placeholder="Please enter Deskdetails" onkeydown="return false;" />
+                      
+                    </div>
+                    <div *ngIf="itSupportForm.get('deskdetails')?.invalid && itSupportForm.get('deskdetails')?.touched">
+                        <div class="error-msg">{{'Desk Details is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <input type="text" class="form-control custom-input" formControlName="department"
+                        placeholder="Please enter department" onkeydown="return false;" />
+                      
+                    </div>
+                    <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
+                        <div class="error-msg">{{'Department is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Start Date'}}<span
+                                class="text-danger">*</span></label>
+                        <input type="text">
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'End Date'}}<span
+                                class="text-danger">*</span></label>
+                        <input type="text">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Start Date'}}<span
+                                class="text-danger">*</span></label>
+                        <textarea type="text"></textarea>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="isLoading">
+                        <span *ngIf="!isLoading">
+                            {{'Request'}}
+                        </span>
+                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                        </div>
+                    </button>
+                </div>
+            </form>
         </div>
-
     </div>
 </ng-template>

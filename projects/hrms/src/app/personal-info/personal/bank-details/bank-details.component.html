@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center">
         <div> <span class="family-sub-header">Bank Details</span></div>
-        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
+        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
         <div class="plus-button">
             <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
                     (click)="openModal(addBankModal)" class="plus-text">Add
@@ -18,7 +18,7 @@
                     <th>IFSC Code</th>
                     <th>Proof</th>
                     <th>Primary Bank</th>
-                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
+                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' )){
                     <th class="text-center">Actions</th>}
 
                 </tr>

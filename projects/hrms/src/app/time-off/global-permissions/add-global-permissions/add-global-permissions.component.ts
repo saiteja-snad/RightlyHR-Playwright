@@ -58,6 +58,8 @@ export class AddGlobalPermissionsComponent implements OnInit,OnDestroy {
     private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,public rbac: RbacService) { }
   ngOnInit(): void {
     this.initalizingForm();
+    this.getAllEmployees();
+    this.getEmployeesTeamwise();
   }
   initalizingForm(){
     this.requestForm = this.fb.group({

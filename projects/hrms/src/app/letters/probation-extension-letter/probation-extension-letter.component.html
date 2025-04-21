@@ -1,17 +1,17 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex py-3">
-            <div>
-                <p class="main-content-heading cursor mb-0" (click)="naviagte()"><i class="bi bi-arrow-90deg-left me-2"></i>Probation Extenstion Letter</p>
-            </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header mb-0" (click)="naviagte()">
+                <i class="bi bi-arrow-90deg-left me-2 cursor"></i>Probation Extenstion Letter
+            </p>
         </div>
     </div>
 
     <!--letter content-->
-    <div class="main-letter-content d-flex">
+    <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
             <form [formGroup]="probationExtensionForm" (ngSubmit)="postProbationExtensionLetterFormSubmit()">
-                <div class="mb-4">
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeedetails" optionLabel="fullName" [filter]="true" filterBy="fullName" (onChange)="pathValuesFuction()"
@@ -23,7 +23,7 @@
                     </div>
                 </div>
             
-                <div class="mb-4">
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date" (change)="pathValuesFuction()" />
                     <div *ngIf="probationExtensionForm.get('issuedDate')?.invalid && probationExtensionForm.get('issuedDate')?.touched">
@@ -31,7 +31,7 @@
                     </div>
                 </div>
             
-                <div class="mb-4">
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="documentType" optionValue="value" optionLabel="name" placeholder="Please select document type" 
@@ -43,7 +43,7 @@
                     </div>
                 </div>
             
-                <div class="mb-4">
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true" 
@@ -58,7 +58,7 @@
                     <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name, Designation,
                         Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
                 </div>
-                <div class="d-flex flex-wrap gap-3 pt-4">
+                <div class="d-flex flex-wrap gap-3 pt-3">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="probationExtensionForm.invalid">Generate Document</button>
                     <button type="button" class="custom-btn btn-primary" (click)="probationExtendeEmail()">Release Letter</button>
                 </div>
@@ -77,7 +77,7 @@
                                 <div class="hard-copy-letter"></div>
                             </ng-template>
     
-                            <div class="d-flex justify-content-between mb-4">
+                            <div class="d-flex justify-content-between mb-3">
                                 <div>
                                     <ul class="list-style-none ps-0">
                                         <li *ngIf="!probationExtensionLetterData.firstName && !probationExtensionLetterData.lastName;else fullname"></li>
@@ -96,36 +96,36 @@
                                 </div>
                             </div>
     
-                            <div class="mb-4">
+                            <div>
                                 <p class="letter-sub-header">Dear {{probationExtensionLetterData.firstName}}
                                     {{probationExtensionLetterData.middleName}} {{probationExtensionLetterData.lastName}},
                                 </p>
                             </div>
     
                             <div>
-                                <p class="mb-4">We are pleased to inform that following a performance appraisal
+                                <p>We are pleased to inform that following a performance appraisal
                                     and subsequent review, your probation period has been extended by {{probationExtensionLetterData.probationmonths}} months.
                                     This extension will conclude on {{ probationExtensionLetterData.probationExtendedDate|dateformat}}.
                                     At the conclusion of this extended probation period, we will conduct another performance
                                     review to determine the subsequent course of action based on your performance.</p>
     
-                                <p class="mb-4">
+                                <p>
                                     During this extended probationary period, we will continue to provide you with
                                     guidance, feedback, and support to help you excel in your role. Our aim is to ensure
                                     that you have the necessary time and resources to meet our performance expectations and
                                     demonstrate your full potential as a valuable member of our team.
                                 </p>
     
-                                <p class="mb-4">Please be aware that your terms and conditions of employment will
+                                <p>Please be aware that your terms and conditions of employment will
                                     remain the same during this extension, and all other aspects of your employment
                                     relationship with RightlyHR will remain unchanged.</p>
     
-                                <p class="mb-4"> We believe that this extension will provide you with an opportunity to
+                                <p> We believe that this extension will provide you with an opportunity to
                                     further showcase your abilities, and we have confidence in your potential to succeed in
                                     your current role. We are committed to working closely with you to ensure your continued growth and success within
                                     our organization.</p>
     
-                                <p class="mb-4"> We look forward to witnessing your continued progress and contributions to our team during 
+                                <p> We look forward to witnessing your continued progress and contributions to our team during 
                                     this extended probationary period.</p>
 
                                 <p>Sincerely,</p>

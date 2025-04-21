@@ -14,11 +14,14 @@ export default [
     { path: 'custom-reports', loadComponent: () => import('./custom-reports/custom-reports.component').then((m) => m.CustomReportsComponent) },
     {
         path: 'attendance-report', children: [
-            // { path: '', redirectTo: 'salutation', pathMatch: 'full' },
-            // { path: 'salutation', loadComponent: () => import('./personal/salutation/salutation.component').then(m => m.SalutationComponent) },
-            // { path: 'gender', loadComponent: () => import('./personal/gender/gender.component').then(m => m.GenderComponent) },
-            // { path: 'maritalstatus', loadComponent: () => import('./personal/maritalstatus/maritalstatus.component').then(m => m.MaritalstatusComponent) },
-            // { path: 'identitytype', loadComponent: () => import('./personal/identitytype/identitytype.component').then(m => m.IdentitytypeComponent) },
+           { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+           { path: 'leave-report', loadComponent: () => import('./attendence-reports/leave-report/leave-report.component').then((m) => m.LeaveReportComponent) },
+           { path: 'leave-summary-report', loadComponent: () => import('./attendence-reports/leave-summary-report/leave-summary-report.component').then((m) => m.LeaveSummaryReportComponent) },
+           { path: 'comp-off-report', loadComponent: () => import('./attendence-reports/compoff-report/compoff-report.component').then((m) => m.CompoffReportComponent) },
+           { path: 'wfh-report', loadComponent: () => import('./attendence-reports/wfh-report/wfh-report.component').then((m) => m.WfhReportComponent) },
+           { path: 'absent-report', loadComponent: () => import('./attendence-reports/absent-report/absent-report.component').then((m) => m.AbsentReportComponent) },
+           { path: 'inactive-employee-report', loadComponent: () => import('./attendence-reports/inactive-employee-report/inactive-employee-report.component').then((m) => m.InactiveEmployeeReportComponent) },
+           { path: 'yearly-summary-report', loadComponent: () => import('./attendence-reports/yearly-summary-report/yearly-summary-report.component').then((m) => m.YearlySummaryReportComponent) },
         ]
     },
     { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent) },

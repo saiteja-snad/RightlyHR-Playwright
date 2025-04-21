@@ -137,3 +137,16 @@
         </div>
     </div>
 </ng-template>
+
+<ng-template #confirmation let-modal>
+    <div class="modal-body p-4" ngbAutofocus>
+        <div class="mb-4 text-center">
+            <img src="/assets/images/Vector@2x.png" alt="" class="modal-icon">
+        </div>
+        <p class="confirm-text mb-4 text-center">Are you sure you want to Delete?</p>
+        <div class="d-flex justify-content-around pt-3">
+            <button class="modal-btn no-btn">No</button>
+            <button class="modal-btn yes-btn">Yes</button>
+        </div>
+    </div>
+</ng-template>

@@ -4,13 +4,14 @@
             <p class="component-header cursor mb-0">Leave Balance</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary"><i
+            <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Timeoff Tab.create')"><i
                     class="bi bi-plus me-2"></i>Request Leave</button>
         </div>
     </div>
     <div>
 
         <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5">
+            @if (rbac.allowedToAccess('Timeoff Tab.view')) {
             @for (item of categoryDetails; track $index) {
             <div class="col">
                 <div class="card employee-details-card w-100 mb-3">
@@ -50,6 +51,7 @@
 
             </div>
             }
+        }
         </div>
         <div>
             <app-leaves-approvaltabs></app-leaves-approvaltabs>
@@ -74,7 +76,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Timeoff Tab.create')">
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Leave Type'| translate}}<span class="text-danger">*</span></label>

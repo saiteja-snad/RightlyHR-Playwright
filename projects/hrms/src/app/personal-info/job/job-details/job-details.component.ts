@@ -12,6 +12,7 @@ import moment from 'moment';
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environments/environment.dev';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../services/form-validations.service';
 
 @Component({
   selector: 'app-job-details',
@@ -67,7 +68,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy{
   status: any
   substatus: any
   isLoading=false;
-  constructor(private modalService: NgbModal,private authService:AuthService,private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(
+    private modalService: NgbModal,
+    private authService:AuthService,
+    private fb: FormBuilder, 
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
+    public formValidations: FormValidationsService,
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');

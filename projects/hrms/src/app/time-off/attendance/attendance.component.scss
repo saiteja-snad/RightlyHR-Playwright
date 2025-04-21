@@ -14,7 +14,10 @@
     color: green;
     font-weight: 700;
   }
-  
+  .status-halfdaypresent {
+    color: rgb(243, 109, 234);
+    font-weight: 700;
+  }
   .status-absent {
     color:  #D8332A;
     
@@ -30,6 +33,10 @@
     color: #BF8534;
     font-weight: 700;
   }
+  .status-compoff {
+    color: #bf6734;
+    font-weight: 700;
+  }
   .status-remote {
     color: #348abf;
     font-weight: 700;
@@ -42,3 +49,12 @@
     color: #7C7C7C;
     font-weight:700;
   }
+.time-custom{
+  th {
+    background-color: #E0E6ED;
+    color:  #141414;
+    text-wrap: nowrap;
+    text-transform: uppercase;
+}
+}
+ 

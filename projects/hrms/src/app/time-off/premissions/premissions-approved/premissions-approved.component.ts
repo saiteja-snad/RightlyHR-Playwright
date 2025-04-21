@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { RegularizationRequest } from '../../../Interfaces/timoff-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { RbacService } from '../../../services/rbac.service';
 
 
 @Component({
@@ -38,7 +39,8 @@ export class PremissionsApprovedComponent implements OnInit,OnDestroy {
   ];
 
   constructor(
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {}
 
 

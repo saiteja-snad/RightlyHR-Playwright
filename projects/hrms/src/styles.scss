@@ -33,6 +33,8 @@
     --btn-color-ts: #305889;
     --btn-success: #38930D;
     --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
     // button colors ends
 
     // colors
@@ -64,7 +66,8 @@
     // font sizes
     --fontsize36: 2.25rem;
     --fontsize32: 2rem;
-    --fontsize28: 1.75rem --fontsize24: 1.5rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
     --fontsize20: 1.25rem;
     --fontsize18: 1.125rem;
     --fontsize16: 1rem;
@@ -177,7 +180,6 @@ body {
         border-radius: 50%;
     }
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -195,7 +197,7 @@ body {
     }
 
     .logo-img {
-        width: 3.25rem;
+        width: 4rem;
         height: 3rem;
         border-radius: 0.2rem;
     }
@@ -429,7 +431,7 @@ a {
     color: #305889;
     cursor: pointer;
 
-    .plus-icon{
+    .plus-icon {
         font-size: var(--fontsize18) !important;
     }
 }
@@ -449,14 +451,28 @@ a {
     cursor: pointer;
 }
 
+.clone-btn {
+    background-color: var(--btn-clone);
+    color: var(--btn-color-tp);
+    border-color: var(--btn-clone);
+}
+
+.publish-btn {
+    background-color: var(--btn-publish);
+    color: var(--btn-color-tp);
+    border-color: var(--btn-publish);
+}
+
 .btn-primary-approve {
     background-color: var(--btn-success);
     color: var(--btn-color-tp);
+    border-color: var(--btn-success);
 }
 
 .btn-primary-reject {
     background-color: var(--btn-failure);
     color: var(--btn-color-tp);
+    border-color: var(--btn-failure);
 }
 
 .btn-secondary {
@@ -468,19 +484,6 @@ a {
 .btn-primary:disabled {
     opacity: 0.5;
 }
-
-// scroll bar stylings
-// ::-webkit-scrollbar {
-//     width: 6px;
-//     height: 6px;
-//     border-radius: 10px;
-// }
-
-// /* Handle */
-// ::-webkit-scrollbar-thumb {
-//     background: #d9d9d9;
-//     border-radius: 10px;
-// }
 
 //custom input stylings
 .custom-label {
@@ -523,7 +526,7 @@ a {
     overflow: auto;
     background-color: #FFFFFF;
     border: 1px solid #E7E7ED;
-    border-radius: 0.75rem;
+    border-radius: 0.55rem;
     position: relative;
 
     thead {
@@ -532,8 +535,7 @@ a {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -550,11 +552,11 @@ a {
     }
 
     th:first-child {
-        border-top-left-radius: 0.75rem;
+        border-top-left-radius: 0.5rem;
     }
 
     th:last-child {
-        border-top-right-radius: 0.75rem;
+        border-top-right-radius: 0.5rem;
     }
 
     tr:nth-child(even) {
@@ -563,7 +565,7 @@ a {
 
     .dropdown-item {
         font-weight: 400;
-        font-size: 14px;
+        font-size: var(--fontsize14);
         line-height: 100%;
         letter-spacing: 0%;
         color: #141414;
@@ -640,7 +642,7 @@ a {
         background-color: #e8f0fb !important;
         color: #222222 !important;
     }
-    
+
     .p-multiSelect:hover {
         border: 1px solid #DEE8F3 !important;
     }
@@ -661,7 +663,6 @@ a {
         color: #222222;
     }
 }
-
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -725,7 +726,6 @@ a {
         color: #06274F;
     }
 }
-
 // My Info Stylings Ends
 
 // letter main content
@@ -782,17 +782,13 @@ a {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table, th, td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
+    th, td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -802,8 +798,7 @@ a {
         font-weight: bold;
     }
 
-    tr:nth-child(4),
-    tr:nth-child(9) {
+    tr:nth-child(4), tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -813,11 +808,11 @@ a {
 }
 
 .hard-copy-letter {
-    margin-bottom: 5rem;
+    margin-bottom: 3rem;
 }
 
 .soft-copy-letter {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .list-style-none {
@@ -854,7 +849,6 @@ a {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
-
 // letter stylings
 
 // custom search field
@@ -867,7 +861,7 @@ a {
         border: none;
         padding: 0.625rem 1rem;
         font-size: var(--fontsize14);
-        background-color: transparent;
+        background-color: #FFFFFF !important;
     }
 
     .custom-search-input {
@@ -1006,11 +1000,8 @@ a {
         font-size: 12px;
         color: #65778D;
     }
-
-   
-
-   
 }
+
 // file styling
 input[type="file"] {
     &::-webkit-file-upload-button {
@@ -1131,10 +1122,7 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,
-        .p-paginator-prev,
-        .p-paginator-next,
-        .p-paginator-last {
+        .p-paginator-first,.p-paginator-prev,.p-paginator-next,.p-paginator-last {
             border-radius: 50%;
             width: 1.25rem;
             height: 1.25rem;
@@ -1143,17 +1131,13 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,
-        .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,
-        .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,.p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
-
 //pagenation stylings
 
 // login components stylings
@@ -1297,8 +1281,8 @@ input:focus {
 }
 
 .settings-common-icon {
-    width: 2rem;
-    height: 2rem;
+    width: 1.25rem;
+    height: 1.25rem;
     cursor: pointer;
 }
 
@@ -1322,15 +1306,13 @@ input:focus {
     border-radius: 1.2rem;
     position: relative;
 
-
     thead {
         top: 0%;
         position: sticky;
         z-index: 1;
     }
 
-    th,
-    td {
+    th,td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1357,7 +1339,6 @@ input:focus {
     tr:nth-child(even) {
         background-color: var(--table-data-bg-even-color);
     }
-
 }
 
 // loader
@@ -1373,28 +1354,14 @@ input:focus {
     }
 }
 
-// .expenses-title-text {
-//     font-weight: 700;
-//     font-size: 14px;
-//     line-height: 100%;
-//     letter-spacing: 0%;
-//     vertical-align: middle;
-//     color: #222B45;
-// }
-
-
 // success icon
 .succes-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
+    width: 3rem;
 }
 
 //error icon
 .error-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
+    width: 3rem;
 }
 
 // Settings Stylings
@@ -1447,88 +1414,14 @@ input:focus {
     }
 }
 
-/* Global override styles for PrimeNG tabs to ensure white background */
-.p-tabview .p-tabview-nav,
-.p-tabview .p-tabview-nav li,
-.p-tabview .p-tabview-nav li .p-tabview-nav-link,
-.p-tabview .p-tabview-panels,
-.p-tab,
-.p-tablist,
-.p-tablist-tab-list,
-.component-nav-tabs-container.card {
-    background-color: #ffffff !important;
-    color: #06274F !important;
+// red trash icon
+.red-trash-icon {
+    width: 1rem;
+    height: 1.25rem;
 }
 
-.card.component-nav-tabs-container {
-    background-color: #ffffff !important;
-    border-color: #ccdaec !important;
-}
-
-/* Direct style override to target the navigation buttons by tag and class */
-button.p-tablist-prev-button,
-button.p-tablist-next-button,
-button.p-tabview-nav-prev,
-button.p-tabview-nav-next,
-.component-nav-tabs-container button,
-.p-tabview button,
-.p-tablist button {
-    background-color: #ffffff !important;
-    color: #06274F !important;
-    border: none !important;
-}
-
-/* Fix for dark SVG icons in buttons */
-button.p-tabview-nav-prev svg,
-button.p-tabview-nav-next svg,
-button.p-tablist-prev-button svg,
-button.p-tablist-next-button svg {
-    fill: #06274F !important;
-    stroke: #06274F !important;
-}
-
-/* Specific fix for the tab navigation arrow buttons */
-.p-tabview-nav-container,
-.p-tablist-container,
-.p-tabview-nav-content {
-    background-color: #ffffff !important;
-}
-
-/* Fix for arrow navigation in PrimeNG tabs */
-.p-tabview-nav-prev,
-.p-tabview-nav-next,
-.p-tablist-prev-button,
-.p-tablist-next-button,
-.p-element.p-tabview-nav-prev,
-.p-element.p-tabview-nav-next,
-.p-element.p-tablist-prev-button,
-.p-element.p-tablist-next-button {
-    background-color: #ffffff !important;
-
-    &::before,
-    &::after,
-    & *,
-    & *::before,
-    & *::after {
-        background-color: #ffffff !important;
-    }
-
-    /* Force any chevron/icon element to have white background */
-    & span,
-    & i,
-    & svg,
-    & path,
-    & g {
-        background-color: #ffffff !important;
-    }
-
-    & .p-icon {
-        background-color: #ffffff !important;
-    }
-}
-
-/* Direct selector for arrow icons */
-.pi-chevron-left,
-.pi-chevron-right {
-    background-color: #ffffff !important;
+input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
 }

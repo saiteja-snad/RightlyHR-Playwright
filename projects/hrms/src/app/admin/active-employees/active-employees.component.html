@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <p class="component-header mb-0" (click)="navigateDashboard()">
-            <i class="bi bi-arrow-90deg-left me-2"></i>{{'Active Employees'|translate}}
+          <p class="component-header mb-0">
+            <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Active Employees'|translate}}
           </p>
         </div>
         @if(this.rbac.allowedToAccess('Active Generate documents.view')){
@@ -12,7 +12,7 @@
             </button>
             <ul class="dropdown-menu custom-dropdown-menu">
                 <li><a class="dropdown-item" [routerLink]="['/admin/letters/address-proof-letter']" routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>{{'Address Proof Letter'| translate}}</a></li>
-                <li><a class="dropdown-item" [routerLink]="['/admin/letters/bank-loan-letterr']" routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>{{'Bank Loan Letter'| translate}}</a></li>
+                <li><a class="dropdown-item" [routerLink]="['/admin/letters/bank-loan-letter']" routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>{{'Bank Loan Letter'| translate}}</a></li>
                 <li><a class="dropdown-item" [routerLink]="['/admin/letters/apprisal-letter']" routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>{{'Appraisal Letter'| translate}}</a></li>
                 <li><a class="dropdown-item" [routerLink]="['/admin/letters/salary-revision-letter']" routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>{{'Salary Revision Letter'| translate}}</a></li>
                 <li><a class="dropdown-item" [routerLink]="['/admin/letters/promotion-letter']" routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>{{'Promotion Letter'| translate}}</a></li>
@@ -22,12 +22,13 @@
     </div>
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search"  #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
         </div>
       
         <div class="custom-table-content">
+          @if (!loader) {
             <table class="w-100">
                 <thead>
                     <tr>
@@ -42,87 +43,92 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let act of Active | activeEmployee : searchValue" (click)="select(act)">
-          
-                      <td>
-                        <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span> 
-                        <ng-template #fusionid>
-                          -
-                        </ng-template></td>
-                      <td> <span *ngIf="act.firstName;else fistname"> </span>{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}
-                        <ng-template #fistname>
-                          -
-                        </ng-template></td>
-                      <td><span *ngIf="act.workEmail;else workemail"> {{act.workEmail}}</span>
-                        <ng-template #workemail>
-                          -
-                        </ng-template></td>
-                      <td><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span> 
-                        <ng-template #contactnumb>
-                          -
-                        </ng-template></td>
-                      <td>
-                        <ng-container *ngIf="act?.jobDetails ; else noData">
-                          <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                            <span *ngIf="first"><span *ngIf="jobDetail.lopcation;else location">{{ jobDetail.lopcation }} </span>
+                  <tr *ngFor="let act of Active | activeEmployee : searchValue" (click)="select(act)">
+                    <td>
+                      <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span>
+                      <ng-template #fusionid>
+                        -
+                      </ng-template>
+                    </td>
+                    <td> <span *ngIf="act.firstName;else fistname"> </span>{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}
+                      <ng-template #fistname>
+                        -
+                      </ng-template>
+                    </td>
+                    <td><span *ngIf="act.workEmail;else workemail"> {{act.workEmail}}</span>
+                      <ng-template #workemail>
+                        -
+                      </ng-template>
+                    </td>
+                    <td><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
+                      <ng-template #contactnumb>
+                        -
+                      </ng-template>
+                    </td>
+                    <td>
+                      <ng-container *ngIf="act?.jobDetails ; else noData">
+                        <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                          <span *ngIf="first"><span *ngIf="jobDetail.lopcation;else location">{{ jobDetail.lopcation }} </span>
                             <ng-template #location>
                               -
                             </ng-template>
                           </span>
-                          </div>
-                        </ng-container>
-                        <ng-template #noData>
-                          <div>-</div>
-                        </ng-template>
-                      </td> 
-                      <td>
-                        <ng-container *ngIf="act?.jobDetails ; else noData">
-                          <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                            <span *ngIf="first">
-                               <span *ngIf="jobDetail.subLocation;else subloaction">{{ jobDetail.subLocation }} </span>
+                        </div>
+                      </ng-container>
+                      <ng-template #noData>
+                        <div>-</div>
+                      </ng-template>
+                    </td>
+                    <td>
+                      <ng-container *ngIf="act?.jobDetails ; else noData">
+                        <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                          <span *ngIf="first">
+                            <span *ngIf="jobDetail.subLocation;else subloaction">{{ jobDetail.subLocation }} </span>
                             <ng-template #subloaction>
                               <div>-</div>
                             </ng-template>
                           </span>
-                          </div>
-                        </ng-container>
-                        <ng-template #noData>
-                          <div>-</div>
-                        </ng-template>
-                      </td>
-                      <td>
-                        <ng-container *ngIf="act?.jobDetails ; else noData">
-                          <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                            <span *ngIf="first">
-                               <span *ngIf="jobDetail.shiftName;else shift">{{ jobDetail.shiftName}} </span>
+                        </div>
+                      </ng-container>
+                      <ng-template #noData>
+                        <div>-</div>
+                      </ng-template>
+                    </td>
+                    <td>
+                      <ng-container *ngIf="act?.jobDetails ; else noData">
+                        <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                          <span *ngIf="first">
+                            <span *ngIf="jobDetail.shiftName;else shift">{{ jobDetail.shiftName}} </span>
                             <ng-template #shift>
                               <div>-</div>
                             </ng-template>
                           </span>
-                          </div>
-                        </ng-container>
-                        <ng-template #noData>
-                          <div>-</div>
-                        </ng-template>
-                      </td>
-                      <td>
-                        <ng-container *ngIf="act?.jobDetails ; else noData">
-                          <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                            <span *ngIf="first"><span *ngIf="jobDetail.jobRole;else jobrole">{{ jobDetail.jobRole }} </span>
+                        </div>
+                      </ng-container>
+                      <ng-template #noData>
+                        <div>-</div>
+                      </ng-template>
+                    </td>
+                    <td>
+                      <ng-container *ngIf="act?.jobDetails ; else noData">
+                        <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                          <span *ngIf="first"><span *ngIf="jobDetail.jobRole;else jobrole">{{ jobDetail.jobRole }} </span>
                             <ng-template #jobrole>
                               -
                             </ng-template>
-                           </span>
-                          </div>
-                        </ng-container>
-                        
-                        <ng-template #noData>
-                          <div>-</div>
-                        </ng-template>
-                      </td>
-                    </tr>
-                  </tbody>
+                          </span>
+                        </div>
+                      </ng-container>
+                      <ng-template #noData>
+                        <div>-</div>
+                      </ng-template>
+                    </td>
+                  </tr>
+                </tbody>
             </table>
+          } @else {
+            <app-data-loader-content/>
+          }
         </div>
     </div>
 </div>

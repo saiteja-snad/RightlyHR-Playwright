@@ -8,6 +8,7 @@ import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { GenderData } from './gender.model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-gender',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
@@ -26,7 +27,14 @@ export class GenderComponent {
   selectedDeleteGender: any = null;
   subscription!: Subscription;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService, public formValidations: FormValidationsService) { }
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService, 
+    public formValidations: FormValidationsService,
+    public rbac: RbacService,
+  ) { }
 
   ngOnInit(): void {
     this.GenderForm = this.fb.group({

@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { IBank } from './bank-name.model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-bank-name',
@@ -32,6 +33,7 @@ export class BankNameComponent implements OnInit {
     private http: HttpService,
     private fb: FormBuilder,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {}
 
   bankForm!: FormGroup;

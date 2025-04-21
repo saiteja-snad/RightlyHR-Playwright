@@ -1,0 +1,72 @@
+<div class="card-top-content py-3">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="mb-3">
+                <input type="search" name="searchForms" #search="ngModel" [(ngModel)]="searchValue" class="form-control search-input" id="exampleInputEmail1" placeholder="Search here">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-table-content ">
+    <table class="w-100">
+        <thead>
+            <tr>
+                <th>{{'Module Name' | translate}}</th>
+                <th>{{'Form Name' | translate}}</th>
+                <th>{{'Created By' | translate}}</th>
+                <th>{{'Updated By' | translate}}</th>
+                <th>{{'Status' | translate}}</th>
+                <th>{{'Actions' | translate}}</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="allFormsDetails.length > 0; else noDataTemplate">
+                <ng-container *ngFor="let form of allFormsDetails | searchForm  : searchValue" class="hover">
+                    <tr>
+                        <td class="text-start">{{ form.moduleName }}</td>
+                        <td class="text-start">{{ form.formName }}</td>
+                        <td class="text-start">{{ form.createdBy }}</td>
+                        <td class="text-start">{{ form.updatedBy ? form.updatedBy : '-' }}</td>
+                        <td class="text-start">{{ form.status | titlecase }}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                              <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                              </span>
+                              <ul class="dropdown-menu custom-dropdown-menu">
+                                <li >
+                                  <a class="dropdown-item" (click)="navigateToUpdateComponent(form.formId)">
+                                    <i class="bi bi-pencil me-2"></i>Update
+                                  </a>
+                                </li>
+                                <li >
+                                    <a class="dropdown-item"  (click)="navigateToViewComponent(form.formId)">
+                                        <i class="bi bi-eye me-2"></i>Preview
+                                    </a>
+                                  </li>
+                                <li >
+                                  <a class="dropdown-item">
+                                    <i class="bi bi-trash3 me-2"></i>Inactive
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          </td>
+                      
+                    </tr>
+                </ng-container>
+            </ng-container>
+          
+            <ng-template #noDataTemplate>
+              <tr>
+                <td colspan="4">
+                  <app-no-data-found></app-no-data-found>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+          
+    </table>
+</div>

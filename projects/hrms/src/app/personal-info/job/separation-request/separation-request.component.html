@@ -1,14 +1,11 @@
-<div class="custom-main-component-container mt-4">
-  <div class="d-flex justify-content-between align-items-center">
-    <div> <span class="component-sub-header">Separation Details</span></div>
-    @if(isLastWorkingDate(this.empdata.lastworkingday)&&nodueclearancedetails.length <= 0&&getSeparationDetails.value.length>0){
-       <div class="plus-button">
-      <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button" (click)="openModal(raiseNodue)"
-          class="plus-text">Raise No Due</span></span>
+<div class="custom-main-component-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><span class="component-sub-header">Separation Details</span></div>
+    @if(isLastWorkingDate(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0 && getSeparationDetails.value.length > 0){
+      <div class="custom-add-btn" (click)="openModal(raiseNodue)"><i class="bi bi-plus plus-icon me-1"></i>Raise No Due</div>
+      }
   </div>
-  }
-</div>
-  <!--Input search-->
+
   <div class="custom-table-content">
     <table class="w-100">
       <thead>
@@ -87,7 +84,6 @@
                 <i class="bi bi-three-dots-vertical"></i>
               </span>
               }
-
               <ul class="dropdown-menu custom-dropdown-menu">
                 <li (click)="recallRequest(item,recallrequestpopup)">
                   <a class="dropdown-item">
@@ -103,14 +99,11 @@
                   </a>
                 </li>
                 }
-
               </ul>
             </div>
           </td>
           <!-- </ng-container> -->
         </tr>
-
-
         }
         }
         @else{
@@ -124,44 +117,41 @@
     </table>
   </div>
 </div>
+
 <!-- Modal -->
 <ng-template #openDiscriotionviewpopup let-modal>
-
-  <div class="custom-main-popup-content" ngbAutofocus>
-    <div class="modal-header">
-      <h1 class="modal-title fs-5">View Comments</h1>
-      <button type="button" class="btn-close me-2" (click)="modal.dismiss()" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-      <div class="cardd mb-3">
-        <div class="row m-0 p-0">
-          <div class="col-12 p-0">
-            <div class="p-0">
-              <p class="m-0 ">
-                <b> Comments:</b> {{ decription_Storing_Variable }}
-              </p>
-            </div>
-          </div>
-        </div>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">View Comments</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-        Close
-      </button>
+    <div class="custom-main-popup-content p-4">
+      <p>
+        <b> Comments:</b> {{ decription_Storing_Variable }}
+      </p>
+      <div class="d-flex justify-content-end gap-3 pt-4">
+        <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
+      </div>
     </div>
   </div>
 </ng-template>
+
 <ng-template #ApprovalPopup let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <h1 class="modal-title fs-5" id="exampleModalLabel">
-        Approver History Details
-      </h1>
-      <button type="button" class="btn-close me-2" (click)="modal.dismiss()"></button>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Approver History Details</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
     </div>
-    <div class="modal-body">
-      <div class="card custom-table mb-3">
+    <div class="custom-main-popup-content p-4">
+      <div class="custom-table-content mb-3">
         <table class="w-100">
           <thead>
             <tr>
@@ -237,44 +227,33 @@
                 <ng-template #isaccept>NA</ng-template>
               </td>
               <td>
-                <span *ngIf="comment?.metadata?.status; else isaccept">{{
-                  comment.metadata.status
-                  }}</span>
+                <span *ngIf="comment?.metadata?.status; else isaccept">{{ comment.metadata.status }}</span>
                 <ng-template #isaccept>NA</ng-template>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-        Close
-      </button>
+      <div class="d-flex justify-content-end gap-3">
+        <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
+      </div>
     </div>
   </div>
 </ng-template>
-<ng-template #recallrequestpopup let-modal>
-  <div class="p-5">
-    <div class="mt-4 mb-3">
-      <!-- <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img" /> -->
-    </div>
-    <h4 class="text-center">
-      Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}}
-      Request?
-    </h4>
-    <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
-      <div class="mb-3">
-        <label class="form-label custom-label mb-2">Reason For Recall <span class="error-msg">*</span></label>
-        <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
-          placeholder="Please enter recall reason" name="recallReason" formControlName="recallReason"></textarea>
 
-        <div>
-          <span class="color">
-            {{ recallreason.get('recallReason')?.value?.length || 0 }} / 250
-          </span>
-          <div>
-            <small class="error-msg"
+<ng-template #recallrequestpopup let-modal>
+  <div class="custom-main-popup-container p-4" ngbAutofocus>
+    <div class="text-center pt-2 mb-4">
+      <p class="popup-heading mb-0">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}} Request?</p>
+    </div>
+    <div class="custom-main-popup-content">
+      <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Reason For Recall <span class="error-msg">*</span></label>
+          <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
+            placeholder="Please enter recall reason" name="recallReason" formControlName="recallReason"></textarea>
+          <div class="color">{{ recallreason.get('recallReason')?.value?.length || 0 }} / 250</div>
+          <div class="error-msg"
             *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
             <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['required']">
               Recall Reason is required
@@ -285,119 +264,110 @@
             <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['pattern']">
               Reason for Recall should not start with a space.
             </ng-container>
-          </small>
           </div>
         </div>
-      </div>
 
-      <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-          {{'No'|translate}}
-        </button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
-          @if(!isLoading){
-          {{'Yes'|translate}}
-          }
-          @else {
-          <div class="d-flex">
-            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+        <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
+            {{'No'|translate}}
+          </button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
+            @if(!isLoading){
+            {{'Yes'|translate}}
+            }
+            @else {
+            <div class="d-flex">
+              <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+              </div>
+              <div> {{'Submitting'|translate}}</div>
             </div>
-            <div> {{'Submitting'|translate}}</div>
-          </div>
-          }
-        </button>
-      </div>
-    </form>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </ng-template>
 
 <!-- modal strat to open the early relieving popup -->
 <ng-template #earlyrequestpopup let-modal>
-  <div class="p-5">
-    <div class="mt-4 mb-3">
-      <!-- <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img" /> -->
+  <div class="custom-main-popup-container p-4" ngbAutofocus>
+    <div class="text-center pt-2 mb-4">
+      <p class="popup-heading mb-0">Request For Early Relieving</p>
     </div>
-    <h4 class="text-center">
-      Request For Early Relieving
-    </h4>
-    <form [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="mb-3">
+    <div class="custom-main-popup-content">
+      <form [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
             <label for="Effective Date ">Early Relieving Date <span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
               id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
-            <small class="error-msg"
+            <div class="error-msg"
               *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
-              Early relieving Date
-              is required </small>
+              Early relieving Date is required </div>
           </div>
-        </div>
-        <div class="col-md-12">
-          <div class="mb-3">
-            <label class="form-label custom-label mb-2">Reason for
-              Early Relieving <span class="error-msg">*</span></label>
+
+          <div class="col-md-12 mb-3">
+            <label class="form-label custom-label mb-2">Reason for Early Relieving <span class="error-msg">*</span></label>
             <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*"
               placeholder="Please provide early relieving reason...." name="Reason"
               formControlName="earlyReleivingReason"></textarea>
-
             <div>
               <span class="color">
                 {{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }} / 250
               </span>
               <div>
-                <small class="error-msg"
-                *ngIf="earlyReleivingform.get('earlyReleivingReason')?.touched && earlyReleivingform.get('earlyReleivingReason')?.invalid">
-                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['required']">
-                  Reason for Early Relieving is required
-                </ng-container>
-                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength']">
-                  Maximum 400 characters allowed
-                </ng-container>
-                <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern']">
-                  Reason for Early Relieving should not start with a space.
-                </ng-container>
-              </small>
+                <div class="error-msg" *ngIf="earlyReleivingform.get('earlyReleivingReason')?.touched && earlyReleivingform.get('earlyReleivingReason')?.invalid">
+                  <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['required']">
+                    Reason for Early Relieving is required
+                  </ng-container>
+                  <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength']">
+                    Maximum 400 characters allowed
+                  </ng-container>
+                  <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern']">
+                    Reason for Early Relieving should not start with a space.
+                  </ng-container>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-          {{'Close'|translate}}
-        </button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
-          @if(!isLoading){
-          {{'Submit'|translate}}
-          }
-          @else {
-          <div class="d-flex">
-            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+
+        <div class="d-flex justify-content-around w-100">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
+            {{'Close'|translate}}
+          </button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
+            @if(!isLoading){
+            {{'Submit'|translate}}
+            }
+            @else {
+            <div class="d-flex">
+              <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+              <div> {{'Submitting'|translate}}</div>
             </div>
-            <div> {{'Submitting'|translate}}</div>
-          </div>
-          }
-        </button>
-      </div>
-    </form>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </ng-template>
 <!-- modal end to open the early relieving popup -->
- <!-- modal open to raise nodue -->
+
+<!-- modal open to raise nodue -->
 <ng-template #raiseNodue let-modal>
-  <div class="modal-body mt-4">
-    <!-- <img src="./assets/images/Vector@2x.png" alt="" class="imgg"> -->
-    <h3 class="want text-center mt-4">Raise No Due Request</h3>
-    <h5 class="want text-center mt-4">
-      Provide your official work email addresses!
-    </h5>
-    <div class="mt-4">
+  <div class="custom-main-popup-container p-4" ngbAutofocus>
+    <div class="text-center pt-2">
+      <p class="popup-heading">Raise No Due Request</p>
+      <p class="popup-heading">Provide your official work email addresses!</p>
+    </div>
+    <div class="custom-main-popup-content">
       <form [formGroup]="profileForm">
-        <div class="ps-4 pe-4">
-          <h6>Add Emails <span class="error-msg">*</span></h6>
-          <!-- Main email input -->
-          <div class="">
+        <div class="mb-3">
+          <p class="popup-heading mb-2">Add Emails<span class="error-msg">*</span></p>
+
+          <div class="mb-3">
             <div class="d-flex">
               <input name="addemail" class="form-control w-100" placeholder="Enter email" type="text"
                 formControlName="emails" />
@@ -406,14 +376,14 @@
               </div>
             </div>
             <!-- Error message for the main email input -->
-            <div *ngIf="emails?.invalid && (emails?.dirty || emails?.touched)" class="text-danger">
+            <div *ngIf="emails?.invalid && (emails?.dirty || emails?.touched)" class="error-msg">
               <div *ngIf="emails?.errors?.['required']">Email is required.</div>
               <div *ngIf="emails?.errors?.['email']">Invalid email format.</div>
             </div>
           </div>
 
           <!-- Dynamic email inputs from FormArray -->
-          <div class="w-100 mt-3" formArrayName="noduerequestedemails">
+          <div class="" formArrayName="noduerequestedemails">
             <div *ngFor="let item of formemailsfornodue.controls; let i = index">
               <div class="d-flex">
                 <input [formControlName]="i" class="form-control mt-2 w-100" placeholder="Enter email" id="item-{{ i }}"
@@ -423,7 +393,7 @@
                     (click)="removeSection(i)"></button>
                 </div>
               </div>
-              <div *ngIf="item.invalid && (item.dirty || item.touched)" class="text-danger">
+              <div *ngIf="item.invalid && (item.dirty || item.touched)" class="error-msg">
                 <div *ngIf="item.errors?.['required']">Email is required.</div>
                 <div *ngIf="item.errors?.['email']">Invalid email format.</div>
               </div>
@@ -431,36 +401,30 @@
           </div>
 
           <!-- Add button at the bottom -->
-          <div class="row mt-4">
-            <div class="col-12 text-end">
-              <button type="button" class="custom-btn btn-primary" (click)="addAlias()">
-                + Add
-              </button>
-            </div>
+          <div class="d-flex text-end my-1">
+            <button type="button" class="custom-btn btn-primary" (click)="addAlias()">+ Add</button>
+          </div>
+
+          <div class="d-flex justify-content-end w-100 gap-2 pt-3">
+            <button type="button" class="custom-btn btn-secondary px-4"
+              (click)="modal.dismiss(); profileForm.reset(); formemailsfornodue.clear()">
+              {{'Cancel'|translate}}
+            </button>
+            <button type="submit" class="custom-btn btn-primary px-4" [disabled]="profileForm.invalid||isLoading"
+              (click)="requestNoDue(profileForm)">
+              @if(!isLoading){
+              {{'Submit'|translate}}
+              }
+              @else {
+              <div class="d-flex">
+                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+                <div> {{'Submitting'|translate}}</div>
+              </div>
+              }
+            </button>
           </div>
         </div>
       </form>
-    </div>
-  </div>
-  <div class="mt-3 mb-3 modal-footer">
-    <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-      <button type="button" class="custom-btn btn-secondary"
-        (click)="modal.dismiss(); profileForm.reset(); formemailsfornodue.clear()">
-        {{'Cancle'|translate}}
-      </button>
-      <button type="submit" class="custom-btn btn-primary" [disabled]="profileForm.invalid||isLoading"
-        (click)="requestNoDue(profileForm)">
-        @if(!isLoading){
-        {{'Submit'|translate}}
-        }
-        @else {
-        <div class="d-flex">
-          <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-          </div>
-          <div> {{'Submitting'|translate}}</div>
-        </div>
-        }
-      </button>
     </div>
   </div>
 </ng-template>

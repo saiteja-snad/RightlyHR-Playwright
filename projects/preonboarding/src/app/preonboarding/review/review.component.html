@@ -17,7 +17,6 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-
                             Personal Details
                         </button>
                     </h2>
@@ -197,27 +196,26 @@
         </div>
     </div>
 
-</div>
-<div class="footer-btn-content d-flex justify-content-between  mt-4">
-    <button class="custom-btn btn-secondary rounded-pill px-3" (click)="navigatePrevious()">
-        Experience Details
-    </button>
-    <div>
-        <div *ngIf="loadingcircle" class="spinner-border text-primary me-3" role="status">
-            <span class="visually-hidden">Loading...</span>
+    <div class="footer-btn-content d-flex justify-content-between pt-3">
+        <button class="custom-btn btn-secondary rounded-pill px-3" (click)="navigatePrevious()">
+            Experience Details
+        </button>
+        <div>
+            <div *ngIf="loadingcircle" class="spinner-border text-primary me-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <button *ngIf="!isCheckedoffer " class="custom-btn btn-primary rounded-pill" data-bs-toggle="modal"
+                (click)="openconformatioModal(submitornot)">
+                Submit
+            </button>
+            <button *ngIf="isCheckedoffer " [disabled]="this.prosempdata.substatus==='Offer letter Accepted'"
+                class="custom-btn btn-primary rounded-pill 5 " (click)="openconformatioModal(submitornot)">
+                Submit
+            </button>
         </div>
-        <button *ngIf="!isCheckedoffer " class="custom-btn btn-primary rounded-pill" data-bs-toggle="modal"
-            (click)="openconformatioModal(submitornot)">
-            Submit
-        </button>
-        <button *ngIf="isCheckedoffer " [disabled]="this.prosempdata.substatus==='Offer letter Accepted'"
-            class="custom-btn btn-primary rounded-pill 5 " (click)="openconformatioModal(submitornot)">
-            Submit
-        </button>
     </div>
+
 </div>
-
-
 
 <!--Submit Modal -->
 <ng-template #submitornot let-modal>
@@ -231,17 +229,12 @@
             <button type="submit" class="custom-btn btn-primary" (click)="submitReviw()">Yes</button>
         </div>
     </div>
-
 </ng-template>
 
-
-
-
 <!-- view modal -->
-
 <ng-template #myModall let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Documents</p>
             </div>
@@ -250,14 +243,12 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-
             <p *ngIf="!DocImageUrl;else imageView">
                 <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width:100%;height:100vh;"></ngx-doc-viewer>
             </p>
             <ng-template #imageView>
                 <img [src]="DocImageUrl" alt="My Image" class="modal-image w-50">
             </ng-template>
-
         </div>
     </div>
 </ng-template>

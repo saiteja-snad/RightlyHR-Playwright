@@ -15,11 +15,15 @@ export class HttpService {
     wfh: boolean;
     employeeId: number;
     permission: boolean;
+    remote:boolean;
+    global:boolean
   }>({
     compOff: false,
     wfh: false,
     employeeId: 0,
     permission: false,
+    remote:false,
+    global:false
   });
   tirggerPendingApprovalCountSignal = signal<{
     compOff: boolean;
@@ -28,7 +32,8 @@ export class HttpService {
     separation: boolean;
     recall: boolean;
     expenses:boolean;
-    nodue:boolean
+    nodue:boolean,
+    
   }>({
     compOff: false,
     wfh: false,
@@ -37,6 +42,7 @@ export class HttpService {
     recall: false,
     expenses: false,
     nodue:false,
+   
   });
 
   constructor(private http: HttpClient) {

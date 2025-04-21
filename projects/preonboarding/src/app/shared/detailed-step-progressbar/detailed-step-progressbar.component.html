@@ -1,74 +1,22 @@
-<div class="progress-bar-container">
-    <div class="progress-number-content">
-        <div class="progress-number mb-3">
-            <span>1</span>
-        </div>
-        <p class="progress-text mb-0">Personal details</p>
-    </div>
-    <div class="progress-content pt-3">
-        <div class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 100%"></div>
+<div *ngIf="prosempdata.substatus.toLowerCase()=='offer letter generated'|| prosempdata.substatus.toLowerCase()=='offer letter released' ||prosempdata.substatus.toLowerCase() =='offer letter regenerated'|| this.prosempdata.substatus.toLowerCase()=='offer letter accepted'  ">
+    <div class="progress-bar">
+        <div class="step" *ngFor="let step of steps; let i = index">
+            <div class="bullet" [ngClass]="{'active': currentStep >= i + 1}">
+                <span>{{ i + 1 }}</span>
+            </div>
+            <p [ngClass]="{'active': currentStep >= i + 1}">{{ step.name }}</p>
         </div>
     </div>
-    <div class="progress-number-content">
-        <div class="progress-number mb-3">
-            <span>2</span>
+</div>
+
+<div *ngIf="prosempdata.substatus=='Requested Documents' ||prosempdata.substatus=='Documents Submitted' ||
+    this.prosempdata.substatus=='Documents Rejected' ||this.prosempdata.substatus=='Documents Verified'|| this.prosempdata.substatus=='Documents Accepted' ">
+    <div class="progress-bar2">
+        <div class="step2" *ngFor="let step of step2; let i = index">
+            <div class="bullet2" [ngClass]="{'activee': currentStepp >= i + 1}">
+                <span>{{ i + 1 }}</span>
+            </div>
+            <p [ngClass]="{'activee': currentStepp >= i + 1}">{{ step.name }}</p>
         </div>
-        <p class="progress-text mb-0">Onboarding Documents</p>
-    </div>
-    <div class="progress-content pt-3">
-        <div class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 100%"></div>
-        </div>
-    </div>
-    <div class="progress-number-content opacity">
-        <div class="progress-number mb-3">
-            <span>3</span>
-        </div>
-        <p class="progress-text mb-0">Offer Letter</p>
-    </div>
-    <div class="progress-content pt-3">
-        <div class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 100%"></div>
-        </div>
-    </div>
-    <div class="progress-number-content opacity">
-        <div class="progress-number mb-3">
-            <span>4</span>
-        </div>
-        <p class="progress-text mb-0">Education</p>
-    </div>
-    <div class="progress-content pt-3">
-        <div class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 100%"></div>
-        </div>
-    </div>
-    <div class="progress-number-content opacity">
-        <div class="progress-number mb-3">
-            <span>5</span>
-        </div>
-        <p class="progress-text mb-0">Emergency contact Details</p>
-    </div>
-    <div class="progress-content pt-3">
-        <div class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 100%"></div>
-        </div>
-    </div>
-    <div class="progress-number-content opacity">
-        <div class="progress-number mb-3">
-            <span>6</span>
-        </div>
-        <p class="progress-text mb-0">Experience</p>
-    </div>
-    <div class="progress-content pt-3">
-        <div class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 100%"></div>
-        </div>
-    </div>
-    <div class="progress-number-content opacity">
-        <div class="progress-number mb-3">
-            <span>7</span>
-        </div>
-        <p class="progress-text mb-0">Review</p>
     </div>
 </div>

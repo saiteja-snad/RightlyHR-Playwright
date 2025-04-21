@@ -18,10 +18,11 @@ import { IemployeeDetails } from '../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
+import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 
 @Component({
   selector: 'app-salary-revision-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss'
 })

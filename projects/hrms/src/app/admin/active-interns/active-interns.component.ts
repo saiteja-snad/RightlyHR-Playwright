@@ -8,10 +8,10 @@ import { HttpService } from '../../services/http.service';
 import { ITrainee } from './active-interns-modules';
 import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { FormsModule } from '@angular/forms';
-
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-active-interns',
-  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule],
+  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent],
   templateUrl: './active-interns.component.html',
   styleUrl: './active-interns.component.scss'
 })
@@ -21,6 +21,8 @@ export class ActiveInternsComponent {
   subscription!: Subscription;
   emp = {} as any;
   TraineeActive = [] as any;
+  loader = false;
+
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
@@ -29,10 +31,11 @@ export class ActiveInternsComponent {
 
   //function for active Employees
   empdata(status: string) {
+    this.loader = true;
     this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.TraineeActive = data as ITrainee[];
+        this.loader = false;
       },
       error: (reason: any) => console.log(reason)
     });
@@ -40,7 +43,6 @@ export class ActiveInternsComponent {
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    console.log(this.emp);
     this.router.navigate(['/personalinfo']);
   }
 

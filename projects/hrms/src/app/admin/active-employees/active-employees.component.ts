@@ -9,9 +9,10 @@ import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { RbacService } from '../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-active-employees',
-  imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule],
+  imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent],
   templateUrl: './active-employees.component.html',
   styleUrl: './active-employees.component.scss'
 })
@@ -21,27 +22,28 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
   Active = [] as Iactive[];
   searchValue: any;
   emp = {} as any;
+  loader = false;
+
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal,public rbac:RbacService) { }
 
   ngOnInit(): void {
     this.empdata();
   }
+
   //function for active Employees
   empdata() {
+    this.loader = true;
     this.subscription = this.http.getData(`Employeedata/ActiveEmployeeswithJobDetails`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.Active = data as Iactive[];
+        this.loader = false;
       },
-
       error: (reason: any) => console.log(reason)
     });
-
   }
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    console.log(this.emp);
     this.router.navigate(['/personalinfo']);
   }
 
@@ -54,5 +56,4 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-
 }

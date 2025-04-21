@@ -1,21 +1,22 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <p class="component-header mb-0 cursor" (click)="navigateDashboard()">
-        <i class="bi bi-arrow-90deg-left me-2"></i>{{'Inactive Interns'| translate}}
+      <p class="component-header mb-0">
+        <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Inactive Interns'| translate}}
       </p>
     </div>
   </div>
 
   <div>
     <!--Input search-->
-    <div class="input-group custom-search mb-4">
+    <div class="input-group custom-search mb-3">
       <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
       <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
         placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
+      @if (!loader) {
       <table class="w-100">
         <thead>
           <th>{{'ID'|translate}}</th>
@@ -117,6 +118,9 @@
           </tr>
         </tbody>
       </table>
+    } @else {
+      <app-data-loader-content/>
+    }
     </div>
   </div>
 </div>

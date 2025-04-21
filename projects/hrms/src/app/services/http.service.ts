@@ -135,7 +135,7 @@ resetTriggerSignal() {
   }
 
   get(url: string, options?: any) {
-    return this.http.get(url, options);
+    return this.http.get(`${this.ApiUrl}${url}`, options);
   }
   getByDownload<T>(endpoint: string, options?: object): Observable<T> {
     return this.http.get<T>(`${this.ApiUrl}${endpoint}`, options);

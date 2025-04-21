@@ -1,1 +1,254 @@
-<p>employee-master-data works!</p>
+<div class="custom-main-component-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <!--header-->
+    <div class="component-header">Reports</div>
+
+    <div class="d-flex gap-3">
+      <div class="d-flex align-items-center gap-2">
+        <label class="custom-label text-nowrap">Date of Joining</label>
+        <div>
+          <input type="text" name="empMasterDataDateRange" ngxDaterangepickerBootstrap [autoApply]="true" readonly
+            placeholder="Please Select Date of Joining" [ranges]="ranges" [alwaysShowCalendars]="true"
+            [locale]="localeOptions" [showClearButton]="true" [(ngModel)]="empMasterDataDOJDateRange"
+            class="form-control custom-input" />
+        </div>
+      </div>
+      
+      <div class="d-flex align-items-center gap-2">
+        <label class="custom-label text-nowrap">Employee Status</label>
+        <div class="">
+          <select name="employee-status" id="employee-status" [(ngModel)]="selectedEmployeeStatus" class="custom-input">
+            <option value="">All Employees</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Prospective">Prospective</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button (click)="getStandardReports()" class="custom-btn btn-secondary">Generate</button>
+        <button [disabled]="this.employeeMasterData.length === 0" class="custom-btn btn-primary">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <app-standard-report-tabs />
+  </div>
+
+  @if(isLoading){
+    
+  }
+  @else {
+  <div class="custom-table-content">
+    <table id="employeeMasterData" class="content w-100">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Employee ID</th>
+          <th>Salutation</th>
+          <th>First Name</th>
+          <th>Middle Name</th>
+          <th>Last Name</th>
+          <th>Status</th>
+          <th>Marital Status</th>
+          <th>Gender</th>
+          <th>Date of Birth</th>
+          <th>Blood Group</th>
+          <th>Secondary Language</th>
+          <th>Address Line 1(current)</th>
+          <th>Address Line 2(current)</th>
+          <th>City(current)</th>
+          <th>State(current)</th>
+          <th>Country(current)</th>
+          <th>Zip Code/Post Code(current)</th>
+          <th>Address Line 1(permanent)</th>
+          <th>Address Line 2(permanent)</th>
+          <th>City(permanent)</th>
+          <th>State(permanent)</th>
+          <th>Country(permanent)</th>
+          <th>Zip Code/Post Code(permanent)</th>
+          <th>Work Number</th>
+          <th>Mobile Phone</th>
+          <th>Work Mail-Id</th>
+          <th>Home Mail-Id</th>
+          <th>Name (contact1)</th>
+          <th>Email-Id (contact1)</th>
+          <th>Phone Number (contact1)</th>
+          <th>Relationship (contact1)</th>
+          <th>Name (contact2)</th>
+          <th>Email-Id (contact2)</th>
+          <th>Phone Number (contact2)</th>
+          <th>Relationship (contact2)</th>
+          <th>Degree</th>
+          <th>University</th>
+          <th>Specialization</th>
+          <th>GPA</th>
+          <th>Degree Start Date</th>
+          <th>Degree End Date</th>
+          <th>Visa Type</th>
+          <th>Issued Country</th>
+          <th>Issued Date</th>
+          <th>Expiry Date</th>
+          <th>Aadhaar Number</th>
+          <th>PAN Number</th>
+          <th>ESIC Number</th>
+          <th>PF Number</th>
+          <th>UAN Number</th>
+          <th>Bank Name</th>
+          <th>Account Name</th>
+          <th>Account Number</th>
+          <th>IFSC Code</th>
+          <th>Offer Sent Date</th>
+          <th>Offer Sent By</th>
+          <th>Offer Sent Status</th>
+          <th>Appointment Sent Date</th>
+          <th>Appointment Sent By</th>
+          <th>Appointment Sent Status</th>
+          <th>Date Of Joining</th>
+          <th>Probation End Date</th>
+          <th>Probation Status</th>
+          <th>Branch Location/Code</th>
+          <th>Notice Period</th>
+          <th>Background Check Status</th>
+          <th>Salary Hold</th>
+          <th>PT</th>
+          <th>ESIC</th>
+          <th>PF</th>
+          <th>Insurance</th>
+          <th>Last Working Day</th>
+          <th>Eligible For Rehire</th>
+          <th>Exit Reason</th>
+          <th>Employment Effective Date</th>
+          <th>Job Type</th>
+          <th>Grade Name</th>
+          <th>Job Grade</th>
+          <th>Job Effective Date</th>
+          <th>Job Role</th>
+          <th>Department</th>
+          <th>Team</th>
+          <th>Reporting To</th>
+          <th>Location</th>
+          <th>Sub Location</th>
+          <th>Shift</th>
+          <th>Shift Code</th>
+          <th>Compensation Effective Date</th>
+          <th>Overtime Eligibility</th>
+          <th>Reason</th>
+          <th>Frequency</th>
+          <th>Pay Type</th>
+          <th>Yearly CTC</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if(employeeMasterData.length === 0){
+        <tr>
+          <td>No records found</td>
+        </tr>
+        }
+        @else {
+        @for (emp of employeeMasterData; track $index) {
+        <tr>
+          <td>{{ emp.employeeId }}</td>
+          <td>{{ emp.fusionEmpId }}</td>
+          <td>{{ emp.title }}</td>
+          <td>{{ emp.firstName }}</td>
+          <td>{{ emp.middleName }}</td>
+          <td>{{ emp.lastName }}</td>
+          <td>{{ emp.empstatus }}</td>
+          <td>{{ emp.maritalStatus }}</td>
+          <td>{{ emp.gender }}</td>
+          <td>{{ emp.dob | dateformat }}</td>
+          <td>{{ emp.bloodGroup }}</td>
+          <td>{{ emp.secondaryLanguage }}</td>
+          <td>{{ emp.currentAddressLine1 }}</td>
+          <td>{{ emp.currentAddressLine2 }}</td>
+          <td>{{ emp.currentCity }}</td>
+          <td>{{ emp.currentState }}</td>
+          <td>{{ emp.currentCountry }}</td>
+          <td>{{ emp.currentZipCode }}</td>
+          <td>{{ emp.permanentAddressLine1 }}</td>
+          <td>{{ emp.permanentAddressLine2 }}</td>
+          <td>{{ emp.permanentCity }}</td>
+          <td>{{ emp.permanentState }}</td>
+          <td>{{ emp.permanentCountry }}</td>
+          <td>{{ emp.permanentZipCode }}</td>
+          <td>{{ emp.workPhone }}</td>
+          <td>{{ emp.contactnumber }}</td>
+          <td>{{ emp.workEmail }}</td>
+          <td>{{ emp.emailaddress }}</td>
+          <td>{{ emp.emergencyName }}</td>
+          <td>{{ emp.emailId }}</td>
+          <td>{{ emp.emergencynumber }}</td>
+          <td>{{ emp.relationShip }}</td>
+          <td>{{ emp.emergencyName1 }}</td>
+          <td>{{ emp.emergencyEmail1 }}</td>
+          <td>{{ emp.emergencynumber1 }}</td>
+          <td>{{ emp.relationShip1 }}</td>
+          <td>{{ emp.degree }}</td>
+          <td>{{ emp.university }}</td>
+          <td>{{ emp.specialization }}</td>
+          <td>{{ emp.gpa }}</td>
+          <td>{{ emp.degreeStartDate |dateformat }}</td>
+          <td>{{ emp.degreeEndDate |dateformat }}</td>
+          <td>{{ emp.visatype }}</td>
+          <td>{{ emp.issuedcountry }}</td>
+          <td>{{ emp.issueddate |dateformat }}</td>
+          <td>{{ emp.expirydate |dateformat }}</td>
+          <td>{{ emp.aadhaar }}</td>
+          <td>{{ emp.pan }}</td>
+          <td>{{ emp.esic }}</td>
+          <td>{{ emp.pf }}</td>
+          <td>{{ emp.uan }}</td>
+          <td>{{ emp.bankName }}</td>
+          <td>{{ emp.accountName }}</td>
+          <td>{{ emp.accountNo }}</td>
+          <td>{{ emp.ifscCode }}</td>
+          <td>{{ emp.offerSentDate |dateformat }}</td>
+          <td>{{ emp.offerSentBy }}</td>
+          <td>{{ emp.offerSentStatus }}</td>
+          <td>{{ emp.appointmentSentDate |dateformat }}</td>
+          <td>{{ emp.appointmentSenyBy }}</td>
+          <td>{{ emp.appointmentSentStatus }}</td>
+          <td>{{ emp.dateOfJoining |dateformat }}</td>
+          <td>{{ emp.probationEndDate |dateformat }}</td>
+          <td>{{ emp.probationStatus }}</td>
+          <td>{{ emp.branchCode }}</td>
+          <td>{{ emp.noticePeriod }}</td>
+          <td>{{ emp.backgroundCheckStatus }}</td>
+          <td>{{ emp.salaryHold }}</td>
+          <td>{{ emp.pt }}</td>
+          <td>{{ emp.esicApplicable }}</td>
+          <td>{{ emp.pfApplicable }}</td>
+          <td>{{ emp.healthInsurance }}</td>
+          <td>{{ emp.lastworkingday |dateformat }}</td>
+          <td>{{ emp.eligibleforrehire }}</td>
+          <td>{{ emp.termreasonoffboard }}</td>
+          <td>{{ emp.employmentEffectiveDate |dateformat }}</td>
+          <td>{{ emp.jobType }}</td>
+          <td>{{ emp.gradeName }}</td>
+          <td>{{ emp.jobGrade }}</td>
+          <td>{{ emp.jobEffectiveDate |dateformat }}</td>
+          <td>{{ emp.jobRole }}</td>
+          <td>{{ emp.departmentName }}</td>
+          <td>{{ emp.subdepartment_name }}</td>
+          <td>{{ emp.reportingManager }}</td>
+          <td>{{ emp.jobLocationName }}</td>
+          <td>{{ emp.jobSubLocationName }}</td>
+          <td>{{ emp.shiftName }}</td>
+          <td>{{ emp.shiftCode }}</td>
+          <td>{{ emp.compeffectivedate |dateformat }}</td>
+          <td>{{ emp.overtimeeligibility }}</td>
+          <td>{{ emp.reason }}</td>
+          <td>{{ emp.frequency }}</td>
+          <td>{{ emp.paytype }}</td>
+          <td>{{ emp.compensationamount }}</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

@@ -1,1 +1,262 @@
-<p>job-location-wise-data works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!--header-->
+        <div class="component-header">Reports</div>
+        
+        <div>
+            <form [formGroup]="locationReportsForm"  (ngSubmit)="onSubmit(locationReportsForm)">
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Date of Joining -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="custom-label text-nowrap">{{"Date of Joining" | translate}}<span class="text-danger">*</span></label>
+                        <div>
+                            <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
+                                [locale]="localeOptions" [showClearButton]="true" formControlName="dateOfJoining"
+                                [placeholder]="'Please Select Date of Joining'" class="form-control custom-input w-100"
+                                [startKey]="'startDate'" [endKey]="'endDate'" readonly />
+                            <div *ngIf="locationReportsForm.get('dateOfJoining')?.touched && locationReportsForm.get('dateOfJoining')?.invalid"
+                                class="error-msg">{{ "Please select date of joining" | translate }}
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Location -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="custom-label text-nowrap">{{ "Location" | translate }}<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="locationDetails" optionLabel="jobLocationName" filterBy="jobLocationName" [filter]="true"
+                                [showClear]="false" formControlName="location" placeholder="Please select location"
+                                class="form-select custom-select" (onChange)="onLocationChange($event.value)">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
+                                <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
+                            </p-select>
+                            <div *ngIf="locationReportsForm.get('location')?.touched && locationReportsForm.get('location')?.invalid"
+                                class="error-msg"> {{ "Please select location" | translate }}
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Sub Location -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="subLocation" class="custom-label text-nowrap">{{ "Sub Location" | translate }}<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
+                                class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
+                                formControlName="subLocation" placeholder="Please select sub location">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
+                                <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
+                            </p-select>
+                            <div *ngIf="locationReportsForm.get('subLocation')?.touched && locationReportsForm.get('subLocation')?.invalid" class="error-msg">
+                                <div *ngIf="locationReportsForm.get('subLocation')?.errors?.['required']">{{"Please select sub location" | translate}}</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="custom-btn btn-secondary" [disabled]="locationReportsForm.invalid">Generate</button>
+                        <!-- <button type="button" class="btn btn-primary mt-1" (click)="getStandardReports()">Generate</button> -->
+                        <button class="custom-btn btn-primary" [disabled]="locationReportList.length === 0 || spinnerLoader" (click)="onClickJobLocationExport() ">
+                            @if(spinnerLoader){
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..'}}...</span>
+                            }@else {
+                            <span>{{'Export'}}</span>
+                            }
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <app-standard-report-tabs />
+    </div>
+
+    <div class="custom-table-content">
+        <table class="w-100" id="jobLocation">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Employee ID</th>
+                    <th>Salutation</th>
+                    <th>First Name</th>
+                    <th>Middle Name</th>
+                    <th>Last Name</th>
+                    <th>Status</th>
+                    <th>Marital Status</th>
+                    <th>Gender</th>
+                    <th>Date of Birth</th>
+                    <th>Blood Group</th>
+                    <th>Address Line 1(current)</th>
+                    <th>Address Line 2(current)</th>
+                    <th>City(current)</th>
+                    <th>State(current)</th>
+                    <th>Country(current)</th>
+                    <th>Zip Code/Post Code(current)</th>
+                    <th>Address Line 1(Communication)</th>
+                    <th>Address Line 2(Communication)</th>
+                    <th>City(Communication)</th>
+                    <th>State(Communication)</th>
+                    <th>Country(Communication)</th>
+                    <th>Zip Code/Post Code(Communication)</th>
+                    <th>Work Number</th>
+                    <th>Mobile Number</th>
+                    <th>Work Email</th>
+                    <th>Personal Email</th>
+                    <th>Name (contact1)</th>
+                    <th>Email (contact1)</th>
+                    <th>Phone Number (contact1)</th>
+                    <th>Relationship (contact1)</th>
+                    <th>Name (contact2)</th>
+                    <th>Email (contact2)</th>
+                    <th>Phone Number (contact2)</th>
+                    <th>Relationship (contact2)</th>
+                    <th>Degree</th>
+                    <th>University</th>
+                    <th>Specialization</th>
+                    <th>GPA</th>
+                    <th>Degree Start Date</th>
+                    <th>Degree End Date</th>
+                    <th>Visa Type</th>
+                    <th>Issued Country</th>
+                    <th>Issued Date</th>
+                    <th>Expiry Date</th>
+                    <th>SSN Number</th>
+                    <th>Driver's License</th>
+                    <th>Bank Name</th>
+                    <th>Account Holder's Name</th>
+                    <th>Account Number</th>
+                    <th>IFSC Code</th>
+                    <th>Offer Sent Date</th>
+                    <th>Offer Sent By</th>
+                    <th>Offer Sent Status</th>
+                    <th>Appointment Sent Date</th>
+                    <th>Appointment Sent By</th>
+                    <th>Appointment Sent Status</th>
+                    <th>Date Of Joining</th>
+                    <th>Probation End Date</th>
+                    <th>Probation Status</th>
+                    <th>Branch Location/Code</th>
+                    <th>Notice Period</th>
+                    <th>Background Check Status</th>
+                    <th>Insurance</th>
+                    <th>Last Working Day</th>
+                    <th>Eligible For Rehire</th>
+                    <th>Exit Reason</th>
+                    <th>Job Type</th>
+                    <th>Grade Name</th>
+                    <th>Job Effective Date</th>
+                    <th>Job Role</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Reporting To</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Shift</th>
+                    <th>Shift Code</th>
+                    <th>Compensation Effective Date</th>
+                    <th>Overtime Eligibility</th>
+                    <th>Reason</th>
+                    <th>Frequency</th>
+                    <th>Pay Type</th>
+                    <th>Yearly CTC</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(locationReportList.length > 0){
+                <ng-container>
+                    @for(emp of locationReportList; track emp){
+                    <tr>
+                        <td>{{ emp.employeeId ? emp.employeeId : '-' }}</td>
+                        <td>{{ emp.fusionEmpId ? emp.fusionEmpId : '-' }}</td>
+                        <td>{{ emp.title ? emp.title : '-' }}</td>
+                        <td>{{ emp.firstName ? emp.firstName : '-' }}</td>
+                        <td>{{ emp.middleName ? emp.middleName : '-' }}</td>
+                        <td>{{ emp.lastName ? emp.lastName : '-' }}</td>
+                        <td>{{ emp.empstatus ? emp.empstatus : '-' }}</td>
+                        <td>{{ emp.maritalStatus ? emp.maritalStatus : '-' }}</td>
+                        <td>{{ emp.gender ? emp.gender : '-' }}</td>
+                        <td>{{ emp.dob ? (emp.dob | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.bloodGroup ? emp.bloodGroup : '-' }}</td>
+                        <td>{{ emp.currentAddressLine1 ? emp.currentAddressLine1 : '-' }}</td>
+                        <td>{{ emp.currentAddressLine2 ? emp.currentAddressLine2 : '-' }}</td>
+                        <td>{{ emp.currentCity ? emp.currentCity : '-' }}</td>
+                        <td>{{ emp.currentState ? emp.currentState : '-' }}</td>
+                        <td>{{ emp.currentCountry ? emp.currentCountry : '-' }}</td>
+                        <td>{{ emp.currentZipCode ? emp.currentZipCode : '-' }}</td>
+                        <td>{{ emp.permanentAddressLine1 ? emp.permanentAddressLine1 : '-' }}</td>
+                        <td>{{ emp.permanentAddressLine2 ? emp.permanentAddressLine2 : '-' }}</td>
+                        <td>{{ emp.permanentCity ? emp.permanentCity : '-' }}</td>
+                        <td>{{ emp.permanentState ? emp.permanentState : '-' }}</td>
+                        <td>{{ emp.permanentCountry ? emp.permanentCountry : '-' }}</td>
+                        <td>{{ emp.permanentZipCode ? emp.permanentZipCode : '-' }}</td>
+                        <td>{{ emp.workPhone ? emp.workPhone : '-' }}</td>
+                        <td>{{ emp.contactnumber ? emp.contactnumber : '-' }}</td>
+                        <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
+                        <td>{{ emp.emailaddress ? emp.emailaddress : '-' }}</td>
+                        <td>{{ emp.emergencyName ? emp.emergencyName : '-' }}</td>
+                        <td>{{ emp.emailId ? emp.emailId : '-' }}</td>
+                        <td>{{ emp.emergencynumber ? emp.emergencynumber : '-' }}</td>
+                        <td>{{ emp.relationShip ? emp.relationShip : '-' }}</td>
+                        <td>{{ emp.emergencyName1 ? emp.emergencyName1 : '-' }}</td>
+                        <td>{{ emp.emergencyEmail1 ? emp.emergencyEmail1 : '-' }}</td>
+                        <td>{{ emp.emergencyNumber1 ? emp.emergencyNumber1 : '-' }}</td>
+                        <td>{{ emp.relationship1 ? emp.relationship1 : '-' }}</td>
+                        <td>{{ emp.degree ? emp.degree : '-' }}</td>
+                        <td>{{ emp.university ? emp.university : '-' }}</td>
+                        <td>{{ emp.specialization ? emp.specialization : '-' }}</td>
+                        <td>{{ emp.gpa ? emp.gpa : '-' }}</td>
+                        <td>{{ emp.degreeStartDate ? (emp.degreeStartDate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.degreeEndDate ? (emp.degreeEndDate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.visatype ? emp.visatype : '-' }}</td>
+                        <td>{{ emp.issuedcountry ? emp.issuedcountry : '-' }}</td>
+                        <td>{{ emp.issueddate ? (emp.issueddate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.expirydate ? (emp.expirydate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.ssn ? emp.ssn : '-' }}</td>
+                        <td>{{ emp.driversLicense ? emp.driversLicense : '-' }}</td>
+                        <td>{{ emp.bankName ? emp.bankName : '-' }}</td>
+                        <td>{{ emp.accountName ? emp.accountName : '-' }}</td>
+                        <td>{{ emp.accountNo ? emp.accountNo : '-' }}</td>
+                        <td>{{ emp.ifscCode ? emp.ifscCode : '-' }}</td>
+                        <td>{{ emp.offerSentDate ? (emp.offerSentDate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.offerSentBy ? emp.offerSentBy : '-' }}</td>
+                        <td>{{ emp.offerSentStatus ? emp.offerSentStatus : '-' }}</td>
+                        <td>{{ emp.appointmentSentDate ? (emp.appointmentSentDate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.appointmentSenyBy ? emp.appointmentSenyBy : '-' }}</td>
+                        <td>{{ emp.appointmentSentStatus ? emp.appointmentSentStatus : '-' }}</td>
+                        <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.probationEndDate ? (emp.probationEndDate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.probationStatus ? emp.probationStatus : '-' }}</td>
+                        <td>{{ emp.branchCode ? emp.branchCode : '-' }}</td>
+                        <td>{{ emp.noticePeriod ? emp.noticePeriod : '-' }}</td>
+                        <td>{{ emp.backgroundCheckStatus ? emp.backgroundCheckStatus : '-' }}</td>
+                        <td>{{ emp.healthInsurance ? emp.healthInsurance : '-' }}</td>
+                        <td>{{ emp.lastworkingday ? (emp.lastworkingday | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.eligibleforrehire ? emp.eligibleforrehire : '-' }}</td>
+                        <td>{{ emp.termreasonoffboard ? emp.termreasonoffboard : '-' }}</td>
+                        <td>{{ emp.jobType ? emp.jobType : '-' }}</td>
+                        <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
+                        <td>{{ emp.jobEffectiveDate ? (emp.jobEffectiveDate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
+                        <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
+                        <td>{{ emp.subdepartment_name ? emp.subdepartment_name : '-' }}</td>
+                        <td>{{ emp.reportingManager ? emp.reportingManager : '-' }}</td>
+                        <td>{{ emp.jobLocationName ? emp.jobLocationName : '-' }}</td>
+                        <td>{{ emp.jobSubLocationName ? emp.jobSubLocationName : '-' }}</td>
+                        <td>{{ emp.shiftName ? emp.shiftName : '-' }}</td>
+                        <td>{{ emp.shiftCode ? emp.shiftCode : '-' }}</td>
+                        <td>{{ emp.compeffectivedate ? (emp.compeffectivedate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.overtimeeligibility ? emp.overtimeeligibility : '-' }}</td>
+                        <td>{{ emp.reason ? emp.reason : '-' }}</td>
+                        <td>{{ emp.frequency ? emp.frequency : '-' }}</td>
+                        <td>{{ emp.paytype ? emp.paytype : '-' }}</td>
+                        <td>{{ emp.compensationamount ? emp.compensationamount : '-' }}</td>
+                    </tr>
+                    }
+                </ng-container>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

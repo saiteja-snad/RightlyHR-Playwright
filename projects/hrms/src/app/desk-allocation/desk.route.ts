@@ -18,7 +18,17 @@ export default [
 
         ]
      },
-     { path: 'view-desk', loadComponent: () => import('./view-desk-details/view-desk-details.component').then((m) => m.ViewDeskDetailsComponent) },
+     { path: 'view-desk', 
+
+        children:[
+            { path: '', redirectTo: 'desk-data', pathMatch: 'full' },
+            { path: 'desk-data', loadComponent: () => import('./view-desk-details/view-desk-details.component').then((m) => m.ViewDeskDetailsComponent) },
+            {path:'desk-history',loadComponent: () => import('./desk-history/desk-history.component').then((m) => m.DeskHistoryComponent)}
+        ]
+     },
+
+   
+
     
    
 ] as Route[];

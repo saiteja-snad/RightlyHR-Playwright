@@ -1,1 +1,34 @@
-<p>view-desk-details works!</p>
+<div class="custom-main-component-container ">
+    <div class="component-nav-tabs-container card px-2 mb-3">
+        <p-tabs value="0" scrollable>
+            <p-tablist>
+                <ng-container *ngFor="let tab of navTabs;">
+                    <p-tab [value]="tab.route">
+                        <a [routerLink]="tab.route" [queryParamsHandling]="'preserve'" routerLinkActive="nav-tab-active"
+                            class="nav-link">
+                            {{ tab.label }}
+                        </a>
+                    </p-tab>
+                </ng-container>
+            </p-tablist>
+        </p-tabs>
+    </div>
+
+    <div class="card  p-3 mt-2 mb-3">
+        <p class=" component-header cursor mb-4">Desk Details</p>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Desk ID:</b> {{ deskResponse?.deskName }}</div>
+            <div class="col-6"><b class="component-sub-header mb-0">Desk Type:</b> {{ deskResponse?.deskType }}</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Location:</b> {{ deskResponse?.location?.jobLocationName }}</div>
+            <div class="col-6"><b class="component-sub-header mb-0">Sub Location:</b> {{ deskResponse?.subLocation?.jobSubLocationName
+                }}</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Register by:</b> {{ deskResponse?.createdBy?.employeeName }}</div>
+            <div class="col-6"><b class="component-sub-header mb-0">Desk Status:</b> {{ deskResponse?.deskStatus }}</div>
+        </div>
+    </div>
+
+</div>

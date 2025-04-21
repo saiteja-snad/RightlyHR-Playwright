@@ -38,7 +38,10 @@ export class HttpService {
     expenses: false,
     nodue:false,
   });
-
+  desklocationIdSubject = new BehaviorSubject<string | null>(null);
+  desksublocationIdSubject = new BehaviorSubject<string | null>(null);
+  assetslocationIdSubject = new BehaviorSubject<string | null>(null);
+  assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -64,6 +67,28 @@ resetTriggerSignal() {
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }
+  desklocationId$ = this.desklocationIdSubject.asObservable();
+  desksublocationId$ = this.desksublocationIdSubject.asObservable();
+    //function to update the desk Updatelocation
+    deskUpdateLocationId(id: string | null) {
+      this.desklocationIdSubject.next(id);
+    }
+    //function to update the desk sublocation
+    deskUpdateSubLocationId(id: string | null) {
+      this.desksublocationIdSubject.next(id);
+    }
+
+    assetslocationId$ = this.assetslocationIdSubject.asObservable();
+    assetssublocationId$ = this.assetssublocationIdSubject.asObservable();
+      //function to update the desk Updatelocation
+      assetsUpdateLocationId(id: string | null) {
+        this.assetslocationIdSubject.next(id);
+      }
+      //function to update the desk sublocation
+      assetsUpdateSubLocationId(id: string | null) {
+        this.assetssublocationIdSubject.next(id);
+      }
+
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
@@ -177,6 +202,67 @@ resetTriggerSignal() {
     return this.http.post<any>(`${this.ApiUrl}${url}`, data);
   }
 
+  getstatusdesk(
+    url: string,
+    selectedLocationId: any,
+    selectedSubLocationId: any,
+    status: string,
+    page: number,
+    pageSize: number,
+    searchQuery: string
+  ): any {
+    const params: { [key: string]: any } = {
+      locationid: selectedLocationId,
+      sublocationid: selectedSubLocationId,
+      DeskStatus: status,
+      pageNumber: page,
+      pageSize: pageSize,
+      searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
+    };
+
+    // Build the query string dynamically, excluding null or undefined values
+    const queryString = Object.entries(params)
+      .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    // Construct the full URL
+    const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
+
+    // Make the HTTP GET request
+    return this.http.get(dataUrl);
+  }
+
+  getassetsdesk(
+    url: string,
+    selectedLocationId: any,
+    selectedSubLocationId: any,
+    status: string,
+    page: number,
+    pageSize: number,
+    searchQuery: string
+  ): any {
+    const params: { [key: string]: any } = {
+      locationid: selectedLocationId,
+      sublocationid: selectedSubLocationId,
+      status: status,
+      page: page,
+      pageSize: pageSize,
+      searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
+    };
+
+    // Build the query string dynamically, excluding null or undefined values
+    const queryString = Object.entries(params)
+      .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    // Construct the full URL
+    const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
+
+    // Make the HTTP GET request
+    return this.http.get(dataUrl);
+  }
   postProbation(
     url: string,
     employeeId: number,
@@ -388,4 +474,31 @@ resetTriggerSignal() {
     this.deskWiatingforapprovalCountsubject.next(count);
   }
 
+  assetCountSubject = new BehaviorSubject<number>(0);
+  avilableassetCountSubject = new BehaviorSubject<number>(0);
+  allocatedassetCountSubject = new BehaviorSubject<number>(0);
+  undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
+  inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
+
+  setAssetCount(count: number) {
+    this.assetCountSubject.next(count);
+  }
+
+  setavilableassignAssetCount(count: number) {
+    this.avilableassetCountSubject.next(count);
+  }
+
+
+  setallocatedAssetCount(count: number) {
+    this.allocatedassetCountSubject.next(count);
+  }
+
+  setundermatinaceAssetCount(count: number) {
+    this.undermatinaceassetCountSubject.next(count);
+  }
+
+
+  setinactiveSubjectAssetCount(count: number) {
+    this.inactiveaceassetCountSubject.next(count);
+  }
 }

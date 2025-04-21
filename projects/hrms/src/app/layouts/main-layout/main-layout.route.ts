@@ -10,6 +10,7 @@ import { PmsLayoutComponent } from "../../pms/pms-layout/pms-layout.component";
 import { DeskAlloctionLayoutComponent } from "../../desk-allocation/desk-alloction-layout/desk-alloction-layout.component";
 import { CalenderLayOutComponent } from "../../calendar/calender-lay-out/calender-lay-out.component";
 import { ReportsLayoutComponent } from "../../reports/reports-layout/reports-layout.component";
+import { AssetsAllocationsLayoutComponent } from "../../assets-allocation/assets-allocations-layout/assets-allocations-layout.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -23,5 +24,8 @@ export default [
     { path: 'pms', component: PmsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../pms/pms.route') },
     { path: 'calendar', component: CalenderLayOutComponent,canActivate: [MsalGuard],loadChildren: () => import('../../calendar/calendar.route')},
     { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../desk-allocation/desk.route')},
-    { path: 'reports', component: ReportsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../reports/reports.routes')}
+    { path: 'reports', component: ReportsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../reports/reports.routes')},
+    { path: 'assets-management', component: AssetsAllocationsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../assets-allocation/assets-allocation.route')},
+
+
 ] as Route[];

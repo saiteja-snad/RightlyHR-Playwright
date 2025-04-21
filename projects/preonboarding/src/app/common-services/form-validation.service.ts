@@ -14,14 +14,23 @@ export class FormValidationService {
       event.preventDefault(); // Block space at the start
     }
   }
-  
+//copyandpaste
+  validatePaste(event: ClipboardEvent): void {
+    const pastedData = event.clipboardData?.getData('text') ?? '';
+    if (!/^\d+$/.test(pastedData)) {
+      event.preventDefault(); // Cancel the paste event if the data is not numeric
+    }
+  }
+
+
+  ///onlynumnbers
   restrictAlphabets(event: KeyboardEvent) {
     const key = event.key;
     if (!/[0-9]/.test(key)) {
       event.preventDefault();  
     }
   }
-  //aplicatives
+  //aplicatives(abc)
   restrictInput(event: KeyboardEvent) {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;
@@ -42,6 +51,26 @@ export class FormValidationService {
     }
   }
 
+  restrictInputallowspicalcharters(event: KeyboardEvent) {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+  
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      return;
+    }
+  
+    // Prevent the first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Allow alphabetic characters, numbers, and special characters
+    const isValidCharacter = /^[A-Za-z0-9\s!@#$%^&*(),.?":{}|<>-]$/.test(key);
+    if (!isValidCharacter) {
+      event.preventDefault();
+    }
+  }
   rateGreaterThanZero(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;

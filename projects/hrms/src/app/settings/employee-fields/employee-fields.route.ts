@@ -1,5 +1,5 @@
 import { Route, } from '@angular/router';
-import { ExpensesConfigurationComponent } from './expenses-configuration/expenses-configuration.component';
+
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal/salutation', pathMatch: 'full' },
@@ -50,6 +50,7 @@ export default [
             { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent) }
         ]
     },
+    
     { path: 'addshifts', loadComponent: () => import('./shits/add-shits/add-shits.component').then((m) => m.AddShitsComponent) },
     {
         path: 'manage-shifts',

@@ -15,7 +15,7 @@ export class SettingsMainHeaderTabsComponent {
     { label: 'Employee Fields', link: '/settings/employee-fields' },
     { label: 'Roles', link: '/settings/roles-permissions' },
     { label: 'Time Off', link: '/settings/timeoff-configurations' },
-    { label: 'Asset Configuration' },
+    { label: 'Asset Configuration',link:'/settings/assets-configuration' },
     { label: 'Dynamic Forms' }
   ];
 }

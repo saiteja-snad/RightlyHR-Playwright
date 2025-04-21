@@ -59,13 +59,44 @@ export default [
             { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
         ]
     },
+    {  path: 'updateshifts/:id', loadComponent: () => import('./shits/update-shifts/update-shifts.component').then((m) => m.UpdateShiftsComponent) },
+    {
+        path: 'manage-shifts',
+        children: [
+            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
+            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
+        ]
+    },
+    { path: 'cloneshifts/:id', loadComponent: () => import('./shits/clone-shift/clone-shift.component').then((m) => m.CloneShiftComponent) },
+    {
+        path: 'manage-shifts',
+        children: [
+            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
+            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
+        ]
+    },
+    {  path: 'viewshifts/:id', loadComponent: () => import('./shits/view-shift/view-shift.component').then((m) => m.ViewShiftComponent) },
+    {
+        path: 'manage-shifts',
+        children: [
+            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
+            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
+        ]
+    },
     { path: 'addpolices', loadComponent: () => import('./manage-policies/add-policies/add-policies.component').then((m) => m.AddPoliciesComponent) },
+    { path: 'updatepolices', loadComponent: () => import('./manage-policies/update-policies/update-policies.component').then((m) => m.UpdatePoliciesComponent) },
+    { path: 'clonepolices', loadComponent: () => import('./manage-policies/clone-policies/clone-policies.component').then((m) => m.ClonePoliciesComponent) },
+    { path: 'viewpolices', loadComponent: () => import('./manage-policies/view-policies/view-policies.component').then((m) => m.ViewPoliciesComponent) },
+    
     {
         path: 'manage-policies',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
-            { path: 'pending-for-submit', loadComponent: () => import('./manage-policies/published-policies/published-policies.component').then((m) => m.PublishedPoliciesComponent) },
-            { path: 'published-policies', loadComponent: () => import('./manage-policies/pending-policies/pending-policies.component').then((m) => m.PendingPoliciesComponent) }
+            { path: 'pending-for-submit', loadComponent: () => import('./manage-policies/pending-policies/pending-policies.component').then((m) => m.PendingPoliciesComponent) },
+            { path: 'published-policies', loadComponent: () => import('./manage-policies/published-policies/published-policies.component').then((m) => m.PublishedPoliciesComponent) }
         ]
     },
 

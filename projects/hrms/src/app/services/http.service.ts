@@ -52,6 +52,15 @@ export class HttpService {
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
 
+ private triggerSignal = signal(false);
+ readonly trigger = this.triggerSignal;
+ triggerActionSignal() {
+  this.triggerSignal.set(true);
+}
+resetTriggerSignal() {
+  this.triggerSignal.set(false);
+}
+
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }
@@ -101,7 +110,7 @@ export class HttpService {
   }
 
   get(url: string, options?: any) {
-    return this.http.get(url, options);
+    return this.http.get(`${this.ApiUrl}${url}`, options);
   }
   getByDownload<T>(endpoint: string, options?: object): Observable<T> {
     return this.http.get<T>(`${this.ApiUrl}${endpoint}`, options);

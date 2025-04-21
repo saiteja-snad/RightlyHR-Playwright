@@ -43,12 +43,7 @@ export class PendingApprovalsTabsComponent {
     { label: 'WFH', route: '/time-off/pending-approvals/wfh', moduleId: environment.wfhModuleId ,permission: { feature: 'Workfromhome Tab', action: 'view' }},
     { label: 'Comp-Off', route: '/time-off/pending-approvals/comp-off', moduleId: environment.compoffModuleId,permission: { feature: 'Compoff Tab', action: 'view' } },
     { label: 'Permissions', route: '/time-off/pending-approvals/permissions', moduleId: environment.permissionsModuleId,permission: { feature: 'Permissions Tab', action: 'view' } },
-    { label: 'Regularization', route: '/time-off/pending-approvals/regularization', moduleId: environment.attendanceRegularizationModuleId,permission: { feature: 'Regularization Tab', action: 'view' } },
-    // {
-    //   label: 'Attendance Regularization',
-    //   route: '/time-off/pending-approvals/regularization-request',
-    //   moduleId: environment.attendanceRegularizationModuleId,permission: { feature: 'Regularization Tab', action: 'view' }
-    // },
+    { label: 'Regularization', route: '/time-off/pending-approvals/regularization-request', moduleId: environment.attendanceRegularizationModuleId,permission: { feature: 'Regularization Tab', action: 'view' } },
     {
       label: 'Separation Requests',
       route: '/time-off/pending-approvals/separation-request',

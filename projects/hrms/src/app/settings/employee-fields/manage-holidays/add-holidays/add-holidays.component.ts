@@ -75,7 +75,7 @@ export class AddHolidaysComponent {
       applicableyear: formValue.year?.value,
       addedby: parseInt(this.empinfo.employeeId),
       addedDate: new Date().toISOString(),
-      status: 'Published',
+      status: 'Pending for submission',
       authorizedDate: new Date().toISOString(),
       authorizedstatus: 'string',
       shiftID: formValue.shift,

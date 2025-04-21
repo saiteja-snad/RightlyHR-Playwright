@@ -1,10 +1,10 @@
 
-  
+
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <div><span class="component-sub-header">Shits Details</span></div>
+      <div><span class="component-sub-header">{{'Shits Details'|translate}}</span></div>
       <div class="custom-add-btn" (click)="nagvition()">
-        <i class="bi bi-plus plus-icon me-1"></i>Add New
+        <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
       </div>
     </div>
  
@@ -13,28 +13,34 @@
     <table class="w-100">
         <thead>
             <tr>
-                <th>Worked Date</th>
-                <th>Availed</th>
-                <!-- <th>Reason</th> -->
-                <th>Applied Date</th>
-                <th>Status</th>
+                <th>{{'Year'|translate}}</th>
+                <th>{{'Location'|translate}}</th>
+                <th>{{'Sub Location'|translate}}</th>
+                <th>{{'STATUS'|translate}}</th>
+                <th>{{'Added By'|translate}}</th>
+                <th>{{'Actions'|translate}}</th>
             </tr>
         </thead>
-        <tbody>
-        <tbody>
-            <!-- <ng-container *ngIf="approvedWFHs!.length > 0; else noDataTemplate">
-          <tr *ngFor="let wfhRequest of approvedWFHs; let i = index">
-            <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="wfhRequest.durationType">
-              <span *ngSwitchCase="1">First Half</span>
-              <span *ngSwitchCase="3">Second Half</span>
-              <span *ngSwitchCase="2">Full Day</span>
-              <span *ngSwitchDefault>-</span>
-            </td>
-            <td>{{ wfhRequest.requestedDate | dateformat }}</td>
-            <td>{{ wfhRequest.status }}</td>
-          </tr>
-        </ng-container> -->
+        <!-- <tbody>
+            <ng-container *ngIf="shiftsData!.length > 0; else noDataTemplate">
+                <tr *ngFor="let shift of pendingsubmittedshifts; let i = index">
+                    <td>{{ shift.applicableyear }}</td>
+                    <td>{{ shift.locationName }}</td>
+                    <td>{{ shift.subLocationName }}</td>
+                    <td>{{ shift.addedbyName }}</td>
+                    <td>{{ shift.status }}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li><a class="dropdown-item" (click)="updateShift(shift.id)"><i class="bi bi-pencil me-2"></i>Update</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </ng-container>
 
             <ng-template #noDataTemplate>
                 <tr>
@@ -43,9 +49,40 @@
                     </td>
                 </tr>
             </ng-template>
-        </tbody>
-
+        </tbody> -->
+        <tbody>
+            @if (shiftsData!.length > 0) {
+              @for (shift of pendingsubmittedshifts; track shift.id) {
+                <tr>
+                  <td>{{ shift.applicableyear }}</td>
+                  <td>{{ shift.locationName }}</td>
+                  <td>{{ shift.subLocationName }}</td>
+                  <td>{{ shift.addedbyName }}</td>
+                  <td>{{ shift.status }}</td>
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <a data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </a>
+                      <ul class="dropdown-menu custom-dropdown-menu">
+                        <li>
+                          <a class="dropdown-item" (click)="updateShift(shift.id)">
+                            <i class="bi bi-pencil me-2"></i>Update
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              }
+            } @else {
+              <tr>
+                <td colspan="6">
+                  <app-no-data-found></app-no-data-found>
+                </td>
+              </tr>
+            }
+          </tbody>
+          
     </table>
-</div>
-
 </div>

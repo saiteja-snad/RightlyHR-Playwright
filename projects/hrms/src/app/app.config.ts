@@ -19,6 +19,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { AuthService } from './services/auth.service';
 import { MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalBroadcastService, MsalGuard, MsalInterceptor, MsalService } from '@azure/msal-angular';
 import { MSALGuardConfigFactory, MSALInstanceFactory, MSALInterceptorConfigFactory } from './azure/msal-config';
+import { provideDaterangepickerLocale } from "ngx-daterangepicker-bootstrap";
 
 
 export function createTranslateLoader(http: HttpClient) {
@@ -152,6 +153,12 @@ export const appConfig: ApplicationConfig = {
     MsalService,
     MsalGuard,
     MsalBroadcastService,
+    provideDaterangepickerLocale({
+      separator: ' - ',
+      applyLabel: 'Apply'
+    })
    
   ],
 };
+
+

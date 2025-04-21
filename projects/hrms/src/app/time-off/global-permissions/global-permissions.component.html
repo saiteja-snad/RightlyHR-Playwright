@@ -1,0 +1,129 @@
+<div class="custom-main-component-container mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <p class="component-header cursor mb-0">Global Permissions</p>
+        </div>
+        <div>
+            <button type="button" class="custom-btn btn-primary" (click)="openAdd()"
+           ><i class="bi bi-plus me-2"></i>Request Global Permissions</button>
+        </div>
+      </div>
+        <div>
+            <div class="custom-table-content">
+                <table class="w-100">
+                    <thead>
+                        <tr >
+                            <th >Applied Date</th>
+                            <th >Permission Requested Date</th>
+                            <th >Requested By</th>
+                            <th >Request Type</th>
+                            <th >Department/Location</th>
+                            <th >Team/Sublocation</th>
+                            <th >Selected Type</th>
+                            <th >List of Employees</th>
+                            <th >Permission Type</th>
+                            <th >Duration(In Hours)</th>
+                            <th >Reason</th>
+                            <th ></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @if(globalpermissions.length > 0){
+                            <tr *ngFor="let item of globalpermissions | globalpermissions : searchValue">
+                                <td > {{item.requestedDate?(item.requestedDate|dateformat):'-'}}
+                                    
+                                  </td>
+                                  
+                                 
+                                  <td >
+                                    <span *ngIf="item.permissionRequestedDate !== '0001-01-01T00:00:00'; else permissiondate">
+                                      {{item.permissionRequestedDate? (item.permissionRequestedDate | dateformat):'-' }}
+                                    </span>
+                                    <ng-template #permissiondate>-</ng-template>
+                                  </td>            
+                                  <td >
+                                    <span *ngIf="item.firstName;else requestby">{{item?.firstName ??''}} {{item?.middleName??''}} {{item?.lastName ??''}}</span>
+                                    <ng-template #requestby>-</ng-template>
+                                  </td>
+                                 
+                                  <td >{{item.type?item.type:'-'}}
+                                  </td>
+                                    <td >{{item.deptId_locationIdName?item.deptId_locationIdName:'-'}}
+                                      </td>
+                                      <td >{{item.teamId_sublocIdName?item.teamId_sublocIdName:'-'}}
+                                        </td>
+                                    <td >{{item.selectType?item.selectType:'-'}}
+                                      </td>
+                                    <td >
+                                      <div class="mt-2">
+                                          <span *ngIf="item.employeeIds.length > 0; else emp">
+                                            <a type="button" placement="top" [ngbPopover]="reason">
+                                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                            </a>
+                                            <ng-template #reason>
+                                                <div>
+                                                    <p class="mb-0">{{getEmployeeNames(item.employeeIds)}}</p>
+                                                </div>
+                                            </ng-template>
+                                              
+                                          </span>
+                                          <ng-template #emp>-</ng-template>
+                                      </div>
+                                  </td>
+                                  
+                                    <td >{{item.requestType?item.requestType:'-'}}
+                                      </td>
+                                  <td >{{item.duration?(item.duration * 60 * 60 * 1000 | date:'HH:mm':'UTC'):'-'}}
+                                    </td>
+                                  <td >
+                                    <div class="mt-2">
+                                      <span *ngIf="item.meta;else res">
+                                        <a type="button" placement="top" [ngbPopover]="reason">
+                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                        </a>
+                                        <ng-template #reason>
+                                            <div>
+                                                <p class="mb-0">{{item.meta}}</p>
+                                            </div>
+                                        </ng-template>
+                                        
+                                        </span>
+                                          <ng-template #res>-</ng-template>
+                                  </div>
+                      
+                                    </td>
+                            </tr>
+                        }
+                       @else {
+                        <tr>
+                            <app-no-data-found></app-no-data-found>
+        
+                        </tr>
+                       }
+                    
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-content pt-2 w-100">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onRowsChange()">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                            </option>
+                        </select>
+                        <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                            totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+                    </div>
+    
+                    <!-- Pagination -->
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
+                </div>
+            </div>
+        </div>
+   
+</div>

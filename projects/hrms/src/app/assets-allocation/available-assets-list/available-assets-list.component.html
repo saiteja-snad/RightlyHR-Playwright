@@ -89,10 +89,9 @@
                         </li>
   
                       </ng-container>
-              
-  
+                   
                       <li>
-                        <a class="dropdown-item">
+                        <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
                           View Asset Details
                         </a>
                       </li>
@@ -481,93 +480,8 @@
       </div>
     </div>
   </ng-template>
-  
-  <ng-template #releaseassets let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="d-flex justify-content-between popup-header-border p-3">
-        <div class="pt-2">
-          <p class="popup-heading mb-0">Release an Asset</p>
-        </div>
-        <div>
-          <a (click)="modal.dismiss();releaseform.reset();openModal(relaseconformation)"><img src="icons/close.png"
-              alt="Close Icon" class="close-icon"></a>
-        </div>
-      </div>
-  
-      <div class="custom-main-popup-content p-3">
-        <form [formGroup]="releaseform" (ngSubmit)="updaterealse(releaseform,storeassetid);modal.dismiss();">
-          <div class="row">
-            <div class="col-md-12 mb-3">
-              <label for="Department" class="form-label custom-label mb-2">Reason for Release <span
-                  class="text-danger">*</span></label>
-              <div class="custom-p-select-content">
-                <p-select [options]="assetsrealsedropdown" optionLabel="value" optionValue="value"
-                  formControlName="assetsstatatue" placeholder="Please select reason"
-                  class="form-select custom-select"></p-select>
-              </div>
-              <div class="error-msg"
-                *ngIf="releaseform.controls['assetsstatatue'].invalid && (releaseform.controls['assetsstatatue'].touched || releaseform.controls['assetsstatatue'].dirty)">
-                <span class="error-msg" *ngIf="releaseform.controls['assetsstatatue'].errors?.['required']">
-                  Reason is required</span>
-              </div>
-            </div>
-  
-            <div class="col-md-12 mb-3">
-              <label class="form-label custom-label mb-2 ">
-                Additional Comments
-              </label>
-              <div class="textarea-container">
-                <textarea class="form-control custom-input" formControlName="reason"
-                  placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
-                <div>
-                  <div class="error-msg" *ngIf="releaseform.get('reason')?.invalid && releaseform.get('reason')?.touched">
-                    <div *ngIf="releaseform.get('reason')?.errors?.['required']">
-                      Additional Comments is required.
-                    </div>
-                    <div *ngIf="releaseform.get('reason')?.errors?.['maxlength']">
-                      Additional Comments not exceed 250 characters.
-                    </div>
-                  </div>
-                </div>
-                <!-- Character count -->
-                <div class=" mt-2 text-end">
-                  {{ releaseform.get("reason")?.value?.length || 0 }}/250
-                </div>
-              </div>
-            </div>
-  
-          </div>
-          <div class="d-flex justify-content-end gap-3">
-            <button type="button" class="custom-btn btn-secondary"
-              (click)="openModal(relaseconformation);modal.dismiss()">Cancel</button>
-            <button type="submit" class="custom-btn btn-primary " [disabled]="releaseform.invalid">Submit</button>
-          </div>
-  
-  
-        </form>
-  
-      </div>
-    </div>
-  </ng-template>
-  
-  <ng-template #relaseconformation let-model>
-    <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-        <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
-      </div>
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="button" class="custom-btn btn-secondary" (click)="openModal(releaseassets)">
-          No
-        </button>
-        <button type="submit" class="custom-btn btn-primary" (click)="model.dismiss()">
-          Yes
-        </button>
-      </div>
-    </div>
-  </ng-template>
+
   <!-- allocateAnasset -->
-  
   <ng-template #allocateAnasset let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
       <div class="d-flex justify-content-between popup-header-border p-3">
@@ -642,70 +556,7 @@
     </div>
   </ng-template>
   
-  <ng-template #reallocateanasset let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="d-flex justify-content-between popup-header-border p-3">
-        <div class="pt-2">
-          <p class="popup-heading mb-0">Reallocate An Asset</p>
-        </div>
-        <div>
-          <a (click)="modal.dismiss();assiginForm.reset();;openModal(updateconformation)"><img src="icons/close.png"
-              alt="Close Icon" class="close-icon"></a>
-        </div>
-      </div>
-  
-      <div class="custom-main-popup-content p-3">
-        <form [formGroup]="reassiginForm" (ngSubmit)="updatereallowed(reassiginForm,storeassetid);modal.dismiss()">
-          <div class="row">
-            <div class="col-md-12 mb-3">
-              <label for="asseTID" class="form-label custom-label mb-2">Asset ID<span class="text-danger">*</span></label>
-              <input id="assetID" formControlName="assetid" class="form-control custom-input"
-                placeholder="Enter asset ID">
-              <div *ngIf="reassiginForm.get('assetid')?.hasError('required') && reassiginForm.get('assetid')?.touched">
-                <div class="error-msg">Asset ID is required</div>
-              </div>
-            </div>
-  
-            <div class="col-md-12 mb-3 ">
-              <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
-                  class="text-danger">*</span></label>
-              <div class="custom-p-select-content">
-                <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
-                  (onChange)="onEmployeeSelect($event)" formControlName="mReportingto"
-                  placeholder="Please select employee" class="form-select custom-select"></p-select>
-              </div>
-              <div *ngIf="reassiginForm.get('mReportingto')?.invalid && reassiginForm.get('mReportingto')?.touched">
-                <div class="error-msg">Employee ID is required</div>
-              </div>
-            </div>
-            <div class="d-flex justify-content-end gap-3">
-              <button type="button" class="custom-btn btn-secondary mt-3"
-                (click)="modal.dismiss();openModal(updateconformation)">Cancel</button>
-              <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="reassiginForm.invalid">Submit</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  
-  </ng-template>
-  
-  <ng-template #updateconformation let-model>
-    <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-        <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
-      </div>
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="button" class="custom-btn btn-secondary" (click)="openModal(reallocateanasset);model.dismiss()">
-          No
-        </button>
-        <button type="submit" class="custom-btn btn-primary" (click)="resetassiginform();model.dismiss()">
-          Yes
-        </button>
-      </div>
-    </div>
-  </ng-template>
+
   
   
   <ng-template #tranferaerasset let-modal>

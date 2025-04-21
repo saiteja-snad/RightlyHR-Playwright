@@ -62,8 +62,7 @@ export class AvailableAssetsListComponent {
   employeeiddetails: any;
   loactionid: any;
   sublocation: any;
-  assetdataid: any;
-  transactionid: any;
+
   transitionsid: any;
   employeid: any;
   constructor(
@@ -198,16 +197,17 @@ export class AvailableAssetsListComponent {
     this.modalService.open(content, { centered: true })
 
   }
-
+  navigateToAsset(assetId: any) {
+    this.router.navigate(['/assets-management/view-assets-details'],{ queryParams: { id: assetId }});
+  }
   getFilteredData() {
     this.subscription = this.http.assetslocationId$.subscribe({
       next: (Value: any) => {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
-
-
         this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
+        this.getcount(Value,  this.selectedSubLocationId,this.Status);
       }
     })
   }
@@ -767,176 +767,7 @@ export class AvailableAssetsListComponent {
   }
 
 
-  updatereallowed(reassiginForm: FormGroup, removeAsset: any) {
-    if (reassiginForm.valid) {
-      // Create the payload for the asset assignment
-      const payload: any = {
-        id: this.transactionid,
-        assetId: removeAsset,
-        employeeId: this.assignEmployeeId,
-        returnDate: new Date(),
-        assetDataId: this.assetdataid,
-        status: 'Released',
-        createdBy: parseInt(this.empinfo.employeeId),
-      };
 
-      this.http.putData(`AssetTransaction/${this.transactionid}`, payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log("Assignment Response:", res);
-            // Call the updateAssets function if the assignment is successful
-            this.postreAssignAssets(reassiginForm, removeAsset);
-          },
-          error: (error) => {
-            console.error("Error assigning asset:", error);
-            this.conformationPopup.openErrorModal(error.error)
-          },
-
-        });
-    } else {
-      console.log("Assignment Form is invalid.");
-    }
-  }
-
-  postreAssignAssets(reassiginForm: FormGroup, removeAsset: number) {
-    if (reassiginForm.valid) {
-      // Create the payload for the asset assignment
-      const payload: IAssetAllocation = {
-        assetId: removeAsset,
-        employeeId: this.assignEmployeeId,
-        allocatedDate: new Date(),
-        assetDataId: this.assetdataid,
-        status: 'Allocated',
-        createdBy: parseInt(this.empinfo.employeeId),
-      };
-      this.http.postdata('AssetTransaction', payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log("Assignment Response:", res);
-            // Call the updateAssets function if the assignment is successful
-            this.conformationPopup.openSuccessModal('Asset Allocated Successfully')
-            this.reassiginForm.reset();
-          },
-          error: (error) => {
-            console.error("Error assigning asset:", error);
-            this.conformationPopup.openErrorModal(error.error.message)
-          },
-          complete: () => {
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-          },
-        });
-    } else {
-      console.log("Assignment Form is invalid.");
-    }
-  }
-  viewasset(id: any) {
-    // Fetch asset details by ID
-    this.http.getData(`AssetMaster/${id}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        console.log('Asset data retrieved and form patched:', data);
-        // Check if there are any transactions
-        const transactions = data.transactions;
-        if (transactions && transactions.length > 0) {
-          // Get the last transaction in the array
-          const lastTransaction = transactions[transactions.length - 1];
-          this.assetdataid = lastTransaction.assetDataId;
-          this.transactionid = lastTransaction.id
-          // Patch the form with values from the last transaction
-          this.reassiginForm.patchValue({
-            assetid: lastTransaction.assetIdName
-          });
-
-          console.log('Last Transaction:', lastTransaction);
-        } else {
-          console.warn('No transactions found for asset ID:', id);
-        }
-      },
-      error: (err) => {
-        console.log('Error fetching asset data:', err);
-      }
-    });
-  }
-
-  updaterealse(releaseform: FormGroup, removeAsset: any) {
-    if (releaseform.valid) {
-      // Create the payload for the asset assignment
-      const payload: any = {
-        id: this.transactionid,
-        assetId: removeAsset,
-        employeeId: this.employeid,
-        returnDate: new Date(),
-        status: 'Released',
-        assetDataId: this.assetdataid,
-        createdBy: parseInt(this.empinfo.employeeId),
-        reason: this.releaseform.controls['assetsstatatue']?.value,
-        additionalComments: this.releaseform.controls['reason']?.value
-      };
-
-      console.log("Payload for assignment:", payload);
-      console.log(this.selectedAsset);
-
-      this.http.putData(`AssetTransaction/${this.transactionid}`, payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log("Assignment Response:", res);
-            // Call the updateAssets function if the assignment is successful
-            this.updaterealseAssets(releaseform, removeAsset)
-            this.releaseform.reset()
-          },
-          error: (error) => {
-            console.error("Error assigning asset:", error);
-
-            this.releaseform.reset();
-
-          },
-          complete: () => {
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-          },
-        });
-    } else {
-      console.log("Assignment Form is invalid.");
-    }
-  }
-
-
-  updaterealseAssets(releaseform: FormGroup, assetId: number) {
-    if (releaseform.valid) {
-      const payload = {
-        "asset": {
-          id: assetId,
-          assetModel: this.selectedAsset.assetModel,
-          assetCategory: this.selectedAsset.assetCategory,
-          assetSubCategory: this.selectedAsset.assetSubCategory,
-          identificationNumber: this.selectedAsset.identificationNumber,
-          serialNumber: this.selectedAsset.serialNumber,
-          status: "Available",
-          createdAt: new Date().toISOString(),
-          createdBy: this.selectedAsset.createdBy,
-          vendorId: this.selectedAsset.vendorId,
-          purchaseDate: this.selectedAsset.purchaseDate,
-        }
-
-      };
-      this.http.putData(`AssetMaster/update/${assetId}?assetId=${assetId}`, payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res) => {
-            this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Released Successfully ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-          },
-          error: (error) => {
-            this.conformationPopup.openErrorModal("Asset Assigned Failed")
-          },
-
-        });
-    } else {
-      console.log('Update form is invalid.');
-    }
-  }
   selectedEmployee: any
   onEmployeeSelect(event: any) {
     this.selectedEmployee = event
@@ -1409,6 +1240,40 @@ export class AvailableAssetsListComponent {
         },
 
       });
+  }
+
+
+  getcount(locationId: string | null, subLocationId: string | null, status: string) {
+    const params = new URLSearchParams();
+    if (locationId) params.append('locationid', locationId);
+    if (subLocationId) params.append('sublocationid', subLocationId);
+    params.append('status', status);
+
+    this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
+      next: (data: any) => {
+        const totalCount = data.totalCount || 0;
+        this.http.setAssetCount(totalCount);
+
+        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+        const availableData = statusCounts.find((item: any) => item.status === "Available");
+        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
+        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
+        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
+
+        const availableCount = availableData?.count || 0;
+        const allocateCount = allocateData?.count || 0;
+        const inactiveCount = inactivedata?.count || 0;
+        const undermaintenceCount = undermaintence?.count || 0;
+
+        this.http.setavilableAssetCount(availableCount);
+        this.http.setallocatedAssetCount(allocateCount);
+        this.http.setundermatinaceAssetCount(undermaintenceCount);
+        this.http.setinactiveSubjectAssetCount(inactiveCount);
+      },
+      error: (error) => {
+        console.error('Error fetching count:', error);
+      }
+    });
   }
 
   ngOnDestroy(): void {

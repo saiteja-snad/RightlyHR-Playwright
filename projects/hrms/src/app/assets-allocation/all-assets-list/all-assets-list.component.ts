@@ -198,6 +198,9 @@ export class AllAssetsListComponent {
     this.modalService.open(content, { centered: true })
 
   }
+  navigateToAsset(assetId: any) {
+    this.router.navigate(['/assets-management/view-assets-details'],{ queryParams: { id: assetId }});
+  }
 
   getFilteredData() {
     this.subscription = this.http.assetslocationId$.subscribe({

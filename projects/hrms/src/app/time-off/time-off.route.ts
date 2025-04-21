@@ -63,6 +63,12 @@ import { TimeOffComponent } from './onbehalf-of-approvals/time-off/time-off.comp
 import { CompOffEntitlementComponent } from './onbehalf-of-approvals/comp-off-entitlement/comp-off-entitlement.component';
 import { WfhComponent } from './onbehalf-of-approvals/wfh/wfh.component';
 import { PermissionsComponent } from './onbehalf-of-approvals/permissions/permissions.component';
+import { RemoteLoginComponent } from './remote-login/remote-login.component';
+import { RemoteWaitingForApprovalComponent } from './remote-login/remote-waiting-for-approval/remote-waiting-for-approval.component';
+import { RemoteApprovedComponent } from './remote-login/remote-approved/remote-approved.component';
+import { RemoteProcessedComponent } from './remote-login/remote-processed/remote-processed.component';
+import { RemoteRejectedComponent } from './remote-login/remote-rejected/remote-rejected.component';
+import { GlobalPermissionsComponent } from './global-permissions/global-permissions.component';
 import { DeskApprovalRequestComponent } from './pending-approvals/desk-approval-request/desk-approval-request.component';
 import { DeskForYouRequestComponent } from './pending-approvals/desk-for-you-request/desk-for-you-request.component';
 import { DeskForYourRoleRequestComponent } from './pending-approvals/desk-for-your-role-request/desk-for-your-role-request.component';
@@ -84,6 +90,15 @@ export default [
       { path: 'approved', component: WfhApprovedComponent },
       { path: 'processed', component: WfhProcessedComponent },
       { path: 'rejected', component: WfhRejectedComponent },
+      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    ],
+  },
+  { path: 'remote', component: RemoteLoginComponent,
+    children: [
+      { path: 'waiting-for-approval', component: RemoteWaitingForApprovalComponent },
+      { path: 'approved', component: RemoteApprovedComponent },
+      { path: 'processed', component: RemoteProcessedComponent },
+      { path: 'rejected', component: RemoteRejectedComponent },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -280,5 +295,8 @@ export default [
       { path: 'wfh', component: WfhComponent },
       { path: 'permissions', component: PermissionsComponent },
     ],
+  },
+  { path: 'global-permissions', component: GlobalPermissionsComponent,
+   
   },
 ] as Route[];

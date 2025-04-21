@@ -1,9 +1,10 @@
-<div class="custom-main-component-container mt-4">
-  <div class="input-group custom-search mb-4">
+<div class="custom-main-component-container">
+  <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
       [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
   </div>
+
   <div class="custom-table-content">
     <table class="w-100">
       <thead>
@@ -53,7 +54,6 @@
   </div>
 </div>
 
-
 <ng-template #viewDetailsModal let-modal>
   <div class="custom-main-popup-container">
     <div class="d-flex justify-content-between popup-header-border p-4">
@@ -64,7 +64,6 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-
     <div class="d-flex gap-5 p-3">
       <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
       <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
@@ -74,7 +73,7 @@
         <thead>
           <tr>
             <th>Expense Type</th>
-            <th>Expense  Name</th>
+            <th>Expense Name</th>
             <th>Expense Date</th>
             <th>Total Amount</th>
             <th>Status</th>
@@ -88,7 +87,7 @@
             <td>{{ item?.item_Name }}</td>
             <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
             <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
-          
+
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
             <td>
@@ -110,8 +109,6 @@
   </div>
 </ng-template>
 
-
-
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
   <div class="custom-main-popup-container">
@@ -124,7 +121,7 @@
             src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="modal-body" style="text-align: center">
+    <div class="modal-body text-center">
       <p *ngIf="!ExpenseImageUrl; else imageView">
         <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
       </p>

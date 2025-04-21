@@ -11,9 +11,8 @@
     
     <!--Content-->
     <div class="employee-fields-main-container d-flex gap-3 w-100">
-        @if (router.url === '/settings/timeoff-configurations/leave-categoery' || router.url === '/settings/timeoff-configurations/eligibility-criterias/comp-off'
-        || router.url === '/settings/timeoff-configurations/eligibility-criterias/wfh' || router.url === '/settings/timeoff-configurations/eligibility-criterias/permissions'
-        || router.url === '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria') {
+        @if (router.url === '/settings/timeoff-configurations/eligibility-criterias/comp-off' || router.url === '/settings/timeoff-configurations/eligibility-criterias/wfh' 
+        || router.url === '/settings/timeoff-configurations/eligibility-criterias/permissions' || router.url === '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria') {
         <!--sub tabs Content-->
         <div class="custom-component-left-content">
             <app-attendance-eligibility-criteria-tabs/>

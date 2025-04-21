@@ -1,20 +1,3 @@
-// export interface IAsset {
-//   id?: number;
-//   assetType: string;
-//   assetModel: string;
-//   assetCategory: string;
-//   assetSubCategory: string;
-//   identificationNumber?: string;
-//   serialNumber: string;
-//   status: 'Active' | 'Inactive'; 
-//   vendorId: number;
-//   purchaseDate: string;  
-//   createdAt?: string;     
-//   createdBy?: number;
-//   meta?: string; 
-//   }
-
-
 
 
 
@@ -215,3 +198,26 @@ export interface IAssetAllocation {
     // Add more fields here as needed
   }
   
+  export interface Vendor {
+    id: number;
+    name: string;
+    contactnumber: number;
+    secondaryContactNumber?:any
+    emailaddress: string;
+    address: string;
+    status?: string;
+    isDeleted?: boolean;
+    createdAt: string;
+    createdBy: number;
+    meta: string;
+}
+export interface AssetCategory {
+    id?: number;
+    name: string;
+    parentId?: number;
+    categoryContactNumber?:any
+    isDeleted: boolean;
+    createdAt: string; 
+    createdBy: number;
+    meta: string;
+}

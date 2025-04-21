@@ -1,0 +1,434 @@
+<div class="custom-main-component-container">
+    <span id="salutation"><button type="submit" class="custom-btn btn-primary"
+            (click)="openModal(addassetevendor)">{{'Add'|translate}}</button></span>
+    <div>
+        <div class="custom-table-content mt-2">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Vendor Name</th>
+                        <th>Primary Contact Number</th>
+                        <th>Secondary Contact Number </th>
+                        <th>Status </th>
+                        <th>Email Address</th>
+                        <th>Address </th>
+                        <th class="text-center">Action(s) </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="((vendor | async) ?? []).length > 0; else noDataTemplate">
+
+                        <tr *ngFor="let asset of vendor | async">
+                            <td>{{ asset.name}}</td>
+                            <td>{{ asset.contactnumber }}</td>
+                            <td>{{ asset.secondaryContactNumber || 'N/A' }}</td>
+                            <td>{{ asset.status }}</td>
+                            <td>{{ asset.emailaddress }}</td>
+                            <td>{{ asset.address }}</td>
+                            <td class="text-center">
+                                <div class="dropdown-container">
+                                    <div class="dropdown">
+
+                                        <a data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </a>
+                                        <ul class="dropdown-menu custom-dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    (click)="openModal(updateanassets );viewdata(asset);selectedAsset = asset">
+                                                    <i class="bi bi-pencil"></i> Update
+                                                </a>
+                                            </li>
+                                            <li *ngIf="asset.status==='Active'">
+                                                <a class="dropdown-item"
+                                                    (click)="openModal(inactivevendor);viewdata(asset);selectedAsset = asset">
+                                                    <i class="bi bi-trash3"></i> Inactive
+                                                </a>
+                                            </li>
+                                            <li *ngIf="asset.status==='Inactive'">
+                                                <a class="dropdown-item"
+                                                    (click)="openModal(activevendor);viewdata(asset);selectedAsset = asset">
+                                                    <i class="bi bi-trash3"></i>Active
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td>
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+
+
+        <ng-template #addassetevendor let-modal>
+            <div class="custom-main-popup-container" ngbAutofocus>
+
+                <div class="d-flex justify-content-between popup-header-border p-3">
+                    <div class="pt-2">
+                        <p class="popup-heading mb-0">Add Vendor Details</p>
+                    </div>
+                    <div>
+                        <a (click)="modal.dismiss();assetForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                                class="close-icon"></a>
+                    </div>
+                </div>
+
+                <div class="custom-main-popup-content p-3">
+
+                    <form [formGroup]="assetForm" (ngSubmit)="postvendor(assetForm); modal.dismiss()">
+                        <div class="row">
+
+
+                            <!-- Vendor Details -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label custom-label mb-2" for="vendordetailes">Vendor Name<span
+                                        class="text-danger">*</span></label>
+                                <input id="vendordetailes" type="text" formControlName="vendordetailes"
+                                    class="form-control custom-input" placeholder="Enter Vendor Name" />
+                                <div class="error-msg"
+                                    *ngIf="assetForm.get('vendordetailes')?.invalid && assetForm.get('vendordetailes')?.touched">
+                                    <!-- Required error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.get('vendordetailes')?.errors?.['required']">
+                                        Vendor name is required
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.get('vendordetailes')?.errors?.['whitespace']">
+                                        Enter a valid Vendor name
+                                    </div>
+                                    <!-- Maxlength error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.get('vendordetailes')?.errors?.['maxlength']">
+                                        Vendor name must not exceed 50 characters
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mobile Number -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label custom-label mb-2" for="phonenumber">Primary Contact<span
+                                        class="text-danger">*</span></label>
+                                <input id="phonenumber" type="text" maxlength="10" minlength="10"
+                                    pattern="^[0-9]*([.,][0-9]*)?$" formControlName="phonenumber"
+                                    class="form-control custom-input" placeholder="Enter Primary Contact Number" />
+
+                                <div class="error-msg"
+                                    *ngIf="assetForm.controls['phonenumber'].invalid && (assetForm.controls['phonenumber'].touched || assetForm.controls['phonenumber'].dirty)">
+                                    <!-- Required error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.controls['phonenumber'].errors?.['required']">
+                                        Primary Contact is required
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.controls['phonenumber'].errors?.['maxlength']">
+                                        Primary Contact is required and must be 10 digits
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.controls['phonenumber'].errors?.['minlength']">
+                                        Primary Contact is required and must be 10 digits
+                                    </div>
+
+                                    <!-- Pattern error for Mobile number length -->
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.controls['phonenumber'].errors?.['pattern']">
+                                        Primary Contact must allow 10 digits only
+                                    </div>
+
+                                </div>
+
+
+
+
+                                <!-- Email -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label custom-label mb-2" for="email">Email Address<span
+                                            class="text-danger">*</span></label>
+                                    <input id="email" type="email" formControlName="email"
+                                        class="form-control custom-input" placeholder="Enter Email Address" />
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.get('email')?.invalid && assetForm.get('email')?.touched">
+                                        <div *ngIf="assetForm.get('email')?.errors?.['required']">
+                                            Email is required
+                                        </div>
+
+                                        <div *ngIf="assetForm.get('email')?.errors?.['maxlength']">
+                                            Email address must not exceed 50 characters
+                                        </div>
+                                        <div class="error"
+                                            *ngIf="assetForm.get('email')?.errors?.['invalidEmail']">Please enter a
+                                            valid
+                                            Email address</div>
+                                    </div>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label custom-label mb-2" for="address">Address<span
+                                            class="text-danger">*</span></label>
+                                    <input id="address" type="text" formControlName="address"
+                                        class="form-control custom-input" placeholder="Enter Address" />
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.get('address')?.invalid && assetForm.get('address')?.touched">
+                                        <!-- Required error -->
+                                        <div class="error-msg" *ngIf="assetForm.get('address')?.errors?.['required']">
+                                            Address is required
+                                        </div>
+                                        <!-- Maxlength error -->
+                                        <div class="error-msg"
+                                            *ngIf="assetForm.get('address')?.errors?.['maxlength']">
+                                            Address must not exceed 50 characters
+                                        </div>
+                                        <div class="error-msg"
+                                            *ngIf="assetForm.get('address')?.errors?.['whitespace']">
+                                            Enter a valid Address
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label custom-label mb-2" for="phonenumber">Secondary Contact</label>
+                                <input id="phonenumber" type="text" maxlength="10"
+                                    formControlName="secondaryphonenumber" class="form-control custom-input"
+                                    placeholder="Enter secondary contact number" />
+
+                                <div class="error-msg"
+                                    *ngIf="assetForm.controls['secondaryphonenumber'].invalid && (assetForm.controls['secondaryphonenumber'].touched || assetForm.controls['secondaryphonenumber'].dirty)">
+                                    <!-- Required error -->
+
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.controls['secondaryphonenumber'].errors?.['maxlength']">
+                                        Secondary Contact must be 10 digits
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.controls['secondaryphonenumber'].errors?.['minlength']">
+                                        Secondary Contact must be 10 digits
+                                    </div>
+                                    <!-- Pattern error for Contact number length -->
+                                    <div class="error-msg"
+                                        *ngIf="assetForm.controls['secondaryphonenumber'].errors?.['pattern']">
+                                        Secondary Contact must allow 10 digits only
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="d-flex justify-content-end gap-3">
+                            <button type="button" class="custom-btn btn-secondary"
+                                (click)="modal.dismiss()">Close</button>
+                            <button type="submit" class="custom-btn btn-primary"
+                                [disabled]="(assetForm.get('vendordetailes')?.value?.trim()===''||assetForm.get('address')?.value?.trim()==='' ||assetForm.get('email')?.value?.trim()==='')|| assetForm.invalid">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </ng-template>
+
+        <ng-template #inactivevendor let-model>
+            <div class="result-popup-content" ngbAutofocus>
+                <div>
+                    <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+                    <p class="confirmation-text mb-4">Are you sure you want to Inactive?</p>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
+                        No
+                    </button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        (click)="updateinactivevendor(assetverderupdataform);model.dismiss()">
+                        Yes
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #activevendor let-model>
+            <div class="result-popup-content" ngbAutofocus>
+                <div>
+                    <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+                    <p class="confirmation-text mb-4">Are you sure you want to Active?</p>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        (click)="updateactivevendor(assetverderupdataform);model.dismiss()">Yes</button>
+                </div>
+            </div>
+        </ng-template>
+
+
+        <ng-template #updateanassets let-modal>
+            <div class="custom-main-popup-container" ngbAutofocus>
+                <div class="d-flex justify-content-between popup-header-border p-3">
+                    <div class="pt-2">
+                        <p class="popup-heading mb-0">Update Vendor Details</p>
+                    </div>
+                    <div>
+                        <a (click)="modal.dismiss();assetverderupdataform.reset()"><img src="icons/close.png"
+                                alt="Close Icon" class="close-icon"></a>
+                    </div>
+                </div>
+                <div class="custom-main-popup-content p-3">
+                    <form [formGroup]="assetverderupdataform"
+                        (ngSubmit)="updatevendor(assetverderupdataform); modal.dismiss()">
+                        <div class="row">
+                            <!-- Vendor Details -->
+                            <div class="col-md-6 mb-3">
+                                <label for="vendordetailes" class="form-label custom-label mb-2">Vendor Name<span class="text-danger">*</span></label>
+                                <input id="vendordetailes" type="text" formControlName="vendordetailes"
+                                    class="form-control custom-input" placeholder="Enter Vendor Details"
+                                    (keydown)="formValidation.restrictInput($event)" />
+                                <div class="error-msg"
+                                    *ngIf="assetverderupdataform.get('vendordetailes')?.invalid && assetverderupdataform.get('vendordetailes')?.touched">
+                                    <!-- Required error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.get('vendordetailes')?.errors?.['required']">
+                                        Vendor name is required
+                                    </div>
+
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.get('vendordetailes')?.errors?.['whitespace']">
+                                        Enter a valid Vendor name
+                                    </div>
+                                    <!-- Maxlength error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.get('vendordetailes')?.errors?.['maxlength']">
+                                        Vendor name must not exceed 50 characters
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Mobile Number -->
+                            <div class="col-md-6 mb-3">
+                                <label for="phonenumber" class="form-label custom-label mb-2">Primary Contact<span class="text-danger">*</span></label>
+                                <input id="phonenumber" type="text" formControlName="phonenumber" maxlength="10"
+                                    (keypress)="formValidation.restrictAlphabets($event)"
+                                    (paste)="formValidation.validatePaste($event)" class="form-control custom-input"
+                                    placeholder="Enter Primary Contact" />
+                                <div class="error-msg"
+                                    *ngIf="assetverderupdataform.controls['phonenumber'].invalid && (assetverderupdataform.controls['phonenumber'].touched || assetverderupdataform.controls['phonenumber'].dirty)">
+                                    <!-- Required error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['required']">
+                                        Primary Contact is required
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['maxlength']">
+                                        Primary Contact is required and must be 10 digits
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['minlength']">
+                                        Primary Contact is required and must be 10 digits
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['whitespace']">
+                                        Primary Contact should not whitespace spaces.
+                                    </div>
+                                    <!-- Pattern error for Mobile number length -->
+                                    <!-- <div class="text-danger" *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['pattern']">
+                                Mobile number must be exactly 10 digits
+                              </div> -->
+                                </div>
+                            </div>
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label custom-label mb-2">Email Address<span class="text-danger">*</span></label>
+                                <input id="email" type="email" formControlName="email" class="form-control custom-input"
+                                    placeholder="Enter Email" />
+
+                                <div class="error-msg"
+                                    *ngIf="assetverderupdataform.get('email')?.invalid && assetverderupdataform.get('email')?.touched">
+                                    <div *ngIf="assetverderupdataform.get('email')?.errors?.['required']">
+                                        Email address is required
+                                    </div>
+
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.get('email')?.errors?.['maxlength']">
+                                        Email address must not exceed 30 characters
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.get('email')?.errors?.['invalidEmail']">Please
+                                        enter a valid email address</div>
+                                </div>
+
+                            </div>
+                            <!-- Address -->
+                            <div class="col-md-6 mb-3">
+                                <label for="address" class="form-label custom-label mb-2">Address<span class="text-danger">*</span></label>
+                                <input id="address" type="text" formControlName="address" class="form-control custom-input"
+                                    placeholder="Enter Address" (keydown)="formValidation.restrictInput($event)" />
+                                <div class="error-msg"
+                                    *ngIf="assetverderupdataform.get('address')?.invalid && assetverderupdataform.get('address')?.touched">
+                                    <!-- Required error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.get('address')?.errors?.['required']">
+                                        Address is required
+                                    </div>
+                                    <!-- Maxlength error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.get('address')?.errors?.['maxlength']">
+                                        Address must not exceed 50 characters
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.get('address')?.errors?.['whitespace']">
+                                        Enter a valid Address
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="phonenumber" class="form-label custom-label mb-2"> Secondary Contact </label>
+                                <input id="phonenumber" type="text" formControlName="secondaryphonenumber"
+                                    maxlength="10" class="form-label custom-label mb-2" placeholder="Enter Secondary Contact " />
+                                <div class="error-msg"
+                                    *ngIf="assetverderupdataform.controls['secondaryphonenumber'].invalid && (assetverderupdataform.controls['secondaryphonenumber'].touched || assetverderupdataform.controls['secondaryphonenumber'].dirty)">
+                                    <!-- Required error -->
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.controls['secondaryphonenumber'].errors?.['required']">
+                                        Secondary Contact is required
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.controls['secondaryphonenumber'].errors?.['maxlength']">
+                                        Secondary Contact must be 10 digits
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.controls['secondaryphonenumber'].errors?.['minlength']">
+                                        Secondary Contact must be 10 digits
+                                    </div>
+                                    <div class="error-msg"
+                                        *ngIf="assetverderupdataform.controls['secondaryphonenumber'].errors?.['whitespace']">
+                                        Secondary Contact should not whitespace spaces.
+                                    </div>
+                                    <!-- Pattern error for Mobile number length -->
+                                    <!-- <div class="text-danger" *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['pattern']">
+                              Mobile number must be exactly 10 digits
+                            </div> -->
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="modal.dismiss();assetverderupdataform.reset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="assetverderupdataform.invalid">Update</button>
+                </div>
+                </form>
+            </div>
+    </div>
+    </ng-template>

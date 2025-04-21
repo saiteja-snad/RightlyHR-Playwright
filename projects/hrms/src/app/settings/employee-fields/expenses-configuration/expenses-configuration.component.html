@@ -3,8 +3,7 @@
     <!-- Add Input-->
     <span id="salutation"><button type="submit" class="custom-btn btn-primary"
             (click)="openModal(addExpensesmodal)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Create')">{{'Add'|translate}}</button></span>
-    <div class="custom-table-content mt-2">
-        <table class="w-100">
+   
     <div class="custom-table-content mt-2 w-50">
         <table class="w-100">
             <thead>
@@ -33,7 +32,8 @@
             </tbody>
         </table>
     </div>
-
+</div>
+</div>
 <ng-template #addExpensesmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">

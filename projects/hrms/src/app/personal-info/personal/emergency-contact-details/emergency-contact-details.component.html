@@ -4,7 +4,7 @@
         <div>
           <span class="emergency-contact-sub-header">Emergency Contact 1</span>
         </div>
-        @if(!buttons &&(empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective')){
+        @if(!buttons &&(empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
         <div>
           <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
         </div>}

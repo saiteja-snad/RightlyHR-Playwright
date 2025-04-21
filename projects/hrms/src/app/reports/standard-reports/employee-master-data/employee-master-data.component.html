@@ -1,1 +1,284 @@
-<p>employee-master-data works!</p>
+<div class="row mt-2">
+    <div class="col-md-4">
+        <div class="d-flex w-100" >
+            <div class="me-2 text-nowrap">
+              <label for="" class="mt-2">Date of Joining</label>
+            </div>
+            <div class="w-50">
+              <input type="text" style="cursor: pointer;" name="empMasterDataDateRange" ngxDaterangepickerBootstrap [autoApply]="true" readonly placeholder="Please Select Date of Joining"
+                [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" 
+                [showClearButton]="true" [(ngModel)]="empMasterDataDOJDateRange" class="form-control mb-2 w-100" />
+            </div>
+          </div>
+    </div>
+    <div class="col-md-7">
+        <div class="d-flex w-100" >
+            <div class="me-2">
+              <label for="" class="mt-2 text-nowrap">Employee Status</label>
+            </div>
+            <div class="">
+              <select style="cursor: pointer;" name="employee-status" id="employee-status"  [(ngModel)]="selectedEmployeeStatus"
+                class=" form-select mb-2">
+                <option value="" >All Employees</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Prospective">Prospective</option>
+              </select>
+            </div>
+          </div>
+    </div>
+
+    <div class="col-md-1" style="display: flex;flex-wrap: wrap;">
+        <div>
+         <button  [disabled]="this.employeeMasterData.length === 0" 
+         class="btn btn-primary mt-1">Export</button>
+     
+        <div>
+        
+       <button (click)="getStandardReports()"
+         class="btn btn-primary mt-1">Generate</button>
+        </div> 
+     </div>
+    
+
+</div>
+
+<hr class="custom-hr">
+
+<div class="row">
+    <div class="tab-pane fade show active" id="master-data" role="tabpanel" aria-labelledby="v-pills-home-tab">
+        @if(isLoading){
+
+            <div class="spinner-container">
+                <div class="spinner-border text-primary d-inline-block ms-3" style="width: 2rem;height: 2rem;"
+                  role="status">
+                  <span class="sr-only"></span>
+                </div>
+                <p class="mt-2">Loading...</p>
+              </div>
+        }
+        @else {
+            <div class="table-scroll">
+
+                <table id="employeeMasterData" class="content" style="width: 100%;">
+                  
+                  <thead style="position: sticky; top: 0; z-index: 1;">
+                    <tr class="d-flex w-100 " style="border-bottom: 1px solid rgb(197, 197, 197);">
+                      <th  class="sticky-header">ID</th>
+                      <th  class="sticky-header">Employee ID</th>
+                      <th  class="sticky-header">Salutation</th>
+                      <th  class="sticky-header">First Name</th>
+                      <th  class="sticky-header">Middle Name</th>
+                      <th  class="sticky-header">Last Name</th>
+                      <th  class="sticky-header">Status</th>
+                      <th  class="sticky-header">Marital Status</th>
+                      <th  class="sticky-header">Gender</th>
+                      <th  class="sticky-header">Date of Birth</th>
+                      <th  class="sticky-header">Blood Group</th>
+                      <th  class="sticky-header">Secondary Language</th>
+                      <th  class="sticky-header">Address Line 1(current)</th>
+                      <th  class="sticky-header">Address Line 2(current)</th>
+                      <th  class="sticky-header">City(current)</th>
+                      <th  class="sticky-header">State(current)</th>
+                      <th  class="sticky-header">Country(current)</th>
+                      <th  class="sticky-header">Zip Code/Post Code(current)</th>
+                      <th  class="sticky-header">Address Line 1(permanent)</th>
+                      <th  class="sticky-header">Address Line 2(permanent)</th>
+                      <th  class="sticky-header">City(permanent)</th>
+                      <th  class="sticky-header">State(permanent)</th>
+                      <th  class="sticky-header">Country(permanent)</th>
+                      <th  class="sticky-header">Zip Code/Post Code(permanent)</th>
+                      <th  class="sticky-header">Work Number</th>
+                      <th  class="sticky-header">Mobile Phone</th>
+                      <th  class="sticky-header">Work Mail-Id</th>
+                      <th  class="sticky-header">Home Mail-Id</th>
+                      <th  class="sticky-header">Name (contact1)</th>
+                      <th  class="sticky-header">Email-Id (contact1)</th>
+                      <th  class="sticky-header">Phone Number (contact1)</th>
+                      <th  class="sticky-header">Relationship (contact1)</th>
+                      <th  class="sticky-header">Name (contact2)</th>
+                      <th  class="sticky-header">Email-Id (contact2)</th>
+                      <th  class="sticky-header">Phone Number (contact2)</th>
+                      <th  class="sticky-header">Relationship (contact2)</th>
+                      <th  class="sticky-header">Degree</th>
+                      <th  class="sticky-header">University</th>
+                      <th  class="sticky-header">Specialization</th>
+                      <th  class="sticky-header">GPA</th>
+                      <th  class="sticky-header">Degree Start Date</th>
+                      <th  class="sticky-header">Degree End Date</th>
+                      <th  class="sticky-header">Visa Type</th>
+                      <th  class="sticky-header">Issued Country</th>
+                      <th  class="sticky-header">Issued Date</th>
+                      <th  class="sticky-header">Expiry Date</th>
+                      <th  class="sticky-header">Aadhaar Number</th>
+                      <th  class="sticky-header">PAN Number</th>
+                      <th  class="sticky-header">ESIC Number</th>
+                      <th  class="sticky-header">PF Number</th>
+                      <th  class="sticky-header">UAN Number</th>
+                      <th  class="sticky-header">Bank Name</th>
+                      <th  class="sticky-header">Account Name</th>
+                      <th  class="sticky-header">Account Number</th>
+                      <th  class="sticky-header">IFSC Code</th>
+                      <th  class="sticky-header">Offer Sent Date</th>
+                      <th  class="sticky-header">Offer Sent By</th>
+                      <th  class="sticky-header">Offer Sent Status</th>
+                      <th  class="sticky-header">Appointment Sent Date</th>
+                      <th  class="sticky-header">Appointment Sent By</th>
+                      <th  class="sticky-header">Appointment Sent Status</th>
+                      <th  class="sticky-header">Date Of Joining</th>
+                      <th  class="sticky-header">Probation End Date</th>
+                      <th  class="sticky-header">Probation Status</th>
+                      <th  class="sticky-header">Branch Location/Code</th>
+                      <th  class="sticky-header">Notice Period</th>
+                      <th  class="sticky-header">Background Check Status</th>
+                      <th  class="sticky-header">Salary Hold</th>
+                      <th  class="sticky-header">PT</th>
+                      <th  class="sticky-header">ESIC</th>
+                      <th  class="sticky-header">PF</th>
+                      <th  class="sticky-header">Insurance</th>
+                      <th  class="sticky-header">Last Working Day</th>
+                      <th  class="sticky-header">Eligible For Rehire</th>
+                      <th  class="sticky-header">Exit Reason</th>
+                      <th  class="sticky-header">Employment Effective Date</th>
+                      <th  class="sticky-header">Job Type</th>
+                      <th  class="sticky-header">Grade Name</th>
+                      <th  class="sticky-header">Job Grade</th>
+                      <th  class="sticky-header">Job Effective Date</th>
+                      <th  class="sticky-header">Job Role</th>
+                      <th  class="sticky-header">Department</th>
+                      <th  class="sticky-header">Team</th>
+                      <th  class="sticky-header">Reporting To</th>
+                      <th  class="sticky-header">Location</th>
+                      <th  class="sticky-header">Sub Location</th>
+                      <th  class="sticky-header">Shift</th>
+                      <th  class="sticky-header">Shift Code</th>
+                      <th  class="sticky-header">Compensation Effective Date</th>
+                      <th  class="sticky-header">Overtime Eligibility</th>
+                      <th  class="sticky-header">Reason</th>
+                      <th  class="sticky-header">Frequency</th>
+                      <th  class="sticky-header">Pay Type</th>
+                      <th  class="sticky-header">Yearly CTC</th>
+      
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @if(employeeMasterData.length === 0){
+                        
+                        <tr >
+                          <td colspan="100%" style="text-align: center;">No records found</td>
+                        </tr>
+                    }
+                    @else {
+                        @for (emp of employeeMasterData; track $index) {
+
+                            <tr class="d-flex w-100 pt-1 pb-1">
+                                <td >{{ emp.employeeId  }}</td>
+                                <td >{{ emp.fusionEmpId  }}</td>
+                                <td >{{ emp.title  }}</td>
+                                <td >{{ emp.firstName  }}</td>
+                                <td >{{ emp.middleName  }}</td>
+                                <td >{{ emp.lastName  }}</td>
+                                <td >{{ emp.empstatus  }}</td>
+                                <td >{{ emp.maritalStatus  }}</td>
+                                <td >{{ emp.gender  }}</td>
+                                <td >{{ emp.dob   | dateformat }}</td>
+                                <td >{{ emp.bloodGroup }}</td>
+                                <td >{{ emp.secondaryLanguage  }}</td>
+                                <td >{{ emp.currentAddressLine1  }}</td>
+                                <td >{{ emp.currentAddressLine2  }}</td>
+                                <td >{{ emp.currentCity  }}</td>
+                                <td >{{ emp.currentState  }}</td>
+                                <td >{{ emp.currentCountry  }}</td>
+                                <td >{{ emp.currentZipCode  }}</td>
+                                <td >{{ emp.permanentAddressLine1  }}</td>
+                                <td >{{ emp.permanentAddressLine2  }}</td>
+                                <td >{{ emp.permanentCity  }}</td>
+                                <td >{{ emp.permanentState  }}</td>
+                                <td >{{ emp.permanentCountry  }}</td>
+                                <td >{{ emp.permanentZipCode  }}</td>
+                                <td >{{ emp.workPhone  }}</td>
+                                <td >{{ emp.contactnumber  }}</td>
+                                <td >{{ emp.workEmail  }}</td>
+                                <td >{{ emp.emailaddress  }}</td>
+                                <td >{{ emp.emergencyName  }}</td>
+                                <td >{{ emp.emailId  }}</td>
+                                <td >{{ emp.emergencynumber  }}</td>
+                                <td >{{ emp.relationShip  }}</td>
+                                <td >{{ emp.emergencyName1  }}</td>
+                                <td >{{ emp.emergencyEmail1  }}</td>
+                                <td >{{ emp.emergencynumber1  }}</td>
+                                <td >{{ emp.relationShip1  }}</td>
+                                <td >{{ emp.degree  }}</td>
+                                <td >{{ emp.university  }}</td>
+                                <td >{{ emp.specialization  }}</td>
+                                <td >{{ emp.gpa  }}</td>
+                                <td >{{ emp.degreeStartDate |dateformat }}</td>
+                                <td >{{ emp.degreeEndDate |dateformat }}</td>
+                                <td >{{ emp.visatype  }}</td>
+                                <td >{{ emp.issuedcountry  }}</td>
+                                <td >{{ emp.issueddate  |dateformat }}</td>
+                                <td >{{ emp.expirydate  |dateformat }}</td>
+                                <td >{{ emp.aadhaar  }}</td>
+                                <td >{{ emp.pan  }}</td>
+                                <td >{{ emp.esic  }}</td>
+                                <td >{{ emp.pf  }}</td>
+                                <td >{{ emp.uan  }}</td>
+                                <td >{{ emp.bankName  }}</td>
+                                <td >{{ emp.accountName  }}</td>
+                                <td >{{ emp.accountNo  }}</td>
+                                <td >{{ emp.ifscCode  }}</td>
+                                <td >{{ emp.offerSentDate |dateformat }}</td>
+                                <td >{{ emp.offerSentBy  }}</td>
+                                <td >{{ emp.offerSentStatus  }}</td>
+                                <td >{{ emp.appointmentSentDate |dateformat }}</td>
+                                <td >{{ emp.appointmentSenyBy  }}</td>
+                                <td >{{ emp.appointmentSentStatus  }}</td>
+                                <td >{{ emp.dateOfJoining |dateformat }}</td>
+                                <td >{{ emp.probationEndDate  |dateformat }}</td>
+                                <td >{{ emp.probationStatus  }}</td>
+                                <td >{{ emp.branchCode  }}</td>
+                                <td >{{ emp.noticePeriod  }}</td>
+                                <td >{{ emp.backgroundCheckStatus  }}</td>
+                                <td >{{ emp.salaryHold  }}</td>
+                                <td >{{ emp.pt  }}</td>
+                                <td >{{ emp.esicApplicable  }}</td>
+                                <td >{{ emp.pfApplicable  }}</td>
+                                <td >{{ emp.healthInsurance  }}</td>
+                                <td >{{ emp.lastworkingday |dateformat }}</td>
+                                <td >{{ emp.eligibleforrehire  }}</td>
+                                <td >{{ emp.termreasonoffboard  }}</td>
+                                <td >{{ emp.employmentEffectiveDate |dateformat }}</td>
+                                <td >{{ emp.jobType  }}</td>
+                                <td >{{ emp.gradeName  }}</td>
+                                <td >{{ emp.jobGrade  }}</td>
+                                <td >{{ emp.jobEffectiveDate  |dateformat }}</td>
+                                <td >{{ emp.jobRole  }}</td>
+                                <td >{{ emp.departmentName  }}</td>
+                                <td >{{ emp.subdepartment_name  }}</td>
+                                <td >{{ emp.reportingManager  }}</td>
+                                <td >{{ emp.jobLocationName }}</td>
+                                <td >{{ emp.jobSubLocationName  }}</td>
+                                <td >{{ emp.shiftName  }}</td>
+                                <td >{{ emp.shiftCode  }}</td>
+                                <td >{{ emp.compeffectivedate  |dateformat }}</td>
+                                <td >{{ emp.overtimeeligibility  }}</td>
+                                <td >{{ emp.reason  }}</td>
+                                <td >{{ emp.frequency  }}</td>
+                                <td >{{ emp.paytype  }}</td>
+                                <td >{{ emp.compensationamount  }}</td>
+                
+                              </tr>
+                        }
+
+                       
+                    }
+                   
+                  </tbody>
+                </table>
+              </div>
+
+        }
+       
+       
+      </div>
+</div>

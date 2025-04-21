@@ -382,6 +382,7 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
           next:(response:any)=>{
             //console.log(response)
               this.isLoader=false;
+              this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Request submitted sucessfully!')
             
             
@@ -394,6 +395,7 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
           },
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           complete:()=> {
+            this.requestForm.reset();
             this.http.tirggerCountSignal.update((status) => ({
               ...status,
               global: true,

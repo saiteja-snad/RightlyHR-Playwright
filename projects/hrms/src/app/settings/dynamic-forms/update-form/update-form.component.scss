@@ -1,0 +1,499 @@
+.accordion-button {
+    width: 10%;
+    border: transparent;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: white;
+    border: transparent;
+    box-shadow: none;
+}
+
+.accordion-button {
+    border: 0;
+}
+
+.accordion-item {
+    margin-bottom: 20px;
+}
+
+.accordion-header {
+    border-bottom: 1px solid #dee2e6;
+    border-top: 1px solid #dee2e6;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.accordion-item:not(:first-of-type) {
+    border: 1px solid #dee2e6;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-button::after {
+    pointer-events: none;
+}
+
+/* General Drag Container Styles */
+.cdk-drop-list {
+    transition: background-color 0.3s ease;
+}
+
+.section-scroll {
+    overflow-y: scroll;
+    max-height: 60.4vh;
+    overflow-x: hidden;
+    padding: 0px;
+}
+
+/* Handle Dragging Effects */
+.cdk-drag-preview {
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+/* Placeholder Style - Hide or Make it Transparent */
+.cdk-drag-placeholder {
+    visibility: hidden;
+}
+
+/* Smooth Transition for Dragging Elements */
+.cdk-drag-animating {
+    transition: transform 0.3s ease;
+}
+
+.inactive-no {
+    background-color: #979797;
+    border-radius: 14px;
+    padding: 11px 55px 13px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.inactive-success {
+    background-color: #304ffd;
+    border-radius: 14px;
+    padding: 11px 51px 13px 52px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.bi-exclamation-circle-fill {
+    color: #fd3030;
+    font-size: 3rem;
+}
+
+/* Make Drag Handle Area Distinct */
+.drag-btn {
+    cursor: grab;
+    background-color: #e9ecef;
+    border: none;
+    border-radius: 3px;
+    padding: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.drag-btn:active {
+    cursor: grabbing;
+    background-color: #d6d7d8;
+}
+
+/* Style the Dragging Indicator */
+.drag-div,
+.question-drag {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.drag-div:hover,
+.question-drag:hover {
+    background-color: #f8f9fa;
+}
+
+.hide-input {
+    border-bottom: 1px solid#dee2e6;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.hide-input:focus {
+    border-top: 2px solid #dee2e6;
+    border-left: 2px solid #dee2e6;
+
+    border-right: 2px solid #dee2e6;
+}
+
+.options-icon {
+    border: 1px solid #dee2e6;
+    color: #dee2e6;
+}
+
+/* Floating Action Button Container */
+.fab-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 15px;
+    z-index: 1000;
+}
+
+/* Floating Action Button */
+.fab-button {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Hover effect */
+.fab-button:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+}
+
+/* Label for buttons */
+.fab-label {
+    position: absolute;
+    right: 70px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+}
+
+/* Show label on hover */
+.fab-button:hover .fab-label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Optional: Different colors for different buttons */
+.fab-button:nth-child(1) {
+    background-color: #304ffd;
+}
+
+.fab-button:nth-child(2) {
+    background-color: #4caf50;
+}
+
+.fab-button:nth-child(2):disabled {
+    background-color: #a1e0a3;
+}
+
+.fab-button:nth-child(3) {
+    background-color: #03a9f4;
+}
+
+.fab-button:nth-child(3):disabled {
+    background-color: #78d1fa;
+}
+
+/* Add button icons */
+.fab-button i {
+    font-size: 24px;
+}
+
+.drag-div {
+    margin-left: -8px;
+    margin-top: 6px;
+}
+
+.drag-btn {
+    padding: 0;
+    border: 0;
+    font-size: 25px;
+    background-color: white;
+    color: #adadad;
+}
+
+.question-drag {
+    margin-left: -16px;
+}
+
+.drag-btn:hover {
+    color: #797878;
+    cursor: grabbing;
+}
+
+.remove-btn {
+    padding: 0;
+}
+
+.section-title-label {
+    position: relative;
+}
+
+.label-box {
+    background-color: #6f3f98;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px 5px 0 0;
+    font-weight: bold;
+    box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+}
+
+.section-header input {
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 0;
+}
+
+.section-header select:focus {
+    box-shadow: none;
+}
+
+.section-header .form-control:focus {
+    box-shadow: none;
+}
+
+.add-button {
+    background-color: #304ffd;
+    color: #fff;
+    padding: 5px 20px;
+    border-radius: 10px;
+    border: none;
+}
+
+.add-button:disabled {
+    background-color: #5770ff;
+}
+
+.content-heading {
+    flex-grow: 0;
+    font-size: 16px;
+    padding-left: 12px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-align: left;
+    color: #222b45;
+}
+
+.sub {
+    padding: 5px 20px;
+    border-radius: 10px;
+    border: none;
+}
+
+.main-card {
+    border: none;
+}
+
+.dropdown-menu a {
+    cursor: pointer;
+}
+
+.update-form-body {
+    max-height: 80vh;
+    overflow-y: scroll;
+}
+
+.fit-scroll {
+    width: fit-content;
+}
+
+.form-check-input:disabled {
+    height: 20px;
+    width: 20px;
+}
+
+.option {
+    width: 30%;
+}
+
+.question-type {
+    border: 1px solid #ced4da;
+    width: 100%;
+    font-weight: normal;
+    border-radius: 3px;
+}
+
+.update-question-type {
+    width: 100%;
+    border: 1px solid #ced4da;
+    font-weight: normal;
+}
+
+.question-type-dropdown {
+    width: 100%;
+}
+
+.question-type:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+.view-form-body {
+    max-height: 80vh;
+    overflow-y: scroll;
+}
+
+.modal-content {
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.modal-body {
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+.card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-control[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    border: 1px solid #ced4da;
+}
+
+.badge {
+    font-size: 0.875rem;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+.question-type-dropdown {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.btn-close:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.delete-btn {
+    outline: none;
+    box-shadow: none;
+}
+
+.text-area-input {
+    outline: none;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #ced4da;
+}
+
+.badge {
+    background-color: #e9ecef;
+    color: black;
+    font-weight: normal;
+}
+
+.question-container {
+    position: relative;
+    background-color: #f8f9fa;
+}
+
+.form-check {
+    margin-bottom: 0;
+}
+
+.required-switch input {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+@media (max-width: 768px) {
+
+    .row .col-md-1,
+    .row .col-md-4,
+    .row .col-md-6 {
+        margin-bottom: 1rem;
+    }
+}
+
+.bi-check-circle-fill {
+    color: #304ffd;
+    font-size: 3rem;
+}
+
+.imgg {
+    width: 4.5rem;
+    height: 4.5rem;
+}
+
+.modal-btn {
+    width: max-content;
+    padding: 0.5rem;
+    border-radius: 14px;
+    color: #fff;
+    border: none;
+    width: 120px;
+}
+
+.yes-btn {
+    background-color: #304ffd;
+}
+
+.no-btn {
+    background-color: #979797;
+}
+
+a {
+    color: #3f434a;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border: 1px solid rgb(222, 226, 230) !important;
+    box-shadow: none !important;
+    outline: none;
+}
+
+.form-label {
+    color: #212529;
+}

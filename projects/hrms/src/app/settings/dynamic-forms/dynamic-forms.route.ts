@@ -5,6 +5,7 @@ import { DraftFormsComponent } from "./draft-forms/draft-forms.component";
 import { FormSettingsComponent } from "./form-settings/form-settings.component";
 import { ViewFormComponent } from "./view-form/view-form.component";
 import { UpdateFormComponent } from "./update-form/update-form.component";
+import { CreateFormComponent } from "./create-form/create-form.component";
 
 
 export default [
@@ -15,5 +16,6 @@ export default [
     { path: 'form-settings', component: FormSettingsComponent },
     { path: 'update-form', component: UpdateFormComponent },
     { path: 'view-form', component: ViewFormComponent },
+    { path: 'create-form', component: CreateFormComponent },
 
 ] as Route[];

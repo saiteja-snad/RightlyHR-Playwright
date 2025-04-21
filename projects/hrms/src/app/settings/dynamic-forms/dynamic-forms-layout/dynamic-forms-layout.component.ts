@@ -17,4 +17,8 @@ export class DynamicFormsLayoutComponent {
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
+
+  navigateToCreateFormComponent() {
+    this.router.navigate(['/settings/dynamic-forms/create-form']);
+  }
 }

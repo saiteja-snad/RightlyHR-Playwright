@@ -3,8 +3,8 @@ export const environment = {
   webSocketUrl: 'ws://api.fusion.snadhr.com',
 
   modules: [
-    { id: 18, moduleName: 'Probation ' },
-    { id: 23, moduleName: 'PMS' } 
+    { id: 20, moduleName: 'Probation' },
+    { id: 24, moduleName: 'PMS' }  
   ],
 
 

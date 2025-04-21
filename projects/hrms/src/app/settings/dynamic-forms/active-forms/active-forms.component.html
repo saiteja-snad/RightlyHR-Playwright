@@ -47,7 +47,7 @@
                                     </a>
                                   </li>
                                 <li >
-                                  <a class="dropdown-item">
+                                  <a class="dropdown-item" (click)="openmodal(confirmation);setfromid=form.formId">
                                     <i class="bi bi-trash3 me-2"></i>Inactive
                                   </a>
                                 </li>
@@ -61,7 +61,7 @@
           
             <ng-template #noDataTemplate>
               <tr>
-                <td colspan="4">
+                <td colspan="6">
                   <app-no-data-found></app-no-data-found>
                 </td>
               </tr>
@@ -70,3 +70,21 @@
           
     </table>
 </div>
+
+
+
+
+
+
+<ng-template #confirmation let-modal>
+  <div ngbAutofocus >
+      <div class="modal-body text-center p-5">
+          <!-- <img src="./assets/images/Vector@2x.png" alt="" class="imgg mb-3" /> -->
+          <h5>Are you sure you want to Inactive this form?</h5>
+          <div class="d-flex justify-content-around pt-3">
+              <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+              <button type="button" class="custom-btn btn-primary" (click)="deleteFormDestails(setfromid);modal.dismiss()">Yes</button>
+          </div>
+      </div>
+  </div>
+</ng-template>

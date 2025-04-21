@@ -16,10 +16,11 @@ import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-mod
 import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
+import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss'
 })

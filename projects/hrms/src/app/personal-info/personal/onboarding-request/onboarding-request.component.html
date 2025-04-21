@@ -2,7 +2,8 @@
     <div class="d-flex justify-content-end">
         <button
             *ngIf="isActive('personalinfo/personal/onboarding-verification') && (empdata.empstatus.toLocaleLowerCase() =='prospective' 
-            || empdata.empstatus.toLocaleLowerCase() =='trainee prospective')  && empdata.substatus.toLocaleLowerCase() =='documents rejected' " 
+            || empdata.empstatus.toLocaleLowerCase() =='trainee prospective')  && empdata.substatus.toLocaleLowerCase() =='documents rejected' 
+           && (empdata.empstatus.toLowerCase() == 'inactive' || empdata.empstatus.toLowerCase() == 'trainee inactive')" 
             class="custom-btn btn-primary mb-3 p-2" (click)="openModal(request)">{{'Re-Request Documents'|translate}}</button>
     </div>
     <!--Input search-->

@@ -4,7 +4,7 @@
             <p class="component-header mb-0" (click)="onBackSubmit()"><i
                     class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate}}/{{headerName}}</p>
         </div>
-        <div>
+        <div class="d-flex justify-content-end">
             <div>
                 <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType')"
                     (click)="navigation()">Inactive</button>
@@ -46,7 +46,7 @@
             }
 
             <div>
-                <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info')"
+                <button class="custom-btn btn-secondary ms-2 me-2" *ngIf="isActive('personalinfo/personal/basic-info')"
                     [hidden]="!emppersonalinfo.isCredentialExpired" (click)="updatePassword()">
                     {{'Generate Credentials'|translate}}
                 </button>

@@ -83,7 +83,6 @@ export interface IProbationEmployees {
   probationAppliedStatus: string
   jobDetails?: IJobdetails;
 }
-
 export interface IJobdetails {
   subdeptId: any;
   id: number,

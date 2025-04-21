@@ -1,1 +1,93 @@
-<p>wfh-report works!</p>
+<div class="container-fluid job-container mt-2">
+    <div class="container-fluid">
+        <div *ngIf="isWfhTabActive" class="custom-dropdown" #dropdown (click)="WfhtoggleDropdown()">
+            <input type="text" class="form-select" style="cursor: pointer;" placeholder="Search Employee ID or Name" (input)="WfhfilterEmployees()">
+            <ul class="dropdown-menu px-2" [class.show]="isDropdownOpen" style="cursor: pointer;width: 17%; max-height:50vh;overflow-y: auto;">
+                <li (click)="selectWfhEmployee(null, $event)">All Employees</li>
+                <li *ngFor="let employee of filteredWfhEmployees" (click)="selectWfhEmployee(employee, $event)" style="white-space: nowrap;">
+                    {{ employee.fusionEmpId }} - {{ employee.employeeName }}
+                </li>
+            </ul>
+        </div>
+
+        <div *ngIf="isWfhTabActive" class="position-relative" #wfhdropdown style="width: 310px; margin-left: 1%;">
+            <input type="text" class="form-select" placeholder="Search Team Manager" [(ngModel)]="selectedWfhManager" (input)="filterWfhManagers($event)" (click)="toggleWfhManagerDropdown()" style="cursor: pointer;">
+            <ul *ngIf="isDropdownOpenwfh" class="dropdown-menu show px-2" style="width: 100%; max-height: 200px; overflow-y: auto; position: absolute; z-index: 1000;">
+                <li *ngFor="let manager of filteredWfhManagers" (click)="selectWfhManager(manager)" style="cursor: pointer;white-space: nowrap;">
+                    {{ manager.id }} - {{ manager.name }}
+                </li>
+            </ul>
+        </div>
+
+        <div *ngIf="isWfhTabActive" class="me-2 text-nowrap" style="margin-left: 1%;">
+            <label for="" class="mt-2">Select Date</label>
+        </div>
+        <div class="w-10" *ngIf="isWfhTabActive">
+            <input
+                type="text"
+                style="cursor: pointer; width: 230px; margin-left: 1%;"
+                name="DateRange"
+                ngxDaterangepickerBootstrap
+                [(ngModel)]="selectedDateRange"
+                [autoApply]="true"
+                [ranges]="ranges"
+                [alwaysShowCalendars]="true"
+                [locale]="localeOptions"
+                readonly
+                placeholder="Please Select Date"
+                class="form-control w-100 mb-2"
+                (ngModelChange)="onDateRangeChangewfh($event)"
+                [disabled]="selectedMonth !== null && selectedMonth !== ''"
+                />
+        </div>
+
+        <!-- <select *ngIf="isWfhTabActive" id="monthDropdown" class="form-select"
+            [disabled]="selectedDateRange !== null && (selectedDateRange.startDate !== null || selectedDateRange.endDate !== null)"
+            style="width: 210px; margin-left: 1%; cursor: pointer;" (change)="onMonthChangeWfh($event)">
+            <option value="" disabled selected>Select Month</option>
+            <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+        </select> -->
+
+        <div class="d-flex" *ngIf="isWfhTabActive">
+            <input type="submit" class="btn save-btns btn-sm" value="Generate" (click)="generateWfhReport()" [disabled]="!isFilterGivenwfh">
+            <button type="button" class="btn save-btn btn-sm me-4" (click)="exportToExcelWfh()" [disabled]="!isFilterGivenwfh">Export</button>
+        </div>
+
+    </div>
+    <div>
+        <ng-container ngbNavItem="WFHReport">
+            <button ngbNavLink (click)="getWfhReport()">WFH Report</button>
+            <ng-template ngbNavContent>
+                <div class="table-scroll">
+                    <table id="wfh" class="content" style="width: 100%;">
+                        <thead>
+                            <th class="th-sticky-header sticky-header">Employee ID</th>
+                            <th class="th-sticky-header sticky-header">Employee Name</th>
+                            <th class="th-sticky-header sticky-header">Department</th>
+                            <th class="th-sticky-header sticky-header">Team Manager</th>
+                            <th class="th-sticky-header sticky-header">Location</th>
+                            <th class="th-sticky-header sticky-header">Sub Location</th>
+                            <th class="th-sticky-header sticky-header">Shift</th>
+                            <th class="th-sticky-header sticky-header">WFH Date</th>
+                            <th class="th-sticky-header sticky-header">Duration</th>
+                        </thead>
+                        <tbody *ngIf="showWfhTable">
+                            <tr *ngFor="let record of filteredWfhRecord">
+                                <td class="td-center">{{record.fusionEmpId ?? '-'}}</td>
+                                <td class="td-center">{{record.employeeName ?? '-'}}</td>
+                                <td class="td-center">{{record.department ?? '-'}}</td>
+                                <td class="td-center">{{record.teamManagerName ?? '-'}}</td>
+                                <td class="td-center">{{record.location ?? '-'}}</td>
+                                <td class="td-center">{{record.subLocation ?? '-'}}</td>
+                                <td class="td-center">{{record.shift ?? '-'}}</td>
+                                <td class="td-center">{{record.worked_Date ? (record.worked_Date |
+                                    date:'dd-MMM-yyyy') : '-'}}</td>
+                                <td class="td-center">{{record.duration ?? '-'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </ng-container>
+    </div>
+</div>

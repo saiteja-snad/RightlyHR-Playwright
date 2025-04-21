@@ -1,5 +1,5 @@
 import { Route, } from '@angular/router';
-import { ExpensesConfigurationComponent } from './expenses-configuration/expenses-configuration.component';
+
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal/salutation', pathMatch: 'full' },
@@ -50,16 +50,7 @@ export default [
             { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent) }
         ]
     },
-    {
-        path: 'assets-configuration',
-        children: [
-            { path: '', redirectTo: 'vendor', pathMatch: 'full' },
-            { path: 'vendor', loadComponent: () => import('./assets-configurations/asset-vendor/asset-vendor.component').then((m) => m.AssetVendorComponent) },
-            { path: 'catagory', loadComponent: () => import('./assets-configurations/asset-catagory/asset-catagory.component').then((m) => m.AssetCatagoryComponent) },
-            { path: 'sub-catagory', loadComponent: () => import('./assets-configurations/sub-catagory/sub-catagory.component').then((m) => m.SubCatagoryComponent) },
-
-        ]
-    },
+    
     { path: 'addshifts', loadComponent: () => import('./shits/add-shits/add-shits.component').then((m) => m.AddShitsComponent) },
     {
         path: 'manage-shifts',

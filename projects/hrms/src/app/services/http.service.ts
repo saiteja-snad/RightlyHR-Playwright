@@ -474,4 +474,31 @@ resetTriggerSignal() {
     this.deskWiatingforapprovalCountsubject.next(count);
   }
 
+  assetCountSubject = new BehaviorSubject<number>(0);
+  avilableassetCountSubject = new BehaviorSubject<number>(0);
+  allocatedassetCountSubject = new BehaviorSubject<number>(0);
+  undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
+  inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
+
+  setAssetCount(count: number) {
+    this.assetCountSubject.next(count);
+  }
+
+  setavilableassignAssetCount(count: number) {
+    this.avilableassetCountSubject.next(count);
+  }
+
+
+  setallocatedAssetCount(count: number) {
+    this.allocatedassetCountSubject.next(count);
+  }
+
+  setundermatinaceAssetCount(count: number) {
+    this.undermatinaceassetCountSubject.next(count);
+  }
+
+
+  setinactiveSubjectAssetCount(count: number) {
+    this.inactiveaceassetCountSubject.next(count);
+  }
 }

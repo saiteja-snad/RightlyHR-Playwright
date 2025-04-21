@@ -1,83 +1,94 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex py-3">
-            <div>
-                <p class="main-content-heading cursor mb-0" (click)="naviagte()"><i class="bi bi-arrow-90deg-left me-2"></i>Probation Confirmation Letter</p>
-            </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header mb-0">
+                <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="naviagte()"></i>Probation Confirmation Letter
+            </p>
         </div>
     </div>
 
     <!--letter main container-->
-    <div class="main-letter-content d-flex">
+    <div class="main-letter-content gap-4 d-flex w-100">
         <!-- letter content-->
         <div class="card letter-fields-content p-4">
-             <form [formGroup]="probationConfirmationForm" (ngSubmit)="postProbationLetterFormSubmit()">
-                 <div class="mb-4">
+            <form [formGroup]="probationConfirmationForm" (ngSubmit)="postProbationLetterFormSubmit()">
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select employee"  formControlName="employeeId" (onChange)="getProbationEmployees()"
-                            class="custom-select w-100">
+                            [showClear]="true" placeholder="Please select employee" formControlName="employeeId"
+                            (onChange)="getProbationEmployees()" class="custom-select w-100">
                         </p-select>
                     </div>
-                    <div *ngIf="probationConfirmationForm.get('employeeId')?.invalid && probationConfirmationForm.get('employeeId')?.touched">
-                        <div class="error-msg">Employee is required</div>
+                    <div *ngIf="probationConfirmationForm.get('employeeId')?.invalid && probationConfirmationForm.get('employeeId')?.touched"
+                        class="error-msg">
+                        Employee is required
                     </div>
-                 </div>
-
-                <div class="mb-4">
+                </div>
+        
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date"
-                        [min]="todayDate" (change)="pathValuesFuction();DateValidation()" />
+                    <input type="date" class="form-control custom-input" formControlName="issuedDate"
+                        placeholder="Please enter Date" [min]="todayDate" (change)="pathValuesFuction();DateValidation()" />
                     <div class="error-msg">
-                        <div *ngIf="probationConfirmationForm.get('issuedDate')?.invalid && probationConfirmationForm.get('issuedDate')?.touched">
+                        <div
+                            *ngIf="probationConfirmationForm.get('issuedDate')?.invalid && probationConfirmationForm.get('issuedDate')?.touched">
                             Issued Date is required
                         </div>
                         <!-- Custom validation error from DateValidation -->
-                        <div *ngIf="!isdateofprobation">Issued Date should not be after Probation End Date</div>
+                        <div class="error-msg" *ngIf="!isdateofprobation">Issued Date should not be after Probation End Date
+                        </div>
                     </div>
                 </div>
-
-                 <div class="col-md-12 mb-4">
+        
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Effective Date <span class="error-msg">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="effectiveDate" placeholder="Please enter Date" (change)="pathValuesFuction();DateValidation()" />
-                    <div >
-                        <div *ngIf="probationConfirmationForm.get('effectiveDate')?.invalid && probationConfirmationForm.get('effectiveDate')?.touched" class="error-msg">Effective Date is required</div>
+                    <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+                        placeholder="Please enter Date" (change)="pathValuesFuction();DateValidation()" />
+                    <div class="error-msg">
+                        <div
+                            *ngIf="probationConfirmationForm.get('effectiveDate')?.invalid && probationConfirmationForm.get('effectiveDate')?.touched">
+                            Effective Date is required</div>
                         <!-- Custom validation error from DateValidation -->
                         <div *ngIf="!isdateofprobation">Effective Date should not be after Probation End Date</div>
                     </div>
                 </div>
-
-                <div class="mb-4">
+        
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                      <p-select [options]="documentType" optionValue="value" optionLabel="name" (onChange)="pathValuesFuction()"
-                        placeholder="Please select document type" formControlName="Documenttype" class="form-select custom-select">
-                      </p-select>
+                        <p-select [options]="documentType" optionValue="value" optionLabel="name"
+                            (onChange)="pathValuesFuction()" placeholder="Please select document type"
+                            formControlName="Documenttype" class="form-select custom-select">
+                        </p-select>
                     </div>
-                    <div *ngIf="probationConfirmationForm.get('Documenttype')?.invalid && probationConfirmationForm.get('Documenttype')?.touched" class="error-msg">
-                      Document Type is required
+                    <div *ngIf="probationConfirmationForm.get('Documenttype')?.invalid && probationConfirmationForm.get('Documenttype')?.touched"
+                        class="error-msg">
+                        Document Type is required
                     </div>
-                  </div>
-
-                 <div class="mb-4">
+                </div>
+        
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select authoruty"  formControlName="authorityid" (onChange)="pathValuesFuction()"
-                            class="custom-select w-100">
+                            [showClear]="true" placeholder="Please select authoruty" formControlName="authorityid"
+                            (onChange)="pathValuesFuction()" class="custom-select w-100">
                         </p-select>
                     </div>
-                    <div *ngIf="probationConfirmationForm.get('authorityid')?.invalid && probationConfirmationForm.get('authorityid')?.touched">
+                    <div
+                        *ngIf="probationConfirmationForm.get('authorityid')?.invalid && probationConfirmationForm.get('authorityid')?.touched">
                         <div class="error-msg">Authority is required</div>
                     </div>
-                 </div>
-
-                 <div class="d-flex flex-wrap gap-3 pt-4">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationConfirmationForm.invalid">Generate Document</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="probationConfirmationemail()" [disabled]="probationConfirmationForm.invalid">Release Letter</button>
                 </div>
-             </form>
+        
+                <div class="d-flex flex-wrap gap-3">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationConfirmationForm.invalid">Generate
+                        Document</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="probationConfirmationemail()"
+                        [disabled]="probationConfirmationForm.invalid">Release Letter</button>
+                </div>
+            </form>
         </div>
 
         <!--Letter Content-->
@@ -112,7 +123,7 @@
                                     </div>
                                 </div>
         
-                                <p class="letter-sub-header mb-4">Dear {{probationLetterData.firstName}}
+                                <p class="letter-sub-header mb-3">Dear {{probationLetterData.firstName}}
                                     {{probationLetterData.middleName}} {{probationLetterData.lastName}},</p>
         
                                 <p class="mb-4">We are pleased to inform you that, following a comprehensive
@@ -140,8 +151,8 @@
                                 <p class="letter-sub-header"><b>for RightlyHR</b></p>
                                 <div class="letter-signature">{{probationLetterData.authorityName}}</div>
                                 <div>
-                                    <p class="stamp-text"><b>{{probationLetterData.authorityName}}</b></p>
-                                    <p class="stamp-text1"><b>{{probationLetterData.authorityDesignation}}</b></p>
+                                    <p><b>{{probationLetterData.authorityName}}</b></p>
+                                    <p><b>{{probationLetterData.authorityDesignation}}</b></p>
                                 </div>
                             </div>
                         </div>

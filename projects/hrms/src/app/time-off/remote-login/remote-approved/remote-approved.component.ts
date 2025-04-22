@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, FormBuilder } from '@angular/forms';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -46,7 +46,19 @@ export class RemoteApprovedComponent implements OnInit,OnDestroy{
     private fb: FormBuilder,
     private http: HttpService,
     public rbac: RbacService,
-  ) {}
+  ) {
+         // Signal reaction for employee switch
+         effect(() =>{
+          if (this.http.tirggerCountSignal().remote) {
+            this.getRemoteRequests();
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              remote: false,
+            }));
+          }
+    
+      })
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

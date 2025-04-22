@@ -3,7 +3,7 @@ import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootst
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { IemployeeDetails } from '../../../Interfaces/job-model';
@@ -11,9 +11,14 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
+import { SelectModule } from 'primeng/select';
+import { HttpService } from '../../../services/http.service';
+import * as XLSX from "xlsx";
+import { CommonModule } from '@angular/common';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-employee-master-data',
-  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent],
+  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent, SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss'
 })
@@ -28,6 +33,8 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   selectedJobLocation: string | undefined = undefined;
   selectedJobSubLocation: string | undefined = undefined;
   employeeMasterData = [] as any[];
+  masterDataForm!: FormGroup;
+
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -39,6 +46,14 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+
+  employeeStatusOptions = [
+    { label: 'All Employees', value: '' },
+    { label: 'Active', value: 'Active' },
+    { label: 'Inactive', value: 'Inactive' },
+    { label: 'Prospective', value: 'Prospective' }
+  ];
+
   localeOptions: any = {
     applyLabel: 'ok',
     format: environment.dateformat.toUpperCase(),
@@ -46,24 +61,27 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     clearLabel: 'Clear', // could be rtl
   };
 
-  constructor(private authService: AuthService, private reportsService: ReportsService) { }
+  constructor(private authService: AuthService, private reportsService: ReportsService, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
+    this.initializeForm();
     this.getStandardReports()
+  }
+
+  initializeForm() {
+    this.masterDataForm = this.fb.group({
+      dateOfJoining: [null, Validators.required],
+      empStatus: ['', Validators.required],
+    });
   }
 
   //method to get All the reports
   getStandardReports() {
     this.isLoading = true;
-    const request: IStandardReportRequest = {
-      employeeStatus: this.selectedEmployeeStatus,
-      dateRange: this.empMasterDataDOJDateRange ? this.empMasterDataDOJDateRange : undefined,
-      selectedBranchLocation: this.selectedBranchLocation,
-      selectedJobLocation: this.selectedJobLocation,
-      selectedJobSubLocation: this.selectedJobSubLocation,
-    };
-    this.subscription = this.reportsService.getStandardReports(request).subscribe({
+    const params = new URLSearchParams();
+    const endpoint = params.toString() ? `Reports/standardReportsWithoutPagination?${params.toString()}` : 'Reports/standardReportsWithoutPagination';
+    this.subscription = this.http.getData(endpoint).subscribe({
       next: (res: any) => {
         if (res) {
           this.employeeMasterData = res.standardReports;
@@ -76,6 +94,140 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       },
       complete: () => { },
     });
+  }
+
+  onSubmit(form: FormGroup) {
+    this.isLoading = true;
+    if (form.valid) {
+      const formData = form.value;
+      const request: IStandardReportRequest = {
+        dateRange: {
+          startDate: formData.dateOfJoining.startDate,
+          endDate: formData.dateOfJoining.endDate,
+        },
+        employeeStatus: formData.empStatus.value
+      };
+      this.subscription = this.reportsService.getStandardReports(request).subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.employeeMasterData = res.standardReports || [];
+            this.isLoading = false;
+          }
+        },
+        error: (err: any) => {
+          this.isLoading = true;
+          console.log(err);
+        },
+      });
+    }
+  }
+
+  onClickEmpMasterExport() {
+    let { arrayBuffer, fileName } = this.exportTableToExcel("employeeMasterData", "Employee_master_data")
+
+    this.uploadReports(arrayBuffer, fileName)
+    this.createReportLog("Employee Master Data")
+  }
+
+  exportTableToExcel(tableId: string, name?: string) {
+    let { sheetName, fileName } = this.getFileName(name);
+    let targetTableElm = document.getElementById(tableId);
+    let wb = XLSX.utils.table_to_book(targetTableElm, <XLSX.Table2SheetOpts>{
+      sheet: sheetName
+    });
+
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
+    let arrayBuffer = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    return { arrayBuffer, fileName }
+  }
+
+  getFileName(name: string | undefined) {
+    let timeSpan = new Date().toISOString();
+    let sheetName = name || "ExportResult";
+    let fileName = `${sheetName}-${timeSpan}`;
+    return {
+      sheetName,
+      fileName
+    };
+  };
+
+  uploadReports(reportsData: any, fileName: string) {
+    const reportFile = new File(
+      [reportsData],
+      `${fileName}.xlsx`,
+      {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      }
+    );
+
+    let filePath = `/FusionDocuments/Employee Documents/Reports/${this.loggedInUser.employeeId}`;
+    this.subscription = this.http
+      .uploadFileWithQuery(
+        'FileSystem/uploadfiletodirectory',
+        filePath,
+        reportFile
+      )
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.ReportEmail(data.path, fileName);
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          alert('file upload  is failed');
+        },
+      });
+  }
+
+  ReportEmail(docUrl: string, fileName: string) {
+    let loggedInUser = this.authService.getToken();
+    const date = new Date();
+    let reportdata = {
+      employeeId: loggedInUser.employeeId,
+      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+      documentUrl: docUrl,
+      reporttitle: fileName,
+      date: date,
+      senderEmail: loggedInUser.workEmail,
+    };
+    if (loggedInUser.middleName) {
+
+      reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
+
+    } else {
+      reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
+
+    }
+    console.log(reportdata);
+    this.subscription = this.http
+      .postdata(`CustomEmail/Reports`, reportdata)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+        },
+      });
+  }
+
+  createReportLog(reportName: string) {
+    const req = {
+      generatedBy: this.loggedInUser.employeeId,
+      reportsType: "Standard Reports",
+      reportsName: reportName
+    }
+
+    this.subscription = this.http.postdata("ReportsLog", req).subscribe({
+      next: (res: any) => {
+        console.log(res);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+      complete: () => { }
+    })
   }
 
   ngOnDestroy(): void {

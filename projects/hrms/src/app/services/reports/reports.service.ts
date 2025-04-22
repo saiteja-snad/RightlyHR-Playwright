@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../http.service';
 import { HttpParams } from '@angular/common/http';
-import { IAttendanceDetails, ICompoffDetails, ILeavesummery, IStandardReportRequest} from '../../Interfaces/reports.model';
+import { IAttendanceDetails, ICompoffDetails, ILeavesummery, IStandardReportRequest,IWfhReportRequest} from '../../Interfaces/reports.model';
 
 @Injectable({
   providedIn: 'root',
@@ -84,6 +84,172 @@ export class ReportsService {
       file
     );
   }
+
+  getWfhReports(request: IWfhReportRequest) {
+    let params = new HttpParams();
+  
+    if (request.FusionEmpId) {
+      params = params.set('FusionEmpId', request.FusionEmpId);
+    }
+  
+    if (request.EmployeeName) {
+      params = params.set('EmployeeName', request.EmployeeName);
+    }
+  
+    if (request.Department) {
+      params = params.set('Department', request.Department);
+    }
+  
+    if (request.TeamManagerName) {
+      params = params.set('TeamManagerName', request.TeamManagerName);
+    }
+  
+    if (request.Shift) {
+      params = params.set('Shift', request.Shift);
+    }
+  
+    if (request.Location) {
+      params = params.set('Location', request.Location);
+    }
+  
+    if (request.SubLocation) {
+      params = params.set('SubLocation', request.SubLocation);
+    }
+  
+    if (request.Worked_Date) {
+      params = params.set('Worked_Date', request.Worked_Date);
+    }
+  
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+  params = params.set('EndDate', request.EndDate);
+    }
+  
+    if (request.Worked_Month !== undefined) {
+      params = params.set('Worked_Month', request.Worked_Month.toString());
+    }
+  
+    return this.http.get('Reports/WfhReports', { params });
+  }
+
+
+  getInactiveReports(request: IWfhReportRequest) {
+    let params = new HttpParams();
+  
+    if (request.FusionEmpId) {
+      params = params.set('FusionEmpId', request.FusionEmpId);
+    }
+  
+    if (request.EmployeeName) {
+      params = params.set('EmployeeName', request.EmployeeName);
+    }
+  
+    if (request.Department) {
+      params = params.set('Department', request.Department);
+    }
+  
+    if (request.TeamManagerName) {
+      params = params.set('TeamManagerName', request.TeamManagerName);
+    }
+  
+    if (request.Shift) {
+      params = params.set('Shift', request.Shift);
+    }
+  
+    if (request.Location) {
+      params = params.set('Location', request.Location);
+    }
+  
+    if (request.SubLocation) {
+      params = params.set('SubLocation', request.SubLocation);
+    }
+  
+    if (request.Worked_Date) {
+      params = params.set('Worked_Date', request.Worked_Date);
+    }
+  
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+  params = params.set('EndDate', request.EndDate);
+    }
+  
+    if (request.Worked_Month !== undefined) {
+      params = params.set('Worked_Month', request.Worked_Month.toString());
+    }
+  
+    return this.http.get('Reports/Inactive_Employee_Reports', { params });
+  }
+
+
+  getAbsentReports(request: IWfhReportRequest) {
+    let params = new HttpParams();
+  
+    if (request.FusionEmpId) {
+      params = params.set('FusionEmpId', request.FusionEmpId);
+    }
+  
+    if (request.EmployeeName) {
+      params = params.set('EmployeeName', request.EmployeeName);
+    }
+  
+    if (request.Department) {
+      params = params.set('Department', request.Department);
+    }
+  
+    if (request.TeamManagerName) {
+      params = params.set('TeamManagerName', request.TeamManagerName);
+    }
+  
+    if (request.Shift) {
+      params = params.set('Shift', request.Shift);
+    }
+  
+    if (request.Location) {
+      params = params.set('Location', request.Location);
+    }
+  
+    if (request.SubLocation) {
+      params = params.set('SubLocation', request.SubLocation);
+    }
+  
+    if (request.Worked_Date) {
+      params = params.set('Worked_Date', request.Worked_Date);
+    }
+  
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+  params = params.set('EndDate', request.EndDate);
+    }
+  
+    if (request.Worked_Month !== undefined) {
+      params = params.set('Worked_Month', request.Worked_Month.toString());
+    }
+  
+    return this.http.get('Reports/AbsentReports', { params });
+  }
+
+  getYearlyReports(request: IWfhReportRequest) {
+    let params = new HttpParams();
+  
+    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
+    if (request.Department) params = params.set('Department', request.Department);
+    if (request.TeamManagerName) params = params.set('TeamManagerName', request.TeamManagerName);
+    if (request.Shift) params = params.set('Shift', request.Shift);
+    if (request.Location) params = params.set('Location', request.Location);
+    if (request.SubLocation) params = params.set('SubLocation', request.SubLocation);
+    if (request.Worked_Date) params = params.set('Worked_Date', request.Worked_Date);
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+      params = params.set('EndDate', request.EndDate);
+    }
+    if (request.Worked_Month !== undefined) {
+      params = params.set('Worked_Month', request.Worked_Month.toString());
+    }
+  
+    return this.http.get('Reports/YearSummaryReports', { params });
+  }
+  
 
   postToReportLog(reportName: string, reportType: string, employeeId: number) {
     const payLoad = {

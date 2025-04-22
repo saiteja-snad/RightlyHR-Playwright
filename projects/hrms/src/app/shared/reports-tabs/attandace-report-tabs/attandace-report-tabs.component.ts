@@ -1,6 +1,5 @@
-
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 @Component({
@@ -11,8 +10,12 @@ import { TabsModule } from 'primeng/tabs';
 })
 export class AttandaceReportTabsComponent {
   navTabs = [
-    { label: 'Leave Report', route: '/reports/attendence-reports/leave-report'},
-    { label: 'Leave Summery Report', route: '/reports/attendence-reports/leave-summary-report'},
-    { label: 'Comp off Report', route: '/reports/attendence-reports/compoff-report'}
+    { label: 'Leave Report', route: '/reports/attendence-reports/leave-report' },
+    { label: 'Leave Summary Report', route: '/reports/attendence-reports/leave-summary-report' },
+    { label: 'Comp Off Report', route: '/reports/attendence-reports/compoff-report' },
+    { label: 'WFH Report', route: '/reports/attendence-reports/wfh-report' },
+    { label: 'Absent Report', route: '/reports/attendence-reports/absent-report' },
+    { label: 'Inactive Employee Report', route: '/reports/attendence-reports/inactive-employee-report' },
+    { label: 'Yearly Summary Report', route: '/reports/attendence-reports/yearly-summary-report' },
   ];
 }

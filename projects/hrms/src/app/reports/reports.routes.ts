@@ -13,7 +13,7 @@ export default [
     },
     { path: 'custom-reports', loadComponent: () => import('./custom-reports/custom-reports.component').then((m) => m.CustomReportsComponent) },
     {
-        path: 'attendance-report', children: [
+        path: 'attendence-reports', children: [
            { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
            { path: 'leave-report', loadComponent: () => import('./attendence-reports/leave-report/leave-report.component').then((m) => m.LeaveReportComponent) },
            { path: 'leave-summary-report', loadComponent: () => import('./attendence-reports/leave-summary-report/leave-summary-report.component').then((m) => m.LeaveSummaryReportComponent) },

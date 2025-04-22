@@ -9,6 +9,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-on-be-half-of-approval',
@@ -40,7 +41,7 @@ export class OnBeHalfOfApprovalComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService,) {
+  constructor(private http: HttpService, private authService: AuthService,public rbac: RbacService,) {
 
   }
 

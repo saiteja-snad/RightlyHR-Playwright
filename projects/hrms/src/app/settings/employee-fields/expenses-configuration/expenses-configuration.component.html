@@ -9,36 +9,35 @@
     <!-- Add Input-->
     <!-- <span id="salutation"><button type="submit" class="custom-btn btn-primary"
             (click)="openModal(addExpensesmodal)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Create')">{{'Add'|translate}}</button></span> -->
-    <div class="custom-table-content mt-2">
-        <table class="w-100">
-    <div class="custom-table-content mt-2 w-50">
-        <table class="w-100">
-            <thead>
-                <th>Expense Type</th>
-                <th>Actions</th>
-            </thead>
-            <tbody>
-                @if (!rbac.allowedToAccess('Expense Types Tab.View')) {}
-                <tr *ngFor="let exp of expense">
-                    <td>{{exp.expenseType}}</td>
-                    <td>
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Update')"><img
-                                        src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(deleteconformation,exp)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Delete')"><img src="/settings-icon/trash-2.png"
-                                        alt="edit icon" class="settings-common-icon"></a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            <div class="custom-table-content mt-2">
+                <table class="w-100">
+                    <thead>
+                        <th>Expense Type</th>
+                        <th>Actions</th>
+                    </thead>
+                    <tbody>
+                        @if (!rbac.allowedToAccess('Expense Types Tab.View')) {}
+                        <tr *ngFor="let exp of expense">
+                            <td>{{exp.expenseType}}</td>
+                            <td>
+                                <div class="d-flex gap-4">
+                                    <!--Update-->
+                                    <div>
+                                        <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Update')"><img
+                                                src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
+                                    </div>
+                                    <!--Delete-->
+                                    <div>
+                                        <a (click)="opendelete(deleteconformation,exp)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Delete')"><img src="/settings-icon/trash-2.png"
+                                                alt="edit icon" class="settings-common-icon"></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+   
 
 <ng-template #addExpensesmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>

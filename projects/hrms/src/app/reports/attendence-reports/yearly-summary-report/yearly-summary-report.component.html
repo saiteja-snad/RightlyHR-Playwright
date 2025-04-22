@@ -1,0 +1,138 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Header -->
+        <div class="component-header">Reports</div>
+      
+        <div>
+          <form [formGroup]="yearlyReportForm" (ngSubmit)="generateYearlyReport()">
+            <div class="d-flex align-items-center gap-3">
+      
+              <!-- Employee -->
+              <div class="d-flex align-items-center gap-2">
+                <div class="custom-p-select-content">
+                  <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName"
+                            [filter]="true" [showClear]="false" formControlName="employee" placeholder="Select Employee"
+                            (onChange)="selectYearlyEmployee($event.value, $event.originalEvent)">
+                    <ng-template #selectedItem let-selectedOption>
+                      {{ selectedOption.fullName }}
+                    </ng-template>
+                    <ng-template let-employee #item>
+                      {{ employee.fullName }}
+                    </ng-template>
+                  </p-select>
+                </div>
+              </div>
+      
+              <!-- Team Manager -->
+              <div class="d-flex align-items-center gap-2">
+                <div class="custom-p-select-content">
+                  <p-select [options]="teamdetails" optionLabel="firstName"
+                            [filter]="true" [showClear]="false"
+                            formControlName="manager"
+                            placeholder="Select Manager"
+                            class="form-select custom-select"
+                            (onChange)="selectYearlyManager($event.value)">
+                    <ng-template #selectedItem let-selectedOption>
+                      {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+                    </ng-template>
+                    <ng-template let-manager #item>
+                      {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                    </ng-template>
+                  </p-select>
+                </div>
+              </div>
+      
+              <!-- Leave Category -->
+              <div class="d-flex align-items-center gap-2">
+                <select title="text" class="form-select custom-select"
+                        formControlName="leaveCategory"
+                        (change)="onLeaveChangeYearly($event)">
+                  <option value="" disabled>Select Leave Category</option>
+                  <option *ngFor="let category of uniqueLeaveCategory" [value]="category">{{ category }}</option>
+                </select>
+              </div>
+      
+              <!-- Year -->
+              <div class="d-flex align-items-center gap-2">
+                <select title="text" class="form-select custom-select"
+                        formControlName="year"
+                        (change)="onYearChange($event)">
+                  <option value="" disabled>Select Year</option>
+                  <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                </select>
+              </div>
+      
+              <!-- Buttons -->
+              <div class="d-flex gap-2">
+                <button type="submit" class="custom-btn btn-secondary" [disabled]="yearlyReportForm.invalid">
+                  Generate
+                </button>
+                <button type="button" class="custom-btn btn-primary"
+                        (click)="exportToExcelYearly()" [disabled]="yearlyReportForm.invalid">
+                  Export
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+  
+    <div class="mb-3">
+      <app-attandace-report-tabs />
+    </div>
+  
+    @if (isLoading) {
+
+      }
+      @else {
+        <div class="custom-table-content">
+          <table id="wfhReportTable" class="content w-100">
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Team Manager</th>
+                <th>Location</th>
+                <th>Sub Location</th>
+                <th>Shift</th>
+                <th>Year</th>
+                <th>Leave Type</th>
+                <th>Entitled</th>
+                <th>Avail</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (!filteredYearlyRecord || filteredYearlyRecord.length === 0) {
+                <tr>
+                  <td colspan="9" class="text-center">No records found</td>
+                </tr>
+              }
+              @else {
+                @for (record of filteredYearlyRecord; track $index) {
+                  <tr>
+                    <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+                    <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+                    <td class="td-center">{{ record.department ?? '-' }}</td>
+                    <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+                    <td class="td-center">{{ record.location ?? '-' }}</td>
+                    <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+                    <td class="td-center">{{ record.shift ?? '-' }}</td>
+                    <td class="td-center">{{record.year ?? '-' }}</td>
+                    <td class="td-center">{{record.leaveType ?? '-'}}</td>
+                    <td class="td-center">{{record.entitled ?? '-'}}</td>
+                    <td class="td-center">{{record.availed ?? '-'}}</td>
+                    <td class="td-center">{{record.balanced ?? '-'}}</td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+      
+  </div>
+
+  

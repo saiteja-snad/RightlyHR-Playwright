@@ -1,56 +1,36 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <p class="component-header mb-0" (click)="onBackSubmit()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate}}/{{headerName}}</p>
+            <p class="component-header mb-0"><i class="bi bi-arrow-90deg-left me-2" (click)="onBackSubmit()"></i>{{headerName}}</p>
         </div>
-        <div class="d-flex justify-content-end">
-            <div>
-                <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType')"
-                    (click)="navigation()">Inactive</button>
-            </div>
-            <div><button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')"
-                    (click)="openModal(changermmodal)">
-                    {{'Change RM'|translate}}
-                </button></div>
-
+        <div class="d-flex gap-2">
+            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType')" (click)="navigation()">Inactive</button>
+            <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">{{'Change RM'|translate}}</button>
             <!-- @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus
-            =='Employee Created' || empdata?.substatus=='Requested Documents') ){ -->
-            <button class="custom-btn btn-primary " *ngIf="isActive('personalinfo/personal/basic-info') "
-                (click)="emailForRequestDoc()" [disabled]="isLoading">
-                <span *ngIf="!isLoading">
-                    {{'Request for Documents'|translate}}
-                </span>
-                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-                </div>
+                    =='Employee Created' || empdata?.substatus=='Requested Documents') ){ -->
+            <button class="custom-btn btn-primary " *ngIf="isActive('personalinfo/personal/basic-info')" (click)="emailForRequestDoc()" [disabled]="isLoading">
+                <span *ngIf="!isLoading">{{'Request for Documents'|translate}}</span>
+                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
             </button>
             <!-- } -->
-
             @if(getOfferDetails.status === 'Released' || getTraineeOfferDetails.status==='Released'){
-            <button class="custom-btn btn-secondary me-3"
-                *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus=='Trainee Prospective') && (emppersonalinfo?.substatus=='Employee Created'
-                                 ||emppersonalinfo?.substatus=='Requested Documents' ||emppersonalinfo?.substatus=='Documents Submitted'||emppersonalinfo?.substatus=='Documents Rejected'||emppersonalinfo?.substatus=='Documents Accepted' ||emppersonalinfo?.substatus=='Documents Verified' )"
-                (click)="openModal(archivedbtn)">
+            <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective' || emppersonalinfo.empstatus == 'Trainee Prospective') 
+            && (emppersonalinfo?.substatus == 'Employee Created' || emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' || 
+            emppersonalinfo?.substatus == 'Documents Rejected'|| emppersonalinfo?.substatus == 'Documents Accepted' || emppersonalinfo?.substatus == 'Documents Verified')" (click)="openModal(archivedbtn)">
                 {{'Archive'|translate}}
             </button>
             }
-
-            <!-- </div> -->
             <!-- <div *ngIf=""> -->
             @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
-            <button class="custom-btn btn-secondary me-3"
-                *ngIf="isActive('personalinfo/personal/basic-info')  && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
-                (click)="openModal(revokeoffer)">
+            <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || 
+             emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')" (click)="openModal(revokeoffer)">
                 {{' Revoke Offer'|translate}}
             </button>
             }
-
-            <div>
-                <button class="custom-btn btn-secondary ms-2 me-2" *ngIf="isActive('personalinfo/personal/basic-info')"
-                    [hidden]="!emppersonalinfo.isCredentialExpired" (click)="updatePassword()">
-                    {{'Generate Credentials'|translate}}
-                </button>
-            </div>
+            <button class="custom-btn btn-secondary ms-2 me-2" *ngIf="isActive('personalinfo/personal/basic-info')"
+                [hidden]="!emppersonalinfo.isCredentialExpired" (click)="updatePassword()">
+                {{'Generate Credentials'|translate}}
+            </button>
             <!-- <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')" (click)="openModal(changermmodal)">Change RM</button> -->
         </div>
     </div>
@@ -61,165 +41,142 @@
             <app-personal-personal-tabs></app-personal-personal-tabs>
         </div>
 
-        <div *ngIf="isActive('personalinfo/job' ) " class="mb-3">
+        <div *ngIf="isActive('personalinfo/job')" class="mb-3">
             <app-personal-job-tabs></app-personal-job-tabs>
         </div>
     </div>
 
     <div class="myinfo-main-container d-flex gap-4">
         <!--User profile content-->
-        <div class="card user-profile-content p-4">
+        <div class="card user-profile-content p-3">
             <app-profile-info-details />
         </div>
-
+    
         <!--main content-->
-        <div class="card myinfo-main-content p-4">
+        <div class="card myinfo-main-content p-3">
             <router-outlet />
         </div>
     </div>
+</div>
 
-    <ng-template #changermmodal let-modal>
-        <div class="custom-main-popup-container">
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
-                    <p class="popup-heading mb-0"> {{'Change RM'|translate}}</p>
-                </div>
-                <div>
-                    <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-                </div>
+<ng-template #changermmodal let-modal>
+    <div class="custom-main-popup-container">
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0"> {{'Change RM'|translate}}</p>
             </div>
-            <div class="custom-main-popup-content p-4">
-                <form [formGroup]="teamForm" (ngSubmit)="updateTeamRM()">
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label custom-label mb-2">
-                                {{'Select Team Member(s)'|translate}} <span class="error-msg">*</span>
-                            </label>
-                            <div class="custom-p-select-content">
-                                <p-select formControlName="teamMembers" id="teamMembers" optionLabel="name"
-                                    [options]="teamMembersdata" placeholder="Select Team Member(s)"
-                                    class="form-select custom-select" multiple="true"
-                                    (onChange)="onSelectManager($event, 'teamMembers')">
-                                </p-select>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label custom-label mb-2">
-                                {{'Select Reporting Manager'|translate}}<span class="error-msg">*</span>
-                            </label>
-                            <div class="custom-p-select-content">
-                                <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name"
-                                    [options]="managers" placeholder="Select Reporting Manager"
-                                    class="form-select custom-select"
-                                    (onChange)="onSelectManager($event, 'reportingManager')">
-                                </p-select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-end gap-3 mt-4">
-                        <button type="reset" class="custom-btn btn-secondary">{{'Close'|translate}}</button>
-                        <button type="submit" class="custom-btn btn-primary"
-                            [disabled]="teamForm.invalid">{{'Submit'|translate}}</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </ng-template>
-
-    <ng-template #request let-modal>
-        <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
-                    <p class="popup-heading mb-0">{{'Re-Request Documents'|translate}}</p>
-                </div>
-                <div>
-                    <a (click)="onclose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-                </div>
-            </div>
-            <div class="custom-main-popup-content p-4">
-                <form [formGroup]="employeeForm" (ngSubmit)="reRequestEmail(employeeForm)" class="w-100">
-                    <div class="mt-3 ps-3 pe-3">
-                        <div class="mb-3">
-                            <label for="comments" class="form-label custom-label mb-2"> {{'Comments'|translate}} <span
-                                    class="error-msg">*</span></label>
-                            <textarea class="form-control custom-input" formControlName="comments"
-                                placeholder="Leave a comment here"></textarea>
-                            <div>
-                                <span class="color">{{ employeeForm.get('comments')?.value?.length || 0 }}
-                                    /250</span>
-                            </div>
-                        </div>
-                        <div *ngIf="employeeForm.get('comments')?.invalid && employeeForm.get('comments')?.touched">
-                            <div class="error-msg">Comments are required</div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end gap-3 mt-4">
-                        <button type="reset" class="custom-btn btn-secondary"
-                            (click)="close()">{{'Close'|translate}}</button>
-                        <button type="submit" class="custom-btn btn-primary"
-                            [disabled]="!employeeForm.valid">{{'Submit'|translate}}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </ng-template>
-    <ng-template #revokeoffer let-modal>
-        <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
-                    <p class="popup-heading mb-0">{{'Revoke Offer'|translate}}</p>
-                </div>
-                <div>
-                    <a (click)="onclose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-                </div>
-            </div>
-            <div class="custom-main-popup-content p-4">
-                <form [formGroup]="revokeForm" (ngSubmit)="submitrevoke()" class="w-100">
-                    <div class="mt-3 ps-3 pe-3">
-                        <div class="mb-3">
-                            <label for="comments" class="form-label custom-label mb-2">{{'Revoke Reason'|translate}}
-                                <span class="error-msg">*</span></label>
-                            <textarea class="form-control custom-input" formControlName="revokeComments"
-                                placeholder="Please provide reason"></textarea>
-                            <div>
-                                <span class="color">{{ revokeForm.get('revokeComments')?.value?.length || 0 }}
-                                    /250</span>
-                            </div>
-                        </div>
-                        <div
-                            *ngIf="revokeForm.get('revokeComments')?.invalid && revokeForm.get('revokeComments')?.touched">
-                            <div class="error-msg">Reason is required</div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end gap-3 mt-4">
-                        <button type="reset" class="custom-btn btn-secondary"
-                            (click)="close()">{{'Close'|translate}}</button>
-                        <button type="submit" class="custom-btn btn-primary"
-                            [disabled]="!revokeForm.valid">{{'Submit'|translate}}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </ng-template>
-
-    <ng-template #archivedbtn let-modal>
-        <div class="result-popup-content" ngbAutofocus>
             <div>
-                <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-                <p class="confirmation-text mb-4">Are you sure you want to Archive?</p>
-            </div>
-            <div class="d-flex justify-content-center gap-3 mt-4">
-                <button type="button" class="custom-btn btn-secondary"
-                    (click)="modal.dismiss()">{{'No'|translate}}</button>
-                <button type="submit" class="custom-btn btn-primary"
-                    (click)="submitArchive()">{{'Yes'|translate}}</button>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="teamForm" (ngSubmit)="updateTeamRM()">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Select Team Member(s)'|translate}}<span class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select formControlName="teamMembers" id="teamMembers" optionLabel="name"
+                                [options]="teamMembersdata" placeholder="Select Team Member(s)"
+                                class="form-select custom-select" multiple="true"
+                                (onChange)="onSelectManager($event, 'teamMembers')">
+                            </p-select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Select Reporting Manager'|translate}}<span class="error-msg">*</span>
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name"
+                                [options]="managers" placeholder="Select Reporting Manager" class="form-select custom-select" 
+                                (onChange)="onSelectManager($event, 'reportingManager')">
+                            </p-select>
+                        </div>
+                    </div>
+                </div>
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="teamForm.invalid">{{'Submit'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
 
-    </ng-template>
+<ng-template #request let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">{{'Re-Request Documents'|translate}}</p>
+            </div>
+            <div>
+                <a (click)="onclose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="employeeForm" (ngSubmit)="reRequestEmail(employeeForm)" class="w-100">
+                <div class="mb-3">
+                    <label for="comments" class="form-label custom-label mb-2"> {{'Comments'|translate}}<span class="error-msg">*</span></label>
+                    <textarea class="form-control custom-input" formControlName="comments"
+                        placeholder="Leave a comment here"></textarea>
+                    <div class="my-1">
+                        <span class="color">{{ employeeForm.get('comments')?.value?.length || 0 }}/250</span>
+                    </div>
+                    <div *ngIf="employeeForm.get('comments')?.invalid && employeeForm.get('comments')?.touched">
+                        <div class="error-msg">Comments are required</div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="close()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="!employeeForm.valid">{{'Submit'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #revokeoffer let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">{{'Revoke Offer'|translate}}</p>
+            </div>
+            <div>
+                <a (click)="onclose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="revokeForm" (ngSubmit)="submitrevoke()" class="w-100">
+                <div class="mb-3">
+                    <label for="comments" class="form-label custom-label mb-2">{{'Revoke Reason'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <textarea class="form-control custom-input" formControlName="revokeComments"
+                        placeholder="Please provide reason"></textarea>
+                    <div class="my-1">
+                        <span class="color">{{ revokeForm.get('revokeComments')?.value?.length || 0 }}/250</span>
+                    </div>
+                    <div *ngIf="revokeForm.get('revokeComments')?.invalid && revokeForm.get('revokeComments')?.touched">
+                        <div class="error-msg">Reason is required</div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="close()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="!revokeForm.valid">{{'Submit'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #archivedbtn let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to Archive?</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="submitArchive()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>

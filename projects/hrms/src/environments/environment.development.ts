@@ -5,10 +5,9 @@ export const environment = {
    
     viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
     modules: [
-        { id: 18, moduleName: 'Probation ' },
-        { id: 23, moduleName: 'PMS' }  
-    ],
-
+        { id: 20, moduleName: 'Probation' },
+        { id: 24, moduleName: 'PMS' }  
+      ],
  
 
   
@@ -45,5 +44,6 @@ export const environment = {
     ProbationExtendPeriodTimes: 2,
     PMSrequestmoduleId:24,
     deskAllocationModuleId:23,
-    expensesModuleId:19
+    expensesModuleId:19,
+    globalPermissionsModuleID:21
 };

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeleteAssessorComponent } from './delete-assessor.component';
+import { ViewAssessorComponent } from './view-assessor.component';
 
-describe('DeleteAssessorComponent', () => {
-  let component: DeleteAssessorComponent;
-  let fixture: ComponentFixture<DeleteAssessorComponent>;
+describe('ViewAssessorComponent', () => {
+  let component: ViewAssessorComponent;
+  let fixture: ComponentFixture<ViewAssessorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DeleteAssessorComponent]
+      imports: [ViewAssessorComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DeleteAssessorComponent);
+    fixture = TestBed.createComponent(ViewAssessorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

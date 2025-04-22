@@ -58,13 +58,14 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllReviewCyclesList(this.page, this.pageSize);
+    
   }
 
   openAdd() {
     this.modalService.open(CreateComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
-  onUpdate(cycle: any) {
+  onUpdate() {
     this.modalService.open(UpdateComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
@@ -130,7 +131,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     const params = {
       page: pagenum,
       pageSize: pageSize,
-      searchQuery: this.searchText
+      // searchQuery: this.searchText
     };
     this.dataload = true;
 
@@ -243,6 +244,30 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   openCancelationPopUp() {
     this.modalService.open(this.cancelationConfirmation, { centered: true });
+  }
+
+  initiateReviewCycle(cycle:any){
+    const fusionUser = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+    const data={
+      status: "Initiated",
+      createdBy: fusionUser.employeeId,
+    }
+    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
+      next: (response) => {
+        console.log('Success:', response);
+        this.closeModal()
+        this.onCreateCycleFormSubmitted()
+        this.conformationPopup.openSuccessModal('Review Cycle Initiated Successfully')
+        // this.Status = 'Review Cycle Initiated Successfully'
+        // this.modalService.open(this.success, { centered: true });
+      },
+      error: (error) => {
+        this.conformationPopup.openErrorModal(error.error.reason)
+        // this.Status = error.error.reason
+        // this.modalService.open(this.success, { centered: true });
+        console.error('Error:', error);
+      }
+    });
   }
 
   ngOnDestroy(): void {

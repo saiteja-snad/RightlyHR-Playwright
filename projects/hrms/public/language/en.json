@@ -277,5 +277,14 @@
     "Review Template Name": "Review Template Name",
     "Final Rating": "Final Rating",
     "Review Cycle Employee List": "Review Cycle Employee List",
-    "PMS": "PMS "
+    "PMS": "PMS ",
+    "Update Review Cycle Details":"Update Review Cycle Details",
+    "Review Cycle Type":"Review Cycle Type",
+    "Review Cycle Start Date":"Review Cycle Start Date",
+    "Review Cycle End Date":"Review Cycle End Date",
+    "Applicable Employees (Joined Before)":"Applicable Employees (Joined Before)",
+    "Description":"Description",
+    "Increment Applicable":"Increment Applicable",
+    "Review Cycle List":"Review Cycle List"
+
 }

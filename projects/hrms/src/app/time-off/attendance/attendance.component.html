@@ -143,6 +143,7 @@
                 <a (click)="modal.dismiss();this.regularizationForm.reset()"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
             </div>
+        </div>
             <div class="custom-main-popup-content p-4">
                 <form [formGroup]="regularizationForm" (ngSubmit)="applyRgularization(regularizationForm)">
                     <div class="row">
@@ -217,7 +218,7 @@
                     </button>
                 </div>
             </form>
-        </div>
+        
         </div>
     </div>
 </ng-template>

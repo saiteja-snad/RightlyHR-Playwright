@@ -11,9 +11,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { DateformatPipe } from "../../../../../hrms/src/app/Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { PopupService } from '../../common-services/popup.service';
+import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-trainee-offerletter',
-  imports: [DateformatPipe, ReactiveFormsModule, CommonModule],
+  imports: [DateformatPipe, ReactiveFormsModule, CommonModule, DetailedStepProgressbarComponent],
   templateUrl: './trainee-offerletter.component.html',
   styleUrl: './trainee-offerletter.component.scss'
 })

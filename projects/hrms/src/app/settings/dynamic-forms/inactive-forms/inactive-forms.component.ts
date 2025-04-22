@@ -33,6 +33,7 @@ import { SearchFormPipe } from '../search-form.pipe';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { environment } from '../../../../environments/environment.dev';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-inactive-forms',
   imports: [
@@ -42,7 +43,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
     TranslateModule,
     FormsModule,
     SearchFormPipe,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './inactive-forms.component.html',
   styleUrl: './inactive-forms.component.scss',
 })
@@ -50,7 +52,7 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
   allFormsDetails = [] as IAllFormsData[];
   searchValue: any;
   updateForm!: FormGroup;
-  subscription!: Subscription;
+  
   modules: any[] = environment.modules;
   questionTypes = [
     { value: 'text', label: 'Text' },
@@ -73,6 +75,7 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   sectionDetails: any;
   empinfo = {} as IJob;
+  loader = false;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -122,15 +125,21 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
   }
 
   getAllFormDetails() {
-    this.subscription = this.http
+    this.loader = true;
+    this.http
       .getData('Form/getAllFormDetails')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           // Filter forms with 'inactive' status
+          this.loader = false;
           this.allFormsDetails = (data as IAllFormsData[]).filter(
             (form) => form.status === 'inactive'
           );
+        },
+        error: (err) => {
+          this.loader = false;
+          this.allFormsDetails = [];
         },
       });
   }
@@ -605,7 +614,7 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
   }
 
   updateFormDetails(formId: number) {
-    this.subscription = this.http
+    this.http
       .getData(`Form/getFormDetailsByFormId/${formId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -632,8 +641,7 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
     this.updateDetails.sectionDetails = this.convertUpdateOptionsArray(
       this.updateForm.value.sections
     );
-
-    this.subscription = this.http
+   this.http
       .postData(`Form/SubmitFormDetails`, this.updateDetails, {
         responseType: 'text',
       })
@@ -643,11 +651,6 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
           this.openSuccessModal(true);
 
           this.updateForm.reset();
-
-          // this.router.navigate(['/form'])
-          // setTimeout(() => {
-          //   location.reload();
-          // }, 1000);
         },
         error: (error) => {
           console.log(error);
@@ -657,13 +660,15 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
       });
   }
   getAllRatingScaleTypes() {
-    this.subscription = this.http
+     this.http
       .getData('Form/getallratings')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.ratingScaleTypes = data as IRatingScale[];
-        },
+        },error: (err) =>{
+          this.ratingScaleTypes = [];
+        }
       });
   }
   convertUpdateOptionsArray(sections: any[]): any[] {

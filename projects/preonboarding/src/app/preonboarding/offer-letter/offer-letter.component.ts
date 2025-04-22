@@ -11,9 +11,10 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PopupService } from '../../common-services/popup.service';
+import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, DateFormatPipe, ReactiveFormsModule],
+  imports: [CommonModule, DateFormatPipe, ReactiveFormsModule, DetailedStepProgressbarComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss'
 })
@@ -41,9 +42,12 @@ export class OfferLetterComponent implements OnInit {
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
   updateempdata = {} as any;
+
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService) { }
 
   ngOnInit(): void {
+    const storedstep = 3;
+    localStorage.setItem('currentStep', storedstep.toString());
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
     this.getOfferLetterDetails();
     this.getprospectivempdata();

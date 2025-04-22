@@ -115,9 +115,6 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       leaveType: [null, Validators.required],
       reason: [null, [Validators.required, Validators.maxLength(250)]],
     });
-    this.regularizationForm.patchValue({
-      permissionDate:moment().format('YYYY-MM-DD')
-    })
     this.getDuration();
   }
   //function to open modal
@@ -182,7 +179,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     console.log(regularizationForm.value);
     if(regularizationForm.valid) {
       const formData = regularizationForm.value;
-  const payLoad = {
+      const payLoad = {
    
     raisedFor: this.empdata.employeeId,
     requestedBy: this.empdata.employeeId,
@@ -324,6 +321,14 @@ export class AttendanceComponent implements OnInit, OnDestroy {
           }
         },
       });
+  }
+  onclickRegularization(date: Date) {
+    
+    this.regularizationForm.patchValue({
+      permissionDate: date,
+    });
+    //this.postregularization.permissionDate=date
+    //console.log(date)
   }
   // function to get the data of employees by hierarchy
   get_Employeelist_forTM = [] as any;

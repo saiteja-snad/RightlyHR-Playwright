@@ -133,7 +133,7 @@
                                         <label class="form-label custom-label">Expense Type<span
                                                 class="text-danger">*</span></label>
                                         <div class="custom-p-select-content">
-                                            <p-select [options]="expensetype" optionValue="expenseId"
+                                            <p-select [options]="expensetype"
                                                 optionLabel="expenseType" (onChange)="onchangeexpnes($event, i)"
                                                 placeholder="Please select expense item" formControlName="item_expense"
                                                 class="form-select custom-select"></p-select>
@@ -277,7 +277,7 @@
                         </div>
                         <div class=" d-flex justify-content-end gap-3 p-3" *ngIf="expenseItems.length > 0">
                             <button type="button" class="custom-btn btn-secondary"
-                                [disabled]="newExpenseForm.invalid || saveasDraftloder"
+                                [disabled]=" saveasDraftloder"
                                 (click)="saveasDraft(newExpenseForm)">
                                 @if (saveasDraftloder) {
                                 <span class="spinner-border spinner-border-sm me-2" role="status"
@@ -288,7 +288,7 @@
                                 }
                             </button>
                             <button type="submit" class="custom-btn btn-primary"
-                                [disabled]="newExpenseForm.invalid || spinnerLoader">
+                                [disabled]=" spinnerLoader">
                                 @if (spinnerLoader) {
                                 <span class="spinner-border spinner-border-sm me-2" role="status"
                                     aria-hidden="true"></span>

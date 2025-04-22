@@ -75,7 +75,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [null, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [null, ]
+      attachment_url: [null ]
     });
   }
 

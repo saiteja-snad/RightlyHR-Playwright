@@ -51,9 +51,7 @@ export class UpdateIncrementComponent implements OnInit,OnDestroy{
   ngOnInit(): void {
     console.log('Received data:', this.updateData);
     this.editDetails(this.updateData);
-    this.UpdateIncrementalpercentage=this.updateData
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getReviewCycledataById();
     this.getReviewCycledata();
   }
   editDetails(Values: any) {
@@ -77,7 +75,7 @@ export class UpdateIncrementComponent implements OnInit,OnDestroy{
     }
 
     // Map itemsdata to ratingscaledetailsarray
-    this.ratingscaledetailsarray = Values.itemsdata.map((item: any) => {
+    this.ratingscaledetailsarray = Values?.itemsdata.map((item: any) => {
       console.log('Item:', item);
       return {
         id: item.id, // Include the id of the item
@@ -105,36 +103,6 @@ export class UpdateIncrementComponent implements OnInit,OnDestroy{
         },
       });
     }
-   // Function to get review cycle data by ID and patch the form
-   getReviewCycledataById() {
-    let id: any;
-    if (this.UpdateIncrementalpercentage.reviewCycleId) {
-      id = this.UpdateIncrementalpercentage.reviewCycleId;
-    }
-    this.subscription = this.http.getData(`reviewCycleHeader/${id}`).subscribe({
-      next: (data: any) => {
-        console.log('Fetched Review Cycle Details:', data);
-        this.reviewCycledetailyById = data;
-        // Patch the form fields
-        if (this.UpdateIncrementalpercentage) {
-          this.UpdateIncrementalpercentage.department = data[0]?.departments?.map((loc: any) => loc?.departmentName).join(', '),
-            this.UpdateIncrementalpercentage.ratingId = data.id,
-            this.UpdateIncrementalpercentage.location = data[0].locations?.map((loc: any) => loc.locationName).join(', '),
-            this.UpdateIncrementalpercentage.sublocation = data[0].sublocations?.map((loc: any) => loc.subLocationName).join(', '),
-            this.UpdateIncrementalpercentage.team = data[0].subdepartments?.map((loc: any) => loc.subDepartmentName).join(', '),
-            this.UpdateIncrementalpercentage.ratingscale = `${data[0].minimumRatingScale ?? ''} to ${data[0].maximumRatingScale ?? ''}`
-        }
-        // Generate dynamic rating rows
-        this.getdetailsrelatedtoreviewcycle(data[0].minimumRatingScale, data[0].maximumRatingScale);
-      },
-      error: (err: any) => {
-        console.error('Error fetching review cycle by ID:', err);
-        this.ratingrangeloop = [];
-        this.ratingscaledetailsarray = [];
-        this.UpdateIncrementalpercentage = {};
-      },
-    });
-  }
   openModal(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -295,6 +263,7 @@ export class UpdateIncrementComponent implements OnInit,OnDestroy{
           this.http.postdata(`IncrementalPercentage/update`, payload).subscribe({
             next: (response: any) => {
               //console.log(response
+              this.modalService.dismissAll();
               this.conformationPopup.openSuccessModal('Incremental Percentage Updated Successfully')
               
               

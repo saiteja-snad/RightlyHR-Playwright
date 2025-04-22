@@ -7,10 +7,12 @@ import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-inactive-desk-list',
-  imports: [CommonModule, FormsModule, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, NoDataFoundComponent, PaginatorModule, DropdownModule],
   templateUrl: './inactive-desk-list.component.html',
   styleUrl: './inactive-desk-list.component.scss'
 })
@@ -24,9 +26,16 @@ export class InactiveDeskListComponent {
   deskid: any
   selectedAsset!: any
   deskiteamid: any;
-  page = 1;
-  pageSize = 10;
-  collectionSize = 100;
+  first:any = 1;
+  rows:any = 10;
+  totalRecords = 100;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
+  
   destroy$: Subject<boolean> = new Subject<boolean>();
   loading = false
   selectedSubLocationId: any
@@ -59,7 +68,7 @@ export class InactiveDeskListComponent {
         this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
 
-        this.getAllDesks(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
+        this.getAllDesks(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
         this.getcount(Value, this.selectedSubLocationId, this.Status);   
       }
     })
@@ -69,8 +78,8 @@ export class InactiveDeskListComponent {
   getAllDesks(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Deskstatus: any) {
 
     const params = {
-      page: pagenum,
-      pageSize: pagesize,
+      first: pagenum,
+      rows: pagesize,
       locationid: locationid,
       sublocationid: sublocationid,
       status: Deskstatus,
@@ -78,7 +87,7 @@ export class InactiveDeskListComponent {
 
     };
     this.loading = true
-    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.page, params.pageSize, params.searchQuery)
+    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -87,7 +96,7 @@ export class InactiveDeskListComponent {
           this.desklist.next(data.items)
           this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.Status)
           // Update the collection size (total records) for pagination
-          this.collectionSize = data.totalRecords;
+          this.totalRecords = data.totalRecords;
 
         },
         error: (error: any) => {
@@ -107,14 +116,24 @@ export class InactiveDeskListComponent {
 
     if (event !== '' && event.length >= 1) {
 
-      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
 
     if (event === '') {
-      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
   }
-
+  onRowsChange() {
+    this.first = 1;
+    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    
+  }
+  onPageChange(event: PaginatorState) {
+    this.first = event.first;
+    this.rows = event.rows;
+    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    
+  }
 
   navigateToAsset(deskid: any) {
     this.router.navigate(['/desk/view-desk'], { queryParams: { id: deskid } });
@@ -168,8 +187,8 @@ export class InactiveDeskListComponent {
         console.log(res);
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Desk marked as Active Successfully')
-        // this.getAllDesks(this.page, this.pageSize);
-        this.getAllDesks(this.page, this.pageSize, null, null, this.Status)
+        // this.getAllDesks(this.first, this.rows);
+        this.getAllDesks(this.first, this.rows, null, null, this.Status)
         this.getcount(null, null, this.Status);
       },
       error: (error) => {

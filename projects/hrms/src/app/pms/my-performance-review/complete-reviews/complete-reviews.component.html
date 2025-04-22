@@ -1,1 +1,106 @@
-<p>complete-reviews works!</p>
+<div class="d-flex gap-3">
+    <div>
+        <a><span>PMS</span></a>
+    </div>
+    <div>
+        <span>My Performance Review</span>
+    </div>
+</div>
+
+<div  class="mb-4">
+    <div class="input-group">
+        <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search here..."
+            [(ngModel)]="searchQuery" (ngModelChange)="fetchReviewCycles()" aria-label="Username"
+            aria-describedby="basic-addon1">
+
+    </div>
+</div>
+
+<div class="custom-table-content">
+    <div>
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Review Cycle Name</th>
+                    <th>Employee Name</th>
+                    <th>Employee ID</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Due Date</th>
+                    <th>Review Template</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="dataload; else maincontent">
+                    <ng-template #loadingSpinner>
+
+                        <div class="spinner-container text-center">
+                            <div class="spinner-border text-primary d-inline-block ms-3"
+                                style="width: 3rem; height: 3rem" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <p class="mb-4">Loading...</p>
+                        </div>
+                    </ng-template>
+                    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+                </ng-container>
+
+                <ng-template #maincontent>
+                    @if(filteredReviews.length > 0){
+                        @for(item of filteredReviews; track item){
+                            <tr>
+                                <td>{{ item.reviewCycleName }}</td>
+                                <td>{{item.reviewEmployeeName}}</td>
+                                <td>{{item.reviewFusionEmployeeId}}</td>
+                                <td>{{ getDepartments(item.deptName) }}</td>
+                                <td>{{ getSubDepartments(item.subdeptName) }}</td>
+                                <td>{{ getLocations(item.locationName) }}</td>
+                                <td>{{ getSubLocations(item.sublocationName) }}</td>
+                                <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
+                                <td>{{ item.formName }}</td>
+                                <td>{{ item.rcItemStatus }}</td>
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </a>
+                                        <ul class="dropdown-menu text-center">
+                                            <!-- <li class="dropdown-item"
+                                                        (click)="selfAssessment(item.reviewCycleItemId, item.currentStage, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                                        <a class="dropdown-custom-btn">{{item.assessorType}}
+                                                            Assessment</a>
+                                                    </li> -->
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }@else {
+                        <tr>
+                            <td colspan="11" class="text-center">
+                                No data found
+                            </td>
+                        </tr>
+                    }
+                </ng-template>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-footer" *ngIf="filteredReviews.length > 0">
+        <div class="d-flex justify-content-between p-3 footer mt-auto">
+            <select class="form-select pagination-select" [(ngModel)]="pageSize" (ngModelChange)="fetchReviewCycles()">
+                <option [ngValue]="10">10</option>
+                <option [ngValue]="20">20 </option>
+                <option [ngValue]="25">25</option>
+            </select>
+            <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [maxSize]="4" [pageSize]="pageSize"
+                (pageChange)="fetchReviewCycles()" aria-label="Default pagination">
+            </ngb-pagination>
+        </div>
+    </div>
+</div>

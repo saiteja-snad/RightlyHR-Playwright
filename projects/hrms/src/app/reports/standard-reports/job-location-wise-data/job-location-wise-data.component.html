@@ -14,9 +14,6 @@
                                 [locale]="localeOptions" [showClearButton]="true" formControlName="dateOfJoining"
                                 [placeholder]="'Please Select Date of Joining'" class="form-control custom-input w-100"
                                 [startKey]="'startDate'" [endKey]="'endDate'" readonly />
-                            <div *ngIf="locationReportsForm.get('dateOfJoining')?.touched && locationReportsForm.get('dateOfJoining')?.invalid"
-                                class="error-msg">{{ "Please select date of joining" | translate }}
-                            </div>
                         </div>
                     </div>
         
@@ -30,9 +27,6 @@
                                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                             </p-select>
-                            <div *ngIf="locationReportsForm.get('location')?.touched && locationReportsForm.get('location')?.invalid"
-                                class="error-msg"> {{ "Please select location" | translate }}
-                            </div>
                         </div>
                     </div>
         
@@ -46,9 +40,6 @@
                                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                             </p-select>
-                            <div *ngIf="locationReportsForm.get('subLocation')?.touched && locationReportsForm.get('subLocation')?.invalid" class="error-msg">
-                                <div *ngIf="locationReportsForm.get('subLocation')?.errors?.['required']">{{"Please select sub location" | translate}}</div>
-                            </div>
                         </div>
                     </div>
         
@@ -255,6 +246,12 @@
                     </tr>
                     }
                 </ng-container>
+                }@else {
+                    <tr>
+                        <td colspan="8">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>

@@ -1,49 +1,72 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <!--header-->
-        <div class="component-header">Reports</div>
-    
-        <div class="d-flex gap-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="component-header">Reports</div>
+  
+    <div>
+      <form [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
+        <div class="d-flex align-items-center gap-3">
+  
+          <!-- Employee -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-                <select title="text"
-                    class="form-control custom-input"
-                    id="employeeId"
-                    [(ngModel)]="selectedEmployeeId"
-                    >
-                    <option value="" disabled selected>Select Employee</option>
-                    <option *ngFor="let employee of employeeiddetails" [value]="employee.fusionEmpId | json" (click)="selectInactiveEmployee(employee, $event)">
-                      {{ employee.fullName }}
-                    </option>
-                </select>
+              <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName"
+                        [filter]="true" [showClear]="false" formControlName="employee" placeholder="Select Employee"
+                        (onChange)="selectInactiveEmployee($event.value)">
+                <ng-template #selectedItem let-selectedOption>
+                  {{ selectedOption.fullName }}
+                </ng-template>
+                <ng-template let-employee #item>
+                  {{ employee.fullName }}
+                </ng-template>
+              </p-select>
             </div>
           </div>
+  
+          <!-- Team Manager -->
+          <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-                <select title="text"
-                    class="form-control custom-input"
-                    id="teamManager"
-                    [(ngModel)]="selectedWfhManager"
-                    >
-                    <option value="" disabled>Please select team manager</option>
-                    <option *ngFor="let manager of teamdetails" [value]="getFullName(manager)" (click)="selectInactiveManager(manager)">
-                        {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
-                      </option>
-                </select>
+              <p-select class="form-select custom-select" [options]="teamdetails" [filter]="true" [showClear]="false" optionLabel="firstName"
+                        formControlName="manager" placeholder="Select Manager" 
+                        (onChange)="selectInactiveManager($event.value)">
+                <ng-template #selectedItem let-selectedOption>
+                  {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+                </ng-template>
+                <ng-template let-manager #item>
+                  {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                </ng-template>
+              </p-select>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <select id="monthDropdown" class="form-select" 
-                [disabled]="selectedDateRange !== null && (selectedDateRange.startDate !== null || selectedDateRange.endDate !== null)"
-                (change)="onMonthChangeInactive($event)">
-                <option value="" disabled selected>Select Month</option>
-                <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
-            </select>
-              </div>
+          </div>
+  
+          <!-- Month Dropdown -->
+          <div class="d-flex align-items-center gap-2">
+            <div>
+              <select title="text" id="monthDropdown" class="form-select"
+                      [disabled]="inactiveReportForm.value.dateRange?.startDate || inactiveReportForm.value.dateRange?.endDate"
+                      formControlName="month" (change)="onMonthChangeInactive($event)">
+                <option value="" disabled>Select Month</option>
+                <option *ngFor="let month of months" [value]="month.value">
+                  {{ month.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+  
+          <!-- Buttons -->
           <div class="d-flex gap-2">
-            <input type="submit" class="custom-btn btn-secondary" value="Generate" (click)="generateInactiveReport()" [disabled]="!canGenerateOrExport()">
-            <button type="button" class="custom-btn btn-primary" (click)="exportToExcelInactive()" [disabled]="!canGenerateOrExport()">Export</button>
+            <button type="submit" class="custom-btn btn-secondary" [disabled]="inactiveReportForm.invalid">
+              Generate
+            </button>
+  
+            <button type="button" class="custom-btn btn-primary"
+                    (click)="exportToExcelInactive()" [disabled]="inactiveReportForm.invalid">
+              Export
+            </button>
           </div>
         </div>
-      </div>
+      </form>
+    </div>
+  </div>
   
     <div class="mb-3">
       <app-attandace-report-tabs />

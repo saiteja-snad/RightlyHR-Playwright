@@ -9,7 +9,6 @@
               
               <!-- Employee -->
               <div class="d-flex align-items-center gap-2">
-                <label class="custom-label text-nowrap">Employee</label>
                 <div class="custom-p-select-content">
                   <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="false"
                             formControlName="employee" placeholder="Select Employee" class="form-select custom-select"
@@ -22,7 +21,6 @@
       
               <!-- Team Manager -->
               <div class="d-flex align-items-center gap-2">
-                <label class="custom-label text-nowrap">Team Manager</label>
                 <div class="custom-p-select-content">
                   <p-select [options]="teamdetails" [filter]="true" [showClear]="false" optionLabel="firstName" formControlName="manager"
                             placeholder="Select Manager" class="form-select custom-select" (onChange)="selectWfhManager($event.value)">
@@ -38,7 +36,6 @@
       
               <!-- Date Range -->
               <div class="d-flex align-items-center gap-2">
-                <label class="custom-label text-nowrap">Date of Joining</label>
                 <div>
                   <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
                          [locale]="localeOptions" [showClearButton]="true" placeholder="Please Select Date of Joining" formControlName="dateRange"
@@ -48,16 +45,12 @@
       
               <!-- Buttons -->
               <div class="d-flex gap-2">
-                <button type="submit"
-                        class="custom-btn btn-secondary"
-                        [disabled]="wfhReportForm.invalid">
+                <button type="submit" class="custom-btn btn-secondary" [disabled]="wfhReportForm.invalid">
                   Generate
                 </button>
       
-                <button type="button"
-                        class="custom-btn btn-primary"
-                        (click)="exportToExcelWfh()"
-                        [disabled]="wfhReportForm.invalid || filteredWfhRecord.length === 0">
+                <button type="button" class="custom-btn btn-primary" (click)="exportToExcelWfh()" 
+                [disabled]="wfhReportForm.invalid || filteredWfhRecord.length === 0">
                   Export
                 </button>
               </div>

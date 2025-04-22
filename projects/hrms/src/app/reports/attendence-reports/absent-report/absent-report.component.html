@@ -7,7 +7,6 @@
           <div class="d-flex align-items-center gap-3 flex-wrap">
             <!-- Employee -->
             <div class="d-flex align-items-center gap-2">
-              <label class="custom-label text-nowrap">Employee</label>
               <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
                           [showClear]="false" formControlName="employee" placeholder="Select Employee" class="form-select custom-select"
@@ -20,7 +19,6 @@
       
             <!-- Manager -->
             <div class="d-flex align-items-center gap-2">
-              <label class="custom-label text-nowrap">Team Manager</label>
               <div class="custom-p-select-content">
                 <p-select [options]="teamdetails" optionLabel="firstName" [filter]="true" [showClear]="false"
                           formControlName="manager" placeholder="Select Manager" class="form-select custom-select"
@@ -37,7 +35,6 @@
       
             <!-- Frequency Dropdown -->
             <div class="d-flex align-items-center gap-2">
-              <label class="custom-label text-nowrap">Select Frequency</label>
               <select title="text" class="form-select"
                       formControlName="frequency"
                       (change)="onFrequencyChange($event)">
@@ -49,7 +46,6 @@
       
             <!-- Date Range Picker -->
             <div class="d-flex align-items-center gap-2" *ngIf="absentReportForm.get('frequency')?.value === 'date'">
-              <label class="custom-label text-nowrap">Select Date</label>
               <input type="text" class="form-control custom-input" ngxDaterangepickerBootstrap formControlName="dateRange"
                      [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
                      [isInvalidDate]="isInvalidDate" [showClearButton]="true" placeholder="Please Select Date" readonly
@@ -58,7 +54,6 @@
       
             <!-- Month Dropdown -->
             <div class="d-flex align-items-center gap-2" *ngIf="absentReportForm.get('frequency')?.value === 'month'">
-              <label class="custom-label text-nowrap">Select Month</label>
               <select title="text" class="form-select"
                       formControlName="month"
                       (change)="onMonthChangeAbsent($event)">

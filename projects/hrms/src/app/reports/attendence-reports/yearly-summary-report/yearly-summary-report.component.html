@@ -9,23 +9,22 @@
       
               <!-- Employee -->
               <div class="d-flex align-items-center gap-2">
-                <label class="custom-label text-nowrap">Employee</label>
                 <div class="custom-p-select-content">
-                  <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName"
-                            [filter]="true" [showClear]="false"
-                            formControlName="employee"
-                            placeholder="Select Employee"
-                            class="form-select custom-select"
+                  <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName"
+                            [filter]="true" [showClear]="false" formControlName="employee" placeholder="Select Employee"
                             (onChange)="selectYearlyEmployee($event.value, $event.originalEvent)">
-                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                    <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                    <ng-template #selectedItem let-selectedOption>
+                      {{ selectedOption.fullName }}
+                    </ng-template>
+                    <ng-template let-employee #item>
+                      {{ employee.fullName }}
+                    </ng-template>
                   </p-select>
                 </div>
               </div>
       
               <!-- Team Manager -->
               <div class="d-flex align-items-center gap-2">
-                <label class="custom-label text-nowrap">Team Manager</label>
                 <div class="custom-p-select-content">
                   <p-select [options]="teamdetails" optionLabel="firstName"
                             [filter]="true" [showClear]="false"
@@ -45,8 +44,7 @@
       
               <!-- Leave Category -->
               <div class="d-flex align-items-center gap-2">
-                <label class="custom-label text-nowrap">Leave Category</label>
-                <select class="form-select custom-select"
+                <select title="text" class="form-select custom-select"
                         formControlName="leaveCategory"
                         (change)="onLeaveChangeYearly($event)">
                   <option value="" disabled>Select Leave Category</option>
@@ -56,8 +54,7 @@
       
               <!-- Year -->
               <div class="d-flex align-items-center gap-2">
-                <label class="custom-label text-nowrap">Year</label>
-                <select class="form-select custom-select"
+                <select title="text" class="form-select custom-select"
                         formControlName="year"
                         (change)="onYearChange($event)">
                   <option value="" disabled>Select Year</option>
@@ -67,19 +64,14 @@
       
               <!-- Buttons -->
               <div class="d-flex gap-2">
-                <button type="submit"
-                        class="custom-btn btn-secondary"
-                        [disabled]="yearlyReportForm.invalid">
+                <button type="submit" class="custom-btn btn-secondary" [disabled]="yearlyReportForm.invalid">
                   Generate
                 </button>
-                <button type="button"
-                        class="custom-btn btn-primary"
-                        (click)="exportToExcelYearly()"
-                        [disabled]="yearlyReportForm.invalid">
+                <button type="button" class="custom-btn btn-primary"
+                        (click)="exportToExcelYearly()" [disabled]="yearlyReportForm.invalid">
                   Export
                 </button>
               </div>
-      
             </div>
           </form>
         </div>

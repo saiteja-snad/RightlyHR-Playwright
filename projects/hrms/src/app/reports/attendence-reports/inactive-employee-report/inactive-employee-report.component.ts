@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
+import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment.dev';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
@@ -20,7 +19,7 @@ import { SelectModule } from 'primeng/select';
   selector: 'app-inactive-employee-report',
   imports: [CommonModule,
     FormsModule,
-    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective,],
+    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,],
   templateUrl: './inactive-employee-report.component.html',
   styleUrl: './inactive-employee-report.component.scss'
 })
@@ -91,6 +90,7 @@ export class InactiveEmployeeReportComponent {
   }
 
   ngOnInit(): void {
+    this.initializeForm();
     this.loggedInUser = this.authService.getToken();
     this.getInactiveEmployeeReports();
     this.getEmployeeId();
@@ -99,8 +99,8 @@ export class InactiveEmployeeReportComponent {
 
   initializeForm(){
     this.inactiveReportForm = this.fb.group({
-      employee: [null],
-      manager: [null],
+      employee: [null, Validators.required],
+      manager: [null, Validators.required],
       month: [''],
       dateRange: [null]
     });
@@ -299,6 +299,11 @@ export class InactiveEmployeeReportComponent {
     });
   }
 
+  isDateRangeSelected(): boolean {
+    const range = this.inactiveReportForm.get('dateRange')?.value;
+    return !!(range?.startDate || range?.endDate);
+  }
+
   formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
@@ -324,9 +329,9 @@ export class InactiveEmployeeReportComponent {
     );
   }
 
-  selectInactiveEmployee(employee: any, event: Event) {
+  selectInactiveEmployee(employee: any) {
     this.isFilterGiveninactive = true;
-    event.stopPropagation();
+    // event.stopPropagation();
     if (!employee) {
       this.selectedEmployeeId = null;
       this.searchTerm = 'All Employees';

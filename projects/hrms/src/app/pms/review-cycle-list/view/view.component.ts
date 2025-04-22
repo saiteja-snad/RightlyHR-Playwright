@@ -77,6 +77,9 @@ export class ViewComponent implements OnInit, OnDestroy {
   closeModal() {
     this.openCancelationPopUp()
   }
+  close(){
+    this.modalService.dismissAll()
+  }
   openCancelationPopUp() {
     this.modalService.open(this.cancelationConfirmation, { centered: true });
   }

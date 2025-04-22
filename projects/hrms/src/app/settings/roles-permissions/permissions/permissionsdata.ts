@@ -138,7 +138,8 @@ export const permissionsData = [
     { fields: 'Welcome Letter', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Monthly Attandance Report', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Attendance Regularization Button', View: false, Update: false, Create: false, Delete: false },
-
+    { fields: 'Remote Login Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
     // Settings sidebar    
     { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Fields', View: false, Update: false, Create: false, Delete: false },

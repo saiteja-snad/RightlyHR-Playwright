@@ -38,6 +38,8 @@ export class EmployeeFieldsLayoutComponent {
       '/settings/employee-fields/update-dst',
       '/settings/employee-fields/clone-dst',
       '/settings/employee-fields/view-dst',
+      '/settings/employee-fields/updateholidays',
+      '/settings/employee-fields/viewholidays',
     ];
     return !excludedRoutes.includes(this.router.url);
   }

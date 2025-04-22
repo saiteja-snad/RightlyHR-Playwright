@@ -1,4 +1,4 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container mt-3" *ngIf="rbac.allowedToAccess('Separation Requests Tab.view')">
     <div>
         <!--Input search-->
         <div class="input-group custom-search mb-4">
@@ -28,7 +28,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (rbac.allowedToAccess('Separation Requests Tab.view')) {
+
                     @if(((separation_For_You_Details | async) ?? []).length > 0) {
 
                     <tr *ngFor="let item of separation_For_You_Details|async">
@@ -136,7 +136,7 @@
                         </td>
                     </tr>
                     }
-                }
+                
                 </tbody>
             </table>
         </div>

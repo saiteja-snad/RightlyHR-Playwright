@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, input, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,8 +36,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
   searchText = '';
   reviewCyclesList: any[] = []
   filteredDetails: any[] = [];
-  @Input() cycle: any;
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
+  @Input() updateData: any
 
   constructor(
     public readonly modalService: NgbModal,
@@ -52,9 +52,10 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.getAllDepartments();
     this.getAllLocations();
     this.getAllDepartments();
-    if (this.cycle) {
-      this.patchReviewCycleForm(this.cycle);
+    if (this.updateData) {
+      this.onUpdate(this.updateData);
     }
+    console.log(this.updateData)
   }
 
   close() {
@@ -86,37 +87,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  patchReviewCycleForm(cycle: any) {
-    const formatDate = (date: any) => {
-      const d = new Date(date);
-      return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
-    };
-
-    // Optional chaining to safely handle undefined/null fields
-    this.reviewCycleForm.patchValue({
-      reviewCycleName: cycle.reviewCycleName,
-      startDate: formatDate(cycle.startDate),
-      endDate: formatDate(cycle.endDate),
-      dueDate: formatDate(cycle.dueDate),
-      reviewCycleType: cycle.reviewCycleType,
-      applicableForIncrement: cycle.applicableForIncrement,
-      locationId: typeof cycle.locationId === 'string' ? cycle.locationId.split(',').map(Number) : cycle.locationId,
-      subLocationId: typeof cycle.subLocationId === 'string' ? cycle.subLocationId.split(',').map(Number) : cycle.subLocationId,
-      departmentId: typeof cycle.departmentId === 'string' ? cycle.departmentId.split(',').map(Number) : cycle.departmentId,
-      subDepartmentId: typeof cycle.subDepartmentId === 'string' ? cycle.subDepartmentId.split(',').map(Number) : cycle.subDepartmentId,
-      applicableEmployeesJoinedBefore: formatDate(cycle.applicableEmployeesJoinedBefore),
-      description: cycle.description,
-      reviewTemplateId: cycle.reviewTemplateId,
-      status: cycle.status,
-      id: cycle.id
-    });
-
-    // Optional: load dropdown dependencies
-    this.getSubLocationByid(this.reviewCycleForm.value.locationId);
-    this.getSubDepartmentsByDepID(this.reviewCycleForm.value.departmentId);
-  }
-
-  onReviewCycleUpdateSubmit(cycle:any) {
+  onReviewCycleUpdateSubmit(cycle: any) {
     // this.modalRef = this.modalService.open(this.loading, { centered: true });
     if (this.reviewCycleForm.valid) {
       const reviewCycleData = {
@@ -211,21 +182,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.getAllDepartments()
     this.getAllReviewCycleTypes()
     this.getAllReviewTemplates()
-
-    this.modalService.open(this.onUpdate, {
-      size: 'lg',
-      centered: true,
-    });
   }
+
   openinitalUpdate() {
     this.getAllLocations()
     this.getAllDepartments()
     this.getAllReviewCycleTypes()
     this.getAllReviewTemplates()
-    this.modalService.open(this.onUpdate, {
-      size: 'lg',
-      centered: true,
-    });
   }
 
   onUpdate(cycle: any) {
@@ -291,6 +254,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.getSubLocationByid(locationIds)
     this.getSubDepartmentsByDepID(depIds)
   }
+
   getAllReviewCycleTypes() {
     const params = {
       entity: 'PMS',
@@ -305,6 +269,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         },
       });
   }
+
   getSubDepartmentsByDepID(id: any) {
     this.subscription = this.http
       .getData(`Subdepartments/Getnames/V2/${id}`)
@@ -370,8 +335,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.subLocationsDropdown = data.jobSubLocations.map((subLocation: any) => {
           return {
             ...subLocation,
-            fullName: `${subLocation.subLocationName}`, // You can modify this based on the actual property
-            selectedAllGroup: 'Group 4', // Add grouping or additional properties if needed
+            fullName: `${subLocation.subLocationName}`, 
+            selectedAllGroup: 'Group 4', 
           };
         });
       }
@@ -437,6 +402,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       return null;
     };
   }
+
   onReviewCycleintialUpdate() {
 
     // this.modalRef = this.modalService.open(this.loading, { centered: true });
@@ -482,6 +448,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       this.reviewCycleForm.markAllAsTouched();
     }
   }
+
   closeModal() {
     this.openCancelationPopUp()
   }
@@ -524,6 +491,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   filterDetails(): void {
     if (!this.searchText) {
       this.filteredDetails = this.reviewCyclesList.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);

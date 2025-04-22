@@ -224,7 +224,7 @@ export class DraftsExpensesComponent {
   }
 
   onchangeexpnes(event: any, index: number) {
-    const selectedId = event.value; // <-- PrimeNG sends the selected value in `event.value`
+    const selectedId = event.value; 
 
     console.log('Selected Expense ID:', selectedId);
 

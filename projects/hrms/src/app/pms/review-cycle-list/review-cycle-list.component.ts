@@ -58,19 +58,29 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllReviewCyclesList(this.page, this.pageSize);
-    
+
   }
 
   openAdd() {
     this.modalService.open(CreateComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
-  onUpdate() {
-    this.modalService.open(UpdateComponent, { centered: true, backdrop: 'static', size: 'lg' });
+  onUpdate(cycle: any) {
+    const modalRef = this.modalService.open(UpdateComponent, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
+    modalRef.componentInstance.updateData = cycle;
   }
 
-  onClickView(cycle: any) {
-    this.modalService.open(ViewComponent, { centered: true, backdrop: 'static', size: 'lg' });
+  onClickView(cycle: any) { 
+   const modalRef = this.modalService.open(ViewComponent, {
+          centered: true,
+          backdrop: 'static',
+          size: 'lg',
+        });
+        modalRef.componentInstance.updateData = cycle;
   }
 
   onClickYes() {
@@ -125,7 +135,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       }
     })
   }
-  
+
   getAllReviewCyclesList(pagenum: number, pagesize: number, fetchAll: boolean = false): void {
     const pageSize = fetchAll ? 10000 : this.pageSize; // Fetch all records if fetchAll is true
     const params = {
@@ -246,9 +256,9 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     this.modalService.open(this.cancelationConfirmation, { centered: true });
   }
 
-  initiateReviewCycle(cycle:any){
+  initiateReviewCycle(cycle: any) {
     const fusionUser = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
-    const data={
+    const data = {
       status: "Initiated",
       createdBy: fusionUser.employeeId,
     }

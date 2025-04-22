@@ -1,15 +1,14 @@
 <div class="custom-main-popup-container">
+    <div class="d-flex justify-content-between align-items-center popup-header-border p-3">
+        <div>
+            <p class="popup-heading mb-0">{{'View Review Cycle Details'|translate}}</p>
+        </div>
+        <div>
+            <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+    </div>
     <div class="custom-main-popup-content p-3">
         <form [formGroup]="reviewCycleupdateForm" (ngSubmit)="onReviewCycleintialUpdate()">
-            <div class="modal-header-content d-flex justify-content-between mb-4">
-                <div>
-                    <h5 class="modal-title">{{'View Review Cycle Details'|translate}}</h5>
-                </div>
-                <div>
-                    <button class="close-btn" type="button" (click)="close()"><img src="icons/close.png"
-                            alt="close Icon" class="close-icon"></button>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <div>

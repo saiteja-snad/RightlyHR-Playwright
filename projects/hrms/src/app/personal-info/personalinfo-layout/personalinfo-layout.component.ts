@@ -471,78 +471,87 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   onBackSubmit() {
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
-    switch (routestatus.empstatus) {
-      case 'Prospective':
-        this.router.navigate(['/admin/prospective-employees'])
-        break;
-      case 'Active':
-        this.router.navigate(['/admin/active-employees'])
-        break;
-      case 'Probation':
-        this.router.navigate(['/admin/probationemployees'])
-        break;
-      case 'Inactive':
-        this.router.navigate(['/admin/inactive-employees'])
-        break;
-      case 'Trainee Prospective':
-        this.router.navigate(['/admin/prospective-interns'])
-        break;
-      case 'Trainee Active':
-        this.router.navigate(['/admin/active-interns'])
-        break;
-      case 'Trainee Inactive':
-        this.router.navigate(['admin/inactive-interns'])
-        break;
-      case 'External Prospective':
-        this.router.navigate(['/admin/externalprospective-employee'])
-        break;
-      case 'External Active':
-        this.router.navigate(['/admin/externalactive-employee'])
-        break;
-      case 'External Inactive':
-        this.router.navigate(['/admin/externalinactive-employee'])
-        break;
-      default:
-        this.router.navigate(['/admin'])
+    if (routestatus.empType === 'Probation') {
+      this.router.navigate(['/admin/probation-employees']);
+    } else {
+      switch (routestatus.empstatus) {
+        case 'Prospective':
+          this.router.navigate(['/admin/prospective-employees'])
+          break;
+        case 'Active':
+          this.router.navigate(['/admin/active-employees'])
+          break;
+        case 'Probation':
+          this.router.navigate(['/admin/probation-employees'])
+          break;
+        case 'Inactive':
+          this.router.navigate(['/admin/inactive-employees'])
+          break;
+        case 'Trainee Prospective':
+          this.router.navigate(['/admin/prospective-interns'])
+          break;
+        case 'Trainee Active':
+          this.router.navigate(['/admin/active-interns'])
+          break;
+        case 'Trainee Inactive':
+          this.router.navigate(['admin/inactive-interns'])
+          break;
+        case 'External Prospective':
+          this.router.navigate(['/admin/externalprospective-employee'])
+          break;
+        case 'External Active':
+          this.router.navigate(['/admin/externalactive-employee'])
+          break;
+        case 'External Inactive':
+          this.router.navigate(['/admin/externalinactive-employee'])
+          break;
+        default:
+          this.router.navigate(['/admin'])
+      }
     }
   }
 
   assignHeading() {
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
-    switch (routestatus.empstatus) {
-      case 'Prospective':
-        this.headerName = "Prospective Employees"
-        break;
-      case 'Active':
-        this.headerName = "Active Employees"
-        break;
-      case 'Probation':
-        this.headerName = "Probation Employees"
-        break;
-      case 'Inactive':
-        this.headerName = "Inactive Employees"
-        break;
-      case 'Trainee Prospective':
-        this.headerName = "Prospective Interns"
-        break;
-      case 'Trainee Active':
-        this.headerName = "Active Interns"
-        break;
-      case 'Trainee Inactive':
-        this.headerName = "Inactive Interns"
-        break;
-      case 'External Prospective':
-        this.headerName = "External Prospective "
-        break;
-      case 'External Active':
-        this.headerName = "External Active "
-        break;
-      case 'External Inactive':
-        this.headerName = "External Inactive"
-        break;
-      default:
-        this.headerName = "Employees"
+    if (routestatus.empType === 'Probation') {
+      this.headerName = "Probation Employees"
+    } else {
+      switch (routestatus.empstatus) {
+        case 'Prospective':
+          this.headerName = "Prospective Employees"
+          break;
+        case 'Active':
+          this.headerName = "Active Employees"
+          break;
+        case 'Probation':
+          this.headerName = "Probation Employees"
+          break;
+        case 'Inactive':
+          this.headerName = "Inactive Employees"
+          break;
+        case 'Trainee Prospective':
+          this.headerName = "Prospective Interns"
+          break;
+        case 'Trainee Active':
+          this.headerName = "Active Interns"
+          break;
+        case 'Trainee Inactive':
+          this.headerName = "Inactive Interns"
+          break;
+        case 'External Prospective':
+          this.headerName = "External Prospective "
+          break;
+        case 'External Active':
+          this.headerName = "External Active "
+          break;
+        case 'External Inactive':
+          this.headerName = "External Inactive"
+          break;
+        default:
+          this.headerName = "Employees"
+      }
     }
+    
   }
 
   navigation() {

@@ -29,14 +29,15 @@
           <th>{{'Sub Status'|translate}}</th>
         </thead>
         <tbody>
-          <tr *ngFor="let act of InActiveTrainee | activeEmployee : searchValue" class="cursor" (click)="select(act)">
+          <tr *ngFor="let act of InActiveTrainee | activeEmployee : searchValue">
 
             <td> <span *ngIf="act.fusionEmpId;else fusionid">{{act.fusionEmpId}} </span>
               <ng-template #fusionid>
                 -
               </ng-template>
             </td>
-            <td><span *ngIf="act.firstName;else firstname"> {{act.firstName}} {{act.middleName}} {{act.lastName}}</span>
+            <td><span *ngIf="act.firstName;else firstname"> <a class="select-item cursor" (click)="select(act)">
+              {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a></span>
               <ng-template #firstname>
                 -
               </ng-template>

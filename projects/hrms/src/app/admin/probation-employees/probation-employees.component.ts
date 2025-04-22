@@ -44,11 +44,9 @@ export class ProbationEmployeesComponent {
   }
 
   select(act: any) {
-    this.emp = localStorage.setItem("personaldata", JSON.stringify(act));
-    localStorage.setItem("routestatus", 'Probation');
-    this.router.navigate(["/admin/personal"]);
+    this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+    this.router.navigate(['/personalinfo']);
   }
-
   formatDate(data: any): any {
     if (data) {
       // return moment(data).format('YYYY-MM-DD');

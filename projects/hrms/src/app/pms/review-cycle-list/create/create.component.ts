@@ -28,6 +28,7 @@ export class CreateComponent {
   status: any;
   isLoading: boolean = false;
   @Output() onClickNoCancelPopUp = new EventEmitter<void>();
+  @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   todayDate = new Date().toISOString().split('T')[0]
 
   constructor(
@@ -49,6 +50,10 @@ export class CreateComponent {
     this.modalService.dismissAll();
   }
 
+  openCancelationPopUp() {
+    this.modalService.open(this.cancelationConfirmation, { centered: true });
+  }
+  
   initializeReviewCycleForm() {
     this.reviewCycleForm = this.fb.group(
       {

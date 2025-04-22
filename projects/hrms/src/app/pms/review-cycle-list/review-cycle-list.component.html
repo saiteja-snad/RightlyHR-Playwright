@@ -43,23 +43,32 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu text-center">
-                                    <li class="dropdown-item border-bottom" *ngIf="cycle.status==='Initiated'"
+                                    @if(cycle.status==='Initiated'){
+                                        <li class="dropdown-item border-bottom" 
                                         (click)="openModal(holdconformation);seletedid=cycle">
                                         <a class="dropdown-custom-btn">Hold</a>
                                     </li>
-                                    <li class="dropdown-item" *ngIf="cycle.status==='Review on Hold'"
-                                        (click)="openModal(Resumeconformation);seletedid=cycle"><a
-                                            class="dropdown-custom-btn">Resume</a></li>
+                                    }
+                                   @if(cycle.status==='Review on Hold'){
                                     <li class="dropdown-item"
-                                        *ngIf="cycle.status !=='Initiated'  && cycle.status !=='Review on Hold'"
-                                        (click)="onUpdate(cycle)"><a class="dropdown-custom-btn">Update</a>
-                                    </li>
-                                    <li class="dropdown-item" *ngIf="cycle.status ==='Initiated'"
+                                    (click)="openModal(Resumeconformation);seletedid=cycle"><a
+                                        class="dropdown-custom-btn">Resume</a></li>
+                                   }
+                                   @if(cycle.status !=='Initiated'  && cycle.status !=='Review on Hold'){
+                                    <li class="dropdown-item" (click)="onUpdate(cycle)"><a class="dropdown-custom-btn">Update</a>
+                                </li> 
+                                   }
+                                    @if(cycle.status ==='Initiated'){
+                                        <li class="dropdown-item"
                                         (click)="onClickView(cycle)"><a class="dropdown-custom-btn">View</a>
                                     </li>
-                                    <li class="dropdown-item" *ngIf="cycle.status==='Created'"
+                                    }
+                                    @if(cycle.status==='Created'){
+                                        <li class="dropdown-item"
                                         (click)="onUpdate(cycle);seletedid=cycle"><a
                                             class="dropdown-custom-btn"></a>Initiate</li>
+                                    }
+                                    
                                 </ul>
                             </div>
                         </td>

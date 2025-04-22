@@ -17,7 +17,7 @@ export default [
            { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
            { path: 'leave-report', loadComponent: () => import('./attendence-reports/leave-report/leave-report.component').then((m) => m.LeaveReportComponent) },
            { path: 'leave-summary-report', loadComponent: () => import('./attendence-reports/leave-summary-report/leave-summary-report.component').then((m) => m.LeaveSummaryReportComponent) },
-           { path: 'comp-off-report', loadComponent: () => import('./attendence-reports/compoff-report/compoff-report.component').then((m) => m.CompoffReportComponent) },
+           { path: 'compoff-report', loadComponent: () => import('./attendence-reports/compoff-report/compoff-report.component').then((m) => m.CompoffReportComponent) },
            { path: 'wfh-report', loadComponent: () => import('./attendence-reports/wfh-report/wfh-report.component').then((m) => m.WfhReportComponent) },
            { path: 'absent-report', loadComponent: () => import('./attendence-reports/absent-report/absent-report.component').then((m) => m.AbsentReportComponent) },
            { path: 'inactive-employee-report', loadComponent: () => import('./attendence-reports/inactive-employee-report/inactive-employee-report.component').then((m) => m.InactiveEmployeeReportComponent) },

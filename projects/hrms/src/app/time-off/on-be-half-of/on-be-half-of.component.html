@@ -46,6 +46,7 @@
         <div class="custom-component-left-content">
             <app-on-be-half-of-approval-tabs></app-on-be-half-of-approval-tabs>
         </div>
+
         <div class="custom-setting-right-content p-3">
             <router-outlet></router-outlet>
         </div>
@@ -54,7 +55,7 @@
 
 <ng-template #addleave let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request Leave On Behalf Of</p>
             </div>
@@ -62,7 +63,8 @@
                 <a (click)="cleardata()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+
+        <div class="custom-main-popup-content">
             <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()">
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -164,7 +166,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
+                <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">{{'Close'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4" [disabled]="leaveForm.invalid || !issEndDategreater  || !isstimeoffValid
                     || !startdatevalid || isHolidaySelected ||!isDayTypeselected|| isWeekOffSelected || isWeekOffSelectedEndate|| isoptionalnotallowedatWorkingdate ||

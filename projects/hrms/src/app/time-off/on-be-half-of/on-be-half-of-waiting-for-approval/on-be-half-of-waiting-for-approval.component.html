@@ -10,12 +10,11 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Reason</th>
-                    <th>Approved Reason</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                @if(waitingForApprovalLeaves.length === 0){
+                @if(waitingForApprovalLeaves.length > 0){
                 <tr *ngFor="let lev of waitingForApprovalLeaves">
                     <td>{{lev.date | dateformat}}</td>
                     <td>{{lev.categoryName}}</td>

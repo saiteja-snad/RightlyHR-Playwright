@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if(approvedLeaves.length === 0){
+                @if(approvedLeaves.length > 0){
                 <tr *ngFor="let lev of approvedLeaves">
                     <td>{{lev.date | dateformat}}</td>
                     <td>{{lev.categoryName}}</td>
@@ -44,16 +44,14 @@
                     </td>
                     <td>
                         <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">{{lev.notes}}</p>
-                                    </div>
-                                </ng-template>
-                            </span>
+                            <a type="button" placement="top" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <div>
+                                    <p class="mb-0">{{lev.rejectedReason}}</p>
+                                </div>
+                            </ng-template>
                         </div>
                     </td>
                     <td>{{lev.status}}</td>
@@ -62,7 +60,6 @@
                 @else {
                 <tr>
                     <app-no-data-found></app-no-data-found>
-
                 </tr>
                 }
             </tbody>

@@ -1,1 +1,42 @@
-<p>assets works!</p>
+<div>
+    <div class="custom-table-content mt-2">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>ASSET ID </th>
+                    <th>ASSETS CATEGORY</th>
+                    <th>ASSET SUB CATEGORY</th>
+                    <th>ASSET MODEL</th>
+                    <th>SERIAL NUMBER</th>
+                    <!-- <th>Assigined By</th> -->
+                    <th>ALLOCATED DATE</th>
+                    <th>RELEASED DATE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="((assestesdata | async) ?? []).length > 0; else noDataTemplate">
+                    <tr *ngFor="let data of assestesdata | async">
+                        <td>{{ data.assetIdName }}</td>
+                        <td>{{ data.assetMaster[0]?.assetCategory }}</td> <!-- Adjusted to access first assetMaster -->
+                        <td>{{ data.assetMaster[0]?.assetSubCategory }}</td>
+                        <td>{{data.assetMaster[0]?.assetModel }}</td>
+
+                        <td>{{ data.assetMaster[0]?.serialNumber }}</td>
+                        <!-- <td>{{ data.assetMaster[0]?.createdBy }}</td> -->
+                        <td>{{ data.allocatedDate |dateformat }}</td>
+                        <td>{{ data.returnDate ? (data.returnDate | dateformat) : 'N/A'}}</td>
+
+                    </tr>
+                </ng-container>
+
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td>
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+    </div>
+</div>

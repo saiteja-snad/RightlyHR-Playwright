@@ -37,9 +37,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let act of Trainee | activeEmployee : searchValue" (click)="select(act)">
+          <tr *ngFor="let act of Trainee | activeEmployee : searchValue">
             <td>{{act.employeeId}}</td>
-            <td><span *ngIf="act.firstName ; else firstname">{{act.firstName}} {{act.middleName}} {{act.lastName}}
+            <td><span *ngIf="act.firstName ; else firstname"><a class="select-item cursor" (click)="select(act)">
+              {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
               </span></td>
             <ng-template #firstname>
               -

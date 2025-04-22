@@ -1,7 +1,7 @@
 <div class="header-module-tabs-container">
   <p-tabs value="0" scrollable>
       <p-tablist>
-          <ng-container *ngFor="let tab of navTabs;">
+          <ng-container *ngFor="let tab of filteredTabs;">
               <p-tab [value]="tab.link">
                   <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
                       {{ tab.label   }}

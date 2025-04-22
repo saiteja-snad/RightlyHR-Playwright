@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {  Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { IAddress, IGender, IJobdetails, Ipersonal, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
 import { BnNgIdleService } from 'bn-ng-idle';
@@ -12,9 +12,10 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { IphoneNumberData } from '../../models/mobilenumber.model';
 import { PopupService } from '../../common-services/popup.service';
+import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-personal-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, NgxCountriesDropdownModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
   templateUrl: './personal-details.component.html',
   styleUrl: './personal-details.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -40,7 +41,7 @@ export class PersonalDetailsComponent implements OnInit {
   placeholderPhoneNumber: string = '';
   spinnerLoader = false;
   selectedCountryCode = signal<string>('');
-  selectedCountryCodegflag:any;
+  selectedCountryCodegflag: any;
   loading = true;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
@@ -61,13 +62,13 @@ export class PersonalDetailsComponent implements OnInit {
     { name: 'O-', value: 'O-' }
   ];
 
-  constructor(private router: Router, private modalService: NgbModal,private openPopup: PopupService, private readonly fb: FormBuilder,
+  constructor(private router: Router, private modalService: NgbModal, private openPopup: PopupService, private readonly fb: FormBuilder,
     private http: HttpService, private bnIdle: BnNgIdleService) {
-      this.initializePersonalForm();
-      effect(() => {
-       this.selectedCountryCode.set(this.selectedDialCode);
-      })
-     }
+    this.initializePersonalForm();
+    effect(() => {
+      this.selectedCountryCode.set(this.selectedDialCode);
+    })
+  }
 
   ngOnInit(): void {
     this.bnIdle.startWatching(1600).subscribe((isTimeOut: boolean) => {
@@ -78,11 +79,9 @@ export class PersonalDetailsComponent implements OnInit {
       }
     })
     this.prospectiveEmpData = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
-
     this.getprospectivempdata()
     this.getGender();
     this.getTitle();
-   
   }
 
   // Prospective Employee Data
@@ -91,21 +90,18 @@ export class PersonalDetailsComponent implements OnInit {
     let employeeId = parseInt(this.prospectiveEmpData.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.employeeData = data as Ipersonal; 
-      this.selectedCountryCode.set(this.employeeData?.contactnumbercountryflag);
-      console.log(this.selectedCountryCode);
-      this.getJobDetails();
-        
+        this.employeeData = data as Ipersonal;
+        this.selectedCountryCode.set(this.employeeData?.contactnumbercountryflag);
+        this.getJobDetails();
+
         this.loading = false;
         if (this.employeeData.dob) {
           this.employeeData.dob = this.formatDate(this.employeeData.dob);
-  
+
         }
       },
-      
+
       error: (reason: any) => {
-        console.log(reason);
         this.loading = false;
         if (reason.status == 401) {
           localStorage.clear();
@@ -122,7 +118,6 @@ export class PersonalDetailsComponent implements OnInit {
       next: (data: any) => {
         this.jobdetails = data[0] as IJobdetails[];
         this.patchForm();
-        console.log(this.jobdetails);
       }
     })
   }
@@ -182,7 +177,7 @@ export class PersonalDetailsComponent implements OnInit {
       }),
     });
   }
- 
+
   patchForm() {
     const dateOfBirth = this.employeeData.dob ? this.formatDate(this.employeeData.dob) : null;
     this.personalDetailsForm.patchValue({
@@ -198,9 +193,9 @@ export class PersonalDetailsComponent implements OnInit {
       subLocation: this.jobdetails.subLocation,
       designation: this.jobdetails.jobRole,
       personalEmail: this.employeeData.emailaddress,
-      currentAddress: this.employeeData?.employeeAddresses?.find((address:IAddress)=>address?.type?.toLowerCase() == 'c'),
-      permanentAddress: this.employeeData?.employeeAddresses?.find((address:IAddress)=>address?.type?.toLowerCase() == 'p')
-    }); 
+      currentAddress: this.employeeData?.employeeAddresses?.find((address: IAddress) => address?.type?.toLowerCase() == 'c'),
+      permanentAddress: this.employeeData?.employeeAddresses?.find((address: IAddress) => address?.type?.toLowerCase() == 'p')
+    });
 
   }
   // Copy Current Address to Permanent Address
@@ -237,31 +232,31 @@ export class PersonalDetailsComponent implements OnInit {
   onSubmit() {
     console.log(this.employeeData);
     if (!this.personalDetailsForm.invalid) {
-       this.employeeData.firstName=this.personalDetailsForm.get('firstName')?.value,
-      this.employeeData.middleName= this.personalDetailsForm.get('middleName')?.value,
-      this.employeeData.lastName= this.personalDetailsForm.get('lastName')?.value,
-      this.employeeData.gender=this.personalDetailsForm.get('gender')?.value,
-       this.employeeData.title=this.personalDetailsForm.get('salutation')?.value,
-      this.employeeData.contactnumber=this.personalDetailsForm.get('phonenumber')?.value,
-      this.employeeData.dob=this.personalDetailsForm.get('dob')?.value,
-       this.employeeData.bloodGroup=this.personalDetailsForm.get('bloodGroup')?.value,
-      this.employeeData.emailaddress=this.personalDetailsForm.get('personalEmail')?.value,
-      this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.employeeData).subscribe({
-        next: (data: any) => {
-          console.log(data);
-          if (data.statusCode === 409) {
-            alert(`${data.message}`);
-          } else if (data.statusCode === 200) {
-            this.postEmployeeAddresses();
+      this.employeeData.firstName = this.personalDetailsForm.get('firstName')?.value,
+        this.employeeData.middleName = this.personalDetailsForm.get('middleName')?.value,
+        this.employeeData.lastName = this.personalDetailsForm.get('lastName')?.value,
+        this.employeeData.gender = this.personalDetailsForm.get('gender')?.value,
+        this.employeeData.title = this.personalDetailsForm.get('salutation')?.value,
+        this.employeeData.contactnumber = this.personalDetailsForm.get('phonenumber')?.value,
+        this.employeeData.dob = this.personalDetailsForm.get('dob')?.value,
+        this.employeeData.bloodGroup = this.personalDetailsForm.get('bloodGroup')?.value,
+        this.employeeData.emailaddress = this.personalDetailsForm.get('personalEmail')?.value,
+        this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.employeeData).subscribe({
+          next: (data: any) => {
+            console.log(data);
+            if (data.statusCode === 409) {
+              alert(`${data.message}`);
+            } else if (data.statusCode === 200) {
+              this.postEmployeeAddresses();
+            }
+          },
+          error: (errorReason: any) => {
+            console.error(errorReason);
+            if (errorReason.status === 400) {
+              this.openPopup.openError(`${errorReason.error?.message || 'Bad request'}`);
+            }
           }
-        },
-        error: (errorReason: any) => {
-          console.error(errorReason);
-          if (errorReason.status === 400) {
-            this.openPopup.openError(`${errorReason.error?.message || 'Bad request'}`);
-          }
-        }
-      });
+        });
     } else {
       this.personalDetailsForm.markAllAsTouched(); // Mark all fields as touched to trigger validation
     }
@@ -269,7 +264,7 @@ export class PersonalDetailsComponent implements OnInit {
 
   postEmployeeAddresses() {
     let payload = {
-      employeeAddresses: [  {
+      employeeAddresses: [{
         ...this.personalDetailsForm.get('currentAddress')?.value,
         zipCode: String(this.personalDetailsForm.get('currentAddress')?.value?.zipCode)
       },
@@ -280,27 +275,24 @@ export class PersonalDetailsComponent implements OnInit {
     }
     this.subscription = this.http.postData("PreonboardingEmployeeAddress", payload).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.router.navigate(['/document']);
       },
       error: reason => console.log(reason),
       complete: () => {
-        
+
       }
     })
   }
 
   // mobile number functions
- 
+
   onCountryChange(country: any) {
-    console.log(country);
-    this.selectedDialCode=country.dialling_code;
-    this.selectedCountryCodegflag=country.code;
+    this.selectedDialCode = country.dialling_code;
+    this.selectedCountryCodegflag = country.code;
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
-    this.employeeData.mobilePhoneCountryCode = country.dialling_code; 
-    this.employeeData.contactnumbercountryflag=country.code;
-    console.log(this.employeeData.mobilePhoneCountryCode);
+    this.employeeData.mobilePhoneCountryCode = country.dialling_code;
+    this.employeeData.contactnumbercountryflag = country.code;
   }
 
   formatPhoneNumber(value: any) {
@@ -332,39 +324,30 @@ export class PersonalDetailsComponent implements OnInit {
   close() {
     this.modalService.dismissAll();
   }
-  
-  disableValidationDob: boolean = false;
 
+  disableValidationDob: boolean = false;
   validateAge(dob: any): boolean {
     if (dob) {
       const currentDate = new Date();
       const birthDate = new Date(dob);
-  
       let age = currentDate.getFullYear() - birthDate.getFullYear();
       const monthDiff = currentDate.getMonth() - birthDate.getMonth();
       const dayDiff = currentDate.getDate() - birthDate.getDate();
-  
       if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
         age--;
       }
-  
       const isValidAge = age >= 18 && age <= 75;
       this.disableValidationDob = !isValidAge;
       return isValidAge;
     }
-  
     this.disableValidationDob = false;
     return true;
   }
 
-  salutationValidationcheck:boolean=false
+  salutationValidationcheck: boolean = false
   onsalutationvalidation() {
     const gender = this.personalDetailsForm.get('gender')?.value?.toLowerCase();
     const title = this.personalDetailsForm.get('salutation')?.value?.toLowerCase();
-  
-    console.log('Gender:', gender);
-    console.log('Salutation:', title);
-  
     if (
       (gender === 'male' && title === 'mr.') ||
       (gender === 'female' && ['ms.', 'miss.', 'mrs.'].includes(title)) ||
@@ -376,7 +359,6 @@ export class PersonalDetailsComponent implements OnInit {
       this.salutationValidationcheck = true;
     }
   }
-  
 
   navigateDocumentUpload() {
     this.router.navigate(['/document']);
@@ -388,8 +370,9 @@ export class PersonalDetailsComponent implements OnInit {
       event.preventDefault();
     }
   }
+
   blockNumbers(event: KeyboardEvent): void {
-    const forbiddenKeys = ['0','1','2','3','4','5','6','7','8','9'];
+    const forbiddenKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     if (forbiddenKeys.includes(event.key)) {
       event.preventDefault();
     }

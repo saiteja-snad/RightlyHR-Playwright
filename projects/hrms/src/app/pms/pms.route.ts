@@ -8,11 +8,18 @@ import { PendingReviewsComponent } from "./my-performance-review/pending-reviews
 import { CompleteReviewsComponent } from "./my-performance-review/complete-reviews/complete-reviews.component";
 import { TeamPendingReviewsComponent } from "./team-performance-review/team-pending-reviews/team-pending-reviews.component";
 import { TeamCompleteReviewsComponent } from "./team-performance-review/team-complete-reviews/team-complete-reviews.component";
+import { UpdateComponent } from "./review-cycle-list/update/update.component";
+import { CreateComponent } from "./review-cycle-list/create/create.component";
+import { ViewComponent } from "./review-cycle-list/view/view.component";
 
 export default [
     { path: '', redirectTo: '/pms/review-cycle', pathMatch: 'full' },
-    { path: 'review-cycle', component: ReviewCycleListComponent},
-    { path: 'apprisal', component: ApprisalListComponent},
+    { path: 'review-cycle', component: ReviewCycleListComponent },
+    { path: 'review-cycle/create', component: CreateComponent }, 
+    { path: 'review-cycle/update', component: UpdateComponent }, 
+    { path: 'review-cycle/view', component: ViewComponent }, 
+    { path: 'apprisal', component: ApprisalListComponent,
+    },
     { path: 'assessment-form', component: AssessmentFormComponent},
     { path: 'myPerformance', component: MyPerformanceReviewComponent,
         children: [

@@ -37,11 +37,11 @@
               <tbody>
                 @if( ((Prospective | async) ?? []).length > 0){
                 @for (act of ((Prospective | async) ?? []) | prospective : searchValue; track act.id) {
-                <tr class="cursor" (click)="select(act)">
+                <tr  >
                   <td>{{act.employeeId}}</td>
                   <td>
                     <span *ngIf="act.firstName ; else firstname">
-                      <a class="select-item" >
+                      <a class="select-item cursor" (click)="select(act)">
                         {{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ? act.lastName:''}}
                       </a>
                     </span>

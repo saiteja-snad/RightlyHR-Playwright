@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if(rejectedLeaves.length === 0){
+                @if(rejectedLeaves.length > 0){
                 <tr *ngFor="let lev of rejectedLeaves" style="text-align: center; cursor: pointer;">
                     <td>{{lev.date | dateformat}}</td>
                     <td>{{lev.categoryName}}</td>
@@ -26,12 +26,15 @@
                     <td>{{lev.startdate | dateformat}}</td>
                     <td>{{lev.enddate | dateformat}}</td>
                     <td>
-                        <div id="tooltip">
-                            <span id="tootipText">{{lev.notes}}</span>
-                            <span *ngIf="lev.notes === null" id="tootipText">-</span>
-                            <ng-container>
-                                <div><i class="bi bi-info-circle-fill"></i></div>
-                            </ng-container>
+                        <div>
+                            <a type="button" placement="top" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <div>
+                                    <p class="mb-0">{{lev.notes}}</p>
+                                </div>
+                            </ng-template>
                         </div>
                     </td>
                     <td>

@@ -6,10 +6,11 @@
       </p>
     </div>
   </div>
+
   <form [formGroup]="holidayForm" (ngSubmit)="submit()">
-    <div class="custom-setting-right-content w-100 p-3">
+    <div class="custom-setting-right-content w-100 p-4">
       <!--Select Fields-->
-      <div class="d-flex gap-3 mt-4">
+      <div class="d-flex gap-3 mb-4">
         <div class="custom-p-select-content">
           <p-select [options]="yearDetails" optionLabel="name" placeholder="Select year" formControlName="year"
             class="form-select custom-select">
@@ -36,11 +37,10 @@
           </button>
         </div>
       </div>
-      <div class="card custom-background-card p-3 mt-2">
-        <div class="row">
-          <div class="card custom-background-card p-3 mt-2" formArrayName="holidays">
-            <div class="row mb-2" *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
 
+      <div class="">
+          <div class="card custom-background-card p-3 mb-4" formArrayName="holidays" *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
+            <div class="row">
               <div class="col-md-5">
                 <label class="form-label custom-label">{{'Holiday Name' | translate}}<span class="text-danger">*</span></label>
                 <input type="text" formControlName="holidayName" class="form-control custom-input"
@@ -63,11 +63,8 @@
             </div>
           </div>
           <!-- Submit Button -->
-          
-        </div>
       </div>
       <button class="custom-btn btn-primary mt-3" type="submit">{{'Submit' | translate}}</button>
     </div>
-    
   </form>
 </div>

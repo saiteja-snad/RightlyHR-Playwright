@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { IJob } from '../../../Interfaces/job-model';
 import { Subject } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
+import { environment } from '../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-separation-request-tabs',
@@ -23,10 +24,11 @@ export class SeparationRequestTabsComponent {
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
 
   navTabs = computed(() => {
-    const data = this.pendingApprovalCount().find(item => item.moduleId === 13);
+    const moduleId=environment.SeparationrequestmoduleId
+    const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
       { label: 'For You ', link: 'separation-for-you', count: data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'separation-for-role', count: data?.forYourRole ?? 0 }
+      { label: 'For Your Role', link: 'separation-for-role', count: data?.forYourRole ?? 0}
     ];
   });
   ngOnInit(): void {
@@ -52,7 +54,7 @@ export class SeparationRequestTabsComponent {
 
   getAllSeparationPendingApprovalsCount() {
     const employeeId = parseInt(this.empinfo.employeeId);
-    const moduleId = 13;
+    const moduleId = environment.SeparationrequestmoduleId;
   
     this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {

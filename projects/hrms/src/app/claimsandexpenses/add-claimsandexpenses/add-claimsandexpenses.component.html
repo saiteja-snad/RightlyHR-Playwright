@@ -7,7 +7,7 @@
         </div>
     </div>
 
-    <div class="card custom-card">
+    <div class="card custom-card ">
         <div class="p-3">
             <form [formGroup]="newExpenseForm" (ngSubmit)="fromdata(newExpenseForm)">
                 <div class="d-flex gap-3 mb-4">
@@ -49,7 +49,7 @@
     
                 <!-- Expense Items List -->
                 <div formArrayName="expenseItems">
-                    <div *ngFor="let item of expenseItems.controls; let i = index" [formGroupName]="i" class="card p-3 custom-expense-item-card">
+                    <div *ngFor="let item of expenseItems.controls; let i = index" [formGroupName]="i" class="card mb-3 p-3 custom-expense-item-card">
                         <div class="row mb-3">
                             <!-- Expense Type -->
                             <div class="col-md-3">

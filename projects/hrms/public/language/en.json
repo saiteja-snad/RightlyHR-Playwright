@@ -246,5 +246,14 @@
     "Notice Period type":"Notice Period type",
     "Reason for Early Relieving":"Reason for Early Relieving",
     "Accept Early Relieving":"Accept Early Relieving",
-    "Employee Emails":"Employee Emails"
+    "Employee Emails":"Employee Emails",
+    "Are you sure you want to Hold the Employee?": "Are you sure you want to Hold the Employee?",
+    "Are you sure you want to Resume the Employee?": "Are you sure you want to Resume the Employee?",
+    "Are you sure you want to Re-Send Appraisal Letter?": "Are you sure you want to Re-Send Appraisal Letter?",
+    "Are you sure you want to Re-Send Promotion Letter?": "Are you sure you want to Re-Send Promotion Letter?",
+    "Generate": "Generate",
+    "Generate Promotion Letter": "Generate Promotion Letter",
+    "Effective From Date": "Effective From Date",
+    "Effective From Date is required.": "Effective From Date is required.",
+    "Create Review Cycle":"Create Review Cycle"
 }

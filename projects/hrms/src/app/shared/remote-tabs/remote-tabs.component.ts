@@ -31,11 +31,11 @@ export class RemoteTabsComponent {
 
   constructor(public readonly router: Router, private http: HttpService) {
     effect(() => {
-      if (this.http.tirggerCountSignal().wfh) {
+      if (this.http.tirggerCountSignal().remote) {
         this.getremoteRequest();
       this.http
         .tirggerCountSignal
-        .update((status) => ({ ...status, wfh: false }));
+        .update((status) => ({ ...status, remote: false }));
       }
 
  

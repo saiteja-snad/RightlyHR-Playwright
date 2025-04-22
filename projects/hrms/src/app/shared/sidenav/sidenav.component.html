@@ -3,58 +3,67 @@
         <img src="logos/rightlyhr-logo.png" alt="company logo" class="logo-img">
     </div>
     <hr class="white-line">
-    <div class="sidnav-main-content px-3">
+    <div class="sidnav-main-content px-2">
         <ul class="nav-items-list text-center ps-0">
             @if(this.rbac.allowedToAccess('Dashboard.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/admin']" routerLinkActive="active-nav-link">
+            <li class="nav-item" [routerLink]="['/admin']" routerLinkActive="active-nav-link">
                 <i class="bi bi-columns-gap custom-icon"></i>Dashboard
             </li>
             }
             @if(this.rbac.allowedToAccess('My Info.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/myinfo']" routerLinkActive="active-nav-link">
+            <li class="nav-item" [routerLink]="['/myinfo']" routerLinkActive="active-nav-link">
                 <i class="bi bi-person-vcard custom-icon"></i>My Info
             </li>
             }
             @if(this.rbac.allowedToAccess('Events.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/events']" routerLinkActive="active-nav-link">
+            <li class="nav-item" [routerLink]="['/events']" routerLinkActive="active-nav-link">
                 <i class="bi bi-calendar2-heart custom-icon"></i>Events
             </li>
             }
             @if(this.rbac.allowedToAccess('Timeoff.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/time-off']" routerLinkActive="active-nav-link">
+            <li class="nav-item" [routerLink]="['/time-off']" routerLinkActive="active-nav-link">
                 <i class="bi bi-clock-history custom-icon"></i>Time-off
             </li>
             }
             @if(this.rbac.allowedToAccess('Claims and Expenses.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/claimsandexpenses']" routerLinkActive="active-nav-link">
+            <li class="nav-item" [routerLink]="['/claimsandexpenses']" routerLinkActive="active-nav-link">
                 <i class="bi bi-currency-dollar custom-icon"></i>Expenses
             </li>
             }
             @if(this.rbac.allowedToAccess('Reports.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/reports']" routerLinkActive="active-nav-link">
+            <li class="nav-item" [routerLink]="['/reports']" routerLinkActive="active-nav-link">
                 <i class="bi bi-currency-dollar custom-icon"></i>Reports
             </li>
             }
             @if(this.rbac.allowedToAccess('Pms.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/pms']" routerLinkActive="active-nav-link">
+            <li class="nav-item" [routerLink]="['/pms']" routerLinkActive="active-nav-link">
                 <i class="bi bi-currency-dollar custom-icon"></i>PMS
             </li>
             }
-            @if(this.rbac.allowedToAccess('Pms.view')){
-                <li class="nav-item p-2 mb-3" [routerLink]="['/pmsconfiguration']" routerLinkActive="active-nav-link">
-                    <i class="bi bi-currency-dollar custom-icon"></i>PMS Configurations
-                </li>
-                }
+            <li class="nav-item text-wrap" [routerLink]="['/pmsconfiguration']" routerLinkActive="active-nav-link">
+                <i class="bi bi-calendar custom-icon"></i>PMS Configurations
+            </li>
             @if(this.rbac.allowedToAccess('Calendar.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/calendar']" routerLinkActive="active-nav-link">
-                <i class="bi bi-currency-dollar custom-icon"></i>Calendar
+            <li class="nav-item" [routerLink]="['/calendar']" routerLinkActive="active-nav-link">
+                <i class="bi bi-calendar custom-icon"></i>Calendar
             </li>
             }
             @if(this.rbac.allowedToAccess('Desk Allocation.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/desk']" routerLinkActive="active-nav-link">
+            <li class="nav-item" [routerLink]="['/desk']" routerLinkActive="active-nav-link">
                 <i class="bi bi-pc-display custom-icon"></i>Desk Allocation
             </li>
             }
+            @if(this.rbac.allowedToAccess('Assets Management.view')){
+                <li class="nav-item p-2 mb-3" [routerLink]="['/assets-management']" routerLinkActive="active-nav-link">
+                    <i class="bi bi-display  custom-icon"></i>Asset Allocation
+                </li>
+                }
+
+                @if(this.rbac.allowedToAccess('Help Desk.view')){
+                    <li class="nav-item p-2 mb-3" [routerLink]="['/it-support']" routerLinkActive="active-nav-link">
+                        <i class="bi bi-headset  custom-icon"></i>IT Support
+                    </li>
+                    }
         </ul>
     </div>
     <div class="sidenav-footer-content text-center py-4">

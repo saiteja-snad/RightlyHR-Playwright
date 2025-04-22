@@ -4,8 +4,8 @@ export const environment = {
   webSocketUrl: 'ws://rightlyhrnewversionapi.rightlyhr.com',
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
   modules: [
-    { id: 18, moduleName: 'Probation ' },
-    { id: 23, moduleName: 'PMS' }  
+    { id: 20, moduleName: 'Probation' },
+    { id: 24, moduleName: 'PMS' }  
   ],
   
 

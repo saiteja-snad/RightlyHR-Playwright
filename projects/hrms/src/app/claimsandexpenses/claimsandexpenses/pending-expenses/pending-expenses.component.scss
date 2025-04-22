@@ -6,15 +6,13 @@
     border-radius: 1.2rem;
     position: relative;
 
-
     thead {
         top: 0%;
         position: sticky;
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -41,7 +39,6 @@
     tr:nth-child(even) {
         background-color: var(--table-data-bg-even-color);
     }
-
 }
 
 .expenses-title-text {
@@ -58,10 +55,8 @@
     max-height: 100%;
 }
 
-
 .status-colour {
     color: #EE8B30;
-
 }
 
 .cardd {

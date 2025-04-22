@@ -1,10 +1,11 @@
-<div class="custom-main-component-container mt-4">
+<div class="custom-main-component-container">
     <!--Input search-->
-    <div class="input-group custom-search mb-4">
+    <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
             [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
+
     <ng-container *ngIf="(expenesEmplyeedata | async) === null; else maincontent">
         <ng-template #loadingSpinner>
             <div class="loader-placeholder-content text-center">
@@ -17,7 +18,6 @@
     </ng-container>
 
     <ng-template #maincontent>
-
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
@@ -27,7 +27,6 @@
                         <th>Total Amount</th>
                         <th>Status</th>
                         <th class="text-center">Actions</th>
-
                     </tr>
                 </thead>
                 <tbody>
@@ -45,8 +44,9 @@
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li><a class="dropdown-item"
-                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)"><i
-                                                    class="bi bi-pencil me-2"></i>Update</a></li>
+                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
+                                                <i class="bi bi-pencil me-2"></i>Update</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>
@@ -65,9 +65,6 @@
         </div>
     </ng-template>
 </div>
-
-
-
 
 <ng-template #updateModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -88,7 +85,6 @@
                             <div class="col-md-4 mb-3">
                                 <label class="form-label custom-label mb-2">Expense Title<span
                                         class="text-danger">*</span></label>
-
                                 <input type="text" class="form-control custom-input" formControlName="expensesTitle"
                                     placeholder="Please enter expense title" />
                                 <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && 
@@ -103,7 +99,6 @@
                                         Expense title must be less than 50 characters
                                     </div>
                                 </div>
-
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label custom-label mb-2">Approval Email<span
@@ -112,9 +107,7 @@
                                     <p-select [options]="emails" optionLabel="label"
                                         placeholder="Please select approval email" formControlName="approvalemail"
                                         class="form-select custom-select"></p-select>
-
                                 </div>
-
                                 <div class="error-msg"
                                     *ngIf="newExpenseForm.controls['approvalemail'].invalid && (newExpenseForm.controls['approvalemail'].touched || newExpenseForm.controls['approvalemail'].dirty)">
                                     <div class="error-msg"
@@ -134,7 +127,6 @@
                         <div formArrayName="expenseItems">
                             <div *ngFor="let item of expenseItems.controls; let i = index" [formGroupName]="i"
                                 class="card p-3 mb-4 custom-expense-item-card">
-
                                 <div class="row mb-3">
                                     <!-- Expense Type -->
                                     <div class="col-md-3">
@@ -145,14 +137,12 @@
                                                 optionLabel="expenseType" (onChange)="onchangeexpnes($event, i)"
                                                 placeholder="Please select expense item" formControlName="item_expense"
                                                 class="form-select custom-select"></p-select>
-
                                         </div>
                                         <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
                                             class="error-msg">
                                             <div class="error-msg"
-                                                *ngIf="item.get('item_expense')?.errors?.['required']"> Expense
-                                                Type is required</div>
-
+                                                *ngIf="item.get('item_expense')?.errors?.['required']">
+                                                Expense Type is required</div>
                                         </div>
                                     </div>
 
@@ -165,14 +155,11 @@
                                         <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
                                             class="error-msg">
                                             <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
-                                                Expense
-                                                item
-                                                is required</div>
+                                                Expense item is required</div>
                                             <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                                 Expense item must be less than 50 characters
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <!-- Expense Date -->
@@ -181,8 +168,6 @@
                                                 class="text-danger">*</span></label>
                                         <input type="date" class="form-control custom-input"
                                             formControlName="expense_Date" onkeypress="return false;" />
-
-
                                     </div>
 
                                     <!-- Amount -->
@@ -192,10 +177,8 @@
                                         <input class="form-control custom-input" formControlName="expense_Amount"
                                             placeholder="Please enter amount" type="text"
                                             (input)="onAmountInput($event)" maxlength="7" />
-
                                         <div *ngIf="item.get('expense_Amount')?.invalid && item.get('expense_Amount')?.touched"
                                             class="error-msg">
-
                                             <div class="error-msg"
                                                 *ngIf="item.get('expense_Amount')?.errors?.['required']">
                                                 Expense amount is required
@@ -317,16 +300,10 @@
                         </div>
                     </form>
                 </div>
-
-
             </div>
-
         </div>
-
     </div>
 </ng-template>
-
-
 
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
@@ -335,7 +312,6 @@
             <h5 class="modal-title" id="exampleModalLabel">
                 My Expense
             </h5>
-
             <button type="button" class="btn-close"
                 (click)="modal.dismiss(); openModal(updateModal); ExpenseViewURL = null; ExpenseImageUrl = null"
                 aria-label="Close"></button>
@@ -363,5 +339,4 @@
             <button type="submit" class="custom-btn btn-primary" (click)="removeExpense()">Yes</button>
         </div>
     </div>
-
 </ng-template>

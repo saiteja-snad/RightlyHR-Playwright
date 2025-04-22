@@ -40,6 +40,11 @@
                 <i class="bi bi-currency-dollar custom-icon"></i>PMS
             </li>
             }
+            @if(this.rbac.allowedToAccess('Pms.view')){
+                <li class="nav-item p-2 mb-3" [routerLink]="['/pmsconfiguration']" routerLinkActive="active-nav-link">
+                    <i class="bi bi-currency-dollar custom-icon"></i>PMS Configurations
+                </li>
+                }
             @if(this.rbac.allowedToAccess('Calendar.view')){
             <li class="nav-item p-2 mb-3" [routerLink]="['/calendar']" routerLinkActive="active-nav-link">
                 <i class="bi bi-currency-dollar custom-icon"></i>Calendar

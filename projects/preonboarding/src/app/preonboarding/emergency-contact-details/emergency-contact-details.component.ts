@@ -1,4 +1,4 @@
-import { Component, effect,Signal,signal} from '@angular/core';
+import { Component, effect, signal} from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
@@ -12,9 +12,11 @@ import { IphoneNumberData } from '../../models/mobilenumber.model';
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { PopupService } from '../../common-services/popup.service';
+import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+
 @Component({
   selector: 'app-emergency-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss'
 })
@@ -31,7 +33,6 @@ export class EmergencyContactDetailsComponent {
   selectedCountryCode1= signal<string>('');
   // mobile number2
   selectedDialCode1: any;
- 
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   spinnerLoader = false;
@@ -53,17 +54,22 @@ export class EmergencyContactDetailsComponent {
     }
 
   ngOnInit(): void {
+    const storedstep = 5;
+    localStorage.setItem('currentStep', storedstep.toString());
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
     this.getRelation();
     this.getempdate();
     this.initializeForm();
   }
+
   navigateNext() {
     this.router.navigate(['/experience-details']);
   }
+
   navigatePrevious(){
     this.router.navigate(['/education-details']);
   }
+  
   loading: boolean = true;
   getempdate() {
     let employeeId = parseInt(this.prosempdata.employeeId);
@@ -81,6 +87,7 @@ export class EmergencyContactDetailsComponent {
       }
     })
   }
+
   getRelation() {
     this.subscription = this.http.getData("PreonboardingRelationShip").subscribe({
       next: (data: any) => {
@@ -136,15 +143,11 @@ export class EmergencyContactDetailsComponent {
       this.empdata.emergencycode1= this.selectedCountryCode1(),
       this.empdata.emergencyNumber1= formEmployeeData.contact2.mobile,
       this.empdata.relationship1= formEmployeeData.contact2.relationship
-      
-      console.log(this.empdata);
       this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
           console.log(data);
           if (data.statusCode === 409) {
-           
             this.openPopup.openError(`${data.message}`);
-            
           }
           else if (data.statusCode === 200) { 
             this.navigateNext();

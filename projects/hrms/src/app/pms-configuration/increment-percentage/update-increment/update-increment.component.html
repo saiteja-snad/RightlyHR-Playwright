@@ -16,7 +16,7 @@
               <label for="reviewcycle" class="form-label custom-label">Review Cycle Name<span class="text-danger">*</span></label>
               <p-select [disabled]="true"  [options]="reviewCycleDropDownData" optionValue="id" optionLabel="reviewCycleName" [filter]="true"
               id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel" [(ngModel)]="UpdateIncrementalpercentage.reviewCycleId" 
-              filterBy="item_text" [showClear]="true" placeholder="Please Select Review Cycle Name" class="form-select w-100" (onChange)="getReviewCycledataById()">
+              filterBy="item_text" [showClear]="true" placeholder="Please Select Review Cycle Name" class="form-select w-100">
               </p-select>
               
               <small class="text-danger"

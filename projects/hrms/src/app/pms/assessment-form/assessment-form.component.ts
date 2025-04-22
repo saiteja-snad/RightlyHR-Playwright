@@ -145,7 +145,7 @@ export class AssessmentFormComponent {
   }
 
   cancle() {
-    this.router.navigate(['/pms/my-performance-review']);
+    this.router.navigate(['/pms/myPerformance']);
   }
   //function to open the model popup
   openconfirmationModel(content: any) {

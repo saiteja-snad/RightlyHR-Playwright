@@ -11,6 +11,7 @@ import { IAllFormsData, IDynamicForm } from '../../../Interfaces/dynamic-forms.m
 import { IJob } from '../../../Interfaces/letters-model';
 import { SearchFormPipe } from "../search-form.pipe";
 import { OpenModalService } from '../../../services/open-modal.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-active-forms',
@@ -21,7 +22,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
     TranslateModule,
     FormsModule,
     SearchFormPipe,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './active-forms.component.html',
   styleUrl: './active-forms.component.scss',
 })
@@ -38,6 +40,7 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
   searchValue: any;
   formStatus = 'Draft';
   empinfo = {} as IJob;
+  loader = false;
 
   constructor(
     private fb: FormBuilder,
@@ -79,19 +82,8 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
   openmodal(content: any) {
     this.modalService.open(content, { centered: true });
   }
-  openSuccessModal() {
-    // Check if formStatus is 'Draft' and set the success message
-    this.successMessage = 'Form inactivated successfully';
-
-    // Open the modal with the success message
-    this.openModal(this.successModal, { centered: true });
-
-    // Automatically dismiss the modal after 1 second
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 1000);
-  }
   getAllFormDetails() {
+    this.loader = true;
     this.http
       .getData('Form/getAllFormDetails')
       .pipe(takeUntil(this.destroy$))
@@ -100,6 +92,10 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
           this.allFormsDetails = (data as IAllFormsData[]).filter(
             (form) => form.status === 'active'
           );
+          this.loader = false;
+        },error: (err) => {
+          this.allFormsDetails = [];
+          this.loader = false;
         },
       });
   }
@@ -320,8 +316,7 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
     this.updateDetails.formHeaderId = this.updateForm.value.formHeaderId;
     this.updateDetails.createdBy = this.updateForm.value.createdBy;
     this.updateDetails.updatedBy = this.updateDetails.employeeId;
-    this.updateDetails.ratingScaleRange =
-      this.updateForm.value.ratingScaleRange;
+    this.updateDetails.ratingScaleRange = this.updateForm.value.ratingScaleRange;
     this.updateDetails.status = 'inactive';
     this.updateDetails.moduleId = this.updateForm.value.moduleId;
     this.updateDetails.overAllRating = this.updateForm.value.overAllRating;

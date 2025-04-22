@@ -89,6 +89,17 @@ body {
     background-color: var(--body-bg-color);
 }
 
+.component-data-content{
+    padding: 0rem 3rem;
+
+    .custom-main-sub-content {
+        width: 100%;
+        height: calc(100dvh - 22rem);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+}
+
 // headings
 .component-header {
     font-family: var(--font-family);

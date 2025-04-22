@@ -4,7 +4,7 @@ import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validat
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment.dev';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import { IWfhReportRequest } from '../../../Interfaces/reports.model';
+import { IInactiveReportRequest, IWfhReportRequest } from '../../../Interfaces/reports.model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
@@ -14,12 +14,13 @@ import dayjs from 'dayjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-inactive-employee-report',
   imports: [CommonModule,
     FormsModule,
-    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,],
+    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './inactive-employee-report.component.html',
   styleUrl: './inactive-employee-report.component.scss'
 })
@@ -92,7 +93,7 @@ export class InactiveEmployeeReportComponent {
   ngOnInit(): void {
     this.initializeForm();
     this.loggedInUser = this.authService.getToken();
-    this.getInactiveEmployeeReports();
+    // this.getInactiveEmployeeReports();
     this.getEmployeeId();
     this.getTeam();
   }
@@ -100,41 +101,10 @@ export class InactiveEmployeeReportComponent {
   initializeForm(){
     this.inactiveReportForm = this.fb.group({
       employee: [null, Validators.required],
-      manager: [null, Validators.required],
+      manager: [null],
       month: [''],
       dateRange: [null]
     });
-  }
-  onEmployeeChange(event: any) {
-    const selected = JSON.parse(event.target.value);
-    this.selectedEmployeeId = selected.fusionEmployeeId;
-    this.isFilterGiveninactive = true;
-  }
-
-  canGenerateOrExport(): boolean {
-    return !!(
-      this.selectedEmployeeId ||
-      this.selectedWfhManager ||
-      this.selectedDateRange
-    );
-  }
-
-  selectInactiveManager(manager: { id: string; name: string }): void {
-    this.isFilterGiveninactive = true;
-    console.log('selectManager method has been called with manager:', manager);
-    console.log('selectManager called with:', manager); // Add this line
-    this.selectedWfhManager = manager.name;
-    console.log('Selected Leave Manager:', this.selectedWfhManager);
-    this.closeWfhDropdown(); // Close dropdown after selection
-  }
-  closeWfhDropdown(): void {
-    this.isDropdownOpenwfh = false;
-  }
-
-  onMonthChangeInactive(event: Event): void {
-    this.isFilterGiveninactive = true;
-    this.selectedMonth =(event.target as HTMLSelectElement).value;
-    console.log('Selected Date:', this.selectedMonth);
   }
 
   getEmployeeId() {
@@ -145,7 +115,6 @@ export class InactiveEmployeeReportComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          // this.employeeiddetails = data as IemployeeDetails[];
 
           console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
@@ -160,10 +129,14 @@ export class InactiveEmployeeReportComponent {
               }${employee.lastName}`,
             };
           });
-          this.employeeiddetails = employeedata.filter((element: any) => {
+          const filteredEmployees = employeedata.filter((element: any) => {
             return element.employeeId != loggedInUser.employeeId;
           });
-          // this.employeeiddetailsauthorityName = data as IemployeeDetails[];
+
+          this.employeeiddetails = [
+            { fullName: 'All Employees', employeeId: 'all' },
+            ...filteredEmployees
+          ];
         },
         error: (reason: any) => {
           console.log(reason);
@@ -198,110 +171,79 @@ export class InactiveEmployeeReportComponent {
       });
   }
 
-  //method to get All the reports
-  getInactiveEmployeeReports() {
-    this.isLoading = true;
-    const request: IWfhReportRequest = {
-      // FusionEmpId: this.selectedEmployeeId,
-      // TeamManagerName: this.selectedWfhManager,
-      // StartDate: this.wfhDateRange?.startDate,
-      // EndDate: this.wfhDateRange?.endDate,
-      // Worked_Month: this.selectedMonth
-    };
-    this.subscription = this.reportsService.getInactiveReports(request).subscribe({
-      next: (res: any) => {
-        if (res) {
-          this.employeeMasterData = res;
-          // this.maxPageNumber = res.maxPageNumber;
-          this.isLoading = false;
-        }
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-      complete: () => {},
-    });
-  }
+  // //method to get All the reports
+  // getInactiveEmployeeReports() {
+  //   this.isLoading = true;
+  //   const request: IWfhReportRequest = {
+  //     // FusionEmpId: this.selectedEmployeeId,
+  //     // TeamManagerName: this.selectedWfhManager,
+  //     // StartDate: this.wfhDateRange?.startDate,
+  //     // EndDate: this.wfhDateRange?.endDate,
+  //     // Worked_Month: this.selectedMonth
+  //   };
+  //   this.subscription = this.reportsService.getInactiveReports(request).subscribe({
+  //     next: (res: any) => {
+  //       if (res) {
+  //         this.employeeMasterData = res;
+  //         // this.maxPageNumber = res.maxPageNumber;
+  //         this.isLoading = false;
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //     },
+  //     complete: () => {},
+  //   });
+  // }
 
   generateInactiveReport(): void {
+    const formValue = this.inactiveReportForm.value;
+    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    // Check if no filter is provided
     const noFilterProvided =
-      !this.selectedEmployeeId &&
+      !formValue.employee &&
       this.searchTerm !== 'All Employees' &&
-      !this.selectedDate &&
-      (!this.selectedDateRange ||
-        (!this.selectedDateRange.startDate &&
-          !this.selectedDateRange.endDate)) &&
-      !this.selectedMonth &&
-      !this.selectedWfhManager;
-
+      !formValue.dateRange?.startDate &&
+      !formValue.dateRange?.endDate &&
+      !formValue.month &&
+      !formValue.manager;
+  
     if (noFilterProvided) {
-      const modalElement = document.getElementById('entitled');
-      if (modalElement) {
-        modalElement.classList.add('show');
-        modalElement.style.display = 'block';
-      }
+      this.filteredInactiveRecord = [];
       return;
     }
-    const params = new URLSearchParams();
-
-    if (this.selectedEmployeeId !== null) {
-      params.append('FusionEmpId', this.selectedEmployeeId.toString());
+  
+    const request: IInactiveReportRequest = {};
+  
+    if (!isAllEmployeesSelected) {
+    // Employee filter
+    if (formValue.employee?.fusionEmpId) {
+      request.FusionEmpId = formValue.employee.fusionEmpId;
     }
-
-    if (
-      this.selectedDateRange &&
-      this.selectedDateRange.startDate &&
-      this.selectedDateRange.endDate
-    ) {
-      const startDate = this.parseDate(this.selectedDateRange.startDate);
-      const endDate = this.parseDate(this.selectedDateRange.endDate);
-      params.append('StartDate', this.formatDate(startDate));
-      params.append('EndDate', this.formatDate(endDate));
+  
+    // Month filter
+    if (formValue.month) {
+      request.Month = formValue.month;
     }
-
-    if (this.selectedMonth !== null) {
-      params.append('Worked_Month', this.selectedMonth.toString());
+  
+    // Manager full name
+    if (formValue.manager) {
+      const fullName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
+        .filter(Boolean)
+        .join(' ');
+      request.TeamManagerName = fullName;
     }
-
-    if (this.selectedWfhManager) {
-      params.append('TeamManagerName', this.selectedWfhManager);
     }
-
-    const endpoint = params.toString()
-      ? `Reports/Inactive_Employee_Reports?${params.toString()}`
-      : 'Reports/Inactive_Employee_Reports';
-    console.log('Fetching data from endpoint:', endpoint);
-
-    this.http.getData(endpoint).subscribe({
-      next: (data: any) => {
-        this.filteredInactiveRecord = data;
-        if (data.length === 0) {
-          // Check if the data is empty
-          const modalElement = document.getElementById('entitled');
-          if (modalElement) {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-          }
-        } else {
-          this.filteredInactiveRecord = data;
-          console.log(
-            'Fetched inactive employee Record for selected parameters:',
-            this.filteredInactiveRecord
-          );
-        }
+    // Call service with the constructed request
+    this.reportsService.getInactiveReports(request).subscribe({
+      next: (response: any) => {
+        this.filteredInactiveRecord = response ?? [];
       },
-      error: (error: any) => {
-        console.error(
-          'Error fetching Inactive employee records for selected parameters',
-          error
-        );
+      error: (error) => {
+        console.error('Error fetching Inactive Employee records', error);
+        this.filteredInactiveRecord = [];
       },
     });
-  }
-
-  isDateRangeSelected(): boolean {
-    const range = this.inactiveReportForm.get('dateRange')?.value;
-    return !!(range?.startDate || range?.endDate);
   }
 
   formatDate(date: Date): string {
@@ -311,46 +253,6 @@ export class InactiveEmployeeReportComponent {
     return date instanceof Date ? date : new Date(date);
   }
 
-  WfhtoggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  WfhfilterEmployees() {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredWfhEmployees = [...this.uniqueEmployees];
-      return;
-    }
-
-    this.filteredWfhEmployees = this.uniqueEmployees.filter(
-      (emp) =>
-        emp.fusionEmpId.toString().includes(term) ||
-        emp.employeeName.toLowerCase().includes(term)
-    );
-  }
-
-  selectInactiveEmployee(employee: any) {
-    this.isFilterGiveninactive = true;
-    // event.stopPropagation();
-    if (!employee) {
-      this.selectedEmployeeId = null;
-      this.searchTerm = 'All Employees';
-    } else {
-      this.selectedEmployeeId = employee.fusionEmpId;
-      this.searchTerm = `${employee.fusionEmpId} - ${employee.employeeName}`;
-    }
-
-    this.filteredInactiveRecord = [];
-    this.isDropdownOpen = false;
-
-    console.log('Selected Employee:', this.searchTerm);
-  }
-
-  getFullName(manager: any): string {
-    return `${manager.firstName} ${
-      manager.middleName ? manager.middleName + ' ' : ''
-    }${manager.lastName}`;
-  }
   exportToExcelInactive(): void {
     // Define header mappings
     const HEADER_MAPPINGS: { [key: string]: string } = {

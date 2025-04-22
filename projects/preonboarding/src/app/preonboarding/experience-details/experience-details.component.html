@@ -1,24 +1,30 @@
 <div class="custom-main-component-container">
-    @if (getempexpdata.length > 0) {
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="component-header">Experience Details</div>
-        <div>
-            <button class="custom-btn btn-primary px-5" (click)="openExperience()">Add</button>
-        </div>
+    <div class="my-3">
+        <app-detailed-step-progressbar />
     </div>
-    }
 
-    <!--Education place holder-->
-    @if(getempexpdata.length <= 0){ 
-        <div class="placeholder-container">
-        <div>
+    <div class="component-data-content">
+        @if (getempexpdata.length > 0) {
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="component-header">Experience Details</div>
             <div>
-                <img src="/images/education-placeholder.png" alt="placeholder Image" class="place-holder-image mb-4">
-                <p class="placeholder-text mb-5">Please provide experience details</p>
                 <button class="custom-btn btn-primary px-5" (click)="openExperience()">Add</button>
             </div>
         </div>
-        </div>
+        }
+
+        <!--Education place holder-->
+        @if(getempexpdata.length <= 0){ 
+            <div class="placeholder-container">
+            <div>
+                <div>
+                    <img src="/images/education-placeholder.png" alt="placeholder Image"
+                        class="place-holder-image mb-4">
+                    <p class="placeholder-text mb-5">Please provide experience details</p>
+                    <button class="custom-btn btn-primary px-5" (click)="openExperience()">Add</button>
+                </div>
+            </div>
+    </div>
     }
 
     <!--Experience Details Table-->
@@ -56,8 +62,10 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                <li><a class="dropdown-item" (click)="openUpdate(exp)"><i class="bi bi-pencil me-2"></i>Update</a></li>
-                                <li><a class="dropdown-item" (click)="openDelete(exp)"><i class="bi bi-trash3 me-2"></i>Delete</a></li>
+                                <li><a class="dropdown-item" (click)="openUpdate(exp)"><i
+                                            class="bi bi-pencil me-2"></i>Update</a></li>
+                                <li><a class="dropdown-item" (click)="openDelete(exp)"><i
+                                            class="bi bi-trash3 me-2"></i>Delete</a></li>
                             </ul>
                         </div>
                     </td>
@@ -67,12 +75,15 @@
     </div>
     }
     <div class="footer-btn-content d-flex justify-content-between gap-3 pt-4">
-        <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigateemergency()"> Emergency Details</button>
+        <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigateemergency()"> Emergency
+            Details</button>
         <!-- <button class="btn  btn-outline-primary rounded-pill pt-2 pb-2 ps-5 pe-5"  (click)="navigatePrevious()">Emergency Details</button> -->
-        <button *ngIf="this.prosempdata.experienceType=='Trainee' && getempexpdata.length<=0" class="custom-btn btn-primary px-5" (click)=" navigateNext()">
+        <button *ngIf="this.prosempdata.experienceType=='Trainee' && getempexpdata.length<=0"
+            class="custom-btn btn-primary px-5" (click)=" navigateNext()">
             Skip & continue
         </button>
-        <button *ngIf="this.prosempdata.experienceType=='Trainee' && getempexpdata.length>0" class="custom-btn btn-primary px-5" (click)=" navigateNext()">
+        <button *ngIf="this.prosempdata.experienceType=='Trainee' && getempexpdata.length>0"
+            class="custom-btn btn-primary px-5" (click)=" navigateNext()">
             Next
         </button>
         <button *ngIf="this.prosempdata.experienceType=='Fresher' && getempexpdata.length<=0 "
@@ -84,6 +95,7 @@
             Next
         </button>
     </div>
+</div>
 </div>
 
 <!--Offer letter accept popup-->

@@ -1,0 +1,65 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <p class="component-header mb-0">It Support</p>
+      </div>
+     
+        <div>
+          <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)"><i
+              class="bi bi-plus me-2"></i>Add  Ticket</button>
+        </div>
+      
+    </div>
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Expense Title</th>
+                    <th>Expense Date</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <!-- <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
+                  lit data
+                </ng-container> -->
+                <!-- No Data Found Template -->
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td>
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+    </div>
+
+
+  
+  
+  </div>
+
+
+
+
+  <ng-template #addtickets let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Add Tickets </p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <!-- fromdata -->
+
+        </div>
+
+    </div>
+</ng-template>

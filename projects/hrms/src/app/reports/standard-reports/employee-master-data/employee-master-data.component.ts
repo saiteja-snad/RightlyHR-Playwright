@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgxDaterangepickerBootstrapDirective, NgxDaterangepickerBootstrapComponent } from "ngx-daterangepicker-bootstrap";
+import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootstrap";
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
@@ -10,22 +10,18 @@ import { IemployeeDetails } from '../../../Interfaces/job-model';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
-
+import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 @Component({
   selector: 'app-employee-master-data',
-  imports: [
-    NgxDaterangepickerBootstrapDirective,
-    FormsModule,
-    DateformatPipe
-],
+  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss'
 })
-export class EmployeeMasterDataComponent implements OnInit,OnDestroy {
 
+export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
-  subscription!:Subscription
-  loggedInUser={} as IemployeeDetails
+  subscription!: Subscription
+  loggedInUser = {} as IemployeeDetails
   isLoading: boolean = false;
   selectedEmployeeStatus: string | undefined = undefined;
   selectedBranchLocation: string | undefined = undefined;
@@ -50,11 +46,7 @@ export class EmployeeMasterDataComponent implements OnInit,OnDestroy {
     clearLabel: 'Clear', // could be rtl
   };
 
-  constructor(
-    private authService:AuthService,
-    private reportsService:ReportsService
-  ){ }
-
+  constructor(private authService: AuthService, private reportsService: ReportsService) { }
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
@@ -62,45 +54,33 @@ export class EmployeeMasterDataComponent implements OnInit,OnDestroy {
   }
 
   //method to get All the reports
-getStandardReports() {
-  this.isLoading = true;
-  
-  const request:IStandardReportRequest = {
-    employeeStatus: this.selectedEmployeeStatus,
-    dateRange: this.empMasterDataDOJDateRange ? this.empMasterDataDOJDateRange : undefined ,
-    selectedBranchLocation: this.selectedBranchLocation,
-    selectedJobLocation: this.selectedJobLocation,
-    selectedJobSubLocation: this.selectedJobSubLocation,
-  };
-  
-  
-  this.subscription = this.reportsService.getStandardReports(request)
-    .subscribe({
+  getStandardReports() {
+    this.isLoading = true;
+    const request: IStandardReportRequest = {
+      employeeStatus: this.selectedEmployeeStatus,
+      dateRange: this.empMasterDataDOJDateRange ? this.empMasterDataDOJDateRange : undefined,
+      selectedBranchLocation: this.selectedBranchLocation,
+      selectedJobLocation: this.selectedJobLocation,
+      selectedJobSubLocation: this.selectedJobSubLocation,
+    };
+    this.subscription = this.reportsService.getStandardReports(request).subscribe({
       next: (res: any) => {
         if (res) {
           this.employeeMasterData = res.standardReports;
-         // this.maxPageNumber = res.maxPageNumber;
-          console.log(this.employeeMasterData);
+          // this.maxPageNumber = res.maxPageNumber;
           this.isLoading = false;
         }
       },
       error: (err: any) => {
         console.log(err);
       },
-      complete: () => {},
+      complete: () => { },
     });
-}
-
-
-
-
-
-
+  }
 
   ngOnDestroy(): void {
-    if(this.subscription) {
+    if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
-
 }

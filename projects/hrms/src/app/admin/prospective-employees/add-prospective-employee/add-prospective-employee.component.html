@@ -109,7 +109,7 @@
                         <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
                             placeholder="Select Sub Location" class="form-select custom-select" id="sublocation"
                             name="sublocation" (change)="onClickValue()" formControlName="subLocation" required>
-                            <option [ngValue]="undefined">{{'Select Sub Location'|translate}}</option>
+                           s
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('subLocation')?.invalid && employeeForm.get('subLocation')?.touched"

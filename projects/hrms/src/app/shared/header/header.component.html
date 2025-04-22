@@ -17,16 +17,22 @@
                 <div *ngIf="isActive('personalinfo')">
                     <app-personalinfo-header-tabs />
                 </div>
+                <div *ngIf="isActive('/it-support')">
+                    <app-itsuporrt-header-tabs />
+                </div>
                 <div *ngIf="isActive('settings')">
                     <app-settings-main-header-tabs/>
                 </div>
                 <div *ngIf="isActive('/reports')">
                     <app-reports-main-tabs/>
                 </div>
-            </div>
-            <div *ngIf="isActive('pms')">
-                <app-pms-tabs/>
-            </div>
+                <div *ngIf="isActive('/pms')">
+                    <app-pms-tabs/>
+                </div>
+                <div *ngIf="isActive('pmsconfiguration')">
+                    <app-pms-settings-tabs/>
+                </div>
+            </div> 
         </div>
 
         <div class="d-flex right-content">

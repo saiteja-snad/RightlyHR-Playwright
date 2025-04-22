@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IAddress, IJobDetails, Iofferletter } from '../../models/offer-letter.model';
-import { of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../http-services/http.service';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import moment from 'moment';
 import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import jsPDF from 'jspdf';
@@ -40,8 +40,8 @@ export class OfferLetterComponent implements OnInit {
   rejectForm!: FormGroup;
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
-  updateempdata={} as any;
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder,private confiramtionpopups:PopupService) { }
+  updateempdata = {} as any;
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService) { }
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -55,13 +55,13 @@ export class OfferLetterComponent implements OnInit {
     this.getAuthorityDetails();
     this.initializeRejectForm();
   }
+
   // Prospective Employee Data
   getprospectivempdata() {
     let employeeId = parseInt(this.prosempdata.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.updateempdata=data
+        this.updateempdata = data;
       },
       error: (reason: any) => {
         console.log(reason);
@@ -89,11 +89,11 @@ export class OfferLetterComponent implements OnInit {
     return data;
   }
 
-  openAccept(){
+  openAccept() {
     this.modalService.open(this.acceptpopup, { centered: true });
   }
-  
-  openReject(){
+
+  openReject() {
     this.modalService.open(this.rejectpopup, { centered: true });
   }
 
@@ -202,7 +202,7 @@ export class OfferLetterComponent implements OnInit {
     this.router.navigate(['/login'])
   }
 
-  closeModal(){
+  closeModal() {
     this.modalService.dismissAll();
   }
 
@@ -215,11 +215,11 @@ export class OfferLetterComponent implements OnInit {
       next: (data: any) => {
         console.log(data);
         this.loadingcircle = false;
-      this.confiramtionpopups.openSuccess('Offer Letter Rejected Successfully');
-      this.modalService.dismissAll();
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 300); // Adjust delay if needed
+        this.confiramtionpopups.openSuccess('Offer Letter Rejected Successfully');
+        this.modalService.dismissAll();
+        setTimeout(() => {
+          this.router.navigate(['']);
+        }, 300); // Adjust delay if needed
       },
       error: (err: any) => {
         console.log(err);
@@ -400,7 +400,6 @@ export class OfferLetterComponent implements OnInit {
   getOfferDetailsByOfferId(offerId: number) {
     this.subscription = this.http.getData(`PreonboardingOfferLetter/getbyid/${offerId}`).subscribe({
       next: (respone) => {
-        console.log(respone);
         if (respone) {
           this.updatedOfferLetterDetails = respone as Iofferletter;
         }
@@ -416,7 +415,6 @@ export class OfferLetterComponent implements OnInit {
     let EmployeeId = Employee.employeeId;
     this.subscription = this.http.getData(`PreonboardingJobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.jobDeatils = data as IJobDetails[];
         let res = data[0];
         this.jobDeatils = res;
@@ -456,11 +454,10 @@ export class OfferLetterComponent implements OnInit {
   updateOfferDetailsforAccept(updatedData: Iofferletter) {
     this.subscription = this.http.postData('PreonboardingOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
-        console.log(respone);
         this.modalService.dismissAll();
-          this.confiramtionpopups.openSuccess('Offer Letter Accepted Successfully');
-          this.loadingcircle = false;
-          this.getOfferLetterDetails();
+        this.confiramtionpopups.openSuccess('Offer Letter Accepted Successfully');
+        this.loadingcircle = false;
+        this.getOfferLetterDetails();
       },
       error: (err) => {
         console.log(err);
@@ -505,14 +502,12 @@ export class OfferLetterComponent implements OnInit {
     const blob = pdf.output('blob');
     //creating form file to upload into AZure
     let d: Date = new Date();
-    const file = new File([blob], fileName, {
-      type: 'application/pdf',
-    });
+    const file = new File([blob], fileName, { type: 'application/pdf' });
     this.generatedfile = file;
-    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile,offerUpdateDetails);
+    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile, offerUpdateDetails);
   }
   //to store file to the azure and return to the url
-  private offerletterUpload(empId: number, file: File,offerUpdateDetails: Iofferletter) {
+  private offerletterUpload(empId: number, file: File, offerUpdateDetails: Iofferletter) {
     let filePath = `/FusionDocuments/Employee Documents/Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
@@ -524,7 +519,6 @@ export class OfferLetterComponent implements OnInit {
       },
       error: (reason: any) => {
         console.log(reason);
-        alert('file upload  is failed');
       },
     });
   }
@@ -535,7 +529,6 @@ export class OfferLetterComponent implements OnInit {
       next: (res: any) => {
         let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
         let blob: Blob = res.body as Blob;
-        console.log(fileName);
         let a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
         let filename = fileurl.split('/')[fileurl.split('/').length - 1];

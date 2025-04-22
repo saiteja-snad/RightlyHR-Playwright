@@ -109,7 +109,7 @@
                                            @if(item.duration.totalDuration!='00:00:00' && 
                                             ( (item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && (item.duration.totalDuration|tohours)< shiftDetails.fullDayMinHrs) 
                                            &&currentMonth==selectedMonth&&this.rbac.allowedToAccess('Attendance Regularization Button.view')){
-                                            <a class="ms-2" (click)="openModal(raiseregularization)"><u>Regularization</u> </a>                 
+                                            <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>                 
                                            }
                                     </td>
                                     <td>
@@ -179,8 +179,8 @@
                         <div class="col-md-12 mb-3">
                             <label for="Date" class="form-label custom-label mb-2">Date<span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="permissionDate"  id="Date"
-                                onkeydown="return false" placeholder="Select Date" />
+                            <input type="text" class="form-control custom-input" formControlName="permissionDate"  id="Date"
+                                (keydown)="false" placeholder="Select Date"  />
                                 <div *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid" class="error-msg">
                                     Permission Date is required.
                                   </div>

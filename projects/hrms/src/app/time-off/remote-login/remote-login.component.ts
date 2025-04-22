@@ -229,8 +229,6 @@ export class RemoteLoginComponent {
             ...status,
             remote: true,
           }));
-     
-
           //write a signal to trigger the get all count in the side bar
         },
         error: (err: any) => {

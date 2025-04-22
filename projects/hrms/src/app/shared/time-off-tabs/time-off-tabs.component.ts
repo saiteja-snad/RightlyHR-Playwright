@@ -25,8 +25,8 @@ export class TimeOffTabsComponent implements OnInit{
  allowedWfh = this.empinfo.allowedWfh;
   navTabs: any[] = [
     { label: 'Time-Off', link: '/time-off/leaves/waiting-for-approval',permission: { feature: 'Timeoff Tab', action: 'view' } },
-    ...(this.allowedWfh ? [{ label: 'WFH', link: '/time-off/wfh/waiting-for-approval', permission: { feature: 'Workfromhome Tab', action: 'view' } }] : []),
-    ...(!this.allowedWfh ?[ {label:'Remote Login',link:'/time-off/remote',permission: { feature: 'Remote Login Tab', action: 'view' }}]:[]),
+    ...(!this.allowedWfh ? [{ label: 'WFH', link: '/time-off/wfh/waiting-for-approval', permission: { feature: 'Workfromhome Tab', action: 'view' } }] : []),
+    ...(this.allowedWfh ?[ {label:'Remote Login',link:'/time-off/remote',permission: { feature: 'Remote Login Tab', action: 'view' }}]:[]),
     { label: 'Comp-Off', link: '/time-off/comp-off/waiting-for-approval', permission: { feature: 'Compoff Tab', action: 'view' }},
     { label: 'Permissions', link: '/time-off/premissions/waiting-for-approval',permission: { feature: 'Permissions Tab', action: 'view' } },
     { label: 'Regularization', link: '/time-off/regularization/waiting-for-approval',permission: { feature: 'Regularization Tab', action: 'view' } },

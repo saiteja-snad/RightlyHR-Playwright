@@ -58,7 +58,7 @@
                     <ul class="dropdown-menu custom-dropdown-menu">
                       <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item"><i
                             class="bi bi-pencil me-2"></i>Update</a></li>
-                      <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item"><i
+                      <li (click)="openmodal(deleteconformation)"><a class="dropdown-item"><i
                             class="bi bi-trash3 me-2"></i>Delete</a></li>
                     </ul>
                   </div>
@@ -179,9 +179,13 @@
           </div>
           <div class="col-md-12 mb-3">
             <label for="file" class="form-label custom-label mb-2">Attachment</label>
-            <input type="file" class="form-control custom-input" id="file" formControlName="imageUrl">
+            <input type="file" class="form-control custom-input" id="file" (change)="onFileSelected($event)" formControlName="imageUrl">
             <div *ngIf="selectedImagePreview" class="my-2 text-wrap w-100 text-truncate">
               <b>{{ selectedImagePreview }}</b>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
+                  The file size should be less than 25MB.</p>
+              </div>
             </div>
           </div>
         </div>

@@ -42,7 +42,7 @@ export class AddEventComponent implements OnInit {
       eventDate: ['', [Validators.required, this.futureDateValidator()]],
       eventTitle: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
       eventMessage: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/), Validators.maxLength(250)]],
-      imageUrl: [null]
+      imageUrl: ['']
     });
   }
   onFileSelected(event: any) {

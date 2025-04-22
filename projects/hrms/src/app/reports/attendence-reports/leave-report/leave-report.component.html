@@ -1,0 +1,149 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!--header-->
+        <div class="component-header">Reports</div>
+<!-- Search Employee ID or Name -->
+        <div class="d-flex gap-3">
+            <div class="d-flex align-items-center gap-2">
+                @if (isLeaveTabActive) {
+                <div class="custom-dropdown" #dropdown (click)="LeavetoggleDropdown()">
+                    <input type="text" class="form-select" [(ngModel)]="searchTerm" style="cursor: pointer;"
+                        placeholder="Search Employee ID or Name" (input)="LeavefilterEmployees()">
+
+                    <ul class="dropdown-menu px-2" [class.show]="isDropdownOpen"
+                        style="cursor: pointer;width: 17%; max-height:50vh;overflow-y: auto;">
+
+                        <li (click)="selectLeaveEmployee(null, $event)">All Employees</li>
+
+                        @for (employee of filteredLeaveEmployees; track employee.fusionEmpId) {
+                        <li (click)="selectLeaveEmployee(employee, $event)" style="white-space: nowrap;">
+                            {{ employee.fusionEmpId }} - {{ employee.employeeName }}
+                        </li>
+                        }
+                    </ul>
+                </div>
+                }
+            </div>
+            <!-- Select Leave Category -->
+            <div class="d-flex align-items-center gap-2">
+                @if (isLeaveTabActive) {
+                <select id="leavecategoryDropdown" class="form-select"
+                    style="width: 230px; margin-left: 1%; cursor: pointer;" (change)="onLeaveChangeLeave($event)">
+                    <option value="" disabled selected>Select Leave Category</option>
+
+                    @for (category of uniqueLeaveCategory; track category) {
+                    <option [value]="category">
+                        {{ category }}
+                    </option>
+                    }
+                </select>
+                }
+
+            </div>
+                <!-- Date of Joining -->
+                <div class="d-flex align-items-center gap-2">
+                    <label class="custom-label text-nowrap">Date of Joining</label>
+                    <div>
+                        <input type="text" name="empMasterDataDateRange" ngxDaterangepickerBootstrap [autoApply]="true"
+                            readonly placeholder="Please Select Date of Joining" [ranges]="ranges"
+                            [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+                            [(ngModel)]="empMasterDataDOJDateRange" class="form-control custom-input" />
+                    </div>
+                </div>
+            <!--search Team Manager  -->
+            @if (isLeaveTabActive) {
+                <div class="position-relative" #leavedropdown style="width: 234px; margin-left: 1%;">
+                  <input
+                    type="text"
+                    class="form-select"
+                    placeholder="Search Team Manager"
+                    [(ngModel)]="selectedLeaveManager"
+                    (input)="filterleaveManagers($event)"
+                    (click)="toggleLeaveManagerDropdown()"
+                    style="cursor: pointer;"
+                  >
+              
+                  @if (isDropdownOpenleave) {
+                    <ul
+                      class="dropdown-menu show px-2"
+                      style="width: 100%; max-height: 200px; overflow-y: auto; position: absolute; z-index: 1000;"
+                    >
+                      @for (manager of filteredLeaveManagers; track manager.id) {
+                        <li
+                          (click)="selectLeaveManager(manager)"
+                          style="cursor: pointer; white-space: nowrap;"
+                        >
+                          {{ manager.id }} - {{ manager.name }}
+                        </li>
+                      }
+                    </ul>
+                  }
+                </div>
+              }
+          
+
+            <div class="d-flex gap-2">
+                <button (click)="getAttendanceReports()" class="custom-btn btn-secondary">Generate</button>
+                <button [disabled]="this.filteredLeaveRecord.length === 0"
+                    class="custom-btn btn-primary" (click)="exportToExcelLeave()">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <app-attandace-report-tabs />
+    </div>
+
+    <!-- @if(isLoading){
+
+    }
+    @else { -->
+    <div class="custom-table-content">
+        <table id="employeeMasterData" class="content w-100">
+            <thead>
+                <tr>
+                    <th>EmployeeID</th>
+                    <th>EmployeeName</th>
+                    <th>Department</th>
+                    <th>TeamManager</th>
+                    <th>Location</th>
+                    <th>SubLocation</th>
+                    <th>Shift</th>
+                    <th>LeaveType</th>
+                    <th>LeaveStartDate</th>
+                    <th>LeaveEndDate</th>
+                    <th>Availed</th>
+                    <th>AppliedDate</th>
+                    <th>Days</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- @if(filteredLeaveRecord.length === 0){
+                <tr>
+                    <td>No records found</td>
+                </tr>
+                }
+                @else { -->
+                @for (record of filteredLeaveRecord; track $index) {
+                <tr>
+                    <td>{{record.fusionEmpId}}</td>
+                    <td>{{record.employeeName}}</td>
+                    <td>{{record.department}}</td>
+                    <td>{{record.teamManagerName}}</td>
+                    <td>{{record.location}}</td>
+                    <td>{{record.subLocation}}</td>
+                    <td>{{record.shift}}</td>
+                    <td>{{record.leaveType}}</td>
+                    <td>{{record.startdate |dateformat}}</td>
+                    <td>{{record.enddate|dateformat}}</td>
+                    <td>{{record.days}}</td>
+                    <td>{{record.availed}}</td>
+                    <td>{{record.appliedDate|dateformat}}</td>
+                </tr>
+                }
+                <!-- } -->
+            </tbody>
+        </table>
+    </div>
+    <!-- } -->
+</div>

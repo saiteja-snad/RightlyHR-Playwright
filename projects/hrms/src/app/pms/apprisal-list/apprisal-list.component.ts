@@ -192,7 +192,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   // }
 
   onReviewCycleChange(selectedValue: any): void {
-    this.dependentdropdowns.get('promoted')?.reset();
+    // this.dependentdropdowns.get('promoted')?.reset();
   
     const selectedId = selectedValue.value;
     if (!selectedId) {
@@ -271,7 +271,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       page: this.page,
       pageSize: this.pageSize,
       reviewcycleid: reviewCycleId,
-      promotion: this.promoted || '',
+      promotion: this.promoted?.value || '',
     };
   }
   
@@ -282,7 +282,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize,
-      promotion: this.promoted.value,
+      promotion: this.promoted?.value,
     };
     this.getEmployeesOfTheReviewCycle(params);
   }

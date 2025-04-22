@@ -1,4 +1,4 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container mt-3"  *ngIf="this.rbac.allowedToAccess('Recall Tab.view')">
     <div>
         <!--Input search-->
         <div class="input-group custom-search mb-4">
@@ -28,7 +28,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                  @if (rbac.allowedToAccess('Recall Tab.view')) {
+                 
                     @if(((recall_For_Your_role_Details | async) ?? []).length > 0) {
 
                     <tr *ngFor="let item of recall_For_Your_role_Details|async">
@@ -136,7 +136,7 @@
                         </td>
                     </tr>
                     }
-                  }
+                  
                 </tbody>
             </table>
         </div>

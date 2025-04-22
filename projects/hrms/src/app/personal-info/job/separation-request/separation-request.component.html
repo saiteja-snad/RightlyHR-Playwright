@@ -64,7 +64,7 @@
           </td>
           <td>
             @if (item.recallStatus) {
-              @if (item.recallStatus?.toLowerCase() == 'recalled') {
+              @if (item.recallStatus.toLowerCase() == 'recalled') {
                 {{ item.requestType }}
               }
               {{ item.recallStatus }}

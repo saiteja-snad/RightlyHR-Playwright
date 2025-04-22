@@ -52,7 +52,10 @@
                             <ng-template #fusionid> - </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.firstName;else fistname"> </span>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}
+                           
+                            <span *ngIf="item.firstName;else fistname"> </span>
+                            <a class="select-item cursor" (click)="select(item)">
+                            {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
                             <ng-template #fistname> - </ng-template>
                         </td>
                         <td>

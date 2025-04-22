@@ -32,12 +32,13 @@ export class AssetsManagmentComponent {
   isToggledWarranty = false;
   empinfo: any
   assetForm!: FormGroup;
-  searchQuery=''
+  searchQuery = ''
   assetSubCategory: any = [];
   assetCategorys: ICategory[] = [];
   vendor: IVendor[] = [];
-    assetslist = new BehaviorSubject<IAsset[]>([])
+  assetslist = new BehaviorSubject<IAsset[]>([])
   locationfromdata!: FormGroup
+  Status=''
   page = 1;
   pageSize = 10;
   collectionSize = 100;
@@ -52,6 +53,7 @@ export class AssetsManagmentComponent {
     this.getvendor()
     this.intiallocationandsublocation()
     this.getcount(null, null)
+    this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
     this.navTabs = [
       { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject },
       { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject },
@@ -311,14 +313,14 @@ export class AssetsManagmentComponent {
     return this.assetCategorys.find((t) => parseInt(data) === t.id)?.name
   }
 
-  
+
   onLocationChange() {
     const locationId = this.locationfromdata.get('locationId')?.value;
     this.getSubLocationByidfliters(locationId);
-    localStorage.setItem('locationId', JSON.stringify(locationId))
+    localStorage.setItem('assetlocationId', JSON.stringify(locationId))
     console.log(locationId)
     this.locationfromdata.get('subLocationId')?.reset()
-    localStorage.setItem('sublocationId', JSON.stringify(null))
+    localStorage.setItem('assetsublocationId', JSON.stringify(null))
     this.http.assetsUpdateLocationId(locationId);
 
     this.getcount(locationId, null)
@@ -329,7 +331,7 @@ export class AssetsManagmentComponent {
 
     if (subLocationId) {
       const loctionid = this.locationfromdata.get('locationId')?.value
-      localStorage.setItem('sublocationId', JSON.stringify(subLocationId))
+      localStorage.setItem('assetsublocationId', JSON.stringify(subLocationId))
       this.http.assetsUpdateLocationId(loctionid);
       console.log(loctionid)
       this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId, null);
@@ -338,12 +340,12 @@ export class AssetsManagmentComponent {
     }
     else {
       const loctionid = this.locationfromdata.get('locationId')?.value
-      localStorage.setItem('sublocationId', JSON.stringify(subLocationId))
+      localStorage.setItem('assetsublocationId', JSON.stringify(subLocationId))
       this.http.assetsUpdateLocationId(loctionid);
     }
   }
-  
- getSubLocationByidfliters(selectedLocation: any): void {
+
+  getSubLocationByidfliters(selectedLocation: any): void {
     this.locationfromdata.get('subLocationId')?.enable();
 
     this.subscription = this.http
@@ -361,12 +363,13 @@ export class AssetsManagmentComponent {
           console.error('Error fetching sub-location data:', err);
           this.subLocationsDropdown = [];
           this.locationfromdata.patchValue({ subLocationId: null });
+          window.location.reload()
           this.locationfromdata.reset()
           this.http.assetslocationIdSubject.complete()
           this.locationfromdata.get('subLocationId')?.disable()
-          localStorage.removeItem('sublocationId');
-          localStorage.removeItem('locationId');
-          
+          localStorage.removeItem('assetsublocationId');
+          localStorage.removeItem('assetlocationId');
+
         }
       });
   }
@@ -550,10 +553,10 @@ export class AssetsManagmentComponent {
     this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.page, params.pageSize, params.searchQuery).subscribe({
       next: (res: any) => {
         this.assetslist.next(res.items);
-    
+
       },
       error: (error: any) => {
-    
+
 
       }
     });
@@ -595,8 +598,8 @@ export class AssetsManagmentComponent {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-    localStorage.removeItem('locationId');
-    localStorage.removeItem('sublocationId');
+    localStorage.removeItem('assetlocationId');
+    localStorage.removeItem('assetsublocationId');
     this.locationfromdata.reset()
     this.http.assetslocationIdSubject.complete()
   }

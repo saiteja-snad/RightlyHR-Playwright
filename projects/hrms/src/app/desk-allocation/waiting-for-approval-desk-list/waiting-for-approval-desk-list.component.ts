@@ -6,10 +6,12 @@ import { Router } from '@angular/router';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-waiting-for-approval-desk-list',
-  imports: [NoDataFoundComponent,CommonModule,FormsModule],
+  imports: [NoDataFoundComponent,CommonModule,FormsModule, PaginatorModule, DropdownModule],
   templateUrl: './waiting-for-approval-desk-list.component.html',
   styleUrl: './waiting-for-approval-desk-list.component.scss'
 })
@@ -23,9 +25,15 @@ export class WaitingForApprovalDeskListComponent {
   deskid: any
   selectedAsset!: any
   deskiteamid: any;
-  page = 1;
-  pageSize = 10;
-  collectionSize = 100;
+  first:any = 1;
+  rows:any = 10;
+  totalRecords = 100;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
   destroy$: Subject<boolean> = new Subject<boolean>();
   loading = false
   selectedSubLocationId: any
@@ -53,7 +61,7 @@ export class WaitingForApprovalDeskListComponent {
         this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
 
-        this.getAllDesks(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
+        this.getAllDesks(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
         this.getcount(Value, this.selectedSubLocationId, this.Status);   
       }
     })
@@ -63,8 +71,8 @@ export class WaitingForApprovalDeskListComponent {
   getAllDesks(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Deskstatus: any) {
 
     const params = {
-      page: pagenum,
-      pageSize: pagesize,
+      first: pagenum,
+      rows: pagesize,
       locationid: locationid,
       sublocationid: sublocationid,
       status: Deskstatus,
@@ -72,7 +80,7 @@ export class WaitingForApprovalDeskListComponent {
 
     };
     this.loading = true
-    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.page, params.pageSize, params.searchQuery)
+    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -81,7 +89,7 @@ export class WaitingForApprovalDeskListComponent {
           this.desklist.next(data.items)
           this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.Status)
           // Update the collection size (total records) for pagination
-          this.collectionSize = data.totalRecords;
+          this.totalRecords = data.totalRecords;
 
         },
         error: (error: any) => {
@@ -96,16 +104,26 @@ export class WaitingForApprovalDeskListComponent {
 
       });
   }
+  onRowsChange() {
+    this.first = 1;
+    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
 
+  }
+  onPageChange(event: PaginatorState) {
+    this.first = event.first;
+    this.rows = event.rows;
+    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+
+  }
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
 
-      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
 
     if (event === '') {
-      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
   }
 

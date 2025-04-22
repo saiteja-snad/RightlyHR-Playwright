@@ -5,14 +5,14 @@
         </div>
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addremote)" 
-           ><i class="bi bi-plus me-2"></i>Request Remote</button>
+           ><i class="bi bi-plus me-2"></i>Request Remote Login</button>
         </div>
     </div>
 
     <div class="employee-fields-main-container d-flex gap-3 w-100">
-        <div class="custom-component-left-content">
+        <!-- <div class="custom-component-left-content">
             <app-remote-tabs/>
-        </div>
+        </div> -->
         <div class="custom-setting-right-content p-3">
             <router-outlet/>
         </div>
@@ -24,7 +24,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Request Remote</p>
+                <p class="popup-heading mb-0">Request For Remote Login</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();addremoteForm.reset();availablebalance = 0"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>

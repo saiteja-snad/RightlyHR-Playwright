@@ -58,7 +58,7 @@
                     <ul class="dropdown-menu custom-dropdown-menu">
                       <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item"><i
                             class="bi bi-pencil me-2"></i>Update</a></li>
-                      <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item"><i
+                      <li (click)="openmodal(deleteconformation)"><a class="dropdown-item"><i
                             class="bi bi-trash3 me-2"></i>Delete</a></li>
                     </ul>
                   </div>
@@ -153,13 +153,9 @@
             <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
                 class="text-danger">*</span></label>
             <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
-            <div *ngIf="customEventupdateForm.get('eventDate')?.touched" class="error-msg">
-              Event date is required.
-            </div>
-            <div
-              *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
-              class="error-msg">
-              Event date cannot be in the past.
+            <div *ngIf="customEventupdateForm.get('required')?.touched" class="error-msg">Event date is required.</div>
+            <div *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
+                class="error-msg">Event date cannot be in the past.
             </div>
           </div>
           <div class="col-md-6 mb-3">
@@ -183,15 +179,19 @@
           </div>
           <div class="col-md-12 mb-3">
             <label for="file" class="form-label custom-label mb-2">Attachment</label>
-            <input type="file" class="form-control custom-input" id="file" formControlName="imageUrl">
+            <input type="file" class="form-control custom-input" id="file" (change)="onFileSelected($event)" formControlName="imageUrl">
             <div *ngIf="selectedImagePreview" class="my-2 text-wrap w-100 text-truncate">
               <b>{{ selectedImagePreview }}</b>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
+                  The file size should be less than 25MB.</p>
+              </div>
             </div>
           </div>
         </div>
         <div class="d-flex justify-content-end gap-3 mt-4">
           <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="customEventupdateForm || spinnerLoader">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="customEventupdateForm.invalid || spinnerLoader">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading' | translate}}...</span>

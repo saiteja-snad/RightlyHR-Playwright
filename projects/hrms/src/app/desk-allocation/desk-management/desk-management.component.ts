@@ -124,6 +124,7 @@ export class DeskManagementComponent {
           this.subLocationsDropdown = [];
           this.locationfromdata.reset()
           this.locationfromdata.get('subLocationId')?.disable()
+          window.location.reload()
           localStorage.removeItem('locationId');
           localStorage.removeItem('sublocationId');
           this.http.desklocationIdSubject.complete()

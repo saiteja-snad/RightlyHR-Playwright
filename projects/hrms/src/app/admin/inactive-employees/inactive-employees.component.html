@@ -43,13 +43,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let act of InActive | inactiveEmployee : searchValue" class="hover" (click)="select(act)">
+          <tr *ngFor="let act of InActive | inactiveEmployee : searchValue">
             <td> <span *ngIf="act.fusionEmpId;else fusionid">{{act.fusionEmpId}} </span>
               <ng-template #fusionid>
                 -
               </ng-template>
             </td>
-            <td><span *ngIf="act.firstName;else firstname"> {{act.firstName}} {{act.middleName}} {{act.lastName}}</span>
+            <td><span *ngIf="act.firstName;else firstname"> <a class="select-item cursor" (click)="select(act)">
+              {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a></span>
               <ng-template #firstname>
                 -
               </ng-template>

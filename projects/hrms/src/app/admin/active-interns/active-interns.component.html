@@ -29,14 +29,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let act of TraineeActive | activeEmployee : searchValue" class="hover cursor" (click)="select(act)">
+                    <tr *ngFor="let act of TraineeActive | activeEmployee : searchValue">
           
                       <td>
                         <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span> 
                         <ng-template #fusionid>
                           -
                         </ng-template></td>
-                      <td> <span *ngIf="act.firstName;else fistname"> </span>{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}
+                      <td> <span *ngIf="act.firstName;else fistname"> </span><a class="select-item cursor" (click)="select(act)">
+                        {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
                         <ng-template #fistname>
                           -
                         </ng-template></td>

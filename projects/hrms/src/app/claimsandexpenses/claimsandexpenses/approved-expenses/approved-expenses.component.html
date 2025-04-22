@@ -1,10 +1,10 @@
-<div class="custom-main-component-container mt-4">
-  <div class="input-group custom-search mb-4">
+<div class="custom-main-component-container">
+  <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username" [(ngModel)]="searchTerm"  
-    (ngModelChange)="getexpensesheaderbyemployeeid()"
-        aria-describedby="basic-addon1">
-</div>
+    <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
+      [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
+  </div>
+
   <div class="custom-table-content">
     <table class="w-100">
       <thead>
@@ -19,40 +19,38 @@
       </thead>
       <tbody>
         <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-        <tr *ngFor="let exp of expenesEmplyeedata | async">
-          <td>{{ exp.expenses_Title }}</td>
-          <td>{{ exp.applied_date | dateformat }}</td>
-          <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-          <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
-          </td>
-          <td class="text-center">
-            <div class="dropdown">
-              <a data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical"></i>
-              </a>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
-                      class="bi bi-paperclip me-2"></i>View</a></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-      </ng-container>
-      <!-- No Data Found Template -->
-      <ng-template #noDataTemplate>
-          <tr>
-              <td>
-                  <app-no-data-found />
-              </td>
+          <tr *ngFor="let exp of expenesEmplyeedata | async">
+            <td>{{ exp.expenses_Title }}</td>
+            <td>{{ exp.applied_date | dateformat }}</td>
+            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+            <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
+            </td>
+            <td class="text-center">
+              <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
+                        class="bi bi-paperclip me-2"></i>View</a></li>
+                </ul>
+              </div>
+            </td>
           </tr>
-      </ng-template>
+        </ng-container>
+        <!-- No Data Found Template -->
+        <ng-template #noDataTemplate>
+          <tr>
+            <td>
+              <app-no-data-found />
+            </td>
+          </tr>
+        </ng-template>
 
       </tbody>
     </table>
   </div>
 </div>
-
-
 
 <ng-template #viewDetailsModal let-modal>
   <div class="custom-main-popup-container">
@@ -64,10 +62,9 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-
     <div class="d-flex gap-5 p-3">
-      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams?.expenses_Title }}</b>
-      <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams?.approverEmail }}</b>
+      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
+      <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
     </div>
     <div class="custom-table">
       <table class="w-100">
@@ -88,11 +85,9 @@
             <td>{{ item?.item_Name }}</td>
             <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
             <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
-          
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
             <td>
-
               <div class="d-flex gap-2">
                 <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
                   <i class="bi bi-download me-2"></i>Download
@@ -101,7 +96,6 @@
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>
-
             </td>
           </tr>
         </tbody>
@@ -109,8 +103,6 @@
     </div>
   </div>
 </ng-template>
-
-
 
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
@@ -124,7 +116,7 @@
             src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="modal-body" style="text-align: center">
+    <div class="modal-body text-center">
       <p *ngIf="!ExpenseImageUrl; else imageView">
         <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
       </p>

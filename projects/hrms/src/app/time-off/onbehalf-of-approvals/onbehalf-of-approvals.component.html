@@ -1,83 +1,62 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <p class="component-header cursor mb-0">On Behalf Of Approvals</p>
     </div>
+  
     <div class="d-flex gap-3 align-items-center">
       <label class="employee-label" for="teamManager">Select Employee</label>
       <div class="custom-p-select-content">
-        <select
-            class="form-control custom-input"
-            id="teamManager"
-            (change)="Onclick(getParsedEmployee($event))">
-            <option value="" disabled selected>Select Employee</option>
-            <option *ngFor="let employee of employeeiddetails" [value]="employee | json">
-              {{ employee.fullName }}
-            </option>
+        <select class="form-control custom-input" id="teamManager" (change)="Onclick(getParsedEmployee($event))">
+          <option value="" disabled selected>Select Employee</option>
+          <option *ngFor="let employee of employeeiddetails" [value]="employee | json">
+            {{ employee.fullName }}
+          </option>
         </select>
       </div>
     </div>
   </div>
+
+  <div class="employee-fields-main-container d-flex gap-3 w-100" *ngIf="employeedata">
+    <div class="custom-component-left-content">
+      <div class="component-side-nav-tabs-container py-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeTab === 'timeOff'" (click)="setActiveTab('timeOff')">Time Off ({{
+              timeOffCount }})</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeTab === 'compOff'" (click)="setActiveTab('compOff')">Comp Off ({{
+              compOffCount }})</a>
+          </li>
+    
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeTab === 'wfh'" (click)="setActiveTab('wfh')">WFH ({{ wfhCount }})</a>
+          </li>
+    
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeTab === 'permissions'"
+              (click)="setActiveTab('permissions')">Permissions ({{ permissionsCount }})</a>
+          </li>
+        </ul>
+      </div>
+    </div>
   
-
-  <!-- Tabs only show if employee is selected -->
-  <div *ngIf="employeedata">
-    <ul class="nav nav-tabs border-bottom mt-3" role="tablist">
-      <li class="nav-item today-nav-item" role="presentation">
-        <button
-          class="nav-link today-nav-link"
-          [class.active]="activeTab === 'timeOff'"
-          (click)="setActiveTab('timeOff')"
-        >
-          Time Off ({{ timeOffCount }})
-        </button>
-      </li>
-      <li class="nav-item today-nav-item" role="presentation">
-        <button
-          class="nav-link today-nav-link"
-          [class.active]="activeTab === 'compOff'"
-          (click)="setActiveTab('compOff')"
-        >
-          Comp Off ({{ compOffCount }})
-        </button>
-      </li>
-      <li class="nav-item today-nav-item" role="presentation">
-        <button
-          class="nav-link today-nav-link"
-          [class.active]="activeTab === 'wfh'"
-          (click)="setActiveTab('wfh')"
-        >
-          WFH ({{ wfhCount }})
-        </button>
-      </li>
-      <li class="nav-item today-nav-item" role="presentation">
-        <button
-          class="nav-link today-nav-link"
-          [class.active]="activeTab === 'permissions'"
-          (click)="setActiveTab('permissions')"
-        >
-          Permissions ({{ permissionsCount }})
-        </button>
-      </li>
-    </ul>
-
-    <div class="tab-content pt-2 border-top">
-      <div *ngIf="activeTab === 'timeOff'">
-        <app-time-off (dataEvent)="timeoff($event)"></app-time-off>
-      </div>
-      <div *ngIf="activeTab === 'compOff'">
-        <app-comp-off-entitlement (dataEvent)="compoff($event)"></app-comp-off-entitlement>
-      </div>
-      <div *ngIf="activeTab === 'wfh'">
-        <app-wfh (dataEvent)="wfhoff($event)"></app-wfh>
-      </div>
-      <div *ngIf="activeTab === 'permissions'">
-        <app-permissions (dataEvent)="permissionsoff($event)"></app-permissions>
+    <div class="custom-setting-right-content p-3">
+      <div class="tab-content">
+        <div *ngIf="activeTab === 'timeOff'">
+          <app-time-off (dataEvent)="timeoff($event)"></app-time-off>
+        </div>
+        <div *ngIf="activeTab === 'compOff'">
+          <app-comp-off-entitlement (dataEvent)="compoff($event)"></app-comp-off-entitlement>
+        </div>
+        <div *ngIf="activeTab === 'wfh'">
+          <app-wfh (dataEvent)="wfhoff($event)"></app-wfh>
+        </div>
+        <div *ngIf="activeTab === 'permissions'">
+          <app-permissions (dataEvent)="permissionsoff($event)"></app-permissions>
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- <div class="custom-setting-right-content p-3">
-    <router-outlet></router-outlet>
-  </div> -->
 </div>

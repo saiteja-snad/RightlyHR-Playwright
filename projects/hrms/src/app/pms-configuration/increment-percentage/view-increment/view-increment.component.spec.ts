@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SidenavComponent } from './sidenav.component';
+import { ViewIncrementComponent } from './view-increment.component';
 
-describe('SidenavComponent', () => {
-  let component: SidenavComponent;
-  let fixture: ComponentFixture<SidenavComponent>;
+describe('ViewIncrementComponent', () => {
+  let component: ViewIncrementComponent;
+  let fixture: ComponentFixture<ViewIncrementComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SidenavComponent]
+      imports: [ViewIncrementComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SidenavComponent);
+    fixture = TestBed.createComponent(ViewIncrementComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

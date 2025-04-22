@@ -19,7 +19,6 @@ export default [
             { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent) }
         ]
     },
-
     {
         path: 'job', children: [
             { path: '', redirectTo: 'pre-onboarding-details', pathMatch: 'full' },

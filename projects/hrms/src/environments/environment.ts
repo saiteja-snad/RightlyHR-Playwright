@@ -4,9 +4,9 @@ export const environment = {
     webSocketUrl: 'ws://localhost:44374',
     viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
     modules: [
-        { id: 18, moduleName: 'Probation' },
-        { id: 23, moduleName: 'PMS' } 
-    ],
+        { id: 20, moduleName: 'Probation' },
+        { id: 24, moduleName: 'PMS' }  
+      ],
 
 
     clientId: '9a09dcfb-a22f-4fdf-a014-38990e558d80',

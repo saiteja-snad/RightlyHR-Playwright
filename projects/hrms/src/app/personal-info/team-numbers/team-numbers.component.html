@@ -15,27 +15,23 @@
                     <th>Phone Number</th>
                     <th>Designation</th>
                     <th class="text-center">Action</th>
-
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let details of TeamMemberArray| searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','workEmail', 'contactnumber', 'jobRole']">
-                    <td class="center">{{details.fusionEmpId}}</td>
-                        <td class="center">{{details.firstName}} {{details.middleName}} {{details.lastName}}</td>
-                        <td class="center">{{details.workEmail}}</td>
-                        <td class="center">{{details.contactnumber}}</td>
-                        <td class="center">{{details.jobRole}}</td>
-                       
+                <tr
+                    *ngFor="let details of TeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','workEmail', 'contactnumber', 'jobRole']">
+                    <td>{{details.fusionEmpId}}</td>
+                    <td>{{details.firstName}} {{details.middleName}} {{details.lastName}}</td>
+                    <td>{{details.workEmail}}</td>
+                    <td>{{details.contactnumber}}</td>
+                    <td>{{details.jobRole}}</td>
                     <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu py-0">
-                                <li (click)="openModal(changermmodal)"><a class="dropdown-item"><i
-                                            class="bi bi-pencil me-2"></i>Change RM</a>
-                                </li>
-
+                                <li (click)="openModal(changermmodal)"><a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a></li>
                             </ul>
                         </div>
                     </td>
@@ -43,66 +39,36 @@
             </tbody>
         </table>
     </div>
-    <div class="pagination-content pt-2 w-100">
-        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-            <!-- Dropdown for Rows per Page -->
-            <div class="d-flex align-items-center gap-3 p-2">
-                <!-- Bootstrap Select -->
-                <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
-                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                    </option>
-                </select>
-                <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                    totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+</div>
+
+<ng-template #changermmodal let-modal>
+    <div class="custom-main-popup-container">
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Change RM</p>
             </div>
-    
-            <!-- Pagination -->
-            <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                (onPageChange)="onPageChange($event)"></p-paginator>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="rmForm" (ngSubmit)="updateRM()">
+            <div class="mb-3">
+                <label class="form-label custom-label mb-2">Select Reporting Manager<span class="text-danger">*</span>
+                </label>
+                <div class="custom-p-select-content">
+                    <p-select optionLabel="name" [options]="managers" placeholder="Select Reporting Manager"
+                        class="form-select custom-select" id="mReportingto" formControlName="mReportingto"
+                        (onChange)="onSelectManager($event)">
+                    </p-select>
+                </div>
+            </div>
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="rmForm.reset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
-
-        <ng-template #changermmodal let-modal>
-            <div class="custom-main-popup-container">
-                <div class="d-flex justify-content-between popup-header-border p-4">
-                    <div class="pt-2">
-                        <p class="popup-heading mb-0">Change RM</p>
-                    </div>
-                    <div>
-                        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-                    </div>
-                </div>
-                
-
-                
-                <div class="custom-main-popup-content p-4">
-                    <form [formGroup]="rmForm" (ngSubmit)="updateRM()">
-                        <div class="row">
-                          <div class="col-md-12 mb-3">
-                            <label class="form-label custom-label mb-2">
-                              Select Reporting Manager<span class="text-danger">*</span>
-                            </label>
-                            <div class="custom-p-select-content">
-                              <p-select optionLabel="name"
-                                        [options]="managers"
-                                        placeholder="Select Reporting Manager"
-                                        class="form-select custom-select"
-                                        id="mReportingto"
-                                        formControlName="mReportingto"
-                                        (onChange)="onSelectManager($event)">
-                              </p-select>
-                            </div>
-                          </div>
-                        </div>
-                      
-                        <div class="d-flex justify-content-end gap-3 mt-4">
-                          <button type="reset" class="custom-btn btn-secondary" (click)="rmForm.reset()">Close</button>
-                          <button type="submit" class="custom-btn btn-primary">Submit</button>
-                        </div>
-                      </form>
-                      
-                </div>
-            </div>
-        </ng-template>
-
-        <!-- (click)="modal.dismiss()" -->
+</ng-template>

@@ -1,12 +1,10 @@
 <div class="custom-main-component-container">
-    <div class="component-header my-4">
-        <span>Offer Letter</span>
-    </div>
-    <div class="card custom-main-sub-content p-5">
+    <div class="component-header mb-3">Offer Letter</div>
+    <div class="card custom-main-sub-content p-4">
         <div class="letter-data-content p-4">
             <div class="d-flex justify-content-center">
                 <div>
-                    <div class="letter-page-content my-4" id="pdfContent1">
+                    <div class="letter-page-content" id="pdfContent1">
                         <div class="letter-page-sub-content">
                             <br />
                             <div class="d-flex justify-content-end my-4">
@@ -119,7 +117,8 @@
                             <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
                         </div>
                     </div>
-                    <div class="letter-page-content my-4" id="pdfContent1">
+
+                    <div class="letter-page-content my-4" id="pdfContent2">
                         <div class="letter-page-sub-content">
                             <br />
                             <div class="d-flex justify-content-end my-4">
@@ -176,18 +175,16 @@
                             <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
                         </div>
                     </div>   
-                    <p class="error-msg family text-center mt-3">
-                        Note: This acknowledgment is system-generated
-                    </p>
+                    <p class="error-msg text-center">Note: This acknowledgment is system-generated</p>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
-       
-    <!-- <div class="justify-content-start"> -->
+        <!-- <div class="justify-content-start"> -->
         <button class="custom-btn btn-secondary rounded-pill px-5 justify-content-start"  (click)="navigatePrevious()">Onboarding Documents</button>
-    <!-- </div> -->
+         <!-- </div> -->
         @if(loadingcircle){
             <div *ngIf="loadingcircle" class="spinner-border text-primary me-4 mt-2" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -211,62 +208,39 @@
         @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
             <button class="btn btn-primary rounded-pill px-5" (click)="navigatefirst()">Close</button>
         }
-        
         @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
             <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
         }
     </div>
-
 </div>
-
 
 <!--Documents upload popup-->
 <ng-template #rejectpopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-container">
-            <form [formGroup]="rejectForm" (ngSubmit)="submitRejectReason(rejectForm)">
-                <div class="custom-main-popup-content p-4">
-                    <div class="py-4 text-center">
-                        <p class="confirmation-text">Are you sure you want to reject offer?</p>
-                    </div>
-                    <div class="mb-3">
-                        <label for="documentType" class="form-label custom-label mb-2">Enter reason<span class="error-msg">*</span></label>
-                        <textarea type="note" name="rejectReason" class="form-control custom-input" formControlName="rejectReason"
-                            placeholder="Please enter reject reason" maxlength="250" id="rejectReason"
-                            (keypress)="blockNonAlphabetic($event)" autocomplete="off" required></textarea>
-                        <div class="error-msg py-1" *ngIf="rejectForm.get('rejectReason')?.touched && rejectForm.get('rejectReason')?.invalid">
-                            <div *ngIf="rejectForm.get('rejectReason')?.hasError('required')">Reject reason is required</div>
-                        </div>
-                        <div class="count-text text-end w-100 py-1"><span>{{ rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
-                    </div>
-                    <div class="d-flex justify-content-end gap-3 pt-4">
-                        <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">Close</button>
-                        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">Submit</button>
-                    </div>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <form [formGroup]="rejectForm" (ngSubmit)="submitRejectReason(rejectForm)">
+            <div class="custom-main-popup-content p-4">
+                <div class="py-4 text-center">
+                    <p class="confirmation-text">Are you sure you want to reject offer?</p>
                 </div>
-            </form>
-        </div>
+                <div class="mb-3">
+                    <label for="documentType" class="form-label custom-label mb-2">Enter reason<span class="error-msg">*</span></label>
+                    <textarea type="note" name="rejectReason" class="form-control custom-input"
+                        formControlName="rejectReason" placeholder="Please enter reject reason" maxlength="250"
+                        id="rejectReason" (keypress)="blockNonAlphabetic($event)" autocomplete="off"
+                        required></textarea>
+                    <div class="error-msg py-1" *ngIf="rejectForm.get('rejectReason')?.touched && rejectForm.get('rejectReason')?.invalid">
+                        <div *ngIf="rejectForm.get('rejectReason')?.hasError('required')">Reject reason is required</div>
+                    </div>
+                    <div class="count-text text-end w-100 py-1"><span>{{ rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
+                </div>
+                <div class="d-flex justify-content-end gap-3 pt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">Submit</button>
+                </div>
+            </div>
+        </form>
     </div>
 </ng-template>
-<!-- Modal -->
-<!-- Modal -->
-<div class="modal" id="submittedreject" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body mt-4 text-center">
-                <img src="./assets/prerecruitment/Group 37269@2x.png" alt="icon" class="imggs" />
-                <h6 class="want mt-3 text-center">Submitted Successfully</h6>
-            </div>
-            <div class="mb-4 w-100 text-center">
-                <button type="button" class="btn save text-center py-2" data-bs-dismiss="modal" (click)="close()">
-                    Ok
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal end-->
 
 <ng-template #acceptpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>

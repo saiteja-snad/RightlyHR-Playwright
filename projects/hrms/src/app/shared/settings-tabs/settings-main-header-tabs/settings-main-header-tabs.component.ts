@@ -16,6 +16,6 @@ export class SettingsMainHeaderTabsComponent {
     { label: 'Roles', link: '/settings/roles-permissions' },
     { label: 'Time Off', link: '/settings/timeoff-configurations' },
     { label: 'Asset Configuration',link:'/settings/assets-configuration' },
-    { label: 'Dynamic Forms' }
+    { label: 'Dynamic Forms', link: '/settings/dynamic-forms' }
   ];
 }

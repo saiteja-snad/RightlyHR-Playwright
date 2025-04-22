@@ -1,5 +1,40 @@
 <div class="custom-main-component-container">
-    <div>
+    <div class="mb-3">
+        <button type="submit" class="custom-btn btn-primary" (click)="openModal(addExpensesmodal)"
+            *ngIf="!rbac.allowedToAccess('Expense Types Tab.Create')">{{'Add'|translate}}</button>
+    </div>
+
+    <div class="custom-table-content w-50">
+        <table class="w-100">
+            <thead>
+                <th>Expense Type</th>
+                <th>Actions</th>
+            </thead>
+            <tbody>
+                @if (!rbac.allowedToAccess('Expense Types Tab.View')) {}
+                <tr *ngFor="let exp of expense">
+                    <td>{{exp.expenseType}}</td>
+                    <td>
+                        <div class="d-flex gap-4">
+                            <!--Update-->
+                            <div>
+                                <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
+                            </div>
+                            <!--Delete-->
+                            <div>
+                                <a (click)="opendelete(deleteconformation,exp)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div><span class="component-sub-header">{{'Expenses Configuration'|translate}}</span></div>
@@ -43,8 +78,8 @@
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
+    
+
 <ng-template #addExpensesmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
@@ -72,7 +107,6 @@
                         Expense Type cannot exceed 50 characters
                     </div>
                 </div>
-
                 <div class="mb-3">
                     <label for="expensecode" class="form-label custom-label mb-2">
                         Expense Code <span class="text-danger">*</span>
@@ -85,7 +119,6 @@
                         Expense Code is required
                     </div>
                 </div>
-
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="button" class="custom-btn btn-secondary px-5 py-2"
                         (click)="expenseForm.reset();modal.dismiss()">Close</button>

@@ -14,9 +14,10 @@ import { IStandardReportRequest } from '../../../Interfaces/reports.model';
 import * as XLSX from "xlsx";
 import { IJob } from '../../../Interfaces/letters-model';
 import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-job-location-wise-data',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent],
   templateUrl: './job-location-wise-data.component.html',
   styleUrls: ['./job-location-wise-data.component.scss']
 })
@@ -36,7 +37,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
-    // this.handleFormValueChanges();
+    this.handleFormValueChanges();
     this.getStandardReports();
     this.getAllLocations();
   }
@@ -45,7 +46,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.locationReportsForm = this.fb.group({
       dateOfJoining: [null, Validators.required],
       location: ['', Validators.required],
-      subLocation: ['', Validators.required]
+      subLocation: [{value: '', disabled:true}, Validators.required]
     });
   }
 

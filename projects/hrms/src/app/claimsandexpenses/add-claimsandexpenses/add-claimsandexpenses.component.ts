@@ -313,6 +313,9 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
+            this.spinnerLoader=false
+          },  complete:()=> {
+            this.spinnerLoader=false
           }
         });
       } else {
@@ -324,13 +327,18 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
+              this.spinnerLoader=false
             }
           },
           error: (error: any) => {
             console.log("error" + error)
+            this.spinnerLoader=false
             this.conformationPopup.openErrorModal(error.error.message)
 
-          }
+          },
+          complete:()=> {
+            this.spinnerLoader=false
+          },
         });
       }
     } else {
@@ -401,7 +409,11 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-          }
+            this.saveasDraftloder=false
+          },
+          complete:()=> {
+            this.saveasDraftloder=false
+          },
         });
       } else {
         // No file to upload, directly post the payload
@@ -418,8 +430,12 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           error: (error: any) => {
             console.log("error" + error)
             this.conformationPopup.openErrorModal(error.error.message)
+            this.saveasDraftloder=false
 
-          }
+          },
+          complete:()=> {
+            this.saveasDraftloder=false
+          },
         });
       }
     } else {

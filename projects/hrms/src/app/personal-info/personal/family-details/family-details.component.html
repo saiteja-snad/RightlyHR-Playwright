@@ -1,12 +1,12 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div> <span class="family-sub-header">Family Details</span></div>
         @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective'
-        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+        && employedata.empstatus.toLowerCase() !== 'inactive' && employedata.empstatus.toLowerCase() !== 'trainee inactive')){
         <div class="custom-add-btn" (click)="openModal(addFamilyModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
         }
     </div>
-    <div class="custom-table-content mt-2">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
@@ -14,7 +14,8 @@
                     <th>Relationship</th>
                     <th>Date of Birth</th>
                     <th>Dependent</th>
-                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' 
+                    && employedata.empstatus.toLowerCase() !== 'inactive' && employedata.empstatus.toLowerCase() !== 'trainee inactive')){
                         <th class="text-center">Actions</th>
                     }
                 </tr>
@@ -26,10 +27,10 @@
                         <td>{{ familyDetail.memberName }}</td>
                         <td>{{ familyDetail.relationShipName }}</td>
                         <td>{{ familyDetail.dateOfBirth | dateformat }}</td>
-
                         <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
                         <td class="text-center">
-                            @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective'&& employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+                            @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' 
+                            && employedata.empstatus.toLowerCase() !== 'inactive' && employedata.empstatus.toLowerCase() !== 'trainee inactive')){
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -46,7 +47,8 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </div>}
+                            </div>
+                            }
                         </td>
                     </tr>
                 </ng-container>
@@ -182,8 +184,7 @@
                     <div class="col-md-6 mb-3">
                         <div class="d-flex align-items-center">
                             <div class="form-check form-switch" style="font-size: x-large;">
-                                <input class="form-check-input" type="checkbox" id="isDependentupdate"
-                                    formControlName="isDependentupdate">
+                                <input class="form-check-input" type="checkbox" id="isDependentupdate" formControlName="isDependentupdate">
                             </div>
                             <label for="isDependentupdate" class="form-label custom-label ms-2">Dependent</label>
                         </div>

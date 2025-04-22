@@ -119,4 +119,24 @@ export interface Branch {
   isDeleted: boolean;
   branchLocation1: string;
 }
-
+//attendance report
+export interface IAttendanceDetails{
+  selectedLeaveEmployeeId?: any;
+  selectedDateRange?: { startDate: Dayjs; endDate: Dayjs };
+  selectedMonth?: any;
+  selectedLeave?: any;
+  selectedLeaveManager?: any;
+}
+//leave summmery
+export interface ILeavesummery{
+  selectedEmployeeId?: any;
+  selectedLeave?: any;
+  selectedLeaveSummaryManager?: any;
+}
+//comp-off
+export interface ICompoffDetails{
+  selectedEmployeeId?: any;
+  selectedDateRange?: { startDate: Dayjs; endDate: Dayjs };
+  selectedMonth?: any;
+  selectedCompoffManager?: any;
+}

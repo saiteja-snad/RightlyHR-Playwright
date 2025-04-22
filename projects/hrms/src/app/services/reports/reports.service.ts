@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../http.service';
 import { HttpParams } from '@angular/common/http';
-import { IStandardReportRequest } from '../../Interfaces/reports.model';
+import { IAttendanceDetails, ICompoffDetails, ILeavesummery, IStandardReportRequest} from '../../Interfaces/reports.model';
 
 @Injectable({
   providedIn: 'root',
@@ -102,5 +102,103 @@ export class ReportsService {
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
+  }
+  //attendance report
+  getAttendanceReports(request: IAttendanceDetails) {
+    let params = new HttpParams();
+
+    if (request.selectedLeaveEmployeeId) {
+      params = params.set('FusionEmpId', request.selectedLeaveEmployeeId.toString());
+    }
+
+    if (request.selectedDateRange?.startDate && request.selectedDateRange?.endDate) {
+      params = params.append(
+        'StartDate',
+        request.selectedDateRange.startDate.format('YYYY-MM-DD')
+      );
+      params = params.append(
+        'EndDate',
+        request.selectedDateRange.endDate.format('YYYY-MM-DD')
+      );
+    }
+    if (request.selectedMonth ) {
+      params = params.append('WorkedMonth', request.selectedMonth);
+    }
+
+    if (request.selectedLeave ) {
+      params = params.append(
+        'LeaveName',
+        request.selectedLeave.toString()
+      );
+    }
+
+    if (request.selectedLeaveManager) {
+      params = params.append(
+        'teamManagerName',
+        request.selectedLeaveManager.toString()
+      );
+    }
+
+    return this.http.get('Reports/Leave_Reports', {
+      params,
+    });
+  }
+  //leave summery
+  getLeaveSummaryReport(request: ILeavesummery) {
+    let params = new HttpParams();
+
+    if (request.selectedEmployeeId) {
+      params = params.set('FusionEmpId', request.selectedEmployeeId.toString());
+    }
+
+    if (request.selectedLeave ) {
+      params = params.append(
+        'LeaveType',
+        request.selectedLeave.toString()
+      );
+    }
+
+    if (request.selectedLeaveSummaryManager) {
+      params = params.append(
+        'Team_Manager',
+        request.selectedLeaveSummaryManager.toString()
+      );
+    }
+
+    return this.http.get('Reports/LeaveSummaryReports', {
+      params,
+    });
+  }
+  //comp off
+  getcompOffReports(request: ICompoffDetails) {
+    let params = new HttpParams();
+
+    if (request.selectedEmployeeId) {
+      params = params.set('FusionEmpId', request.selectedEmployeeId.toString());
+    }
+    if (request.selectedDateRange?.startDate && request.selectedDateRange?.endDate) {
+      params = params.append(
+        'StartDate',
+        request.selectedDateRange.startDate.format('YYYY-MM-DD')
+      );
+      params = params.append(
+        'EndDate',
+        request.selectedDateRange.endDate.format('YYYY-MM-DD')
+      );
+    }
+    if (request.selectedMonth ) {
+      params = params.append('Worked_Month', request.selectedMonth);
+    }
+
+    if (request.selectedCompoffManager) {
+      params = params.append(
+        'Team_Manager',
+        request.selectedCompoffManager.toString()
+      );
+    }
+
+    return this.http.get('Reports/CompOffReports', {
+      params,
+    });
   }
 }

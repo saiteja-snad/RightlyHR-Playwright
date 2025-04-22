@@ -4,10 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-complete-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent],
   templateUrl: './complete-reviews.component.html',
   styleUrl: './complete-reviews.component.scss'
 })
@@ -62,6 +63,7 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
           }
         },
         error: (err) => {
+          this.dataload=false;
           console.error('Error fetching review cycles:', err);
         },
         complete: () => {

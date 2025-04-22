@@ -5,10 +5,11 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-pending-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent],
   templateUrl: './pending-reviews.component.html',
   styleUrl: './pending-reviews.component.scss'
 })
@@ -64,6 +65,7 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
           }
         },
         error: (err) => {
+          this.dataload=false;
           console.error('Error fetching review cycles:', err);
         },
         complete: () => {

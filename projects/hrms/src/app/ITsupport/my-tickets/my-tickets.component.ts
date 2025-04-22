@@ -24,6 +24,11 @@ export class MyTicketsComponent {
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   employeedetails: any = [];
+  ticketRaisedFor :any []=[];
+  allEmployeesself = [] as any [];
+  empdata = {} as any;
+  isColleagueSelected:boolean = true;
+  ticketEmpData = {} as any;
 
 
   constructor(
@@ -35,19 +40,79 @@ export class MyTicketsComponent {
   
 
   ngOnInit() {
+    this.ticketRaisedFor = [
+      { value: 'Self', label: 'Self' },
+      { value: 'Colleague', label: 'Colleague' }
+    ];
+    this.getSelfEmployee();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getuserticketsbyempid();
+   
 
     this.itSupportForm = this.fb.group({
-      employee: [null, Validators.required],
+      employee: ['', Validators.required],
       name: [null, Validators.required],
-      enddate: [null, Validators.required],
-      availing: [{value : '',disabled: true}, Validators.required], 
-      reason: ['', [Validators.required]]
+      email: [null, Validators.required],
+      phoneNumber: [null, Validators.required], 
+      deskdetails: ['', [Validators.required]],
+      department: ['', [Validators.required]],
+      team: ['', [Validators.required]],
+      type: ['', [Validators.required]],
+      priority: ['', [Validators.required]],
+      subject: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+
+
+
     });
   }
 
+
+  getSelfEmployee() {
+    this.subscription = this.http.getData('Employeedata/ActiveAllEmployees').subscribe({
+      next: (data: any) => {
+        this.allEmployeesself = data;
+        console.log(this.allEmployeesself);
+        //this.onTicketRaisedForChange("Self");
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      }
+    });
+ 
+  }
+
   
+  onTicketRaisedForChange(event: any) {
+    let value = event;
+    console.log(value);
+    if (value === "Self") {
+       
+        let empid = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}').employeeId;
+        this.empdata = this.allEmployeesself.find(employee => employee.employeeId == empid);
+        console.log(this.empdata);
+        if (this.empdata) {
+            this.ticketEmpData.EmployeeId = this.empdata.employeeId;
+            this.ticketEmpData.fusionEmpId = this.empdata.fusionEmpId;
+            this.ticketEmpData.name = this.empdata.firstName;
+            this.ticketEmpData.email = this.empdata.workEmail;
+            this.ticketEmpData.mobile_number = this.empdata.contactnumber;
+            this.ticketEmpData.deskId = this.empdata.deskId;
+
+        }
+        console.log(this.ticketEmpData);
+        this.isColleagueSelected = true; 
+    }
+    else {
+        this.ticketEmpData.EmployeeId = null;
+        this.ticketEmpData.fusionEmpId = null;
+        this.ticketEmpData.name = '';
+        this.ticketEmpData.email = '';
+        this.ticketEmpData.mobile_number = '';
+        this.ticketEmpData.deskId='';
+        this.isColleagueSelected = false; 
+    }
+ }
   
   
   getuserticketsbyempid(){
@@ -66,6 +131,7 @@ export class MyTicketsComponent {
   }
 
   onSubmit() {
+console.log(this.itSupportForm.value);
 
   }
 

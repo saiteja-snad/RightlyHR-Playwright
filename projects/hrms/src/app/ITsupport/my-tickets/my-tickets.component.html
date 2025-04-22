@@ -65,13 +65,9 @@
                         <label class="form-label custom-label mb-2">{{'Ticket Raised For' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
-                                optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
-                                formControlName="employee" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
-                                    }}</ng-template>
-                                <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
-                                    }}</ng-template>
+                            <p-select [options]="ticketRaisedFor" name="employee" (onChange)="onTicketRaisedForChange($event.value)"
+                                optionLabel="label" optionValue="label" placeholder="Please select"
+                                formControlName="employee" class="custom-select w-100">
                             </p-select>
                         </div>
                         <div *ngIf="itSupportForm.get('employee')?.invalid && itSupportForm.get('employee')?.touched">
@@ -143,11 +139,14 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <input type="text" class="form-control custom-input" formControlName="department"
-                        placeholder="Please enter department" onkeydown="return false;" />
-                      
-                    </div>
+                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                            formControlName="department" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                }}</ng-template>
+                        </p-select>
                     <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
                         <div class="error-msg">{{'Department is required' | translate}}</div>
                     </div>
@@ -156,28 +155,91 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Start Date'}}<span
-                                class="text-danger">*</span></label>
-                        <input type="text">
+                        <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
+                            class="text-danger">*</span></label>
+                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                            formControlName="team" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                }}</ng-template>
+                        </p-select>
+                    <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
+                        <div class="error-msg">{{'Team is required' | translate}}</div>
+                    </div>
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'End Date'}}<span
-                                class="text-danger">*</span></label>
-                        <input type="text">
+                        <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                            formControlName="type" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                }}</ng-template>
+                        </p-select>
+                      
+                    </div>
+                    <div *ngIf="itSupportForm.get('type')?.invalid && itSupportForm.get('type')?.touched">
+                        <div class="error-msg">{{'Type is required' | translate}}</div>
+                    </div>
 
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
+                            class="text-danger">*</span></label>
+                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                            formControlName="priority" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                }}</ng-template>
+                        </p-select>
+                    <div *ngIf="itSupportForm.get('priority')?.invalid && itSupportForm.get('priority')?.touched">
+                        <div class="error-msg">{{'Priority is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                            formControlName="subject" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                }}</ng-template>
+                        </p-select>
+                      
+                    </div>
+                    <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
+                        <div class="error-msg">{{'Subject is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Start Date'}}<span
-                                class="text-danger">*</span></label>
-                        <textarea type="text"></textarea>
+                        <label class="form-label custom-label mb-2">{{'Description'| translate}}<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" formControlName="description" placeholder="Please enter description"></textarea>
+                    </div>
+                    <div *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
+                        <div class="error-msg">{{'Description is required' | translate}}</div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="isLoading">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">
                             {{'Request'}}
                         </span>

@@ -15,6 +15,8 @@ import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootst
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment.dev';
+import { ILeavesummery } from '../../../Interfaces/reports.model';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 @Component({
   selector: 'app-leave-summary-report',
   imports: [
@@ -24,7 +26,7 @@ import { environment } from '../../../../environments/environment.dev';
     DropdownModule, 
     SelectModule, 
     TranslateModule, 
-    ReactiveFormsModule],
+    ReactiveFormsModule,NoDataFoundComponent],
   templateUrl: './leave-summary-report.component.html',
   styleUrl: './leave-summary-report.component.scss'
 })
@@ -42,7 +44,7 @@ export class LeaveSummaryReportComponent {
   selectedYear: string | null = null;
   uniqueLeaveCategory: string[] = [];
   years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
-  yearlyReportForm!: FormGroup;
+  lvSummeryReportForm!: FormGroup;
    empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   selectedDateRange: any;
   ranges: any = {
@@ -79,7 +81,7 @@ export class LeaveSummaryReportComponent {
   }
   
   initializeForm() {
-    this.yearlyReportForm = this.fb.group({
+    this.lvSummeryReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null, Validators.required],
       year: [''],
@@ -90,18 +92,41 @@ export class LeaveSummaryReportComponent {
   
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
-    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-      next: (data: any) => {
-        this.employeeiddetails = data
-          .filter((e: any) => e.employeeId !== loggedInUser.employeeId)
-          .map((e: any) => ({
-            ...e,
-            fullName: `${e.fusionEmployeeId ? e.fusionEmployeeId + ' - ' : ''}${e.firstName} ${e.middleName ? e.middleName + ' ' : ''}${e.lastName}`
-          }));
-      },
-      error: (reason: any) => console.log(reason),
-    });
+    this.subscription = this.http
+  
+      .getData('Employeedata/ActiveEmployees')
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+  
+          console.log('from wfh' + this.employeeiddetails);
+          const employeedata = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.fusionEmployeeId
+                  ? employee.fusionEmployeeId + ' - '
+                  : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
+          const filteredEmployees = employeedata.filter((element: any) => {
+            return element.employeeId != loggedInUser.employeeId;
+          });
+  
+          this.employeeiddetails = [
+            { fullName: 'All Employees', employeeId: 'all' },
+            ...filteredEmployees
+          ];
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
+  
   
   getTeam() {
     this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
@@ -175,30 +200,68 @@ export class LeaveSummaryReportComponent {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
-  generateYearlyReport(form: FormGroup): void {
-    const formData = form.value;
-    if (!this.selectedEmployeeId && !this.selectedWfhManager && !this.selectedYear && !this.selectedLeave) {
-      return;
-    }
-  
-    const params = new URLSearchParams();
-    if (this.selectedEmployeeId) params.append('FusionEmpId', this.selectedEmployeeId);
-    if (this.selectedLeave) params.append('LeaveType', this.selectedLeave);
-     if (this.selectedWfhManager) params.append('Team_Manager', this.selectedWfhManager);
-  
-    const endpoint = `Reports/LeaveSummaryReports${params.toString() ? '?' + params.toString() : ''}`;
-    this.http.getData(endpoint).subscribe({
-      next: (data: any) => {
-        this.filteredYearlyRecord = data;
-        if (data.length === 0) {
-          // show modal: no data
-        } else {
-          console.log('Fetched Yearly Record:', this.filteredYearlyRecord);
-        }
-      },
-      error: (error: any) => console.error('Error fetching Yearly records:', error)
-    });
-  }
+  leavesummeryReport(): void {
+   const formValue = this.lvSummeryReportForm.value;
+   const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+   // Check if no filter is provided
+   const noFilterProvided =
+     !formValue.employee &&
+     !formValue.manager &&
+     !formValue.leaveCategory &&
+     !formValue.year;
+ 
+   if (noFilterProvided) {
+     this.filteredYearlyRecord = [];
+     return;
+   }
+ 
+   const request: ILeavesummery = {};
+ 
+   if (!isAllEmployeesSelected) {
+   // Employee filter
+   if (formValue.employee?.fusionEmpId) {
+     request.FusionEmpId = formValue.employee.fusionEmpId;
+   }
+ 
+   // Manager full name
+   if (formValue.manager) {
+     const fullName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
+       .filter(Boolean)
+       .join(' ');
+     request.TeamManagerName = fullName;
+   }
+ 
+   // Leave category
+   if (formValue.leaveCategory) {
+     request.LeaveName = formValue.leaveCategory;
+   }
+ 
+   // Year
+   if (formValue.year) {
+     request.Year = formValue.year;
+   }
+   }
+   // Call service with the constructed request
+   this.reportsService.getLeaveSummaryReport(request).subscribe({
+     next: (data: any) => {
+       // Extract the year from startDate and add it to each record
+       this.filteredYearlyRecord = data.map((record: any) => {
+         const startDate = new Date(record.startDate);  // Assuming startDate is in a valid format
+         return {
+           ...record,
+           year: startDate.getFullYear()  // Add the year as a new field
+         };
+       });
+ 
+       if (this.filteredYearlyRecord.length === 0) {
+         // Show modal: no data
+       } else {
+         console.log('Fetched Yearly Record:', this.filteredYearlyRecord);
+       }
+     },
+     error: (error: any) => console.error('Error fetching Yearly records:', error),
+   });
+ }
     exportToExcelYearly(): void {
       // Define header mappings
       const HEADER_MAPPINGS: { [key: string]: string } = {
@@ -259,7 +322,7 @@ export class LeaveSummaryReportComponent {
       ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
   
       // Add WFH Report row
-      XLSX.utils.sheet_add_aoa(ws, [['YEARLY SUMMARY REPORT']], { origin: 'A1' });
+      XLSX.utils.sheet_add_aoa(ws, [['LEAVE SUMMARY REPORT']], { origin: 'A1' });
   
       // Add header row
       const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
@@ -295,7 +358,7 @@ export class LeaveSummaryReportComponent {
       // Generate Excel file and trigger download
       const wb: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Yearly Summary Report');
-      XLSX.writeFile(wb, 'Yearly_Summary_Report.xlsx');
+      XLSX.writeFile(wb, 'Leave_Summary_Report.xlsx');
     }
   
   

@@ -4,34 +4,25 @@
         <div class="component-header">Reports</div>
       
         <div>
-          <form [formGroup]="yearlyReportForm" (ngSubmit)="generateYearlyReport(yearlyReportForm)">
+          <form [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()">
             <div class="d-flex align-items-center gap-3">
       
               <!-- Employee -->
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
-                  <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName"
-                            [filter]="true" [showClear]="false" formControlName="employee" placeholder="Select Employee"
-                            (onChange)="selectYearlyEmployee($event.value, $event.originalEvent)">
-                    <ng-template #selectedItem let-selectedOption>
-                      {{ selectedOption.fullName }}
-                    </ng-template>
-                    <ng-template let-employee #item>
-                      {{ employee.fullName }}
-                    </ng-template>
+                  <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="false"
+                            formControlName="employee" placeholder="Select Employee" class="form-select custom-select">
+                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                    <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                   </p-select>
                 </div>
               </div>
-      
+             
               <!-- Team Manager -->
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
-                  <p-select [options]="teamdetails" optionLabel="firstName"
-                            [filter]="true" [showClear]="false"
-                            formControlName="manager"
-                            placeholder="Select Manager"
-                            class="form-select custom-select"
-                            (onChange)="selectYearlyManager($event.value)">
+                  <p-select [options]="teamdetails" [filter]="true" [showClear]="false" optionLabel="firstName" formControlName="manager"
+                            placeholder="Select Manager" class="form-select custom-select">
                     <ng-template #selectedItem let-selectedOption>
                       {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
                     </ng-template>
@@ -39,6 +30,15 @@
                       {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
                     </ng-template>
                   </p-select>
+                </div>
+              </div>
+      
+              <!-- Date Range -->
+              <div class="d-flex align-items-center gap-2">
+                <div>
+                  <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
+                         [locale]="localeOptions" [showClearButton]="true" placeholder="Please Select Date" formControlName="dateRange"
+                         [startKey]="'startDate'" [endKey]="'endDate'" readonly />
                 </div>
               </div>
       
@@ -54,23 +54,13 @@
                 </div>
               </div>
       
-              <!-- Year -->
-            <div class="d-flex align-items-center gap-2">
-                <!-- <label class="custom-label text-nowrap">Date of Joining<span class="text-danger">*</span></label> -->
-                <div>
-                  <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
-                    [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
-                    formControlName="worked_Date" [placeholder]="'Please Select Date of Joining'"
-                    class="form-control custom-input w-100" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
-                </div>
-              </div>
               <!-- Buttons -->
               <div class="d-flex gap-2">
-                <button type="submit" class="custom-btn btn-secondary" [disabled]="yearlyReportForm.invalid">
+                <button type="submit" class="custom-btn btn-secondary" [disabled]="LeaveReportForm.invalid">
                   Generate
                 </button>
                 <button type="button" class="custom-btn btn-primary"
-                        (click)="exportToExcelYearly()" [disabled]="yearlyReportForm.invalid">
+                        (click)="exportToExcelYearly()" [disabled]="LeaveReportForm.invalid">
                   Export
                 </button>
               </div>
@@ -110,7 +100,8 @@
             <tbody>
               @if (!filteredYearlyRecord || filteredYearlyRecord.length === 0) {
                 <tr>
-                  <td colspan="9" class="text-center">No records found</td>
+                  <td colspan="9" class="text-center">
+                    <app-no-data-found></app-no-data-found></td>
                 </tr>
               }
               @else {

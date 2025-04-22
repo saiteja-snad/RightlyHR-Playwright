@@ -15,6 +15,8 @@ import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment.dev';
 import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootstrap";
 import { Dayjs } from 'dayjs';
+import { ICompoffDetails } from '../../../Interfaces/reports.model';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-compoff-report',
@@ -26,7 +28,7 @@ import { Dayjs } from 'dayjs';
     DropdownModule, 
     SelectModule, 
     TranslateModule, 
-    ReactiveFormsModule],
+    ReactiveFormsModule,NoDataFoundComponent],
   templateUrl: './compoff-report.component.html',
   styleUrl: './compoff-report.component.scss'
 })
@@ -46,7 +48,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   selectedYear: string | null = null;
   uniqueLeaveCategory: string[] = [];
   years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
-  yearlyReportForm!: FormGroup;
+  compoffReportForm!: FormGroup;
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   selectedDateRange: any;
   ranges: any = {
@@ -82,10 +84,10 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   }
   
   initializeForm() {
-    this.yearlyReportForm = this.fb.group({
+    this.compoffReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null, Validators.required],
-      worked_Date: [null, Validators.required],
+      dateRange: [null, Validators.required],
       leaveCategory: [''],
       year: ['']
     });
@@ -93,19 +95,38 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
-    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-      next: (data: any) => {
-        this.employeeiddetails = data
-          .filter((e: any) => e.employeeId !== loggedInUser.employeeId)
-          .map((e: any) => ({
-            ...e,
-            fullName: `${e.fusionEmployeeId ? e.fusionEmployeeId + ' - ' : ''}${e.firstName} ${e.middleName ? e.middleName + ' ' : ''}${e.lastName}`
-          }));
-      },
-      error: (reason: any) => console.log(reason),
-    });
+    this.subscription = this.http
+
+      .getData('Employeedata/ActiveEmployees')
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+
+          console.log('from wfh' + this.employeeiddetails);
+          const employeedata = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${employee.fusionEmployeeId
+                  ? employee.fusionEmployeeId + ' - '
+                  : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            };
+          });
+          const filteredEmployees = employeedata.filter((element: any) => {
+            return element.employeeId != loggedInUser.employeeId;
+          });
+
+          this.employeeiddetails = [
+            { fullName: 'All Employees', employeeId: 'all' },
+            ...filteredEmployees
+          ];
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
-  
   getTeam() {
     this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
       next: (data: any) => {
@@ -178,46 +199,58 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
-  generateYearlyReport(form: FormGroup): void {
-    const formData = form.value;
-    if (!this.selectedEmployeeId && !this.selectedWfhManager && !this.selectedYear && !this.selectedLeave) {
-      return;
-    }
-  
-    const params = new URLSearchParams();
-    if (this.selectedEmployeeId) params.append('FusionEmpId', this.selectedEmployeeId);
+  generateCompoffReport(): void {
+     const formValue = this.compoffReportForm.value;
+     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
    
-      const startDate = this.parseDate(formData.worked_Date.startDate);
-      const endDate = this.parseDate(formData.worked_Date.endDate);
-      params.append('StartDate', this.formatDate(startDate));
-      params.append('EndDate', this.formatDate(endDate));
-    
-    // dateRange: {
-    //   startDate: formData.worked_Date.startDate;
-    //   endDate: formData.worked_Date.endDate,
-    // },
-   if (this.selectedMonth !== null) {
-     params.append('Worked_Month', this.selectedMonth.toString());
+     const noFilterProvided =
+       !formValue.employee &&
+       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
+       !formValue.month &&
+       !formValue.manager;
+   
+     if (noFilterProvided) {
+       this.filteredYearlyRecord = [];
+       return;
+     }
+   
+     const request: ICompoffDetails = {};
+   
+     // Only include filters if not "All Employees"
+     if (!isAllEmployeesSelected) {
+       if (formValue.employee?.fusionEmpId) {
+         request.FusionEmpId = formValue.employee.fusionEmpId;
+       }
+   
+       if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
+         const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
+         const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
+         request.StartDate = startDate;
+         request.EndDate = endDate;
+       }
+   
+      //  if (formValue.leaveCategory) {
+      //    request.selectedLeave = formValue.leaveCategory;
+      //  }
+   
+       if (formValue.manager) {
+         request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
+           .filter(Boolean)
+           .join(' ');
+       }
+     }
+   
+     // Single API call
+     this.reportsService.getcompOffReports(request).subscribe({
+       next: (response: any) => {
+         this.filteredYearlyRecord = response ?? [];
+       },
+       error: (error) => {
+         console.error('Error fetching WFH records', error);
+         this.filteredYearlyRecord = [];
+       },
+     });
    }
-   if (this.selectedLeave) params.append('LeaveName', this.selectedLeave);
-   if (this.selectedWfhManager) {
-     params.append('Team_Manager', this.selectedWfhManager);
-   }
-    
-  
-    const endpoint = `Reports/CompOffReports${params.toString() ? '?' + params.toString() : ''}`;
-    this.http.getData(endpoint).subscribe({
-      next: (data: any) => {
-        this.filteredYearlyRecord = data;
-        if (data.length === 0) {
-          // show modal: no data
-        } else {
-          console.log('Fetched Yearly Record:', this.filteredYearlyRecord);
-        }
-      },
-      error: (error: any) => console.error('Error fetching Yearly records:', error)
-    });
-  }
     exportToExcelYearly(): void {
       // Define header mappings
       const HEADER_MAPPINGS: { [key: string]: string } = {
@@ -278,7 +311,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
   
       // Add WFH Report row
-      XLSX.utils.sheet_add_aoa(ws, [['YEARLY SUMMARY REPORT']], { origin: 'A1' });
+      XLSX.utils.sheet_add_aoa(ws, [['COMPOFF REPORT']], { origin: 'A1' });
   
       // Add header row
       const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
@@ -314,7 +347,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       // Generate Excel file and trigger download
       const wb: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Yearly Summary Report');
-      XLSX.writeFile(wb, 'Yearly_Summary_Report.xlsx');
+      XLSX.writeFile(wb, 'Compoff_Summary_Report.xlsx');
     }
   
   

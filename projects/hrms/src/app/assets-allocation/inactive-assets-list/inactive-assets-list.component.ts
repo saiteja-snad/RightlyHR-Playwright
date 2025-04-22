@@ -133,8 +133,8 @@ export class InactiveAssetsListComponent {
     this.subscription = this.http.assetslocationId$.subscribe({
       next: (Value: any) => {
         console.log(Value);
-        this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
-        this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
+        this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
+        this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
         this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
         this.getcount(Value,  this.selectedSubLocationId,this.Status);
       }

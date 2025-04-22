@@ -43,9 +43,9 @@ export class UpcomingEventsComponent {
 
   initiateForm() {
     this.customEventupdateForm = this.fb.group({
-      eventDate: ['', [Validators.required, this.futureDateValidator()]],
-      eventTitle: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
-      eventMessage: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/), Validators.maxLength(250)]],
+      eventDate: [null, [Validators.required, this.futureDateValidator()]],
+      eventTitle: [null, [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
+      eventMessage: [null, [Validators.required, Validators.maxLength(250)]],
       imageUrl: [null]
     });
   }

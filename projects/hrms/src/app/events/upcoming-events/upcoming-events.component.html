@@ -153,13 +153,9 @@
             <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
                 class="text-danger">*</span></label>
             <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
-            <div *ngIf="customEventupdateForm.get('eventDate')?.touched" class="error-msg">
-              Event date is required.
-            </div>
-            <div
-              *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
-              class="error-msg">
-              Event date cannot be in the past.
+            <div *ngIf="customEventupdateForm.get('required')?.touched" class="error-msg">Event date is required.</div>
+            <div *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
+                class="error-msg">Event date cannot be in the past.
             </div>
           </div>
           <div class="col-md-6 mb-3">
@@ -191,7 +187,7 @@
         </div>
         <div class="d-flex justify-content-end gap-3 mt-4">
           <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="customEventupdateForm || spinnerLoader">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="customEventupdateForm.invalid || spinnerLoader">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading' | translate}}...</span>

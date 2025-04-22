@@ -13,7 +13,7 @@
           <th>Expense Date</th>
           <th>Total Amount</th>
           <th>Status</th>
-          <th class="text-center">Approver Comments</th>
+          <!-- <th class="text-center">Approver Comments</th> -->
           <th class="text-center">View Details
           </th>
 
@@ -27,7 +27,7 @@
             <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
             </td>
-            <td class="text-center">
+            <!-- <td class="text-center">
               <div>
                 <span *ngIf="exp.expenseApproverComments?.length > 0; else NA">
                   <a type="button" placement="top">
@@ -43,7 +43,7 @@
                   N/A
                 </ng-template>
               </div>
-            </td>
+            </td> -->
             <td class="text-center">
               <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">

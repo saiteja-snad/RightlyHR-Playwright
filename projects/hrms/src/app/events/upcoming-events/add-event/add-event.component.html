@@ -39,8 +39,8 @@
                 </div>
                 
                 <div class="col-md-12 mb-3">
-                    <label for="file" class="form-label custom-label mb-2">Attachmen</label>
-                    <input type="file" class="form-control custom-input" id="file" formControlName="imageUrl">
+                    <label for="file" class="form-label custom-label mb-2">Attachment</label>
+                    <input type="file" class="form-control custom-input"  (change)="onFileSelected($event)" id="file"  formControlName="imageUrl">
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4">

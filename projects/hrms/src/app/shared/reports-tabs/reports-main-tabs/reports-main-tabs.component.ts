@@ -13,7 +13,7 @@ export class ReportsMainTabsComponent {
   navTabs: any[] = [
     { label: 'Standard Reports', link: '/reports/standard-reports', permission: { feature: 'Standard Reports', action: 'view'}},
     { label: 'Custom Reports', link: '/reports/custom-reports' ,permission: { feature: 'Custom Reports', action: 'view'}},
-    { label: 'Attendance Reports', permission: { feature: 'Attendance Reports', action: 'view' }},
+    { label: 'Attendance Reports',link: '/reports/attendance-report', permission: { feature: 'Attendance Reports', action: 'view' }},
     { label: 'Monthly Attendance Report', link: '/reports/monthly-attandance-reports' ,permission: { feature: 'Monthly Attandance Report', action: 'view'}},
   ];
 }

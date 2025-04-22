@@ -1,1 +1,101 @@
-<p>inactive-employee-report works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!--header-->
+        <div class="component-header">Reports</div>
+    
+        <div class="d-flex gap-3">
+          <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+                <select title="text"
+                    class="form-control custom-input"
+                    id="employeeId"
+                    [(ngModel)]="selectedEmployeeId"
+                    >
+                    <option value="" disabled selected>Select Employee</option>
+                    <option *ngFor="let employee of employeeiddetails" [value]="employee.fusionEmpId | json" (click)="selectInactiveEmployee(employee, $event)">
+                      {{ employee.fullName }}
+                    </option>
+                </select>
+            </div>
+          </div>
+            <div class="custom-p-select-content">
+                <select title="text"
+                    class="form-control custom-input"
+                    id="teamManager"
+                    [(ngModel)]="selectedWfhManager"
+                    >
+                    <option value="" disabled>Please select team manager</option>
+                    <option *ngFor="let manager of teamdetails" [value]="getFullName(manager)" (click)="selectInactiveManager(manager)">
+                        {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
+                      </option>
+                </select>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <select id="monthDropdown" class="form-select" 
+                [disabled]="selectedDateRange !== null && (selectedDateRange.startDate !== null || selectedDateRange.endDate !== null)"
+                (change)="onMonthChangeInactive($event)">
+                <option value="" disabled selected>Select Month</option>
+                <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+            </select>
+              </div>
+          <div class="d-flex gap-2">
+            <input type="submit" class="custom-btn btn-secondary" value="Generate" (click)="generateInactiveReport()" [disabled]="!canGenerateOrExport()">
+            <button type="button" class="custom-btn btn-primary" (click)="exportToExcelInactive()" [disabled]="!canGenerateOrExport()">Export</button>
+          </div>
+        </div>
+      </div>
+  
+    <div class="mb-3">
+      <app-attandace-report-tabs />
+    </div>
+  
+    @if (isLoading) {
+
+      }
+      @else {
+        <div class="custom-table-content">
+          <table id="wfhReportTable" class="content w-100">
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Team Manager</th>
+                <th>Location</th>
+                <th>Sub Location</th>
+                <th>Leave Type</th>
+                <th>Entitled</th>
+                <th>Availed</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (!filteredInactiveRecord || filteredInactiveRecord.length === 0) {
+                <tr>
+                  <td colspan="9" class="text-center">No records found</td>
+                </tr>
+              }
+              @else {
+                @for (record of filteredInactiveRecord; track $index) {
+                  <tr>
+                    <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+                    <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+                    <td class="td-center">{{ record.department ?? '-' }}</td>
+                    <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+                    <td class="td-center">{{ record.location ?? '-' }}</td>
+                    <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+                    <td class="td-center">{{record.leaveType ?? '-'}}</td>
+                    <td class="td-center">{{record.entitled ?? '-'}}</td>
+                    <td class="td-center">{{record.availed ?? '-'}}</td>
+                    <td class="td-center">{{record.balanced ?? '-'}}</td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+      
+  </div>
+
+  

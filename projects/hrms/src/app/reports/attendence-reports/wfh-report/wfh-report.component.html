@@ -11,8 +11,7 @@
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
                   <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="false"
-                            formControlName="employee" placeholder="Select Employee" class="form-select custom-select"
-                            (click)="selectWfhEmployee($event)">
+                            formControlName="employee" placeholder="Select Employee" class="form-select custom-select">
                     <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                     <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                   </p-select>
@@ -23,7 +22,7 @@
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
                   <p-select [options]="teamdetails" [filter]="true" [showClear]="false" optionLabel="firstName" formControlName="manager"
-                            placeholder="Select Manager" class="form-select custom-select" (onChange)="selectWfhManager($event.value)">
+                            placeholder="Select Manager" class="form-select custom-select">
                     <ng-template #selectedItem let-selectedOption>
                       {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
                     </ng-template>
@@ -38,7 +37,7 @@
               <div class="d-flex align-items-center gap-2">
                 <div>
                   <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
-                         [locale]="localeOptions" [showClearButton]="true" placeholder="Please Select Date of Joining" formControlName="dateRange"
+                         [locale]="localeOptions" [showClearButton]="true" placeholder="Please Select Date" formControlName="dateRange"
                          [startKey]="'startDate'" [endKey]="'endDate'" readonly />
                 </div>
               </div>
@@ -64,52 +63,48 @@
       <app-attandace-report-tabs />
     </div>
   
-    @if (isLoading) {
-
-      }
-      @else {
-        <div class="custom-table-content">
-          <table id="wfhReportTable" class="content w-100">
-            <thead>
+    <div class="custom-table-content">
+      <table id="wfhReportTable" class="content w-100">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Team Manager</th>
+            <th>Location</th>
+            <th>Sub Location</th>
+            <th>Shift</th>
+            <th>Worked Date</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredWfhRecord && filteredWfhRecord.length > 0) {
+            @for (record of filteredWfhRecord; track record) {
               <tr>
-                <th>Employee ID</th>
-                <th>Employee Name</th>
-                <th>Department</th>
-                <th>Team Manager</th>
-                <th>Location</th>
-                <th>Sub Location</th>
-                <th>Shift</th>
-                <th>Worked Date</th>
-                <th>Duration</th>
+                <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+                <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+                <td class="td-center">{{ record.department ?? '-' }}</td>
+                <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+                <td class="td-center">{{ record.location ?? '-' }}</td>
+                <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+                <td class="td-center">{{ record.shift ?? '-' }}</td>
+                <td class="td-center">
+                  {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
+                </td>
+                <td class="td-center">{{ record.duration ?? '-' }}</td>
               </tr>
-            </thead>
-            <tbody>
-              @if (!filteredWfhRecord || filteredWfhRecord.length === 0) {
-                <tr>
-                  <td colspan="9" class="text-center">No records found</td>
-                </tr>
-              }
-              @else {
-                @for (record of filteredWfhRecord; track $index) {
-                  <tr>
-                    <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-                    <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-                    <td class="td-center">{{ record.department ?? '-' }}</td>
-                    <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-                    <td class="td-center">{{ record.location ?? '-' }}</td>
-                    <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-                    <td class="td-center">{{ record.shift ?? '-' }}</td>
-                    <td class="td-center">
-                      {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
-                    </td>
-                    <td class="td-center">{{ record.duration ?? '-' }}</td>
-                  </tr>
-                }
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+            }
+          } @else {
+            <tr>
+              <td colspan="9" class="text-center">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
       
   </div>
 

@@ -6,39 +6,36 @@ import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
-
 @Component({
   selector: 'app-leaves-approvaltabs',
-  imports: [RouterModule,CommonModule,TabsModule],
+  imports: [RouterModule, CommonModule, TabsModule],
   templateUrl: './leaves-approvaltabs.component.html',
   styleUrl: './leaves-approvaltabs.component.scss'
 })
+
 export class LeavesApprovaltabsComponent {
-    loggedinuser = {} as any;
-    empdata = {} as any;
-    subscription!: Subscription;
-    lpdata = [] as Ilpid[];
-    processedCount: any;
-    waitingForApprovalCount: any;
-    approvedCount: any;
-    rejectedCount: any;
-    statusTabs: any[] = [
-      { label: 'Waiting For Approval', link: 'waiting-for-approval', },
-      { label: 'Approved', link: 'approved', },
-      { label: 'Processed', link: 'processed', },
-      { label: 'Rejected', link: 'rejected', }
-    ];
+  loggedinuser = {} as any;
+  empdata = {} as any;
+  subscription!: Subscription;
+  lpdata = [] as Ilpid[];
+  processedCount: any;
+  waitingForApprovalCount: any;
+  approvedCount: any;
+  rejectedCount: any;
+  statusTabs: any[] = [
+    { label: 'Waiting For Approval', link: 'waiting-for-approval', },
+    { label: 'Approved', link: 'approved', },
+    { label: 'Processed', link: 'processed', },
+    { label: 'Rejected', link: 'rejected', }
+  ];
 
-    constructor(public readonly router: Router,private http: HttpService, private authService: AuthService) {}
-
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getDataByLPID();
   }
-
-  
 
   getDataByLPID() {
     let empid = this.empdata.employeeId;
@@ -50,7 +47,6 @@ export class LeavesApprovaltabsComponent {
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
-
           // Set counts
           this.statusTabs = [
             { label: 'Waiting For Approval', link: 'waiting-for-approval', count: waiting.length },

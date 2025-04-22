@@ -218,6 +218,8 @@ body {
         border-radius: 0.5rem;
         color: var(--side-nav-item-color);
         cursor: pointer;
+        padding: 0.5rem 0rem;
+        margin-bottom: 0.75rem;
     }
 
     .active-nav-link {
@@ -578,6 +580,7 @@ a {
     .custom-poup-header-content {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         padding: 1rem;
     }
 
@@ -1445,4 +1448,63 @@ input[type="checkbox"] {
 .form-check-input:checked {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
+}
+
+// leaves cards stylings
+.leave-cards-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: 1rem;
+
+    .leaves-card {
+        width: 20rem;
+        height: max-content;
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0px 0px 6px 1px #0000000D;
+        margin-bottom: 1rem;
+
+        .leave-type-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 0.5px solid #DADADA;
+
+            .leave-type-heading {
+                font-weight: 500;
+                font-size: var(--fontsize14);
+                line-height: 100%;
+                letter-spacing: 0%;
+                color: #222222;
+            }
+
+            .leave-type-card {
+                width: max-content;
+                padding: 0.75rem 1.25rem;
+                border-radius: 0.5rem;
+                border: none;
+
+                .bi-house-door {
+                    font-size: var(--fontsize24);
+                }
+            }
+        }
+
+        .leave-content {
+            font-weight: 400;
+            font-size: var(--fontsize14);
+            line-height: 100%;
+            letter-spacing: 0%;
+            color: #222222;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            div {
+                position: relative;
+                text-wrap: nowrap;
+                padding: 1rem 1.5rem 0rem;
+            }
+        }
+    }
 }

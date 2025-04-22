@@ -18,8 +18,5 @@ export class AttandaceReportTabsComponent {
     { label: 'Absent Report', route: '/reports/attendence-reports/absent-report' },
     { label: 'Inactive Employee Report', route: '/reports/attendence-reports/inactive-employee-report' },
     { label: 'Yearly Summary Report', route: '/reports/attendence-reports/yearly-summary-report' },
-    { label: 'Leave Report', route: '/reports/attendence-reports/leave-report'},
-    { label: 'Leave Summery Report', route: '/reports/attendence-reports/leave-summary-report'},
-    { label: 'Comp off Report', route: '/reports/attendence-reports/compoff-report'}
   ];
 }

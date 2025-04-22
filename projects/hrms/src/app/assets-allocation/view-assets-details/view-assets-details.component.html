@@ -1,0 +1,88 @@
+<div>
+    <div class="component-nav-tabs-container card px-2 mb-3">
+        <p-tabs value="0" scrollable>
+            <p-tablist>
+                <ng-container *ngFor="let tab of navTabs;">
+                    <p-tab [value]="tab.route">
+                        <a [routerLink]="tab.route" [queryParamsHandling]="'preserve'" routerLinkActive="nav-tab-active"
+                            class="nav-link">
+                            {{ tab.label }}
+                        </a>
+                    </p-tab>
+                </ng-container>
+            </p-tablist>
+        </p-tabs>
+    </div>
+
+    <div class="card  p-3 mt-2 mb-3">
+
+        <p class=" component-header cursor mb-4">Asset Details</p>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Asset Model:</b> {{ assetDetails?.assetModel }}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Asset Category:</b> {{ assetDetails?.assetCategory
+                }}</div>
+            <div class="col-6"><b class="component-sub-header mb-0">Asset Sub Category:</b> {{
+                assetDetails?.assetSubCategory }}</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Serial Number:</b> {{ assetDetails?.serialNumber }}
+            </div>
+            <div class="col-6"><b class="component-sub-header mb-0">Asset Status:</b> {{ assetDetails?.status }}</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Registered by:</b> {{ assetDetails?.createdByName }}
+            </div>
+            <div class="col-6"><b class="component-sub-header mb-0">Purchase Date:</b> {{ assetDetails?.purchaseDate |
+                date }}</div>
+        </div>
+    </div>
+
+    <div class="card  p-3  mb-3">
+
+        <h5 class=" component-header cursor mb-4">Warranty Details</h5>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Warranty Start Date:</b> {{
+                assetDetails?.assetWarranties[0]?.warrantyStartDate ? (assetDetails.assetWarranties[0].warrantyStartDate
+                | date) : 'N/A' }}</div>
+            <div class="col-6"><b class="component-sub-header mb-0">Warranty Expiry Date:</b> {{
+                assetDetails?.assetWarranties[0]?.warrantyExpiryDate ?
+                (assetDetails.assetWarranties[0].warrantyExpiryDate | date) : 'N/A' }}</div>
+        </div>
+    </div>
+
+
+    <div class="card p-3 mb-3">
+
+        <h5 class="component-header cursor mb-4">Vendor Details</h5>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">Vendor Name:</b> {{ assetDetails?.venderName ?
+                assetDetails?.venderName :
+                'N/A'}}</div>
+            <div class="col-6"><b class="component-sub-header mb-0">Contact Number:</b> {{ assetDetails?.contactnumber ?
+                assetDetails?.contactnumber :'N/A' }}</div>
+        </div>
+    </div>
+
+    <!-- AMC Vendor Details Card -->
+    <div class="card p-3 mb-3">
+
+        <h5 class="component-header cursor mb-4">AMC Vendor Details</h5>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">AMC Vendor Name:</b> {{
+                assetDetails?.assetAMC?.[0]?.name ? (assetDetails?.assetAMC?.[0]?.name) :'N/A' }}</div>
+            <div class="col"><b class="component-sub-header mb-0">AMC Contact Number:</b> {{
+                assetDetails?.assetAMC?.[0]?.phoneNumber ? (assetDetails?.assetAMC?.[0]?.phoneNumber) :'N/A' }}</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-6"><b class="component-sub-header mb-0">AMC Start Date:</b> {{
+                assetDetails?.assetAMC?.[0]?.startDate ? (assetDetails?.assetAMC?.[0]?.startDate | date) :'N/A' }}</div>
+            <div class="col-6"><b class="component-sub-header mb-0">AMC End Date:</b> {{
+                assetDetails?.assetAMC?.[0]?.endDate ? (assetDetails?.assetAMC?.[0]?.endDate | date ) :'N/A' }}</div>
+        </div>
+    </div>
+
+
+</div>

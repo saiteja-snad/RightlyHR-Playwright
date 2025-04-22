@@ -1,0 +1,141 @@
+<div>
+    <div class="component-nav-tabs-container card px-2 mb-3">
+        <p-tabs value="0" scrollable>
+            <p-tablist>
+                <ng-container *ngFor="let tab of navTabs;">
+                    <p-tab [value]="tab.route">
+                        <a [routerLink]="tab.route" [queryParamsHandling]="'preserve'" routerLinkActive="nav-tab-active"
+                            class="nav-link">
+                            {{ tab.label }}
+                        </a>
+                    </p-tab>
+                </ng-container>
+            </p-tablist>
+        </p-tabs>
+    </div>
+
+
+    <!-- Main Check for Data -->
+    <ng-container
+        *ngIf="(assetstranstiondata | async)?.length || (assetTransactions | async)?.length || (assetstranstiontraser | async)?.length ; else noDataTemplate">
+
+        <!-- Asset Data Section -->
+        <ng-container *ngIf="(assetstranstiondata | async) as assetData">
+            <div class="d-flex flex-column gap-3 mt-3">
+                <div *ngFor="let asset of assetData">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col"><p class="component-sub-header mb-0" >Asset ID</p>{{ asset?.assetIdName }}</div>
+                                <div class="col"><p class="component-sub-header mb-0">Asset Category</p>{{
+                                    assetDetails?.assetCategory}}</div>
+                                <div class="col"><p class="component-sub-header mb-0">Asset Sub
+                                        Category</p >{{assetDetails?.assetSubCategory}}</div>
+                                <div class="col"><p class="component-sub-header mb-0">Serial Number</p>{{ assetDetails?.serialNumber
+                                    }}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col"><p class="component-sub-header mb-0">Asset Status</p>{{ asset.status }}</div>
+                                <div class="col"><p class="component-sub-header mb-0">Allocated To</p>{{ asset.firstName }} {{
+                                    asset.lastName }}</div>
+                                <div class="col"><p class="component-sub-header mb-0">Allocation Date</p>{{ asset.allocatedDate |
+                                    dateformat }}</div>
+                                <div class="col"><p class="component-sub-header mb-0">Released Date</p>{{ asset.returnDate ?
+                                    (asset.returnDate | dateformat) : 'N/A' }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transfer History Section -->
+
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="(assetstranstiontraser | async) as transferHistories">
+            <div *ngIf="transferHistories.length > 0" class="d-flex flex-column gap-3 mt-3">
+                <div *ngFor="let transfer of transferHistories">
+                    <div class="card p-3 mb-4">
+                        <div class="card-body">
+
+                            <div class="row mb-3">
+                                <div class="col"><p class="component-sub-header mb-0">From Location</p><br>{{ transfer.fromlocationname
+                                    }}</div>
+                                <div class="col"><p class="component-sub-header mb-0">From Sub Location</p><br>{{
+                                    transfer.fromsublocationname }}</div>
+                                <div class="col"><p class="component-sub-header mb-0">To Location</p><br>{{ transfer.locationname }}
+                                </div>
+                                <div class="col"><p class="component-sub-header mb-0">To Sub Location</p><br>{{ transfer.sublocationname
+                                    }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+
+        <!-- Asset Transactions Section -->
+        <ng-container *ngIf="(assetTransactions | async) as transactionsData">
+            <div>
+                <div *ngFor="let transaction of transactionsData">
+                    <div class="card mb-3 mt-3"
+                        *ngIf="transaction.status === 'Under Maintenance' || transaction.status === 'Available' ">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col"><strong>Asset Category</strong><br>{{
+                                    assetDetails?.assetCategory}}</div>
+                                <div class="col"><strong>Asset Sub
+                                        Category</strong><br>{{assetDetails?.assetSubCategory}}</div>
+                                <div class="col"><strong>Serial Number</strong><br>{{ assetDetails?.serialNumber
+                                    }}</div>
+                                <div class="col"><strong>Asset Model</strong> <br> {{ assetDetails?.assetModel }}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col"><strong>Reason</strong><br>{{ transaction.reason }}</div>
+                                <div class="col"><strong> Asset Status</strong><br>{{ transaction.status }}</div>
+                                <div class="col" *ngIf="transaction.status !== 'Inactive'"><strong>Maintenance
+                                        Start Date</strong><br>{{ transaction.fromDate ? (transaction.fromDate |
+                                    dateformat) : 'N/A' }}</div>
+                                <div class="col" *ngIf="transaction.status !== 'Inactive'"><strong>Maintenance
+                                        End Date</strong><br>{{ transaction.toDate ? (transaction.toDate | dateformat) :
+                                    'N/A' }}</div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngFor="let transaction of transactionsData">
+                    <div class="card mb-3 mt-3 "
+                        *ngIf="transaction.status === 'Available' || transaction.status === 'Inactive'">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col"><strong>Asset Category</strong><br>{{
+                                    assetDetails?.assetCategory}}</div>
+                                <div class="col"><strong>Asset Sub
+                                        Category</strong><br>{{assetDetails?.assetSubCategory}}</div>
+                                <div class="col"><strong>Serial Number</strong><br>{{ assetDetails?.serialNumber
+                                    }}</div>
+                                <div class="col"><strong>Asset Model</strong> <br> {{ assetDetails?.assetModel }}
+                                </div>
+                                <div class="col"><strong>Reason</strong><br>{{ transaction.reason }}</div>
+                                <div class="col"><strong> Asset Status</strong><br>{{ transaction.status }}</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+    </ng-container>
+
+    <!-- No Data Template -->
+    <ng-template #noDataTemplate>
+        <div class="text-center w-100 p-5">
+            <p class="text-center"><b><app-no-data-found></app-no-data-found></b></p>
+        </div>
+    </ng-template>
+
+</div>

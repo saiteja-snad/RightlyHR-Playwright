@@ -4,12 +4,13 @@ import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, FormA
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbModal, NgbModalConfig, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
-import { environment } from '../../../../environments/environment.dev';
 import { IDynamicForm, IRatingScale } from '../../../Interfaces/dynamic-forms.model';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule,Location } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { IJob } from '../../../Interfaces/letters-model';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-update-form',
@@ -61,7 +62,9 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     config: NgbModalConfig,
     private router: Router,
-    private route: ActivatedRoute,) {
+    private route: ActivatedRoute,
+    private sharedModalService: OpenModalService,
+  ) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
@@ -89,12 +92,16 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
 
     this.formId = history.state.formId;
 
-    console.log(this.updateForm);
-
     this.handleOptionWeightageValidation();
 
     this.updateFormDetails(this.formId)
     this.getAllRatingScaleTypes();
+    
+    // this.updateForm.get('moduleId')?.valueChanges.subscribe(value => {
+    //   console.log('Module ID:', value);
+    //   this.onModuleChange(value);
+    //   this.toggleRatingValidators(value);
+    // });
 
 
 
@@ -103,7 +110,6 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
   }
   // Method to toggle validators based on moduleId
 toggleRatingValidators(moduleId: any): void {
-  console.log(moduleId);
   
   const cutOffRating = this.updateForm.get('cutOffRating');
   const overAllRating = this.updateForm.get('overAllRating');
@@ -198,9 +204,9 @@ toggleRatingValidators(moduleId: any): void {
   }
 
 
-  onModuleChange(module?: any) {
-    const newModule = module;
-    console.log('Module ID:', module);
+
+  onModuleChange(module?: any): void {
+
     if (module?.id === 24) {
   
       // Clear validators and reset fields for module ID 24
@@ -550,7 +556,8 @@ toggleRatingValidators(moduleId: any): void {
   onRatingScaleRangeChange(event: any): void {
     const selectedValue = event.value; // This is an object: { minimum: number, maximum: number }
   
-    console.log('Selected Rating Scale Range:', selectedValue);
+
+    
   
     if (selectedValue) {
       const { minimum: selectedMinimum, maximum: selectedMaximum } = selectedValue;
@@ -570,7 +577,8 @@ toggleRatingValidators(moduleId: any): void {
         ratingScaleTypeControl.setValue(null, { emitEvent: false });
       }
   
-      console.log('After Reset: Rating Scale Type Control Value:', ratingScaleTypeControl?.value);
+
+      
   
       // Filter rating scale types
       this.filteredRatingScaleTypes = this.ratingScaleTypes.filter(
@@ -581,8 +589,8 @@ toggleRatingValidators(moduleId: any): void {
     } else {
       this.filteredRatingScaleTypes = [];
     }
-  
-    console.log('Filtered Rating Scale Types:', this.filteredRatingScaleTypes);
+
+    
   }
 
 
@@ -599,18 +607,15 @@ toggleRatingValidators(moduleId: any): void {
 
   onRatingScaleTypeChange(event: Event): void {
     const selectedValue = (event?.target as HTMLSelectElement);
-    console.log('Selected Rating Scale Type:', event);
   }
 
 
   assignValuestoUpdateForm(data: any) {
     const [min, max] = data.ratingScaleRange.split('-').map(Number);
-    console.log(this.modules.find((module) => module.id = data.moduleId).moduleName);
-    
     this.updateForm.patchValue({
       formHeader: data.formName,
       formId: data.formId,
-      moduleId:this.modules.find((module) => module.id = data.moduleId),
+      moduleId:this.modules.find((module) => module.id === data.moduleId),
       createdBy: data.createdBy,
       updatedBy: this.updateDetails.employeeId,
       ratingScaleRange: this.uniqueRatingScaleRanges.find(
@@ -624,7 +629,7 @@ toggleRatingValidators(moduleId: any): void {
       sectionId: data.sectionId,
       formHeaderId: data.formHeaderId,
     });
-    console.log(this.updateForm.value);
+    
     
 
     const [selectedMinimum, selectedMaximum] = data.ratingScaleRange.split('-').map(Number);
@@ -668,7 +673,6 @@ toggleRatingValidators(moduleId: any): void {
 
         });
         const isRatingSection = section.sectionType === 'rating';
-        console.log(isRatingSection);
         
         const questionGroup = this.fb.group({
           id: [question.id],
@@ -703,7 +707,7 @@ toggleRatingValidators(moduleId: any): void {
         // Assuming ratingScaleType is based on the first question's type
         ratingScaleType = section.questions[0].type;
       }
-      console.log(section.sectionType);
+      
       
       const sectionGroup = this.fb.group({
         id: [section.id],
@@ -715,7 +719,7 @@ toggleRatingValidators(moduleId: any): void {
         questions: questionsArray,
         createdBy: section.createdBy || this.updateDetails.createdBy,
       });
-      console.log(sectionGroup);
+      
       
 
       if (section.sectionType === 'rating') {
@@ -745,7 +749,7 @@ toggleRatingValidators(moduleId: any): void {
   onSaveSubmit() {
 
     this.isDraftType = true;
-
+    
     if (this.updateForm.valid) {
       const selectedRange = this.updateForm.value.ratingScaleRange;
       this.updateDetails.ratingScaleRange = selectedRange
@@ -762,7 +766,7 @@ toggleRatingValidators(moduleId: any): void {
       this.updateDetails.formHeaderId = this.updateForm.value.formHeaderId;
       this.updateDetails.status = "draft"
       this.updateDetails.sectionDetails = this.convertUpdateOptionsArray(this.updateForm.value.sections);
-
+      
       this.http.postData(`Form/SubmitFormDetails`, this.updateDetails, { responseType: 'text' }).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.openSuccessModal('draft');
@@ -772,10 +776,10 @@ toggleRatingValidators(moduleId: any): void {
             if (this.formStatus === 'draft') {
               // Stay on the same page by reloading the current page
               // location.reload();
-              this.router.navigate(['/form/draft-forms'])
+              this.router.navigate(['/settings/dynamic-forms/draft-forms'])
             } else {
               // Navigate to the forms tab for any other status
-              this.router.navigate(['/form']);
+              this.router.navigate(['/settings/dynamic-forms/active-forms']);
             }
           }, 1000);
           this.isDraftType = false;
@@ -805,7 +809,8 @@ toggleRatingValidators(moduleId: any): void {
   }
 
   onUpdate(formStatus: string) {
-    console.log(this.updateForm);
+    
+    
 
     if (this.updateForm.valid) {
       const selectedRange = this.updateForm.value.ratingScaleRange;
@@ -824,7 +829,8 @@ toggleRatingValidators(moduleId: any): void {
       this.updateDetails.cutOffRating = this.updateForm.value.cutOffRating;
       this.updateDetails.sectionDetails = this.convertUpdateOptionsArray(this.updateForm.value.sections);
 
-      console.log(this.updateDetails);
+    
+      
 
       this.http.postData(`Form/SubmitFormDetails`, this.updateDetails, { responseType: 'text' }).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
@@ -834,10 +840,10 @@ toggleRatingValidators(moduleId: any): void {
             if (this.formStatus === 'draft') {
               // Stay on the same page by reloading the current page
               // location.reload();
-              this.router.navigate(['/form/draft-forms'])
+              this.router.navigate(['/settings/dynamic-forms/draft-forms'])
             } else {
               // Navigate to the forms tab for any other status
-              this.router.navigate(['/form']);
+              this.router.navigate(['/settings/dynamic-forms/active-forms']);
             }
           }, 1000);
 
@@ -989,7 +995,6 @@ toggleRatingValidators(moduleId: any): void {
   }
   statusvalue!:string;
   statuscheck(value: string) {
-    console.log(value);
     if (value?.toLowerCase() === 'active') {
       this.statusvalue='Update'
 
@@ -1008,13 +1013,7 @@ toggleRatingValidators(moduleId: any): void {
       this.successMessage = 'Form drafted successfully';
     }
 
-    // Open the modal with the success message
-    this.openModal(this.successModal, { centered: true });
-
-    // Automatically dismiss the modal after 1 second
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 1000);
+    this.sharedModalService.openSuccessModal(this.successMessage);
   }
 
   backToTableView() {

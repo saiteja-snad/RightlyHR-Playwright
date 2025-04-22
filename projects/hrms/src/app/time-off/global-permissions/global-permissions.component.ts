@@ -1,4 +1,4 @@
-import { Component, effect, ViewChild } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
@@ -22,7 +22,7 @@ import { AddGlobalPermissionsComponent } from './add-global-permissions/add-glob
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })
-export class GlobalPermissionsComponent {
+export class GlobalPermissionsComponent implements OnInit,OnDestroy {
   totalRecords = 100
   first: any = 1;
   rows: any = 10;
@@ -97,7 +97,11 @@ export class GlobalPermissionsComponent {
         .join(',\n'); // Join with line breaks for each employee
 }
   
- 
+ngOnDestroy(): void {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
+  }
+}
 
   
   

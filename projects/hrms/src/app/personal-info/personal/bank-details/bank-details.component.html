@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Bank Details</span></div>
         @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' 
-        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+        && employedata.empstatus.toLowerCase() !== 'inactive' && employedata.empstatus.toLowerCase() !== 'trainee inactive')){
             <div class="custom-add-btn" (click)="openModal(addBankModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
         }
     </div>

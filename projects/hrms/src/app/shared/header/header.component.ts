@@ -12,9 +12,10 @@ import { SettingsMainHeaderTabsComponent } from "../settings-tabs/settings-main-
 import { CalendarHeaderTabsComponent } from "../calendar-header-tabs/calendar-header-tabs.component";
 import { ReportsMainTabsComponent } from "../reports-tabs/reports-main-tabs/reports-main-tabs.component";
 import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component";
+import { PmsSettingsTabsComponent } from "../pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent, CalendarHeaderTabsComponent, ReportsMainTabsComponent, PmsTabsComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent, CalendarHeaderTabsComponent, ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

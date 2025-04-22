@@ -209,13 +209,12 @@
         <img src="assets/images/Vector@2x.png" alt="" style="width: 50px" class="imgg" />
         <h6 class="want mt-4">Are you sure you want to cancel?</h6>
         <div class="d-flex justify-content-center mt-4 mb-2">
-            <button type="button" class="btn btn-secondary me-3" (click)="modal.dismiss()">
-                No
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="modal.dismiss()">
+              {{'No'|translate}}
             </button>
-            <button type="button" class="btn btn-primary"
-              (click)="close()">
-                Yes
-            </button>
+            <button type="button" class="custom-btn btn-primary px-5"  (click)="close()">
+              {{'Yes'|translate}}
+          </button>
         </div>
     </div>
   </ng-template>
@@ -226,13 +225,21 @@
         <img src="assets/images/Vector@2x.png" alt="" style="width: 50px" class="imgg" />
         <h6 class="want mt-4">Are you sure you want to submit?</h6>
         <div class="d-flex justify-content-center mt-4 mb-2">
-            <button type="button" class="btn btn-secondary me-3" (click)="modal.dismiss()">
-                No
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="modal.dismiss()">
+              {{'No'|translate}}
             </button>
-            <button type="button" class="btn btn-primary"
-            (click)="onSubmit()">
-                Yes
-            </button>
+            <button type="button" class="custom-btn btn-primary px-5"  (click)="onSubmit()">
+              @if(!isLoader){
+              {{'Yes'|translate}}
+              }
+              @else {
+              <div class="d-flex">
+                  <div *ngIf="isLoader" class="spinner-border spinner-border text-light" role="status">
+                  </div>
+                  <div> {{'Submitting'|translate}}</div>
+              </div>
+              }
+          </button>
         </div>
     </div>
   </ng-template>

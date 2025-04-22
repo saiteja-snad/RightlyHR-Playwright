@@ -4,6 +4,7 @@ import { HttpService } from '../../../services/http.service';
 import { Subject, take, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pending-reviews',
@@ -39,7 +40,8 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
 
   constructor(
     private readonly modalService: NgbModal,
-    private readonly http: HttpService
+    private readonly http: HttpService,
+    private router: Router
   ) { }
   
   fetchReviewCycles(): void {
@@ -90,6 +92,7 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
     this.page = newPage;
     this.fetchReviewCycles();
   }
+
   onPageSizeChange(newPageSize: number) {
     console.log('Page size changed to:', newPageSize);
     console.log(this.page)
@@ -99,6 +102,25 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
 
   onSearch(): void {
     this.page = 1; 
+  }
+
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
+    console.log(currentStage)
+    const queryParams = {
+      reviewCycleItemId: reviewCycleItemId,
+      currentStage: currentStage,
+      assessorItemId: assessorItemId,
+      reviewCycles: JSON.stringify(this.reviewCycles), // Ensure this.reviewCycles is defined
+      reviewEmployeeId:reviewEmployeeId,
+      reviewcycleitemformresponseid:reviewcycleitemformresponseid,
+      formresponseid:formresponseid
+    };
+  
+    // Store queryParams in localStorage
+    localStorage.setItem('queryParams', JSON.stringify(queryParams));
+  
+    // Navigate to the assessment route
+    this.router.navigate(['/pms/assessment-form']);
   }
 
   closeModal(){

@@ -59,7 +59,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   modalRef!: NgbModalRef;
 
   promotedOptions = [
-    { label: 'Select Promoted', value: null },
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
@@ -278,14 +277,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   
   onPromotedChange(event: any): void {
     this.promoted = this.dependentdropdowns.get('promoted')?.value
+    console.log(this.promoted)
     const params = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize,
-      promotion: this.promoted,
+      promotion: this.promoted.value,
     };
     this.getEmployeesOfTheReviewCycle(params);
-
   }
 
   onPageChange(newPage: number) {
@@ -349,7 +348,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   getEmployeesOfTheReviewCycleforReport(): void {
     const params = {
       reviewcycleid: this.selectedReviewCycle?.id,
-      promotion: this.promoted || '',
+      promotion: this.promoted?.value || '',
     };
     this.dataload = true;
     this.http.getDataIncludeParams("ReviewCycleItem", params).pipe(takeUntil(this.destroy$)).subscribe({
@@ -636,32 +635,23 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${iteamid}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
-          console.log(data)
-
-          this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
-          // this.Status = 'Appraisal Letter Generated Successfully'
-          // this.modalService.open(this.success, { centered: true });
           this.modal.openSuccessModal('Appraisal Letter Generated Successfully');
-          this.Effectivedatefrom.reset()
         },
         error: (err) => {
-          console.error('Error generating letter:', err);
           if (err.status === 500) {
-            // this.Status = err.error.details || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessage, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
           else if (err.status === 409) {
-            // this.Status = err.error.message || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessagecloseall, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
           else {
-            // this.Status = err.error.details || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessagecloseall, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
         },
+        complete: () =>{
+          this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+          this.Effectivedatefrom.reset();
+        }
       })
 
   }

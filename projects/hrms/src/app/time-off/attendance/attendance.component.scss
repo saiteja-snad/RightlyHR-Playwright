@@ -1,60 +1,65 @@
 .employee-lable {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 500;
-    font-size: 13px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    vertical-align: middle;
-    color: #06274F;
-    
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  color: #06274F;
 }
+
 .status-present {
-    color: green;
-    font-weight: 700;
-  }
-  .status-halfdaypresent {
-    color: rgb(243, 109, 234);
-    font-weight: 700;
-  }
-  .status-absent {
-    color:  #D8332A;
-    
-    font-weight: 700;
-  }
-  
-  .status-leave {
-    color: #3449BF;
-    font-weight: 700;
-  }
-  
-  .status-wfh {
-    color: #BF8534;
-    font-weight: 700;
-  }
-  .status-compoff {
-    color: #bf6734;
-    font-weight: 700;
-  }
-  .status-remote {
-    color: #348abf;
-    font-weight: 700;
-  }
-  .status-weekend {
-    color: #D31973;
-    font-weight:700;
-  }
-  .status-norecords{
-    color: #7C7C7C;
-    font-weight:700;
-  }
-.time-custom{
+  color: green;
+  font-weight: 700;
+}
+
+.status-halfdaypresent {
+  color: rgb(243, 109, 234);
+  font-weight: 700;
+}
+
+.status-absent {
+  color: #D8332A;
+  font-weight: 700;
+}
+
+.status-leave {
+  color: #3449BF;
+  font-weight: 700;
+}
+
+.status-wfh {
+  color: #BF8534;
+  font-weight: 700;
+}
+
+.status-compoff {
+  color: #bf6734;
+  font-weight: 700;
+}
+
+.status-remote {
+  color: #348abf;
+  font-weight: 700;
+}
+
+.status-weekend {
+  color: #D31973;
+  font-weight: 700;
+}
+
+.status-norecords {
+  color: #7C7C7C;
+  font-weight: 700;
+}
+
+.time-custom {
   th {
     background-color: #E0E6ED;
-    color:  #141414;
+    color: #141414;
     text-wrap: nowrap;
     text-transform: uppercase;
+  }
 }
-}
- 

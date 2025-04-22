@@ -1,7 +1,11 @@
 <div class="custom-main-component-container">
-    <div class="component-header mb-4">Onboarding Documents</div>
+    <div class="my-3">
+        <app-detailed-step-progressbar />
+    </div>
 
-    <div class="custom-main-sub-content">
+    <div class="component-data-content">
+        <div class="component-header mb-4">Onboarding Documents</div>
+
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
@@ -18,15 +22,16 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let item of getDocumentsDetails">
-                        <td>{{ item.documentType ? item.documentType : '-' }}<span [ngClass]="{'text-danger': item.isMandatory}" *ngIf="item.isMandatory">*</span></td>
+                        <td>{{ item.documentType ? item.documentType : '-' }}<span [ngClass]="{'text-danger': item.isMandatory}"
+                                *ngIf="item.isMandatory">*</span></td>
                         <td>{{ item.referenceNumber ? item.referenceNumber : '-' }}</td>
                         <td>{{ item.submittedDate ? (item.submittedDate | dateFormat) : '-' }}</td>
-                        <td>{{ item.firstName ? item.firstName : '-' }} {{ item.middleName ? item.middleName : '' }} {{
+                        <td>{{ item.firstName ? item.firstName : '-' }} {{ item.middleName ? item.middleName : '' }}
+                            {{
                             item.lastName ? item.lastName : '' }}</td>
                         <td>{{ item.status ? item.status : '-' }}</td>
                         <td>
-                            <span *ngIf="item.reason" [ngbTooltip]="tipContent"><i
-                                    class="bi bi-info-circle-fill"></i></span>
+                            <span *ngIf="item.reason" [ngbTooltip]="tipContent"><i class="bi bi-info-circle-fill"></i></span>
                             <span *ngIf="!item.reason">-</span>
                             <ng-template #tipContent>{{item.reason}}</ng-template>
                         </td>
@@ -35,8 +40,10 @@
                                 <div class="centerhypen">-</div>
                             </span>
                             <ng-template #attachment>
-                                <div *ngIf="item.documentUrl.endsWith('jpg') || item.documentUrl.endsWith('jpeg') || item.documentUrl.endsWith('png') ;else downloadView">
-                                    <a type="button" class="view-btn" (click)="onViewClick(item.documentUrl);onClickEditDocument(item)">
+                                <div
+                                    *ngIf="item.documentUrl.endsWith('jpg') || item.documentUrl.endsWith('jpeg') || item.documentUrl.endsWith('png') ;else downloadView">
+                                    <a type="button" class="view-btn"
+                                        (click)="onViewClick(item.documentUrl);onClickEditDocument(item)">
                                         <i class="bi bi-paperclip me-1"></i>View
                                     </a>
                                 </div>
@@ -48,11 +55,13 @@
                         </td>
                         <td class="text-nowrap" *ngIf="item.status!='Not Submitted'">
                             <div *ngIf="item.status == null || item.status == 'Requested' || item.status =='Not Submitted'">
-                                <button type="button" class="custom-btn btn-primary py-2" (click)="onClickEditDocument(item);openModal(item)">
+                                <button type="button" class="custom-btn btn-primary py-2"
+                                    (click)="onClickEditDocument(item);openModal(item)">
                                     <i class="bi bi-upload me-2"></i>Upload</button>
                             </div>
                             <div *ngIf="item.status == 'Rejected' ||  item.status == 'Waiting for submission'">
-                                <button type="button" class="custom-btn btn-primary py-2" (click)="onClickEditDocument(item);openModal(item)">
+                                <button type="button" class="custom-btn btn-primary py-2"
+                                    (click)="onClickEditDocument(item);openModal(item)">
                                     <i class="bi bi-upload me-2"></i>Re-Upload</button>
                             </div>
                         </td>
@@ -60,36 +69,43 @@
                 </tbody>
             </table>
         </div>
-    </div>
 
-    <div class="footer-btn-content d-flex justify-content-between gap-2 pt-3">
-        <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Personal Details</button>
-        @if(loadingcircle){
-        <div class="spinner-border text-primary me-4" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        }
-        <!-- @if(this.prosempdata.substatus.toLowerCase() == 'Requested Documents' || this.prosempdata.substatus.toLowerCase() == 'Documents Rejected'){
+        <div class="footer-btn-content d-flex justify-content-between gap-2 pt-4 px-4">
+            <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Personal Details</button>
+            @if(loadingcircle){
+            <div class="spinner-border text-primary me-4" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            }
+            <!-- @if(this.prosempdata.substatus.toLowerCase() == 'Requested Documents' || this.prosempdata.substatus.toLowerCase() == 'Documents Rejected'){
             <button type="submit" class="custom-btn btn-primary py-2 px-5"
                 [disabled]="!aftersubmitbuttondisable||!submitbuttondisableforrejected"
                 (click)="openConfirmation()">Submit</button>
             }  -->
-        <button *ngIf="(prosempdata.substatus.toLowerCase() === 'requested documents' || prosempdata.substatus.toLowerCase() === 'documents rejected')"
-            type="submit" class="custom-btn btn-primary py-2 px-5" [disabled]="!aftersubmitbuttondisable || !submitbuttondisableforrejected"
-            (click)="openConfirmation()">Submit
-        </button>
+            <button
+                *ngIf="(prosempdata.substatus.toLowerCase() === 'requested documents' || prosempdata.substatus.toLowerCase() === 'documents rejected')"
+                type="submit" class="custom-btn btn-primary py-2 px-5"
+                [disabled]="!aftersubmitbuttondisable || !submitbuttondisableforrejected"
+                (click)="openConfirmation()">Submit
+            </button>
 
-        @if((this.prosempdata.empstatus.toLowerCase() == 'prospective') && ( this.prosempdata.substatus.toLowerCase() == 'offer letter generated' || 
-        this.prosempdata.substatus.toLowerCase() == 'offer letter released' || this.prosempdata.substatus.toLowerCase() == 'offer letter regenerated' ||
-        this.prosempdata.substatus.toLowerCase() == 'offer letter accepted' )){
-        <button type="button" class="custom-btn btn-primary py-2 px-5" routerLink="/offer-letter">Next</button>
-        }
+            @if((this.prosempdata.empstatus.toLowerCase() == 'prospective') && (
+            this.prosempdata.substatus.toLowerCase() == 'offer letter generated' ||
+            this.prosempdata.substatus.toLowerCase() == 'offer letter released' ||
+            this.prosempdata.substatus.toLowerCase() == 'offer letter regenerated' ||
+            this.prosempdata.substatus.toLowerCase() == 'offer letter accepted' )){
+            <button type="button" class="custom-btn btn-primary py-2 px-5" routerLink="/offer-letter">Next</button>
+            }
 
-        @if((this.prosempdata?.empstatus .toLowerCase() == 'trainee prospective') && (this.prosempdata?.empType.toLowerCase() == 'trainee') &&
-        (this.prosempdata?.substatus.toLowerCase() == 'offer letter generated' || this.prosempdata?.substatus.toLowerCase() == 'offer letter released'
-        || this.prosempdata?.substatus.toLowerCase() =='offer letter regenerated'|| this.prosempdata?.substatus.toLowerCase() == 'offer letter accepted')){
-        <button type="button" class="custom-btn btn-primary py-2 px-5" routerLink="/trainee-offerletter">Next</button>
-        }
+            @if((this.prosempdata?.empstatus .toLowerCase() == 'trainee prospective') &&
+            (this.prosempdata?.empType.toLowerCase() == 'trainee') &&
+            (this.prosempdata?.substatus.toLowerCase() == 'offer letter generated' ||
+            this.prosempdata?.substatus.toLowerCase() == 'offer letter released'
+            || this.prosempdata?.substatus.toLowerCase() =='offer letter regenerated'||
+            this.prosempdata?.substatus.toLowerCase() == 'offer letter accepted')){
+            <button type="button" class="custom-btn btn-primary py-2 px-5" routerLink="/trainee-offerletter">Next</button>
+            }
+        </div>
     </div>
 </div>
 

@@ -3,8 +3,11 @@ import { EmployeeFieldsLayoutComponent } from "../../settings/employee-fields/em
 import { MsalGuard } from "@azure/msal-angular";
 import { RolesPermissionsLayoutComponent } from "../../settings/roles-permissions/roles-permissions-layout/roles-permissions-layout.component";
 import { TimeOffLayoutComponent } from "../../settings/time-off/time-off-layout/time-off-layout.component";
-import { DynamicFormsLayoutComponent } from "../../settings/dynamic-forms/dynamic-forms-layout/dynamic-forms-layout.component";
+
 import { AssetConfigurationLayOutComponent } from "../../settings/assets-configurations/asset-configuration-lay-out/asset-configuration-lay-out.component";
+import { DynamicFormsLayoutComponent } from "../../settings/dynamic-forms/dynamic-forms-layout/dynamic-forms-layout.component";
+
+
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields', pathMatch: 'full' },

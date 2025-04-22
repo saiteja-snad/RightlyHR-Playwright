@@ -122,7 +122,11 @@ export class DeskManagementComponent {
         error: (err: any) => {
           console.error('Error fetching sub-location data:', err);
           this.subLocationsDropdown = [];
-          this.locationfromdata.patchValue({ subLocationId: null });
+          this.locationfromdata.reset()
+          this.locationfromdata.get('subLocationId')?.disable()
+          localStorage.removeItem('locationId');
+          localStorage.removeItem('sublocationId');
+          this.http.desklocationIdSubject.complete()
         }
       });
 
@@ -408,9 +412,9 @@ export class DeskManagementComponent {
 
     this.getcount(locationId, null)
   }
+  
   onSubLocationChange() {
     const subLocationId = this.locationfromdata.get('subLocationId')?.value;
-
     if (subLocationId) {
       const loctionid = this.locationfromdata.get('locationId')?.value
       localStorage.setItem('sublocationId', JSON.stringify(subLocationId))
@@ -443,12 +447,7 @@ export class DeskManagementComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-
           this.desklist.next(data.items)
-          //this.getcount(this.selectedLocationId, this.selectedSubLocationId)
-          // Update the collection size (total records) for pagination
-
-
         },
         error: (error: any) => {
           console.error('Error fetching desk data', error);
@@ -458,6 +457,7 @@ export class DeskManagementComponent {
 
       });
   }
+
   getcount(locationId: string | null, subLocationId: string | null) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
@@ -507,5 +507,17 @@ export class DeskManagementComponent {
     this.http.deskUpdateLocationId(loctionid);
     console.log(loctionid)
 
+  }
+
+  
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+    this.http.desklocationIdSubject.complete()
+    localStorage.removeItem('locationId');
+    localStorage.removeItem('sublocationId');
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

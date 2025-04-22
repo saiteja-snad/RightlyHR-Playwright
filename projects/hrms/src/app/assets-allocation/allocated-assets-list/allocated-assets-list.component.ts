@@ -205,9 +205,8 @@ export class AllocatedAssetsListComponent {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
-
-
         this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
+        this.getcount(Value,  this.selectedSubLocationId,this.Status);
       }
     })
   }
@@ -1410,7 +1409,43 @@ export class AllocatedAssetsListComponent {
 
       });
   }
+  
+  navigateToAsset(assetId: any) {
+    this.router.navigate(['/assets-management/view-assets-details'],{ queryParams: { id: assetId }});
+  }
+  
+  getcount(locationId: string | null, subLocationId: string | null, status: string) {
+    const params = new URLSearchParams();
+    if (locationId) params.append('locationid', locationId);
+    if (subLocationId) params.append('sublocationid', subLocationId);
+    params.append('status', status);
 
+    this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
+      next: (data: any) => {
+        const totalCount = data.totalCount || 0;
+        this.http.setAssetCount(totalCount);
+
+        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+        const availableData = statusCounts.find((item: any) => item.status === "Available");
+        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
+        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
+        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
+
+        const availableCount = availableData?.count || 0;
+        const allocateCount = allocateData?.count || 0;
+        const inactiveCount = inactivedata?.count || 0;
+        const undermaintenceCount = undermaintence?.count || 0;
+
+        this.http.setavilableAssetCount(availableCount);
+        this.http.setallocatedAssetCount(allocateCount);
+        this.http.setundermatinaceAssetCount(undermaintenceCount);
+        this.http.setinactiveSubjectAssetCount(inactiveCount);
+      },
+      error: (error) => {
+        console.error('Error fetching count:', error);
+      }
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

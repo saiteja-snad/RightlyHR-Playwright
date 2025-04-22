@@ -16,7 +16,14 @@ export default [
             { path: 'inactive-assets', loadComponent: () => import('./inactive-assets-list/inactive-assets-list.component').then((m) => m.InactiveAssetsListComponent) },
         ]
     },
-    { path: 'view-assets-details', loadComponent: () => import('./view-assets-details/view-assets-details.component').then((m) => m.ViewAssetsDetailsComponent) },
+    { path: 'view-assets-details', 
+
+        children:[
+            { path: '', redirectTo: 'asset-data', pathMatch: 'full' },
+            {path:'asset-data',loadComponent: () => import('./view-assets-details/view-assets-details.component').then((m) => m.ViewAssetsDetailsComponent)},
+            {path:'asset-history',loadComponent: () => import('./asset-history/asset-history.component').then((m) => m.AssetHistoryComponent)}
+        ]
+     },
 
 
 ] as Route[];

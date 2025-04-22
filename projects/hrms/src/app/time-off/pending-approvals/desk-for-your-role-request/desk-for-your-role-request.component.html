@@ -27,76 +27,176 @@
                 </thead>
                 <tbody>
                     @if (deskheaderpending.length > 0) {
+                    <tr *ngFor="let exp of deskheaderpending">
+                        <td class="text-left">{{exp.entity?.deskallocatedtoname}}</td>
+                        <td class="text-left">{{exp.entity?.deskname}}</td>
+                        <td class="text-left">{{exp.entity?.deskType}}</td>
+                        <td class="text-left">{{exp.entity?.locationName}}</td>
+                        <td class="text-left">{{exp.entity?.sublocationName}}</td>
+                        <td class="text-left">{{exp.entity?.shiftName}}</td>
 
-                        <tr *ngFor="let exp of deskheaderpending">
-                            <td class="text-left">{{exp.entity?.deskallocatedtoname}}</td>
-                            <td class="text-left">{{exp.entity?.deskname}}</td>
-                            <td class="text-left">{{exp.entity?.deskType}}</td>
-                            <td class="text-left">{{exp.entity?.locationName}}</td>
-                            <td class="text-left">{{exp.entity?.sublocationName}}</td>
-                            <td class="text-left">{{exp.entity?.shiftName}}</td>
-    
-                            <td class="text-left">{{exp.entity?.allocatedDate}}</td>
-                            <td class="text-center">
-                                <div *ngIf="exp.entity?.deskAllocationItemId">
-                                    <div class="dropdown">
-                                        <div class="dots bot-m" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                            <i class="bi bi-info-circle-fill ms-2"></i>
-                                        </div>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                            <li>
-                                                <button class="dropdown-item" type="button">
-                                                    <i class="bi bi-paperclip"></i> View Details
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-    
-                            </td>
-    
-                            <td class="text-left">{{exp.entity?.approvalStatus}}</td>
-    
-    
-                            <td class="text-center">
+                        <td class="text-left">{{exp.entity?.allocatedDate | dateformat}}</td>
+                        <td class="text-center">
+                            <div *ngIf="exp.entity?.deskAllocationItemId">
                                 <div class="dropdown">
                                     <div class="dots bot-m" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
                                         aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
+                                        <i class="bi bi-info-circle-fill ms-2"></i>
                                     </div>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                        <li
-                                            *ngIf="exp.approvalHeader.currentapprovalStage !== exp.approvalHeader.finalapprovalStage">
-                                            <button class="dropdown-item" type="button" data-bs-target="#ApproveDesk"
-                                                data-bs-toggle="modal">
-                                                Approve
-                                            </button>
-                                        </li>
-                                        <li
-                                            *ngIf="exp.approvalHeader.currentapprovalStage === exp.approvalHeader.finalapprovalStage">
-                                            <button class="dropdown-item">
-                                                Process
-                                            </button>
-                                        </li>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
                                         <li>
-                                            <button class="dropdown-item" type="button" data-bs-target="#RejectDesk"
-                                                data-bs-toggle="modal">
-                                                Reject
-                                            </button>
+                                            <a class="dropdown-item" type="button"
+                                                (click)="viewdeskitem(exp.entity?.deskAllocationItemId);openmodal(mydsek)">
+                                                <i class="bi bi-paperclip"></i> View Details
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+
+                        </td>
+
+                        <td class="text-left">{{exp.entity?.approvalStatus}}</td>
+
+
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li
+                                        *ngIf="exp.approvalHeader.currentapprovalStage !== exp.approvalHeader.finalapprovalStage">
+                                        <a class="dropdown-item" type="button">
+                                            Approve
+                                        </a>
+                                    </li>
+                                    <li
+                                        *ngIf="exp.approvalHeader.currentapprovalStage === exp.approvalHeader.finalapprovalStage">
+                                        <a class="dropdown-item"
+                                            (click)="process(exp.approvalHeader.id,exp);viewdeskitem(exp.entity?.deskAllocationItemId)">
+                                            Process
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" type="button"
+                                            (click)="selectedexpenesid=exp.approvalHeader.id;openModal(rejectmodal)">
+                                            Reject
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
                     }
                     @else {
-                        <tr>
-                          <td colspan="9"><app-no-data-found></app-no-data-found></td>
-                        </tr>
-                        }
+                    <tr>
+                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                    </tr>
+                    }
+
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+
+<ng-template #mydsek let-model>
+    <div class="custom-main-popup-container" ngbAutofocus>
+
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">View Desk</p>
+            </div>
+            <div>
+                <a (click)="model.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="assets-custom-table-main">
+                        <table class="w-100">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Employee Name</th>
+                                    <th class="text-center">Allocation Date</th>
+                                    <th class="text-center">Desk Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody *ngIf="deskiteam; else noDataTemplate">
+                                <tr>
+
+                                    <td class="text-center">{{ deskiteam.allocatedToName }}</td>
+                                    <td class="text-center">{{ deskiteam.allocatedDate | dateformat }}</td>
+                                    <td class="text-center">{{ deskiteam.status }}</td>
+
+                                </tr>
+                            </tbody>
+                            <ng-template #noDataTemplate>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="6" class="text-center w-100 p-5">
+                                            <p class="text-center"><b>No Data Found</b></p>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </ng-template>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #rejectmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+
+        <div class="custom-main-popup-content p-5">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="icons\reject.png" alt="succues" class="error-icon">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <h4 class="text-center">{{'Are you sure you want to Reject?' | translate}}</h4>
+            </div>
+            <form [formGroup]="rejectForm" (ngSubmit)="Rejected(rejectForm)">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
+                            <span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="comments"
+                            placeholder="Please provide reason for rejection" formControlName="comments"
+                            maxlength="250"></textarea>
+                        <div class="text-end small text-muted">
+                            {{ rejectForm.get('comments')?.value?.length || 0 }}/250
+                        </div>
+
+                        <div class="error-msg"
+                            *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+                            <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
+                                Rejected
+                                Reason
+                                is
+                                required.
+                            </div>
+                            <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">
+                                Reason cannot exceed 250 characters.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
+                        translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
+                        translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

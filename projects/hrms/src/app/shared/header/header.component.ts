@@ -14,10 +14,9 @@ import { ReportsMainTabsComponent } from "../reports-tabs/reports-main-tabs/repo
 import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component";
 import { PmsSettingsTabsComponent } from "../pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
-
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent, CalendarHeaderTabsComponent, ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent,ItsuporrtHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent, CalendarHeaderTabsComponent, ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent, ItsuporrtHeaderTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

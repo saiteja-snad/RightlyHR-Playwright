@@ -7,8 +7,8 @@ import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RouterModule } from '@angular/router';
-import { Subject, Subscription, takeUntil } from 'rxjs';
-import { ICategory, IVendor } from '../../Interfaces/assets-management.model';
+import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
+import { IAsset, ICategory, IVendor } from '../../Interfaces/assets-management.model';
 
 @Component({
   selector: 'app-assets-managment',
@@ -32,10 +32,15 @@ export class AssetsManagmentComponent {
   isToggledWarranty = false;
   empinfo: any
   assetForm!: FormGroup;
+  searchQuery=''
   assetSubCategory: any = [];
   assetCategorys: ICategory[] = [];
   vendor: IVendor[] = [];
-
+    assetslist = new BehaviorSubject<IAsset[]>([])
+  locationfromdata!: FormGroup
+  page = 1;
+  pageSize = 10;
+  collectionSize = 100;
   constructor(
     private readonly fb: FormBuilder,
     private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,) { }
@@ -45,12 +50,14 @@ export class AssetsManagmentComponent {
     this.getassetsCategory()
     this.getjobLocationList()
     this.getvendor()
+    this.intiallocationandsublocation()
+    this.getcount(null, null)
     this.navTabs = [
-      { label: 'All', route: '/assets-management/all-assets', count$: this.http.deskTotalCountSubject },
-      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.deskAvailableCountSubject },
-      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.deskAllocatedCountSubject },
-      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.deskUndermaindanaenceCountSubject },
-      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.deskinactiveCountSubject },
+      { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject },
+      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject },
+      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject },
+      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject },
+      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject },
     ];
   }
 
@@ -81,6 +88,13 @@ export class AssetsManagmentComponent {
     )
   }
 
+  intiallocationandsublocation() {
+    this.locationfromdata = this.fb.group({
+      locationId: [null],
+      subLocationId: [{ value: null, disabled: true }],
+    });
+
+  }
 
 
   openModal(content: any) {
@@ -158,9 +172,6 @@ export class AssetsManagmentComponent {
   }
 
 
-
-
-
   toggleAmcFields(enable: boolean, resetValues: boolean = false) {
     const amcFields = ['amcstartdate', 'amcenddate', 'vendorname', 'contactnumber'];
 
@@ -177,8 +188,6 @@ export class AssetsManagmentComponent {
       }
     });
   }
-
-
 
   onStartDateChange(): void {
     const startDate = this.assetForm.get('warrantystartdate')?.value;
@@ -302,6 +311,65 @@ export class AssetsManagmentComponent {
     return this.assetCategorys.find((t) => parseInt(data) === t.id)?.name
   }
 
+  
+  onLocationChange() {
+    const locationId = this.locationfromdata.get('locationId')?.value;
+    this.getSubLocationByidfliters(locationId);
+    localStorage.setItem('locationId', JSON.stringify(locationId))
+    console.log(locationId)
+    this.locationfromdata.get('subLocationId')?.reset()
+    localStorage.setItem('sublocationId', JSON.stringify(null))
+    this.http.assetsUpdateLocationId(locationId);
+
+    this.getcount(locationId, null)
+  }
+
+  onSubLocationChange() {
+    const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+
+    if (subLocationId) {
+      const loctionid = this.locationfromdata.get('locationId')?.value
+      localStorage.setItem('sublocationId', JSON.stringify(subLocationId))
+      this.http.assetsUpdateLocationId(loctionid);
+      console.log(loctionid)
+      this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId, null);
+      this.getcount(loctionid, subLocationId)
+
+    }
+    else {
+      const loctionid = this.locationfromdata.get('locationId')?.value
+      localStorage.setItem('sublocationId', JSON.stringify(subLocationId))
+      this.http.assetsUpdateLocationId(loctionid);
+    }
+  }
+  
+ getSubLocationByidfliters(selectedLocation: any): void {
+    this.locationfromdata.get('subLocationId')?.enable();
+
+    this.subscription = this.http
+      .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation}`)
+      .subscribe({
+        next: (data: any) => {
+          if (data && data.jobSubLocations) {
+            // Prepend 'All Sub Locations' option
+            this.subLocationsDropdown = data.jobSubLocations
+          } else {
+            this.subLocationsDropdown = [];
+          }
+        },
+        error: (err: any) => {
+          console.error('Error fetching sub-location data:', err);
+          this.subLocationsDropdown = [];
+          this.locationfromdata.patchValue({ subLocationId: null });
+          this.locationfromdata.reset()
+          this.http.assetslocationIdSubject.complete()
+          this.locationfromdata.get('subLocationId')?.disable()
+          localStorage.removeItem('sublocationId');
+          localStorage.removeItem('locationId');
+          
+        }
+      });
+  }
 
   getjobLocationList() {
     this.subscription = this.http
@@ -454,8 +522,6 @@ export class AssetsManagmentComponent {
 
   }
 
-
-
   toggleWarrantyFields(enable: boolean, resetValues: boolean = false) {
     const warrantyFields = ['warrantystartdate', 'warrantyenddate'];
 
@@ -470,9 +536,68 @@ export class AssetsManagmentComponent {
     });
   }
 
+  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
+
+    const params = {
+      page: pagenum,
+      pageSize: pagesize,
+      searchQuery: this.searchQuery,
+      locationid: locationid,
+      status: Assetsstatus,
+      sublocationid: sublocationid
+    };
+
+    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.page, params.pageSize, params.searchQuery).subscribe({
+      next: (res: any) => {
+        this.assetslist.next(res.items);
+    
+      },
+      error: (error: any) => {
+    
+
+      }
+    });
+  }
+
+  getcount(locationId: string | null, subLocationId: string | null) {
+    const params = new URLSearchParams();
+    if (locationId) params.append('locationid', locationId);
+    if (subLocationId) params.append('sublocationid', subLocationId);
+    params.append('status', status);
+
+    this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
+      next: (data: any) => {
+        const totalCount = data.totalCount || 0;
+        this.http.setAssetCount(totalCount);
+
+        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+        const availableData = statusCounts.find((item: any) => item.status === "Available");
+        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
+        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
+        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
+
+        const availableCount = availableData?.count || 0;
+        const allocateCount = allocateData?.count || 0;
+        const inactiveCount = inactivedata?.count || 0;
+        const undermaintenceCount = undermaintence?.count || 0;
+
+        this.http.setavilableAssetCount(availableCount);
+        this.http.setallocatedAssetCount(allocateCount);
+        this.http.setundermatinaceAssetCount(undermaintenceCount);
+        this.http.setinactiveSubjectAssetCount(inactiveCount);
+      },
+      error: (error) => {
+        console.error('Error fetching count:', error);
+      }
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-    localStorage.removeItem('assetsdata');
+    localStorage.removeItem('locationId');
+    localStorage.removeItem('sublocationId');
+    this.locationfromdata.reset()
+    this.http.assetslocationIdSubject.complete()
   }
 }

@@ -490,7 +490,7 @@ resetTriggerSignal() {
     this.assetCountSubject.next(count);
   }
 
-  setavilableassignAssetCount(count: number) {
+  setavilableAssetCount(count: number) {
     this.avilableassetCountSubject.next(count);
   }
 

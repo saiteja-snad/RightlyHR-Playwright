@@ -1,0 +1,43 @@
+.custom-search {
+    border: 1px solid #CCDAEC;
+    border-radius: 0.8rem;
+    overflow: hidden;
+
+    .custom-input-group-search {
+        border: none;
+        padding: 1rem 1.5rem;
+        font-size: var(--fontsize14);
+    }
+
+    .custom-search-input {
+        border: none;
+        padding: 1rem 1rem 1rem 0rem;
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        vertical-align: middle;
+    }
+
+    input:focus {
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+input:focus{
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px solid #DEE8F3 !important;
+    background-color: #F8FBFF !important;
+}
+
+.succes-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+}
+
+.popup-heading {
+    font-weight: 700;
+    font-size: var(--fontsize16);
+    vertical-align: middle;
+}

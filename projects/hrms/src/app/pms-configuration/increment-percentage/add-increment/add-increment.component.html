@@ -18,12 +18,12 @@
                 class="text-danger">*</span></label>
             <p-select [options]="reviewCycleDropDownData" optionValue="id" optionLabel="reviewCycleName" [filter]="true"
               id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel" [(ngModel)]="postincrementalpercentage.id"
-              filterBy="reviewCycleName" [showClear]="true" placeholder="Please Select Review Cycle Name"  class="form-select w-100" (onChange)="getReviewCycledataById()">
-              </p-select>
-              <small class="text-danger" *ngIf="reviewcycle.touched && reviewcycle.invalid">
-                Review Cycle Name is required
-              </small>
-            </div>
+              filterBy="reviewCycleName" [showClear]="true" placeholder="Please Select Review Cycle Name"
+              class="form-select w-100" (onChange)="getReviewCycledataById()">
+            </p-select>
+            <small class="text-danger" *ngIf="reviewcycle.touched && reviewcycle.invalid">
+              Review Cycle Name is required
+            </small>
           </div>
         </div>
         <div class="col-md-6 mb-3">

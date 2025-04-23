@@ -5,6 +5,7 @@ import { NgbModal, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-team-pending-reviews',
@@ -40,7 +41,8 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
 
   constructor(
     private readonly modalService: NgbModal,
-    private readonly http: HttpService
+    private readonly http: HttpService,
+    private router: Router
   ) { }
 
   fetchReviewCycles(): void {
@@ -106,6 +108,26 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
   closeModal() {
     this.modalService.dismissAll();
   }
+
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
+    console.log(currentStage)
+    const queryParams = {
+      reviewCycleItemId: reviewCycleItemId,
+      currentStage: currentStage,
+      assessorItemId: assessorItemId,
+      reviewCycles: JSON.stringify(this.reviewCycles), // Ensure this.reviewCycles is defined
+      reviewEmployeeId:reviewEmployeeId,
+      reviewcycleitemformresponseid:reviewcycleitemformresponseid,
+      formresponseid:formresponseid
+    };
+  
+    // Store queryParams in localStorage
+    localStorage.setItem('queryParams', JSON.stringify(queryParams));
+  
+    // Navigate to the assessment route
+    this.router.navigate(['/pms/assessment-form']);
+  }
+
 
   ngOnDestroy() {
     this.destroy$.next(true);

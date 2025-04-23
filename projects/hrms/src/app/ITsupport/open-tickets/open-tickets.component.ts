@@ -24,8 +24,12 @@ export class OpenTicketsComponent {
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   ticketRaisedFor :any []=[];
+  status :any []=[];
+
   departmentDetails = [] as IDepartment[];
   teamTicketDetails: any = {};
+  allEmployees = [] as any [];
+  selectedTickets: any = {};
 
   constructor(
     private readonly http: HttpService,
@@ -40,9 +44,17 @@ export class OpenTicketsComponent {
       { value: 'Self', label: 'Self' },
       { value: 'Colleague', label: 'Colleague' }
     ];
-    
+    this.status = [
+      { value: 'Open', label: 'Open' },
+      { value: 'Closed', label: 'Closed' },
+      { value: 'Await On User', label: 'Await On User' },
+      { value: 'Rejected', label: 'Rejected' }
+
+    ];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    
     this.teamTicketDetails = JSON.parse(localStorage.getItem('ticketDetails') || '{}');
+    this.getEmployee(this.teamTicketDetails.empId);
 
     this.getuserticketsbyempid();
     this.itSupportForm = this.fb.group({
@@ -56,15 +68,16 @@ export class OpenTicketsComponent {
       type: [{ value: '', disabled: true }, [Validators.required]],
       priority: [{ value: '', disabled: true }, [Validators.required]],
       subject: [{ value: '', disabled: true }, [Validators.required]],
-      description: ['', [Validators.required]],
+      description: [{ value: '', disabled: true }, [Validators.required]],
       comments : ['', [Validators.required]],
+      assignedto : [null, [Validators.required]],
 
 
 
     });
   }
   
-  selectedTickets: any = {};;
+  
 
   openModal(content: any, ticket: any) {
     this.selectedTickets = ticket;
@@ -79,6 +92,7 @@ export class OpenTicketsComponent {
       priority: this.selectedTickets.priority,
       subject : this.selectedTickets.subject,
       description: this.selectedTickets.description,
+      ticketStatus: this.selectedTickets.ticketStatus,
     });
     console.log(ticket);
     
@@ -99,6 +113,33 @@ export class OpenTicketsComponent {
 
       }
     })
+  }
+
+  getEmployee(empId:any) {
+    // this.employeeid = this.employeeinfos.empId
+    console.log(empId);
+    this.subscription = this.http.getData(`JobDetails/getRMTM?EmployeeId=${empId}`).subscribe({
+      next: (data: any) => {
+        this.allEmployees = data;
+        console.log(this.allEmployees);
+        this.allEmployees = this.allEmployees.map(a => ({
+          ...a,
+          fullName: `${a.fusionEmpId} - ${a.assigneeName}`.trim()
+        }));
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      }
+    });
+ 
+ 
+  }
+
+  selectedAssigneeId: any ;
+
+  assigneeDetails(id: any) {
+    console.log(id);
+    this.selectedAssigneeId = id;
   }
   onUpdate(){
 

@@ -234,21 +234,52 @@
                 </div>
 
                 <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Action'| translate}}<span class="text-danger">*</span></label>
+                        <p-select [options]="status"
+                                optionLabel="label" optionValue="name" placeholder="Please select status"
+                                formControlName="ticketStatus" class="custom-select w-100">
+                            </p-select>
+                        <div *ngIf="itSupportForm.get('ticketStatus')?.invalid && itSupportForm.get('ticketStatus')?.touched">
+                            <div class="error-msg">{{'Status is required' | translate}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}<span class="text-danger">*</span></label>
+                        <p-select [options]="allEmployees" [filter]="true" filterBy="firstName" [showClear]="true"
+                                optionLabel="fullName" optionValue="assigneeId" (onChange)="assigneeDetails($event.value)" placeholder="Please select employee"
+                                formControlName="assignedto" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                    }}</ng-template>
+                                <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                    }}</ng-template>
+                            </p-select>
+                        <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
+                            <div class="error-msg">{{'Comments is required' | translate}}</div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="row">
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Description'| translate}}<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="description" placeholder="Please enter description"></textarea>
-                    </div>
-                    <div *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
-                        <div class="error-msg">{{'Description is required' | translate}}</div>
+                        <div *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
+                            <div class="error-msg">{{'Description is required' | translate}}</div>
+                        </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Comments'| translate}}<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="comments" placeholder="Please enter comments"></textarea>
+                        <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
+                            <div class="error-msg">{{'Comments is required' | translate}}</div>
+                        </div>
                     </div>
-                    <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
-                        <div class="error-msg">{{'Comments is required' | translate}}</div>
-                    </div>
+                    
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'}}</button>

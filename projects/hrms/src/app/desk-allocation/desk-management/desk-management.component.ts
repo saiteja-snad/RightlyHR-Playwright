@@ -127,7 +127,7 @@ export class DeskManagementComponent {
           window.location.reload()
           localStorage.removeItem('locationId');
           localStorage.removeItem('sublocationId');
-          this.http.desklocationIdSubject.complete()
+  
         }
       });
 
@@ -514,7 +514,6 @@ export class DeskManagementComponent {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-    this.http.desklocationIdSubject.complete()
     localStorage.removeItem('locationId');
     localStorage.removeItem('sublocationId');
     if (this.subscription) {

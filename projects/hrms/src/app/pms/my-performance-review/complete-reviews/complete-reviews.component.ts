@@ -4,10 +4,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { PaginatorModule } from 'primeng/paginator';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Router } from '@angular/router';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-complete-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent],
   templateUrl: './complete-reviews.component.html',
   styleUrl: './complete-reviews.component.scss'
 })
@@ -25,8 +30,27 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
   pageSize = 10;
   collectionSize = 100;
   totalItems = 0;
+  rows = 10;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
+
+  first = 0;
+  totalRecords = 0;
+  Status:any;
 
   destroy$: Subject<boolean> = new Subject();
+
+  
+  constructor(
+    private readonly modalService: NgbModal,
+    private readonly http: HttpService,
+    private router: Router,
+    private sharedModalService: OpenModalService,
+  ) { }
 
   ngOnInit(): void {
     const fusionuserString = localStorage.getItem('rightlyHrUser');
@@ -36,11 +60,6 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
     }
     this.fetchReviewCycles();
   }
-
-  constructor(
-    private readonly modalService: NgbModal,
-    private readonly http: HttpService
-  ) { }
 
   fetchReviewCycles(): void {
     this.dataload = true;
@@ -62,6 +81,7 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
           }
         },
         error: (err) => {
+          this.dataload=false;
           console.error('Error fetching review cycles:', err);
         },
         complete: () => {
@@ -85,16 +105,92 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
   getSubLocations(sublocations: any[]): string {
     return sublocations?.map(subLoc => subLoc.subLocationName).join(', ') || '-';
   }
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first
 
-  onPageChange(newPage: number): void {
-    this.page = newPage;
     this.fetchReviewCycles();
   }
+
+
   onPageSizeChange(newPageSize: number) {
-    console.log('Page size changed to:', newPageSize);
-    console.log(this.page)
+    this.pageSize = newPageSize;
+    this.rows = newPageSize; 
     this.page = 1;
+    this.first = 0;
     this.fetchReviewCycles();
+  }
+
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
+    console.log(currentStage)
+    const queryParams = {
+      reviewCycleItemId: reviewCycleItemId,
+      currentStage: currentStage,
+      assessorItemId: assessorItemId,
+      reviewCycles: JSON.stringify(this.reviewCycles), // Ensure this.reviewCycles is defined
+      reviewEmployeeId:reviewEmployeeId,
+      reviewcycleitemformresponseid:reviewcycleitemformresponseid,
+      formresponseid:formresponseid
+    };
+  
+    // Store queryParams in localStorage
+    localStorage.setItem('queryParams', JSON.stringify(queryParams));
+  
+       // Navigate to the assessment route
+    this.router.navigate(['/pms/assessment-form']);
+  }
+
+  downloadPromotionletter(iteamid: any) {
+    console.log(iteamid);
+
+     this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+
+      next: (data: Blob) => {
+        console.log('Received byte data:', data);
+        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PerformancePromotion_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.Status = 'Promotion Letter Downloaded Successfully';
+        this.sharedModalService.openSuccessModal(this.Status);
+      },
+      error: (err) => {
+        console.error('Error downloading letter:', err);
+        this.Status = 'Failed to download letter';
+      },
+    });
+  }
+
+  downloadletter(iteamid: any) {
+    console.log(iteamid);
+
+     this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+
+      next: (data: Blob) => {
+        console.log('Received byte data:', data);
+        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PerformanceAppraisal_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.Status = 'Appraisal Letter Downloaded Successfully';
+        this.sharedModalService.openSuccessModal(this.Status);
+      },
+      error: (err) => {
+        console.error('Error downloading letter:', err);
+        this.Status = 'Failed to download letter';
+      },
+    });
   }
 
   onSearch(): void {

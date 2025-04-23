@@ -1,22 +1,26 @@
 <div class="custom-main-component-container">
-    @if (getEducationData.length > 0) {
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="component-header">Education Details</div>
-        <div>
-            <button class="custom-btn btn-primary px-5" (click)="openEducation()">Add</button>
-        </div>
+    <div class="my-3">
+        <app-detailed-step-progressbar />
     </div>
-    }
 
-    <!--Education place holder-->
-    @if (getEducationData.length <= 0) { 
-        <div class="placeholder-container">
-        <div>
-            <img src="/images/education-placeholder.png" alt="placeholder Image" class="place-holder-image mb-4">
-            <p class="placeholder-text mb-5">Please provide education details</p>
-            <button class="custom-btn btn-primary px-5" (click)="openEducation()">Add</button>
+    <div class="component-data-content">
+        @if (getEducationData.length > 0) {
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="component-header">Education Details</div>
+            <div>
+                <button class="custom-btn btn-primary px-5" (click)="openEducation()">Add</button>
+            </div>
         </div>
-        </div>
+        }
+
+        <!--Education place holder-->
+        @if (getEducationData.length <= 0) { <div class="placeholder-container">
+            <div>
+                <img src="/images/education-placeholder.png" alt="placeholder Image" class="place-holder-image mb-4">
+                <p class="placeholder-text mb-5">Please provide education details</p>
+                <button class="custom-btn btn-primary px-5" (click)="openEducation()">Add</button>
+            </div>
+    </div>
     }
 
     @if (getEducationData.length > 0) {
@@ -55,7 +59,8 @@
                                 </a>
                             </div>
                             <ng-template #downloadView>
-                                <a type="button" class="view-btn" (click)="onSelectDownload(data.attachment)"><i class="bi bi-download me-2"></i>Download</a>
+                                <a type="button" class="view-btn" (click)="onSelectDownload(data.attachment)"><i
+                                        class="bi bi-download me-2"></i>Download</a>
                             </ng-template>
                         </ng-template>
                     </td>
@@ -65,10 +70,12 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                <li><a class="dropdown-item" (click)="openUpdate(data)"><i class="bi bi-pencil me-2"></i>Update</a></li>
+                                <li><a class="dropdown-item" (click)="openUpdate(data)"><i
+                                            class="bi bi-pencil me-2"></i>Update</a></li>
                                 <li>
-                                    <a class="dropdown-item" (click)="deleteeducation(data.id,data.employeeId,data.degree,data.university,data.specialization,data.gpa,data.degreeStartDate,data.degreeEndDate)">
-                                    <i class="bi bi-trash3 me-2"></i>Delete</a>
+                                    <a class="dropdown-item"
+                                        (click)="deleteeducation(data.id,data.employeeId,data.degree,data.university,data.specialization,data.gpa,data.degreeStartDate,data.degreeEndDate)">
+                                        <i class="bi bi-trash3 me-2"></i>Delete</a>
                                 </li>
                             </ul>
                         </div>
@@ -80,18 +87,25 @@
     }
 
     <div class="footer-btn-content d-flex justify-content-between gap-2 pt-3">
-        @if((this.empinfo.empstatus.toLowerCase() == 'prospective') && (this.empinfo.substatus.toLowerCase() == 'offer letter generated' || 
-        this.empinfo.substatus.toLowerCase() == 'offer letter released' || this.empinfo.substatus.toLowerCase() == 'offer letter regenerated' || 
+        @if((this.empinfo.empstatus.toLowerCase() == 'prospective') && (this.empinfo.substatus.toLowerCase() == 'offer
+        letter generated' ||
+        this.empinfo.substatus.toLowerCase() == 'offer letter released' || this.empinfo.substatus.toLowerCase() ==
+        'offer letter regenerated' ||
         this.empinfo.substatus.toLowerCase() == 'offer letter accepted')){
         <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Offer Letter</button>
         }
-        @if((this.empinfo.empstatus.toLowerCase() == 'trainee prospective') && (this.empinfo.empType.toLowerCase() == 'trainee') && 
-        (this.empinfo.substatus.toLowerCase() == 'offer letter generated' ||this.empinfo.substatus.toLowerCase() == 'offer letter released'
-        || this.empinfo.substatus.toLowerCase() == 'offer letter regenerated'|| this.empinfo.substatus.toLowerCase() == 'offer letter accepted')){
-        <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevioustoTranineeofferletter()">Offer Letter</button>
+        @if((this.empinfo.empstatus.toLowerCase() == 'trainee prospective') && (this.empinfo.empType.toLowerCase() ==
+        'trainee') &&
+        (this.empinfo.substatus.toLowerCase() == 'offer letter generated' ||this.empinfo.substatus.toLowerCase() ==
+        'offer letter released'
+        || this.empinfo.substatus.toLowerCase() == 'offer letter regenerated'|| this.empinfo.substatus.toLowerCase() ==
+        'offer letter accepted')){
+        <button class="custom-btn btn-secondary rounded-pill px-5"
+            (click)="navigatePrevioustoTranineeofferletter()">Offer Letter</button>
         }
         <button class="custom-btn btn-primary px-5" [disabled]="disablebutton" (click)="navigateNext()">Next</button>
     </div>
+</div>
 </div>
 
 <!--Image view popup-->

@@ -76,7 +76,6 @@ export class WfhComponent {
   });
   }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const storedEmployee = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
 
   if (storedEmployee && Object.keys(storedEmployee).length > 0) {
@@ -101,7 +100,7 @@ export class WfhComponent {
   }
 
   getAllPendingApprovals() {
-    let EmployeeId = parseInt(this.empinfo.employeeId);
+    let EmployeeId = parseInt(this.LOGIN.employeeId);
     console.log(EmployeeId);
     this.http
       .getData(

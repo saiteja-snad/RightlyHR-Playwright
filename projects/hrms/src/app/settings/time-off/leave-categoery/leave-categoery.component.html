@@ -1,7 +1,10 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-end mb-3">
-        <button class="custom-btn btn-primary"><i class="bi bi-plus"></i>Add Leave Category</button>
+        <button type="button" class="custom-btn btn-primary" data-bs-toggle="modal"
+        data-bs-target="#requestdoc" ><i class="bi bi-plus"></i>Add Leave Category</button>
     </div>
+
+
 
     <div class="card shadow mt-4 table-card">
         <ul class="nav nav-tabs mb-2 border-bottom" id="pills-tab" role="tablist">
@@ -192,9 +195,8 @@
         </div>
     </div>
 </div>
-
-<!-- Modal -->
-<div class="modal fade" id="requestdoc" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <!-- Modal -->
+    <div class="modal fade" id="requestdoc" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <!-- Add Form starts -->
@@ -257,7 +259,7 @@
                                     Location is required </small>
                             </div>
                         </div>
-
+    
                         <!-- Shift -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -274,11 +276,11 @@
                                     Shift is required </small>
                             </div>
                         </div>
-
+    
                         <div class=" popuprow rounded col-12 mb-1">
                             <p class="ps-2 m-0 pt-2 pb-2">Leave Category Information</p>
                         </div>
-
+    
                         <!-- Leave Type  -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -294,7 +296,7 @@
                                     Leave Category Type is required </small>
                             </div>
                         </div>
-
+    
                         <!-- Name -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -307,7 +309,7 @@
                                     Leave Category Name is required </small>
                             </div>
                         </div>
-
+    
                         <!-- Code -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -320,7 +322,7 @@
                                     Leave Category Code is required </small>
                             </div>
                         </div>
-
+    
                         <!-- Valid Dates -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -334,7 +336,7 @@
                                     Days is required </small>
                             </div>
                         </div>
-
+    
                         <!-- Color -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -348,7 +350,7 @@
                                     Leave Category Color is required </small>
                             </div>
                         </div>
-
+    
                         <!-- Is Dependent -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -361,12 +363,12 @@
                                 </select>
                             </div>
                         </div>
-
+    
                         <div class=" popuprow rounded col-12 mb-1">
                             <p class="ps-2 m-0 pt-2 pb-2">Additional Information</p>
                         </div>
                     </div>
-
+    
                     <div class="row">
                         <!-- Gender  -->
                         <div class="col-md-4">
@@ -385,7 +387,7 @@
                                     Allowed Gender is required </small>
                             </div>
                         </div>
-
+    
                         <!-- Marital status -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -404,7 +406,7 @@
                                     Marital Status is required </small>
                             </div>
                         </div>
-
+    
                         <!--Exclude Weekends  -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -422,7 +424,7 @@
                                     Exclude Weekends is required </small>
                             </div>
                         </div>
-
+    
                         <!-- Exclude Holidays  -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -438,7 +440,7 @@
                                 <small class="error-msg"
                                     *ngIf="(ExcludeHolidays.touched && ExcludeHolidays.invalid)|| (ExcludeHolidays.invalid && OrganizationPolicy.submitted)">
                                     Exclude Holidays is required </small>
-
+    
                             </div>
                         </div>
                         <!-- optional holidays -->
@@ -450,16 +452,16 @@
                                     placeholder="Is Optional Holiday" id="optionalHolidays" name="optionalHolidays"
                                     #OptionalHolidays="ngModel" [(ngModel)]="postOrgPloicyDetails.isOptionalHoliday"
                                     required>
-
+    
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
-
+    
                                 </select>
                                 <small class="error-msg"
                                     *ngIf="(OptionalHolidays.touched && OptionalHolidays.invalid)|| (OptionalHolidays.invalid && OrganizationPolicy.submitted)">
                                     Is Optioanl Holiday is required </small>
-
+    
                             </div>
                         </div>
                         <!--Half days allowed  -->
@@ -468,26 +470,26 @@
                                 <label for="designation">Half Day Leave Allowed
                                     <span class="error-msg">*</span>
                                 </label>
-
+    
                                 <select class="form-select" aria-label="Default select example"
                                     placeholder="Half Days Allowed" id="HalfDaysAllowed" name="HalfDaysAllowed"
                                     #HalfDaysAllowed="ngModel" [(ngModel)]="postOrgPloicyDetails.allowedHalfDay"
                                     required>
-
+    
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
-
+    
                                 </select>
                                 <small class="error-msg"
                                     *ngIf="(HalfDaysAllowed.touched && HalfDaysAllowed.invalid)|| (HalfDaysAllowed.invalid && OrganizationPolicy.submitted)">
                                     Half Day Leave Allowed is required </small>
-
-
+    
+    
                             </div>
                         </div>
-
-
+    
+    
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="prorata">Pro Rata Leave Allocation<span class="error-msg">*</span></label>
@@ -504,15 +506,15 @@
                                     Pro Rata Leave Allocation is required </small>
                             </div>
                         </div>
-
-
+    
+    
                         <div class=" popuprow rounded col-12 mb-1">
                             <p class="ps-2 m-0 pt-2 pb-2">Allow Requests For Future Dates</p>
                         </div>
-
+    
                         <!-- Future Dates Allowed  -->
                         <div class="col-md-4">
-
+    
                             <div class="mb-3">
                                 <label for="gender">Allowed<span class="error-msg">*</span></label>
                                 <select class="form-select" aria-label="Default select example"
@@ -528,8 +530,8 @@
                                     Future Dates Allowed is required </small>
                             </div>
                         </div>
-
-
+    
+    
                         <!-- Future Dates Allowed Days  -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -540,14 +542,14 @@
                                     class="form-control input-content" id="FutureDatesAllowedUnits"
                                     placeholder="No. of days" [required]="postOrgPloicyDetails.futureDatesAllowed"
                                     autocomplete="off" min="1" [disabled]="!postOrgPloicyDetails.futureDatesAllowed">
-
+    
                                 <!-- Required Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.futureDatesAllowed && FutureDatesAllowedUnits.touched && 
                         (postOrgPloicyDetails.futureDatesAllowedDays === null || postOrgPloicyDetails.futureDatesAllowedDays === undefined)">
                                     Future Dates Allowed days are required
                                 </small>
-
+    
                                 <!-- Minimum Value Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.futureDatesAllowed && FutureDatesAllowedUnits.touched && 
@@ -556,14 +558,14 @@
                                 </small>
                             </div>
                         </div>
-
-
-
-
+    
+    
+    
+    
                         <div class=" popuprow rounded col-12 mb-1">
                             <p class="ps-2 m-0 pt-2 pb-2">Allow Requests For Past Dates</p>
                         </div>
-
+    
                         <!-- Past Dates Allowed  -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -572,20 +574,20 @@
                                     placeholder="Past Dates Allowed" id="PastDatesAllowed" name="PastDatesAllowed"
                                     #PastDatesAllowed="ngModel" (change)="onPastDatesAllowedChange()"
                                     [(ngModel)]="postOrgPloicyDetails.pastDateAllowed" required>
-
+    
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
-
+    
                                 </select>
                                 <small class="error-msg"
                                     *ngIf="(PastDatesAllowed.touched && PastDatesAllowed.invalid)|| (PastDatesAllowed.invalid && OrganizationPolicy.submitted)">
                                     Past Dates Allowed is required </small>
-
+    
                             </div>
                         </div>
-
-
+    
+    
                         <!-- Past Dates Allowed Days  -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -597,14 +599,14 @@
                                     [(ngModel)]="postOrgPloicyDetails.pastDatesAllowedDays"
                                     class="form-control input-content" id="PastDatesAllowedUnits"
                                     placeholder="No. of days" min="1">
-
+    
                                 <!-- Required Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.pastDateAllowed && PastDatesAllowedUnits.touched && 
                         (postOrgPloicyDetails.pastDatesAllowedDays === null || postOrgPloicyDetails.pastDatesAllowedDays === undefined)">
                                     Past Dates Allowed days are required
                                 </small>
-
+    
                                 <!-- Minimum Value Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.pastDateAllowed && PastDatesAllowedUnits.touched && 
@@ -613,12 +615,12 @@
                                 </small>
                             </div>
                         </div>
-
-
+    
+    
                         <div class=" popuprow rounded col-12 mb-1">
                             <p class="ps-2 m-0 pt-2 pb-2">Carry Forward</p>
                         </div>
-
+    
                         <!-- Carry Forward Leave  -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -627,53 +629,53 @@
                                     placeholder="Carry Forward Leave" id="CarryForwardLeave" name="CarryForwardLeave"
                                     #CarryForwardLeave="ngModel" (change)="onCarryForwardLeaveChange()"
                                     [(ngModel)]="postOrgPloicyDetails.carryForwardAllowed" required>
-
+    
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
-
+    
                                 </select>
                                 <small class="error-msg"
                                     *ngIf="(CarryForwardLeave.touched && CarryForwardLeave.invalid)|| (CarryForwardLeave.invalid && OrganizationPolicy.submitted)">
                                     Carry Forward Leave is required </small>
-
+    
                             </div>
                         </div>
-
-
+    
+    
                         <!-- Carry Forward Leave Days  -->
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="gender">Days<span class="error-msg">*</span></label>
-
+    
                                 <input type="number" name="CarryForwardLeaveUnits" class="form-control input-content"
                                     (input)="restrictInputDays($event)"
                                     [required]="postOrgPloicyDetails.carryForwardAllowed"
                                     [disabled]="!postOrgPloicyDetails.carryForwardAllowed" id="CarryForwardLeaveUnits"
                                     placeholder="No. of days" #CarryForwardLeaveUnits="ngModel" autocomplete="off"
                                     [(ngModel)]="postOrgPloicyDetails.carryForwardAllowedValue" min="1">
-
+    
                                 <!-- Required Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.carryForwardAllowed && CarryForwardLeaveUnits.touched && 
                         (postOrgPloicyDetails.carryForwardAllowedValue === null || postOrgPloicyDetails.carryForwardAllowedValue === undefined)">
                                     Carry Forward days are required
                                 </small>
-
+    
                                 <!-- Minimum Value Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.carryForwardAllowed && CarryForwardLeaveUnits.touched && 
                         postOrgPloicyDetails.carryForwardAllowedValue !== null && postOrgPloicyDetails.carryForwardAllowedValue < 1">
                                     Carry Forward days must be at least 1
                                 </small>
-
+    
                             </div>
                         </div>
-
+    
                         <div class=" popuprow rounded col-12 mb-1">
                             <p class="ps-2 m-0 pt-2 pb-2">Encash</p>
                         </div>
-
+    
                         <!-- Encash Leave  -->
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -682,55 +684,55 @@
                                     placeholder="Encash Leave" id="EncashLeave" name="EncashLeave"
                                     #EncashLeave="ngModel" (change)="onEncashLeaveChange()"
                                     [(ngModel)]="postOrgPloicyDetails.encashAllowedType" required>
-
+    
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
-
+    
                                 </select>
                                 <small class="error-msg"
                                     *ngIf="(EncashLeave.touched && EncashLeave.invalid)|| (EncashLeave.invalid && OrganizationPolicy.submitted)">
                                     Encash Allowed is required </small>
-
+    
                             </div>
                         </div>
-
-
+    
+    
                         <!-- Encash Leave Value  -->
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="gender">Days<span class="error-msg">*</span></label>
-
+    
                                 <input type="number" #EncashLeaveUnits="ngModel" name="EncashLeaveUnits"
                                     [required]="postOrgPloicyDetails.encashAllowedType"
                                     [disabled]="!postOrgPloicyDetails.encashAllowedType" autocomplete="off"
                                     [(ngModel)]="postOrgPloicyDetails.encashAllowedValue"
                                     class="form-control input-content" (input)="restrictInputDays($event)"
                                     id="EncashLeaveUnits" placeholder="No. of days" min="1">
-
+    
                                 <!-- Required Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.encashAllowedType && EncashLeaveUnits.touched && 
                         (postOrgPloicyDetails.encashAllowedValue === null || postOrgPloicyDetails.encashAllowedValue === undefined)">
                                     Encash days are required
                                 </small>
-
+    
                                 <!-- Minimum Value Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.encashAllowedType && EncashLeaveUnits.touched && 
                         postOrgPloicyDetails.encashAllowedValue !== null && postOrgPloicyDetails.encashAllowedValue < 1">
                                     Encash days must be at least 1
                                 </small>
-
+    
                             </div>
                         </div>
-
-
+    
+    
                         <div class=" popuprow rounded col-12 mb-1">
                             <p class="ps-2 m-0 pt-2 pb-2">Notice Period</p>
                         </div>
-
-
+    
+    
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="gender">Allow Leaves<span class="error-msg">*</span></label>
@@ -738,54 +740,54 @@
                                     placeholder="No. of days" id="NoticePeriod" name="NoticePeriod"
                                     #NoticePeriod="ngModel" (change)="onNoticePeriodChange()"
                                     [(ngModel)]="postOrgPloicyDetails.noticeperiodAllowedType" required>
-
+    
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
-
+    
                                 </select>
                                 <small class="error-msg"
                                     *ngIf="(NoticePeriod.touched && NoticePeriod.invalid)|| (NoticePeriod.invalid && OrganizationPolicy.submitted)">
                                     Allow Leaves is required </small>
-
+    
                             </div>
                         </div>
-
+    
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="gender">Maximum Leaves Allowed Per Month<span
                                         class="error-msg">*</span></label>
-
+    
                                 <input type="number" #NoticePeriodUnits="ngModel" name="NoticePeriodUnits"
                                     [required]="postOrgPloicyDetails.noticeperiodAllowedType"
                                     [disabled]="!postOrgPloicyDetails.noticeperiodAllowedType" autocomplete="off"
                                     [(ngModel)]="postOrgPloicyDetails.noticePeriodAllowedValue"
                                     class="form-control input-content" (input)="restrictInputDays($event)"
                                     id="NoticePeriodUnits" placeholder="No. of days" min="1">
-
+    
                                 <!-- Required Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.noticeperiodAllowedType && NoticePeriodUnits.touched && 
                         (postOrgPloicyDetails.noticePeriodAllowedValue === null || postOrgPloicyDetails.noticePeriodAllowedValue === undefined)">
                                     Maximum Leaves Allowed Per Month is required
                                 </small>
-
+    
                                 <!-- Minimum Value Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.noticeperiodAllowedType && NoticePeriodUnits.touched && 
                         postOrgPloicyDetails.noticePeriodAllowedValue !== null && postOrgPloicyDetails.noticePeriodAllowedValue < 1">
                                     Maximum Leaves Allowed Per Month must be at least 1
                                 </small>
-
+    
                             </div>
                         </div>
-
-
-
+    
+    
+    
                         <div class=" popuprow rounded col-12 mb-1">
                             <p class="ps-2 m-0 pt-2 pb-2">Probation Period</p>
                         </div>
-
+    
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="gender">Allow Leaves<span class="error-msg">*</span></label>
@@ -793,52 +795,52 @@
                                     placeholder="No. of days" id="ProbationPeriod" name="ProbationPeriod"
                                     #ProbationPeriod="ngModel" (change)="onNoticePeriodChange()"
                                     [(ngModel)]="postOrgPloicyDetails.isProbationAllowed" required>
-
+    
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
-
+    
                                 </select>
                                 <small class="error-msg"
                                     *ngIf="(ProbationPeriod.touched && ProbationPeriod.invalid)|| (ProbationPeriod.invalid && OrganizationPolicy.submitted)">
                                     Allow Leaves is required </small>
-
+    
                             </div>
                         </div>
-
-
-
+    
+    
+    
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="gender">Maximum Leaves Allowed Per Month<span
                                         class="error-msg">*</span></label>
-
+    
                                 <input type="number" #ProbationPeriodUnits="ngModel" name="ProbationPeriodUnits"
                                     [required]="postOrgPloicyDetails.isProbationAllowed"
                                     [disabled]="!postOrgPloicyDetails.isProbationAllowed" autocomplete="off"
                                     [(ngModel)]="postOrgPloicyDetails.probationDays" class="form-control input-content"
                                     (input)="restrictInputDays($event)" id="ProbationPeriodUnits"
                                     placeholder="No. of days" min="1">
-
+    
                                 <!-- Required Error Message -->
                                 <small class="error-msg"
                                     *ngIf="postOrgPloicyDetails.isProbationAllowed && ProbationPeriodUnits.touched && 
                         (postOrgPloicyDetails.probationDays === null || postOrgPloicyDetails.probationDays === undefined)">
                                     Maximum Leaves Allowed Per Month is required
                                 </small>
-
+    
                                 <!-- Minimum Value Error Message -->
                                 <small class="error-msg" *ngIf="postOrgPloicyDetails.isProbationAllowed && ProbationPeriodUnits.touched && 
                         postOrgPloicyDetails.probationDays !== null && postOrgPloicyDetails.probationDays < 1">
                                     Maximum Leaves Allowed Per Month must be at least 1
                                 </small>
-
+    
                             </div>
                         </div>
-
-
+    
+    
                     </div>
-
+    
                 </div>
                 <div class="modal-footer">
                     <button type="submit" data-bs-dismiss="modal" class="custom-btn btn-primary"
@@ -849,8 +851,9 @@
         </form>
         <!-- Add Form ends  -->
     </div>
-</div>
-<!--model ends-->
+    </div>
+    <!--model ends-->
+
 
 <div class="modal fade bgfade" id="successhide" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">

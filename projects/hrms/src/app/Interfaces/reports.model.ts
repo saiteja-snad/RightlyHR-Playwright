@@ -12,6 +12,55 @@ export interface IStandardReportRequest {
   selectedJobSubLocation?: string;
 }
 
+export interface IWfhReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  Shift?: string;
+  Location?: string;
+  SubLocation?: string;
+  Worked_Date?: string;
+  StartDate?: string;
+  EndDate?: string;
+  Worked_Month?: number;
+}
+
+export interface IAbsentReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  Shift?: string;
+  Location?: string;
+  SubLocation?: string;
+  Worked_Date?: string;
+  StartDate?: string;
+  EndDate?: string;
+  Worked_Month?: number;
+}
+
+export interface IInactiveReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  shift?: string;
+  location?: string;
+  Month?: number;
+  Year?: number;
+}
+
+export interface IYearlyReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  LeaveName?: string;
+  Location?: string;
+  Shift?: string;
+  Year?: number;
+}
 
 export interface IFamilyDetails{
   empStatus: string;
@@ -119,4 +168,57 @@ export interface Branch {
   isDeleted: boolean;
   branchLocation1: string;
 }
+//attendance report
 
+export interface IAttendanceDetails{
+  // selectedLeaveEmployeeId?: any;
+  // selectedDateRange?: { startDate: Dayjs; endDate: Dayjs };
+  // selectedMonth?: any;
+  LeaveName?: any;
+  // selectedLeaveManager?: any;
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  Shift?: string;
+  Location?: string;
+  SubLocation?: string;
+  Worked_Date?: string;
+  StartDate?: string;
+  EndDate?: string;
+  Worked_Month?: number;
+}
+//leave summmery
+export interface ILeavesummery{
+  // selectedEmployeeId?: any;
+  // selectedLeave?: any;
+  // selectedLeaveSummaryManager?: any;
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  LeaveName?: string;
+  Location?: string;
+  Shift?: string;
+  Year?: number;
+}
+//comp-off
+export interface ICompoffDetails{
+  // selectedEmployeeId?: any;
+  // selectedDateRange?: { startDate: Dayjs; endDate: Dayjs };
+  // selectedMonth?: any;
+  // selectedCompoffManager?: any;
+  // selectedLeave?: any;
+  // selectedLeaveManager?: any;
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  Shift?: string;
+  Location?: string;
+  SubLocation?: string;
+  Worked_Date?: string;
+  StartDate?: string;
+  EndDate?: string;
+  Worked_Month?: number;
+}

@@ -5,7 +5,7 @@
         </div>
         
         <div>
-            <button class="custom-btn btn-primary">Create</button>
+            <button class="custom-btn btn-primary" (click)="openAdd()">Create</button>
         </div>
     </div>
     <div class="w-100">
@@ -28,9 +28,75 @@
                     </tr>
                 </thead>
                 <tbody>
-                
+                    @if(assessorDetailsget.length>0){
+                        @for (item of assessorDetailsget; track $index) {
+                            <tr >
+                                <td>{{ item.reviewCycleName ? item.reviewCycleName : '-' }}</td>
+                                    <td>{{ getNamesAsString(item?.departmentNames, 'departmentName') }}</td>
+                                    <td>{{ getNamesAsString(item?.subDepartmentNames, 'subDepartmentName') }}</td>
+                                    <td>{{ getNamesAsString(item?.locationNames, 'locationName') }}</td>
+                                    <td>{{ getNamesAsString(item?.subLocationNames, 'subLocationName') }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <a data-bs-toggle="dropdown" aria-expanded="false"
+                                                class="dropdown-custom-btn">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li  *ngIf="item?.reviewCycleHeaderStatus==='Created'"><a class="dropdown-item"
+                                                        (click)="editDetails(item)">Update</a></li>
+                                              
+                                                <li *ngIf="item?.reviewCycleHeaderStatus==='Created'"><a class="dropdown-item"
+                                                        (click)="openDelete(confirmation, item.index)">Delete</a></li>
+
+                                                        <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'"><a class="dropdown-item"
+                                                            (click)="editDetails(item)">Update</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                            </tr>
+                        }
+                      
+                     }
+                     @else {
+                        <tr>
+                            <app-no-data-found></app-no-data-found>
+        
+                        </tr>
+                     }
                   </tbody>
             </table>
         </div>
+        <div class="pagination-content pt-2 w-100">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                
+                <div class="d-flex align-items-center gap-3 p-2">
+                    
+                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onRowsChange()">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+                </div>
+
+                <!-- Pagination -->
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
+        </div>
     </div>
 </div>
+<ng-template #confirmation let-modal>
+    <div class="modal-body p-4" ngbAutofocus>
+      <div class="mb-4 text-center">
+        <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon"> -->
+      </div>
+      <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to delete?</p>
+      <div class="d-flex justify-content-around pt-3">
+        <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+        <button class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">Yes</button>
+      </div>
+    </div>
+  </ng-template>

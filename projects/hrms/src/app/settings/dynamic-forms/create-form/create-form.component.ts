@@ -120,7 +120,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   }
   onModuleChange(module?: any): void {
 
-    console.log('Module ID:', module);
+    
     if (module?.id === 24) {
   
       // Clear validators and reset fields for module ID 24
@@ -161,8 +161,8 @@ export class CreateFormComponent implements OnInit, OnDestroy {
 
   onRatingScaleRangeChange(event: any): void {
     const selectedValue = event.value; // This is an object: { minimum: number, maximum: number }
-  
-    console.log('Selected Rating Scale Range:', selectedValue);
+
+    
   
     if (selectedValue) {
       const { minimum: selectedMinimum, maximum: selectedMaximum } = selectedValue;
@@ -182,8 +182,6 @@ export class CreateFormComponent implements OnInit, OnDestroy {
         ratingScaleTypeControl.setValue(null, { emitEvent: false });
       }
   
-      console.log('After Reset: Rating Scale Type Control Value:', ratingScaleTypeControl?.value);
-  
       // Filter rating scale types
       this.filteredRatingScaleTypes = this.ratingScaleTypes.filter(
         (type) =>
@@ -194,7 +192,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       this.filteredRatingScaleTypes = [];
     }
   
-    console.log('Filtered Rating Scale Types:', this.filteredRatingScaleTypes);
+    
   }
   
   // Reorder questions within a section
@@ -212,10 +210,10 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   }
 
   setRatingScaleTypeValidator(section: FormGroup) {
-    console.log(section);
+
     
     const ratingScaleTypeControl = section.get('ratingScaleType');
-    console.log(ratingScaleTypeControl);
+    
     
 
     if (section.get('type')?.value === 'rating') {
@@ -228,7 +226,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   }
 
   onSectionTypeChange(section: any) {
-    console.log(section);
+    
     
     this.setRatingScaleTypeValidator(section);
     const sectionIndex = this.sections.controls.findIndex((s) => s === section);
@@ -249,7 +247,6 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       if (!sections || sections.length === 0) {
         return null; // Return null if no sections exist
       }
- // console.log(this.createForm)
       if (moduleId === 20) {
         // Validation logic for module ID 20
         const isValid = sections.controls.every(section => {
@@ -368,12 +365,12 @@ export class CreateFormComponent implements OnInit, OnDestroy {
 
   createQuestion(sectionType: string): FormGroup {
     // Update to get the current section type from the parent form
-    console.log(sectionType);
+    
 
     const typeValidators =
       sectionType === 'normal' ? [Validators.required] : [];
     const isRatingSection = sectionType === 'rating';
-    console.log(isRatingSection);
+    
 
     return this.fb.group({
       type: ['', typeValidators],
@@ -462,7 +459,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   }
 
   addQuestion(sectionIndex: number) {
-    console.log(this.sections.at(sectionIndex).get('type')?.value);
+    
     const newQuestion = this.createQuestion(
       this.sections.at(sectionIndex).get('type')?.value
     );
@@ -530,7 +527,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   getRatingScaleOptions(
     ratingType: string
   ): { scale: number; description: string }[] | null {
-    console.log(ratingType);
+    
     
     // Check if ratingScaleTypes is available
     if (!this.ratingScaleTypes) {
@@ -540,7 +537,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     const selectedRatingType = this.ratingScaleTypes.find(
       (scale) => scale.ratingType === ratingType
     );
-    console.log(selectedRatingType);
+    
     
     return selectedRatingType ? selectedRatingType.scales : null;
   }
@@ -818,7 +815,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
 
   onSaveSubmit() {
     this.isDraftType = true;
-    console.log(this.createForm);
+
     
     if (this.createForm.valid) {
       const selectedRange = this.createForm.value.ratingScaleRange;
@@ -836,7 +833,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
         this.createForm.value.sections
       );
 
-      console.log("Form Data",this.dynamicForm);
+      
       
 
       this.http
@@ -880,8 +877,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       this.createForm.value.sections
     );
 
-    console.log(this.dynamicForm);
-
+   
     this.http
       .postData(`Form/SubmitFormDetails`, this.dynamicForm, {
         responseType: 'text',

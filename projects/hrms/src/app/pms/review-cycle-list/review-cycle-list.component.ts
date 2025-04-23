@@ -305,7 +305,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       .putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data)
       .subscribe({
         next: (response) => {
-          this.closeModal();
+          // this.closeModal();
           this.onCreateCycleFormSubmitted();
           this.conformationPopup.openSuccessModal(
             'Review Cycle Initiated Successfully'

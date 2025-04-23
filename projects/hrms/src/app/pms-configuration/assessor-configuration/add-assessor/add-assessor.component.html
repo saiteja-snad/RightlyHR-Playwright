@@ -95,11 +95,14 @@
                                 name="deadlineindays-{{i}}" required [min]="currentDate">
                             <ng-container *ngIf="detail?.assessors?.toLowerCase()==='hr'"
                                 onkeypress="return false;">
-                                <p-select   [options]="activeEmplist" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                                id="assesorid-{{i}}" name="employeename"  #employeename="ngModel"
-                                [(ngModel)]="detail.assessorempId" required
-                                filterBy="fullName" [showClear]="true" placeholder="Select Employee Name"  class="form-select w-100">
-                                </p-select>
+                                <div class="custom-p-select-content">
+                                    <p-select   [options]="activeEmplist" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                                    id="assesorid-{{i}}" name="employeename"  #employeename="ngModel"
+                                    [(ngModel)]="detail.assessorempId" required
+                                    filterBy="fullName" [showClear]="true" placeholder="Select Employee Name"  class="form-select w-100">
+                                    </p-select>
+                                </div>
+                               
                             </ng-container>
 
                         </td>

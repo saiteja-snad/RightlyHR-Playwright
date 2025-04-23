@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="custom-table-content w-50">
-        <ng-container *ngIf="regularizationvalue!.length > 0; else noDataTemplate">
+        <ng-container *ngIf="permissionsvalue!.length > 0; else noDataTemplate">
             <table class="w-100">
                 <thead>
                     <tr>
@@ -10,28 +10,44 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor=" let permi of regularizationvalue ;let i = index">
-                        <td>{{ permi.attribute }}</td>
-                        <td>
-                            <ng-container *ngIf="editingIndex !== i">{{ permi.value }}</ng-container>
+                    <tr *ngFor=" let permi of permissionsvalue ;let i = index">
+                        <td class="table-text">{{ permi.attribute }}</td>
+                        <!-- <td class="table-text">{{permi.value}}</td> -->
+                        <td class="table-text">
+                            <ng-container *ngIf="editingIndex !== i">
+                                {{ permi.value }}
+                            </ng-container>
+
                             <ng-container *ngIf="editingIndex === i">
-                                <input class="form-control" type="text" [(ngModel)]="temporaryValue"
-                                    (keypress)="validateDecimal($event, permi.attribute)" (keydown.tab)="editingIndex === i" />
+                                <input class="form-control custom-input" type="text"
+                                    [(ngModel)]="temporaryValue"
+                                    (keypress)="validateDecimal($event, permi.attribute)"
+                                    (keydown.tab)="editingIndex === i"
+                                     />
                             </ng-container>
                         </td>
-                        <td class="text-center">
-                            <ul class="dropdown-menu custom-dropdown-menu" *ngIf="editingIndex !== i; else editingMode">
-                                <li>
-                                    <a class="dropdown-item" (click)="enableEditForPermissionRegulization(i, permi.id, permi.value, permi.entity)">
-                                    <i class="bi bi-pencil me-2"></i>Update</a>
-                                </li>
-                              </ul>
+
+                        <td>
+                            <div class="dropdown" *ngIf="editingIndex !== i; else editingMode">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item"  (click)="enableEditForPermissionRegulization(i, permi.id, permi.value, permi.entity)"><i class="bi bi-pencil me-2"></i>Update</a>
+                                    </li>
+                                </ul>
+                            </div>
                             <ng-template #editingMode>
                                 <div class="d-flex gap-2">
-                                    <button class="custom-btn btn-primary" type="button"  (click)="submitPermissionEligibilityValue(i, temporaryValue)">
+                                    <button class="custom-btn btn-primary" type="button" 
+                                    (click)="submitPermissionEligibilityValue(i, temporaryValue)">
                                         Update
                                     </button>
-                                    <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">Cancel</button>
+                                    <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
+                                        <!-- <i class="bi bi-x-circle-fill"></i> -->
+                                        Cancel
+                                    </button>
                                 </div>
                             </ng-template>
                         </td>

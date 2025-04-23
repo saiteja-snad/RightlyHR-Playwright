@@ -6,6 +6,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 70vh;
+    height: calc(100dvh - 10rem);
     position: relative;
 }

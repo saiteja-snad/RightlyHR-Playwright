@@ -61,44 +61,49 @@
                     </thead>
                     <tbody>
 
-                        
-                        @if(attendanceData.value.length>0){
-                            @for (item of attendanceData|async; track $index) {
-                                <tr >
-    
-                                    <td>{{(item.date|dateformat)??'-'}}</td>
-                                    <td>{{(item.firstLogin|dateformat)??'-'}}</td>
-                                    <td>{{(item.lastLogout|dateformat)??'-'}}</td>
-                                    <td>{{item.duration?.totalDuration??'-'}}</td>
-                                    <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
-                                        @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
-                                           <a  class="ms-2"><u>Leave</u> </a>
-                                        }
-                                           @if(item.duration.totalDuration!='00:00:00' && 
-                                            ( (item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && (item.duration.totalDuration|tohours)< shiftDetails.fullDayMinHrs) 
-                                           &&currentMonth==selectedMonth&&this.rbac.allowedToAccess('Attendance Regularization Button.view')){
-                                            <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>                 
-                                           }
-                                    </td>
-                                    <td>
-                                        @if((item?.dayLogs??[]).length>0){
-                                            <div>
-                                                <span>
-                                                    <a type="button"  (click)="openModal(punchintimes);dayLogsData(item.dayLogs,item.date)" >
-                                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                                    </a>
-                                                </span>
-                                            </div>
-                                        }
-                                        @else{-}
-                                    </td>
-                                    <td></td>
-                                </tr>
+                        @if(!dataLoader){
+                            @if(attendanceData.value.length>0){
+                                @for (item of attendanceData|async; track $index) {
+                                    <tr >
+        
+                                        <td>{{(item.date|dateformat)??'-'}}</td>
+                                        <td>{{(item.firstLogin|dateformat)??'-'}}</td>
+                                        <td>{{(item.lastLogout|dateformat)??'-'}}</td>
+                                        <td>{{item.duration?.totalDuration??'-'}}</td>
+                                        <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
+                                            @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
+                                               <a  class="ms-2"><u>Leave</u> </a>
+                                            }
+                                               @if(item.duration.totalDuration!='00:00:00' && 
+                                                ( (item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && (item.duration.totalDuration|tohours)< shiftDetails.fullDayMinHrs) 
+                                               &&currentMonth==selectedMonth&&this.rbac.allowedToAccess('Attendance Regularization Button.view')){
+                                                <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>                 
+                                               }
+                                        </td>
+                                        <td>
+                                            @if((item?.dayLogs??[]).length>0){
+                                                <div>
+                                                    <span>
+                                                        <a type="button"  (click)="openModal(punchintimes);dayLogsData(item.dayLogs,item.date)" >
+                                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            }
+                                            @else{-}
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                }
+                            }
+                            @else {
+                            <app-no-data-found />
                             }
                         }
                         @else {
-                        <app-no-data-found />
+                            <app-data-loader-content/>
                         }
+                       
                     </tbody>
                 </table>
             </div>
@@ -113,19 +118,32 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <ng-container *ngIf="statusCounts$ | async as statusCounts">
-                            @for (status of statusCounts | keyvalue; track $index) {
-                            <tr>
-                                <td>{{ status.key.toUpperCase() }}</td>
-                                <td>{{ status.value }}</td>
-                            </tr>
+                        @if(!dataLoader){
+                            @if(statusCounts$.value){
+                                <ng-container *ngIf="statusCounts$ | async as statusCounts;else nodata">
+                                    @for (status of statusCounts | keyvalue; track $index) {
+                                    <tr>
+                                        <td>{{ status.key.toUpperCase() }}</td>
+                                        <td>{{ status.value }}</td>
+                                    </tr>
+                                    }
+                                </ng-container>
+                                <ng-template #nodata>
+                                    <tr>
+                                        <td><app-no-data-found/> </td>
+                                    </tr>
+                                </ng-template>
                             }
-                        </ng-container>
-                        @if (!(statusCounts$ | async)) {
-                        <tr>
-                            <td>No data available</td>
-                        </tr>
+                           @else {
+                            <tr>
+                                <td><app-no-data-found/> </td>
+                            </tr>
+                           }
                         }
+                        @else {
+                            <app-data-loader-content/>
+                        }
+                       
                     </tbody>
                 </table>
             </div>

@@ -79,7 +79,7 @@
       <!--Upcoming Events-->
       <div class="card events-section-card">
         <div class="mb-4">
-          <p class="component-sub-header mb-0">Upcoming Events</p>
+          <p class="component-sub-header mb-0">Custom Events</p>
         </div>
 
         <div class="d-flex flex-wrap gap-4">
@@ -176,10 +176,13 @@
             <div *ngIf="customEventupdateForm.get('eventMessage')?.errors?.['required']" class="error-msg">
               Event Description is requied
             </div>
+            <div class="character-count mt-1 text-end">
+              {{ customEventupdateForm.get("eventMessage")?.value?.length || 0 }}/250
+            </div>
           </div>
           <div class="col-md-12 mb-3">
             <label for="file" class="form-label custom-label mb-2">Attachment</label>
-            <input type="file" class="form-control custom-input" id="file" (change)="onFileSelected($event)" formControlName="imageUrl">
+            <input type="file" class="form-control custom-input" id="file" (change)="onFileSelected($event)" >
             <div *ngIf="selectedImagePreview" class="my-2 text-wrap w-100 text-truncate">
               <b>{{ selectedImagePreview }}</b>
               <div class="d-flex justify-content-between align-items-center mt-3">

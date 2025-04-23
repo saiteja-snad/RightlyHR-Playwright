@@ -44,7 +44,7 @@
           <div class="custom-settings-add-input input-group">
               <input type="text" class="form-control custom-input" placeholder="Please enter duration"
                   formControlName="Duration" aria-label="duration" aria-describedby="duration"
-                  (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                  (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
           </div>
           <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg mt-2">
               <div *ngIf="AddForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
@@ -153,7 +153,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter duration"
                     formControlName="Duration" aria-label="duration" aria-describedby="duration"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
             </div>
             <div *ngIf="updateForm.get('Duration')?.touched && updateForm.get('Duration')?.invalid" class="error-msg mt-2">
                 <div *ngIf="updateForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>

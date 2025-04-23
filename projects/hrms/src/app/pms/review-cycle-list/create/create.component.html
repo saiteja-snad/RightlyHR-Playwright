@@ -14,7 +14,8 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <div>
-                        <label for="" class="form-label">{{'Review Cycle Name'|translate}}<span class="text-danger">*</span></label>
+                        <label for="" class="form-label">{{'Review Cycle Name'|translate}}<span
+                                class="text-danger">*</span></label>
                         <input class="form-control custom-input" id="reviewCycleName" formControlName="reviewCycleName"
                             type="text" maxlength="50" placeholder="Please enter review cycle name" autocomplete="off"
                             aria-label="default input example">
@@ -34,7 +35,8 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <div>
-                        <label for="" class="form-label">{{'Review Cycle Type' |translate}}<span class="text-danger">*</span></label>
+                        <label for="" class="form-label">{{'Review Cycle Type' |translate}}<span
+                                class="text-danger">*</span></label>
                         <p-select [options]="ReviewCycleTypes" optionLabel="value" optionValue="value"
                             placeholder="Please select review cycle type" formControlName="reviewCycleType"
                             class="form-select custom-select">
@@ -62,7 +64,8 @@
 
                 <div class="col-md-6 mb-3">
                     <div>
-                        <label for="subDepartmentId" class="form-label">{{'Team' |translate}}<span class="text-danger">*</span></label>
+                        <label for="subDepartmentId" class="form-label">{{'Team' |translate}}<span
+                                class="text-danger">*</span></label>
                         <p-multiselect class="form-select custom-select" [options]="subDepartmentsDropdownValues"
                             formControlName="subDepartmentId" optionValue="subdepartmentId"
                             optionLabel="subdepartmentName" placeholder="Please select team(s)" />
@@ -75,7 +78,8 @@
 
                 <div class="col-md-6 mb-3">
                     <div>
-                        <label for="locationId" class="form-label">{{'Location'|translate}}<span class="text-danger">*</span></label>
+                        <label for="locationId" class="form-label">{{'Location'|translate}}<span
+                                class="text-danger">*</span></label>
                         <p-multiselect class="form-select custom-select" [options]="jobLocationDropDownData"
                             optionValue="id" optionLabel="jobLocationName" formControlName="locationId"
                             placeholder="Please select location(s)" (onChange)="OnClickLocation($event)" />
@@ -113,9 +117,11 @@
                         <small class="text-danger">Review Cycle Start Date is required</small>
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
                     <div>
-                        <label for="" class="form-label">{{'Review Cycle End Date'|translate}}<span class="text-danger">*</span></label>
+                        <label for="" class="form-label">{{'Review Cycle End Date'|translate}}<span
+                                class="text-danger">*</span></label>
                         <input class="form-control custom-input" id="endDate" formControlName="endDate" type="date"
                             onkeypress="return false;" [disabled]="!reviewCycleForm.get('startDate')?.valid"
                             aria-label="default input example" autocomplete="off">
@@ -129,6 +135,7 @@
                             date</small>
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
                     <div>
                         <label for="" class="form-label">{{'Applicable Employees (Joined Before)'|translate}}<span
@@ -146,7 +153,6 @@
                             Cycle Start Date and
                             less than Review Cycle End Date</small>
                     </div>
-
                 </div>
 
                 <div class="col-md-12">
@@ -183,6 +189,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="d-flex justify-content-end gap-3 mt-4">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Close'|translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="reviewCycleForm.invalid ">
@@ -191,6 +198,7 @@
                     </div>
                 </button>
             </div>
+
         </form>
     </div>
 </div>

@@ -8,16 +8,17 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { ITrainee } from './Prospective-interns-modules';
 import { FormsModule } from '@angular/forms';
-import { IServe } from '../../Interfaces/letters-model';
 import { ActiveEmployeePipe } from '../../Pipes/active-employee.pipe';
 import { RbacService } from '../../services/rbac.service';
-
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { IServe } from '../../Interfaces/letters-model';
 @Component({
   selector: 'app-prospective-interns',
-  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule],
+  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent],
   templateUrl: './prospective-interns.component.html',
   styleUrl: './prospective-interns.component.scss'
 })
+
 export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   searchValue: any;
@@ -33,41 +34,37 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   selectedValueJobRoledrop: string = '';
   optionsFound: boolean = true;
   filteredTabs: any[] = [];
-  constructor(private router: Router, private http: HttpService,
-     private modalService: NgbModal, public rbac: RbacService) { }
+  loader = false;
+
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empdata();
     this.getJobrole();
     this.jobLocationList();
-    this.http.activeTabSubject
-      .subscribe((selectedObj) => {
-        console.log('Received designation from child via Observable:', selectedObj);
-        this.empdata();
-      });
+    this.http.activeTabSubject.subscribe((selectedObj) => {
+      this.empdata();
+    });
     this.getservingperiod();
   }
 
   empdata() {
+    this.loader = true;
     this.subscription = this.http.getData(`Employeedata/TrainingEmployees`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.Trainee = data as ITrainee[];
+        this.loader = false;
       },
       error: (reason: any) => console.log(reason)
     });
-
   }
 
   jobLocationList() {
-    this.subscription = this.http
-      .getData(`JobLocation/getAllLocations`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.jobLocationDropDownData = data;
-        },
-      });
+    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+      next: (data: any) => {
+        this.jobLocationDropDownData = data;
+      },
+    });
   }
 
   openAddProspective() {
@@ -80,7 +77,6 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    console.log(this.emp);
     this.router.navigate(['/personalinfo']);
   }
 
@@ -91,7 +87,6 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   getJobrole() {
     this.subscription = this.http.getData("DesignationGradeMapper").subscribe({
       next: (data: any) => {
-        console.log(data);
         this.JobroleDetails = data;
         this.AllJobRoles = this.JobroleDetails.map((item: { designationName: any; }) => item.designationName)
       }
@@ -101,32 +96,24 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   getservingperiod() {
     this.subscription = this.http.getData("ServingPeriods").subscribe({
       next: (data: any) => {
-        console.log(data);
         this.serveDetails = data as IServe[]
-        console.log(this.serveDetails);
         const filteredServeDetails = this.serveDetails.filter((serve: IServe) => {
-
           return serve.servingPeriodType === 'Trainee Duration Period';
         });
         this.singleValue = filteredServeDetails.length > 0 ? filteredServeDetails[0] : null;
-        console.log(this.singleValue);
       }
-
     })
   }
 
   buttondisable = false;
-  disablebutton: boolean = false
+  disablebutton: boolean = false;
   initialLocationId: any;
-
-  //function to get sublocation by id
   subLocationsDropdown = {} as any;
+  //function to get sublocation by id
   getSubLocationByid(ValuesForSublocation: any) {
     this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${ValuesForSublocation.id} `).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.subLocationsDropdown = data.jobSubLocations
-        console.log(this.subLocationsDropdown);
+        this.subLocationsDropdown = data.jobSubLocations;
       }
     })
   }
@@ -136,5 +123,4 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-  
 }

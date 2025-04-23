@@ -13,6 +13,7 @@ import { ICategoryDetails } from '../../../../Interfaces/timoff-model';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingapprovals.pipe";
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-time-off-for-you-request',
@@ -48,7 +49,12 @@ export class TimeOffForYouRequestComponent {
     this.rows = event.rows;
 
   }
-  constructor(private http: HttpService,private modalService: NgbModal,private conformationPopup: OpenModalService,) {  
+  constructor(
+    private http: HttpService,
+    private modalService: NgbModal,
+    private conformationPopup: OpenModalService,
+    public rbac: RbacService,
+  ) {  
   }
   
   ngOnInit(): void {

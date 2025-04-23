@@ -1,0 +1,123 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header mb-0">Remote</p>
+        </div>
+        <div>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addremote)" 
+           ><i class="bi bi-plus me-2"></i>Request Remote Login</button>
+        </div>
+    </div>
+
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
+        <!-- <div class="custom-component-left-content">
+            <app-remote-tabs/>
+        </div> -->
+        <div class="custom-setting-right-content p-3">
+            <router-outlet/>
+        </div>
+    </div>
+</div>
+
+<!--Add Work Form Home-->
+<ng-template #addremote let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Request For Remote Login</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss();addremoteForm.reset();availablebalance = 0"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <form [formGroup]="addremoteForm" (ngSubmit)="applyremote(addremoteForm)" class="custom-form" >
+                <!-- Worked Date -->
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
+                            formControlName="workedDate">
+                        <div *ngIf="addremoteForm.get('workedDate')?.touched && addremoteForm.get('workedDate')?.invalid"
+                            class="error-msg">
+                            Worked Date is required.
+                        </div>
+                        <div class="error-msg" *ngIf="addremoteForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after
+                            your date of joining.</div>
+                    </div>
+                
+                    <!-- Availing -->
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-3">Availing<span class="text-danger">*</span></label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="halfDay" value="Half Day" formControlName="availing">
+                                <label class="form-check-label custom-label" for="halfDay">Half Day</label>
+                                <!-- Half Day Selection -->
+                                <div class="row" *ngIf="addremoteForm.get('availing')?.value === 'Half Day'">
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label custom-label mb-2">Select Half<span
+                                                class="text-danger">*</span></label>
+                                        <div class="d-flex gap-3">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" id="firstHalf" [value]="1"
+                                                    formControlName="halfType">
+                                                <label class="form-check-label" for="firstHalf">First Half</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" id="secondHalf" [value]="3"
+                                                    formControlName="halfType">
+                                                <label class="form-check-label" for="secondHalf">Second Half</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="fullDay" value="Full Day" formControlName="availing"
+                                    [value]="2" (change)="updateDuration()">
+                                <label class="form-check-label custom-label" for="fullDay">Full Day</label>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Reason -->
+                    <div class="col-md-12 mb-3">
+                        <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3" maxlength="250"
+                            placeholder="Type here"></textarea>
+                        <!-- Character counter -->
+                        <div class="text-end my-1">
+                            {{ addremoteForm.get('reason')?.value?.length || 0 }}/250
+                        </div>
+                        <div class="error-msg" *ngIf="addremoteForm.get('reason')?.touched && addremoteForm.get('reason')?.invalid">
+                            <div *ngIf="addremoteForm.get('reason')?.errors?.['required']">
+                                Reason is required.
+                            </div>
+                            <div *ngIf="addremoteForm.get('reason')?.errors?.['maxlength']">
+                                Reason cannot exceed 250 characters.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Action Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary px-4"
+                        (click)="modal.dismiss();this.addremoteForm.reset();availablebalance = 0">Close</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="addremoteForm.invalid || spinnerLoader">
+                        @if(spinnerLoader){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Request'}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

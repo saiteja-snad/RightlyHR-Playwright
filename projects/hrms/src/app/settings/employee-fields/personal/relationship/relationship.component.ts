@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-relationship',
@@ -25,7 +26,14 @@ export class RelationshipComponent {
   selectedId: number | null = null;
   selectedDeleterelation: any = null;
   subscription!: Subscription;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService, public formValidations: FormValidationsService) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private conformationPopup: OpenModalService, 
+    public formValidations: FormValidationsService,
+    public rbac: RbacService,
+  ) {
 
   }
   ngOnInit(): void {

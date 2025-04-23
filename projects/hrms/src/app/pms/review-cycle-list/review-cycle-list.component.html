@@ -1,16 +1,21 @@
-<div class="custom-main-component-container w-100">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="component-header">
+            Review Cycle List
+        </div>
+
         <div>
-            <p class="dashboard-text">Review Cycle</p>
-        <div>
+            <button class="custom-btn btn-primary" (click)="openAdd()">Create Review cycle</button>
+        </div>
     </div>
     <div class="w-100">
-        <!--Input search-->
-        <div class="input-group custom-search mb-4">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                    class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search" aria-label="Username"
+                aria-describedby="basic-addon1">
         </div>
-      
+
         <div class="custom-table-content w-100">
             <table class="w-100">
                 <thead>
@@ -25,9 +30,132 @@
                     </tr>
                 </thead>
                 <tbody>
-                
-                  </tbody>
+                    <tr *ngFor="let cycle of filteredDetails">
+                        <td>{{ cycle.reviewCycleName }}</td>
+                        <td>{{ getNamesAsString(cycle.departments, 'departments') }}</td>
+                        <td>{{ getNamesAsString(cycle.subdepartments, 'subDepartmentNames') }}</td>
+                        <td>{{ getNamesAsString(cycle.locations, 'locations') }}</td>
+                        <td>{{ getNamesAsString(cycle.sublocations, 'subLocations') }}</td>
+                        <td>{{ cycle.status }}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu text-center">
+                                    @if(cycle.status==='Initiated'){
+                                        <li class="dropdown-item border-bottom" 
+                                        (click)="openModal(holdconformation);seletedid=cycle">
+                                        <a class="dropdown-custom-btn">Hold</a>
+                                    </li>
+                                    }
+                                   @if(cycle.status==='Review on Hold'){
+                                    <li class="dropdown-item"
+                                    (click)="openModal(Resumeconformation);seletedid=cycle"><a
+                                        class="dropdown-custom-btn">Resume</a></li>
+                                   }
+                                   @if(cycle.status !=='Initiated'  && cycle.status !=='Review on Hold'){
+                                    <li class="dropdown-item" (click)="onUpdate(cycle)"><a class="dropdown-custom-btn">Update</a>
+                                </li> 
+                                   }
+                                    @if(cycle.status ==='Initiated'){
+                                        <li class="dropdown-item"
+                                        (click)="onClickView(cycle)"><a class="dropdown-custom-btn">View</a>
+                                    </li>
+                                    }
+                                    @if(cycle.status==='Created'){
+                                        <li class="dropdown-item"
+                                        (click)="onUpdate(cycle);seletedid=cycle"><a
+                                            class="dropdown-custom-btn"></a>Initiate</li>
+                                    }
+                                    
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
+        </div>
+        <div class="pagination-content pt-2 w-100">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+
+                <div class="d-flex align-items-center gap-3 p-2">
+
+                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onRowsChange()">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+                </div>
+
+                <!-- Pagination -->
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
         </div>
     </div>
 </div>
+
+<ng-template #holdconformation let-modal>
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+        <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Hold the Review Cycle?</p>
+        <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
+                (click)="HoldReviewCycle(seletedid);modal.dismiss()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #cancelationConfirmation let-modal>
+    <div class="modal-body p-4" ngbAutofocus>
+        <div class="mb-4 text-center">
+            <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
+        </div>
+        <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Cancel?</p>
+        <div class="d-flex justify-content-around pt-3">
+            <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
+            <button class="modal-btn yes-btn" (click)="onClickYes()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #holdconformation let-modal>
+    <div class="modal-body p-4" ngbAutofocus>
+        <div class="mb-4 text-center">
+            <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
+        </div>
+        <p class="mb-4 confirm-text text-center">Are you sure you want to Hold the Review Cycle?</p>
+        <div class="d-flex justify-content-around pt-3">
+            <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
+            <button class="modal-btn yes-btn" (click)="HoldReviewCycle(seletedid);modal.dismiss()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #Resumeconformation let-modal>
+    <div class="modal-body p-4" ngbAutofocus>
+        <div class="mb-4 text-center">
+            <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
+        </div>
+        <p class="mb-4 confirm-text text-center">Are you sure you want to Resume the Review cycle?</p>
+        <div class="d-flex justify-content-around pt-3">
+            <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
+            <button class="modal-btn yes-btn" (click)="ResumeReviewCycle(seletedid);modal.dismiss()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #confirmation let-modal>
+    <div class="modal-body p-4" ngbAutofocus>
+        <div class="mb-4 text-center">
+            <img src="/assets/images/Vector@2x.png" alt="" class="modal-icon">
+        </div>
+        <p class="confirm-text mb-4 text-center">Are you sure you want to Delete?</p>
+        <div class="d-flex justify-content-around pt-3">
+            <button class="modal-btn no-btn">No</button>
+            <button class="modal-btn yes-btn">Yes</button>
+        </div>
+    </div>
+</ng-template>

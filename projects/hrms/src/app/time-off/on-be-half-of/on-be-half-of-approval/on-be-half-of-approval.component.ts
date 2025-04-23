@@ -1,11 +1,70 @@
 import { Component } from '@angular/core';
+import { HttpService } from '../../../services/http.service';
+import { AuthService } from '../../../services/auth.service';
+import { Subscription } from 'rxjs';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { DropdownModule } from 'primeng/dropdown';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { FormsModule } from '@angular/forms';
+import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-on-be-half-of-approval',
-  imports: [],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './on-be-half-of-approval.component.html',
   styleUrl: './on-be-half-of-approval.component.scss'
 })
 export class OnBeHalfOfApprovalComponent {
+  loggedinuser = {} as any;
+  empdata = {} as any;
+  subscription!: Subscription;
+  approvedLeaves: any = [];
+  totalRecords = 100
+  first: any = 0;
+  rows: any = 10;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
 
+  onRowsChange() {
+    this.first = 0;
+  }
+
+  onPageChange(event: PaginatorState) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
+
+  constructor(private http: HttpService, private authService: AuthService,public rbac: RbacService,) {
+
+  }
+
+  ngOnInit(): void {
+    this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('onbehalfof') || '{}');
+    this.getDataByLPID();
+  }
+
+  getDataByLPID() {
+    let empid = this.empdata.employeeId;
+    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        if (Array.isArray(response)) {
+          this.approvedLeaves = response.filter(item => item.status === 'Approved');
+          let pendingCount = this.approvedLeaves.length;
+          console.log("Pending Records Count:", pendingCount);
+        } else {
+          console.error("Invalid response format");
+        }
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
 }

@@ -74,6 +74,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   regularizationForm!: FormGroup;
   spinnerLoader = false;
   regularizationTypes: LeaveType[] = [] as LeaveType[];
+  punchInData=[] as any;
   duration = [
     { name: 0.5, value: 0.5 },
     { name: 1, value: 1 },
@@ -114,14 +115,53 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       leaveType: [null, Validators.required],
       reason: [null, [Validators.required, Validators.maxLength(250)]],
     });
-    this.regularizationForm.patchValue({
-      permissionDate:moment().format('YYYY-MM-DD')
-    })
     this.getDuration();
   }
   //function to open modal
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  //function to get the day logs
+  punchPairs: { in?: string, out?: string }[] = [];
+  selectedDate!:Date;
+  dayLogsData(Value:any,date:Date){
+    console.log(Value)
+    this.selectedDate=date;
+    if(Value){
+      this.punchPairs=[];
+      const inOutList = Value;
+      let temp: { in?: string, out?: string } = {};
+    
+      inOutList.forEach((log: { direction: string; punchTime: string | undefined; }) => {
+        if (log.direction === 'in') {
+          // If there is already an unpaired 'in', push it and start a new one
+          if (temp.in && !temp.out) {
+            this.punchPairs.push(temp);
+            temp = {};
+          }
+          temp.in = log.punchTime;
+        } else {
+          // If there's already an 'in', complete the pair
+          if (temp.in && !temp.out) {
+            temp.out = log.punchTime;
+            this.punchPairs.push(temp);
+            temp = {};
+          } else {
+            // No previous 'in', just push with only 'out'
+            this.punchPairs.push({ out: log.punchTime });
+          }
+        }
+      });
+    
+      // If there's a remaining 'in' without a pair
+      if (temp.in && !temp.out) {
+        this.punchPairs.push(temp);
+      }
+      this.punchInData=this.punchPairs;
+    }
+    else{
+      this.punchPairs=[];
+    }
   }
   //function to get the regularization types
   getDuration() {
@@ -139,7 +179,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     console.log(regularizationForm.value);
     if(regularizationForm.valid) {
       const formData = regularizationForm.value;
-  const payLoad = {
+      const payLoad = {
    
     raisedFor: this.empdata.employeeId,
     requestedBy: this.empdata.employeeId,
@@ -187,7 +227,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
-          console.log(response.data);
+          console.log(response.data.attendanceData);
           this.attendanceData.next(response.data.attendanceData);
           this.statusCounts$.next(response.data.summary);
           this.shiftDetails = response.data.shiftDetails;
@@ -281,6 +321,14 @@ export class AttendanceComponent implements OnInit, OnDestroy {
           }
         },
       });
+  }
+  onclickRegularization(date: Date) {
+    
+    this.regularizationForm.patchValue({
+      permissionDate: date,
+    });
+    //this.postregularization.permissionDate=date
+    //console.log(date)
   }
   // function to get the data of employees by hierarchy
   get_Employeelist_forTM = [] as any;

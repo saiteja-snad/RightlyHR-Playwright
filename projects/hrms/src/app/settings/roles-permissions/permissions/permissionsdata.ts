@@ -26,7 +26,8 @@ export const permissionsData = [
     {  fields: 'Onboard Request', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Change RM button', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'No Due Clearance', View: false, Update: false, Create: false, Delete: false },
-
+    // {  fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false},
+    
     //Employee Info Fields
     { fields: 'Employee Basic Information', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Current Address', View: false, Update: false, Create: false, Delete: false },
@@ -56,7 +57,7 @@ export const permissionsData = [
     { fields: 'Last Working Day', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Change RM button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee No Due Request', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Probation Details', View: false, Update: false, Create: false, Delete: false },
 
     //Dashboard menubar
     { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
@@ -80,6 +81,7 @@ export const permissionsData = [
     // View Modules
     { fields: 'Invite New User', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Permissions', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Recall Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Regularizations', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Timeoff Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Compoff Tab', View: false, Update: false, Create: false, Delete: false },
@@ -117,6 +119,7 @@ export const permissionsData = [
     // {fields: 'Trainee Appointment Letter', View: false, Update: false, Create: false, Delete:false},
     { fields: 'Document History', View: false, Update: false, Create: false, Delete: false },
     { fields: 'On Behalf Of Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'On Behalf Of Approvals Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Separation Requests Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Documents Upload Button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Standard Reports', View: false, Update: false, Create: false, Delete: false },
@@ -135,7 +138,8 @@ export const permissionsData = [
     { fields: 'Welcome Letter', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Monthly Attandance Report', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Attendance Regularization Button', View: false, Update: false, Create: false, Delete: false },
-
+    { fields: 'Remote Login Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
     // Settings sidebar    
     { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Fields', View: false, Update: false, Create: false, Delete: false },
@@ -174,7 +178,7 @@ export const permissionsData = [
     { fields: 'Sub Location', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Pre Onboard Documents', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Serving Period', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Interview Rounds', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
 
     //Status tab 

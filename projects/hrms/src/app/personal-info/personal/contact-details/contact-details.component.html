@@ -1,61 +1,80 @@
 <div class="custom-main-component-container">
-    <div class="card contact-content-card p-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <span class="contact-sub-header">Contact Details</span>
+  <div class="card custom-background-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <span class="component-sub-header">Contact Details</span>
+      </div>
+      @if(!buttons &&(employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase()
+      !==
+      'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+      employedata?.empstatus?.toLowerCase()
+      !== 'trainee inactive')){
+      <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+      }
+      @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee
+      prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
+      'trainee inactive')){
+      <div class="d-flex justify-content-end gap-2">
+        <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid"
+          (click)="updateAddressInfo()">Save</button>
+      </div>
+      }
+    </div>
+
+    <!-- Reactive Form -->
+    <form [formGroup]="contactForm">
+      <div class="row">
+        <div class="col-md-6 col-lg-4 mb-3">
+          <label for="workNumber" class="form-label custom-label mb-2">Work Number<span
+              class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" id="workNumber" formControlName="workNumber"
+            placeholder="Please enter work number">
+          <div class="error-msg"
+            *ngIf="contactForm.get('workNumber')?.invalid && contactForm.get('workNumber')?.touched">
+            <div *ngIf="contactForm.get('workNumber')?.errors?.['required']">Work number is required</div>
+            <div *ngIf="contactForm.get('workNumber')?.errors?.['pattern']">Work number must be a valid 10-digit number
             </div>
-            @if(!buttons &&(employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective')){
-              <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
-            }
-            @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective')){
-              <div class="d-flex justify-content-end gap-3" >
-                <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="contactForm.invalid" (click)="updateAddressInfo()" >Save</button>
-            </div>
-            }   
+          </div>
         </div>
 
-        <!-- Reactive Form -->
-        <div class="myinfo-input-content">
-            <form [formGroup]="contactForm">
-                <div class="row">
-                  <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="workNumber" class="form-label custom-label mb-2">Work Number<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="workNumber" formControlName="workNumber" placeholder="Please enter work number">
-                    <div class="error-msg" *ngIf="contactForm.get('workNumber')?.invalid && contactForm.get('workNumber')?.touched">
-                      <div *ngIf="contactForm.get('workNumber')?.errors?.['required']">Work number is required</div>
-                      <div *ngIf="contactForm.get('workNumber')?.errors?.['pattern']">Work number must be a valid 10-digit number</div>
-                    </div>
-                  </div>
-              
-                  <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="phoneNumber" formControlName="phoneNumber" placeholder="Please enter phone number">
-                    <div class="error-msg" *ngIf="contactForm.get('phoneNumber')?.invalid && contactForm.get('phoneNumber')?.touched">
-                      <div *ngIf="contactForm.get('phoneNumber')?.errors?.['required']">Phone number is required</div>
-                      <div *ngIf="contactForm.get('phoneNumber')?.errors?.['pattern']">Phone number must be a valid 10-digit number</div>
-                    </div>
-                  </div>
-              
-                  <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="workMail" class="form-label custom-label mb-2">Work Email ID<span class="text-danger">*</span></label>
-                    <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail" placeholder="Please enter work email ID">
-                    <div class="error-msg" *ngIf="contactForm.get('workMail')?.invalid && contactForm.get('workMail')?.touched">
-                      <div *ngIf="contactForm.get('workMail')?.errors?.['required']">Work email is required</div>
-                      <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work email must be a valid email address</div>
-                    </div>
-                  </div>
-              
-                  <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="personalEmail" class="form-label custom-label mb-2">Personal Email ID<span class="text-danger">*</span></label>
-                    <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail" placeholder="Please enter personal email ID">
-                    <div class="error-msg" *ngIf="contactForm.get('personalEmail')?.invalid && contactForm.get('personalEmail')?.touched">
-                      <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">Personal email ID is required</div>
-                      <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email ID</div>
-                    </div>
-                  </div>
-                </div>
-              </form>
+        <div class="col-md-6 col-lg-4 mb-3">
+          <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
+              class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" id="phoneNumber" formControlName="phoneNumber"
+            placeholder="Please enter phone number">
+          <div class="error-msg"
+            *ngIf="contactForm.get('phoneNumber')?.invalid && contactForm.get('phoneNumber')?.touched">
+            <div *ngIf="contactForm.get('phoneNumber')?.errors?.['required']">Phone number is required</div>
+            <div *ngIf="contactForm.get('phoneNumber')?.errors?.['pattern']">Phone number must be a valid 10-digit
+              number</div>
+          </div>
         </div>
-    </div>
+
+        <div class="col-md-6 col-lg-4 mb-3">
+          <label for="workMail" class="form-label custom-label mb-2">Work Email ID<span
+              class="text-danger">*</span></label>
+          <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail"
+            placeholder="Please enter work email ID">
+          <div class="error-msg" *ngIf="contactForm.get('workMail')?.invalid && contactForm.get('workMail')?.touched">
+            <div *ngIf="contactForm.get('workMail')?.errors?.['required']">Work email is required</div>
+            <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work email must be a valid email address</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-3">
+          <label for="personalEmail" class="form-label custom-label mb-2">Personal Email ID<span
+              class="text-danger">*</span></label>
+          <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail"
+            placeholder="Please enter personal email ID">
+          <div class="error-msg"
+            *ngIf="contactForm.get('personalEmail')?.invalid && contactForm.get('personalEmail')?.touched">
+            <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">Personal email ID is required</div>
+            <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email ID
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>

@@ -1,0 +1,297 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormsModule,
+  FormBuilder,
+  NgForm,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { Select } from 'primeng/select';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../../services/auth.service';
+import { HttpService } from '../../../services/http.service';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
+import {
+  IReviewCycle,
+  RatingDetail,
+} from '../../increment-percentage/add-increment/increment.modal';
+import { IDesignationNames } from './add-assessor.modal';
+import moment from 'moment';
+
+@Component({
+  selector: 'app-add-assessor',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    Select,
+    TranslateModule,
+  ],
+  templateUrl: './add-assessor.component.html',
+  styleUrl: './add-assessor.component.scss',
+})
+export class AddAssessorComponent implements OnInit, OnDestroy {
+  empinfo = {} as any;
+  subscription!: Subscription;
+  postassesorConfiguration = {} as any;
+  Status: any;
+  isLoading = false;
+  myForm!: NgForm;
+  deleteId: any;
+  removeRowdata:any
+  reviewCycledetailyById = {};
+  reviewCycleDropDownData = [] as IReviewCycle[];
+  reviewCycleData = [] as IDesignationNames[];
+  assesorDetails = [] as any;
+  currentDate: any;
+  activeEmplist = [] as any;
+  @ViewChild('deletesuccess') deletesuccess: any;
+  @ViewChild('deleterowincrement') deleterowincrement: any;
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    public rbac: RbacService
+  ) {}
+  ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getReviewCycledata();
+    this.getAllasessors();
+    this.getAllActiveEmpList();
+    const currentdate = moment();
+    this.currentDate = this.formatDate(currentdate);
+  }
+  formatDate(date: any) {
+    return date?.split('T')[0];
+  }
+  getAllasessors() {
+    this.subscription = this.http
+      .getData('entityAttributeValues?entity=PMS&attribute=assessorconfig')
+      .subscribe({
+        next: (data: any) => {
+          this.reviewCycleData = data;
+          console.log(data);
+        },
+      });
+  }
+  //function to get all active employees list
+  getAllActiveEmpList() {
+    this.subscription = this.http
+      .getData(`Employeedata/ActiveEmployees`)
+      .subscribe({
+        next: (res: any) => {
+          this.activeEmplist = res.map((employee: any) => {
+            return {
+              ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+              // Concatenate first, middle (if present), and last name
+            };
+          });
+          console.log(this.activeEmplist);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        error: (err: unknown) => {},
+      });
+  }
+  // Check row state and trigger UI updates
+  checkRowState(index: number) {
+    const detail = this.assesorDetails[index];
+    if (this.isRowFilled(detail)) {
+      // Log if row is filled
+      console.log(`Row ${index} is filled`);
+    } else {
+      // Log if row is incomplete
+      console.log(`Row ${index} is incomplete`);
+    }
+  }
+  initialAddRowCall() {
+    this.assesorDetails = [];
+    this.addRow();
+  }
+
+  // Add Row to FormArray
+  // Helper function to check if a row is filled
+  isRowFilled(detail: any): boolean {
+    // Check if mandatory fields are filled
+    return !!(detail.assessors && detail.deadlineindays);
+  }
+  // Function to get all review cycle data
+  getReviewCycledata() {
+    this.subscription = this.http.getData(`reviewCycleHeader`).subscribe({
+      next: (data: any) => {
+        console.log('Review Cycle Data:', data);
+        this.reviewCycleDropDownData = data.items as IReviewCycle[];
+      },
+      error: (err: any) => {
+        console.error('Error fetching review cycle data:', err);
+      },
+    });
+  }
+  // Function to get review cycle data by ID and patch the form
+  getReviewCycledataById() {
+    let id: any;
+    if (this.postassesorConfiguration.id) {
+      id = this.postassesorConfiguration.id;
+    }
+    this.subscription = this.http.getData(`reviewCycleHeader/${id}`).subscribe({
+      next: (data: any) => {
+        console.log('Fetched Review Cycle Details:', data);
+        this.reviewCycledetailyById = data;
+        // Patch the form fields
+        if (this.postassesorConfiguration) {
+          (this.postassesorConfiguration.department = data[0]?.departments
+            ?.map((loc: any) => loc?.departmentName)
+            .join(', ')),
+            (this.postassesorConfiguration.ratingId = data.id),
+            (this.postassesorConfiguration.location = data[0]?.locations
+              ?.map((loc: any) => loc?.locationName)
+              .join(', ')),
+            (this.postassesorConfiguration.sublocation = data[0]?.sublocations
+              ?.map((loc: any) => loc?.subLocationName)
+              .join(', ')),
+            (this.postassesorConfiguration.team = data[0]?.subdepartments
+              ?.map((loc: any) => loc?.subDepartmentName)
+              .join(', '));
+              this.initialAddRowCall();
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching review cycle by ID:', err);
+        this.postassesorConfiguration = {};
+      },
+    });
+  }
+ 
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true });
+  }
+  close() {
+    this.modalService.dismissAll();
+  }
+  closeModal() {
+    this.modalService.dismissAll();
+    this.postassesorConfiguration = {}; // Reset the form
+  }
+  //function to open the model popup
+  openconfirmationModel(content: any) {
+    this.modalService.open(content, { centered: true });
+  }
+  //function to open the model popup
+  openconfirmationModelforcancle(content: any, form: any) {
+    this.myForm = form;
+    this.modalService.open(content, { centered: true });
+  }
+  //function to delete
+  openDeletepopup(content: any, id: any) {
+    console.log(id);
+    this.deleteId = id;
+    console.log(this.deleteId);
+    this.modalService.open(content, { centered: true });
+  }
+  clearindexdata(index:any){
+ 
+    if (this.assesorDetails && this.assesorDetails[index]) {
+      // Clear the data for the specific index
+      this.assesorDetails[index] = {
+          assessors: null,
+          deadlineindays: null,
+          assessorempId: null,
+          comments: false,
+          rating: false,
+          view: false
+      };
+  }
+}
+  // Add Row to FormArray
+  addRow() {
+    const newRow = {
+      assessors: null,
+      deadlineindays: null,
+      view: null,
+      rating: null,
+      comments: null,
+      assessorempId: null
+    };
+    this.assesorDetails.push(newRow);
+  }
+  // Delete Row from FormArray
+  deleteRow(index: number): void {
+    this.assesorDetails.splice(index, 1);
+    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+  }
+  // Handle form submission
+  onSubmit() {
+    this.isLoading = true;
+    const loggedinuser = this.authService.getToken();
+    const currentDate = new Date();
+    if (this.postassesorConfiguration) {
+      console.log(this.assesorDetails)
+      const payload = {
+        reviewCycleId: this.postassesorConfiguration.id,
+        isDeleted: false,
+        createdBy: loggedinuser.employeeId,
+        createdAt: currentDate,
+
+        items: this.assesorDetails?.map((row: any) => ({
+          assessor: row.assessors,
+          dueDate: row.deadlineindays,
+          isView: row.view,
+          isCommentsVisible: row.comments,
+          isRatingVisible: row.rating,
+          isDeleted: false,
+          createdAt: currentDate,
+          assessorEmployeeIds: row?.assessorempId?.toString(),
+        })),
+      };
+
+      console.log('Final Payload:', payload);
+
+      this.http.postdata(`Assessor/AddAssessor`, payload).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal(
+            'Assessor Configurations Added Successfully'
+          );
+        },
+        error: (err: any) => {
+          this.isLoading = false;
+          console.log(err);
+          if (err.status === 404) {
+            this.conformationPopup.openErrorModal(
+              'The requested resource was not found. Please check the URL or contact the administrator for assistance.'
+            );
+          } else if (err.status === 500) {
+            this.conformationPopup.openErrorModal(err.error.Message);
+          } else {
+            this.conformationPopup.openErrorModal(err.error.Message
+            );
+          }
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        complete: () => {
+          this.isLoading = false;
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            global: true,
+          }));
+        },
+      });
+    }
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+}

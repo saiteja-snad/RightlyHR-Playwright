@@ -9,14 +9,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { IProbationEmployees } from '../../../admin/probation-employees/probation-emp-module';
-
 @Component({
   selector: 'app-bank-details',
   imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
-export class BankDetailsComponent implements OnInit,OnDestroy{
+
+export class BankDetailsComponent implements OnInit, OnDestroy {
   banknames: Ibank[] = [];
   bankDetailsForm!: FormGroup;
   bankid: any
@@ -26,9 +26,11 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
   subscription!: Subscription
   proofValid: boolean = true;
   bankdocument: any
-  displayblankdocument:any
-  employedata={} as IProbationEmployees;
+  displayblankdocument: any
+  employedata = {} as IProbationEmployees;
+
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeBankDetailsForm();
@@ -56,8 +58,8 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
       accountName: data.accountName || '',
       accountNo: data.accountNo || '',
       ifscCode: data.ifscCode || '',
-      isPrimary: data.isPrimary || false, 
-      attachment: data.attachment || null,  
+      isPrimary: data.isPrimary || false,
+      attachment: data.attachment || null,
     });
   }
 
@@ -92,11 +94,8 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
     this.subscription = this.http.getData(`Bank`).subscribe({
       next: (data: any) => {
         if (data && data.length > 0) {
-          this.banknames = data.sort((a: any, b: any) =>
-            (a.bankName1 || '').localeCompare(b.bankName1 || '')
-          );
+          this.banknames = data.sort((a: any, b: any) => (a.bankName1 || '').localeCompare(b.bankName1 || ''));
         } else {
-          console.warn('No bank names found');
           this.banknames = [];
         }
       },
@@ -119,11 +118,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
   onBankProofSelected(event: any): void {
     const file = event.target.files[0];
     const timestamp = new Date().getTime();
-    this.bankdocument = this.renameFileAttachment(
-      file,
-      `${this.empinfo.employeeId}_${timestamp}_${file.name}`
-    );
-    console.log('Identity attachment:', this.bankdocument);
+    this.bankdocument = this.renameFileAttachment(file,`${this.empinfo.employeeId}_${timestamp}_${file.name}`);
   }
 
   private renameFileAttachment(originalFile: File, newName: string): File {
@@ -136,7 +131,6 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
   postBankDetails(): void {
     if (this.bankDetailsForm.valid) {
       const payload = this.createBankDetailsPayload();
-
       if (this.bankdocument) {
         this.uploadBankProof(payload);
       } else {
@@ -149,19 +143,17 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
 
   uploadBankProof(payload: any): void {
     const filePath = `/FusionDocuments/Employee Documents/Bank Documents/${this.empinfo.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankdocument)
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            payload.docUrl= data.path;
-            this.saveBankDetails(payload);
-          }
-        },
-        error: () => {
-          console.error('File upload failed');
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankdocument).subscribe({
+      next: (data: any) => {
+        if (data) {
+          payload.docUrl = data.path;
+          this.saveBankDetails(payload);
         }
-      });
+      },
+      error: () => {
+        console.error('File upload failed');
+      }
+    });
   }
 
   saveBankDetails(payload: any): void {
@@ -173,7 +165,6 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
         this.conformationPopup.openSuccessModal('Bank details added successfully')
       },
       error: (err: any) => {
-        console.error('Error saving bank details:', err);
         this.conformationPopup.openErrorModal('Bank details added failed')
       }
     });
@@ -187,37 +178,29 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
       accountNo: this.bankDetailsForm.get('accountNo')?.value,
       ifscCode: this.bankDetailsForm.get('ifscCode')?.value,
       isPrimary: this.bankDetailsForm.get('isPrimary')?.value,
-     
     };
   }
 
   //download Functionality
   onSelectBankProofDownload(file: any) {
-    this.subscription = this.http
-      .DownloadDataWithQuery('FileSystem/Downloadfile', file.docUrl)
-      .subscribe({
-        next: (res: any) => {
-          let fileName = res.headers
-            .get('content-disposition')
-            ?.split(':')[1]
-            .split('=')[1];
-          let blob: Blob = res.body as Blob;
-          let a = document.createElement('a');
-          a.href = window.URL.createObjectURL(blob);
-          let filename =
-            file.docUrl.split('/')[file.docUrl.split('/').length - 1];
-          a.download = filename;
-          a.click();
-        },
-        error: (reason) => console.log(reason),
-      });
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.docUrl).subscribe({
+      next: (res: any) => {
+        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
+        let blob: Blob = res.body as Blob;
+        let a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        let filename = file.docUrl.split('/')[file.docUrl.split('/').length - 1];
+        a.download = filename;
+        a.click();
+      },
+      error: (reason) => console.log(reason),
+    });
   }
 
   //keypress
   restrictInput(event: KeyboardEvent) {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;
-
     if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
       return;
     }
@@ -225,7 +208,6 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
       event.preventDefault();
       return;
     }
-
     const isAlphabetic = /^[A-Za-z\s]$/.test(key);
     if (!isAlphabetic) {
       event.preventDefault();
@@ -233,12 +215,10 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
   }
 
   openModalupdate(content: any, bankDetail: any): void {
-    console.log(bankDetail)
     this.bankid = bankDetail.bankId
     const selectedBank = this.banknames.find(
       (bank) => bank.bankName1 === bankDetail.bankName
     );
-
     // Patch the values into the form
     this.bankDetailsUpdateForm.patchValue({
       bankNameupdate: selectedBank,
@@ -246,12 +226,8 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
       accountNoupdate: bankDetail.accountNo,
       ifscCodeupdate: bankDetail.ifscCode,
       isPrimaryupdate: bankDetail.isPrimary,
-
     });
-    this.displayblankdocument= bankDetail.docUrl
-    ? bankDetail.docUrl.split('/').pop()
-    : null;
-   
+    this.displayblankdocument = bankDetail.docUrl ? bankDetail.docUrl.split('/').pop() : null;
     this.bankdocument = bankDetail.docUrl
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -264,18 +240,14 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
       const payload = {
         bankId: this.bankid,
         empId: parseInt(this.empinfo.employeeId),
-        docUrl:this.bankdocument,
+        docUrl: this.bankdocument,
         bankName: formData.bankNameupdate?.bankName1 || formData.bankNameupdate, // Extract bank name
         accountName: formData.accountNameupdate, // Account holder's name
         accountNo: formData.accountNoupdate, // Account number
         ifscCode: formData.ifscCodeupdate,
         isPrimary: formData.isPrimaryupdate,
         isDeleted: false,
-
       };
-
-      console.log('Payload being sent:', payload); // Debugging log
-
       // Check if a new attachment is selected
       if (this.bankdocument instanceof File) {
         this.uploadUpdatedBankAttachment(payload);
@@ -289,26 +261,22 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
 
   uploadUpdatedBankAttachment(payload: any): void {
     const filePath = `/FusionDocuments/Employee Documents/Bank Documents/${this.empinfo.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankdocument)
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            payload.docUrl = data.path; // Update the payload with the uploaded file path
-            this.saveUpdatedBankDetails(payload);
-          }
-        },
-        error: () => {
-          console.error('File upload failed');
-          this.conformationPopup.openErrorModal('Failed to upload bank proof. Please try again.');
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankdocument).subscribe({
+      next: (data: any) => {
+        if (data) {
+          payload.docUrl = data.path; // Update the payload with the uploaded file path
+          this.saveUpdatedBankDetails(payload);
         }
-      });
+      },
+      error: () => {
+        this.conformationPopup.openErrorModal('Failed to upload bank proof. Please try again.');
+      }
+    });
   }
 
   saveUpdatedBankDetails(payload: any): void {
     this.subscription = this.http.postdata(`BankDetail/Update`, payload).subscribe({
       next: (data: any) => {
-        console.log('Bank details updated successfully:', data);
         this.bankDetailsUpdateForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank details updated successfully');
@@ -322,7 +290,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
   }
 
   opendeletModal(content: any, bankDetail: any): void {
-    this.bankid = bankDetail.bankId; 
+    this.bankid = bankDetail.bankId;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -331,23 +299,18 @@ export class BankDetailsComponent implements OnInit,OnDestroy{
       console.error('Bank ID is not set. Cannot delete bank details.');
       return;
     }
-  
-    this.subscription = this.http
-      .getData(`BankDetail/deletebyid/${this.bankid}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log('Bank details deleted successfully:', data);
-          this.getbankempid(); // Refresh the bank details list
-          this.modalService.dismissAll(); // Close the modal
+    this.subscription = this.http.getData(`BankDetail/deletebyid/${this.bankid}`).subscribe({
+      next: (data: any) => {
+        this.getbankempid(); // Refresh the bank details list
+        this.modalService.dismissAll(); // Close the modal
         this.conformationPopup.openSuccessModal('Bank details deleted successfully')
-       
-        },
-        error: (reason: any) => {
-          console.error('Error deleting bank details:', reason);
-          this.conformationPopup.openErrorModal('Failed to delete bank details. Please try again.');
-        }
-      });
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal('Failed to delete bank details. Please try again.');
+      }
+    });
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

@@ -1,0 +1,104 @@
+.form-container {
+    max-width: 800px;
+    margin: auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    text-align: center;
+    color: #333;
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 20px;
+    color: #000000;
+}
+
+.section {
+    border-bottom: 1px dotted #e0e0e0;
+
+    margin-bottom: 10px;
+    padding: 20px;
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.question {
+    margin-top: 15px;
+}
+
+.question label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.options {
+    padding-left: 10px;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.option-label input[type="radio"] {
+    margin-right: 10px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+small {
+    color: #888;
+    font-size: 12px;
+}
+
+.hide-input {
+    border: none;
+    border-bottom: 1px solid#dee2e6;
+    box-shadow: none;
+    border-radius: 0;
+    font-size: 16px;
+}
+
+.hide-input::placeholder {
+    font-size: 16px;
+    /* Ensure placeholder font size matches */
+}
+
+.imgg {
+    width: 4.5rem;
+    height: 4.5rem;
+}
+
+.modal-btn {
+    width: max-content;
+    padding: 0.5rem;
+    border-radius: 14px;
+    color: #fff;
+    border: none;
+    width: 120px;
+}
+
+.yes-btn {
+    background-color: #304ffd;
+}
+
+.no-btn {
+    background-color: #979797;
+}

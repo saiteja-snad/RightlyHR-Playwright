@@ -1,16 +1,17 @@
 <div class="custom-main-component-container mt-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <div> <span class="component-sub-header">No Due Clearance Details</span></div>
-      @if(lineOrder &&nodue_Clearance_Details.value.length >= 0&& empdata?.substatus?.toLowerCase()==='raised no due'){
-         <div class="plus-button">
-        <a class="dropdown-item" 
-          [routerLink]="['/admin/nodue-form-details']" routerLinkActive="active" (click)="onsubmission(empdata.employeeId)">
-          <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i> 
-            <span type="button" class="plus-text">Submission Of No Due Clearance</span></span>
-          </a>
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="component-sub-header">No Due Clearance Details</div>
+    @if(lineOrder &&nodue_Clearance_Details.value.length >= 0&& empdata?.substatus?.toLowerCase()==='raised no due'){
+    <div class="plus-button">
+      <a class="dropdown-item" [routerLink]="['/admin/nodue-form-details']" routerLinkActive="active"
+        (click)="onsubmission(empdata.employeeId)">
+        <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i>
+          <span type="button" class="plus-text">Submission Of No Due Clearance</span></span>
+      </a>
     </div>
     }
   </div>
+  
   <!--Input search-->
   <div class="custom-table-content">
     <table class="w-100">
@@ -22,7 +23,7 @@
           <th>{{'APPROVAL STATUS'|translate}}</th>
           <th>{{'SUB STATUS'|translate}}</th>
           <th>{{'LAST WORKING DAY'|translate}}</th>
-          <th ></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -32,7 +33,7 @@
           <td>{{ item.departmentName?item.departmentName:'NA' }}
           </td>
           <td>
-              {{ item.requestedDate?(item.requestedDate):'NA' }}
+            {{ item.requestedDate?(item.requestedDate):'NA' }}
           </td>
           <td>{{item.processedByName?item.processedByName:'NA'}}</td>
           <td>{{item.status?item.status:'NA'}}</td>
@@ -47,9 +48,9 @@
                 <i class="bi bi-three-dots-vertical"></i>
               </span>
               }
-  
+
               <ul class="dropdown-menu custom-dropdown-menu">
-                <li >
+                <li>
                   <a class="dropdown-item" (click)="rerequestFornoDue(item)">
                     <i class="bi bi-repeat me-2 fs-5"></i>Re-request for no due
                   </a>
@@ -69,3 +70,4 @@
       </tbody>
     </table>
   </div>
+</div>

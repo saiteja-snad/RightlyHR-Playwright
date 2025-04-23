@@ -13,17 +13,18 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Employee ID </th>
-                        <th>Employee Name</th>
-                        <th>Worked Date</th>
-                        <th>Availed</th>
-                        <th>Reason</th>
-                        <th>Approver Comments</th>
-                        <th>Applied Date</th>
-                        <th>Action(s)</th>
+                        <th>{{'Employee ID' | translate}} </th>
+                        <th>{{'Employee Name' | translate}}</th>
+                        <th>{{'Worked Date' | translate}}</th>
+                        <th>{{'Availed' | translate}}</th>
+                        <th>{{'Reason' | translate}}</th>
+                        <th>{{'Approver Comments' | translate}}</th>
+                        <th>{{'Applied Date' | translate}}</th>
+                        <th>{{'Action(s)' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
                     @if (((leaves | async) ?? []).length > 0) {
                         @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ;  track leave.approvalHeader.id){
                     <tr>
@@ -62,16 +63,16 @@
                                     </a>
                                     <ul class="dropdown-menu py-0">
                                         @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="openApproveModal(approval,leave)"><a class="dropdown-item"><i
+                                        <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')"><a class="dropdown-item"><i
                                                     class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                         </li>
                                         }
                                         @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="handleProcess(leave)"><a class="dropdown-item"><i
+                                        <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')"><a class="dropdown-item"><i
                                                     class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                         </li>
                                         }
-                                        <li (click)="openRejectModal(rejectmodal,leave)"><a class="dropdown-item"><i
+                                        <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.delete')"><a class="dropdown-item"><i
                                                     class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a></li>
                                     </ul>
                                 </div>
@@ -80,12 +81,12 @@
                         }
                     }@else {
                     <tr>
-                      <td colspan="4">
+                      <td colspan="8">
                         <app-no-data-found></app-no-data-found>
                       </td>
                     </tr>
                 }
-
+            }
                 </tbody>
             </table>
         </div>
@@ -210,7 +211,7 @@
     <div class="modal-body" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">{{'Comments' | translate}}</p>
             </div>
             <div>
                 <button type="button" class="btn-close" aria-label="Close"
@@ -223,10 +224,10 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Comments</th>
-                            <th>Commented By</th>
-                            <th>Date</th>
-                            <th>Commented By ID</th>
+                            <th>{{'Comments' | translate}}</th>
+                            <th>{{'Commented By'|translate}}</th>
+                            <th>{{"Date" | translate}}</th>
+                            <th>{{'Commented By ID' | translate}}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -72,7 +72,7 @@
 
 <ng-template #addexperincemodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add Certification Details
                 </p>
@@ -81,10 +81,10 @@
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content">
             <form [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
-
                 <div class="row">
+                    @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="certificationName" class="form-label custom-label mb-2">
                             Certification Name <span class="text-danger">*</span>
@@ -98,8 +98,9 @@
                             <span *ngIf="certificationForm.get('certificationName')?.errors?.['pattern']">Enter a
                                 valid Certification Name</span>
                         </div>
-                    </div>
+                    </div>}
 
+                    @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="certificationId" class="form-label custom-label mb-2">
                             Certification ID <span class="text-danger">*</span>
@@ -113,10 +114,9 @@
                             <span *ngIf="certificationForm.get('certificationId')?.errors?.['pattern']">Enter a
                                 valid Certification ID</span>
                         </div>
-                    </div>
-                </div>
+                    </div>}
 
-                <div class="row">
+                     @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="issuedDate" class="form-label custom-label mb-2 ">
                             Issued Date <span class="text-danger">*</span>
@@ -127,8 +127,9 @@
                             *ngIf="certificationForm.get('issuedDate')?.invalid && certificationForm.get('issuedDate')?.touched">
                             Issued Date is required
                         </div>
-                    </div>
+                    </div>}
 
+                     @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="expiryDate" class="form-label custom-label mb-2">
                             Expiry Date <span class="text-danger">*</span>
@@ -140,15 +141,15 @@
                             Expiry Date is required
                         </div>
                         <!-- <div class="error-msg" *ngIf="!isExpiryDate">Expiry Date cannot be less than Issued Date</div> -->
+                        @if(this.rbac.allowedToAccess('Certification Details.view')){
                         <div class="form-check">
                             <input class="form-check-input mt-2" type="checkbox" id="noExpiry"
                                 formControlName="isExpired" />
                             <label class="form-check-label  custom-label mt-2" for="noExpiry">No Expiry</label>
-                        </div>
-                    </div>
-                </div>
+                        </div>}
+                    </div>}
 
-                <div class="row">
+                    @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">
                             Attachment <span class="text-danger">*</span>
@@ -165,15 +166,14 @@
                         </div>
                         <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
                         <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
-                    </div>
+                    </div>}
                 </div>
 
-                <div class="modal-footer d-flex justify-content-end">
+                <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="onReset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="certificationForm.invalid">Add
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -182,7 +182,7 @@
 
 <ng-template #updateexperincemodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Certification Details</p>
             </div>
@@ -190,10 +190,10 @@
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content">
             <form [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
-
                 <div class="row">
+                    @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="certificationName" class="form-label custom-label mb-2">
                             Certification Name <span class="text-danger">*</span>
@@ -207,8 +207,9 @@
                             <span *ngIf="updateCertificationForm.get('certificationName')?.errors?.['pattern']">Enter a
                                 valid Certification Name</span>
                         </div>
-                    </div>
+                    </div>}
 
+                    @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="certificationId" class="form-label custom-label mb-2">
                             Certification ID <span class="text-danger">*</span>
@@ -222,10 +223,9 @@
                             <span *ngIf="updateCertificationForm.get('certificationId')?.errors?.['pattern']">Enter a
                                 valid Certification ID</span>
                         </div>
-                    </div>
-                </div>
+                    </div>}
 
-                <div class="row">
+                    @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="issuedDate" class="form-label custom-label mb-2 ">
                             Issued Date <span class="text-danger">*</span>
@@ -236,8 +236,9 @@
                             *ngIf="updateCertificationForm.get('issuedDate')?.invalid && updateCertificationForm.get('issuedDate')?.touched">
                             Issued Date is required
                         </div>
-                    </div>
+                    </div>}
 
+                    @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="expiryDate" class="form-label custom-label mb-2">
                             Expiry Date <span class="text-danger">*</span>
@@ -254,10 +255,9 @@
                                 formControlName="isExpired" />
                             <label class="form-check-label label-in mt-2" for="noExpiry">No Expiry</label>
                         </div>
-                    </div>
-                </div>
+                    </div>}
 
-                <div class="row">
+                    @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">
                             Attachment <span class="text-danger">*</span>
@@ -277,15 +277,14 @@
                         </div>
                         <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
                         <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
-                    </div>
+                    </div>}
                 </div>
 
-                <div class="modal-footer d-flex justify-content-end">
+                <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="onReset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="updateCertificationForm.invalid">update
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -303,5 +302,4 @@
             <button type="submit" class="custom-btn btn-primary" (click)="deleteCertification()">Yes</button>
         </div>
     </div>
-
 </ng-template>

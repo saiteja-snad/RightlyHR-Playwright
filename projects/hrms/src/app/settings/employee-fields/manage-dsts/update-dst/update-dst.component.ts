@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -22,10 +22,11 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ManageDST } from '../dsts.modal';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update-dst',
-  imports: [SelectModule, CommonModule, ReactiveFormsModule],
+  imports: [SelectModule, CommonModule, ReactiveFormsModule,TranslateModule],
   templateUrl: './update-dst.component.html',
   styleUrl: './update-dst.component.scss',
 })
@@ -42,6 +43,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
   pendingDST: ManageDST | null = null;
   hidePublishCloneButtons: boolean = false;
 
+  @ViewChild('confirmation') confirmation!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -65,16 +67,17 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
         year: this.pendingDST.applicableYear,
       });
     }
+    this.handleFormValueChanges();
 
     this.getAllLocations();
   }
 
   inititializeForm() {
     this.dstForm = this.fb.group({
-      year: [{ value: '', disabled: true }, Validators.required],
-      location: [{ value: '', disabled: true }, Validators.required],
-      subLocation: [{ value: '', disabled: true }, Validators.required],
-      shift: [{ value: null, disabled: true }, Validators.required],
+      year: [ '', Validators.required],
+      location: ['' , Validators.required],
+      subLocation: [ '' , Validators.required],
+      shift: [ null , Validators.required],
       momentRows: this.fb.array([]),
     });
 
@@ -184,12 +187,49 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
               );
             });
           }
-
-          console.log('Form Data', this.dstForm.value);
         },
         error: (err) => console.error('Error fetching locations:', err),
       });
   }
+
+  private handleFormValueChanges(): void {
+    const form = this.dstForm;
+
+    const resetAndDisable = (controls: string[]) => {
+      controls.forEach(control => {
+        form.get(control)?.reset();
+        form.get(control)?.disable();
+      });
+    };
+
+    form.get('year')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        form.get('location')?.reset();
+        resetAndDisable(['subLocation', 'shift']);
+      });
+
+    form.get('location')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        resetAndDisable(['subLocation', 'shift']);
+      });
+
+    form.get('subLocation')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        form.get('shift')?.reset();
+        // resetAndDisable(['shift']);
+      });
+  }
+
+  openConfirmation(){
+    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
+  }
+  closeUpdateDST(){
+    this.modalService.dismissAll();
+    this.navigate();
+   }
 
   formatToDateInput(dateStr: string): string {
     const date = new Date(dateStr);
@@ -199,14 +239,9 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     return `${yyyy}-${mm}-${dd}`;
   }
 
-
-
   UpdateDST(dstForm: FormGroup) {
-    console.log(dstForm);
-    
     if (dstForm.valid) {
       const formValue = dstForm.value;
-    
       const holidays = {
         lastModifiedDate: new Date(),
         addedDate: new Date(),
@@ -226,38 +261,68 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
           headerId: this.pendingDST?.dayLight?.[0]?.headerId,
         })),
       };
-    
-      console.log('holidays payload:', holidays);
+      this.http
+        .postdata('OrgDayLight/Update/Shift/OrgShift', holidays)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            if (response.statusCode === 400) {
+              this.sharedModalService.openErrorModal(
+                'Error: Shift already exists.'
+              );
+            }
 
-    this.http
-      .postdata('OrgDayLight/Update/Shift/OrgShift', holidays)
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          if (response.statusCode === 400) {
-            this.sharedModalService.openErrorModal(
-              'Error: Shift already exists.'
+            this.sharedModalService.openSuccessModal(
+              'Manage DST updated successfully'
             );
-          }
+            this.navigate();
+          },
+          error: (err) => {
+            if (err.error) {
+              this.sharedModalService.openErrorModal(
+                'Error: ' + err.error.Message
+              );
+            }
+          },
+        });
+    }
+  }
 
-          this.sharedModalService.openSuccessModal('Manage DST updated successfully')
+  publishDST() {
+    let publishItem = {
+      Category: 'Daylightsaving',
+      refentityId: this.pendingDST?.dayLight[0].headerId,
+    };
+    this.http
+      .postdata(
+        `CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`,
+        { params: publishItem }
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respnose: any) => {
+          this.sharedModalService.openSuccessModal(
+            'Manage DST Published Successfully'
+          );
           this.navigate();
         },
         error: (err) => {
           if (err.error) {
-            this.sharedModalService.openErrorModal(
-              'Error: ' + err.error.Message
-            );
+            this.sharedModalService.openErrorModal(err.error);
           }
-          // alert()
-          // <insert code for what to do on failure>
+          this.sharedModalService.openErrorModal(
+            'Error occured while publishing manage dst'
+          );
         },
       });
-    }
   }
-
   navigate(): void {
     this.router.navigate(['/settings/employee-fields/manage-dsts']);
+  }
+
+  navigateToCloneComponent(): void {
+    localStorage.setItem('cloneDST', JSON.stringify(this.pendingDST));
+    this.router.navigate(['/settings/employee-fields/clone-dst']);
   }
 
   ngOnDestroy(): void {

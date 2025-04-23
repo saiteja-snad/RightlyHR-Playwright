@@ -10,50 +10,49 @@
         <table class="w-100">
             <thead>
                 <tr>
-                   <th>Year</th>
-                   <th>Location</th>
-                   <th>sub Location</th>
-                   <th>Shift Name</th>
-                   <th>status</th>
-                   <th>added by</th>
-                   <th>action(s)</th>
+                    <th>{{'Year' | translate}}</th>
+                    <th>{{"Location" | translate}}</th>
+                    <th>{{"sub Location" | translate}}</th>
+                    <th>{{"shift name" | translate}}</th>
+                    <th>{{'status' | translate}}</th>
+                    <th>{{'added by' | translate}}</th>
+                    <th class="text-center">{{'action(s)' | translate}}</th>
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="pendingDSTs!.length > 0; else noDataTemplate">
                     <tr *ngFor="let pendingDST of pendingDSTs; let i = index">
-                      <td>{{pendingDST.applicableYear}} </td>
-                      <td>{{pendingDST.jobLocationName}} </td>
-                      <td>{{pendingDST.jobSubLocationName}}</td>
-                      <td>{{pendingDST.shiftName}}</td>
-                      <td>{{pendingDST.status}} </td>
-                      <td>{{pendingDST.firstName}} {{pendingDST.middleName}} {{pendingDST.lastName}}</td>
-                      <td class="text-center">
-                        <div class="dropdown">
-                          <span type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-three-dots-vertical"></i>
-                          </span>
-                          <ul class="dropdown-menu custom-dropdown-menu">
-                            <li >
-                              <a class="dropdown-item" (click)="navigateToUpdateDSTComponent(pendingDST)">
-                                <i class="bi bi-pencil me-2"></i>Update
-                              </a>
-                            </li>
-                        
-                          </ul>
-                        </div>
-                      </td>
+                        <td>{{pendingDST.applicableYear}} </td>
+                        <td>{{pendingDST.jobLocationName}} </td>
+                        <td>{{pendingDST.jobSubLocationName}}</td>
+                        <td>{{pendingDST.shiftName}}</td>
+                        <td>{{pendingDST.status}} </td>
+                        <td>{{pendingDST.firstName}} {{pendingDST.middleName}} {{pendingDST.lastName}}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" (click)="navigateToUpdateDSTComponent(pendingDST)">
+                                            <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
-                  </ng-container>
-                
-                  <ng-template #noDataTemplate>
+                </ng-container>
+
+                <ng-template #noDataTemplate>
                     <tr>
-                      <td colspan="7">
-                        <app-no-data-found></app-no-data-found>
-                      </td>
+                        <td colspan="7">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
                     </tr>
-                  </ng-template>
-              </tbody>
+                </ng-template>
+            </tbody>
         </table>
     </div>
 </div>

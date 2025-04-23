@@ -24,6 +24,7 @@
                     </tr>
                 </thead>
                 <tbody>
+
                     <ng-container *ngIf="regularization!.length > 0; else noDataTemplate">
                     <tr *ngFor="let leave of regularization; let i = index">
                         <td>{{leave.entity.fusionempId}}</td>
@@ -53,16 +54,16 @@
                                 </a>
                                 <ul class="dropdown-menu py-0">
                                     @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="openApproveModal(approval,leave)"><a class="dropdown-item"><i
+                                    <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Regularizations.update')"><a class="dropdown-item"><i
                                                 class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                     </li>
                                     }
                                     @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="handleProcess(leave)"><a class="dropdown-item"><i
+                                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Regularizations.update')"><a class="dropdown-item"><i
                                                 class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                     </li>
                                     }
-                                    <li (click)="openRejectModal(rejectmodal,leave)"><a class="dropdown-item"><i
+                                    <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Regularizations.delete')"><a class="dropdown-item"><i
                                                 class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a></li>
                                 </ul>
                             </div>
@@ -76,7 +77,7 @@
                       </td>
                     </tr>
                   </ng-template>
-
+                
                 </tbody>
             </table>
         </div>

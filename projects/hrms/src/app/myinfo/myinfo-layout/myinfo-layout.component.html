@@ -12,17 +12,17 @@
   <!--nav tabs content-->
   <div class="mb-3">
     <div *ngIf="isActive('myinfo/personal')">
-      <app-my-info-personal-tabs></app-my-info-personal-tabs>
+      <app-my-info-personal-tabs />
     </div>
     <div *ngIf="isActive('myinfo/job' )">
-      <app-myinfo-job-tabs></app-myinfo-job-tabs>
+      <app-myinfo-job-tabs />
     </div>
   </div>
 
   <div class="myinfo-main-container d-flex gap-4">
     <!--User profile content-->
     <div class="card user-profile-content p-3">
-      <app-myinfo-details></app-myinfo-details>
+      <app-myinfo-details />
     </div>
 
     <!--main content-->
@@ -34,7 +34,7 @@
   
 <ng-template #changermmodal let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
         <p class="popup-heading mb-0">Change RM</p>
       </div>
@@ -45,7 +45,6 @@
     <div class="custom-main-popup-content p-4">
       <form [formGroup]="teamForm" (ngSubmit)="updateTeamRM()">
         <div class="row">
-
           <div class="col-md-6 mb-3">
             <label class="form-label custom-label mb-2">
               Select Team Member(s) <span class="text-danger">*</span>
@@ -55,16 +54,11 @@
                 placeholder="Select Team Member(s)" class="form-select custom-select" multiple="true"
                 (onChange)="onSelectManager($event, 'teamMembers')">
               </p-select>
-
-
             </div>
           </div>
 
-
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">
-              Select Reporting Manager <span class="text-danger">*</span>
-            </label>
+            <label class="form-label custom-label mb-2">Select Reporting Manager <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name" [options]="managers"
                 placeholder="Select Reporting Manager" class="form-select custom-select"
@@ -75,12 +69,11 @@
         </div>
 
         <!-- Buttons -->
-        <div class="d-flex justify-content-end gap-3 mt-4">
+        <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid">Submit</button>
         </div>
       </form>
-
     </div>
   </div>
 </ng-template>

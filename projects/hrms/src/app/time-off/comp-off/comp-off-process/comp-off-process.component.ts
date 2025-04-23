@@ -66,12 +66,10 @@ export class CompOffProcessComponent implements OnInit,OnDestroy {
 
   getCompOffRequest() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
     this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (response: any) => {
-        console.log(response);
         this.compOff = response;
         this.processedCompOffRequests = this.compOff.filter((element: { status: string }) => element.status === 'Processed');
         this.processedCompOffRequestsCount = this.processedCompOffRequests.length;

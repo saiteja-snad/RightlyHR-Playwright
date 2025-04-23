@@ -82,13 +82,14 @@ export class CompOffComponent implements OnInit, OnDestroy {
   applyCompOff(addForm: FormGroup) {
     if (addForm.valid) {
       const formData = addForm.value;
+      const isFullDay = +formData.availing === 2;
       const payload = {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
         requestedComments: this.compoffdata.requestedComments,
-        durationType: +formData.availing,
-        duration: +formData.availing == 2 ? 1 : 0.5,
+        durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
+        duration: isFullDay ? 1 : 0.5,
         status: 'Waiting for Approval',
         reason: formData.reason,
         requestedCategory: 3,
@@ -124,7 +125,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
         },
       });
     }
-    throw new Error('Method not implemented.');
   }
 
   updateDuration() {
@@ -181,13 +181,14 @@ export class CompOffComponent implements OnInit, OnDestroy {
           (item: any) => item.name === 'maxDuration'
         );
         this.filteredMinhoursData = filterminhoursData ?? ({} as LeaveConfigurationSetting);
-        localStorage.setItem('filterHalfDayData', JSON.stringify(filterHalfDayData));
+        localStorage.setItem('filterHalfDayData',JSON.stringify(filterHalfDayData));
         const filterFullDayData = this.compOffEligibilityCriteria.find(
           (item: any) => item.name === 'minFullDayHours'
         );
         localStorage.setItem('filterFullDayData', JSON.stringify(filterFullDayData));
       },
       error: (error) => {
+        console.error('Error fetching data:', error);
         this.compOffEligibilityCriteria = []; // Set to empty array on error
       },
     });

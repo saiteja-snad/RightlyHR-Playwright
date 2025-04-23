@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, NgForm, FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ReactiveFormsModule, FormsModule, NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
@@ -11,19 +10,24 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { IReviewCycle, IDesignationNames } from '../add-assessor/add-assessor.modal';
+import {
+  IReviewCycle,
+  IDesignationNames,
+} from '../add-assessor/add-assessor.modal';
 
 @Component({
   selector: 'app-update-assessor',
-  imports: [ CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     Select,
-    TranslateModule,],
+    TranslateModule,
+  ],
   templateUrl: './update-assessor.component.html',
-  styleUrl: './update-assessor.component.scss'
+  styleUrl: './update-assessor.component.scss',
 })
-export class UpdateAssessorComponent implements OnInit,OnDestroy {
+export class UpdateAssessorComponent implements OnInit, OnDestroy {
   empinfo = {} as any;
   subscription!: Subscription;
   updateassesorConfiguration = {} as any;
@@ -31,7 +35,7 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
   isLoading = false;
   myForm!: NgForm;
   deleteId: any;
-  removeRowdata:any
+  removeRowdata: any;
   reviewCycledetailyById = {};
   reviewCycleDropDownData = [] as IReviewCycle[];
   reviewCycleData = [] as IDesignationNames[];
@@ -42,18 +46,16 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
   deletedRows: any[] = [];
   @ViewChild('deletesuccess') deletesuccess: any;
   @ViewChild('deleterowincrement') deleterowincrement: any;
-  @Input() updateData:any
+  @Input() updateData: any;
   constructor(
-    private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
     private http: HttpService,
-    private fb: FormBuilder,
     private modalService: NgbModal,
     public rbac: RbacService
   ) {}
   ngOnInit(): void {
-    console.log('assesor date',this.updateData);
+    console.log('assesor date', this.updateData);
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.editDetails(this.updateData);
     this.getReviewCycledata();
@@ -62,43 +64,57 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
     const currentdate = moment();
     this.currentDate = this.formatDate(currentdate);
   }
-    //function to edit the details
-    editDetails(Values: any) {
-      this.getAllActiveEmpList();
-      this.headerId = Values.assessor.id;
-      // Ensure Values.departmentNames is defined before using map
-      const departmentNames = Values.departmentNames ? Values.departmentNames.map((dept: any) => dept.departmentName).join(', ') : '';
-      const locationNames = Values.locationNames ? Values.locationNames.map((loc: any) => loc.locationName).join(', ') : '';
-      const teamNames = Values.subDepartmentNames ? Values.subDepartmentNames.map((loc: any) => loc.subDepartmentName).join(', ') : '';
-      const sublocationNames = Values.subLocationNames ? Values.subLocationNames.map((loc: any) => loc.subLocationName).join(', ') : '';
-  
-      // Populate the form with the selected values
-      this.updateassesorConfiguration = {
-        id: Values.id,
-        reviewCycleId: Values.reviewCycleId,
-        department: departmentNames,
-        location: locationNames,
-        team: teamNames,
-        sublocation: sublocationNames
-      };
-  
-      // Map assessorItems to ratingscaledetailsarray
-      this.assesorDetails = Values.assessorItems ? Values.assessorItems.map((item: any) => {
-        return {
-          ...item,
-          id: item.id,
-          assessors: item.assessor,
-          assessorempId: parseInt(item.assessorEmployeeIds),
-          assessorEmpName: item.assessorEmpName,
-          deadlineindays: item.dueDate.split('T')[0], // Extract date part,
-          comments: item.isCommentsVisible,
-          rating: item.isRatingVisible,
-          view: item.isView
-        };
-  
-      }) : [];
-      console.log('Ratingscale Details:', this.assesorDetails);
-    }
+  //function to edit the details
+  editDetails(Values: any) {
+    this.getAllActiveEmpList();
+    this.headerId = Values.assessor.id;
+    // Ensure Values.departmentNames is defined before using map
+    const departmentNames = Values.departmentNames
+      ? Values.departmentNames
+          .map((dept: any) => dept.departmentName)
+          .join(', ')
+      : '';
+    const locationNames = Values.locationNames
+      ? Values.locationNames.map((loc: any) => loc.locationName).join(', ')
+      : '';
+    const teamNames = Values.subDepartmentNames
+      ? Values.subDepartmentNames
+          .map((loc: any) => loc.subDepartmentName)
+          .join(', ')
+      : '';
+    const sublocationNames = Values.subLocationNames
+      ? Values.subLocationNames
+          .map((loc: any) => loc.subLocationName)
+          .join(', ')
+      : '';
+
+    // Populate the form with the selected values
+    this.updateassesorConfiguration = {
+      id: Values.id,
+      reviewCycleId: Values.reviewCycleId,
+      department: departmentNames,
+      location: locationNames,
+      team: teamNames,
+      sublocation: sublocationNames,
+    };
+
+    // Map assessorItems to ratingscaledetailsarray
+    this.assesorDetails = Values.assessorItems
+      ? Values.assessorItems.map((item: any) => {
+          return {
+            ...item,
+            id: item.id,
+            assessors: item.assessor,
+            assessorempId: parseInt(item.assessorEmployeeIds),
+            assessorEmpName: item.assessorEmpName,
+            deadlineindays: item.dueDate.split('T')[0], // Extract date part,
+            comments: item.isCommentsVisible,
+            rating: item.isRatingVisible,
+            view: item.isView,
+          };
+        })
+      : [];
+  }
   formatDate(date: any) {
     return date?.split('T')[0];
   }
@@ -126,10 +142,8 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
               }${employee.firstName} ${
                 employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
-              
             };
           });
-          console.log(this.activeEmplist);
         },
         error: (err: any) => {},
       });
@@ -186,19 +200,19 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
     console.log(this.deleteId);
     this.modalService.open(content, { centered: true });
   }
-  clearindexdata(index:any){
+  clearindexdata(index: any) {
     if (this.assesorDetails && this.assesorDetails[index]) {
       // Clear the data for the specific index
       this.assesorDetails[index] = {
-          assessors: null,
-          deadlineindays: null,
-          assessorempId: null,
-          comments: false,
-          rating: false,
-          view: false
+        assessors: null,
+        deadlineindays: null,
+        assessorempId: null,
+        comments: false,
+        rating: false,
+        view: false,
       };
+    }
   }
-}
   // Add Row to FormArray
   addRow() {
     const newRow = {
@@ -207,7 +221,7 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
       view: null,
       rating: null,
       comments: null,
-      assessorempId: null
+      assessorempId: null,
     };
     this.assesorDetails.push(newRow);
   }
@@ -219,11 +233,10 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
       this.assesorDetails.splice(index, 1);
     }
     this.conformationPopup.openSuccessModal('Row Deleted Successfully');
-
   }
   // Handle form submission
   Updateassessor() {
-    this.isLoading=true;
+    this.isLoading = true;
     const loggedinuser = this.authService.getToken();
     const currentDate = moment();
     if (this.updateassesorConfiguration) {
@@ -242,7 +255,7 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
             isView: item.view,
             isDeleted: false,
             createdAt: currentDate.toISOString(),
-            aessorEmployeeIds: item.assessorempId?.toString()
+            aessorEmployeeIds: item.assessorempId?.toString(),
           })),
           ...this.deletedRows.map((item: any) => ({
             id: item.id,
@@ -253,31 +266,36 @@ export class UpdateAssessorComponent implements OnInit,OnDestroy {
             isView: item.view,
             isDeleted: true, // Ensure the isDeleted flag is set to true
             createdAt: currentDate.toISOString(),
-            aessorEmployeeIds: item.assessorempId?.toString()
-          }))
-        ]
+            aessorEmployeeIds: item.assessorempId?.toString(),
+          })),
+        ],
       };
-      this.http.putData(`Assessor/UpdateReviewAssessorHeaderConfig/${this.headerId}`, payload).subscribe({
-        next: (response: any) => {
-          this.isLoading=false;
-          console.log('API response:', response);
+      this.http
+        .putData(
+          `Assessor/UpdateReviewAssessorHeaderConfig/${this.headerId}`,
+          payload
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.isLoading = false;
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Assessor Configurations Updated Successfully')
-        },
-        error: (err: any) => {
-          console.error('Error:', err);
-          this.isLoading=false;
-         this.conformationPopup.openErrorModal(err.error)
-       
-        },
-        complete: () => {
-          this.isLoading = false;
-          this.http.tirggerCountSignal.update((status) => ({
-            ...status,
-            global: true,
-          }));
-        },
-      });
+            this.conformationPopup.openSuccessModal(
+              'Assessor Configurations Updated Successfully'
+            );
+          },
+          error: (err: any) => {
+            console.error('Error:', err);
+            this.isLoading = false;
+            this.conformationPopup.openErrorModal(err.error);
+          },
+          complete: () => {
+            this.isLoading = false;
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              global: true,
+            }));
+          },
+        });
     }
   }
 

@@ -1,15 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit} from '@angular/core';
 import { ReactiveFormsModule, FormsModule, NgForm, FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
-import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { IReviewCycle, IDesignationNames } from '../add-assessor/add-assessor.modal';
 
@@ -38,15 +35,8 @@ export class ViewAssessorComponent implements OnInit,OnDestroy {
   assesorDetails = [] as any;
   currentDate: any;
   activeEmplist = [] as any;
-  headerId: any;
-  deletedRows: any[] = [];
-  @ViewChild('deletesuccess') deletesuccess: any;
-  @ViewChild('deleterowincrement') deleterowincrement: any;
   @Input() updateData:any
   constructor(
-    private router: Router,
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
     private http: HttpService,
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -65,13 +55,11 @@ export class ViewAssessorComponent implements OnInit,OnDestroy {
     //function to edit the details
     editDetails(Values: any) {
       this.getAllActiveEmpList();
-      this.headerId = Values.assessor.id;
       // Ensure Values.departmentNames is defined before using map
       const departmentNames = Values.departmentNames ? Values.departmentNames.map((dept: any) => dept.departmentName).join(', ') : '';
       const locationNames = Values.locationNames ? Values.locationNames.map((loc: any) => loc.locationName).join(', ') : '';
       const teamNames = Values.subDepartmentNames ? Values.subDepartmentNames.map((loc: any) => loc.subDepartmentName).join(', ') : '';
       const sublocationNames = Values.subLocationNames ? Values.subLocationNames.map((loc: any) => loc.subLocationName).join(', ') : '';
-  
       // Populate the form with the selected values
       this.updateassesorConfiguration = {
         id: Values.id,
@@ -97,7 +85,6 @@ export class ViewAssessorComponent implements OnInit,OnDestroy {
         };
   
       }) : [];
-      console.log('Ratingscale Details:', this.assesorDetails);
     }
   formatDate(date: any) {
     return date?.split('T')[0];

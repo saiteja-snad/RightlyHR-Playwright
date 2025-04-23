@@ -51,7 +51,6 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.compOff = response;
           this.waitingForApprovalCompOffCount = this.compOff.filter(
             (element: { status: string }) =>

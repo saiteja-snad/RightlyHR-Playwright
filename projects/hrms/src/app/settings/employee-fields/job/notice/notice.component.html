@@ -5,7 +5,7 @@
           <div class="custom-settings-add-input input-group">
               <input type="text" class="form-control custom-input" placeholder="Please enter notice period"
                   formControlName="noticeperiod" aria-label="noticeperiod" aria-describedby="noticeperiod"
-                  (keydown)="formValidations.restrictInitialSpace($event)">
+                  (keydown)="formValidations.restrictInput($event)">
               <span class="input-group-text" id="noticeperiod">
                   <button type="submit" class="custom-btn btn-primary"
                       [disabled]="noticeperiodForm.invalid">{{'Add'|translate}}</button></span>
@@ -68,7 +68,7 @@
                   <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Noticeperiod'|translate}}
                       <span class="error-msg">*</span></label>
                   <input type="text" class="form-control custom-input" formControlName="noticeperiod" placeholder="Please enter notice period"
-                  (keydown)="formValidations.restrictInitialSpace($event)">
+                  (keydown)="formValidations.restrictInput($event)">
                   <div *ngIf="updateForm.get('noticeperiod')?.touched && updateForm.get('noticeperiod')?.invalid" class="error-msg mt-2">
                       <div *ngIf="updateForm.get('noticeperiod')?.errors?.['required']">{{'Noticeperiod is required'|translate}}</div>
                   </div>

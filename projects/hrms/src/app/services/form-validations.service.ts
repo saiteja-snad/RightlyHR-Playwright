@@ -40,21 +40,27 @@ export class FormValidationsService {
       return null; // Valid input
     };
   }
-  restrictInitialSpace(event: any): void {
+
+  restrictInput(event: KeyboardEvent) {
     const key = event.key;
-    const inputValue = (event.target as HTMLInputElement).value;
-  
-    // Prevent leading space
-    if (key === ' ' && inputValue.length === 0) {
-      event.preventDefault();
+    const inputElement = event.target as HTMLInputElement;
+
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      return;
     }
-  
-    // Prevent consecutive spaces
-    if (key === ' ' && inputValue.endsWith(' ')) {
+
+    // Prevent the first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const isAlphabetic = /^[A-Za-z\s]$/.test(key);
+    if (!isAlphabetic) {
       event.preventDefault();
     }
   }
-
+  
   blockNonAlphabets(event: KeyboardEvent): void {
     const key = event.key;
     const input = (event.target as HTMLInputElement).value;
@@ -84,18 +90,4 @@ export class FormValidationsService {
     }
   }
 
-  restrictInput(event: KeyboardEvent) {
-    const key = event.key;
-    const inputElement = event.target as HTMLInputElement;
-
-    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
-      return;
-    }
-
-    // Prevent the first character from being a space
-    if (key === ' ' && inputElement.selectionStart === 0) {
-      event.preventDefault();
-      return;
-    }
-  }
 }

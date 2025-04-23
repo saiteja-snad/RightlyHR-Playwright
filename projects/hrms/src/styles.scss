@@ -1333,12 +1333,34 @@ input:focus {
     }
 }
 
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.settings-common-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+}
+
+.confirmation-icon {
+    width: 3rem;
+}
+
+.confirmation-text {
+    font-weight: 500;
+    font-size: var(--fontsize20);
+    line-height: 30px;
+    color: #06274F;
+}
+
+//styles for popup table
 // styles for expenses
 .custom-table {
     width: 100%;
     overflow: auto;
     background-color: #FFFFFF;
-    border: 1px solid #E7E7ED;
     border-radius: 1.2rem;
     position: relative;
 
@@ -1355,7 +1377,7 @@ input:focus {
         line-height: 100%;
         letter-spacing: 0%;
         vertical-align: middle;
-        padding: 1.6rem;
+        padding: 1rem;
     }
 
     th {

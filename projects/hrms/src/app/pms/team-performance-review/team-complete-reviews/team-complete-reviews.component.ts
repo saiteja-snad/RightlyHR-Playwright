@@ -9,10 +9,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-team-complete-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, PaginatorModule, TranslateModule, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, PaginatorModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './team-complete-reviews.component.html',
   styleUrl: './team-complete-reviews.component.scss'
 })
@@ -43,7 +44,7 @@ export class TeamCompleteReviewsComponent {
   onRowsChange() {
     this.first = 0;
   }
-  
+
   constructor(
     private readonly modalService: NgbModal, private conformationPopup: OpenModalService,
     private readonly http: HttpService, private router: Router,
@@ -109,8 +110,6 @@ export class TeamCompleteReviewsComponent {
   }
 
   onPageSizeChange(newPageSize: number) {
-    console.log('Page size changed to:', newPageSize);
-    console.log(this.page)
     this.page = 1;
     this.fetchReviewCycles();
   }
@@ -124,7 +123,6 @@ export class TeamCompleteReviewsComponent {
   }
 
   selfAssessment(reviewCycleItemId: number, currentStage: number, assessorType: string, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
-    console.log(currentStage)
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,
@@ -137,15 +135,11 @@ export class TeamCompleteReviewsComponent {
     };
 
     localStorage.setItem('queryParams', JSON.stringify(queryParams));
-
     this.router.navigate(['/pms/assessment-form']);
   }
 
   downloadPromotionletter(iteamid: any) {
-    console.log(iteamid);
-
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
-
       next: (data: Blob) => {
         console.log('Received byte data:', data);
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
@@ -158,13 +152,10 @@ export class TeamCompleteReviewsComponent {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         this.conformationPopup.openSuccessModal('Promotion Letter Downloaded Successfully')
-        // this.Status = 'Promotion Letter Downloaded Successfully';
-        // this.modalService.open(this.success, { centered: true });
       },
       error: (err) => {
         console.error('Error downloading letter:', err);
         this.conformationPopup.openErrorModal('Failed to download letter')
-        // this.Status = 'Failed to download letter';
       },
     });
   }
@@ -173,7 +164,6 @@ export class TeamCompleteReviewsComponent {
     console.log(iteamid);
 
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
-
       next: (data: Blob) => {
         console.log('Received byte data:', data);
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
@@ -186,13 +176,9 @@ export class TeamCompleteReviewsComponent {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         this.conformationPopup.openSuccessModal('Appraisal Letter Downloaded Successfully')
-        // this.Status = 'Appraisal Letter Downloaded Successfully';
-        // this.modalService.open(this.success, { centered: true });
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to download letter')
-        // console.error('Error downloading letter:', err);
-        // this.Status = 'Failed to download letter';
       },
     });
   }

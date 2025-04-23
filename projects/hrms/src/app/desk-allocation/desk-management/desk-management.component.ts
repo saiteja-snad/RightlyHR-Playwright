@@ -288,7 +288,7 @@ export class DeskManagementComponent {
           // Transform data to include `employeeName`
           this.approvalname = res.map((employee: any) => ({
             ...employee,
-            employeeName: `${employee.fusionEmpId ?? ''} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            employeeNames: `${employee.fusionEmpId ?? ''} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           }));
         },
         error: (errormessage) => {

@@ -74,6 +74,7 @@ resetTriggerSignal() {
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }
+  
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
     //function to update the desk Updatelocation

@@ -176,6 +176,9 @@
             <div *ngIf="customEventupdateForm.get('eventMessage')?.errors?.['required']" class="error-msg">
               Event Description is requied
             </div>
+            <div class="character-count mt-1 text-end">
+              {{ customEventupdateForm.get("eventMessage")?.value?.length || 0 }}/250
+            </div>
           </div>
           <div class="col-md-12 mb-3">
             <label for="file" class="form-label custom-label mb-2">Attachment</label>

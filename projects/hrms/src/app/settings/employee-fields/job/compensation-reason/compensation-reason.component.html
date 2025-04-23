@@ -1,5 +1,6 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="CompensationForm" (ngSubmit)="addReason()" *ngIf="rbac.allowedToAccess('Compensation Reason.create')">
+    <form [formGroup]="CompensationForm" (ngSubmit)="addReason()"
+        *ngIf="rbac.allowedToAccess('Compensation Reason.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -10,8 +11,10 @@
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="CompensationForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="CompensationForm.get('Reason')?.touched && CompensationForm.get('Reason')?.invalid" class="error-msg mt-2">
-                <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">{{'Compensation reason is required'|translate}}</div>
+            <div *ngIf="CompensationForm.get('Reason')?.touched && CompensationForm.get('Reason')?.invalid"
+                class="error-msg mt-2">
+                <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">{{'Compensation reason is
+                    required'|translate}}</div>
             </div>
         </div>
     </form>
@@ -33,19 +36,22 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(reason)" *ngIf="rbac.allowedToAccess('Compensation Reason.update')"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openupdate(reason)"
+                                    *ngIf="rbac.allowedToAccess('Compensation Reason.update')"><img
+                                        src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(reason)" *ngIf="rbac.allowedToAccess('Compensation Reason.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                <a (click)="opendelete(reason)"
+                                    *ngIf="rbac.allowedToAccess('Compensation Reason.delete')"><img
+                                        src="/settings-icon/trash-2.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                         </div>
                     </td>
                 </tr>
                 }
-            }
+                }
             </tbody>
         </table>
     </div>
@@ -55,27 +61,33 @@
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-3">
-                <div class="pt-2">
+            <div class="custom-poup-header-content popup-header-border">
+                <div>
                     <p class="popup-heading mb-0">{{'Edit Compensation Reason'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-4">
+            <div class="custom-main-popup-content">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Compensation Reason'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Compensation
+                        Reason'|translate}}
                         <span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="UpdateReason" placeholder="Please enter compensation reason"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-                    <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">{{'Compensation reason is required'|translate}}</div>
+                    <input type="text" class="form-control custom-input" formControlName="UpdateReason"
+                        placeholder="Please enter compensation reason"
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid"
+                        class="error-msg mt-2">
+                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">{{'Compensation reason is
+                            required'|translate}}</div>
                     </div>
                 </div>
-                <div class="d-flex gap-5 w-100 pt-3">
-                    <button type="button"  class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button"  class="custom-btn btn-primary w-50 py-2" (click)="updateReason(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary "
+                        (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary " (click)="updateReason(modal)"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -84,16 +96,17 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-4">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-            </div>
+    <div class="result-popup-content" ngbAutofocus>
+
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary "
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>
+
 </ng-template>

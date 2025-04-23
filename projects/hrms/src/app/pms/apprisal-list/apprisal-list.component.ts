@@ -1,4 +1,4 @@
-import { Component, model, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, model, OnDestroy, OnInit, TemplateRef, viewChild, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -78,6 +78,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   @ViewChild('loading') loading: any;
   @ViewChild('addEmployee') addEmployee: any;
+  @ViewChild('confirmation') confirmation: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit() {
@@ -1024,6 +1025,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   closeModal() {
     this.Effectivedatefrom.reset();
     this.reviewtemplatedropdowns.reset();
+    this.modalService.dismissAll();
+  }
+
+  openConfirmation(){
+    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static'})
+  }
+
+  close(){
     this.modalService.dismissAll();
   }
 

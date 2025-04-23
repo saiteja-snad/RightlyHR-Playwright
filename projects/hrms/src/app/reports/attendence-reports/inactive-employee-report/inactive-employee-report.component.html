@@ -10,14 +10,9 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName"
-                        [filter]="true" [showClear]="false" formControlName="employee" placeholder="Select Employee"
-                        (onChange)="selectInactiveEmployee($event.value)">
-                <ng-template #selectedItem let-selectedOption>
-                  {{ selectedOption.fullName }}
-                </ng-template>
-                <ng-template let-employee #item>
-                  {{ employee.fullName }}
-                </ng-template>
+                        [filter]="true" [showClear]="false" formControlName="employee" placeholder="Select Employee">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
               </p-select>
             </div>
           </div>
@@ -26,8 +21,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select class="form-select custom-select" [options]="teamdetails" [filter]="true" [showClear]="false" optionLabel="firstName"
-                        formControlName="manager" placeholder="Select Manager" 
-                        (onChange)="selectInactiveManager($event.value)">
+                        formControlName="manager" placeholder="Select Manager">
                 <ng-template #selectedItem let-selectedOption>
                   {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
                 </ng-template>
@@ -43,7 +37,7 @@
             <div>
               <select title="text" id="monthDropdown" class="form-select"
                       [disabled]="inactiveReportForm.value.dateRange?.startDate || inactiveReportForm.value.dateRange?.endDate"
-                      formControlName="month" (change)="onMonthChangeInactive($event)">
+                      formControlName="month">
                 <option value="" disabled>Select Month</option>
                 <option *ngFor="let month of months" [value]="month.value">
                   {{ month.name }}
@@ -72,52 +66,48 @@
       <app-attandace-report-tabs />
     </div>
   
-    @if (isLoading) {
-
-      }
-      @else {
-        <div class="custom-table-content">
-          <table id="wfhReportTable" class="content w-100">
-            <thead>
+    <div class="custom-table-content">
+      <table id="wfhReportTable" class="content w-100">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Team Manager</th>
+            <th>Location</th>
+            <th>Sub Location</th>
+            <th>Leave Type</th>
+            <th>Entitled</th>
+            <th>Availed</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredInactiveRecord && filteredInactiveRecord.length > 0) {
+            @for (record of filteredInactiveRecord; track record) {
               <tr>
-                <th>Employee ID</th>
-                <th>Employee Name</th>
-                <th>Department</th>
-                <th>Team Manager</th>
-                <th>Location</th>
-                <th>Sub Location</th>
-                <th>Leave Type</th>
-                <th>Entitled</th>
-                <th>Availed</th>
-                <th>Balance</th>
+                <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+                <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+                <td class="td-center">{{ record.department ?? '-' }}</td>
+                <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+                <td class="td-center">{{ record.location ?? '-' }}</td>
+                <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+                <td class="td-center">{{ record.leaveType ?? '-' }}</td>
+                <td class="td-center">{{ record.entitled ?? '-' }}</td>
+                <td class="td-center">{{ record.availed ?? '-' }}</td>
+                <td class="td-center">{{ record.balanced ?? '-' }}</td>
               </tr>
-            </thead>
-            <tbody>
-              @if (!filteredInactiveRecord || filteredInactiveRecord.length === 0) {
-                <tr>
-                  <td colspan="9" class="text-center">No records found</td>
-                </tr>
-              }
-              @else {
-                @for (record of filteredInactiveRecord; track $index) {
-                  <tr>
-                    <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-                    <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-                    <td class="td-center">{{ record.department ?? '-' }}</td>
-                    <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-                    <td class="td-center">{{ record.location ?? '-' }}</td>
-                    <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-                    <td class="td-center">{{record.leaveType ?? '-'}}</td>
-                    <td class="td-center">{{record.entitled ?? '-'}}</td>
-                    <td class="td-center">{{record.availed ?? '-'}}</td>
-                    <td class="td-center">{{record.balanced ?? '-'}}</td>
-                  </tr>
-                }
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+            }
+          } @else {
+            <tr>
+              <td colspan="10" class="text-center">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
       
   </div>
 

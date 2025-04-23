@@ -1,191 +1,158 @@
-// Common animation
-@keyframes animate {
-    100% {
-        transform: scale(1);
-    }
+/* New scroller stylings */
+.progress-container {
+  width: 100%;
+  height: 7vh;
 }
 
-// First progress bar styles
+.bar-content {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
 .progress-bar {
-    display: flex;
-    flex-direction: row;
-    margin: 20px 0;
-    position: sticky;
-    top: 0;
-
-    .step {
-        text-align: center;
-        width: 100%;
-        position: sticky;
-        top: 0;
-        background-color: #fff;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #d9dbe9;
-
-        p {
-            font-size: 14px;
-            font-weight: 500;
-            color: #3f434a;
-            margin-bottom: 8px;
-            transition: 0.3s;
-
-            &.active {
-                color: #305889;
-            }
-        }
-
-        .bullet {
-            position: relative;
-            height: 35px;
-            width: 35px;
-            border: 2px solid #eff0f6;
-            display: inline-block;
-            border-radius: 50%;
-            background-color: #eff0f6;
-            color: #6f6c90;
-            transition: 0.2s;
-
-            &.active {
-                border-color: #305889;
-                background-color: #305889;
-                color: #fff;
-            }
-
-            &::before,
-            &::after {
-                position: absolute;
-                content: "";
-                bottom: 12px;
-                left: -140px;
-                height: 6px;
-                width: 120px;
-                background: #eff0f6;
-                border-radius: 8px;
-            }
-
-            &.active::after {
-                background: #305889;
-                transform: scale(0);
-                transform-origin: left;
-                animation: animate 0.3s linear forwards;
-            }
-        }
-
-        &:first-child {
-
-            .bullet::before,
-            .bullet::after {
-                display: none;
-            }
-        }
-
-        span {
-            font-size: 16px;
-            line-height: 32px;
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%);
-        }
-    }
-
-    @media only screen and (max-width: 1200px) {
-        margin-left: 2rem;
-
-        .step {
-            .bullet {
-
-                &::before,
-                &::after {
-                    bottom: 12px;
-                    left: -85px;
-                    width: 75px;
-                }
-            }
-
-            &:first-child {
-
-                .bullet::before,
-                .bullet::after {
-                    left: -95px;
-                }
-            }
-        }
-    }
+  width: 100%;
+  height: 10px;
+  appearance: none;
 }
 
-// Second progress bar styles
-.progress-bar2 {
-    width: 28vw;
-    display: flex;
+.progress-bar::-webkit-progress-bar {
+  background-color: #eff0f6;
+  border-radius: 5px;
+}
 
-    .step2 {
-        text-align: center;
+.progress-bar::-webkit-progress-value {
+  background-color: #305889;
+  border-radius: 5px;
+}
+
+.progress-bar::-moz-progress-bar {
+  background-color: #305889;
+}
+
+.number-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -1.4rem;
+}
+
+.text-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bullet {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  line-height: 34px;
+  border-radius: 50%;
+  background-color: #eff0f6;
+  border: 2px solid #eff0f6;
+  color: #6f6c90;
+  font-size: 16px;
+}
+
+.step-text{
+  width: 5rem;
+}
+
+.step.active .bullet {
+  background-color: #305889;
+  border-color: #305889;
+  color: white;
+}
+
+/* Progress 2 - SCSS */
+.progress-container2 {
+  position: relative;
+  width: 100%;
+  height: 7vh;
+  left: 25%;
+
+  .custom-width-2 {
+    width: 40%;
+    overflow-x: hidden;
+
+    .progress-bar-content {
+      position: relative;
+      width: 50%;
+      left: 36%;
+
+      .progress-bar2 {
+        position: relative;
         width: 100%;
-        top: 0;
-        background-color: #fff;
+        height: 0.5rem;
+        appearance: none;
+
+        &::-webkit-progress-bar {
+          background-color: #fff;
+          border-radius: 5px;
+        }
+
+        &::-webkit-progress-value {
+          background-color: #305889;
+          border-radius: 5px;
+        }
+
+        &::-moz-progress-bar {
+          background-color: #305889;
+          border-radius: 5px;
+        }
+      }
+    }
+
+    .steps-container2 {
+      position: absolute;
+      display: flex;
+      justify-content: space-evenly;
+      margin-top: -1.75rem;
+      z-index: 100;
+      width: 50%;
+
+      .step2 {
+        text-align: center;
+        width: max-content;
 
         p {
-            font-size: 14px;
-            font-weight: 500;
-            color: #3f434a;
-            transition: 0.3s;
+          font-size: 14px;
+          color: #3f434a;
+          margin-top: 5px;
+        }
 
-            &.active2 {
-                color: #305889;
-            }
+        &.activee {
+          p {
+            color: #305889;
+          }
+
+          .bullet2 {
+            background-color: #305889;
+            border-color: #305889;
+            color: #fff;
+          }
         }
 
         .bullet2 {
-            position: relative;
-            height: 2.25rem;
-            width: 2.25rem;
-            border: 2px solid #eff0f6;
-            display: inline-block;
-            border-radius: 50%;
-            background-color: #eff0f6;
-            color: #6f6c90;
-            transition: 0.2s;
-
-            &.activee {
-                border-color: #305889;
-                background-color: #305889;
-                color: #fff;
-            }
-
-            &::before,
-            &::after {
-                position: absolute;
-                content: "";
-                bottom: 12px;
-                left: -220px;
-                height: 6px;
-                width: 10rem;
-                background: #eff0f6;
-                border-radius: 8px;
-            }
-
-            &.activee::after {
-                background: #305889;
-                transform: scale(0);
-                transform-origin: left;
-                animation: animate 0.3s linear forwards;
-            }
+          display: inline-block;
+          width: 35px;
+          height: 35px;
+          line-height: 34px;
+          border-radius: 50%;
+          background-color: #eff0f6;
+          border: 2px solid #eff0f6;
+          color: #6f6c90;
+          font-size: 16px;
         }
-
-        &:first-child {
-
-            .bullet2::before,
-            .bullet2::after {
-                display: none;
-            }
-        }
-
-        span {
-            font-size: 16px;
-            line-height: 32px;
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%);
-        }
+      }
     }
+  }
+}
+
+.progress-text {
+  font-weight: 500;
+  font-size: var(--fontsize13);
+  line-height: 100%;
+  letter-spacing: 0;
+  vertical-align: middle;
+  color: #305889;
 }

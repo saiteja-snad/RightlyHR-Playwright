@@ -15,7 +15,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
   styleUrl: './permission-eligibility-criteria.component.scss'
 })
 export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy {
-  regularizationvalue=[] as IPermissionsvalue[];
+  permissionsvalue=[] as IPermissionsvalue[];
   editingIndex: number | null = null;
   temporaryValue: any;
   valueId!: number
@@ -26,18 +26,18 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
   constructor(private http: HttpService,private sharedModalService: OpenModalService,) {}
 
   ngOnInit(): void {
-    this.getregularizationTypes();
+    this.getdatabyentriy();
   }
 
-  getregularizationTypes(){
-    const params = 'AttendanceRegularization'
-    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth']
-   this.http
-    .getDatabyentriyvalue(`entityAttributeValues/getv1`, params,param).subscribe({
+
+
+  getdatabyentriy() {
+    this.disableEdit();
+    const params = 'Permissions'
+    const param = ["maxHoursPerDay", 'maxHoursPerMonth','globalPermissionsDuration']
+    this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        console.log(data)
-        this.regularizationvalue = data as IPermissionsvalue[];
-      
+        this.permissionsvalue = data as IPermissionsvalue[];
       }, error(err) {
         console.log("errors", err)
       },
@@ -99,7 +99,7 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
     this.http.updatePermissionEligibilityValues(`entityAttributeValues/update`, data).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
   
-        this.getregularizationTypes();
+        this.getdatabyentriy();
        
         // this.toaster.success({
         //   detail: 'SUCCESS',
@@ -123,7 +123,7 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
       return 'Value cannot be null or empty.';
     }
 
-    const currentCriteria = this.regularizationvalue;
+    const currentCriteria = this.permissionsvalue;
     const criteria = currentCriteria.find((c) => c.id === id);
 
     if (!criteria) {
@@ -163,7 +163,7 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
     if (value === null || value === undefined || value === '') {
       return 'Value cannot be null or empty.';
     }
-    const currentCriteria = this.regularizationvalue;
+    const currentCriteria = this.permissionsvalue;
     const criteria = currentCriteria.find((c) => c.id === id);
 
     if (!criteria) {

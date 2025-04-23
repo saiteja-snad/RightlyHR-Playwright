@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment.dev';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import { IWfhReportRequest } from '../../../Interfaces/reports.model';
+import { IAbsentReportRequest, IWfhReportRequest } from '../../../Interfaces/reports.model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import * as XLSX from 'xlsx';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,6 +15,7 @@ import { AttandaceReportTabsComponent } from '../../../shared/reports-tabs/attan
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-absent-report',
@@ -22,7 +23,13 @@ import { SelectModule } from 'primeng/select';
     CommonModule,
     FormsModule,
     NgxDaterangepickerBootstrapDirective,
-    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule],
+    AttandaceReportTabsComponent,
+    DropdownModule,
+    SelectModule,
+    TranslateModule,
+    ReactiveFormsModule,
+    NoDataFoundComponent
+],
   templateUrl: './absent-report.component.html',
   styleUrl: './absent-report.component.scss'
 })
@@ -99,7 +106,7 @@ export class AbsentReportComponent {
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
-    this.getAbsentReports();
+    // this.getAbsentReports();
     this.getEmployeeId();
     this.getTeam();
     this.initializeForm();
@@ -107,58 +114,12 @@ export class AbsentReportComponent {
 
   initializeForm() {
     this.absentReportForm = this.fb.group({
-      employee: [null],
+      employee: [null, Validators.required],
       manager: [null],
-      frequency: ['', Validators.required],
+      frequency: [''],
       dateRange: [null],
       month: ['']
     });
-  }
-
-  onEmployeeChange(event: any) {
-    const selected = JSON.parse(event.target.value);
-    this.selectedEmployeeId = selected.fusionEmployeeId;
-    this.isFilterGivenAbsent = true;
-  }
-
-  onFrequencyChange(event: any): void {
-    this.frequency = event.target.value;
-    // Optional: Reset values on switch
-    this.selectedDateRange = null;
-    this.selectedAbsentMonth = null;
-    this.isFilterGivenabsent = false;
-  }
-
-  onMonthChangeAbsent(event: any): void {
-    this.isFilterGivenabsent = !!event.target.value;
-    console.log('Selected Absent Month:', this.selectedAbsentMonth);
-  }
-
-  canGenerateOrExport(): boolean {
-    return !!(
-      this.selectedEmployeeId ||
-      this.selectedAbsentManager ||
-      this.selectedDateRange
-    );
-  }
-  onDateRangeChangeabsent(dateRange: any): void {
-    if (dateRange && dateRange.startDate && dateRange.endDate) {
-      this.isFilterGivenabsent = true;
-      console.log('Selected Start Date:', dateRange.startDate.toDate());
-      console.log('Selected End Date:', dateRange.endDate.toDate());
-    }
-  }
-
-  selectAbsentManager(manager: { id: string; name: string }): void {
-    this.isFilterGivenAbsent = true;
-    console.log('selectManager method has been called with manager:', manager);
-    console.log('selectManager called with:', manager); // Add this line
-    this.selectedAbsentManager = manager.name;
-    console.log('Selected Leave Manager:', this.selectedAbsentManager);
-    this.closeWfhDropdown(); // Close dropdown after selection
-  }
-  closeWfhDropdown(): void {
-    this.isDropdownOpenwfh = false;
   }
 
   getEmployeeId() {
@@ -169,9 +130,8 @@ export class AbsentReportComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          // this.employeeiddetails = data as IemployeeDetails[];
 
-          console.log(this.employeeiddetails);
+          console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
@@ -184,10 +144,14 @@ export class AbsentReportComponent {
               }${employee.lastName}`,
             };
           });
-          this.employeeiddetails = employeedata.filter((element: any) => {
+          const filteredEmployees = employeedata.filter((element: any) => {
             return element.employeeId != loggedInUser.employeeId;
           });
-          // this.employeeiddetailsauthorityName = data as IemployeeDetails[];
+
+          this.employeeiddetails = [
+            { fullName: 'All Employees', employeeId: 'all' },
+            ...filteredEmployees
+          ];
         },
         error: (reason: any) => {
           console.log(reason);
@@ -222,104 +186,91 @@ export class AbsentReportComponent {
       });
   }
 
-  //method to get All the reports
-  getAbsentReports() {
-    this.isLoading = true;
-    const request: IWfhReportRequest = {
-      // FusionEmpId: this.selectedEmployeeId,
-      // TeamManagerName: this.selectedWfhManager,
-      // StartDate: this.wfhDateRange?.startDate,
-      // EndDate: this.wfhDateRange?.endDate,
-      // Worked_Month: this.selectedMonth
-    };
-    this.subscription = this.reportsService.getAbsentReports(request).subscribe({
-      next: (res: any) => {
-        if (res) {
-          this.employeeMasterData = res;
-          // this.maxPageNumber = res.maxPageNumber;
-          this.isLoading = false;
-        }
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-      complete: () => {},
-    });
-  }
+  // //method to get All the reports
+  // getAbsentReports() {
+  //   this.isLoading = true;
+  //   const request: IWfhReportRequest = {
+  //     // FusionEmpId: this.selectedEmployeeId,
+  //     // TeamManagerName: this.selectedWfhManager,
+  //     // StartDate: this.wfhDateRange?.startDate,
+  //     // EndDate: this.wfhDateRange?.endDate,
+  //     // Worked_Month: this.selectedMonth
+  //   };
+  //   this.subscription = this.reportsService.getAbsentReports(request).subscribe({
+  //     next: (res: any) => {
+  //       if (res) {
+  //         this.employeeMasterData = res;
+  //         // this.maxPageNumber = res.maxPageNumber;
+  //         this.isLoading = false;
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //     },
+  //     complete: () => {},
+  //   });
+  // }
 
   generateAbsentReport(): void {
+    const formValue = this.absentReportForm.value;
+    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
     const noFilterProvided =
-      !this.selectedEmployeeId &&
+      !formValue.employee &&
       this.searchTerm !== 'All Employees' &&
-      !this.selectedDate &&
-      (!this.selectedDateRange ||
-        (!this.selectedDateRange.startDate &&
-          !this.selectedDateRange.endDate)) &&
-      !this.selectedMonth &&
-      !this.selectedAbsentManager;
-
+      (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
+      !formValue.month &&
+      !formValue.manager;
+  
     if (noFilterProvided) {
-      const modalElement = document.getElementById('entitled');
-      if (modalElement) {
-        modalElement.classList.add('show');
-        modalElement.style.display = 'block';
-      }
+      this.filteredAbsentRecord = [];
       return;
     }
-    const params = new URLSearchParams();
-
-    if (this.selectedEmployeeId !== null) {
-      params.append('FusionEmpId', this.selectedEmployeeId.toString());
+  
+    const request: IAbsentReportRequest = {};
+    if (!isAllEmployeesSelected) {
+    // Employee
+    if (formValue.employee?.fusionEmpId) {
+      request.FusionEmpId = formValue.employee.fusionEmpId;
     }
-
-    if (
-      this.selectedDateRange &&
-      this.selectedDateRange.startDate &&
-      this.selectedDateRange.endDate
-    ) {
-      const startDate = this.parseDate(this.selectedDateRange.startDate);
-      const endDate = this.parseDate(this.selectedDateRange.endDate);
-      params.append('StartDate', this.formatDate(startDate));
-      params.append('EndDate', this.formatDate(endDate));
+  
+    // Date Range
+    if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
+      const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
+      const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
+      request.StartDate = startDate;
+      request.EndDate = endDate;
     }
-
-    if (this.selectedMonth !== null) {
-      params.append('Worked_Month', this.selectedMonth.toString());
+  
+    // Month
+    if (formValue.month) {
+      request.Worked_Month = formValue.month;
     }
-
-    if (this.selectedAbsentManager) {
-      params.append('TeamManagerName', this.selectedAbsentManager);
+  
+    // Manager full name
+    if (formValue.manager) {
+      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
+        .filter(Boolean)
+        .join(' ');
     }
-
-    const endpoint = params.toString()
-      ? `Reports/AbsentReports?${params.toString()}`
-      : 'Reports/AbsentReports';
-    console.log('Fetching data from endpoint:', endpoint);
-
-    this.http.getData(endpoint).subscribe({
-      next: (data: any) => {
-        this.filteredAbsentRecord = data;
-        if (data.length === 0) {
-          // Check if the data is empty
-          const modalElement = document.getElementById('entitled');
-          if (modalElement) {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-          }
-        } else {
-          this.filteredAbsentRecord = data;
-          console.log(
-            'Fetched Absent Record for selected parameters:',
-            this.filteredAbsentRecord
-          );
-        }
+  }
+    this.reportsService.getAbsentReports(request).subscribe({
+      next: (response: any) => {
+        this.filteredAbsentRecord = response ?? [];
       },
-      error: (error: any) => {
-        console.error(
-          'Error fetching absent records for selected parameters',
-          error
-        );
+      error: (error) => {
+        console.error('Error fetching absent records', error);
+        this.filteredAbsentRecord = [];
       },
+    });
+  }
+  
+  clearAllFilters(): void {
+    this.absentReportForm.reset({
+      employee: null,
+      manager: null,
+      frequency: '',
+      dateRange: null,
+      month: ''
     });
   }
 
@@ -330,50 +281,6 @@ export class AbsentReportComponent {
     return date instanceof Date ? date : new Date(date);
   }
 
-  WfhtoggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  WfhfilterEmployees() {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredAbsentEmployees = [...this.uniqueEmployees];
-      return;
-    }
-
-    this.filteredAbsentEmployees = this.uniqueEmployees.filter(
-      (emp) =>
-        emp.fusionEmpId.toString().includes(term) ||
-        emp.employeeName.toLowerCase().includes(term)
-    );
-  }
-
-  selectAbsentEmployee(employee: any) {
-    this.isFilterGivenabsent = true;
-
-    if (employee === null) {
-      this.selectedEmployeeId = null; // Set selectedEmployeeId to null for "All Employees"
-      this.searchTerm = 'All Employees';
-      this.isDropdownOpen = false;
-
-      console.log('Selected Option: All Employees');
-
-    } else {
-      this.selectedEmployeeId = employee.fusionEmpId;
-      this.searchTerm = `${employee.fusionEmpId} - ${employee.employeeName}`;
-      this.isDropdownOpen = false;
-
-      console.log('Selected Option:', this.searchTerm);
-      // Reset filteredAbsentRecord to an empty array
-      this.filteredAbsentRecord = [];
-    }
-  }
-
-  getFullName(manager: any): string {
-    return `${manager.firstName} ${
-      manager.middleName ? manager.middleName + ' ' : ''
-    }${manager.lastName}`;
-  }
   exportToExcelAbsent(): void {
     // Define header mappings
     const HEADER_MAPPINGS: { [key: string]: string } = {

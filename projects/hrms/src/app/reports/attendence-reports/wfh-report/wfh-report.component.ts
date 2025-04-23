@@ -15,13 +15,15 @@ import { HttpService } from '../../../services/http.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-wfh-report',
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective,
-    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule
-  ],
+    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule,
+    NoDataFoundComponent
+],
   templateUrl: './wfh-report.component.html',
   styleUrl: './wfh-report.component.scss',
 })
@@ -72,7 +74,7 @@ export class WfhReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
-    this.getStandardReports();
+    // this.getStandardReports();
     this.getEmployeeId();
     this.getTeam();
     this.initializeForm();
@@ -80,9 +82,9 @@ export class WfhReportComponent implements OnInit {
 
   initializeForm() {
     this.wfhReportForm = this.fb.group({
-      employee: [null],
+      employee: [null, Validators.required],
       manager: [null],
-      dateRange: [null, Validators.required]
+      dateRange: [null]
     });
   }
 
@@ -105,18 +107,6 @@ export class WfhReportComponent implements OnInit {
     );
   }
 
-  selectWfhManager(manager: { id: string; name: string }): void {
-    this.isFilterGivenwfh = true;
-    console.log('selectManager method has been called with manager:', manager);
-    console.log('selectManager called with:', manager); // Add this line
-    this.selectedWfhManager = manager.name;
-    console.log('Selected Leave Manager:', this.selectedWfhManager);
-    this.closeWfhDropdown(); // Close dropdown after selection
-  }
-  closeWfhDropdown(): void {
-    this.isDropdownOpenwfh = false;
-  }
-
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
     this.subscription = this.http
@@ -125,7 +115,6 @@ export class WfhReportComponent implements OnInit {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          // this.employeeiddetails = data as IemployeeDetails[];
 
           console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
@@ -140,10 +129,14 @@ export class WfhReportComponent implements OnInit {
               }${employee.lastName}`,
             };
           });
-          this.employeeiddetails = employeedata.filter((element: any) => {
+          const filteredEmployees = employeedata.filter((element: any) => {
             return element.employeeId != loggedInUser.employeeId;
           });
-          // this.employeeiddetailsauthorityName = data as IemployeeDetails[];
+
+          this.employeeiddetails = [
+            { fullName: 'All Employees', employeeId: 'all' },
+            ...filteredEmployees
+          ];
         },
         error: (reason: any) => {
           console.log(reason);
@@ -179,103 +172,88 @@ export class WfhReportComponent implements OnInit {
   }
 
   //method to get All the reports
-  getStandardReports() {
-    this.isLoading = true;
-    const request: IWfhReportRequest = {
-      // FusionEmpId: this.selectedEmployeeId,
-      // TeamManagerName: this.selectedWfhManager,
-      // StartDate: this.wfhDateRange?.startDate,
-      // EndDate: this.wfhDateRange?.endDate,
-      // Worked_Month: this.selectedMonth
-    };
-    this.subscription = this.reportsService.getWfhReports(request).subscribe({
-      next: (res: any) => {
-        if (res) {
-          this.employeeMasterData = res;
-          // this.maxPageNumber = res.maxPageNumber;
-          this.isLoading = false;
-        }
+  // getStandardReports() {
+  //   this.isLoading = true;
+  //   const request: IWfhReportRequest = {
+  //     // FusionEmpId: this.selectedEmployeeId,
+  //     // TeamManagerName: this.selectedWfhManager,
+  //     // StartDate: this.wfhDateRange?.startDate,
+  //     // EndDate: this.wfhDateRange?.endDate,
+  //     // Worked_Month: this.selectedMonth
+  //   };
+  //   this.subscription = this.reportsService.getWfhReports(request).subscribe({
+  //     next: (res: any) => {
+  //       if (res) {
+  //         this.employeeMasterData = res;
+  //         // this.maxPageNumber = res.maxPageNumber;
+  //         this.isLoading = false;
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //     },
+  //     complete: () => {},
+  //   });
+  // }
+
+  generateWfhReport(): void {
+    const formValue = this.wfhReportForm.value;
+    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+  
+    const noFilterProvided =
+      !formValue.employee &&
+      (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
+      !formValue.month &&
+      !formValue.manager;
+  
+    if (noFilterProvided) {
+      this.filteredWfhRecord = [];
+      return;
+    }
+  
+    const request: IWfhReportRequest = {};
+  
+    // Only include filters if not "All Employees"
+    if (!isAllEmployeesSelected) {
+      if (formValue.employee?.fusionEmpId) {
+        request.FusionEmpId = formValue.employee.fusionEmpId;
+      }
+  
+      if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
+        const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
+        const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
+        request.StartDate = startDate;
+        request.EndDate = endDate;
+      }
+  
+      if (formValue.month) {
+        request.Worked_Month = formValue.month;
+      }
+  
+      if (formValue.manager) {
+        request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
+          .filter(Boolean)
+          .join(' ');
+      }
+    }
+  
+    // Single API call
+    this.reportsService.getWfhReports(request).subscribe({
+      next: (response: any) => {
+        this.filteredWfhRecord = response ?? [];
       },
-      error: (err: any) => {
-        console.log(err);
+      error: (error) => {
+        console.error('Error fetching WFH records', error);
+        this.filteredWfhRecord = [];
       },
-      complete: () => {},
     });
   }
 
-  generateWfhReport(): void {
-    const noFilterProvided =
-      !this.selectedEmployeeId &&
-      this.searchTerm !== 'All Employees' &&
-      !this.selectedDate &&
-      (!this.selectedDateRange ||
-        (!this.selectedDateRange.startDate &&
-          !this.selectedDateRange.endDate)) &&
-      !this.selectedMonth &&
-      !this.selectedWfhManager;
-
-    if (noFilterProvided) {
-      const modalElement = document.getElementById('entitled');
-      if (modalElement) {
-        modalElement.classList.add('show');
-        modalElement.style.display = 'block';
-      }
-      return;
-    }
-    const params = new URLSearchParams();
-
-    if (this.selectedEmployeeId !== null) {
-      params.append('FusionEmpId', this.selectedEmployeeId.toString());
-    }
-
-    if (
-      this.selectedDateRange &&
-      this.selectedDateRange.startDate &&
-      this.selectedDateRange.endDate
-    ) {
-      const startDate = this.parseDate(this.selectedDateRange.startDate);
-      const endDate = this.parseDate(this.selectedDateRange.endDate);
-      params.append('StartDate', this.formatDate(startDate));
-      params.append('EndDate', this.formatDate(endDate));
-    }
-
-    if (this.selectedMonth !== null) {
-      params.append('Worked_Month', this.selectedMonth.toString());
-    }
-
-    if (this.selectedWfhManager) {
-      params.append('TeamManagerName', this.selectedWfhManager);
-    }
-
-    const endpoint = params.toString()
-      ? `Reports/WfhReports?${params.toString()}`
-      : 'Reports/WfhReports';
-    console.log('Fetching data from endpoint:', endpoint);
-
-    this.http.getData(endpoint).subscribe({
-      next: (data: any) => {
-        this.filteredWfhRecord = data;
-        if (data.length === 0) {
-          // Check if the data is empty
-          const modalElement = document.getElementById('entitled');
-          if (modalElement) {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-          }
-        } else {
-          this.filteredWfhRecord = data;
-          console.log(
-            'Fetched WFH Record for selected parameters:',
-            this.filteredWfhRecord
-          );
-        }
-      },
-      error: (error: any) => {
-        console.error(
-          'Error fetching WFH records for selected parameters',
-          error
-        );
-      },
+  clearAllFilters(): void {
+    this.wfhReportForm.reset({
+      employee: null,
+      manager: null,
+      dateRange: null
     });
   }
 
@@ -285,49 +263,7 @@ export class WfhReportComponent implements OnInit {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
-
-  WfhtoggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  WfhfilterEmployees() {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredWfhEmployees = [...this.uniqueEmployees];
-      return;
-    }
-
-    this.filteredWfhEmployees = this.uniqueEmployees.filter(
-      (emp) =>
-        emp.fusionEmpId.toString().includes(term) ||
-        emp.employeeName.toLowerCase().includes(term)
-    );
-  }
-
-  selectWfhEmployee(event: any) {
-    const employee = event.value;
-    this.isFilterGivenwfh = true;
-    event.stopPropagation();
-
-    if (!employee) {
-      this.selectedEmployeeId = null;
-      this.searchTerm = 'All Employees';
-    } else {
-      this.selectedEmployeeId = employee.fusionEmpId;
-      this.searchTerm = `${employee.fusionEmpId} - ${employee.employeeName}`;
-    }
-
-    this.filteredWfhRecord = [];
-    this.isDropdownOpen = false;
-
-    console.log('Selected Employee:', this.searchTerm);
-  }
-
-  getFullName(manager: any): string {
-    return `${manager.firstName} ${
-      manager.middleName ? manager.middleName + ' ' : ''
-    }${manager.lastName}`;
-  }
+  
   exportToExcelWfh(): void {
     // Define header mappings
     const HEADER_MAPPINGS: { [key: string]: string } = {

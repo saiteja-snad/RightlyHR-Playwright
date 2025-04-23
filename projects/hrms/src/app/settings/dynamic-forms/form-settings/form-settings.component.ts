@@ -8,6 +8,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-form-settings',
@@ -18,17 +19,13 @@ import { OpenModalService } from '../../../services/open-modal.service';
     FormsModule,
     ReactiveFormsModule,
     FormsModule,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './form-settings.component.html',
   styleUrl: './form-settings.component.scss',
 })
 export class FormSettingsComponent implements OnInit, OnDestroy {
-  @ViewChild('successhide') successModal!: TemplateRef<any>;
-  @ViewChild('updateform') Updateformmodal!: TemplateRef<any>;
-  @ViewChild('navigateToTable') navigateToTable!: TemplateRef<any>;
-  @ViewChild('confirmPopUp') confirmPopUp!: TemplateRef<any>;
-  @ViewChild('confirmPopUp1') confirmPopUp1!: TemplateRef<any>;
-  @ViewChild('addRatingScale') addRatingScale!: TemplateRef<any>;
+  
   fromsettings = {} as IFromsettings;
   destroy$: Subject<boolean> = new Subject<boolean>();
   ratingform!: FormGroup;
@@ -38,8 +35,14 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
   showForm = false; // Property to control form visibility
   showTable = true;
   successMessage = '';
-
+  loader = false;
   ratingType!: string;
+  @ViewChild('successhide') successModal!: TemplateRef<any>;
+  @ViewChild('updateform') Updateformmodal!: TemplateRef<any>;
+  @ViewChild('navigateToTable') navigateToTable!: TemplateRef<any>;
+  @ViewChild('confirmPopUp') confirmPopUp!: TemplateRef<any>;
+  @ViewChild('confirmPopUp1') confirmPopUp1!: TemplateRef<any>;
+  @ViewChild('addRatingScale') addRatingScale!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -163,32 +166,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     };
   }
 
-  // generateScales(): void {
-  //   const from = this.ratingform.get('minimumRatingScale')?.value;
-  //   const to = this.ratingform.get('maximumRatingScale')?.value;
 
-  //   // Check that from and to are not null and are within the range
-  //   if (from != null && to != null && from <= to && from >= 1 && to <= 10 )  {
-  //     // Ensure that the range does not exceed 10
-
-  //       // Reset the scales form array
-  //       this.scales.clear();
-
-  //       // Add scale and description form groups based on the range
-  //       for (let i = from; i <= to; i++) {
-  //         this.scales.push(
-  //           this.fb.group({
-  //             scale: [i, Validators.required], // Pre-fill scale value
-  //             description: ['', [Validators.required, Validators.maxLength(50)]], // Empty description
-  //           })
-  //         );
-  //       }
-
-  //   }
-  //   else {
-  //     console.warn('The range must be between 1 and 10.'); // Optional: Log a warning if the range exceeds 10
-  //   }
-  // }
   generateScales(): void {
     const from = this.ratingform.get('minimumRatingScale')?.value;
     const to = this.ratingform.get('maximumRatingScale')?.value;
@@ -560,10 +538,15 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
   }
 
   getAllRatingDetails() {
+    this.loader = true;
     this.http.getData('Form/getallratings').subscribe({
       next: (data: any) => {
+        this.loader = false;
         this.formSettingDetails = data as IFromsettings[];
-      },
+      },error: (err) =>{
+        this.loader =  false;
+        this.formSettingDetails = []
+      }
     });
   }
   ngOnDestroy(): void {

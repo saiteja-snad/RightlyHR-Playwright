@@ -5,15 +5,10 @@ import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn } from '@angu
   providedIn: 'root'
 })
 
-export class FormValidationService {
+export class  FormValidationService {
   constructor() { }
 
-  restrictInitialSpace(event: any) {
-    const value = event.target.value;
-    if (value.length === 0 && event.key === ' ') {
-      event.preventDefault(); // Block space at the start
-    }
-  }
+
 //copyandpaste
   validatePaste(event: ClipboardEvent): void {
     const pastedData = event.clipboardData?.getData('text') ?? '';

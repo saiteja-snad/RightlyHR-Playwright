@@ -95,7 +95,7 @@
               <label for="assetSubCategory" class="form-label custom-label mb-2">Asset Sub Category<span
                   class="text-danger">*</span></label>
               <input class="form-control custom-input" formControlName="assetSubCategory"
-                placeholder="Asset Sub Category" type="text" (keydown)="formValidation.restrictInput($event)" />
+                placeholder="Asset Sub Category" type="text"  (keypress)="formValidation.restrictInput($event)" />
 
               <div
                 *ngIf="assetcataeryForm.get('assetSubCategory')?.invalid && assetcataeryForm.get('assetSubCategory')?.touched">
@@ -159,7 +159,7 @@
               <label for="assetSubCategorys" class="form-label custom-label mb-2">Asset Sub Category<span
                   class="text-danger">*</span></label>
               <input class="form-control custom-input" formControlName="assetSubCategory"
-                (keydown)="formValidation.restrictInput($event)" />
+                (keypress)="formValidation.restrictInput($event)" />
 
               <div
                 *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.invalid && assetcataeryupdateForm.get('assetSubCategory')?.touched">

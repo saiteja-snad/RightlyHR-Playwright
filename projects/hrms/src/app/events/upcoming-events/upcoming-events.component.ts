@@ -167,7 +167,7 @@ export class UpcomingEventsComponent {
         empId: this.Employeeinfo.employeeId,
         isDeleted: false,
         eventTitle: formdata.eventTitle,
-        attachmentUrl:  this.postEventsData.attachmentUrl  // this should be base64 from your file input
+        attachmentUrl:  this.postEventsData.attachmentUrl || null
       };
   
       this.subscription = this.http.postdata(`CustomEvents/Update`, data).subscribe({
@@ -180,6 +180,7 @@ export class UpcomingEventsComponent {
         
         },
         error: (err: any) => {
+          this.spinnerLoader=false;
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal('Insertion of data failed');
         }

@@ -79,14 +79,22 @@
                         <label class="form-label custom-label mb-2">{{'Name' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
-                                optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
+                            @if (this.ticketFor === 'Self') {
+                                
+                            <input type="text" class="form-control custom-input" formControlName="name"
+                            placeholder="Please enter employeename" onkeydown="return false;" />
+                            }
+                            @else {
+                                <p-select [options]="allEmployees" [filter]="true" filterBy="firstName" [showClear]="true"
+                                optionLabel="fullName" optionValue="employeeId" (onChange)="colleagueDetails($event.value)" placeholder="Please select employee"
                                 formControlName="name" class="custom-select w-100" [dataKey]="'fusionEmpId'">
                                 <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
                                     }}</ng-template>
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
                                     }}</ng-template>
                             </p-select>
+                            }
+                            
                         </div>
                         <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
                             <div class="error-msg">{{'Employee is required' | translate}}</div>

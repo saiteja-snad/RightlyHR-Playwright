@@ -25,10 +25,13 @@ export class MyTicketsComponent {
   itSupportForm!: FormGroup;
   employeedetails: any = [];
   ticketRaisedFor :any []=[];
+  ticketFor : string = 'Self';
   allEmployeesself = [] as any [];
   empdata = {} as any;
   isColleagueSelected:boolean = true;
   ticketEmpData = {} as any;
+  allEmployees = [] as any [];
+  employeeId : any;
 
 
   constructor(
@@ -44,8 +47,10 @@ export class MyTicketsComponent {
       { value: 'Self', label: 'Self' },
       { value: 'Colleague', label: 'Colleague' }
     ];
-    this.getSelfEmployee();
+    
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getSelfEmployee();
+    this.getEmployee();
     this.getuserticketsbyempid();
    
 
@@ -65,6 +70,27 @@ export class MyTicketsComponent {
 
 
     });
+    this.itSupportForm.patchValue({
+      employee: this.ticketFor
+    });
+  }
+
+
+  getEmployee() {
+    this.employeeId = this.empinfo.employeeId
+    this.subscription = this.http.getData(`Employeedata/neglectself?employeeid=${this.employeeId}`).subscribe({
+      next: (data: any) => {
+        this.allEmployees = data;
+        this.allEmployees = this.allEmployees.map(a => ({
+          ...a,
+          fullName: `${a.fusionEmpId} - ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
+        }));
+        console.log(this.allEmployees);  // Check the structure
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      }
+    });
   }
 
 
@@ -72,8 +98,15 @@ export class MyTicketsComponent {
     this.subscription = this.http.getData('Employeedata/ActiveAllEmployees').subscribe({
       next: (data: any) => {
         this.allEmployeesself = data;
+        this.allEmployeesself = this.allEmployeesself.map(a => ({
+          ...a,
+          fullName: `${a.fusionEmpId} - ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
+        }));
+        
+        console.log(this.itSupportForm.value.name);
+
         console.log(this.allEmployeesself);
-        //this.onTicketRaisedForChange("Self");
+        this.onTicketRaisedForChange("Self");
       },
       error: (reason: any) => {
         console.log(reason);
@@ -85,6 +118,7 @@ export class MyTicketsComponent {
   
   onTicketRaisedForChange(event: any) {
     let value = event;
+    this.ticketFor = value;
     console.log(value);
     if (value === "Self") {
        
@@ -94,10 +128,21 @@ export class MyTicketsComponent {
         if (this.empdata) {
             this.ticketEmpData.EmployeeId = this.empdata.employeeId;
             this.ticketEmpData.fusionEmpId = this.empdata.fusionEmpId;
-            this.ticketEmpData.name = this.empdata.firstName;
+            this.ticketEmpData.name = `${this.empdata.fusionEmpId} - ${this.empdata.firstName} ${this.empdata.middleName ?? ''} ${this.empdata.lastName}`;
             this.ticketEmpData.email = this.empdata.workEmail;
             this.ticketEmpData.mobile_number = this.empdata.contactnumber;
             this.ticketEmpData.deskId = this.empdata.deskId;
+
+            if (this.allEmployeesself.length > 0) {
+              this.itSupportForm.patchValue({
+                name: this.ticketEmpData.name,
+                email: this.ticketEmpData.email,
+                phoneNumber: this.ticketEmpData.mobile_number,
+                deskdetails: this.ticketEmpData.deskId,
+              });
+            }
+            console.log(this.itSupportForm.value.name);
+            
 
         }
         console.log(this.ticketEmpData);
@@ -113,6 +158,41 @@ export class MyTicketsComponent {
         this.isColleagueSelected = false; 
     }
  }
+
+ colleagueDetails(event: any) {
+  console.log(event);
+  this.empdata = this.allEmployeesself.find(employee => employee.employeeId == event);
+
+  if (this.empdata) {
+
+    this.ticketEmpData.fusionEmpId = this.empdata.fusionEmpId;
+    this.ticketEmpData.fullName = `${this.empdata.firstName} ${this.empdata.middleName} ${this.empdata.lastName}`;
+    this.ticketEmpData.EmployeeId = this.empdata.employeeId;
+    this.ticketEmpData.email = this.empdata.workEmail;
+    this.ticketEmpData.mobile_number = this.empdata.contactnumber;
+    this.ticketEmpData.assetName = this.empdata.assetName;
+    this.ticketEmpData.deskId = this.empdata.deskId;
+    if (this.allEmployees.length > 0) {
+      this.itSupportForm.patchValue({
+        name: this.ticketEmpData.fullName,
+        email: this.ticketEmpData.email,
+        phoneNumber: this.ticketEmpData.mobile_number,
+        deskdetails: this.ticketEmpData.deskId,
+      });
+    }
+
+  } else {
+
+    this.ticketEmpData.fusionEmpId = '';
+    this.ticketEmpData.name = '';
+    this.ticketEmpData.email = '';
+    this.ticketEmpData.mobile_number = '';
+    this.ticketEmpData.deskId='';
+    this.ticketEmpData.assetName='';
+  }
+
+  console.log(this.ticketEmpData);
+}
   
   
   getuserticketsbyempid(){

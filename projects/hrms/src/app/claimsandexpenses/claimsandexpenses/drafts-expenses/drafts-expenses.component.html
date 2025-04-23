@@ -132,16 +132,16 @@
                                     <div class="col-md-3">
                                         <label class="form-label custom-label">Expense Type<span
                                                 class="text-danger">*</span></label>
-                                        <div class="custom-p-select-content">
-                                            <p-select [options]="expensetype"
-                                                optionLabel="expenseType" (onChange)="onchangeexpnes($event, i)"
-                                                placeholder="Please select expense item" formControlName="item_expense"
-                                                class="form-select custom-select"></p-select>
-                                        </div>
-                                        <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
+                                                <select  class="form-select custom-input" formControlName="expenseId" (change)="onchangeexpnes()">
+                                                    <option [ngValue]="null" disabled>Select Expense Type</option>
+                                                    <option *ngFor="let item of expense | async" [value]="item.expenseId">
+                                                      {{ item.expenseType }}
+                                                    </option>
+                                                  </select>
+                                        <div *ngIf="item.get('expenseId')?.invalid && item.get('expenseId')?.touched"
                                             class="error-msg">
                                             <div class="error-msg"
-                                                *ngIf="item.get('item_expense')?.errors?.['required']">
+                                                *ngIf="item.get('expenseId')?.errors?.['required']">
                                                 Expense Type is required</div>
                                         </div>
                                     </div>

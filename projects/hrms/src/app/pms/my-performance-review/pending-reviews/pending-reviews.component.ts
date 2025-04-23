@@ -7,10 +7,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule } from 'primeng/paginator';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-pending-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent,PaginatorModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent],
   templateUrl: './pending-reviews.component.html',
   styleUrl: './pending-reviews.component.scss'
 })

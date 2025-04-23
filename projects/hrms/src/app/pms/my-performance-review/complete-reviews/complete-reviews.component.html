@@ -1,3 +1,4 @@
+@if(!dataload){
 <div class="custom-main-component-container">
     <!--Input search-->
     <div class="input-group custom-search mb-3">
@@ -53,15 +54,30 @@
                         <td>{{ item.rcItemStatus }}</td>
                         <td class="text-center">
                             <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                <a data-bs-toggle="dropdown" aria-expanded="false"
+                                    class="dropdown-custom-btn">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu text-center">
-                                    <!-- <li class="dropdown-item"
-                                                        (click)="selfAssessment(item.reviewCycleItemId, item.currentStage, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                                        <a class="dropdown-custom-btn">{{item.assessorType}}
-                                                            Assessment</a>
-                                                    </li> -->
+                                    <li class="dropdown-item"
+                                        (click)="selfAssessment(item.reviewCycleItemId, 0, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                        <a class="dropdown-custom-btn">{{item.assessorType}}
+                                            Assessment View</a>
+                                    </li>
+                                    <li class="dropdown-item"
+                                    *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
+                                    (click)="downloadPromotionletter(item)">
+                                    <a class="dropdown-custom-btn">
+                                        Promotion Letter Download
+                                    </a>
+                                </li>
+                                <li class="dropdown-item"
+                                    *ngIf=" item.rcItemStatus === 'Appraisal Letter Sent' ||  item.rcItemStatus=== 'Appraisal Letter Generated'"
+                                    (click)="downloadletter(item)">
+                                    <a class="dropdown-custom-btn">
+                                        Appraisal Letter Download
+                                    </a>
+                                </li>
                                 </ul>
                             </div>
                         </td>
@@ -77,18 +93,25 @@
                 </ng-template>
             </tbody>
         </table>
-        <div class="pagination-footer" *ngIf="filteredReviews.length > 0">
-            <div class="d-flex justify-content-between p-3 footer mt-auto">
-                <select class="form-select pagination-select" [(ngModel)]="pageSize"
-                    (ngModelChange)="fetchReviewCycles()">
-                    <option [ngValue]="10">10</option>
-                    <option [ngValue]="20">20 </option>
-                    <option [ngValue]="25">25</option>
-                </select>
-                <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [maxSize]="4" [pageSize]="pageSize"
-                    (pageChange)="fetchReviewCycles()" aria-label="Default pagination">
-                </ngb-pagination>
-            </div>
-        </div>
+ 
     </div>
 </div>
+@if(filteredReviews.length > 0){
+<div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                (ngModelChange)="onPageSizeChange($event)">
+                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                </option>
+            </select>
+            <span class="pagination-label text-nowrap">
+                Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
+            </span>
+        </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+            (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+</div>
+}
+}@else{<app-data-loader-content />}

@@ -1,5 +1,5 @@
+@if(!dataload){
 <div class="custom-main-component-container">
-    <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchQuery"
@@ -58,13 +58,19 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu text-center">
-                                        <ng-container *ngIf="item.assessorType==='HR' ;else elseBlock">
-                                            <li class="dropdown-item" (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                                <a class="dropdown-custom-btn">{{item.assessorType}} Assessment View</a></li>
-                                        </ng-container>
-                                       <ng-template #elseBlock>  <li class="dropdown-item" (click)="selfAssessment(item.reviewCycleItemId, 0,item.assessorType, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                        <a class="dropdown-custom-btn">{{item.assessorType}} Assessment View</a></li></ng-template>
+                                    <ng-container *ngIf="item.assessorType==='HR' ;else elseBlock">
                                         <li class="dropdown-item"
+                                            (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                            <a class="dropdown-custom-btn">{{item.assessorType}} Assessment View</a>
+                                        </li>
+                                    </ng-container>
+                                    <ng-template #elseBlock>
+                                        <li class="dropdown-item"
+                                            (click)="selfAssessment(item.reviewCycleItemId, 0,item.assessorType, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                            <a class="dropdown-custom-btn">{{item.assessorType}} Assessment View</a>
+                                        </li>
+                                    </ng-template>
+                                    <li class="dropdown-item"
                                         *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
                                         (click)="downloadPromotionletter(item)">
                                         <a class="dropdown-custom-btn">
@@ -109,3 +115,6 @@
         </div> -->
     </div>
 </div>
+}
+@else{<app-data-loader-content />
+}

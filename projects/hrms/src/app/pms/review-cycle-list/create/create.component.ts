@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
-export class CreateComponent {
+export class CreateComponent implements OnInit,OnDestroy{
   subscription!: Subscription;
   reviewCyclesList: any;
   reviewCycleForm!: FormGroup;
@@ -44,7 +44,6 @@ export class CreateComponent {
     this.getAllDepartments();
     this.getAllReviewCycleTypes();
   }
-
 
   close() {
     this.modalService.dismissAll();
@@ -127,7 +126,6 @@ export class CreateComponent {
           return { joinDateInvalid: true };
         }
       }
-
       return null;
     };
   }
@@ -138,7 +136,6 @@ export class CreateComponent {
       const startsWithInvalidChar = /^[^a-zA-Z0-9]/.test(value); // Checks for non-alphanumeric character at the start
       const isEmptyAfterTrim = value === ''; // Check if only spaces were entered
       const isValid = !startsWithInvalidChar && !isEmptyAfterTrim;
-
       return isValid ? null : { invalidStart: true };
     };
   }
@@ -167,7 +164,6 @@ export class CreateComponent {
   }
 
   onDepartmentNameChange(event: any) {
-    console.log(event)
     const joinedIds = event.value.map((item: any) => item).join(',');
     this.reviewCycleForm.get('subDepartmentId')?.reset();
     if (joinedIds) {
@@ -224,6 +220,7 @@ export class CreateComponent {
         },
       });
   }
+
   getAllReviewCycleTypes() {
     const params = {
       entity: 'PMS',
@@ -238,6 +235,7 @@ export class CreateComponent {
         },
       });
   }
+
   onComplete() {
     this.modalService.dismissAll()
   }
@@ -252,7 +250,6 @@ export class CreateComponent {
 
   onReviewCycleSubmit() {
     this.isLoading = true;
-    console.log(this.reviewCycleForm.value.locationId)
     if (this.reviewCycleForm.valid) {
       const data = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
       const reviewCycleData = {
@@ -274,20 +271,20 @@ export class CreateComponent {
       };
       this.http.postdata('reviewCycleHeader', reviewCycleData).subscribe({
         next: (response) => {
-          this.modalService.dismissAll();
+          this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Review Cycle Created Successfully');
-          // 
         },
-
         error: (error) => {
-          this.modalService.dismissAll();
           this.conformationPopup.openErrorModal('error.error.Message');
-          // this.modalService.dismissAll();
+          console.error('Error:', error);
         },
       });
     } else {
       this.reviewCycleForm.markAllAsTouched();
     }
+    setTimeout(() => {
+      this.modalService.dismissAll();
+    }, 3000);
   }
 
   OnClickLocation(event: any) {

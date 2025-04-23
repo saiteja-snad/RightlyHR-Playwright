@@ -72,7 +72,6 @@ export class TimeOffComponent {
   }
   
   ngOnInit(): void {
-    this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     const storedEmployee = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
 
   if (storedEmployee && Object.keys(storedEmployee).length > 0) {

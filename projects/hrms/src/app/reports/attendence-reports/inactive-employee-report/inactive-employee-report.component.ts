@@ -246,6 +246,13 @@ export class InactiveEmployeeReportComponent {
     });
   }
 
+  clearAllFilters(): void {
+    this.inactiveReportForm.reset({
+      employee: null,
+      manager: null,
+      month: ''
+    });
+  }
   formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }

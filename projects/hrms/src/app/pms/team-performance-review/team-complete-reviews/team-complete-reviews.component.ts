@@ -5,10 +5,12 @@ import { NgbPaginationModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-team-complete-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule,PaginatorModule,TranslateModule, NoDataFoundComponent],
   templateUrl: './team-complete-reviews.component.html',
   styleUrl: './team-complete-reviews.component.scss'
 })
@@ -16,19 +18,30 @@ export class TeamCompleteReviewsComponent {
   dataload=false;
   employeeId!:number;
   searchQuery = '';
-
   reviewCycles: any[] = [];
   pendingReviews: any[] = []; 
   completedReviews: any[] = [];
   filteredReviews: any[] = [];
-
   page = 1;
   pageSize = 10;
   collectionSize=100;
   totalItems = 0;
-
+  totalRecords = 100
+  first: any = 1;
+  rows: any = 10;
   destroy$: Subject<boolean> = new Subject();
-  
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
+
+   onRowsChange() {
+      this.first = 0;
+    }
+
+
   ngOnInit(): void {
     const fusionuserString = localStorage.getItem('rightlyHrUser');
     if (fusionuserString) {
@@ -47,7 +60,7 @@ export class TeamCompleteReviewsComponent {
     this.dataload=true;
     this.http.getReviewCycles('reviewCycleHeader/getallperformances', 
       this.page, this.pageSize, 
-      this.searchQuery, 
+      // this.searchQuery, 
       this.employeeId.toString(), 
       'Team Manager,Reporting Manager,HR', 'Submitted,Re-Submitted' ).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
@@ -92,6 +105,7 @@ export class TeamCompleteReviewsComponent {
     this.page = newPage;
     this.fetchReviewCycles();
   }
+  
   onPageSizeChange(newPageSize: number) {
     console.log('Page size changed to:', newPageSize);
     console.log(this.page)

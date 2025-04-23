@@ -6,10 +6,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { Router } from '@angular/router';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-team-pending-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent,DataLoaderContentComponent],
   templateUrl: './team-pending-reviews.component.html',
   styleUrl: './team-pending-reviews.component.scss'
 })
@@ -17,17 +18,14 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
   dataload = false;
   employeeId!: number;
   searchQuery = '';
-
   reviewCycles: any[] = [];
   pendingReviews: any[] = [];
   completedReviews: any[] = [];
   filteredReviews: any[] = [];
-
   page = 1;
   pageSize = 10;
   collectionSize = 100;
   totalItems = 0;
-
   destroy$: Subject<boolean> = new Subject();
 
   ngOnInit(): void {
@@ -58,7 +56,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
           this.totalItems = data.totalCount || 0;
 
           this.pendingReviews = data.items;
-          console.log(this.pendingReviews)
           this.filteredReviews = this.pendingReviews;
           if (this.pendingReviews.length > 0) {
             this.collectionSize = data.totalCount;
@@ -94,9 +91,8 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
     this.page = newPage;
     this.fetchReviewCycles();
   }
+
   onPageSizeChange(newPageSize: number) {
-    console.log('Page size changed to:', newPageSize);
-    console.log(this.page)
     this.page = 1;
     this.fetchReviewCycles();
   }
@@ -110,7 +106,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
   }
 
   selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
-    console.log(currentStage)
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,
@@ -121,10 +116,7 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
       formresponseid:formresponseid
     };
   
-    // Store queryParams in localStorage
     localStorage.setItem('queryParams', JSON.stringify(queryParams));
-  
-    // Navigate to the assessment route
     this.router.navigate(['/pms/assessment-form']);
   }
 

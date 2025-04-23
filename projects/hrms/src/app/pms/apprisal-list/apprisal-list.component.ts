@@ -12,10 +12,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { IReviewCycleEmployee } from './review-cycle-emp.model';
 import { PaginatorModule } from 'primeng/paginator';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-apprisal-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './apprisal-list.component.html',
   styleUrl: './apprisal-list.component.scss'
 })
@@ -29,6 +30,13 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   customLabelTemplate: string | undefined;
   listofReviewTemplates: any;
   reviewCyclesList: IReviewCycleEmployee[] = [];
+
+  reviewCyclename!: string;
+  selectedIds: number[] = [];
+  allSelected = false;
+  authorityDetailsForAppraisal = [] as any;
+  status!: string;
+  authorityDetailsForPromotion = [] as any;
 
   jobLocationDropDownData: any;
   subLocationsDropdown: any;
@@ -135,78 +143,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       });
   }
 
-  // onReviewCycleChange(selectedValue: any): void {
-  //   this.dependentdropdowns.get('promoted')?.reset();
-  //   const selectedId = selectedValue.value;
-  //   if (!selectedId) {
-  //     console.error('No value selected.');
-  //     return;
-  //   }
-
-  //   const selectedCycle = this.reviewCyclesList.find((item: any) => item.id == selectedId.id);
-  //   this.reviewCycleID = selectedCycle?.id ?? null;
-  //   this.selectedReviewCycle = selectedCycle
-  //   if (!selectedCycle) {
-  //     console.error('Selected review cycle not found.');
-  //     return;
-  //   }
-  //   this.selectedReviewCycle = selectedCycle;
-
-  //   if (selectedCycle.status.trim().toLowerCase() === 'created') {
-  //     this.createdStatuses = ['created'];
-  //   } else {
-  //     this.createdStatuses = [];
-  //   }
-
-  //   console.log(this.createdStatuses); 
-
-  //   this.jobLocationDropDownData = [];
-  //   this.subLocationsDropdown = [];
-  //   this.departmentDetails = [];
-  //   this.subDepartmentsDropdownValues = [];
-  //   // this.jobLocationDropDownData = selectedCycle.locations ?? [];
-  //   // this.subLocationsDropdown = selectedCycle.sublocations ?? [];
-  //   // this.departmentDetails = selectedCycle.departments ?? [];
-  //   // this.subDepartmentsDropdownValues = selectedCycle.subdepartments ?? [];
-  //   // const locationIds = Array.isArray(selectedCycle.locations) ? selectedCycle.locations.map((item: any) => item.locationId).join(',') : '';
-  //   // const subLocationIds = Array.isArray(selectedCycle.sublocations) ? selectedCycle.sublocations.map((item: any) => item.subLocationId).join(',') : '';
-  //   // const depIds = Array.isArray(selectedCycle.departments) ? selectedCycle.departments.map((item: any) => item.departmentId).join(',') : '';
-  //   const depIds = selectedCycle.departments ?? [];
-  //   this.departmentDetails = depIds;
-  //   // const subDepIds = Array.isArray(selectedCycle.subdepartments) ? selectedCycle.subdepartments.map((item: any) => item.subDepartmentId).join(',') : '';
-  //   const subDepIds = selectedCycle.subdepartments ?? [];
-  //   this.subDepartmentsDropdownValues = subDepIds;
-
-  //   const locationIds = selectedCycle.locations ?? [];
-  //   this.jobLocationDropDownData = locationIds;
-
-  //   const subLocationIds = selectedCycle.sublocations ?? [];
-  //   this.subLocationsDropdown = subLocationIds;
-
-  //   this.dependentdropdowns.patchValue({
-  //     selectedReviewCycle: selectedId,
-  //     departmentId: depIds,
-  //     subDepartmentId: subDepIds,
-  //     locationId: locationIds,
-  //     subLocationId: subLocationIds,
-  //   });
-
-  //   this.loctionIds = locationIds
-  //   this.subLoctionIds = subLocationIds
-  //   this.departmentIds = depIds
-  //   this.subDepartmentIds = subDepIds
-
-  //   const params = {
-  //     page: this.page,
-  //     pageSize: this.pageSize,
-  //     reviewcycleid: selectedCycle.id,
-  //     promotion: this.promoted || '',
-
-  //   };
-  //   console.log(params)
-  //   this.getEmployeesOfTheReviewCycle(params);
-  // }
-
   onReviewCycleChange(selectedValue: any): void {
       
     const selectedId = selectedValue.value;
@@ -236,6 +172,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     const params = this.buildParams(selectedCycle.id);
     this.first = 0;
     this.searchText = null;
+    this.rows= 10;
     this.getEmployeesOfTheReviewCycle(params);
   }
   
@@ -303,11 +240,15 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.pageSize = event.rows;
     this.first = event.first;
 
-    const params = {
+    const params: { reviewcycleid: any; page: number; pageSize: number; searchQuery?: string } = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize
     };
+
+    if (this.searchText) {
+      params.searchQuery = this.searchText;
+    }
 
     this.getEmployeesOfTheReviewCycle(params);
   }
@@ -318,26 +259,40 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.page = 1;
     this.first = 0;
 
-    const params = {
+    const params:  { reviewcycleid: any; page: number; pageSize: number; searchQuery?: string }  = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize
     };
+
+    if (this.searchText) {
+      params.searchQuery = this.searchText;
+    }
 
     this.getEmployeesOfTheReviewCycle(params);
   }
 
   onSearchTextChange(): void {
     if (this.searchText) {
-      this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id }, true); 
+      const params:  { reviewcycleid: any; page: number; pageSize: number; searchQuery?: string }  = {
+        reviewcycleid: this.reviewCycleID,
+        page: this.page,
+        pageSize: this.pageSize
+      };
+
+      this.getEmployeesOfTheReviewCycle(params); 
     } else {
       this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id });
     }
   }
 
-  getEmployeesOfTheReviewCycle(params: any, fetchAll = false): void {
+  getEmployeesOfTheReviewCycle(params: any): void {
     this.dataload = true;
-    params.pageSize = fetchAll ? 10000 : this.pageSize;
+    // params.pageSize = fetchAll ? 10000 : this.pageSize;
+    
+    if (this.searchText) {
+      params.searchQuery = this.searchText;
+    }
 
     this.http.getDataIncludeParams("ReviewCycleItem", params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
@@ -346,10 +301,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.filteredEmployees = this.listOfAllEmployees;
         this.collectionSize = data.totalCount;
 
-        if (this.searchText) {
-          this.filterEmployees();
-        }
-        this.getEmployeesOfTheReviewCycleforReport();
+        // if (this.searchText) {
+        //   this.filterEmployees();
+        // }
+        // this.getEmployeesOfTheReviewCycleforReport();
       },
       error: (err) => {
         this.dataload = false;
@@ -361,10 +316,15 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   getEmployeesOfTheReviewCycleforReport(): void {
-    const params = {
+    const params: { reviewcycleid: any; promotion: any; searchQuery?: string } = {
       reviewcycleid: this.selectedReviewCycle?.id,
       promotion: this.promoted?.value || '',
     };
+
+    if (this.searchText) {
+      params.searchQuery = this.searchText;
+    }
+
     this.dataload = true;
     this.http.getDataIncludeParams("ReviewCycleItem", params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
@@ -393,8 +353,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectedIds: number[] = [];
-  allSelected = false;
   onHeaderCheckboxChange(event: any): void {
     this.allSelected = event.target.checked;
     this.filteredEmployees.forEach(employee => {
@@ -602,12 +560,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     });
   }
 
-  status!: string;
   onclickStatusupdate(status: string) {
     this.status = status;
   }
 
-  authorityDetailsForAppraisal = [] as any;
   getAppraisalAuthorityDetails() {
     const offertype = 'Appraisal Letter'
     this.http.getData(`SignaturesList?LetterType=${offertype}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -726,7 +682,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       });
   }
   
-  authorityDetailsForPromotion = [] as any;
   getAuthorityDetails() {
     const offertype = 'Promotion Letter'
     this.http.getData(`SignaturesList?LetterType=${offertype}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -896,7 +851,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     return dateString;
   }
 
-  reviewCyclename!: string;
   reportdata(): void {
     const payload = this.reportOfAllEmployees.map(employee => ({
       'Review Cycle Name': employee.reviewCycleHeaderIdName,
@@ -1003,7 +957,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => { 
           this.modal.openSuccessModal('Promotion Letter Generated Successfully');
-          this.Effectivedatefrom.reset();
         },
         error: (err: any) => {
           if (err.status === 500) {
@@ -1018,6 +971,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         },
         complete: () =>{
           this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+          this.Effectivedatefrom.reset();
         }
       });
   }

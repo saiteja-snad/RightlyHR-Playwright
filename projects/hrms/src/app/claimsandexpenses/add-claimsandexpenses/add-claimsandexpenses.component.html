@@ -27,7 +27,7 @@
                     </div>
     
                     <div>
-                        <label class="form-label custom-label mb-2">Approval Email<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">Approver Email<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="emails" optionLabel="label" placeholder="Please select approval email"
                                 formControlName="approvalemail" class="form-select custom-select"></p-select>
@@ -42,7 +42,7 @@
                     <!-- Add New Expense Button -->
                     <div class="pt-4 mt-1">
                         <button type="button" class="custom-btn btn-primary" (click)="addExpenseItem()">
-                            <i class="bi bi-plus me-2"></i> Add New Expense
+                            <i class="bi bi-plus me-2"></i> Add New Item
                         </button>
                     </div>
                 </div>
@@ -75,9 +75,7 @@
                                 <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
                                     class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
-                                        Expense
-                                        item
-                                        is required</div>
+                                        Expense item is required</div>
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                         Expense item must be less than 50 characters
                                     </div>

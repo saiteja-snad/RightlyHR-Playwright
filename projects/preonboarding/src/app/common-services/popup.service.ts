@@ -14,7 +14,7 @@ export class PopupService {
     successpopup.componentInstance.status = status;
     setTimeout(() => {
       successpopup.dismiss();
-    }, 2000);
+    }, 3000);
   }
 
   openError(status: string){
@@ -22,6 +22,6 @@ export class PopupService {
     errorpopup.componentInstance.status = status;
     setTimeout(() => {
       errorpopup.dismiss();
-    }, 2000);
+    }, 3000);
   }
 }

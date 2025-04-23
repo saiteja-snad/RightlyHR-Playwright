@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 
 export class SettingsJobTabsComponent {
   navLinks = [
-    { label: 'Job Role', route: '/settings/employee-fields/job/jobrole' },
+    { label: 'Job Role', route: '/settings/employee-fields/job/jobrole' , permission: { feature: 'Job Role', action: 'view' }},
     { label: 'Job Type', route: '/settings/employee-fields/job/jobtype' },
     { label: 'Probation Status', route: '/settings/employee-fields/job/probationstatus' },
     { label: 'Background Check Status', route: '/settings/employee-fields/job/backgroundcheck' },

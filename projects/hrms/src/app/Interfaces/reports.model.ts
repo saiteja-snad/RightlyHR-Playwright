@@ -26,6 +26,41 @@ export interface IWfhReportRequest {
   Worked_Month?: number;
 }
 
+export interface IAbsentReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  Shift?: string;
+  Location?: string;
+  SubLocation?: string;
+  Worked_Date?: string;
+  StartDate?: string;
+  EndDate?: string;
+  Worked_Month?: number;
+}
+
+export interface IInactiveReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  shift?: string;
+  location?: string;
+  Month?: number;
+  Year?: number;
+}
+
+export interface IYearlyReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  Department?: string;
+  TeamManagerName?: string;
+  LeaveName?: string;
+  Location?: string;
+  Shift?: string;
+  Year?: number;
+}
 
 export interface IFamilyDetails{
   empStatus: string;

@@ -14,7 +14,6 @@
         </thead>
         <tbody>
           <ng-container>
-            @if (rbac.allowedToAccess('Job Role.view')) {}
             <tr *ngFor="let roles of JobroleDetails">
               <td>{{roles.designationName}}</td>
               <td>{{roles.gradeName}}</td>

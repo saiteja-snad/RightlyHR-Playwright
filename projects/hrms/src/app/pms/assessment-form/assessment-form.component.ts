@@ -7,12 +7,13 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-assessment-form',
   imports: [CommonModule, FormsModule, NgbPaginationModule,
     ReactiveFormsModule,
-    NgbNavModule, DateformatPipe, RouterModule,  ],
+    NgbNavModule, DateformatPipe, RouterModule,SelectModule  ],
   templateUrl: './assessment-form.component.html',
   styleUrl: './assessment-form.component.scss'
 })
@@ -335,8 +336,10 @@ export class AssessmentFormComponent implements OnInit {
   gradeId!: any;
   designationChange(Value:any){
      console.log(Value);
-     if(Value.gradeId){
-       this.gradeId=Value.gradeId;
+     if(Value.value){
+       this.gradeId=Value.value.gradeId;
+       console.log(this.gradeId);
+       
      }
      else{  
       this.gradeId=null;
@@ -1092,6 +1095,8 @@ console.log(this.assessmentFormData.currentSalaryAuto)
   onSubmit() {
     this.modalRef = this.modalService.open(this.loading, { centered: true });
     // if (this.assessmentForm.valid) {
+    console.log(this.assessmentFormData);
+    
     const payload = {
       employeeId: this.employeeId,
       formId: this.assessmentFormData.formId,
@@ -1121,7 +1126,7 @@ console.log(this.assessmentFormData.currentSalaryAuto)
       currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
       revisedSalaryAuto: this.assessmentFormData.revicedSalary,
       currentDesignation: this.assessmentFormData.currentDesignation,
-      revisedDesignation: this.assessmentFormData.revisedDesignation,
+      revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
       totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
       status: "Submitted",
       currentStage: this.currentStage + 1,
@@ -1195,7 +1200,7 @@ console.log(this.assessmentFormData.currentSalaryAuto)
         currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
         revisedSalaryAuto: this.assessmentFormData.revicedSalary,
         currentDesignation: this.assessmentFormData.currentDesignation,
-        revisedDesignation: this.assessmentFormData.revisedDesignation,
+        revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
         totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
         status: "Re-Submitted",
         currentStage: this.currentStage + 1,
@@ -1270,7 +1275,7 @@ console.log(this.assessmentFormData.currentSalaryAuto)
       currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
       revisedSalaryAuto: this.assessmentFormData.revicedSalary,
       currentDesignation: this.assessmentFormData.currentDesignation,
-      revisedDesignation: this.assessmentFormData.revisedDesignation,
+      revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
       totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
       status: "Draft",
       currentStage: this.currentStage,

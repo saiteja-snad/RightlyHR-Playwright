@@ -205,7 +205,7 @@
           <tbody>
             <ng-container *ngFor="let section of assessmentFormData?.sectionDetails; let i = index">
               <tr *ngFor="let question of section?.questions; let j = index">
-                <td *ngIf="j === 0" [attr.rowspan]="section.questions.length" class="text-center">
+                <td *ngIf="j === 0" [attr.rowspan]="section.questions.length">
                   {{ section.sectionName }}
                 </td>
                 <td>{{ question.question }}
@@ -213,12 +213,12 @@
                     <label>{{ option.optionWeightage }} - {{ option.option }}</label>
                   </div>
                 </td>
-                <td class="text-center">{{question.targetfield}}</td>
+                <td >{{question.targetfield}}</td>
                 <td>{{question.unitofmeasurement}}</td>
-                <td class="text-center">
+                <td >
                   {{ question.questionweightage }}
                 </td>
-                <td class="text-center" *ngIf="j === 0" [attr.rowspan]="section.questions.length">
+                <td  *ngIf="j === 0" [attr.rowspan]="section.questions.length">
                   {{ section.sectionweightage }}
                 </td>
                 <!-- Loop through formResponses -->
@@ -550,7 +550,7 @@
             </div>
           </div>
           <div class="col-lg-4 col-md-6 mb-3">
-            <div>
+            <div class="custom-p-select-content">
               <label for="" class="form-label">Revised Designation<span class="text-danger"
                   *ngIf="assessmentFormData.eligibleforpromotion">*</span></label>
               <!-- <select id="designation" class="form-select" name="designation" #designation="ngModel"
@@ -561,15 +561,18 @@
                 <option *ngFor="let item of getDesignationWithGradeIdDetails" [value]="item.designationName">
                   {{item.designationName}}</option>
               </select> -->
-              <!-- <ng-select [items]="getDesignationWithGradeIdDetails" bindValue="designationName" bindLabel="designationName"
-                (change)="designationChange($event)" id="designation" name="designation" #designation="ngModel"
-                [disabled]="currentStage!==lastStage||!assessmentFormData.eligibleforpromotion"
-                [(ngModel)]="assessmentFormData.revisedDesignation" [multiple]="false" notFoundText="No results found"
-                [closeOnSelect]="true" placeholder="Please select revised designation" required>
-                <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-                  <span>{{ item.designationName}}</span>
-                </ng-template>
-              </ng-select> -->
+              <p-select 
+              [options]="getDesignationWithGradeIdDetails" 
+              optionLabel="designationName"
+              name="revisedDesignation"
+              [(ngModel)]="assessmentFormData.revisedDesignation"
+              [disabled]="currentStage !== lastStage || !assessmentFormData.eligibleforpromotion"
+              placeholder="Please select revised designation"
+              (onChange)="designationChange($event)"
+              [showClear]="true"
+              [filter]="true"
+              required>
+            </p-select>
             </div>
           </div>
         </div>
@@ -578,20 +581,20 @@
       <div class="button-content pb-4">
         <div class="d-flex justify-content-end gap-3">
           <ng-container *ngFor="let response of assessmentFormData?.formResponses;">
-            <button type="button" class="modal-btn no-btn"
+            <button type="button" class="custom-btn btn-secondary"
               *ngIf="response.order === this.currentStage && (response.status==='Pending'||response.status==='Draft' ||response.status==='Submitted'||response.status==='Re-Submitted')"
               (click)="openconfirmationModel(confirmationtocancle)">Cancel</button>
             <button class="modal-btn yes-btn" type="button"
               *ngIf="response.order === this.currentStage && (response.status==='Pending'||response.status==='Draft')"
-               class="modal-btn yes-btn btn btn-primary"
+              class="custom-btn btn-primary"
               (click)="openconfirmationModel(confirmationtosaveasdraft);saveAsDraftcheck()">Save as Draft</button>
             <button type="button" 
               *ngIf="(response.order === this.currentStage) && (response.status==='Pending'||response.status==='Draft')"
-              [disabled]="form.invalid" class="modal-btn yes-btn btn btn-primary"
+              [disabled]="form.invalid" class="custom-btn btn-primary"
               (click)="openconfirmationModel(confirmationtosave)">Submit</button>
               <button type="button"
               *ngIf="(response.order === this.currentStage) && (response.status==='Submitted' ||response.status==='Re-Submitted')"
-              [disabled]="form.invalid" class="modal-btn yes-btn btn btn-primary"
+              [disabled]="form.invalid" class="custom-btn btn-primary"
               (click)="openconfirmationModel(resubmitconfirmationtosave)">Re-Submit</button>
           </ng-container>
         </div>

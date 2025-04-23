@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModalRef, NgbModalConfig, NgbModal, NgbNavModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -7,16 +7,17 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-assessment-form',
   imports: [CommonModule, FormsModule, NgbPaginationModule,
     ReactiveFormsModule,
-    NgbNavModule, DateformatPipe, RouterModule],
+    NgbNavModule, DateformatPipe, RouterModule,SelectModule  ],
   templateUrl: './assessment-form.component.html',
   styleUrl: './assessment-form.component.scss'
 })
-export class AssessmentFormComponent {
+export class AssessmentFormComponent implements OnInit {
   subscription!: Subscription;
   templateId!: number;
   currentStage!: number;
@@ -59,6 +60,7 @@ export class AssessmentFormComponent {
   assessortype: any;
   constructor(
     config: NgbModalConfig, private readonly modalService: NgbModal,
+    //  public _userAcessService: UserAccessService,
     private route: ActivatedRoute,
     private http: HttpService,
     private router: Router,
@@ -98,7 +100,7 @@ export class AssessmentFormComponent {
     }
 
     // Retrieve fusionuser data from localStorage
-    const fusionuserString = localStorage.getItem('fusionuser');
+    const fusionuserString = localStorage.getItem('rightlyHrUser');
     if (fusionuserString) {
       const fusionuser = JSON.parse(fusionuserString);
       this.employeeId = fusionuser.employeeId;
@@ -145,7 +147,7 @@ export class AssessmentFormComponent {
   }
 
   cancle() {
-    this.router.navigate(['/pms/myPerformance']);
+    this.router.navigate(['/pms/my-performance-review']);
   }
   //function to open the model popup
   openconfirmationModel(content: any) {
@@ -334,8 +336,10 @@ export class AssessmentFormComponent {
   gradeId!: any;
   designationChange(Value:any){
      console.log(Value);
-     if(Value.gradeId){
-       this.gradeId=Value.gradeId;
+     if(Value.value){
+       this.gradeId=Value.value.gradeId;
+       console.log(this.gradeId);
+       
      }
      else{  
       this.gradeId=null;
@@ -1091,6 +1095,8 @@ console.log(this.assessmentFormData.currentSalaryAuto)
   onSubmit() {
     this.modalRef = this.modalService.open(this.loading, { centered: true });
     // if (this.assessmentForm.valid) {
+    console.log(this.assessmentFormData);
+    
     const payload = {
       employeeId: this.employeeId,
       formId: this.assessmentFormData.formId,
@@ -1120,7 +1126,7 @@ console.log(this.assessmentFormData.currentSalaryAuto)
       currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
       revisedSalaryAuto: this.assessmentFormData.revicedSalary,
       currentDesignation: this.assessmentFormData.currentDesignation,
-      revisedDesignation: this.assessmentFormData.revisedDesignation,
+      revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
       totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
       status: "Submitted",
       currentStage: this.currentStage + 1,
@@ -1194,7 +1200,7 @@ console.log(this.assessmentFormData.currentSalaryAuto)
         currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
         revisedSalaryAuto: this.assessmentFormData.revicedSalary,
         currentDesignation: this.assessmentFormData.currentDesignation,
-        revisedDesignation: this.assessmentFormData.revisedDesignation,
+        revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
         totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
         status: "Re-Submitted",
         currentStage: this.currentStage + 1,
@@ -1269,7 +1275,7 @@ console.log(this.assessmentFormData.currentSalaryAuto)
       currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
       revisedSalaryAuto: this.assessmentFormData.revicedSalary,
       currentDesignation: this.assessmentFormData.currentDesignation,
-      revisedDesignation: this.assessmentFormData.revisedDesignation,
+      revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
       totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
       status: "Draft",
       currentStage: this.currentStage,

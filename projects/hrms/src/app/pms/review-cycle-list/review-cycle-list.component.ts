@@ -58,6 +58,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllReviewCyclesList(this.page, this.pageSize);
+
   }
 
   openAdd() {
@@ -65,11 +66,21 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   onUpdate(cycle: any) {
-    this.modalService.open(UpdateComponent, { centered: true, backdrop: 'static', size: 'lg' });
+    const modalRef = this.modalService.open(UpdateComponent, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
+    modalRef.componentInstance.updateData = cycle;
   }
 
-  onClickView(cycle: any) {
-    this.modalService.open(ViewComponent, { centered: true, backdrop: 'static', size: 'lg' });
+  onClickView(cycle: any) { 
+   const modalRef = this.modalService.open(ViewComponent, {
+          centered: true,
+          backdrop: 'static',
+          size: 'lg',
+        });
+        modalRef.componentInstance.updateData = cycle;
   }
 
   onClickYes() {
@@ -124,13 +135,13 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       }
     })
   }
-  
+
   getAllReviewCyclesList(pagenum: number, pagesize: number, fetchAll: boolean = false): void {
     const pageSize = fetchAll ? 10000 : this.pageSize; // Fetch all records if fetchAll is true
     const params = {
       page: pagenum,
       pageSize: pageSize,
-      searchQuery: this.searchText
+      // searchQuery: this.searchText
     };
     this.dataload = true;
 
@@ -243,6 +254,30 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   openCancelationPopUp() {
     this.modalService.open(this.cancelationConfirmation, { centered: true });
+  }
+
+  initiateReviewCycle(cycle: any) {
+    const fusionUser = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+    const data = {
+      status: "Initiated",
+      createdBy: fusionUser.employeeId,
+    }
+    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
+      next: (response) => {
+        console.log('Success:', response);
+        this.closeModal()
+        this.onCreateCycleFormSubmitted()
+        this.conformationPopup.openSuccessModal('Review Cycle Initiated Successfully')
+        // this.Status = 'Review Cycle Initiated Successfully'
+        // this.modalService.open(this.success, { centered: true });
+      },
+      error: (error) => {
+        this.conformationPopup.openErrorModal(error.error.reason)
+        // this.Status = error.error.reason
+        // this.modalService.open(this.success, { centered: true });
+        console.error('Error:', error);
+      }
+    });
   }
 
   ngOnDestroy(): void {

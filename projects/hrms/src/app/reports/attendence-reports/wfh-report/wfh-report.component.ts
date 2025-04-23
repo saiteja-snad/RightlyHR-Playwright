@@ -249,36 +249,21 @@ export class WfhReportComponent implements OnInit {
     });
   }
 
+  clearAllFilters(): void {
+    this.wfhReportForm.reset({
+      employee: null,
+      manager: null,
+      dateRange: null
+    });
+  }
+
   formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
-
-  WfhtoggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  WfhfilterEmployees() {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredWfhEmployees = [...this.uniqueEmployees];
-      return;
-    }
-
-    this.filteredWfhEmployees = this.uniqueEmployees.filter(
-      (emp) =>
-        emp.fusionEmpId.toString().includes(term) ||
-        emp.employeeName.toLowerCase().includes(term)
-    );
-  }
-
-  getFullName(manager: any): string {
-    return `${manager.firstName} ${
-      manager.middleName ? manager.middleName + ' ' : ''
-    }${manager.lastName}`;
-  }
+  
   exportToExcelWfh(): void {
     // Define header mappings
     const HEADER_MAPPINGS: { [key: string]: string } = {

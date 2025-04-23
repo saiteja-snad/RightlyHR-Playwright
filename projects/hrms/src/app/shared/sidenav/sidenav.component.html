@@ -32,16 +32,16 @@
             }
             @if(this.rbac.allowedToAccess('Reports.view')){
             <li class="nav-item" [routerLink]="['/reports']" routerLinkActive="active-nav-link">
-                <i class="bi bi-currency-dollar custom-icon"></i>Reports
+                <i class="bi bi-file-earmark-bar-graph-fill custom-icon"></i>Reports
             </li>
             }
             @if(this.rbac.allowedToAccess('Pms.view')){
             <li class="nav-item" [routerLink]="['/pms']" routerLinkActive="active-nav-link">
-                <i class="bi bi-currency-dollar custom-icon"></i>PMS
+                <i class="bi bi-graph-up-arrow custom-icon"></i>PMS
             </li>
             }
             <li class="nav-item text-wrap" [routerLink]="['/pmsconfiguration']" routerLinkActive="active-nav-link">
-                <i class="bi bi-calendar custom-icon"></i>PMS Configurations
+                <i class="bi bi-gear-fill custom-icon"></i>PMS Configurations
             </li>
             @if(this.rbac.allowedToAccess('Calendar.view')){
             <li class="nav-item" [routerLink]="['/calendar']" routerLinkActive="active-nav-link">
@@ -50,20 +50,19 @@
             }
             @if(this.rbac.allowedToAccess('Desk Allocation.view')){
             <li class="nav-item" [routerLink]="['/desk']" routerLinkActive="active-nav-link">
-                <i class="bi bi-pc-display custom-icon"></i>Desk Allocation
+                <i class="bi bi-pc-display custom-icon"></i>Desk<br>Allocation
             </li>
             }
             @if(this.rbac.allowedToAccess('Assets Management.view')){
-                <li class="nav-item p-2 mb-3" [routerLink]="['/assets-management']" routerLinkActive="active-nav-link">
-                    <i class="bi bi-display  custom-icon"></i>Asset Allocation
-                </li>
-                }
-
-                @if(this.rbac.allowedToAccess('Help Desk.view')){
-                    <li class="nav-item p-2 mb-3" [routerLink]="['/it-support']" routerLinkActive="active-nav-link">
-                        <i class="bi bi-headset  custom-icon"></i>IT Support
-                    </li>
-                    }
+            <li class="nav-item" [routerLink]="['/assets-management']" routerLinkActive="active-nav-link">
+                <i class="bi bi-display custom-icon"></i>Asset<br>Allocation
+            </li>
+            }
+            @if(this.rbac.allowedToAccess('Help Desk.view')){
+            <li class="nav-item" [routerLink]="['/it-support']" routerLinkActive="active-nav-link">
+                <i class="bi bi-headset  custom-icon"></i>IT Support
+            </li>
+            }
         </ul>
     </div>
     <div class="sidenav-footer-content text-center py-4">

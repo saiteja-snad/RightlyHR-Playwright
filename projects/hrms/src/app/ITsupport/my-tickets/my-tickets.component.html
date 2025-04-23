@@ -80,7 +80,6 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             @if (this.ticketFor === 'Self') {
-                                
                             <input type="text" class="form-control custom-input" formControlName="name"
                             placeholder="Please enter employeename" onkeydown="return false;" />
                             }
@@ -147,13 +146,9 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
-                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
-                            formControlName="department" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
-                                }}</ng-template>
-                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
-                                }}</ng-template>
+                            <p-select [options]="jobLocationDropDownData" [filter]="true" filterBy="firstName" [showClear]="true"
+                            optionLabel="jobLocationName" placeholder="Please select employee"
+                            formControlName="department" class="custom-select w-100" (onChange)="getSubLocationByid($event.value)">
                         </p-select>
                     <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
                         <div class="error-msg">{{'Department is required' | translate}}</div>
@@ -165,13 +160,9 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
-                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
-                            formControlName="team" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
-                                }}</ng-template>
-                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
-                                }}</ng-template>
+                            <p-select [options]="subLocationsDropdown" [filter]="true" filterBy="firstName" [showClear]="true"
+                            optionLabel="jobSubLocationName"  placeholder="Please select employee"
+                            formControlName="subLocation" class="custom-select w-100">
                         </p-select>
                     <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
                         <div class="error-msg">{{'Team is required' | translate}}</div>
@@ -182,13 +173,10 @@
                         <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
-                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
-                            formControlName="type" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
-                                }}</ng-template>
-                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
-                                }}</ng-template>
+                        <p-select [options]="typeDetails"
+                            optionLabel="label" optionValue="value" placeholder="Please select employee"
+                            formControlName="type" class="custom-select w-100">
+                            
                         </p-select>
                       
                     </div>

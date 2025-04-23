@@ -32,6 +32,12 @@ export class MyTicketsComponent {
   ticketEmpData = {} as any;
   allEmployees = [] as any [];
   employeeId : any;
+  typeDetails = [
+    { value: 'Issue', label: 'Issue' },
+    { value: 'Incident', label: 'Incident' },
+    { value: 'Query', label: 'Query' }
+
+  ];
 
 
   constructor(
@@ -52,7 +58,7 @@ export class MyTicketsComponent {
     this.getSelfEmployee();
     this.getEmployee();
     this.getuserticketsbyempid();
-   
+    this.getjobLocationList();
 
     this.itSupportForm = this.fb.group({
       employee: ['', Validators.required],
@@ -115,11 +121,50 @@ export class MyTicketsComponent {
  
   }
 
+  subLocationsDropdown: any = [];
+  jobLocationDropDownData: any = [];
+  getSubLocationByid(selectedLocation: any): void {
+    if (selectedLocation && selectedLocation.id) {
+      this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
+        next: (data: any) => {
+          if (data.length === 0) {
+            this.subLocationsDropdown = [];
+          } else {
+            this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+          }
+        },
+        error: (err: any) => {
+        },
+      });
+    } else {
+      this.subLocationsDropdown = [];
+    }
+  }
+
+  getjobLocationList() {
+      this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+        next: (locations: any) => {
+          this.jobLocationDropDownData = locations;
+          // Fetch sub-locations for each location
+          const subLocationRequests = locations.map((location: { id: any; }) =>
+            this.http.getData(`JobLocation/sub-location-by-joblocation/${location.id}`)
+          );
+          
+        }
+      });
+    }
   
   onTicketRaisedForChange(event: any) {
     let value = event;
     this.ticketFor = value;
     console.log(value);
+    this.itSupportForm.patchValue({
+      name: null,
+      email: null,
+      phoneNumber: null,
+      employeeId: null,
+      deskdetails: null,
+    });
     if (value === "Self") {
        
         let empid = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}').employeeId;
@@ -161,8 +206,18 @@ export class MyTicketsComponent {
 
  colleagueDetails(event: any) {
   console.log(event);
-  this.empdata = this.allEmployeesself.find(employee => employee.employeeId == event);
-
+  console.log(this.allEmployeesself);
+  
+  this.empdata = this.allEmployeesself.find((employee) => employee.employeeId == event);
+  this.itSupportForm.patchValue({
+    name: null,
+    email: null,
+    phoneNumber: null,
+    employeeId: null,
+    deskdetails: null,
+  });
+  console.log(this.empdata);
+  
   if (this.empdata) {
 
     this.ticketEmpData.fusionEmpId = this.empdata.fusionEmpId;
@@ -174,11 +229,13 @@ export class MyTicketsComponent {
     this.ticketEmpData.deskId = this.empdata.deskId;
     if (this.allEmployees.length > 0) {
       this.itSupportForm.patchValue({
-        name: this.ticketEmpData.fullName,
+        name: this.allEmployeesself.find((employee) => employee.employeeId === event).fullName,
         email: this.ticketEmpData.email,
         phoneNumber: this.ticketEmpData.mobile_number,
         deskdetails: this.ticketEmpData.deskId,
       });
+      console.log(this.itSupportForm.value.name);
+      
     }
 
   } else {

@@ -93,7 +93,6 @@
                                     }}</ng-template>
                             </p-select>
                             }
-                            
                         </div>
                         <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
                             <div class="error-msg">{{'Employee is required' | translate}}</div>
@@ -146,10 +145,11 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="jobLocationDropDownData" [filter]="true" filterBy="firstName" [showClear]="true"
-                            optionLabel="jobLocationName" placeholder="Please select employee"
-                            formControlName="department" class="custom-select w-100" (onChange)="getSubLocationByid($event.value)">
+                            <p-select [options]="departmentDetails" [filter]="true" filterBy="departmentName" [showClear]="true"
+                            optionLabel="departmentName" placeholder="Please select department"
+                            formControlName="department" class="custom-select w-100" (onChange)="onDepartmentChange($event.value)">
                         </p-select>
+                        
                     <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
                         <div class="error-msg">{{'Department is required' | translate}}</div>
                     </div>
@@ -160,9 +160,9 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="subLocationsDropdown" [filter]="true" filterBy="firstName" [showClear]="true"
-                            optionLabel="jobSubLocationName"  placeholder="Please select employee"
-                            formControlName="subLocation" class="custom-select w-100">
+                            <p-select [options]="teamDropdownValues" [filter]="true" filterBy="subdepartmentName" [showClear]="true"
+                            optionLabel="subdepartmentName"  placeholder="Please select team"
+                            formControlName="team" class="custom-select w-100" (onChange)="onSubDepartmentNameChange($event.value)">
                         </p-select>
                     <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
                         <div class="error-msg">{{'Team is required' | translate}}</div>
@@ -174,7 +174,7 @@
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="typeDetails"
-                            optionLabel="label" optionValue="value" placeholder="Please select employee"
+                            optionLabel="label" optionValue="value" placeholder="Please select type"
                             formControlName="type" class="custom-select w-100">
                             
                         </p-select>
@@ -190,13 +190,10 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
-                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
-                            formControlName="priority" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
-                                }}</ng-template>
-                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
-                                }}</ng-template>
+                            <p-select [options]="priorityDetails"
+                            optionLabel="label" optionValue="value" placeholder="Please select priority"
+                            formControlName="priority" class="custom-select w-100">
+                            
                         </p-select>
                     <div *ngIf="itSupportForm.get('priority')?.invalid && itSupportForm.get('priority')?.touched">
                         <div class="error-msg">{{'Priority is required' | translate}}</div>
@@ -207,14 +204,10 @@
                         <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeedetails" [filter]="true" filterBy="firstName" [showClear]="true"
-                            optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
-                            formControlName="subject" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
-                                }}</ng-template>
-                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
-                                }}</ng-template>
-                        </p-select>
+                        
+                            <input type="text" class="form-control custom-input" formControlName="subject"
+                            placeholder="Please enter subject" />
+                        
                       
                     </div>
                     <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">

@@ -9,6 +9,8 @@ import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { OpenModalService } from '../../services/open-modal.service';
+import { IDepartment } from '../../Interfaces/letters-model';
 
 
 @Component({
@@ -31,19 +33,33 @@ export class MyTicketsComponent {
   isColleagueSelected:boolean = true;
   ticketEmpData = {} as any;
   allEmployees = [] as any [];
+  departmentDetails = [] as IDepartment[];
   employeeId : any;
+  teamDropdownValues: any[] = [];
+  postDetails: any = {};
+  itTicketDetails = {} as any;
+  selectedSubDepartmentId: any;
   typeDetails = [
     { value: 'Issue', label: 'Issue' },
     { value: 'Incident', label: 'Incident' },
     { value: 'Query', label: 'Query' }
 
   ];
+  priorityDetails = [
+    { value: 'Urgent', label: 'Urgent' },
+    { value: 'High', label: 'High' },
+    { value: 'Normal', label: 'Normal' },
+    { value: 'Low', label: 'Low' }
+
+  ];
+
 
 
   constructor(
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private fb: FormBuilder,
+    private confirmation: OpenModalService
   ) {}
 
   
@@ -58,7 +74,7 @@ export class MyTicketsComponent {
     this.getSelfEmployee();
     this.getEmployee();
     this.getuserticketsbyempid();
-    this.getjobLocationList();
+    this.getDepartment(); 
 
     this.itSupportForm = this.fb.group({
       employee: ['', Validators.required],
@@ -121,38 +137,36 @@ export class MyTicketsComponent {
  
   }
 
-  subLocationsDropdown: any = [];
-  jobLocationDropDownData: any = [];
-  getSubLocationByid(selectedLocation: any): void {
-    if (selectedLocation && selectedLocation.id) {
-      this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
-        next: (data: any) => {
-          if (data.length === 0) {
-            this.subLocationsDropdown = [];
-          } else {
-            this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
-          }
-        },
-        error: (err: any) => {
-        },
-      });
-    } else {
-      this.subLocationsDropdown = [];
-    }
+
+  
+  onDepartmentChange(selectedDepartment: any): void {
+    const selectedDepartmentId = selectedDepartment.sno; // Get the sno of the selected department
+    // Fetch the teams based on the selected department ID
+    this.subscription = this.http.getData(`Subdepartments/Getnames/${selectedDepartmentId}`).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.teamDropdownValues = data; // Update the team dropdown values
+        } else {
+          this.teamDropdownValues = []; // Reset if no teams are found
+        }
+        this.itSupportForm.patchValue({ team: null }); // Reset the team selection
+      },
+      error: (err: any) => {
+        this.teamDropdownValues = []; // Reset on error
+        this.itSupportForm.patchValue({ team: null }); // Reset the team selection
+      }
+    });
   }
 
-  getjobLocationList() {
-      this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
-        next: (locations: any) => {
-          this.jobLocationDropDownData = locations;
-          // Fetch sub-locations for each location
-          const subLocationRequests = locations.map((location: { id: any; }) =>
-            this.http.getData(`JobLocation/sub-location-by-joblocation/${location.id}`)
-          );
-          
+
+    getDepartment() {
+      this.subscription = this.http.getData('Department').subscribe({
+        next: (data: any) => {
+          this.departmentDetails = data as IDepartment[];
         }
       });
     }
+    
   
   onTicketRaisedForChange(event: any) {
     let value = event;
@@ -171,7 +185,7 @@ export class MyTicketsComponent {
         this.empdata = this.allEmployeesself.find(employee => employee.employeeId == empid);
         console.log(this.empdata);
         if (this.empdata) {
-            this.ticketEmpData.EmployeeId = this.empdata.employeeId;
+            this.ticketEmpData.employeeId = this.empdata.employeeId;
             this.ticketEmpData.fusionEmpId = this.empdata.fusionEmpId;
             this.ticketEmpData.name = `${this.empdata.fusionEmpId} - ${this.empdata.firstName} ${this.empdata.middleName ?? ''} ${this.empdata.lastName}`;
             this.ticketEmpData.email = this.empdata.workEmail;
@@ -222,7 +236,7 @@ export class MyTicketsComponent {
 
     this.ticketEmpData.fusionEmpId = this.empdata.fusionEmpId;
     this.ticketEmpData.fullName = `${this.empdata.firstName} ${this.empdata.middleName} ${this.empdata.lastName}`;
-    this.ticketEmpData.EmployeeId = this.empdata.employeeId;
+    this.ticketEmpData.employeeId = this.empdata.employeeId;
     this.ticketEmpData.email = this.empdata.workEmail;
     this.ticketEmpData.mobile_number = this.empdata.contactnumber;
     this.ticketEmpData.assetName = this.empdata.assetName;
@@ -266,9 +280,53 @@ export class MyTicketsComponent {
       }
     })
   }
-
+  
+  onSubDepartmentNameChange(selectedSubDepartment: any): void {
+    this.selectedSubDepartmentId = selectedSubDepartment.subdepartmentId;
+    console.log(this.selectedSubDepartmentId);
+  }
   onSubmit() {
-console.log(this.itSupportForm.value);
+    this.isLoading = true;
+    console.log(this.itSupportForm.value);
+    this.postDetails = this.itSupportForm.value
+
+    this.itTicketDetails.empId = this.ticketEmpData.employeeId;
+    this.itTicketDetails.subdeptId = this.selectedSubDepartmentId;
+    this.itTicketDetails.deskNo = this.itSupportForm.value.deskdetails;
+    this.itTicketDetails.type = this.itSupportForm.value.type;
+    this.itTicketDetails.ticketStatus = "Open";
+    this.itTicketDetails.priority = this.itSupportForm.value.priority;
+    this.itTicketDetails.subject = this.itSupportForm.value.subject;
+    this.itTicketDetails.description = this.itSupportForm.value.description;
+    this.itTicketDetails.stepsToReplicate = this.itSupportForm.value.description;
+    this.itTicketDetails.comments = null
+    this.itTicketDetails.assigneeId = null;
+    this.itTicketDetails.attachmentUrl = null;
+    this.itTicketDetails.createdAt = new Date().toISOString();
+    this.itTicketDetails.updatedAt = null;
+    this.itTicketDetails.isdeleted = false
+    this.subscription = this.http.postdata(`Tickets`, this.itTicketDetails).subscribe({
+      next: (data: any) => {
+       console.log(data);
+       this.confirmation.openSuccessModal('Ticket raised successfully');
+       localStorage.setItem('ticketDetails', JSON.stringify(data));
+       setTimeout(() => {
+        this.itSupportForm.reset();
+        this.modalService.dismissAll();
+        this.getuserticketsbyempid();
+       }, 2000);
+       this.isLoading = false;
+
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.confirmation.openErrorModal(err.error.Message);
+        this.isLoading = false;
+      },
+      complete: () => {
+
+      }
+    });
 
   }
 

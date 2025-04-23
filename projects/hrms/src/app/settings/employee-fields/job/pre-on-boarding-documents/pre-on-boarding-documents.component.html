@@ -23,7 +23,7 @@
                     <div class="position-relative">
                         <input type="text" class="form-control custom-input" formControlName="PreOnboardDocuments"
                             placeholder=" Enter document name " maxlength="100"
-                            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" />
+                            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
                         <small class="text-muted position-absolute end-0 bottom-0 pe-2">
                             {{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100
                         </small>
@@ -183,7 +183,7 @@
                     <div class="position-relative">
                         <input type="text" class="form-control custom-input" formControlName="UpdatePreOnboardDocuments"
                             placeholder="Enter Document Name " maxlength="100"
-                            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                         <small class="text-muted position-absolute end-0 bottom-0 pe-2">
                             {{updateForm.get('UpdatePreOnboardDocuments')?.value?.length || 0}}/100
                         </small>

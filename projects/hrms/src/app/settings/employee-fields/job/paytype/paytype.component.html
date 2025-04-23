@@ -5,7 +5,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter paytype"
                     formControlName="Paytype" aria-label="paytype" aria-describedby="paytype"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="paytype">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="PaytypeForm.invalid">{{'Add'|translate}}</button></span>
@@ -68,7 +68,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Paytype'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Paytype" placeholder="Please enter paytype"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('Paytype')?.touched && updateForm.get('Paytype')?.invalid" class="error-msg mt-2">
                         <div *ngIf="updateForm.get('Paytype')?.errors?.['required']">{{'Paytype is required'|translate}}</div>
                     </div>

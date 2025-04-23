@@ -1,3 +1,4 @@
+@if(!dataload){
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="component-header">
@@ -44,32 +45,30 @@
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     @if(cycle.status==='Initiated'){
-                                        <li class="dropdown-item border-bottom" 
+                                    <li class="dropdown-item border-bottom"
                                         (click)="openModal(holdconformation);seletedid=cycle">
                                         <a class="dropdown-custom-btn">Hold</a>
                                     </li>
                                     }
-                                   @if(cycle.status==='Review on Hold'){
-                                    <li class="dropdown-item"
-                                    (click)="openModal(Resumeconformation);seletedid=cycle"><a
-                                        class="dropdown-custom-btn">Resume</a></li>
-                                   }
-                                   @if(cycle.status !=='Initiated'  && cycle.status !=='Review on Hold'){
+                                    @if(cycle.status==='Review on Hold'){
+                                    <li class="dropdown-item" (click)="openModal(Resumeconformation);seletedid=cycle"><a
+                                            class="dropdown-custom-btn">Resume</a></li>
+                                    }
+                                    @if(cycle.status !=='Initiated' && cycle.status !=='Review on Hold'){
                                     <li class="dropdown-item" (click)="onUpdate(cycle)">
                                         <a class="dropdown-custom-btn">Update</a>
-                                </li> 
-                                   }
+                                    </li>
+                                    }
                                     @if(cycle.status ==='Initiated'){
-                                        <li class="dropdown-item"
-                                        (click)="onClickView(cycle)"><a class="dropdown-custom-btn">View</a>
+                                    <li class="dropdown-item" (click)="onClickView(cycle)"><a
+                                            class="dropdown-custom-btn">View</a>
                                     </li>
                                     }
                                     @if(cycle.status==='Created'){
-                                        <li class="dropdown-item" 
-                                        (click)="openModal(intialconformation);seletedid=cycle"><a
+                                    <li class="dropdown-item" (click)="openModal(intialconformation);seletedid=cycle"><a
                                             class="dropdown-custom-btn"></a>Initiate</li>
                                     }
-                                    
+
                                 </ul>
                             </div>
                         </td>
@@ -90,14 +89,13 @@
                     <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
                         totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
                 </div>
-
-                <!-- Pagination -->
                 <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
                     (onPageChange)="onPageChange($event)"></p-paginator>
             </div>
         </div>
     </div>
 </div>
+}@else{<app-data-loader-content />}
 
 <ng-template #cancelationConfirmation let-modal>
     <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center" ngbAutofocus>
@@ -109,23 +107,27 @@
         </div>
     </div>
 </ng-template>
+
 <ng-template #holdconformation let-modal>
     <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center" ngbAutofocus>
         <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
         <p class="mb-4 confirm-text text-center">Are you sure you want to Hold the Review Cycle?</p>
         <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="HoldReviewCycle(seletedid);modal.dismiss()">Yes</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="HoldReviewCycle(seletedid);modal.dismiss()">Yes</button>
         </div>
     </div>
 </ng-template>
+
 <ng-template #Resumeconformation let-modal>
     <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center" ngbAutofocus>
         <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
         <p class="mb-4 confirm-text text-center">Are you sure you want to Resume the Review cycle?</p>
         <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="ResumeReviewCycle(seletedid);modal.dismiss()">Yes</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="ResumeReviewCycle(seletedid);modal.dismiss()">Yes</button>
         </div>
     </div>
 </ng-template>
@@ -136,7 +138,8 @@
         <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Initiate the Review Cycle?</h4>
         <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="initiateReviewCycle(seletedid);modal.dismiss()">{{'Yes'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="initiateReviewCycle(seletedid);modal.dismiss()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

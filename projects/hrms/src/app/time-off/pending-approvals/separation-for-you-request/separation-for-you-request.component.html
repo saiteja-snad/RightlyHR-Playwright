@@ -335,7 +335,7 @@
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="reset" class="custom-btn btn-secondary"
                         (click)=" resetForm();">{{'Cancel'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid||isLoading">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid||isLoading||!buttondisable">
                         @if(!isLoading){
                         {{'Approve'|translate}}
                         }
@@ -596,7 +596,7 @@
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="resetForm(); modal.dismiss()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="acceptFormforprocess.invalid||isLoading">
+                        [disabled]="acceptFormforprocess.invalid||isLoading||!buttondisable">
                         @if(!isLoading){
                         {{'Approve'|translate}}
                         }

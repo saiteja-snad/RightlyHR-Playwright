@@ -25,6 +25,7 @@ import { RbacService } from '../../../services/rbac.service';
   styleUrl: './trainee-approvals.component.scss'
 })
 export class TraineeApprovalsComponent {
+  isLoading= false;
   private customsetup: any;
   private datePipe: DatePipe;
   selectedLeaveData: any = {
@@ -152,6 +153,7 @@ onRowsChange() {
   }
 
   handleAccept(f:NgForm) {
+    this.isLoading=true;
     let requestBody = {
       status: 'Approved',
       comments: this.selectedLeaveData.trcomments,
@@ -168,18 +170,20 @@ onRowsChange() {
           this.conformationPopup.openSuccessModal('Request Accepted Successfully')
         },
         error: (reason: any) => {
+          this.isLoading=false
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+           this.isLoading=false;
+           this.getAllPendingApprovals();
+           this.selectedLeaveData.trcomments='';
         },
       });
   }
 
   //function to send the rejected status and comments
   handleReject(f:NgForm) {
+    this.isLoading=true
     let requestBody = {
       status: 'Rejected',
       comments: this.selectedLeaveData.rejectedReason,
@@ -191,12 +195,17 @@ onRowsChange() {
       )
       .subscribe({
         next: (respone: any) => {
+          this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Request Rejected Successfully')
         },
         error: (reason: any) => {
+          this.isLoading=false
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
+          this.isLoading=false;
+          this.getAllPendingApprovals();
+          this.selectedLeaveData={};
         },
       });
   }

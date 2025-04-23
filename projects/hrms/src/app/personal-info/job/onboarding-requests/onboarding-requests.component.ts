@@ -111,8 +111,9 @@ export class OnboardingRequestsComponent {
     // Send the POST request
     this.http.postdata('onboardRequest', requestBody).subscribe({
       next: (response: any) => {
-        this.conformationPopup.openSuccessModal("Onboard Request submitted successfully")
         this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal("Onboard Request submitted successfully")
+        this.getOnboardrequest();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message)
@@ -162,7 +163,7 @@ export class OnboardingRequestsComponent {
     this.subscription = this.http.getData(`onboardRequest/getbyemployeeId?Id=${EmployeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.dynamicData = data;
+        this.dynamicData.next(data);
 
         let filtereddata = this.getSeparationDetails.some((ele: any) => {
           return ele.status?.toLowerCase() === 'rejected';

@@ -383,7 +383,7 @@
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-3 mt-2">
-                <button type="reset" class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{'Cancel' | translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary w-50  py-2" (click)="openConfirmation()">{{'Cancel' | translate}}</button>
                 <button type="submit" class="custom-btn btn-primary w-50  py-2" [disabled]="reviewtemplatedropdowns.invalid">{{'Assign' | translate}}</button>
             </div>
         </form>
@@ -613,7 +613,7 @@
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4 pb-3">
                 <button type="reset" class="custom-btn btn-secondary w-50 py-2"
-                    (click)="modal.dismiss()">Cancel</button>
+                    (click)="openConfirmation()">Cancel</button>
                 <button type="submit" class="custom-btn btn-primary w-50 py-2"
                     [disabled]="addEmployeeForm.invalid">Save</button>
             </div>
@@ -692,6 +692,7 @@
     </div>
 </ng-template>
 
+<!-- Promotion letter Generation -->
 <ng-template #promationletter let-modal>
     <div ngbAutofocus>
         <form [formGroup]="Effectivedatefrom" (ngSubmit)="generatepromationLetters()">
@@ -754,5 +755,19 @@
     <div class="modal-body text-center p-5" ngbAutofocus>
         <div class="spinner-border text-primary" role="status"></div>
         <p class="heading4 pt-4">Update in progress...</p>
+    </div>
+</ng-template>
+
+<!-- Confirmation Modal -->
+<ng-template #confirmation let-modal>
+    <div class="result-popup-content text-center" ngbAutofocus>
+        <div class="mt-2">
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+            <p class="confirmation-text">{{'Are you sure want to close?'|translate}}</p>
+        </div>
+        <div class="d-flex gap-5 pt-2 w-100">
+            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
+            <button class="custom-btn btn-primary w-50  py-2" (click)="close()">{{"Yes" | translate}}</button>
+        </div>
     </div>
 </ng-template>

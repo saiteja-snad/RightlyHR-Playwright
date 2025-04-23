@@ -254,7 +254,7 @@ export class CreateComponent {
     this.isLoading = true;
     console.log(this.reviewCycleForm.value.locationId)
     if (this.reviewCycleForm.valid) {
-      const data = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+      const data = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
       const reviewCycleData = {
         reviewCycleName: this.reviewCycleForm.value.reviewCycleName,
         startDate: this.reviewCycleForm.value.startDate,

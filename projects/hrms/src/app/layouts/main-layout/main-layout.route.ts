@@ -15,6 +15,7 @@ import { AssetsAllocationsLayoutComponent } from "../../assets-allocation/assets
 import { ItsupportLayOutComponent } from "../../ITsupport/itsupport-lay-out/itsupport-lay-out.component";
 
 import { PmsConfigurationLayoutComponent } from "../../pms-configuration/pms-configuration-layout/pms-configuration-layout.component";
+import { OrganizationchartComponent } from "../../organizationchart/organizationchart/organizationchart.component";
 
 
 export default [
@@ -32,6 +33,7 @@ export default [
     { path: 'reports', component: ReportsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../reports/reports.routes')},
     { path: 'assets-management', component: AssetsAllocationsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../assets-allocation/assets-allocation.route')},
     { path: 'it-support', component: ItsupportLayOutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../ITsupport/itsupport.route')},
-    { path: 'pmsconfiguration', component: PmsConfigurationLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../pms-configuration/pms-configuration.route')}
+    { path: 'pmsconfiguration', component: PmsConfigurationLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../pms-configuration/pms-configuration.route')},
+    { path: 'organization-chart', component: OrganizationchartComponent, canActivate: [MsalGuard]}
 
 ] as Route[];

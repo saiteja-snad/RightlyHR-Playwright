@@ -43,14 +43,14 @@
                                                 <i class="bi bi-three-dots-vertical"></i>
                                             </a>
                                             <ul class="dropdown-menu">
-                                                <li  *ngIf="item?.reviewCycleHeaderStatus==='Created'"><a class="dropdown-item"
-                                                        (click)="editDetails(item)">Update</a></li>
-                                              
+                                                <li *ngIf="item?.reviewCycleHeaderStatus==='Created' ||item?.reviewCycleHeaderStatus==='Initiated' "><a
+                                                        class="dropdown-item" (click)="editDetails(item)">Update</a></li>
+                                            
                                                 <li *ngIf="item?.reviewCycleHeaderStatus==='Created'"><a class="dropdown-item"
                                                         (click)="openDelete(confirmation, item)">Delete</a></li>
-
-                                                        <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'"><a class="dropdown-item"
-                                                            (click)="editDetails(item)">Update</a></li>
+                                                <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'"><a class="dropdown-item"
+                                                        (click)="viewDetails(item)">View</a>
+                                                </li>
                                             </ul>
                                         </div>
                                     </td>

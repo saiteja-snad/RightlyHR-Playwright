@@ -85,10 +85,10 @@ export class AssessorConfigurationComponent implements OnInit , OnDestroy {
       size: 'lg',
     });
   }
-  openDelete(content: any, id: any) {
-    this.deleteId = id;
+  openDelete(content: any, data: any) {
+    this.deleteId = data.assessor.id;
     console.log(this.deleteId);
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, {  backdrop: 'static',centered: true });
   }
   editDetails(data: any) {
     const modalRef = this.modalService.open(UpdateAssessorComponent, {
@@ -99,11 +99,12 @@ export class AssessorConfigurationComponent implements OnInit , OnDestroy {
     modalRef.componentInstance.updateData = data;
   }
   viewDetails(data: any) {
-    this.modalService.open(ViewAssessorComponent, {
+    const modalRef = this.modalService.open(ViewAssessorComponent, {
       centered: true,
       backdrop: 'static',
       size: 'lg',
     });
+    modalRef.componentInstance.updateData = data;
   }
   //function to get the globalpermissions details
   getAllAssesorConfigurationdata(): void {
@@ -136,7 +137,7 @@ export class AssessorConfigurationComponent implements OnInit , OnDestroy {
         return array.map((item: any) => item.locationName).join(', ');
       case 'subLocationName':
         return array.map((item: any) => item.subLocationName).join(', ');
-      case 'departments':
+      case 'departmentName':
         return array.map((item: any) => item.departmentName).join(', ');
       case 'subDepartmentName':
         return array.map((item: any) => item.subDepartmentName).join(', ');

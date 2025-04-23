@@ -364,7 +364,7 @@ export class OnboardingDetailsComponent {
       relationship1: this.empinfo.relationship1,
       profileUrl: this.empinfo.profileUrl,
       fusionEmpId: this.empinfo.fusionEmpId,
-      empstatus: this.onboardingForm.get('status')?.value.statusname ?? this.empinfo.empstatus,
+      empstatus: this.onboardingForm.get('status')?.value?.statusname ?? this.empinfo.empstatus,
       dateOfJoining: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.dateOfJoining,
       branchCode: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.branchCode,
       probationEndDate: this.onboardingForm.get('probationEndDate')?.value ?? this.empinfo.probationEndDate,
@@ -372,9 +372,9 @@ export class OnboardingDetailsComponent {
       noticePeriod: this.onboardingForm.get('noticePeriodStatus')?.value?.name ?? this.empinfo.noticePeriod,
       backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value?.backgroundcheckstatus1 ?? this.empinfo.backgroundCheckStatus,
       issalaryhold: this.onboardingForm.get('salaryHold')?.value?.value ?? this.empinfo.issalaryhold,
-      pf: this.onboardingForm.get('pf')?.value.value ?? this.empinfo.pf,
-      esic: this.onboardingForm.get('esic')?.value.value ?? this.empinfo.esic,
-      pt: this.onboardingForm.get('pt')?.value.value ?? this.empinfo.pt,
+      pf: this.onboardingForm.get('pf')?.value?.value ?? this.empinfo.pf,
+      esic: this.onboardingForm.get('esic')?.value?.value ?? this.empinfo.esic,
+      pt: this.onboardingForm.get('pt')?.value?.value ?? this.empinfo.pt,
       totalYearsOfExperience: this.onboardingForm.get('totalExperience')?.value ?? this.empinfo.totalYearsOfExperience,
       allowWFH: this.onboardingForm.get('remoteLogin')?.value?.value ?? this.empinfo.allowWFH,
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empinfo.workLocation,
@@ -396,7 +396,7 @@ export class OnboardingDetailsComponent {
           this.getEmployeeId();
           this.onboardingForm.disable();
           console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
+          
 
         },
         error: (reason: any) => {

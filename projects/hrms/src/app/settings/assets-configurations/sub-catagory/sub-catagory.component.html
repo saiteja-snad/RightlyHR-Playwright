@@ -13,10 +13,10 @@
       <table class="w-100">
         <thead>
           <tr>
-            <th class="text-center">Asset Category</th>
-            <th class="text-center">Asset Sub Category</th>
+            <th >Asset Category</th>
+            <th >Asset Sub Category</th>
 
-            <th class="text-center">Action(s)</th>
+            <th>Action(s)</th>
 
           </tr>
         </thead>
@@ -24,8 +24,8 @@
           <ng-container *ngIf="((categoridata | async) ?? []).length > 0; else noDataTemplate">
 
             <tr *ngFor="let asset of categoridata | async">
-              <td class="text-center">{{ getAssetCatData(asset.parentId) }}</td>
-              <td class="text-center">{{ asset.name }}</td>
+              <td >{{ getAssetCatData(asset.parentId) }}</td>
+              <td >{{ asset.name }}</td>
               <td class="text-center">
                 <div class="d-flex gap-4">
 

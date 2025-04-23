@@ -132,29 +132,10 @@ requestForOnboard(Value:any) {
 
       const modalElement = document.getElementById('successhide');
       this.conformationPopup.openSuccessModal('Updated Successfully');
-      // if (modalElement) {
-      //   modalElement.classList.add('show');
-      //   modalElement.style.display = 'block';
-      //   this.StatusMsg = 'Onboard Request submitted successfully'
-      // }
-     
-
     },
     error: (error: any) => {
-      // alert(error.error.message);
           const modalElement = document.getElementById('errorhide');
           this.conformationPopup.openErrorModal('Updated Successfully');
-          // if (modalElement) {
-          //   modalElement.classList.add('show');
-          //   modalElement.style.display = 'block';
-          //   this.StatusMsg = error.error.message;
-          // }
-      // setTimeout(function () {
-      //   location.reload();
-      // }, 2000);
-
-
-   //   window.location.reload();
     }
   });
 }

@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {
-  ReactiveFormsModule,
-  FormsModule,
-  FormBuilder,
-  NgForm,
-} from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormsModule, NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
@@ -15,22 +9,13 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import {
-  IReviewCycle,
-  RatingDetail,
-} from '../../increment-percentage/add-increment/increment.modal';
+import { IReviewCycle } from '../../increment-percentage/add-increment/increment.modal';
 import { IDesignationNames } from './add-assessor.modal';
 import moment from 'moment';
 
 @Component({
   selector: 'app-add-assessor',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    Select,
-    TranslateModule,
-  ],
+  imports: [CommonModule, FormsModule, Select, TranslateModule],
   templateUrl: './add-assessor.component.html',
   styleUrl: './add-assessor.component.scss',
 })
@@ -42,7 +27,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
   isLoading = false;
   myForm!: NgForm;
   deleteId: any;
-  removeRowdata:any
+  removeRowdata: any;
   reviewCycledetailyById = {};
   reviewCycleDropDownData = [] as IReviewCycle[];
   reviewCycleData = [] as IDesignationNames[];
@@ -52,11 +37,9 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
   @ViewChild('deletesuccess') deletesuccess: any;
   @ViewChild('deleterowincrement') deleterowincrement: any;
   constructor(
-    private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
     private http: HttpService,
-    private fb: FormBuilder,
     private modalService: NgbModal,
     public rbac: RbacService
   ) {}
@@ -89,13 +72,12 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           this.activeEmplist = res.map((employee: any) => {
             return {
-              ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
+              ...employee,
               fullName: `${
                 employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${
                 employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
-              // Concatenate first, middle (if present), and last name
             };
           });
           console.log(this.activeEmplist);
@@ -119,8 +101,6 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     this.assesorDetails = [];
     this.addRow();
   }
-
-  // Add Row to FormArray
   // Helper function to check if a row is filled
   isRowFilled(detail: any): boolean {
     // Check if mandatory fields are filled
@@ -146,7 +126,6 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.getData(`reviewCycleHeader/${id}`).subscribe({
       next: (data: any) => {
-        console.log('Fetched Review Cycle Details:', data);
         this.reviewCycledetailyById = data;
         // Patch the form fields
         if (this.postassesorConfiguration) {
@@ -163,7 +142,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
             (this.postassesorConfiguration.team = data[0]?.subdepartments
               ?.map((loc: any) => loc?.subDepartmentName)
               .join(', '));
-              this.initialAddRowCall();
+          this.initialAddRowCall();
         }
       },
       error: (err: any) => {
@@ -172,12 +151,9 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
       },
     });
   }
- 
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true });
-  }
-  close() {
-    this.modalService.dismissAll();
   }
   closeModal() {
     this.modalService.dismissAll();
@@ -194,25 +170,22 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
   }
   //function to delete
   openDeletepopup(content: any, id: any) {
-    console.log(id);
     this.deleteId = id;
-    console.log(this.deleteId);
     this.modalService.open(content, { centered: true });
   }
-  clearindexdata(index:any){
- 
+  clearindexdata(index: any) {
     if (this.assesorDetails && this.assesorDetails[index]) {
       // Clear the data for the specific index
       this.assesorDetails[index] = {
-          assessors: null,
-          deadlineindays: null,
-          assessorempId: null,
-          comments: false,
-          rating: false,
-          view: false
+        assessors: null,
+        deadlineindays: null,
+        assessorempId: null,
+        comments: false,
+        rating: false,
+        view: false,
       };
+    }
   }
-}
   // Add Row to FormArray
   addRow() {
     const newRow = {
@@ -221,7 +194,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
       view: null,
       rating: null,
       comments: null,
-      assessorempId: null
+      assessorempId: null,
     };
     this.assesorDetails.push(newRow);
   }
@@ -236,13 +209,12 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     const loggedinuser = this.authService.getToken();
     const currentDate = new Date();
     if (this.postassesorConfiguration) {
-      console.log(this.assesorDetails)
+      console.log(this.assesorDetails);
       const payload = {
         reviewCycleId: this.postassesorConfiguration.id,
         isDeleted: false,
         createdBy: loggedinuser.employeeId,
         createdAt: currentDate,
-
         items: this.assesorDetails?.map((row: any) => ({
           assessor: row.assessors,
           dueDate: row.deadlineindays,
@@ -274,8 +246,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
           } else if (err.status === 500) {
             this.conformationPopup.openErrorModal(err.error.Message);
           } else {
-            this.conformationPopup.openErrorModal(err.error.Message
-            );
+            this.conformationPopup.openErrorModal(err.error.Message);
           }
         },
         // eslint-disable-next-line @typescript-eslint/no-empty-function

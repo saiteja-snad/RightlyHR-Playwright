@@ -39,7 +39,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
-  filteredYearlyRecord: any[] = [];
+  filteredleaveRecord: any[] = [];
   employeeiddetails: any[] = [];
   teamdetails = [] as any[];
   selectedEmployeeId: any = null;
@@ -171,7 +171,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   selectYearlyEmployee(employee: any, event: Event) {
     event.stopPropagation();
     this.selectedEmployeeId = employee?.fusionEmpId ?? null;
-    this.filteredYearlyRecord = [];
+    this.filteredleaveRecord = [];
   }
 
   selectYearlyManager(manager: { id: string; fullName: string }): void {
@@ -209,7 +209,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       !formValue.manager;
   
     if (noFilterProvided) {
-      this.filteredYearlyRecord = [];
+      this.filteredleaveRecord = [];
       return;
     }
   
@@ -242,11 +242,11 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     // Single API call
     this.reportsService.getAttendanceReports(request).subscribe({
       next: (response: any) => {
-        this.filteredYearlyRecord = response ?? [];
+        this.filteredleaveRecord = response ?? [];
       },
       error: (error) => {
         console.error('Error fetching WFH records', error);
-        this.filteredYearlyRecord = [];
+        this.filteredleaveRecord = [];
       },
     });
   }
@@ -285,7 +285,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     ];
 
     // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredYearlyRecord.map(record => {
+    const modifiedData = this.filteredleaveRecord.map(record => {
       const modifiedRecord: any = {};
       NEW_SEQUENCE.forEach(columnName => {
         const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);

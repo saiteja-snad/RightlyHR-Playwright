@@ -38,7 +38,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
-  filteredYearlyRecord: any[] = [];
+  filteredCompoffRecord: any[] = [];
   employeeiddetails: any[] = [];
   teamdetails = [] as any[];
   selectedEmployeeId: any = null;
@@ -181,7 +181,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   selectYearlyEmployee(employee: any, event: Event) {
     event.stopPropagation();
     this.selectedEmployeeId = employee?.fusionEmpId ?? null;
-    this.filteredYearlyRecord = [];
+    this.filteredCompoffRecord = [];
   }
   
   selectYearlyManager(manager: { id: string; fullName: string }): void {
@@ -218,7 +218,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
        !formValue.manager;
    
      if (noFilterProvided) {
-       this.filteredYearlyRecord = [];
+       this.filteredCompoffRecord = [];
        return;
      }
    
@@ -251,11 +251,11 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
      // Single API call
      this.reportsService.getcompOffReports(request).subscribe({
        next: (response: any) => {
-         this.filteredYearlyRecord = response ?? [];
+         this.filteredCompoffRecord = response ?? [];
        },
        error: (error) => {
          console.error('Error fetching WFH records', error);
-         this.filteredYearlyRecord = [];
+         this.filteredCompoffRecord = [];
        },
      });
    }
@@ -293,7 +293,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       ];
   
       // Modify data with renamed headers and new sequence
-      const modifiedData = this.filteredYearlyRecord.map(record => {
+      const modifiedData = this.filteredCompoffRecord.map(record => {
         const modifiedRecord: any = {};
         NEW_SEQUENCE.forEach(columnName => {
           const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);

@@ -77,7 +77,7 @@
       }
       @else {
         <div class="custom-table-content">
-          <table id="wfhReportTable" class="content w-100">
+          <table id="leaveReportTable" class="content w-100">
             <thead>
                 <tr>
                     <th>Employee ID</th>
@@ -96,14 +96,14 @@
                 </tr>
             </thead>
             <tbody>
-              @if (!filteredYearlyRecord || filteredYearlyRecord.length === 0) {
+              @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
                 <tr>
                   <td colspan="9" class="text-center">
                     <app-no-data-found></app-no-data-found></td>
                 </tr>
               }
               @else {
-                @for (record of filteredYearlyRecord; track $index) {
+                @for (record of filteredleaveRecord; track $index) {
                   <tr>
                     <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
                     <td class="td-center">{{ record.employeeName ?? '-' }}</td>

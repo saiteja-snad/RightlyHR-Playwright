@@ -34,7 +34,7 @@ export class LeaveSummaryReportComponent {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
-  filteredYearlyRecord: any[] = [];
+  filterlvsumRecord: any[] = [];
   employeeiddetails: any[] = [];
   teamdetails = [] as any[];
   selectedEmployeeId: any = null;
@@ -165,7 +165,7 @@ export class LeaveSummaryReportComponent {
   selectYearlyEmployee(employee: any, event: Event) {
     event.stopPropagation();
     this.selectedEmployeeId = employee?.fusionEmpId ?? null;
-    this.filteredYearlyRecord = [];
+    this.filterlvsumRecord = [];
   }
   
   selectYearlyManager(manager: { id: string; fullName: string }): void {
@@ -202,7 +202,7 @@ export class LeaveSummaryReportComponent {
      !formValue.year;
  
    if (noFilterProvided) {
-     this.filteredYearlyRecord = [];
+     this.filterlvsumRecord = [];
      return;
    }
  
@@ -236,7 +236,7 @@ export class LeaveSummaryReportComponent {
    this.reportsService.getLeaveSummaryReport(request).subscribe({
      next: (data: any) => {
        // Extract the year from startDate and add it to each record
-       this.filteredYearlyRecord = data.map((record: any) => {
+       this.filterlvsumRecord = data.map((record: any) => {
          const startDate = new Date(record.startDate);  // Assuming startDate is in a valid format
          return {
            ...record,
@@ -244,10 +244,10 @@ export class LeaveSummaryReportComponent {
          };
        });
  
-       if (this.filteredYearlyRecord.length === 0) {
+       if (this.filterlvsumRecord.length === 0) {
          // Show modal: no data
        } else {
-         console.log('Fetched Yearly Record:', this.filteredYearlyRecord);
+         console.log('Fetched Yearly Record:', this.filterlvsumRecord);
        }
      },
      error: (error: any) => console.error('Error fetching Yearly records:', error),
@@ -287,7 +287,7 @@ export class LeaveSummaryReportComponent {
       ];
   
       // Modify data with renamed headers and new sequence
-      const modifiedData = this.filteredYearlyRecord.map(record => {
+      const modifiedData = this.filterlvsumRecord.map(record => {
         const modifiedRecord: any = {};
         NEW_SEQUENCE.forEach(columnName => {
           const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);

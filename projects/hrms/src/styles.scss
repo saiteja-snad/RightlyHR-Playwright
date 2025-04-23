@@ -1316,12 +1316,11 @@ input:focus {
     color: #06274F;
 }
 
-//stylesfor expenses
+//styles for popup table
 .custom-table {
     width: 100%;
     overflow: auto;
     background-color: #FFFFFF;
-    border: 1px solid #E7E7ED;
     border-radius: 1.2rem;
     position: relative;
 
@@ -1331,13 +1330,13 @@ input:focus {
         z-index: 1;
     }
 
-    th,td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
         letter-spacing: 0%;
         vertical-align: middle;
-        padding: 1.6rem;
+        padding: 1rem;
     }
 
     th {

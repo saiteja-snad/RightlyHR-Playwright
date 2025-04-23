@@ -91,7 +91,7 @@ export class LeaveSummaryReportComponent {
   initializeForm() {
     this.lvSummeryReportForm = this.fb.group({
       employee: [null, Validators.required],
-      manager: [null, Validators.required],
+      manager: [null],
       year: [''],
       leaveCategory: ['']
      

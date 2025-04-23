@@ -97,7 +97,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   initializeForm() {
     this.LeaveReportForm = this.fb.group({
       employee: [null, Validators.required],
-      manager: [null, Validators.required],
+      manager: [null],
       dateRange: [null],
       leaveCategory: [''],
       year: ['']

@@ -85,8 +85,8 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   initializeForm() {
     this.compoffReportForm = this.fb.group({
       employee: [null, Validators.required],
-      manager: [null, Validators.required],
-      dateRange: [null, Validators.required],
+      manager: [null],
+      dateRange: [null],
       leaveCategory: [''],
       year: ['']
     });

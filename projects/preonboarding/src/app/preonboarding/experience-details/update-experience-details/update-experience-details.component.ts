@@ -62,10 +62,10 @@ export class UpdateExperienceDetailsComponent {
       fromDate: [this.formatDate(this.experienceData?.fromDate) || '', Validators.required],
       toDate: [this.formatDate(this.experienceData?.toDate) || ''],
       jobTitle: [this.experienceData?.jobTitle || '', Validators.required],
-      description: [this.experienceData?.description || '', Validators.required],
-      previousContactName: [this.experienceData?.previousContactName || '', Validators.required],
-      previousContactNumber: [this.experienceData?.previousContactNumber || '', [Validators.required, this.phoneNumberValidator()]],
-      previousContactEmail: [this.experienceData?.previousContactEmail || '', [Validators.required, Validators.email]],
+      description: [this.experienceData?.description || ''],
+      previousContactName: [this.experienceData?.previousContactName || ''],
+      previousContactNumber: [this.experienceData?.previousContactNumber || '', [this.phoneNumberValidator()]],
+      previousContactEmail: [this.experienceData?.previousContactEmail || '', [Validators.email]],
       attachment: [this.experienceData?.attachment || null, Validators.required]
     });
     // Disable toDate if isPresent is true

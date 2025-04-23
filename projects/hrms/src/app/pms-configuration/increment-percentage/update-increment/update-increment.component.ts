@@ -232,6 +232,7 @@ export class UpdateIncrementComponent implements OnInit,OnDestroy{
     }
       // Handle form submission
       updateincermement() {
+        this.isLoading=true;
         // this.modalRef = this.modalService.open(this.loading, { centered: true });
         const loggedinuser = this.authService.getToken();
         const currentDate = new Date();
@@ -269,7 +270,7 @@ export class UpdateIncrementComponent implements OnInit,OnDestroy{
               
             },
             error: (err: any) => {
-            
+              this.isLoading=false;
               console.log(err)
               if (err.status === 404) {
                 this.conformationPopup.openErrorModal('The requested resource was not found. Please check the URL or contact the administrator for assistance.');
@@ -282,7 +283,11 @@ export class UpdateIncrementComponent implements OnInit,OnDestroy{
             },
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             complete: () => {
-              //
+              this.isLoading=false;
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            global: true,
+          }));
             },
           })
         }

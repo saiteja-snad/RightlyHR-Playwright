@@ -1,22 +1,19 @@
+.component-data-content {
+  padding: 5rem;
+}
+
 .success-icon {
-    width: 10rem;
-    height: 10rem;
+  width: 8rem;
 }
 
-.text-content {
-    width: 60%;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 30px;
-    color: #222B45;
+.review-content {
+  color: #222B45;
+  font-weight: 500;
+  font-size: var(--fontsize18);
+  line-height: 30px;
 }
 
-.pa{
-    color: #222b45;
-    font-size: 18px;
-    font-weight: 500;
-    
-  }
-  .email{
-    color: #304ffd;
-  }
+.job {
+  font-weight: 700;
+  color: var(--primary-color) !important;
+}

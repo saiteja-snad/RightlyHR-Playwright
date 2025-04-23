@@ -182,6 +182,12 @@ resetTriggerSignal() {
     );
   }
 
+  DownloadDataWithQuerydata(endpoint: string, params: any): Observable<any> {
+    return this.http.post(endpoint, params, {
+      observe: 'response',
+      responseType: 'blob'
+    });
+  }
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);
   }

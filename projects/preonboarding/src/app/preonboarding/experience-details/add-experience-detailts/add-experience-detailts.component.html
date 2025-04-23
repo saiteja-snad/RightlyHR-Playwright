@@ -62,8 +62,7 @@
                 </div>
         
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Roles & Responsibilities<span
-                            class="error-msg"></span></label>
+                    <label class="form-label custom-label mb-2">Roles & Responsibilities<span class="error-msg"></span></label>
                     <textarea class="form-control custom-input" formControlName="description" placeholder="Please enter job summary"></textarea>
                     <!-- <div *ngIf="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched" class="error-msg">
                         Roles & Responsibilities is required
@@ -75,7 +74,7 @@
                 </div>
         
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">Contact Name<span class="error-msg"></span></label>
+                    <label class="form-label custom-label mb-2">Contact Name</label>
                     <input type="text" class="form-control custom-input" formControlName="previousContactName" placeholder="Contact name">
                     <!-- <div *ngIf="experienceForm.get('previousContactName')?.invalid && experienceForm.get('previousContactName')?.touched" class="error-msg">
                         Contact Name is required
@@ -83,15 +82,12 @@
                 </div>
         
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">Contact Number<span class="error-msg"></span></label>
+                    <label class="form-label custom-label mb-2">Contact Number</label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                         <lib-country-list [selectedCountryConfig]="selectedCountryConfig"  [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig" class="country-input"
                          (onCountryChange)="onCountryChange($event)"></lib-country-list>
-                        <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
-                            placeholder="Please enter your mobile number" id="phonenumbers"
-                            aria-describedby="phonenumbers"
-                            [value]="experienceForm.get('previousContactNumber')?.value ? formatPhoneNumber(experienceForm.get('previousContactNumber')?.value) : ''"
-                            autocomplete="off" required>
+                        <input type="text" class="form-control custom-input" formControlName="previousContactNumber" placeholder="Please enter your mobile number" 
+                         id="phonenumbers" aria-describedby="phonenumbers" [value]="experienceForm.get('previousContactNumber')?.value" autocomplete="off">
                     </div>
                     <!-- <div class="error-msg my-1"
                         *ngIf="experienceForm.get('previousContactNumber')?.invalid &&  (experienceForm.get('previousContactNumber')?.touched || experienceForm.get('previousContactNumber')?.dirty)">
@@ -104,12 +100,8 @@
                 </div>
         
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">Work Email<span class="error-msg"></span></label>
+                    <label class="form-label custom-label mb-2">Work Email</label>
                     <input type="email" class="form-control custom-input" formControlName="previousContactEmail" placeholder="Work Email">
-                    <!-- <div *ngIf="experienceForm.get('previousContactEmail')?.invalid && experienceForm.get('previousContactEmail')?.touched" class="error-msg">
-                        Work Email is required
-                    </div> -->
-                    
                 </div>
         
                 <div class="col-md-12 mb-3">

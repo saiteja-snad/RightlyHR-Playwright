@@ -76,6 +76,7 @@ export class OfferLetterComponent implements OnInit {
       }
     });
   }
+
   initializeRejectForm() {
     this.rejectForm = this.fb.group({
       rejectReason: ['', Validators.required],
@@ -197,15 +198,6 @@ export class OfferLetterComponent implements OnInit {
     })
   }
 
-  close() {
-    const modalElement = document.getElementById('submittedreject');
-    if (modalElement) {
-      modalElement.classList.remove('show');
-      modalElement.style.display = 'none';
-    }
-    this.router.navigate(['/login'])
-  }
-
   closeModal() {
     this.modalService.dismissAll();
   }
@@ -217,7 +209,6 @@ export class OfferLetterComponent implements OnInit {
     }
     this.subscription = this.http.postData(`PreonboardingEmail/EmployeeOfferRejection`, emaildata).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.loadingcircle = false;
         this.confiramtionpopups.openSuccess('Offer Letter Rejected Successfully');
         this.modalService.dismissAll();

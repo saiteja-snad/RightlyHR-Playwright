@@ -62,10 +62,10 @@ export class AddExperienceDetailtsComponent {
       fromDate: ['', Validators.required],
       toDate: [''],
       jobTitle: ['', Validators.required],
-      description: ['', Validators.required],
-      previousContactName: ['', Validators.required],
-      previousContactNumber: ['', [Validators.required, this.phoneNumberValidator()]],
-      previousContactEmail: ['', [Validators.required, Validators.email]],
+      description: [''],
+      previousContactName: [''],
+      previousContactNumber: ['', [this.phoneNumberValidator()]],
+      previousContactEmail: ['', [Validators.email]],
       attachment: [null, Validators.required]
     });
     this.experienceForm.get('isPresent')?.valueChanges.subscribe((isPresent) => {
@@ -160,7 +160,6 @@ export class AddExperienceDetailtsComponent {
           }
         },
         complete: () => {
-
         }
       });
     };

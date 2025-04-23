@@ -10,11 +10,9 @@ import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
-import { RemoteTabsComponent } from "../../shared/remote-tabs/remote-tabs.component";
-
 @Component({
   selector: 'app-remote-login',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, RemoteTabsComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './remote-login.component.html',
   styleUrl: './remote-login.component.scss'
 })

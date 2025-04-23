@@ -45,46 +45,30 @@ export class AddEventComponent implements OnInit {
       imageUrl: ['']
     });
   }
-  onFileSelected(event: any) {
+  onFileSelected(event: any): void {
     const selectedFile: File = event.target.files[0];
+    const fileType = selectedFile?.type;
+    const maxSize = 2 * 1024 * 1024; // 2MB
   
-    if (selectedFile) {
-      const fileType = selectedFile.type;
+    if (!selectedFile) return;
   
-      if (fileType === 'image/png' || fileType === 'image/jpeg') {
-        const maxSize = 2 * 1024 * 1024; // 2MB
-  
-        if (selectedFile.size <= maxSize) {
-          const reader = new FileReader();
-  
-          // Ensure the objects are initialized before setting properties
-          if (!this.postEventsData) this.postEventsData = {};
-          if (!this.selectedCustomEventField) this.selectedCustomEventField = {};
-  
-          reader.onload = (e: any) => {
-            const base64String = e.target.result;
-            this.postEventsData.attachmentUrl = base64String;
-            this.selectedCustomEventField.attachmentUrl = base64String;
-          };
-  
-          reader.readAsDataURL(selectedFile);
-        } else {
-          this.conformationPopup.openErrorModal('File size exceeds the allowed limit of 2MB.');
-          this.spinnerLoader=false;
-          if (this.postEventsData) this.postEventsData.attachmentUrl = null;
-          event.target.value = '';
-        }
+    if (fileType === 'image/png' || fileType === 'image/jpeg') {
+      if (selectedFile.size <= maxSize) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.customEventForm.patchValue({ imageUrl: e.target.result });
+        };
+        reader.readAsDataURL(selectedFile);
       } else {
-        this.conformationPopup.openErrorModal('Invalid file type. Only PNG and JPG files are allowed.');
-        if (this.postEventsData) this.postEventsData.attachmentUrl = null;
+        this.conformationPopup.openErrorModal('File size exceeds 2MB.');
         event.target.value = '';
       }
     } else {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PNG and JPG are allowed.');
       event.target.value = '';
-      if (this.postEventsData) this.postEventsData.attachmentUrl = null;
-      if (this.selectedCustomEventField) this.selectedCustomEventField.attachmentUrl = null;
     }
   }
+  
   
   getToday(): string {
     return new Date().toISOString().split('T')[0]
@@ -101,18 +85,19 @@ export class AddEventComponent implements OnInit {
         empId: this.Employeeinfo.employeeId,
         isDeleted: false,
         eventTitle: formdata.eventTitle,
-        attachmentUrl: this.postEventsData.attachmentUrl || null
+        attachmentUrl: formdata.imageUrl || null
       };
 
       this.subscription = this.http.postdata(`CustomEvents`, data).subscribe({
         next: (response: any) => {
           if (response) {
             this.spinnerLoader=false
+            this.http.notifyEventAdded();
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Event added successfully');
             // Optionally send custom emails or reset the form
             this.CustomEmail();
-            window.location.reload()
+            // window.location.reload()
           }
         },
         error: (err: any) => {

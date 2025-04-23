@@ -929,4 +929,10 @@ export class JobDetailsComponent {
       this.showSaperationDots = false;
     }
   }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 }

@@ -4,10 +4,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { Router } from '@angular/router';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-team-pending-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent,DataLoaderContentComponent],
   templateUrl: './team-pending-reviews.component.html',
   styleUrl: './team-pending-reviews.component.scss'
 })
@@ -15,17 +18,14 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
   dataload = false;
   employeeId!: number;
   searchQuery = '';
-
   reviewCycles: any[] = [];
   pendingReviews: any[] = [];
   completedReviews: any[] = [];
   filteredReviews: any[] = [];
-
   page = 1;
   pageSize = 10;
   collectionSize = 100;
   totalItems = 0;
-
   destroy$: Subject<boolean> = new Subject();
 
   ngOnInit(): void {
@@ -39,7 +39,8 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
 
   constructor(
     private readonly modalService: NgbModal,
-    private readonly http: HttpService
+    private readonly http: HttpService,
+    private router: Router
   ) { }
 
   fetchReviewCycles(): void {
@@ -55,13 +56,13 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
           this.totalItems = data.totalCount || 0;
 
           this.pendingReviews = data.items;
-          console.log(this.pendingReviews)
           this.filteredReviews = this.pendingReviews;
           if (this.pendingReviews.length > 0) {
             this.collectionSize = data.totalCount;
           }
         },
         error: (err) => {
+          this.dataload=false;
           console.error('Error fetching review cycles:', err);
         },
         complete: () => {
@@ -90,9 +91,8 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
     this.page = newPage;
     this.fetchReviewCycles();
   }
+
   onPageSizeChange(newPageSize: number) {
-    console.log('Page size changed to:', newPageSize);
-    console.log(this.page)
     this.page = 1;
     this.fetchReviewCycles();
   }
@@ -104,6 +104,22 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
   closeModal() {
     this.modalService.dismissAll();
   }
+
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
+    const queryParams = {
+      reviewCycleItemId: reviewCycleItemId,
+      currentStage: currentStage,
+      assessorItemId: assessorItemId,
+      reviewCycles: JSON.stringify(this.reviewCycles), // Ensure this.reviewCycles is defined
+      reviewEmployeeId:reviewEmployeeId,
+      reviewcycleitemformresponseid:reviewcycleitemformresponseid,
+      formresponseid:formresponseid
+    };
+  
+    localStorage.setItem('queryParams', JSON.stringify(queryParams));
+    this.router.navigate(['/pms/assessment-form']);
+  }
+
 
   ngOnDestroy() {
     this.destroy$.next(true);

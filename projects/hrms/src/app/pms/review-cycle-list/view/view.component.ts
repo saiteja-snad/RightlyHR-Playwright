@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -19,6 +19,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 })
 export class ViewComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
+  empinfo = {} as any;
   jobLocationDropDownData: any
   subLocationsDropdown: any
   departmentDetails: any
@@ -37,13 +38,19 @@ export class ViewComponent implements OnInit, OnDestroy {
   @ViewChild('viewreviewcycle') viewreviewcycle: any;
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   todayDate = new Date().toISOString().split('T')[0]
+  @Input() updateData: any
 
-  constructor(private router: Router, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService, private modalService: NgbModal) {
-
+  constructor(private router: Router,
+    private conformationPopup: OpenModalService, private fb: FormBuilder,
+    private http: HttpService, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeReviewCycleupdateForm();
+    if (this.updateData) {
+      this.Viewintial(this.updateData);
+    }
   }
 
   initializeReviewCycleupdateForm() {
@@ -66,45 +73,21 @@ export class ViewComponent implements OnInit, OnDestroy {
       { validators: this.startDateEndDateValidator() }
     );
     this.reviewCycleupdateForm.get('startDate')?.valueChanges.subscribe(() => {
-      this.toggleDateFields();
-      this.updateDueDateValidator();
       this.dueDateAfterStartDateValidator('startDate')
       this.startDateEndDateValidator()
-    });
-    this.toggleDateFields();
-    this.updateDueDateValidator();
+    });  
   }
+
   closeModal() {
     this.openCancelationPopUp()
   }
+
+  close() {
+    this.modalService.dismissAll()
+  }
+
   openCancelationPopUp() {
     this.modalService.open(this.cancelationConfirmation, { centered: true });
-  }
-  updateDueDateValidator(): void {
-    const startDate = this.reviewCycleForm.get('startDate')?.value;
-
-    if (startDate) {
-      this.reviewCycleForm.get('dueDate')?.enable();
-      this.reviewCycleForm.get('dueDate')?.updateValueAndValidity();
-    } else {
-      this.reviewCycleForm.get('dueDate')?.reset();
-      this.reviewCycleForm.get('dueDate')?.disable();
-    }
-  }
-
-  toggleDateFields(): void {
-    const startDateControl = this.reviewCycleForm.get('startDate');
-    const startDateValid = !!startDateControl?.value && startDateControl.valid;
-
-    if (startDateValid) {
-      this.reviewCycleForm.get('endDate')?.enable();
-      this.reviewCycleForm.get('dueDate')?.enable();
-    } else {
-      this.reviewCycleForm.get('endDate')?.reset();
-      this.reviewCycleForm.get('endDate')?.disable();
-      this.reviewCycleForm.get('dueDate')?.reset();
-      this.reviewCycleForm.get('dueDate')?.disable();
-    }
   }
 
   startDateEndDateValidator(): ValidatorFn {
@@ -151,9 +134,9 @@ export class ViewComponent implements OnInit, OnDestroy {
     };
     this.reviewCycleupdateForm.patchValue({
       reviewCycleName: cycle.reviewCycleName,
-      startDate: formatDate(cycle.startDate), // Format to YYYY-MM-DD
+      startDate: formatDate(cycle.startDate), 
       endDate: formatDate(cycle.endDate),
-      //dueDate: formatDate(cycle.dueDate),
+      dueDate: formatDate(cycle.dueDate),
       reviewCycleType: cycle.reviewCycleType,
       applicableForIncrement: cycle.applicableForIncrement,
       applicableEmployeesJoinedBefore: formatDate(cycle.applicableEmployeesJoinedBefore),
@@ -175,10 +158,6 @@ export class ViewComponent implements OnInit, OnDestroy {
     this.getAllDepartments()
     this.getAllReviewCycleTypes()
     this.getAllReviewTemplates()
-    this.modalService.open(this.viewreviewcycle, {
-      size: 'lg',
-      centered: true,
-    });
   }
 
   getAllLocations() {
@@ -264,8 +243,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   onReviewCycleintialUpdate() {
-
-    // this.modalRef = this.modalService.open(this.loading, { centered: true });
     if (this.reviewCycleupdateForm.valid) {
       const reviewCycleData = {
         reviewCycleName: this.reviewCycleupdateForm.value.reviewCycleName,
@@ -284,23 +261,12 @@ export class ViewComponent implements OnInit, OnDestroy {
       };
       this.http.putData(`reviewCycleHeader/update/${this.reviewCycleupdateForm.value.id}`, reviewCycleData).subscribe({
         next: (response) => {
-          // if (this.modalRef) {
-          //   this.modalRef.close();  // or this.modalRef.dismiss();
-          // }
-          // console.log('Success:', response);
           this.closeModal()
           this.onCreateCycleFormSubmitted()
-          // this.Status = 'Review Cycle Updated Successfully'
           this.conformationPopup.openSuccessModal('Review Cycle Updated Successfully')
-          // this.modalService.open(this.success, { centered: true });
         },
         error: (error) => {
-          // this.Status = error.error.reason
           this.conformationPopup.openSuccessModal(error.error.reason)
-          // this.modalService.open(this.errormessage, { centered: true });
-          // if (this.modalRef) {
-          //   this.modalRef.close();  // or this.modalRef.dismiss();
-          // }
           console.error('Error:', error);
         }
       });
@@ -308,6 +274,7 @@ export class ViewComponent implements OnInit, OnDestroy {
       this.reviewCycleForm.markAllAsTouched();
     }
   }
+
   onCreateCycleFormSubmitted() {
     this.page = 1
     this.pageSize = 10
@@ -384,9 +351,8 @@ export class ViewComponent implements OnInit, OnDestroy {
       this.subLocationsDropdown = []
     }
   }
-  
+
   onDepartmentNameChange(event: any) {
-    console.log(event)
     const joinedIds = event.value.map((item: any) => item).join(',');
     this.reviewCycleForm.get('subDepartmentId')?.reset();
     if (joinedIds) {

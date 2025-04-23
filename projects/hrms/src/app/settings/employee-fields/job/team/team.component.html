@@ -39,7 +39,7 @@
           </label>
           <input type="text" class="form-control custom-input" formControlName="teamName"
             placeholder="Please Enter Team name"
-            (keydown)="formValidations.restrictInitialSpace($event)" />
+            (keydown)="formValidations.restrictInput($event)" />
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg">
             {{ 'Team name is required' | translate }}
           </div>
@@ -168,7 +168,7 @@
           </label>
           <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
             placeholder="Please Enter Team name"
-            (keydown)="formValidations.restrictInitialSpace($event)" />
+            (keydown)="formValidations.restrictInput($event)" />
           <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid" class="error-msg">
             {{ 'Team name is required' | translate }}
           </div>

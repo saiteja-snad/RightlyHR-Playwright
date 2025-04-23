@@ -11,10 +11,11 @@ import { UpdateComponent } from './update/update.component';
 import { ViewComponent } from './view/view.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-review-cycle-list',
-  imports: [CommonModule, FormsModule, NgbPopoverModule, PaginatorModule, TranslateModule],
+  imports: [CommonModule, FormsModule, NgbPopoverModule, PaginatorModule, TranslateModule,DataLoaderContentComponent],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss'
 })
@@ -53,7 +54,6 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,) {
-
   }
 
   ngOnInit(): void {
@@ -65,11 +65,21 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   onUpdate(cycle: any) {
-    this.modalService.open(UpdateComponent, { centered: true, backdrop: 'static', size: 'lg' });
+    const modalRef = this.modalService.open(UpdateComponent, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
+    modalRef.componentInstance.updateData = cycle;
   }
 
-  onClickView(cycle: any) {
-    this.modalService.open(ViewComponent, { centered: true, backdrop: 'static', size: 'lg' });
+  onClickView(cycle: any) { 
+   const modalRef = this.modalService.open(ViewComponent, {
+          centered: true,
+          backdrop: 'static',
+          size: 'lg',
+        });
+        modalRef.componentInstance.updateData = cycle;
   }
 
   onClickYes() {
@@ -92,7 +102,6 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    console.log(content)
     this.modalService.open(content, { centered: true })
   }
 
@@ -124,16 +133,15 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       }
     })
   }
-  
+
   getAllReviewCyclesList(pagenum: number, pagesize: number, fetchAll: boolean = false): void {
     const pageSize = fetchAll ? 10000 : this.pageSize; // Fetch all records if fetchAll is true
     const params = {
       page: pagenum,
       pageSize: pageSize,
-      searchQuery: this.searchText
+      // searchQuery: this.searchText
     };
     this.dataload = true;
-
     this.subscription = this.http.getpagentiontData("reviewCycleHeader", params).subscribe({
       next: (data: any) => {
         this.collectionSize = data.totalCount;
@@ -193,15 +201,12 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     }
     this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
       next: (response) => {
-        console.log('Success:', response);
         this.closeModal()
         this.onCreateCycleFormSubmitted()
         this.conformationPopup.openSuccessModal('Review Cycle is Kept on Hold')
-        // this.modalService.open(this.success, { centered: true });
       },
       error: (error) => {
         this.conformationPopup.openErrorModal(error.error.message)
-        // this.modalService.open(this.success, { centered: true });
         console.error('Error:', error);
       }
     });
@@ -215,17 +220,12 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     }
     this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
       next: (response) => {
-        console.log('Success:', response);
         this.closeModal()
         this.onCreateCycleFormSubmitted()
-        // this.Status = 'Review Cycle is Resumed Successfully'
         this.conformationPopup.openSuccessModal('Review Cycle is Resumed Successfully')
-        // this.modalService.open(this.success, { centered: true });
       },
       error: (error) => {
-        // this.Status = error.error.reason
         this.conformationPopup.openErrorModal(error.error.reason)
-        // this.modalService.open(this.success, { centered: true });
         console.error('Error:', error);
       }
     });
@@ -243,6 +243,25 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   openCancelationPopUp() {
     this.modalService.open(this.cancelationConfirmation, { centered: true });
+  }
+
+  initiateReviewCycle(cycle: any) {
+    const fusionUser = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+    const data = {
+      status: "Initiated",
+      createdBy: fusionUser.employeeId,
+    }
+    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
+      next: (response) => {
+        this.closeModal()
+        this.onCreateCycleFormSubmitted()
+        this.conformationPopup.openSuccessModal('Review Cycle Initiated Successfully')
+      },
+      error: (error) => {
+        this.conformationPopup.openErrorModal(error.error.reason)
+        console.error('Error:', error);
+      }
+    });
   }
 
   ngOnDestroy(): void {

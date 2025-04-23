@@ -5,7 +5,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter bank name"
                     formControlName="bank" aria-label="bank" aria-describedby="bank"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="gender">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="bankForm.invalid">{{'Add'|translate}}</button></span>
@@ -67,7 +67,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="bankName2"
                         placeholder="Please enter bank name" 
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('bankName2')?.touched && updateForm.get('bankName2')?.invalid" class="error-msg mt-2">
                         <div *ngIf="updateForm.get('bankName2')?.errors?.['required']">{{'Bank name is required'|translate}}</div>
                     </div>

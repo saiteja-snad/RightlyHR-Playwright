@@ -25,9 +25,10 @@
                     <div class="custom-p-select-content">
                         <select title="text" class="form-control custom-input" formControlName="AddSubLocation">
                             <option value="" disabled selected>Please select Location</option>
-                            <option *ngFor="let subloc of SubLocationdetails" [value]="subloc.jobLocationId">
-                                {{ subloc.jobLocationName }}
-                            </option>
+                            <!-- <option *ngFor="let subloc of SubLocationdetails" [value]="subloc.jobLocationId">
+                                {{ locationDetail }}
+                            </option> -->
+                            <option *ngFor="let subloc of locationDetail"[value]="subloc.id">{{subloc.jobLocationName}}</option>
                         </select>
                     </div>
                     <div *ngIf="AddForm.get('AddSubLocation')?.touched && AddForm.get('AddSubLocation')?.invalid" class="error-msg mt-2">
@@ -41,7 +42,7 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="AddLocation"
                         placeholder="Please enter sublocation"
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"  />
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"  />
                     <div *ngIf="AddForm.get('AddLocation')?.touched && AddForm.get('AddLocation')?.invalid"
                         class="error-msg">
                         {{ 'Sub location is required' | translate }}.
@@ -143,7 +144,7 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateSubLocation"
                         placeholder="Please enter sub location" 
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('UpdateSubLocation')?.invalid && updateForm.get('UpdateSubLocation')?.touched"
                         class="error-msg">
                         {{ 'Sub location is required' | translate }}.

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, input, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,6 +18,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class UpdateComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
+  empinfo = {} as any;
   reviewCycleForm!: FormGroup;
   reviewCycleupdateForm!: FormGroup;
   page = 1;
@@ -30,6 +31,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
   subDepartmentsDropdownValues: any;
   listofReviewTemplates: any
   todayDate = new Date().toISOString().split('T')[0]
+  isLoading: boolean = false;
+  dataload = false;
+  searchText = '';
+  reviewCyclesList: any[] = []
+  filteredDetails: any[] = [];
+  @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
+  @Input() updateData: any
 
   constructor(
     public readonly modalService: NgbModal,
@@ -38,45 +46,47 @@ export class UpdateComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.initializeReviewCycleupdateForm();
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.initializeReviewCycleForm();
     this.getAllReviewCycleTypes();
+    this.getAllDepartments();
+    this.getAllLocations();
+    this.getAllDepartments();
+    if (this.updateData) {
+      this.onUpdate(this.updateData);
+    }
   }
 
-  closeModal() {
+  close() {
     this.modalService.dismissAll();
   }
 
-  initializeReviewCycleupdateForm() {
-    this.reviewCycleupdateForm = this.fb.group({
-      reviewCycleName: [{ value: null, disabled: true }, Validators.required],
-      startDate: [{ value: null, disabled: true }, Validators.required],
-      endDate: [{ value: null, disabled: true }, Validators.required],
+  initializeReviewCycleForm() {
+    this.reviewCycleForm = this.fb.group({
+      reviewCycleName: ['', [Validators.required, Validators.maxLength(50), this.noWhitespaceValidator()]],
+      startDate: [null, Validators.required],
+      endDate: [null, Validators.required],
       dueDate: [null, [this.dueDateAfterStartDateValidator('startDate')]],
-      reviewCycleType: [{ value: null, disabled: true }, Validators.required],
-      applicableForIncrement: [{ value: null, disabled: true }, false],
-      locationId: [{ value: null, disabled: true }, Validators.required],
-      subLocationId: [{ value: null, disabled: true }, Validators.required],
-      departmentId: [{ value: null, disabled: true }, Validators.required],
-      subDepartmentId: [{ value: null, disabled: true }, Validators.required],
-      applicableEmployeesJoinedBefore: [{ value: null, disabled: true }, Validators.required],
-      description: [{ value: null, disabled: true }],
+      reviewCycleType: [null, Validators.required],
+      applicableForIncrement: [false],
+      locationId: [null, Validators.required],
+      subLocationId: [null, Validators.required],
+      departmentId: [null, Validators.required],
+      subDepartmentId: [null, Validators.required],
+      applicableEmployeesJoinedBefore: [null, Validators.required],
+      description: [null, [Validators.maxLength(50), this.noWhitespaceValidatordescrition()]],
       status: ['draft'],
       id: [null]
     },
-      { validators: this.startDateEndDateValidator() }
+      { validators: [this.startDateEndDateValidator(), this.joinDateEndDateValidator()] }
     );
-    this.reviewCycleupdateForm.get('startDate')?.valueChanges.subscribe(() => {
+    this.reviewCycleForm.get('startDate')?.valueChanges.subscribe(() => {
       this.toggleDateFields();
-      this.updateDueDateValidator();
-      this.dueDateAfterStartDateValidator('startDate')
-      this.startDateEndDateValidator()
+      this.reviewCycleForm.updateValueAndValidity();
     });
-    this.toggleDateFields();
-    this.updateDueDateValidator();
   }
 
-  onReviewCycleUpdateSubmit() {
-    // this.modalRef = this.modalService.open(this.loading, { centered: true });
+  onReviewCycleUpdateSubmit(cycle: any) {
     if (this.reviewCycleForm.valid) {
       const reviewCycleData = {
         reviewCycleName: this.reviewCycleForm.value.reviewCycleName,
@@ -164,27 +174,19 @@ export class UpdateComponent implements OnInit, OnDestroy {
       this.reviewCycleForm.get('dueDate')?.disable();
     }
   }
-  
+
   openUpdate() {
     this.getAllLocations()
     this.getAllDepartments()
     this.getAllReviewCycleTypes()
     this.getAllReviewTemplates()
-
-    this.modalService.open(this.onUpdate, {
-      size: 'lg',
-      centered: true,
-    });
   }
+
   openinitalUpdate() {
     this.getAllLocations()
     this.getAllDepartments()
     this.getAllReviewCycleTypes()
     this.getAllReviewTemplates()
-    this.modalService.open(this.onUpdate, {
-      size: 'lg',
-      centered: true,
-    });
   }
 
   onUpdate(cycle: any) {
@@ -250,6 +252,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.getSubLocationByid(locationIds)
     this.getSubDepartmentsByDepID(depIds)
   }
+
   getAllReviewCycleTypes() {
     const params = {
       entity: 'PMS',
@@ -264,6 +267,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         },
       });
   }
+
   getSubDepartmentsByDepID(id: any) {
     this.subscription = this.http
       .getData(`Subdepartments/Getnames/V2/${id}`)
@@ -329,8 +333,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.subLocationsDropdown = data.jobSubLocations.map((subLocation: any) => {
           return {
             ...subLocation,
-            fullName: `${subLocation.subLocationName}`, // You can modify this based on the actual property
-            selectedAllGroup: 'Group 4', // Add grouping or additional properties if needed
+            fullName: `${subLocation.subLocationName}`,
+            selectedAllGroup: 'Group 4',
           };
         });
       }
@@ -338,7 +342,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   onDepartmentNameChange(event: any) {
-    console.log(event)
     const joinedIds = event.value.map((item: any) => item).join(',');
     this.reviewCycleForm.get('subDepartmentId')?.reset();
     if (joinedIds) {
@@ -358,6 +361,152 @@ export class UpdateComponent implements OnInit, OnDestroy {
     else {
       this.subLocationsDropdown = []
     }
+  }
+
+  noWhitespaceValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const isWhitespace = (control.value || '').trim() === '';
+      const isValid = !isWhitespace;
+      return isValid ? null : { whitespace: true };
+    };
+  }
+
+  noWhitespaceValidatordescrition(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value || '';
+      const isWhitespace = value.trim().length === 0 && value.length > 0;
+      const isValid = !isWhitespace;
+      return isValid ? null : { whitedespritionspace: true };
+    };
+  }
+
+  joinDateEndDateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const joinDate = control.get('applicableEmployeesJoinedBefore')?.value;
+      const startDate = control.get('startDate')?.value;
+      const endDate = control.get('endDate')?.value;
+
+      if (joinDate && startDate && endDate) {
+        const join = new Date(joinDate);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (join <= start || join >= end) {
+          return { joinDateInvalid: true };
+        }
+      }
+
+      return null;
+    };
+  }
+
+  onReviewCycleintialUpdate() {
+    if (this.reviewCycleupdateForm.valid) {
+      const reviewCycleData = {
+        reviewCycleName: this.reviewCycleupdateForm.value.reviewCycleName,
+        startDate: this.reviewCycleupdateForm.value.startDate,
+        endDate: this.reviewCycleupdateForm.value.endDate,
+        dueDate: null,
+        reviewCycleType: this.reviewCycleupdateForm.value.reviewCycleType,
+        applicableForIncrement: this.reviewCycleupdateForm.value.applicableForIncrement,
+        locationId: this.reviewCycleupdateForm.value.locationId?.join(','),
+        subLocationId: this.reviewCycleupdateForm.value.subLocationId?.join(','),
+        departmentId: this.reviewCycleupdateForm.value.departmentId?.join(','),
+        subDepartmentId: this.reviewCycleupdateForm.value.subDepartmentId?.join(','),
+        applicableEmployeesJoinedBefore: this.reviewCycleupdateForm.value.applicableEmployeesJoinedBefore,
+        description: this.reviewCycleupdateForm.value.description,
+        reviewTemplateId: this.reviewCycleupdateForm.value.reviewTemplateId,
+      };
+      this.http.putData(`reviewCycleHeader/update/${this.reviewCycleupdateForm.value.id}`, reviewCycleData).subscribe({
+        next: (response) => {
+          console.log('Success:', response);
+          this.closeModal()
+          this.onCreateCycleFormSubmitted()
+          this.conformationPopup.openSuccessModal('Review Cycle Updated Successfully')
+        },
+        error: (error) => {
+          this.conformationPopup.openErrorModal(error.error.reason)
+          console.error('Error:', error);
+        }
+      });
+    } 
+    else {
+      this.reviewCycleForm.markAllAsTouched();
+    }
+  }
+
+  closeModal() {
+    this.openCancelationPopUp()
+  }
+
+  openCancelationPopUp() {
+    this.modalService.open(this.cancelationConfirmation, { centered: true });
+  }
+
+  onCreateCycleFormSubmitted() {
+    this.page = 1
+    this.pageSize = 10
+    this.getAllReviewCyclesList(this.page, this.pageSize)
+  }
+
+  getAllReviewCyclesList(pagenum: number, pagesize: number, fetchAll: boolean = false): void {
+    const pageSize = fetchAll ? 10000 : this.pageSize; // Fetch all records if fetchAll is true
+    const params = {
+      page: pagenum,
+      pageSize: pageSize,
+      searchQuery: this.searchText
+    };
+    this.dataload = true;
+
+    this.subscription = this.http.getpagentiontData("reviewCycleHeader", params).subscribe({
+      next: (data: any) => {
+        this.collectionSize = data.totalCount;
+        this.reviewCyclesList = data.items || [];
+        this.filteredDetails = this.reviewCyclesList;
+        if (this.searchText) {
+          this.filterDetails();
+        }
+        this.dataload = false;
+      },
+      error: (err: any) => {
+        console.log("errors", err);
+        this.dataload = false;
+      },
+      complete: () => {
+        this.dataload = false;
+      },
+    });
+  }
+
+  filterDetails(): void {
+    if (!this.searchText) {
+      this.filteredDetails = this.reviewCyclesList.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+      this.collectionSize = this.reviewCyclesList.length;
+    } else {
+      const searchTextLower = this.searchText.toLowerCase();
+      const filtered = this.reviewCyclesList.filter(item => {
+        return this.objectContainsText(item, searchTextLower);
+      });
+      this.collectionSize = filtered.length;
+      this.filteredDetails = filtered.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+    }
+    this.page = 1; // Reset to the first page
+  }
+
+  objectContainsText(obj: any, text: string): boolean {
+    if (typeof obj === 'string') {
+      return obj.toLowerCase().includes(text);
+    }
+    if (typeof obj === 'number') {
+      return obj.toString().toLowerCase().includes(text);
+    }
+    if (Array.isArray(obj)) {
+      return obj.some(item => this.objectContainsText(item, text));
+    }
+    if (typeof obj === 'object' && obj !== null) {
+      return Object.values(obj).some(val => this.objectContainsText(val, text));
+    }
+    return false;
   }
 
   ngOnDestroy(): void {

@@ -1,705 +1,726 @@
 <div class="Assessment-form-container">
-    <div class="d-flex pt-3 nav-text">
-      <div class="pd-class">
-        <a><span (click)="openModal(Cancelback)"> <i class="bi bi-reply-fill fa-1x me-2"></i>PMS</span></a>
-      </div>
-      <div>
-        <img src="/assets/images/fast-forward-double-right-arrows.png" alt="forward-icon"
-          class="double-forward-icon mx-2">
-      </div>
-      <div class="pd-class">
-        <span>{{assessmentFormData?.formName}}</span>
-      </div>
+  <div class="d-flex pt-3 nav-text">
+    <div class="pd-class">
+      <a><span (click)="openModal(Cancelback)"> <i class="bi bi-reply-fill fa-1x me-2"></i>PMS</span></a>
     </div>
-    <ng-container *ngIf="dataload; else maincontent">
-      <ng-template #loadingSpinner>
-        <div class="spinner-container text-center">
-          <div class="spinner-border text-primary d-inline-block ms-3" style="width: 3rem; height: 3rem" role="status">
-            <span class="sr-only"></span>
-          </div>
-          <p class="mb-4">Loading...</p>
+    <div>
+      <img src="/assets/images/fast-forward-double-right-arrows.png" alt="forward-icon"
+        class="double-forward-icon mx-2">
+    </div>
+    <div class="pd-class">
+      <span>{{assessmentFormData?.formName}}</span>
+    </div>
+  </div>
+  <ng-container *ngIf="dataload; else maincontent">
+    <ng-template #loadingSpinner>
+
+      <div class="spinner-container text-center">
+        <div class="spinner-border text-primary d-inline-block ms-3" style="width: 3rem; height: 3rem" role="status">
+          <span class="sr-only"></span>
         </div>
-      </ng-template>
-      <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
-    <ng-template #maincontent>
-      <div class="card details-card w-100 my-3 py-2 px-4">
-        <div class="d-flex justify-content-between w-100 gap-3">
-          <!-- Left Column -->
-          <div class="w-33">
-            <div class="form-group">
-              <label for="employeeName" class="form-label custom-info-label">Name of the Employee</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="employeeName" [value]="assessmentFormData?.employeeName" disabled>
-            </div>
-            <div class="form-group">
-              <label for="designation" class="form-label custom-info-label">Designation</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="designation" [value]="assessmentFormData?.designation" disabled>
-            </div>
-            <div class="form-group">
-              <label for="department" class="form-label custom-info-label">Department</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="department" [value]="assessmentFormData?.departmentname" disabled>
-            </div>
-            <div class="form-group">
-              <label for="dateOfJoining" class="form-label custom-info-label">Date of Joining</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="dateOfJoining" [value]="assessmentFormData?.dateOfJoining | dateformat" disabled>
-            </div>
-          </div>
-        
-          <!-- Middle Column -->
-          <div class="w-33">
-            <div class="form-group">
-              <label for="workEmail" class="form-label custom-info-label">Work Email ID</label>
-              <div>:</div>
-              <input type="email" class="form-control text-truncate custom-info-input" id="workEmail" [value]="assessmentFormData?.workemail"
-              [title]="assessmentFormData?.workemail || 'No email available'" disabled>
-            </div>
-            <div class="form-group">
-              <label for="empId" class="form-label custom-info-label">Employee ID</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="empId" [value]="assessmentFormData?.fusionEmployeeId" disabled>
-            </div>
-            <div class="form-group">
-              <label for="reportingManager" class="form-label custom-info-label">Reporting Manager</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="reportingManager" [value]="assessmentFormData?.rmName" disabled>
-            </div>
-          </div>
-        
-          <!-- Right Column -->
-          <div class="w-33">
-            <div class="form-group">
-              <label for="teamManager" class="form-label custom-info-label">Team Manager</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="teamManager" [value]="assessmentFormData?.tmName" disabled>
-            </div>
-            <div class="form-group">
-              <label for="location" class="form-label custom-info-label">Location</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="location" [value]="assessmentFormData?.location" disabled>
-            </div>
-            <div class="form-group">
-              <label for="subLocation" class="form-label custom-info-label">Sub Location</label>
-              <div>:</div>
-              <input type="text" class="form-control text-truncate custom-info-input" id="subLocation" [value]="assessmentFormData?.sublocation" disabled>
-            </div>
-          </div>
-        </div>
-        
-        <!-- <div class="row w-75">
-          <div class="col-md-6">
-            <div class="row">
-              <div class="col-md-6">
-                <p class="mb-2"><span class="label-text me-1">Name of the Employee:</span></p>
-                <p class="mb-2"><span class="label-text me-1">Designation:</span></p>
-                <p class="mb-2"><span class="label-text me-1">Department:</span></p>
-                <p class="mb-2"><span class="label-text me-1">Work Email ID:</span></p>
-                <p class="mb-2"><span class="label-text me-1">Emp ID:</span></p>
-              </div>
-              <div class="col-md-6">
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.employeeName}}</span></p>
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.designation}}</span></p>
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.departmentname}}</span></p>
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.workemail}}</span></p>
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.fusionEmployeeId}}</span></p>
-              </div>
-            </div>
-          </div>
-  
-          <div class="col-md-6">
-            <div class="row">
-              <div class="col-md-6">
-                <p class="mb-2"><span class="label-text me-1">Reporting Manager:</span></p>
-                <p class="mb-2"><span class="label-text me-1">Team Manager:</span></p>
-                <p class="mb-2"><span class="label-text me-1">Location:</span></p>
-                <p class="mb-2"><span class="label-text me-1">Sub Location:</span></p>
-                <p class="mb-2"><span class="label-text me-1">Date Of Joining:</span></p>
-              </div>
-              <div class="col-md-6">
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.rmName}}</span></p>
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.tmName}}</span></p>
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.location}}</span></p>
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.sublocation}}</span></p>
-                <p class="mb-2"><span class="content-text">{{assessmentFormData?.dateOfJoining|dateformat}}</span></p>
-              </div>
-            </div>
-          </div>
-        </div> -->
-  
-        <!-- <div class="d-flex justify-content-around gap-3 flex-wrap">
-          <div>
-            <p class="mb-1"><span class="label-text me-1">Name of the Employee:</span>
-              <span class="content-text">{{assessmentFormData?.employeeName}}</span>
-            </p>
-            <p class="mb-1"><span class="label-text me-1">Designation:</span>
-              <span class="content-text">{{assessmentFormData?.designation}}</span>
-            </p>
-            <p class="mb-1"><span class="label-text me-1">Department:</span>
-              <span class="content-text">{{assessmentFormData?.departmentname}}</span>
-            </p>
-            <p class="mb-1"><span class="label-text me-1">Work Email ID:</span>
-              <span class="content-text">{{assessmentFormData?.workemail}}</span>
-            </p>
-          </div>
-  
-          <div>
-            <p class="mb-1"><span class="label-text me-1">Emp ID:</span>
-              <span class="content-text">{{assessmentFormData?.fusionEmployeeId}}</span>
-            </p>
-            <p class="mb-1"><span class="label-text me-1">Reporting Manager:</span>
-              <span class="content-text">{{assessmentFormData?.rmName}}</span>
-            </p>
-            <p class="mb-1"><span class="label-text me-1">Team Manager:</span>
-              <span class="content-text">{{assessmentFormData?.tmName}}</span>
-            </p>
-          </div>
-  
-          <div>
-            <p class="mb-1"><span class="label-text me-1">Location:</span>
-              <span class="content-text">{{assessmentFormData?.location}}</span>
-            </p>
-            <p class="mb-1"><span class="label-text me-1">Sub Location:</span>
-              <span class="content-text">{{assessmentFormData?.sublocation}}</span>
-            </p>
-            <p class="mb-1"><span class="label-text me-1">Date Of Joining:</span>
-              <span class="content-text">{{assessmentFormData?.dateOfJoining|dateformat}}</span>
-            </p>
-          </div>
-        </div> -->
+        <p class="mb-4">Loading...</p>
       </div>
-  
-      <!-- (ngSubmit)="onSubmit()" -->
-      <form (ngSubmit)="onSubmit()" #form="ngForm">
-        <div class="table-content mb-4">
-          <table class="w-100">
-            <thead>
-              <tr>
-                <th>Competency</th>
-                <th>Questions</th>
-                <th>Target</th>
-                <th>Unit of<br> Measurement</th>
-                <th>Question Weightage</th>
-                <th>Weightage</th>
-                <!-- <th>Employee Self rating</th>
-              <th>Employee Comments</th>
-              <th>Reporting Manager Rating</th>
-              <th>Reporting Manager Comments</th>
-              <th>Team Manager Rating</th>
-              <th>Team Manager Comments</th>
-              <th>HR Rating</th>
-              <th>HR Comments</th> -->
-                <ng-container *ngFor="let response of assessmentFormData?.formResponses">
-                  <th style="width: max-content" class="text-wrap" *ngIf="response.isRatingVisible">
-                    {{ response.name }} <br> Rating<span class="text-danger">*</span>
-                  </th>
-                  <th *ngIf="response.isCommentsVisible">
-                    {{ response.name }} Comments<span class="text-danger">*</span>
-                  </th>
-                </ng-container>
-              </tr>
-            </thead>
-            <tbody>
-              <ng-container *ngFor="let section of assessmentFormData?.sectionDetails; let i = index">
-                <tr *ngFor="let question of section?.questions; let j = index">
-                  <td *ngIf="j === 0" [attr.rowspan]="section.questions.length" class="text-center">
-                    {{ section.sectionName }}
-                  </td>
-                  <td>{{ question.question }}
-                    <div *ngFor="let option of question.options">
-                      <label>{{ option.optionWeightage }} - {{ option.option }}</label>
-                    </div>
-                  </td>
-                  <td class="text-center">{{question.targetfield}}</td>
-                  <td>{{question.unitofmeasurement}}</td>
-                  <td class="text-center">
-                    {{ question.questionweightage }}
-                  </td>
-                  <td class="text-center" *ngIf="j === 0" [attr.rowspan]="section.questions.length">
-                    {{ section.sectionweightage }}
-                  </td>
-                  <!-- Loop through formResponses -->
-                  <ng-container *ngFor="let formResponse of assessmentFormData?.formResponses; let k = index">
-                    <ng-container *ngFor="let sectionDetail of formResponse?.formresponse?.sectionDetails">
-                      <!-- Check if current section matches the section in form response -->
-                      <ng-container *ngIf="sectionDetail.id === section.id">
-                        <td class="text-center text-wrap"  *ngIf="formResponse.isRatingVisible">
-                          <!-- Rating Input -->
-                           <!--  oninput="this.value = (this.value > 5 || this.value < 1 || this.value == 6) ? '' : this.value" -->
-                          <input type="number" placeholder="Enter rating" id="ratingfield-{{i}}-{{j}}-{{k}}"
-                            name="ratingfield-{{i}}-{{j}}-{{k}}" #rating="ngModel" class="form-control rating-input p-2 input-font"
-                            [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.rating" [min]="min" [max]="max" step="1"
-                            pattern="^[1-9]$" maxlength="1" oninput="this.value = (this.value < min ) ? '' : this.value"
-                            [disabled]="(currentStage !== formResponse?.order)|| formResponse.status!=='Pending'&&formResponse.status!=='Draft'"
-                            (ngModelChange)="updateRating( section, question, formResponse, sectionDetail.questions[j].optionsData?.meta.rating, 
-                            sectionDetail.questions[j].optionsData?.meta.comments)" required />
-                          <div>
-                            <small class="text-danger" *ngIf="rating.invalid &&(rating.dirty ||rating.touched ||form.submitted)">
-                              <span *ngIf="rating.errors?.['required']">Rating is required</span>
-                              <span *ngIf="rating.errors?.['min']">Rating must be at least {{min}}</span>
-                              <span *ngIf="rating.errors?.['max']">Rating must not be greater than {{max}}</span>
-                              <span *ngIf="rating.errors?.['pattern']">Please enter rating between {{min}} and {{max}}</span>
-                            </small>
-                          </div>
-                        </td>
-                        <td *ngIf="formResponse.isCommentsVisible">
-                          <!-- Comment Input -->
-                          <textarea class="form-control text-content input-font p-2" rows="3" placeholder="Please provide Comments"
-                            id="commentsfield-{{i}}-{{j}}-{{k}}" #ratingcomments="ngModel"
-                            name="commentsfield-{{i}}-{{j}}-{{k}}" [maxLength]="250" [minLength]="1"
-                            [disabled]="(currentStage !== formResponse?.order)|| (formResponse.status!=='Pending'&&formResponse.status!=='Draft')"
-                            [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.comments" 
-                            (ngModelChange)="updateRating( section, question, formResponse, sectionDetail.questions[j].optionsData?.meta.rating, 
-                            sectionDetail.questions[j].optionsData?.meta.comments)" required=""></textarea>
-                          <div>
-                            <small class="text-danger"
-                              *ngIf="ratingcomments.invalid &&(ratingcomments.dirty ||ratingcomments.touched ||form.submitted)">
-                              <span *ngIf="ratingcomments.errors?.['required']" >Comment is required</span>
-                            </small>
-                          </div>
-  
-                          <div>
-                            <span *ngIf="sectionDetail.questions[j].optionsData?.meta.comments" class="color">
-                              {{sectionDetail.questions[j].optionsData?.meta.comments?.length?sectionDetail.questions[j].optionsData?.meta.comments?.length:0}}
-                              /250</span>
-                          </div>
-                          <!-- <small *ngIf="sectionDetail.questions[j].optionsData.meta.comments.errors?.['required']">
-                           Comments is required.</small> -->
-                          <!-- <small *ngIf="employeeCommentsControl.errors?.['minlength']">Minimum length is 10 characters.</small>   minlength="10"-->
-                        </td>
-                      </ng-container>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+  </ng-container>
+  <ng-template #maincontent>
+    <div class="card details-card w-100 my-3 py-2 px-4">
+      <div class="d-flex justify-content-between w-100 gap-3">
+        <!-- Left Column -->
+        <div class="w-33">
+          <div class="form-group">
+            <label for="employeeName" class="form-label custom-info-label">Name of the Employee</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="employeeName"
+              [value]="assessmentFormData?.employeeName" disabled>
+          </div>
+          <div class="form-group">
+            <label for="designation" class="form-label custom-info-label">Designation</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="designation"
+              [value]="assessmentFormData?.designation" disabled>
+          </div>
+          <div class="form-group">
+            <label for="department" class="form-label custom-info-label">Department</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="department"
+              [value]="assessmentFormData?.departmentname" disabled>
+          </div>
+          <div class="form-group">
+            <label for="dateOfJoining" class="form-label custom-info-label">Date of Joining</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="dateOfJoining"
+              [value]="assessmentFormData?.dateOfJoining | dateformat" disabled>
+          </div>
+        </div>
+
+        <!-- Middle Column -->
+        <div class="w-33">
+          <div class="form-group">
+            <label for="workEmail" class="form-label custom-info-label">Work Email ID</label>
+            <div>:</div>
+            <input type="email" class="form-control text-truncate custom-info-input" id="workEmail"
+              [value]="assessmentFormData?.workemail" [title]="assessmentFormData?.workemail || 'No email available'"
+              disabled>
+          </div>
+          <div class="form-group">
+            <label for="empId" class="form-label custom-info-label">Employee ID</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="empId"
+              [value]="assessmentFormData?.fusionEmployeeId" disabled>
+          </div>
+          <div class="form-group">
+            <label for="reportingManager" class="form-label custom-info-label">Reporting Manager</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="reportingManager"
+              [value]="assessmentFormData?.rmName" disabled>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="w-33">
+          <div class="form-group">
+            <label for="teamManager" class="form-label custom-info-label">Team Manager</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="teamManager"
+              [value]="assessmentFormData?.tmName" disabled>
+          </div>
+          <div class="form-group">
+            <label for="location" class="form-label custom-info-label">Location</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="location"
+              [value]="assessmentFormData?.location" disabled>
+          </div>
+          <div class="form-group">
+            <label for="subLocation" class="form-label custom-info-label">Sub Location</label>
+            <div>:</div>
+            <input type="text" class="form-control text-truncate custom-info-input" id="subLocation"
+              [value]="assessmentFormData?.sublocation" disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="row w-75">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-2"><span class="label-text me-1">Name of the Employee:</span></p>
+              <p class="mb-2"><span class="label-text me-1">Designation:</span></p>
+              <p class="mb-2"><span class="label-text me-1">Department:</span></p>
+              <p class="mb-2"><span class="label-text me-1">Work Email ID:</span></p>
+              <p class="mb-2"><span class="label-text me-1">Emp ID:</span></p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.employeeName}}</span></p>
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.designation}}</span></p>
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.departmentname}}</span></p>
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.workemail}}</span></p>
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.fusionEmployeeId}}</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-2"><span class="label-text me-1">Reporting Manager:</span></p>
+              <p class="mb-2"><span class="label-text me-1">Team Manager:</span></p>
+              <p class="mb-2"><span class="label-text me-1">Location:</span></p>
+              <p class="mb-2"><span class="label-text me-1">Sub Location:</span></p>
+              <p class="mb-2"><span class="label-text me-1">Date Of Joining:</span></p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.rmName}}</span></p>
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.tmName}}</span></p>
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.location}}</span></p>
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.sublocation}}</span></p>
+              <p class="mb-2"><span class="content-text">{{assessmentFormData?.dateOfJoining|dateformat}}</span></p>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- <div class="d-flex justify-content-around gap-3 flex-wrap">
+        <div>
+          <p class="mb-1"><span class="label-text me-1">Name of the Employee:</span>
+            <span class="content-text">{{assessmentFormData?.employeeName}}</span>
+          </p>
+          <p class="mb-1"><span class="label-text me-1">Designation:</span>
+            <span class="content-text">{{assessmentFormData?.designation}}</span>
+          </p>
+          <p class="mb-1"><span class="label-text me-1">Department:</span>
+            <span class="content-text">{{assessmentFormData?.departmentname}}</span>
+          </p>
+          <p class="mb-1"><span class="label-text me-1">Work Email ID:</span>
+            <span class="content-text">{{assessmentFormData?.workemail}}</span>
+          </p>
+        </div>
+
+        <div>
+          <p class="mb-1"><span class="label-text me-1">Emp ID:</span>
+            <span class="content-text">{{assessmentFormData?.fusionEmployeeId}}</span>
+          </p>
+          <p class="mb-1"><span class="label-text me-1">Reporting Manager:</span>
+            <span class="content-text">{{assessmentFormData?.rmName}}</span>
+          </p>
+          <p class="mb-1"><span class="label-text me-1">Team Manager:</span>
+            <span class="content-text">{{assessmentFormData?.tmName}}</span>
+          </p>
+        </div>
+
+        <div>
+          <p class="mb-1"><span class="label-text me-1">Location:</span>
+            <span class="content-text">{{assessmentFormData?.location}}</span>
+          </p>
+          <p class="mb-1"><span class="label-text me-1">Sub Location:</span>
+            <span class="content-text">{{assessmentFormData?.sublocation}}</span>
+          </p>
+          <p class="mb-1"><span class="label-text me-1">Date Of Joining:</span>
+            <span class="content-text">{{assessmentFormData?.dateOfJoining|dateformat}}</span>
+          </p>
+        </div>
+      </div> -->
+    </div>
+
+    <!-- (ngSubmit)="onSubmit()" -->
+    <form (ngSubmit)="onSubmit()" #form="ngForm">
+      <div class="table-content mb-4">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Competency</th>
+              <th>Questions</th>
+              <th>Target</th>
+              <th>Unit of<br> Measurement</th>
+              <th>Question Weightage</th>
+              <th>Weightage</th>
+              <!-- <th>Employee Self rating</th>
+            <th>Employee Comments</th>
+            <th>Reporting Manager Rating</th>
+            <th>Reporting Manager Comments</th>
+            <th>Team Manager Rating</th>
+            <th>Team Manager Comments</th>
+            <th>HR Rating</th>
+            <th>HR Comments</th> -->
+              <ng-container *ngFor="let response of assessmentFormData?.formResponses">
+                <th style="width: max-content" class="text-wrap" *ngIf="response.isRatingVisible">
+                  {{ response.name }} <br> Rating<span class="text-danger">*</span>
+                </th>
+                <th *ngIf="response.isCommentsVisible">
+                  {{ response.name }} Comments<span class="text-danger">*</span>
+                </th>
+              </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let section of assessmentFormData?.sectionDetails; let i = index">
+              <tr *ngFor="let question of section?.questions; let j = index">
+                <td *ngIf="j === 0" [attr.rowspan]="section.questions.length">
+                  {{ section.sectionName }}
+                </td>
+                <td>{{ question.question }}
+                  <div *ngFor="let option of question.options">
+                    <label>{{ option.optionWeightage }} - {{ option.option }}</label>
+                  </div>
+                </td>
+                <td>{{question.targetfield}}</td>
+                <td>{{question.unitofmeasurement}}</td>
+                <td>
+                  {{ question.questionweightage }}
+                </td>
+                <td *ngIf="j === 0" [attr.rowspan]="section.questions.length">
+                  {{ section.sectionweightage }}
+                </td>
+                <!-- Loop through formResponses -->
+                <ng-container *ngFor="let formResponse of assessmentFormData?.formResponses; let k = index">
+                  <ng-container *ngFor="let sectionDetail of formResponse?.formresponse?.sectionDetails">
+                    <!-- Check if current section matches the section in form response -->
+                    <ng-container *ngIf="sectionDetail.id === section.id">
+                      <td class="text-center text-wrap" *ngIf="formResponse.isRatingVisible">
+                        <!-- Rating Input -->
+                        <!--  oninput="this.value = (this.value > 5 || this.value < 1 || this.value == 6) ? '' : this.value" -->
+                        <input type="number" placeholder="Enter rating" id="ratingfield-{{i}}-{{j}}-{{k}}"
+                          name="ratingfield-{{i}}-{{j}}-{{k}}" #rating="ngModel"
+                          class="form-control rating-input p-2 input-font"
+                          [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.rating" [min]="min" [max]="max"
+                          step="1" pattern="^[1-9]$" maxlength="1"
+                          oninput="this.value = (this.value < min ) ? '' : this.value"
+                          [disabled]="(currentStage !== formResponse?.order)|| formResponse.status!=='Pending'&&formResponse.status!=='Draft'"
+                          (ngModelChange)="updateRating( section, question, formResponse, sectionDetail.questions[j].optionsData?.meta.rating, 
+                          sectionDetail.questions[j].optionsData?.meta.comments)" required />
+                        <div>
+                          <small class="text-danger"
+                            *ngIf="rating.invalid &&(rating.dirty ||rating.touched ||form.submitted)">
+                            <span *ngIf="rating.errors?.['required']">Rating is required</span>
+                            <span *ngIf="rating.errors?.['min']">Rating must be at least {{min}}</span>
+                            <span *ngIf="rating.errors?.['max']">Rating must not be greater than {{max}}</span>
+                            <span *ngIf="rating.errors?.['pattern']">Please enter rating between {{min}} and
+                              {{max}}</span>
+                          </small>
+                        </div>
+                      </td>
+                      <td *ngIf="formResponse.isCommentsVisible">
+                        <!-- Comment Input -->
+                        <textarea class="form-control text-content input-font p-2" rows="3"
+                          placeholder="Please provide Comments" id="commentsfield-{{i}}-{{j}}-{{k}}"
+                          #ratingcomments="ngModel" name="commentsfield-{{i}}-{{j}}-{{k}}" [maxLength]="250"
+                          [minLength]="1"
+                          [disabled]="(currentStage !== formResponse?.order)|| (formResponse.status!=='Pending'&&formResponse.status!=='Draft')"
+                          [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.comments" (ngModelChange)="updateRating( section, question, formResponse, sectionDetail.questions[j].optionsData?.meta.rating, 
+                          sectionDetail.questions[j].optionsData?.meta.comments)" required=""></textarea>
+                        <div>
+                          <small class="text-danger"
+                            *ngIf="ratingcomments.invalid &&(ratingcomments.dirty ||ratingcomments.touched ||form.submitted)">
+                            <span *ngIf="ratingcomments.errors?.['required']">Comments is required</span>
+                          </small>
+                        </div>
+
+                        <div>
+                          <span *ngIf="sectionDetail.questions[j].optionsData?.meta.comments" class="color">
+                            {{sectionDetail.questions[j].optionsData?.meta.comments?.length?sectionDetail.questions[j].optionsData?.meta.comments?.length:0}}
+                            /250</span>
+                        </div>
+                        <!-- <small *ngIf="sectionDetail.questions[j].optionsData.meta.comments.errors?.['required']">
+                         Comments is required.</small> -->
+                        <!-- <small *ngIf="employeeCommentsControl.errors?.['minlength']">Minimum length is 10 characters.</small>   minlength="10"-->
+                      </td>
                     </ng-container>
                   </ng-container>
-                </tr>
-              </ng-container>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="6">Overall Ratings</td>
-                <!-- Dynamically render the overall rating fields and comments for each role -->
-                <ng-container *ngFor="let response of assessmentFormData?.formResponses; let i=index">
-                    <td *ngIf="response.name === 'Employee' && response.isRatingVisible">
-                      <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall Rating</label>
-                      <input *ngIf="response.name === 'Employee'" type="number" id="overallrating-{{i}}"
-                        name="overallrating-{{i}}" #overallrating="ngModel" class="form-control"
-                        [(ngModel)]="response.formresponse.employeeOverAllRating" [disabled]="currentStage !== response.order" readonly>
-                    </td>
-                    <td *ngIf="response.name === 'Employee' && response.isCommentsVisible">
-                      <p></p>
-                    </td>
-            
-                    <td *ngIf="response.name === 'Team Manager' && response.isRatingVisible">
-                      <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall Rating</label>
-                      <input *ngIf="response.name === 'Team Manager'" type="number" id="overallrating-{{i}}"
-                        name="overallrating-{{i}}" #overallrating="ngModel" class="form-control" placeholder="Overall ratings"
-                        [(ngModel)]="response.formresponse.tmOverrAllRating" [disabled]="currentStage !== response.order" readonly>
-                    </td>
-                    <td *ngIf="response.name === 'Team Manager' && response.isCommentsVisible">
-                      <p></p>
-                    </td>
-            
-                    <td *ngIf="response.name === 'Reporting Manager' && response.isRatingVisible">
-                      <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall Rating</label>
-                      <input *ngIf="response.name === 'Reporting Manager'" type="number" id="overallrating-{{i}}"
-                        name="overallrating-{{i}}" #overallrating="ngModel" class="form-control" placeholder="Overall ratings"
-                        [(ngModel)]="response.formresponse.rmOverAllRating" [disabled]="currentStage !== response.order" readonly>
-                    </td>
-                    <td *ngIf="response.name === 'Reporting Manager' && response.isCommentsVisible">
-                      <p></p>
-                    </td>
-            
-                    <td *ngIf="response.name === 'HR' && response.isRatingVisible">
-                      <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall Rating</label>
-                      <input *ngIf="response.name === 'HR'" type="number" id="overallrating-{{i}}" name="overallrating-{{i}}"
-                        #overallrating="ngModel" [(ngModel)]=" response.formresponse.hrOverAllRating" class="form-control"
-                        [disabled]="currentStage !== response.order" placeholder="Overall ratings" readonly>
-                    </td>
-                    
-                    <td *ngIf="response.name === 'HR' && response.isCommentsVisible">
-                      <p></p>
-                    </td>
                 </ng-container>
               </tr>
-            </tfoot>
-          </table>
-        </div>
-  
-        <!-- Checkbox for same as Reporting Manager Rating and Comments -->
-        <div class="form-check mb-4" *ngIf="(currentStage>2 && currentStage<lastStage ||((currentStage>=lastStage||currentStage<=0) && assessmentFormData.isSameAsPreviousAssessor))">
-          <input class="form-check-input" type="checkbox" id="sameasprevious" name="sameasprevious" (click)="checkTmAndRm($event)" [(ngModel)]="assessmentFormData.isSameAsPreviousAssessor"
-            [disabled]="!currentStage" />
-          <label class="form-check-label" for="sameAsRM">Same as {{currentStageName}} Rating and Comments</label>
-        </div>
-  
-        <div class="row mb-4">
-          <!-- Employee Comments -->
-          <ng-container *ngFor="let response of assessmentFormData?.formResponses; let i = index">
-            <div class="col-md-6 mb-3">
-              <label for="employeeComments-{{i}}" class="form-label">
-                {{response.name}} Comments<span class="text-danger">*</span></label>
-              <textarea class="form-control" id="comments-{{i}}" name="comments-{{i}}" rows="3"
-                placeholder="Please provide comments" [(ngModel)]="response?.formresponse.employeeComments" maxlength="500"
-                [disabled]="(response.order !== this.currentStage)|| (response.status!=='Pending'&&response.status!=='Draft')"
-                (ngModelChange)="postcomments(response?.formresponse.employeeComments)" required
-                #employeeCommentsControl="ngModel">
-                </textarea>
-              <div>
-                <span *ngIf="response?.formresponse.employeeComments"
-                  class="color">{{response?.formresponse.employeeComments?.length?response?.formresponse.employeeComments?.length:0}}
-                  /500</span>
-              </div>
-              <div *ngIf="employeeCommentsControl.touched && employeeCommentsControl.invalid" class="text-danger">
-                <small *ngIf="employeeCommentsControl.errors?.['required']">
-                  {{response.name}} Comment is required.</small>
-                <!-- <small *ngIf="employeeCommentsControl.errors?.['minlength']">Minimum length is 10 characters.</small>   minlength="10"-->
-              </div>
+            </ng-container>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6">Overall Ratings</td>
+              <!-- Dynamically render the overall rating fields and comments for each role -->
+              <ng-container *ngFor="let response of assessmentFormData?.formResponses; let i=index">
+                <td *ngIf="response.name === 'Employee' && response.isRatingVisible">
+                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
+                    Rating</label>
+                  <input *ngIf="response.name === 'Employee'" type="number" id="overallrating-{{i}}"
+                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control"
+                    [(ngModel)]="response.formresponse.employeeOverAllRating"
+                    [disabled]="currentStage !== response.order" readonly>
+                </td>
+                <td *ngIf="response.name === 'Employee' && response.isCommentsVisible">
+                  <p></p>
+                </td>
+
+                <td *ngIf="response.name === 'Team Manager' && response.isRatingVisible">
+                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
+                    Rating</label>
+                  <input *ngIf="response.name === 'Team Manager'" type="number" id="overallrating-{{i}}"
+                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control"
+                    [(ngModel)]="response.formresponse.tmOverrAllRating" [disabled]="currentStage !== response.order"
+                    readonly>
+                </td>
+                <td *ngIf="response.name === 'Team Manager' && response.isCommentsVisible">
+                  <p></p>
+                </td>
+
+                <td *ngIf="response.name === 'Reporting Manager' && response.isRatingVisible">
+                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
+                    Rating</label>
+                  <input *ngIf="response.name === 'Reporting Manager'" type="number" id="overallrating-{{i}}"
+                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control"
+                    [(ngModel)]="response.formresponse.rmOverAllRating" [disabled]="currentStage !== response.order"
+                    readonly>
+                </td>
+                <td *ngIf="response.name === 'Reporting Manager' && response.isCommentsVisible">
+                  <p></p>
+                </td>
+
+                <td *ngIf="response.name === 'HR' && response.isRatingVisible">
+                  <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
+                    Rating</label>
+                  <input *ngIf="response.name === 'HR'" type="number" id="overallrating-{{i}}"
+                    name="overallrating-{{i}}" #overallrating="ngModel"
+                    [(ngModel)]=" response.formresponse.hrOverAllRating" class="form-control"
+                    [disabled]="currentStage !== response.order" readonly>
+                </td>
+
+                <td *ngIf="response.name === 'HR' && response.isCommentsVisible">
+                  <p></p>
+                </td>
+              </ng-container>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Checkbox for same as Reporting Manager Rating and Comments -->
+      <div class="form-check mb-4"
+        *ngIf="(currentStage>2 && currentStage<lastStage ||((currentStage>=lastStage||currentStage<=0) && assessmentFormData.isSameAsPreviousAssessor))">
+        <input class="form-check-input" type="checkbox" id="sameasprevious" name="sameasprevious"
+          (click)="checkTmAndRm($event)" [(ngModel)]="assessmentFormData.isSameAsPreviousAssessor"
+          [disabled]="!currentStage" />
+        <label class="form-check-label" for="sameAsRM">Same as {{currentStageName}} Rating and Comments</label>
+      </div>
+
+      <div class="row mb-4">
+        <!-- Employee Comments -->
+        <ng-container *ngFor="let response of assessmentFormData?.formResponses; let i = index">
+          <div class="col-md-6 mb-3">
+            <label for="employeeComments-{{i}}" class="form-label">
+              {{response.name}} Comments<span class="text-danger">*</span></label>
+            <textarea class="form-control" id="comments-{{i}}" name="comments-{{i}}" rows="3"
+              placeholder="Please provide comments" [(ngModel)]="response?.formresponse.employeeComments"
+              maxlength="500"
+              [disabled]="(response.order !== this.currentStage)|| (response.status!=='Pending'&&response.status!=='Draft')"
+              (ngModelChange)="postcomments(response?.formresponse.employeeComments)" required
+              #employeeCommentsControl="ngModel">
+              </textarea>
+            <div>
+              <span *ngIf="response?.formresponse.employeeComments"
+                class="color">{{response?.formresponse.employeeComments?.length?response?.formresponse.employeeComments?.length:0}}
+                /500</span>
             </div>
-          </ng-container>
-        </div>
-        <ng-container *ngIf="(currentStage>1 && currentStage===lastStage || ((currentStage>=lastStage||currentStage<=0) && assessmentFormData.hrratingexist))">
-          <div *ngIf="assessmentFormData.isApplicableForIncrement">
-            <div class="row mb-4">
-              <div class="col-lg-12 col-md-6">
-                <div class="row">
-                  <div class="col-lg-4 col-md-12 mb-3">
-                    <div>
-                      <label for="" class="form-label">Overall Rating</label>
-                      <input class="form-control" type="text" id="hroverallrating" name="hroverallrating"
-                        [(ngModel)]="hrOverAllRatingForProrata" placeholder="Overall Rating"
-                        aria-label="default input example" readonly>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 col-md-12 mb-3">
-                    <div>
-                      <label for="" class="form-label"> Incremental Percentage Based on Pro Rata Basis</label>
-                      <input class="form-control" type="text" id="incrementalpercentage" name="incrementalpercentage"
-                        [(ngModel)]="assessmentFormData.incrementpercentagebasedonprorata"
-                        placeholder="Increment in Amount based on Pro Rata Basis" aria-label="default input example"
-                        readonly>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 col-md-12 mb-3">
-                    <div>
-                      <label for="" class="form-label">Current Salary</label>
-                      <input class="form-control" type="text" id="currentsalary" name="currentsalary"
-                        [(ngModel)]="assessmentFormData.currentSalaryAuto" placeholder="Current Salary"
-                        aria-label="default input example" readonly>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-12 col-md-6">
-                <div class="row">
-                  <div class="col-lg-4 col-md-12 mb-3">
-                    <div>
-                      <label for="" class="form-label">Total Duration in Months</label>
-                      <input class="form-control" type="number" placeholder="Total Duration in Months" id="totalrating"
-                        name="totalrating" [min]="1" step="1" oninput="this.value = (this.value < 1 ) ? '' : this.value"
-                        aria-label="default input example" [(ngModel)]="assessmentFormData.totaldurationinmonths"
-                        (ngModelChange)="prorataCalculationBasedontotaldurationinmonths(assessmentFormData.totaldurationinmonths)"
-                        [disabled]="currentStage!==lastStage">
-                    </div>
-                  </div>
-                  <div class="col-lg-4 col-md-12 mb-3">
-                    <div>
-                      <label for="" class="form-label">Increment in Amount based on Pro Rata Basis</label>
-                      <input class="form-control" type="number" id="incrementalamount" name="incrementalamount"
-                        [(ngModel)]="assessmentFormData.IncrementalAmount"
-                        placeholder="Incremental Percentage Based on Pro Rata Basis" aria-label="default input example"
-                        readonly>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 col-md-12 mb-3">
-                    <div>
-                      <label for="" class="form-label">Revised Salary</label>
-                      <input class="form-control" type="text" id="revicedsalary" name="revicedsalary"
-                        [(ngModel)]="assessmentFormData.revicedSalary" placeholder="Revised Salary"
-                        aria-label="default input example" readonly>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-check mb-4" *ngIf="(currentStage===lastStage || ((currentStage<=0||currentStage>=lastStage) && assessmentFormData.hrratingexist))">
-              <input class="form-check-input" type="checkbox" value="" id="considermanual" name="considermanual"
-                [(ngModel)]="assessmentFormData.considermanualinputcheck" (click)="considermanualinput($event)"
-                id="flexCheckDefault" [disabled]="currentStage!==lastStage">
-              <label class="form-check-label" for="flexCheckDefault">
-                Consider Manual Input
-              </label>
-            </div>
-            <div class="row mb-4">
-              <div class="col-lg-4 col-md-6 mb-3">
-                <div>
-                  <label for="" class="form-label">Incremental Percentage Based on Rating<span class="text-danger"
-                      *ngIf="assessmentFormData.considermanualinputcheck">*</span></label>
-                  <input class="form-control" type="number" step="1" [min]="1"
-                    oninput="this.value = ( this.value < 1 ) ? '' : this.value" id="cmincrementalpercentage"
-                    name="cmincrementalpercentage" [(ngModel)]="assessmentFormData.cmincrementpercentagebasedonprorata"
-                    (ngModelChange)="considermanualinputProrataCheck(assessmentFormData.cmincrementpercentagebasedonprorata)"
-                    placeholder="Incremental Percentage Based on Rating" aria-label="default input example"
-                    [required]="assessmentFormData.considermanualinputcheck"
-                    [disabled]="!this.assessmentFormData.considermanualinputcheck ||currentStage!==lastStage">
-                </div>
-              </div>
-  
-              <div class="col-lg-4 col-md-6 mb-3">
-                <div>
-                  <label for="" class="form-label">Current Salary</label>
-                  <input class="form-control" type="text" placeholder="Current Salary" id="cmcurrentsalary"
-                    [(ngModel)]="assessmentFormData.cmcurrentSalaryAuto" name="cmcurrentsalary"
-                    aria-label="default input example" [disabled]="currentStage === 1" readonly>
-                </div>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-3">
-                <div>
-                  <label for="" class="form-label">Revised Salary<span class="text-danger"></span></label>
-                  <input class="form-control" type="text" placeholder="Revised Salary" aria-label="default input example"
-                    [disabled]="currentStage === 1" id="cmrevicedsalary" name="cmrevicedsalary"
-                    [(ngModel)]="assessmentFormData.cmrevicedSalary" readonly>
-                </div>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-3">
-                <div>
-                  <label for="" class="form-label">Increment in Amount<span class="text-danger"
-                      *ngIf="assessmentFormData.considermanualinputcheck">*</span></label>
-                  <input class="form-control" type="number" step="1" [min]="1"
-                    oninput="this.value = ( this.value < 1 ) ? '' : this.value" placeholder="Increment in Amount"
-                    id="cmincrementalAmount" name="cmincrementalAmount"
-                    [(ngModel)]="assessmentFormData.cmIncrementalAmount"
-                    (ngModelChange)="considermanualinputProrataCheckforpercentage(assessmentFormData.cmIncrementalAmount)"
-                    aria-label="default input example" [disabled]="currentStage!==lastStage ||!this.assessmentFormData.considermanualinputcheck"
-                    [required]="assessmentFormData.considermanualinputcheck">
-                </div>
-              </div>
-            </div>
-            <div class="form-check mb-4" *ngIf="((currentStage===lastStage) || ((currentStage<=0||currentStage>=lastStage) && assessmentFormData.hrratingexist))">
-              <input class="form-check-input" type="checkbox" value="" id="salarycorrection" name="salarycorrection"
-                [(ngModel)]="assessmentFormData.salaryCorrectioninputcheck" (click)="salaryCorrectionmanualinput($event)"
-                id="flexCheckDefault" [disabled]="currentStage!==lastStage">
-              <label class="form-check-label" for="flexCheckDefault">
-                Salary Correction
-              </label>
-            </div>
-            <div class="row mb-4">
-              <div class="col-lg-4 col-md-6 mb-3">
-                <div>
-                  <label for="" class="form-label">Incremental Percentage Based on Rating<span class="text-danger"
-                      *ngIf="assessmentFormData.salaryCorrectioninputcheck">*</span></label>
-                  <input class="form-control" type="number" step="1" [min]="1"
-                    oninput="this.value = ( this.value < 1 ) ? '' : this.value" id="scincrementalpercentage"
-                    name="scincrementalpercentage" [(ngModel)]="assessmentFormData.scincrementpercentagebasedonprorata"
-                    (ngModelChange)="salaryCorrectionmanualinputProrataCheck(assessmentFormData.scincrementpercentagebasedonprorata)"
-                    placeholder="Incremental Percentage Based on Rating" aria-label="default input example"
-                    [required]="assessmentFormData.salaryCorrectioninputcheck"
-                    [disabled]="!this.assessmentFormData.salaryCorrectioninputcheck ||currentStage!==lastStage">
-                </div>
-              </div>
-    
-              <div class="col-lg-4 col-md-6 mb-3">
-                <div>
-                  <label for="" class="form-label">Current Salary</label>
-                  <input class="form-control" type="text" placeholder="Current Salary" id="sccurrentsalary"
-                    [(ngModel)]="assessmentFormData.sccurrentSalaryAuto" name="sccurrentsalary"
-                    aria-label="default input example" [disabled]="currentStage === 1" readonly>
-                </div>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-3">
-                <div>
-                  <label for="" class="form-label">Revised Salary<span class="text-danger"></span></label>
-                  <input class="form-control" type="text" placeholder="Revised Salary" aria-label="default input example"
-                    [disabled]="currentStage === 1" id="screvicedsalary" name="screvicedsalary"
-                    [(ngModel)]="assessmentFormData.screvicedSalary" readonly>
-                </div>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-3">
-                <div>
-                  <label for="" class="form-label">Increment in Amount<span class="text-danger"
-                      *ngIf="assessmentFormData.salaryCorrectioninputcheck">*</span></label>
-                  <input class="form-control" type="number" step="1" [min]="1"
-                    oninput="this.value = ( this.value < 1 ) ? '' : this.value" placeholder="Increment in Amount"
-                    id="scincrementalAmount" name="scincrementalAmount"
-                    [(ngModel)]="assessmentFormData.scIncrementalAmount"
-                    (ngModelChange)="salaryCorrectionmanualinputProrataCheckforpercentage(assessmentFormData.scIncrementalAmount)"
-                    aria-label="default input example" [disabled]="currentStage!==lastStage||!this.assessmentFormData.salaryCorrectioninputcheck"
-                    [required]="assessmentFormData.salaryCorrectioninputcheck">
-                </div>
-              </div>
-            </div>
-          </div>
-       
-          <div class="form-check mb-4" *ngIf="(currentStage===lastStage || ((currentStage<=0 ||currentStage>=lastStage)&& assessmentFormData.hrratingexist))">
-            <input class="form-check-input" type="checkbox" value="" id="eligibleforRehire" name="eligibleforRehire"
-              [(ngModel)]="assessmentFormData.eligibleforpromotion" (click)="eligibleforrehirecheck($event)"
-              [disabled]="currentStage!==lastStage">
-            <label class="form-check-label" for="flexCheckDefault">
-              Eligible for Promotion
-            </label>
-          </div>
-  
-          <div class="row mb-4">
-            <div class="col-lg-4 col-md-6 mb-3">
-              <div>
-                <label for="" class="form-label">Current Designation<span class="text-danger"></span></label>
-                <input class="form-control" type="text" id="curentdesignation" name="currentdesignation"
-                  [(ngModel)]="assessmentFormData.designation" placeholder="current designation"
-                  aria-label="default input example" disabled readonly>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-6 mb-3">
-              <div>
-                <label for="" class="form-label">Revised Designation<span class="text-danger"
-                    *ngIf="assessmentFormData.eligibleforpromotion">*</span></label>
-                <!-- <select id="designation" class="form-select" name="designation" #designation="ngModel"
-                  [disabled]="currentStage!==lastStage||!assessmentFormData.eligibleforpromotion"
-                  [(ngModel)]="assessmentFormData.revisedDesignation"
-                  [required]="assessmentFormData.eligibleforpromotion">
-                  <option [ngValue]="null" disabled selected>Please select revised designation</option>
-                  <option *ngFor="let item of getDesignationWithGradeIdDetails" [value]="item.designationName">
-                    {{item.designationName}}</option>
-                </select> -->
-                <!-- <ng-select [items]="getDesignationWithGradeIdDetails" bindValue="designationName" bindLabel="designationName"
-                  (change)="designationChange($event)" id="designation" name="designation" #designation="ngModel"
-                  [disabled]="currentStage!==lastStage||!assessmentFormData.eligibleforpromotion"
-                  [(ngModel)]="assessmentFormData.revisedDesignation" [multiple]="false" notFoundText="No results found"
-                  [closeOnSelect]="true" placeholder="Please select revised designation" required>
-                  <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-                    <span>{{ item.designationName}}</span>
-                  </ng-template>
-                </ng-select> -->
-              </div>
+            <div *ngIf="employeeCommentsControl.touched && employeeCommentsControl.invalid" class="text-danger">
+              <small *ngIf="employeeCommentsControl.errors?.['required']">
+                {{response.name}} Comment is required.</small>
+              <!-- <small *ngIf="employeeCommentsControl.errors?.['minlength']">Minimum length is 10 characters.</small>   minlength="10"-->
             </div>
           </div>
         </ng-container>
-  
-        <div class="button-content pb-4">
-          <div class="d-flex justify-content-end gap-3">
-            <ng-container *ngFor="let response of assessmentFormData?.formResponses;">
-              <button type="button" class="modal-btn no-btn"
-                *ngIf="response.order === this.currentStage && (response.status==='Pending'||response.status==='Draft' ||response.status==='Submitted'||response.status==='Re-Submitted')"
-                (click)="openconfirmationModel(confirmationtocancle)">Cancel</button>
-              <button class="modal-btn yes-btn" type="button"
-                *ngIf="response.order === this.currentStage && (response.status==='Pending'||response.status==='Draft')"
-                 class="modal-btn yes-btn btn btn-primary"
-                (click)="openconfirmationModel(confirmationtosaveasdraft);saveAsDraftcheck()">Save as Draft</button>
-              <button type="button" 
-                *ngIf="(response.order === this.currentStage) && (response.status==='Pending'||response.status==='Draft')"
-                [disabled]="form.invalid" class="modal-btn yes-btn btn btn-primary"
-                (click)="openconfirmationModel(confirmationtosave)">Submit</button>
-                <button type="button"
-                *ngIf="(response.order === this.currentStage) && (response.status==='Submitted' ||response.status==='Re-Submitted')"
-                [disabled]="form.invalid" class="modal-btn yes-btn btn btn-primary"
-                (click)="openconfirmationModel(resubmitconfirmationtosave)">Re-Submit</button>
-            </ng-container>
+      </div>
+      <ng-container
+        *ngIf="(currentStage>1 && currentStage===lastStage || ((currentStage>=lastStage) && assessmentFormData.hrratingexist))">
+        <div *ngIf="assessmentFormData.isApplicableForIncrement">
+          <div class="row mb-4">
+            <div class="col-lg-12 col-md-6">
+              <div class="row">
+                <div class="col-lg-4 col-md-12 mb-3">
+                  <div>
+                    <label for="" class="form-label">Overall Rating</label>
+                    <input class="form-control" type="text" id="hroverallrating" name="hroverallrating"
+                      [(ngModel)]="hrOverAllRatingForProrata" placeholder="Overall Rating"
+                      aria-label="default input example" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-12 mb-3">
+                  <div>
+                    <label for="" class="form-label"> Incremental Percentage Based on Pro Rata Basis</label>
+                    <input class="form-control" type="text" id="incrementalpercentage" name="incrementalpercentage"
+                      [(ngModel)]="assessmentFormData.incrementpercentagebasedonprorata"
+                      placeholder="Increment in Amount based on Pro Rata Basis" aria-label="default input example"
+                      readonly>
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-12 mb-3">
+                  <div>
+                    <label for="" class="form-label">Current Salary</label>
+                    <input class="form-control" type="text" id="currentsalary" name="currentsalary"
+                      [(ngModel)]="assessmentFormData.currentSalaryAuto" placeholder="Current Salary"
+                      aria-label="default input example" readonly>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-6">
+              <div class="row">
+                <div class="col-lg-4 col-md-12 mb-3">
+                  <div>
+                    <label for="" class="form-label">Total Duration in Months</label>
+                    <input class="form-control" type="number" placeholder="Total Duration in Months" id="totalrating"
+                      name="totalrating" [min]="1" step="1" oninput="this.value = (this.value < 1 ) ? '' : this.value"
+                      aria-label="default input example" [(ngModel)]="assessmentFormData.totaldurationinmonths"
+                      (ngModelChange)="prorataCalculationBasedontotaldurationinmonths(assessmentFormData.totaldurationinmonths)"
+                      [disabled]="currentStage!==lastStage">
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-12 mb-3">
+                  <div>
+                    <label for="" class="form-label">Increment in Amount based on Pro Rata Basis</label>
+                    <input class="form-control" type="number" id="incrementalamount" name="incrementalamount"
+                      [(ngModel)]="assessmentFormData.IncrementalAmount"
+                      placeholder="Incremental Percentage Based on Pro Rata Basis" aria-label="default input example"
+                      readonly>
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-12 mb-3">
+                  <div>
+                    <label for="" class="form-label">Revised Salary</label>
+                    <input class="form-control" type="text" id="revicedsalary" name="revicedsalary"
+                      [(ngModel)]="assessmentFormData.revicedSalary" placeholder="Revised Salary"
+                      aria-label="default input example" readonly>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-check mb-4"
+            *ngIf="(currentStage===lastStage || ((currentStage<=0||currentStage>=lastStage) && assessmentFormData.hrratingexist))">
+            <input class="form-check-input" type="checkbox" value="" id="considermanual" name="considermanual"
+              [(ngModel)]="assessmentFormData.considermanualinputcheck" (click)="considermanualinput($event)"
+              id="flexCheckDefault" [disabled]="currentStage!==lastStage">
+            <label class="form-check-label" for="flexCheckDefault">
+              Consider Manual Input
+            </label>
+          </div>
+          <div class="row mb-4">
+            <div class="col-lg-4 col-md-6 mb-3">
+              <div>
+                <label for="" class="form-label">Incremental Percentage Based on Rating<span class="text-danger"
+                    *ngIf="assessmentFormData.considermanualinputcheck">*</span></label>
+                <input class="form-control" type="number" step="1" [min]="1"
+                  oninput="this.value = ( this.value < 1 ) ? '' : this.value" id="cmincrementalpercentage"
+                  name="cmincrementalpercentage" [(ngModel)]="assessmentFormData.cmincrementpercentagebasedonprorata"
+                  (ngModelChange)="considermanualinputProrataCheck(assessmentFormData.cmincrementpercentagebasedonprorata)"
+                  placeholder="Incremental Percentage Based on Rating" aria-label="default input example"
+                  [required]="assessmentFormData.considermanualinputcheck"
+                  [disabled]="!this.assessmentFormData.considermanualinputcheck ||currentStage!==lastStage">
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-3">
+              <div>
+                <label for="" class="form-label">Current Salary</label>
+                <input class="form-control" type="text" placeholder="Current Salary" id="cmcurrentsalary"
+                  [(ngModel)]="assessmentFormData.cmcurrentSalaryAuto" name="cmcurrentsalary"
+                  aria-label="default input example" [disabled]="currentStage === 1" readonly>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+              <div>
+                <label for="" class="form-label">Revised Salary<span class="text-danger"></span></label>
+                <input class="form-control" type="text" placeholder="Revised Salary" aria-label="default input example"
+                  [disabled]="currentStage === 1" id="cmrevicedsalary" name="cmrevicedsalary"
+                  [(ngModel)]="assessmentFormData.cmrevicedSalary" readonly>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+              <div>
+                <label for="" class="form-label">Increment in Amount<span class="text-danger"
+                    *ngIf="assessmentFormData.considermanualinputcheck">*</span></label>
+                <input class="form-control" type="number" step="1" [min]="1"
+                  oninput="this.value = ( this.value < 1 ) ? '' : this.value" placeholder="Increment in Amount"
+                  id="cmincrementalAmount" name="cmincrementalAmount"
+                  [(ngModel)]="assessmentFormData.cmIncrementalAmount"
+                  (ngModelChange)="considermanualinputProrataCheckforpercentage(assessmentFormData.cmIncrementalAmount)"
+                  aria-label="default input example"
+                  [disabled]="currentStage!==lastStage ||!this.assessmentFormData.considermanualinputcheck"
+                  [required]="assessmentFormData.considermanualinputcheck">
+              </div>
+            </div>
+          </div>
+          <div class="form-check mb-4"
+            *ngIf="((currentStage===lastStage) || ((currentStage<=0||currentStage>=lastStage) && assessmentFormData.hrratingexist))">
+            <input class="form-check-input" type="checkbox" value="" id="salarycorrection" name="salarycorrection"
+              [(ngModel)]="assessmentFormData.salaryCorrectioninputcheck" (click)="salaryCorrectionmanualinput($event)"
+              id="flexCheckDefault" [disabled]="currentStage!==lastStage">
+            <label class="form-check-label" for="flexCheckDefault">
+              Salary Correction
+            </label>
+          </div>
+          <div class="row mb-4">
+            <div class="col-lg-4 col-md-6 mb-3">
+              <div>
+                <label for="" class="form-label">Incremental Percentage Based on Rating<span class="text-danger"
+                    *ngIf="assessmentFormData.salaryCorrectioninputcheck">*</span></label>
+                <input class="form-control" type="number" step="1" [min]="1"
+                  oninput="this.value = ( this.value < 1 ) ? '' : this.value" id="scincrementalpercentage"
+                  name="scincrementalpercentage" [(ngModel)]="assessmentFormData.scincrementpercentagebasedonprorata"
+                  (ngModelChange)="salaryCorrectionmanualinputProrataCheck(assessmentFormData.scincrementpercentagebasedonprorata)"
+                  placeholder="Incremental Percentage Based on Rating" aria-label="default input example"
+                  [required]="assessmentFormData.salaryCorrectioninputcheck"
+                  [disabled]="!this.assessmentFormData.salaryCorrectioninputcheck ||currentStage!==lastStage">
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-3">
+              <div>
+                <label for="" class="form-label">Current Salary</label>
+                <input class="form-control" type="text" placeholder="Current Salary" id="sccurrentsalary"
+                  [(ngModel)]="assessmentFormData.sccurrentSalaryAuto" name="sccurrentsalary"
+                  aria-label="default input example" [disabled]="currentStage === 1" readonly>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+              <div>
+                <label for="" class="form-label">Revised Salary<span class="text-danger"></span></label>
+                <input class="form-control" type="text" placeholder="Revised Salary" aria-label="default input example"
+                  [disabled]="currentStage === 1" id="screvicedsalary" name="screvicedsalary"
+                  [(ngModel)]="assessmentFormData.screvicedSalary" readonly>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+              <div>
+                <label for="" class="form-label">Increment in Amount<span class="text-danger"
+                    *ngIf="assessmentFormData.salaryCorrectioninputcheck">*</span></label>
+                <input class="form-control" type="number" step="1" [min]="1"
+                  oninput="this.value = ( this.value < 1 ) ? '' : this.value" placeholder="Increment in Amount"
+                  id="scincrementalAmount" name="scincrementalAmount"
+                  [(ngModel)]="assessmentFormData.scIncrementalAmount"
+                  (ngModelChange)="salaryCorrectionmanualinputProrataCheckforpercentage(assessmentFormData.scIncrementalAmount)"
+                  aria-label="default input example"
+                  [disabled]="currentStage!==lastStage||!this.assessmentFormData.salaryCorrectioninputcheck"
+                  [required]="assessmentFormData.salaryCorrectioninputcheck">
+              </div>
+            </div>
           </div>
         </div>
-      </form>
-    </ng-template>
+
+        <div class="form-check mb-4"
+          *ngIf="(currentStage===lastStage || ((currentStage<=0 ||currentStage>=lastStage)&& assessmentFormData.hrratingexist))">
+          <input class="form-check-input" type="checkbox" value="" id="eligibleforRehire" name="eligibleforRehire"
+            [(ngModel)]="assessmentFormData.eligibleforpromotion" (click)="eligibleforrehirecheck($event)"
+            [disabled]="currentStage!==lastStage">
+          <label class="form-check-label" for="flexCheckDefault">
+            Eligible for Promotion
+          </label>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-lg-4 col-md-6 mb-3">
+            <div>
+              <label for="" class="form-label">Current Designation<span class="text-danger"></span></label>
+              <input class="form-control" type="text" id="curentdesignation" name="currentdesignation"
+                [(ngModel)]="assessmentFormData.designation" placeholder="current designation"
+                aria-label="default input example" disabled readonly>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 mb-3">
+            <div class="custom-p-select-content">
+              <label for="" class="form-label">Revised Designation<span class="text-danger"
+                  *ngIf="assessmentFormData.eligibleforpromotion">*</span></label>
+              <p-select [options]="getDesignationWithGradeIdDetails" optionLabel="designationName"
+                name="revisedDesignation" [(ngModel)]="assessmentFormData.revisedDesignation"
+                [disabled]="currentStage !== lastStage || !assessmentFormData.eligibleforpromotion"
+                placeholder="Please select revised designation" (onChange)="designationChange($event)"
+                [showClear]="true" [filter]="true" required>
+              </p-select>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="button-content pb-4">
+        <div class="d-flex justify-content-end gap-3">
+          <ng-container *ngFor="let response of assessmentFormData?.formResponses;">
+            <button type="button" class="custom-btn btn-secondary"
+              *ngIf="response.order === this.currentStage && (response.status==='Pending'||response.status==='Draft' ||response.status==='Submitted'||response.status==='Re-Submitted')"
+              (click)="openconfirmationModel(confirmationtocancle)">Cancel</button>
+            <button class="modal-btn yes-btn" type="button"
+              *ngIf="response.order === this.currentStage && (response.status==='Pending'||response.status==='Draft')"
+              class="custom-btn btn-primary"
+              (click)="openconfirmationModel(confirmationtosaveasdraft)">Save as Draft</button>
+            <button type="button"
+              *ngIf="(response.order === this.currentStage) && (response.status==='Pending'||response.status==='Draft')"
+              [disabled]="form.invalid" class="custom-btn btn-primary"
+              (click)="openconfirmationModel(confirmationtosave)">Submit</button>
+            <button type="button"
+              *ngIf="(response.order === this.currentStage) && (response.status==='Submitted' ||response.status==='Re-Submitted')"
+              [disabled]="form.invalid" class="custom-btn btn-primary"
+              (click)="openconfirmationModel(resubmitconfirmationtosave)">Re-Submit</button>
+          </ng-container>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</div>
+
+<ng-template #confirmationtosave let-modal>
+  <div class="modal-body p-4" ngbAutofocus>
+    <div class="mb-4 text-center">
+      <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
+    </div>
+    <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Submit?</p>
+    <div class="d-flex justify-content-around pt-3">
+      <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
+      <button class="modal-btn yes-btn" (click)="onSubmit();modal.dismiss() ">Yes</button>
+    </div>
   </div>
-  
-  <ng-template #confirmationtosave let-modal>
-    <div class="modal-body p-4" ngbAutofocus>
-      <div class="mb-4 text-center">
-        <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
-      </div>
-      <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Submit?</p>
-      <div class="d-flex justify-content-around pt-3">
-        <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
-        <button class="modal-btn yes-btn" (click)="onSubmit();modal.dismiss() ">Yes</button>
-      </div>
+</ng-template>
+<ng-template #resubmitconfirmationtosave let-modal>
+  <div class="modal-body p-4" ngbAutofocus>
+    <div class="mb-4 text-center">
+      <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
     </div>
-  </ng-template>
-  <ng-template #resubmitconfirmationtosave let-modal>
-    <div class="modal-body p-4" ngbAutofocus>
-      <div class="mb-4 text-center">
-        <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
-      </div>
-      <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Submit?</p>
-      <div class="d-flex justify-content-around pt-3">
-        <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
-        <button class="modal-btn yes-btn" (click)="onReSubmit();modal.dismiss() ">Yes</button>
-      </div>
+    <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Submit?</p>
+    <div class="d-flex justify-content-around pt-3">
+      <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
+      <button class="modal-btn yes-btn" (click)="onReSubmit();modal.dismiss() ">Yes</button>
     </div>
-  </ng-template>
-  
-  <ng-template #confirmationtosaveasdraft let-modal>
-    <div class="modal-body p-4" ngbAutofocus>
-      <div class="mb-4 text-center">
-        <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
-      </div>
-      <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Save?</p>
-      <div class="d-flex justify-content-around pt-3">
-        <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
-        <button class="modal-btn yes-btn" (click)="onSaveasDraft();modal.dismiss() ">Yes</button>
-      </div>
+  </div>
+</ng-template>
+
+<ng-template #confirmationtosaveasdraft let-modal>
+  <div class="modal-body p-4" ngbAutofocus>
+    <div class="mb-4 text-center">
+      <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
     </div>
-  </ng-template>
-  
-  <ng-template #confirmationtocancle let-modal>
-    <div class="modal-body p-4" ngbAutofocus>
-      <div class="mb-4 text-center">
-        <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
-      </div>
-      <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Cancel?</p>
-      <div class="d-flex justify-content-around pt-3">
-        <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
-        <button class="modal-btn yes-btn" (click)="cancle();modal.dismiss() ">Yes</button>
-      </div>
+    <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Save?</p>
+    <div class="d-flex justify-content-around pt-3">
+      <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
+      <button class="modal-btn yes-btn" (click)="onSaveasDraft();modal.dismiss() ">Yes</button>
     </div>
-  </ng-template>
-  
-  <ng-template #success let-modal>
-    <div class="modal-body p-4 text-center" ngbAutofocus>
-      <div class="d-flex flex-column justify-content-center">
-        <i class="bi bi-check-circle-fill mb-3"></i>
-        <h4 class=" ps-3 pe-3 confirm-text text-wrap">{{ Status }}</h4>
-        <div class="text-center mb-4">
-          <div>
-            <button type="button" class="btn btn-primary mt-4" (click)="close1()">
-              OK
-            </button>
-          </div>
+  </div>
+</ng-template>
+
+<ng-template #confirmationtocancle let-modal>
+  <div class="modal-body p-4" ngbAutofocus>
+    <div class="mb-4 text-center">
+      <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
+    </div>
+    <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to Cancel?</p>
+    <div class="d-flex justify-content-around pt-3">
+      <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
+      <button class="modal-btn yes-btn" (click)="cancle();modal.dismiss() ">Yes</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #success let-modal>
+  <div class="modal-body p-4 text-center" ngbAutofocus>
+    <div class="d-flex flex-column justify-content-center">
+      <i class="bi bi-check-circle-fill mb-3"></i>
+      <h4 class=" ps-3 pe-3 confirm-text text-wrap">{{ Status }}</h4>
+      <div class="text-center mb-4">
+        <div>
+          <button type="button" class="btn btn-primary mt-4" (click)="close1()">
+            OK
+          </button>
         </div>
       </div>
     </div>
-  </ng-template>
-  
-  <!-- loading popup start -->
-  <ng-template #loading let-modal>
-    <div class="modal-body ">
-      <div class="mt-4 py-5 text-center  justify-content-center">
-        <div class="spinner-border text-primary d-inline-block ms-3" style="width: 2rem; height: 2rem" role="status">
-          <span class="sr-only"></span>
-        </div>
-        <p>Sending request please wait...</p>
+  </div>
+</ng-template>
+
+<!-- loading popup start -->
+<ng-template #loading let-modal>
+  <div class="modal-body ">
+    <div class="mt-4 py-5 text-center  justify-content-center">
+      <div class="spinner-border text-primary d-inline-block ms-3" style="width: 2rem; height: 2rem" role="status">
+        <span class="sr-only"></span>
+      </div>
+      <p>Sending request please wait...</p>
+    </div>
+  </div>
+</ng-template>
+
+<!-- loading popup end -->
+<ng-template #error let-model>
+  <div class="modal-body text-center p-4" ngbAutofocus>
+    <div class="d-flex flex-column justify-content-center">
+      <i class="bi bi-x-circle-fill mb-3"></i>
+      <h4 class="ps-3 pe-3 confirm-text text-wrap">{{Status}}</h4>
+      <div class="text-center mb-4">
+        <button type="button" class="btn btn-primary mt-4" (click)="model.dismiss()">OK</button>
       </div>
     </div>
-  </ng-template>
-  
-  <!-- loading popup end -->
-  <ng-template #error let-model>
-    <div class="modal-body text-center p-4" ngbAutofocus>
-      <div class="d-flex flex-column justify-content-center">
-        <i class="bi bi-x-circle-fill mb-3"></i>
-        <h4 class="ps-3 pe-3 confirm-text text-wrap">{{Status}}</h4>
-        <div class="text-center mb-4">
-          <button type="button" class="btn btn-primary mt-4" (click)="model.dismiss()">OK</button>
-        </div>
-      </div>
+  </div>
+</ng-template>
+
+<ng-template #Cancelback let-model>
+  <div class="modal-body p-4" ngbAutofocus>
+    <div class="mb-4 text-center">
+      <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
     </div>
-  </ng-template>
-  
-  <ng-template #Cancelback let-model>
-    <div class="modal-body p-4" ngbAutofocus>
-      <div class="mb-4 text-center">
-        <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon">
-      </div>
-      <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to go back?</p>
-      <div class="d-flex justify-content-around pt-3">
-        <button class="modal-btn no-btn" (click)="model.dismiss()">No</button>
-        <button class="modal-btn yes-btn" (click)="remove();model.dismiss() ">Yes</button>
-      </div>
+    <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to go back?</p>
+    <div class="d-flex justify-content-around pt-3">
+      <button class="modal-btn no-btn" (click)="model.dismiss()">No</button>
+      <button class="modal-btn yes-btn" (click)="remove();model.dismiss() ">Yes</button>
     </div>
-  </ng-template>
+  </div>
+</ng-template>

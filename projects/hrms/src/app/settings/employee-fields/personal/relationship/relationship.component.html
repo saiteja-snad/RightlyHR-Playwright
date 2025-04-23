@@ -5,7 +5,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter relation"
                     formControlName="Relationship" aria-label="relation" aria-describedby="relation"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="gender">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="RelationForm.invalid">{{'Add'|translate}}</button></span>
@@ -67,7 +67,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Relationship"
                         placeholder="Please enter relationship"
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('Relationship')?.touched && updateForm.get('Relationship')?.invalid" class="error-msg mt-2">
                         <div *ngIf="updateForm.get('Relationship')?.errors?.['required']">{{'Relationship is required'|translate}}</div>
                     </div>

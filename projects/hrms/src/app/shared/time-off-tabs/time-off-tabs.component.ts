@@ -11,20 +11,19 @@ import { RbacService } from '../../services/rbac.service';
 })
 
 export class TimeOffTabsComponent implements OnInit {
-  constructor(public readonly router: Router, private rbac: RbacService) { }
   filteredTabs: any[] = [];
   isActive(route: string): boolean {
     return this.router.isActive(route, true);
   }
-  
   empinfo: any;
   allowedWfh: boolean = false;
   navTabs: any[] = [];
-  
+
+  constructor(public readonly router: Router, private rbac: RbacService) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.allowedWfh = this.empinfo.allowWFH;
-  
     this.navTabs = [
       { label: 'Time-Off', link: '/time-off/leaves', permission: { feature: 'Timeoff Tab', action: 'view' } },
       ...(!this.allowedWfh ? [{ label: 'WFH', link: '/time-off/wfh', permission: { feature: 'Workfromhome Tab', action: 'view' } }] : []),
@@ -38,14 +37,12 @@ export class TimeOffTabsComponent implements OnInit {
       { label: 'On Behalf Of Approvals', link: '/time-off/on-behalf-of-approvals', permission: { feature: 'On Behalf Of Approvals Tab', action: 'view' } },
       { label: 'Global-Permissions', link: '/time-off/global-permissions', permission: { feature: 'Global Permissions Tab', action: 'view' } }
     ];
-  
     this.filterTabsByRbac();
   }
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
-
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);

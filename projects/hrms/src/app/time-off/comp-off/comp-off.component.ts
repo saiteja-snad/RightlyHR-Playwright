@@ -1,14 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CompOffApprovalTabsComponent } from '../../shared/comp-off-approval-tabs/comp-off-approval-tabs.component';
 import { RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IJob } from '../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -18,19 +11,14 @@ import { Ileavesdatas, IValidations } from '../../Interfaces/timoff-model';
 import moment from 'moment';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
-
-
+import { CompOffApprovalTabsComponent } from "../../shared/time-off-module-tabs/comp-off-approval-tabs/comp-off-approval-tabs.component";
 @Component({
   selector: 'app-comp-off',
-  imports: [
-    CompOffApprovalTabsComponent,
-    RouterModule,
-    ReactiveFormsModule,
-    CommonModule,
-  ],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, CompOffApprovalTabsComponent],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
 })
+
 export class CompOffComponent implements OnInit, OnDestroy {
   addCompOffForm!: FormGroup;
   empinfo = {} as IJob;
@@ -49,25 +37,13 @@ export class CompOffComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   alloweddates: string = '';
 
-
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private sharedModalService:OpenModalService,
-    public rbac: RbacService,
-  ) {}
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
+    private sharedModalService: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.halfDayValue = JSON.parse(
-      localStorage.getItem('filterHalfDayData') || '{}'
-    );
-    this.fullDayValue = JSON.parse(
-      localStorage.getItem('filterFullDayData') || '{}'
-    );
-    
-
+    this.halfDayValue = JSON.parse(localStorage.getItem('filterHalfDayData') || '{}');
+    this.fullDayValue = JSON.parse(localStorage.getItem('filterFullDayData') || '{}');
     this.intializeCompOffForm();
     this.getWorkfromhomeCriteria();
     this.getEmployeeeHolidays();
@@ -81,7 +57,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   intializeCompOffForm() {
     this.addCompOffForm = this.fb.group({
-      workedDate: ['', 
+      workedDate: ['',
         [Validators.required, this.onlyWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]
       ],
       availing: ['', Validators.required],
@@ -125,29 +101,23 @@ export class CompOffComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           // this.getCompOffRequest();
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal(
-            'Request submitted successfully'
-          );
+          this.sharedModalService.openSuccessModal('Request submitted successfully');
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             compOff: true,
           }));
-
           setTimeout(() => {
             window.location.reload();
-          }
-        , 2000);
+          }, 2000);
           //write a signal to trigger the get all count in the side bar
         },
         error: (err: any) => {
           this.spinnerLoader = false;
-          if(err.error.message.toLowerCase()=='you already applied to same category for same day'){
-              this.sharedModalService.openErrorModal('Same date range already exists')
-        }else{
-          this.sharedModalService.openErrorModal( err.error.message)
-        }
-       
-
+          if (err.error.message.toLowerCase() == 'you already applied to same category for same day') {
+            this.sharedModalService.openErrorModal('Same date range already exists')
+          } else {
+            this.sharedModalService.openErrorModal(err.error.message)
+          }
         },
         complete: () => {
           this.addCompOffForm.reset();
@@ -155,17 +125,12 @@ export class CompOffComponent implements OnInit, OnDestroy {
         },
       });
     }
-
   }
 
   updateDuration() {
     if (this.compoffdata.startTimeProp && this.compoffdata.endTimeProp) {
-      const formattedStartTime = moment(this.compoffdata.startTimeProp).format(
-        'HH:mm'
-      );
-      const formattedEndTime = moment(this.compoffdata.endTimeProp).format(
-        'HH:mm'
-      );
+      const formattedStartTime = moment(this.compoffdata.startTimeProp).format('HH:mm');
+      const formattedEndTime = moment(this.compoffdata.endTimeProp).format('HH:mm');
       const startTime = moment(formattedStartTime, 'hh:mm A');
       const endTime = moment(formattedEndTime, 'hh:mm A');
       // Calculate the duration in minutes
@@ -181,13 +146,10 @@ export class CompOffComponent implements OnInit, OnDestroy {
       // Calculate duration as a float
       const durationAsFloat = this.hours + this.minutes / 60;
       this.compoffdata.duration = durationAsFloat.toFixed(2);
-
- 
       const orgHalfDayWFHCritera = parseFloat(this.halfDayValue.value);
       if (this.compoffdata.duration < orgHalfDayWFHCritera) {
         this.compoffdata.duration = null;
-        this.wfhValidations.DurationErrorMessage =
-          'Provided duration is not eligible for Comp Off';
+        this.wfhValidations.DurationErrorMessage = 'Provided duration is not eligible for Comp Off';
         this.wfhValidations.isdurationValidated = true;
       } else {
         this.duration = this.compoffdata.duration;
@@ -201,62 +163,46 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   getEmployeeeHolidays() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.http
-      .getData(`orgHolidays/getOrgHoliday/${EmployeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.holidaysData = data;
-        },
-      });
+    this.http.getData(`orgHolidays/getOrgHoliday/${EmployeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.holidaysData = data;
+      },
+    });
   }
 
   getWorkfromhomeCriteria() {
-    this.http
-      .getData(`CompOffEligibilityCriteria`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.compOffEligibilityCriteria = response;
-          const filterHalfDayData = this.compOffEligibilityCriteria.find(
-            (item: any) => item.name === 'minHalfDayHours'
-          );
-          const filterminhoursData = this.compOffEligibilityCriteria.find(
-            (item: any) => item.name === 'maxDuration'
-          );
-          this.filteredMinhoursData =
-            filterminhoursData ?? ({} as LeaveConfigurationSetting);
-
-          localStorage.setItem(
-            'filterHalfDayData',
-            JSON.stringify(filterHalfDayData)
-          );
-          const filterFullDayData = this.compOffEligibilityCriteria.find(
-            (item: any) => item.name === 'minFullDayHours'
-          );
-          localStorage.setItem(
-            'filterFullDayData',
-            JSON.stringify(filterFullDayData)
-          );
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.compOffEligibilityCriteria = []; // Set to empty array on error
-        },
-      });
+    this.http.getData(`CompOffEligibilityCriteria`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOffEligibilityCriteria = response;
+        const filterHalfDayData = this.compOffEligibilityCriteria.find(
+          (item: any) => item.name === 'minHalfDayHours'
+        );
+        const filterminhoursData = this.compOffEligibilityCriteria.find(
+          (item: any) => item.name === 'maxDuration'
+        );
+        this.filteredMinhoursData = filterminhoursData ?? ({} as LeaveConfigurationSetting);
+        localStorage.setItem('filterHalfDayData',JSON.stringify(filterHalfDayData));
+        const filterFullDayData = this.compOffEligibilityCriteria.find(
+          (item: any) => item.name === 'minFullDayHours'
+        );
+        localStorage.setItem('filterFullDayData', JSON.stringify(filterFullDayData));
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.compOffEligibilityCriteria = []; // Set to empty array on error
+      },
+    });
   }
 
   getEmployeeeWeekends() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.http
-      .getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${EmployeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.weekendsData = data;
-        },
-      });
+    this.http.getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${EmployeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.weekendsData = data;
+      },
+    });
   }
+
   // Custom Validator: Allow only weekends
   onlyWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
     if (control.value) {
@@ -290,6 +236,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
     const year = d.getFullYear();
     return `${year}-${month}-${day}`;
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

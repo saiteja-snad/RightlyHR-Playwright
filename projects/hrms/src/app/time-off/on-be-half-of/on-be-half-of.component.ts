@@ -1,5 +1,4 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { OnBeHalfOfApprovalTabsComponent } from "../../shared/on-be-half-of-approval-tabs/on-be-half-of-approval-tabs.component";
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -14,10 +13,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { IJobdetails } from '../../Interfaces/job-model';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { OnBeHalfOfApprovalTabsComponent } from "../../shared/time-off-module-tabs/on-be-half-of-approval-tabs/on-be-half-of-approval-tabs.component";
 
 @Component({
   selector: 'app-on-be-half-of',
-  imports: [CommonModule, OnBeHalfOfApprovalTabsComponent, RouterModule, TranslateModule, Select, ReactiveFormsModule,],
+  imports: [CommonModule, RouterModule, TranslateModule, Select, ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss'
 })

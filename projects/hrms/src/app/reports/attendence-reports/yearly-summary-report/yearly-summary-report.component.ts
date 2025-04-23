@@ -129,22 +129,6 @@ getYearlyReports() {
 }
 
 extractUniqueYearlyFilters(data: any[]): void {
-  this.employeeiddetails = Array.from(new Map(data.map((item: any) => [item.fusionEmpId, item])).values())
-    .map((item: any) => ({
-      fusionEmpId: item.fusionEmpId,
-      fullName: `${item.fusionEmpId} - ${item.employeeName}`
-    }));
-
-  this.teamdetails = Array.from(new Map(data
-    .filter(item => item.teamManagerName)
-    .map(item => [item.teamManagerName, item])).values())
-    .map((item: any) => ({
-      id: item.teamManagerEmpID,
-      firstName: item.teamManagerName.split(' ')[0],
-      middleName: '',
-      lastName: item.teamManagerName.split(' ').slice(1).join(' ')
-    }));
-
   this.uniqueLeaveCategory = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
 }
 

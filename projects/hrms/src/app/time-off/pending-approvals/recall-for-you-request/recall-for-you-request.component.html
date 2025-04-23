@@ -1,8 +1,8 @@
 
-<div class="custom-main-component-container mt-3" *ngIf="this.rbac.allowedToAccess('Recall Tab.view')">
+<div class="custom-main-component-container" *ngIf="this.rbac.allowedToAccess('Recall Tab.view')">
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search here"

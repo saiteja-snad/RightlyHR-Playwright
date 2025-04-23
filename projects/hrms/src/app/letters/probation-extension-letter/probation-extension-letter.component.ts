@@ -9,9 +9,9 @@ import { Router } from '@angular/router';
 import moment from 'moment';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 import { OpenModalService } from '../../services/open-modal.service';
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-probation-extension-letter',
   imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],

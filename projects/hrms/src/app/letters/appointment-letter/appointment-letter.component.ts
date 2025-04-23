@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
@@ -14,9 +12,10 @@ import jsPDF from 'jspdf';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import { IAuthority } from '../../Interfaces/letters-model';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, LettersTabComponent, Select, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent],

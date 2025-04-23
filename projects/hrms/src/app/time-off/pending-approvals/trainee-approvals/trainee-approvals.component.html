@@ -1,10 +1,10 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
     <div>
         <div class="mb-3">
             <app-trainee-approvals-tabs/>
         </div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search here"
@@ -76,7 +76,7 @@
                                     @if(trn.approvalHeader.currentapprovalStage !=
                                     trn.approvalHeader.finalapprovalStage){
                                     <li><button class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)" 
-                                        *ngIf="!rbac.allowedToAccess('Trainee Tab.Delete')"> Reject</button>
+                                        *ngIf="rbac.allowedToAccess('Trainee Tab.delete')"> Reject</button>
                                     </li>}
                                     @if(trn.approvalHeader.currentapprovalStage ==
                                     trn.approvalHeader.finalapprovalStage){
@@ -155,9 +155,20 @@
                 </div>
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" 
-                        >{{'No' | translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="acceptForm.invalid || ! selectedLeaveData.trcomments">{{'Yes'|translate}}</button>
+                        >{{'Cancle' | translate}}</button>
+                        <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="acceptForm.invalid || ! selectedLeaveData.trcomments || isLoading">
+                            @if(!isLoading){
+                            {{'Approve'|translate}}
+                            }
+                            @else {
+                            <div class="d-flex">
+                                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                                </div>
+                                <div> {{'Submitting'|translate}}</div>
+                            </div>
+                            }
+                        </button>
                 </div>
             </form>
         </div>
@@ -242,14 +253,14 @@
                 </div>
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <button type="button" class="custom-btn btn-secondary" (click)="reload()" type="reset"
-                        (click)="selectedLeaveData = {}">{{'No'|translate}}</button>
+                        (click)="selectedLeaveData = {}">{{'Cancel'|translate}}</button>
 
                     <button *ngIf="!discontinue" type="submit" class="custom-btn btn-primary"
                         [disabled]="!selectedLeaveData.trcomments || !selectedLeaveData.extenddate"
-                        (click)="handleExtend(acceptForm)">{{'Yes'|translate}}</button>
+                        (click)="handleExtend(acceptForm)">{{'Reject'|translate}}</button>
 
                     <button *ngIf="discontinue && !extend" type="submit" class="custom-btn btn-primary"
-                        [disabled]="!selectedLeaveData.rejectedReason" (click)="handleReject(acceptForm)">{{'Yes'|translate}}</button>
+                        [disabled]="!selectedLeaveData.rejectedReason" (click)="handleReject(acceptForm)">{{'Reject'|translate}}</button>
                 </div>
             </form>
         </div>

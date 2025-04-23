@@ -36,6 +36,7 @@ export class OnboardingDetailsComponent {
   onboardingForm!: FormGroup;
   traineeForm!: FormGroup;
   isEditing = false;
+  empyployeedata={} as any;
   noticePeriodStatus = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -97,7 +98,7 @@ export class OnboardingDetailsComponent {
       branchLocation: [{ value: "", disabled: true }],
       probationEndDate: [{ value: "", disabled: true }],
       probationStatus: [{ value: "", disabled: true }],
-      noticePeriodStatus: [{ value: '', disable: true }, Validators.required],
+      noticePeriodStatus: [{ value: '', disable: true },],
       backgroundCheckStatus: [{ value: "", disabled: true }],
       salaryHold: [{ value: "", disabled: true }],
       pf: [{ value: "", disabled: true }],
@@ -385,7 +386,7 @@ export class OnboardingDetailsComponent {
       
     };
     if (payload.empstatus === 'Active' && payload.substatus === 'Offer Letter Accepted') {
-      payload.substatus = 'Probation'
+      payload.substatus = 'Probation' 
       payload.empType = 'Probation'
     }
     this.subscription = this.http
@@ -396,8 +397,6 @@ export class OnboardingDetailsComponent {
           this.getEmployeeId();
           this.onboardingForm.disable();
           console.log('Data updated successfully:', data);
-          
-
         },
         error: (reason: any) => {
           console.log(reason);
@@ -405,7 +404,6 @@ export class OnboardingDetailsComponent {
 
         },
       });
-
   }
 
   showButtons(): void {

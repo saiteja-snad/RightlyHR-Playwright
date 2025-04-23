@@ -78,22 +78,20 @@
         <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigateemergency()">Emergency Details</button>
         <!-- <button class="btn  btn-outline-primary rounded-pill pt-2 pb-2 ps-5 pe-5"  (click)="navigatePrevious()">Emergency Details</button> -->
         <div>
-            <button *ngIf="this.prosempdata.experienceType=='Trainee' && getempexpdata.length<=0"
-                class="custom-btn btn-primary px-5" (click)=" navigateNext()">
-                Skip & continue
-            </button>
-            <button *ngIf="this.prosempdata.experienceType=='Trainee' && getempexpdata.length>0"
-                class="custom-btn btn-primary px-5" (click)=" navigateNext()">
-                Next
-            </button>
-            <button *ngIf="this.prosempdata.experienceType=='Fresher' && getempexpdata.length<=0 "
-                class="custom-btn btn-primary px-5" (click)=" navigateNext()">
-                Skip & continue
-            </button>
-            <button *ngIf="this.prosempdata.experienceType=='Fresher' && getempexpdata.length>0 "
-                class="custom-btn btn-primary px-5" (click)=" navigateNext()">
-                Next
-            </button>
+            <button *ngIf="this.prosempdata.experienceType == 'Trainee' && getempexpdata.length <= 0"
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+                
+            <button *ngIf="this.prosempdata.experienceType == 'Trainee' && getempexpdata.length > 0"
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+
+            <button *ngIf="this.prosempdata.experienceType == 'Fresher' && getempexpdata.length <= 0"
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+
+            <button *ngIf="this.prosempdata.experienceType == 'Fresher' && getempexpdata.length > 0"
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+
+            <button *ngIf="this.prosempdata.experienceType == 'Experienced' && getempexpdata.length > 0" 
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
         </div>
     </div>
 </div>

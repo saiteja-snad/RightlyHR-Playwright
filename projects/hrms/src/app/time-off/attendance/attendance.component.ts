@@ -20,6 +20,7 @@ import { TohoursPipe } from "../../Pipes/tohours.pipe";
 import { LeaveType } from '../../Interfaces/timoff-model';
 import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment.dev';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-attendance',
@@ -36,11 +37,13 @@ import { environment } from '../../../environments/environment.dev';
     DateformatPipe,
     TohoursPipe,
     Select,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './attendance.component.html',
   styleUrl: './attendance.component.scss',
 })
 export class AttendanceComponent implements OnInit, OnDestroy {
+  dataLoader=false;
   subscription!: Subscription;
   yearOptions = [
     { name: '2024', value: 2024 },
@@ -96,9 +99,10 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     const currentDate = moment().date();
     // Get current month (1-based)
     this.currentMonth = moment().month() + 1;
-    console.log(this.currentMonth);
+    this.selectedMonth=this.currentMonth;
     // Get current year
     this.currentYear = moment().year();
+    this.selectedYear=this.currentYear;
     let loggedInUser = this.authService.getToken();
     this.empdata = loggedInUser;
     this.selectedEmployee = loggedInUser.employeeId;
@@ -125,7 +129,6 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   punchPairs: { in?: string, out?: string }[] = [];
   selectedDate!:Date;
   dayLogsData(Value:any,date:Date){
-    console.log(Value)
     this.selectedDate=date;
     if(Value){
       this.punchPairs=[];
@@ -169,18 +172,15 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       .getData(`PermissionTypes?type=${'Regularization'}`)
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.regularizationTypes = response;
         },
       });
   }
   //function to post the regularization
   applyRgularization(regularizationForm: FormGroup) {
-    console.log(regularizationForm.value);
     if(regularizationForm.valid) {
       const formData = regularizationForm.value;
       const payLoad = {
-   
     raisedFor: this.empdata.employeeId,
     requestedBy: this.empdata.employeeId,
     requestedDate: formData.permissionDate,
@@ -193,7 +193,6 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     processedComment: formData.processedComment,
     moduleId:environment.attendanceRegularizationModuleId,
   };
-  console.log(payLoad);
   this.spinnerLoader = true;
   this.http.postdata('RegularizationRequests/create',payLoad).subscribe({
     next: (res:any) => {
@@ -221,21 +220,28 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   }
   //function to get the attendance data
   getAttendnaceData(employeeId: number) {
+    this.dataLoader=true;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
       )
       .subscribe({
         next: (response: any) => {
-          console.log(response.data.attendanceData);
+          this.dataLoader=false;
           this.attendanceData.next(response.data.attendanceData);
           this.statusCounts$.next(response.data.summary);
           this.shiftDetails = response.data.shiftDetails;
           // this.attendanceData.next(response.data);
         },
         error: (err: any) => {
+          this.dataLoader=false;
           console.log(err);
           this.attendanceData.next([]);
+          this.statusCounts$.next([]);
+          this.shiftDetails={};
+        },
+        complete:()=> {
+          this.dataLoader=false;
         },
       });
   }
@@ -301,7 +307,6 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       .getData(`Employeedata/Getallemployees?statuses=${satus}`)
       .subscribe({
         next: (response: any) => {
-          // console.log(response);
           if (response) {
             this.getAllEmployeeInfo = response
               .filter(
@@ -323,12 +328,9 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       });
   }
   onclickRegularization(date: Date) {
-    
     this.regularizationForm.patchValue({
       permissionDate: date,
     });
-    //this.postregularization.permissionDate=date
-    //console.log(date)
   }
   // function to get the data of employees by hierarchy
   get_Employeelist_forTM = [] as any;
@@ -338,7 +340,6 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           if (response) {
             this.get_Employeelist_forTM = response.map((employee: any) => {
               return {

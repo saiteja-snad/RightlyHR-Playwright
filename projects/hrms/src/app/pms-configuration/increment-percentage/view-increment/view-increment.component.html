@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between align-items-center popup-header-border p-3">
         <div>
-            <p class="popup-heading mb-0">{{'Create New Increment Percentage'| translate}}</p>
+            <p class="popup-heading mb-0">{{'View Increment Percentage'| translate}}</p>
         </div>
         <div>
             <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -88,7 +88,6 @@
                 <tr>
                   <th>Increment Percentage/Rating</th>
                   <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
-                  <th class="text-center">Action(s)</th>
                   <th></th>
                 </tr>
               </thead>

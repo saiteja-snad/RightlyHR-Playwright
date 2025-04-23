@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
-import { RbacService } from '../../services/rbac.service';
+import { RbacService } from '../../../services/rbac.service';
+
 @Component({
   selector: 'app-time-off-tabs',
   imports: [CommonModule, RouterModule, TabsModule],

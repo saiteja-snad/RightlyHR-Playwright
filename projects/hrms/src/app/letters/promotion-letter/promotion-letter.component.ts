@@ -12,11 +12,10 @@ import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
-
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-promotion-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],

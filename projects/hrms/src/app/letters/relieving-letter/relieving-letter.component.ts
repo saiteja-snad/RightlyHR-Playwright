@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -12,10 +11,10 @@ import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-relieving-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],

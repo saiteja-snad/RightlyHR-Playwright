@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModalRef, NgbModalConfig, NgbModal, NgbNavModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -12,11 +12,11 @@ import { DateformatPipe } from "../../Pipes/dateformat.pipe";
   selector: 'app-assessment-form',
   imports: [CommonModule, FormsModule, NgbPaginationModule,
     ReactiveFormsModule,
-    NgbNavModule, DateformatPipe, RouterModule],
+    NgbNavModule, DateformatPipe, RouterModule,  ],
   templateUrl: './assessment-form.component.html',
   styleUrl: './assessment-form.component.scss'
 })
-export class AssessmentFormComponent {
+export class AssessmentFormComponent implements OnInit {
   subscription!: Subscription;
   templateId!: number;
   currentStage!: number;
@@ -59,6 +59,7 @@ export class AssessmentFormComponent {
   assessortype: any;
   constructor(
     config: NgbModalConfig, private readonly modalService: NgbModal,
+    //  public _userAcessService: UserAccessService,
     private route: ActivatedRoute,
     private http: HttpService,
     private router: Router,
@@ -98,7 +99,7 @@ export class AssessmentFormComponent {
     }
 
     // Retrieve fusionuser data from localStorage
-    const fusionuserString = localStorage.getItem('fusionuser');
+    const fusionuserString = localStorage.getItem('rightlyHrUser');
     if (fusionuserString) {
       const fusionuser = JSON.parse(fusionuserString);
       this.employeeId = fusionuser.employeeId;
@@ -145,7 +146,7 @@ export class AssessmentFormComponent {
   }
 
   cancle() {
-    this.router.navigate(['/pms/myPerformance']);
+    this.router.navigate(['/pms/my-performance-review']);
   }
   //function to open the model popup
   openconfirmationModel(content: any) {

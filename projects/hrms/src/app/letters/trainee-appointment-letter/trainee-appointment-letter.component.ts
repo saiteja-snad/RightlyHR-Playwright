@@ -1,22 +1,22 @@
-import { Component, ElementRef, model, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { IAddress, IDepartment, IemployeeDetails, IIssuelocation, IMake } from '../appointment-letter/appointment-letter-model';
 import moment from 'moment';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
-import { LettersTabComponent } from '../../shared/letters-tab/letters-tab.component';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { IAuthority } from '../../Interfaces/letters-model';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+
 @Component({
   selector: 'app-trainee-appointment-letter',
   imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],

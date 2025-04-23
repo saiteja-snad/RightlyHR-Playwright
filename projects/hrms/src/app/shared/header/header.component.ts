@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { TimeOffTabsComponent } from '../time-off-tabs/time-off-tabs.component';
 import { MyExpensesTabComponent } from "../claimsandexpenses-tabs/my-expenses-tab/my-expenses-tab.component";
 import { MyinfoHeaderTabsComponent } from '../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component';
 import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalinfo-header-tabs/personalinfo-header-tabs.component";
@@ -14,10 +13,12 @@ import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component
 import { PmsSettingsTabsComponent } from "../pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 import { CalendarHeaderTabsComponent } from "../calendar-tabs/calendar-header-tabs/calendar-header-tabs.component";
+import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
+
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TimeOffTabsComponent, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent,
-    ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent, ItsuporrtHeaderTabsComponent, CalendarHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent,
+    ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent, ItsuporrtHeaderTabsComponent, CalendarHeaderTabsComponent, TimeOffTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

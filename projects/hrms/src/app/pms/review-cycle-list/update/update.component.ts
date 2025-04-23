@@ -55,7 +55,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
     if (this.updateData) {
       this.onUpdate(this.updateData);
     }
-    console.log(this.updateData)
   }
 
   close() {
@@ -88,7 +87,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   onReviewCycleUpdateSubmit(cycle: any) {
-    // this.modalRef = this.modalService.open(this.loading, { centered: true });
     if (this.reviewCycleForm.valid) {
       const reviewCycleData = {
         reviewCycleName: this.reviewCycleForm.value.reviewCycleName,
@@ -335,8 +333,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.subLocationsDropdown = data.jobSubLocations.map((subLocation: any) => {
           return {
             ...subLocation,
-            fullName: `${subLocation.subLocationName}`, 
-            selectedAllGroup: 'Group 4', 
+            fullName: `${subLocation.subLocationName}`,
+            selectedAllGroup: 'Group 4',
           };
         });
       }
@@ -344,7 +342,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   onDepartmentNameChange(event: any) {
-    console.log(event)
     const joinedIds = event.value.map((item: any) => item).join(',');
     this.reviewCycleForm.get('subDepartmentId')?.reset();
     if (joinedIds) {
@@ -404,8 +401,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   onReviewCycleintialUpdate() {
-
-    // this.modalRef = this.modalService.open(this.loading, { centered: true });
     if (this.reviewCycleupdateForm.valid) {
       const reviewCycleData = {
         reviewCycleName: this.reviewCycleupdateForm.value.reviewCycleName,
@@ -424,27 +419,18 @@ export class UpdateComponent implements OnInit, OnDestroy {
       };
       this.http.putData(`reviewCycleHeader/update/${this.reviewCycleupdateForm.value.id}`, reviewCycleData).subscribe({
         next: (response) => {
-          // if (this.modalRef) {
-          //   this.modalRef.close();  // or this.modalRef.dismiss();
-          // }
           console.log('Success:', response);
           this.closeModal()
           this.onCreateCycleFormSubmitted()
           this.conformationPopup.openSuccessModal('Review Cycle Updated Successfully')
-          // this.Status = 'Review Cycle Updated Successfully'
-          // this.modalService.open(this.success, { centered: true });
         },
         error: (error) => {
           this.conformationPopup.openErrorModal(error.error.reason)
-          // this.Status = error.error.reason
-          // this.modalService.open(this.errormessage, { centered: true });
-          // if (this.modalRef) {
-          //   this.modalRef.close();  // or this.modalRef.dismiss();
-          // }
           console.error('Error:', error);
         }
       });
-    } else {
+    } 
+    else {
       this.reviewCycleForm.markAllAsTouched();
     }
   }

@@ -41,7 +41,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   @Input() updateData: any
 
   constructor(private router: Router,
-    private conformationPopup: OpenModalService,private fb: FormBuilder,
+    private conformationPopup: OpenModalService, private fb: FormBuilder,
     private http: HttpService, private modalService: NgbModal) {
   }
 
@@ -51,38 +51,33 @@ export class ViewComponent implements OnInit, OnDestroy {
     if (this.updateData) {
       this.Viewintial(this.updateData);
     }
-    console.log(this.updateData)
   }
 
   initializeReviewCycleupdateForm() {
     this.reviewCycleupdateForm = this.fb.group({
-      reviewCycleName: [{value:null,disabled: true }, Validators.required],
-      startDate: [{value:null,disabled: true }, Validators.required],
-      endDate: [{value:null,disabled: true }, Validators.required],
+      reviewCycleName: [{ value: null, disabled: true }, Validators.required],
+      startDate: [{ value: null, disabled: true }, Validators.required],
+      endDate: [{ value: null, disabled: true }, Validators.required],
       dueDate: [null, [this.dueDateAfterStartDateValidator('startDate')]],
-      reviewCycleType: [{value:null,disabled: true }, Validators.required],
-      applicableForIncrement: [{value:null,disabled: true },false],
-      locationId: [{value:null,disabled: true }, Validators.required],
-      subLocationId: [{value:null,disabled: true }, Validators.required],
-      departmentId: [{value:null,disabled: true }, Validators.required],
-      subDepartmentId: [{value:null,disabled: true }, Validators.required],
-      applicableEmployeesJoinedBefore: [{value:null,disabled: true }, Validators.required],
-      description: [{value:null,disabled: true }],
+      reviewCycleType: [{ value: null, disabled: true }, Validators.required],
+      applicableForIncrement: [{ value: null, disabled: true }, false],
+      locationId: [{ value: null, disabled: true }, Validators.required],
+      subLocationId: [{ value: null, disabled: true }, Validators.required],
+      departmentId: [{ value: null, disabled: true }, Validators.required],
+      subDepartmentId: [{ value: null, disabled: true }, Validators.required],
+      applicableEmployeesJoinedBefore: [{ value: null, disabled: true }, Validators.required],
+      description: [{ value: null, disabled: true }],
       status: ['draft'],
       id: [null]
     },
       { validators: this.startDateEndDateValidator() }
     );
     this.reviewCycleupdateForm.get('startDate')?.valueChanges.subscribe(() => {
-      // this.toggleDateFields();
-      // this.updateDueDateValidator();
       this.dueDateAfterStartDateValidator('startDate')
       this.startDateEndDateValidator()
-    });
-    // this.toggleDateFields();
-    // this.updateDueDateValidator();    
+    });  
   }
-  
+
   closeModal() {
     this.openCancelationPopUp()
   }
@@ -94,33 +89,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   openCancelationPopUp() {
     this.modalService.open(this.cancelationConfirmation, { centered: true });
   }
-
-  // updateDueDateValidator(): void {
-  //   const startDate = this.reviewCycleForm.get('startDate')?.value;
-
-  //   if (startDate) {
-  //     this.reviewCycleForm.get('dueDate')?.enable();
-  //     this.reviewCycleForm.get('dueDate')?.updateValueAndValidity();
-  //   } else {
-  //     this.reviewCycleForm.get('dueDate')?.reset();
-  //     this.reviewCycleForm.get('dueDate')?.disable();
-  //   }
-  // }
-
-  // toggleDateFields(): void {
-  //   const startDateControl = this.reviewCycleForm.get('startDate');
-  //   const startDateValid = !!startDateControl?.value && startDateControl.valid;
-
-  //   if (startDateValid) {
-  //     this.reviewCycleForm.get('endDate')?.enable();
-  //     this.reviewCycleForm.get('dueDate')?.enable();
-  //   } else {
-  //     this.reviewCycleForm.get('endDate')?.reset();
-  //     this.reviewCycleForm.get('endDate')?.disable();
-  //     this.reviewCycleForm.get('dueDate')?.reset();
-  //     this.reviewCycleForm.get('dueDate')?.disable();
-  //   }
-  // }
 
   startDateEndDateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -166,9 +134,9 @@ export class ViewComponent implements OnInit, OnDestroy {
     };
     this.reviewCycleupdateForm.patchValue({
       reviewCycleName: cycle.reviewCycleName,
-      startDate: formatDate(cycle.startDate), // Format to YYYY-MM-DD
+      startDate: formatDate(cycle.startDate), 
       endDate: formatDate(cycle.endDate),
-      //dueDate: formatDate(cycle.dueDate),
+      dueDate: formatDate(cycle.dueDate),
       reviewCycleType: cycle.reviewCycleType,
       applicableForIncrement: cycle.applicableForIncrement,
       applicableEmployeesJoinedBefore: formatDate(cycle.applicableEmployeesJoinedBefore),
@@ -275,7 +243,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   onReviewCycleintialUpdate() {
-    // this.modalRef = this.modalService.open(this.loading, { centered: true });
     if (this.reviewCycleupdateForm.valid) {
       const reviewCycleData = {
         reviewCycleName: this.reviewCycleupdateForm.value.reviewCycleName,
@@ -294,23 +261,12 @@ export class ViewComponent implements OnInit, OnDestroy {
       };
       this.http.putData(`reviewCycleHeader/update/${this.reviewCycleupdateForm.value.id}`, reviewCycleData).subscribe({
         next: (response) => {
-          // if (this.modalRef) {
-          //   this.modalRef.close();  // or this.modalRef.dismiss();
-          // }
-          // console.log('Success:', response);
           this.closeModal()
           this.onCreateCycleFormSubmitted()
-          // this.Status = 'Review Cycle Updated Successfully'
           this.conformationPopup.openSuccessModal('Review Cycle Updated Successfully')
-          // this.modalService.open(this.success, { centered: true });
         },
         error: (error) => {
-          // this.Status = error.error.reason
           this.conformationPopup.openSuccessModal(error.error.reason)
-          // this.modalService.open(this.errormessage, { centered: true });
-          // if (this.modalRef) {
-          //   this.modalRef.close();  // or this.modalRef.dismiss();
-          // }
           console.error('Error:', error);
         }
       });
@@ -318,7 +274,7 @@ export class ViewComponent implements OnInit, OnDestroy {
       this.reviewCycleForm.markAllAsTouched();
     }
   }
-  
+
   onCreateCycleFormSubmitted() {
     this.page = 1
     this.pageSize = 10
@@ -397,7 +353,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   onDepartmentNameChange(event: any) {
-    console.log(event)
     const joinedIds = event.value.map((item: any) => item).join(',');
     this.reviewCycleForm.get('subDepartmentId')?.reset();
     if (joinedIds) {

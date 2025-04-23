@@ -60,7 +60,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo);
     this.halfDayValue = JSON.parse(
       localStorage.getItem('filterHalfDayData') || '{}'
     );
@@ -105,24 +104,22 @@ export class CompOffComponent implements OnInit, OnDestroy {
   }
 
   applyCompOff(addForm: FormGroup) {
-    console.log(addForm);
-
     if (addForm.valid) {
       const formData = addForm.value;
+      const isFullDay = +formData.availing === 2;
       const payload = {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
         requestedComments: this.compoffdata.requestedComments,
-        durationType: +formData.availing,
-        duration:+formData.availing == 2 ? 1 : 0.5,
+        durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
+        duration: isFullDay ? 1 : 0.5,
         status: 'Waiting for Approval',
         reason: formData.reason,
         requestedCategory: 3,
         requestedBy: this.empinfo.employeeId,
         requestedDate: new Date(),
       };
-      console.log(payload);
       this.spinnerLoader = true;
       this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
@@ -154,22 +151,14 @@ export class CompOffComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.addCompOffForm.reset();
-          this.spinnerLoader = false;},
+          this.spinnerLoader = false;
+        },
       });
     }
 
-    throw new Error('Method not implemented.');
   }
 
   updateDuration() {
-    // this.enableButton = false;
-    // this.selectedValuehalf=false;
-    // let starttime =`${this.compoffdata.startTimeProp} ${this.compoffdata.am}`
-    // console.log(starttime);
-    // let endtime =`${this.compoffdata.endTimeProp} ${this.compoffdata.pm}`
-    // console.log(endtime);
-    console.log(this.compoffdata.startTimeProp);
-    console.log(this.compoffdata.endTimeProp);
     if (this.compoffdata.startTimeProp && this.compoffdata.endTimeProp) {
       const formattedStartTime = moment(this.compoffdata.startTimeProp).format(
         'HH:mm'
@@ -192,14 +181,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
       // Calculate duration as a float
       const durationAsFloat = this.hours + this.minutes / 60;
       this.compoffdata.duration = durationAsFloat.toFixed(2);
-      // if(this.compoffdata.duration >= 9){
-      //   this.timeValudationError=false;
-      // }
-      console.log(this.compoffdata.startTimeProp);
-      console.log(this.compoffdata.endTimeProp);
-      console.log(this.hours, this.minutes);
-      console.log(durationAsFloat);
-      console.log(this.compoffdata.duration);
+
+ 
       const orgHalfDayWFHCritera = parseFloat(this.halfDayValue.value);
       if (this.compoffdata.duration < orgHalfDayWFHCritera) {
         this.compoffdata.duration = null;
@@ -218,14 +201,12 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   getEmployeeeHolidays() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    console.log(EmployeeId);
     this.http
       .getData(`orgHolidays/getOrgHoliday/${EmployeeId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.holidaysData = data;
-          console.log('Holidays', this.holidaysData);
         },
       });
   }
@@ -236,7 +217,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.compOffEligibilityCriteria = response;
           const filterHalfDayData = this.compOffEligibilityCriteria.find(
             (item: any) => item.name === 'minHalfDayHours'
@@ -246,7 +226,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
           );
           this.filteredMinhoursData =
             filterminhoursData ?? ({} as LeaveConfigurationSetting);
-          console.log(filterHalfDayData);
 
           localStorage.setItem(
             'filterHalfDayData',
@@ -255,7 +234,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
           const filterFullDayData = this.compOffEligibilityCriteria.find(
             (item: any) => item.name === 'minFullDayHours'
           );
-          console.log(filterFullDayData);
           localStorage.setItem(
             'filterFullDayData',
             JSON.stringify(filterFullDayData)
@@ -270,14 +248,12 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   getEmployeeeWeekends() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    console.log(EmployeeId);
     this.http
       .getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${EmployeeId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.weekendsData = data;
-          console.log(this.weekendsData);
         },
       });
   }

@@ -196,8 +196,8 @@
                             Select Approver<span class="error-msg" *ngIf="isToggled">*</span>
                         </label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true"
-                                filterBy="employeeName" formControlName="deskapprovalid"
+                            <p-select [options]="approvalname" optionLabel="employeeNames" [filter]="true"
+                                filterBy="employeeNames" formControlName="deskapprovalid"
                                 placeholder="Please select approver" class="form-select custom-select"
                                 (onChange)="onApprovalSelects($event)"></p-select>
                         </div>

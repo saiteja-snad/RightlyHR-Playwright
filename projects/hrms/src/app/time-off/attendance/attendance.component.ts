@@ -239,6 +239,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
           this.attendanceData.next([]);
           this.statusCounts$.next([]);
           this.shiftDetails={};
+
         },
         complete:()=> {
           this.dataLoader=false;

@@ -8,6 +8,7 @@ import { HttpService } from '../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { SelectModule } from 'primeng/select';
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-assessment-form',
@@ -64,7 +65,8 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private http: HttpService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private sharedModalService: OpenModalService,
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -258,7 +260,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
         } else {
           this.Status = err.error.message;
         }
-        this.modalService.open(this.error, { centered: true });
+        this.sharedModalService.openErrorModal(this.error);
         this.dataload = false;
       },
       complete: () => {
@@ -932,7 +934,10 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
           this.modalRef.close(); 
         }
         this.Status = 'Submitted Successfully'
-        this.modalService.open(this.success, { centered: true });
+        this.sharedModalService.openSuccessModal(this.Status);
+        setTimeout(() => {
+          this.location.back();
+        }, 2000);
       },
       error: (err) => {
         if (this.modalRef) {
@@ -945,7 +950,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
         } else {
           this.Status = err.error.message;
         }
-        this.modalService.open(this.error, { centered: true });
+        this.sharedModalService.openErrorModal(this.Status);
       }
     });
   }
@@ -1001,14 +1006,17 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
       this.subscription= this.http.postdata(`reviewCycleHeader/upsertquery`, payload).subscribe({
         next: (data) => {
           if (this.modalRef) {
-            this.modalRef.close(); 
+            this.modalRef.close();  
           }
-          this.Status = 'Submitted Successfully'
-          this.modalService.open(this.success, { centered: true });
+          this.Status = 'Submitted Successfully';
+          this.sharedModalService.openSuccessModal(this.Status);
+          setTimeout(() => {
+            this.location.back();
+          }, 2000);
         },
         error: (err) => {
           if (this.modalRef) {
-            this.modalRef.close(); 
+            this.modalRef.close();  
           }
           if (err.status === 404) {
             this.Status = "The requested resource was not found. Please check the URL or contact the administrator for assistance.";
@@ -1017,7 +1025,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
           } else {
             this.Status = err.error.message;
           }
-          this.modalService.open(this.error, { centered: true });
+          this.sharedModalService.openErrorModal(this.Status)
         }
       });
     }
@@ -1077,7 +1085,11 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
           this.modalRef.close();  
         }
         this.Status = 'Saved as Draft Successfully'
-        this.modalService.open(this.success, { centered: true });
+        this.sharedModalService.openSuccessModal(this.Status);
+        
+        setTimeout(() => {
+          this.location.back();
+        }, 2000);
       },
       error: (err) => {
         if (this.modalRef) {
@@ -1090,7 +1102,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
         } else {
           this.Status = err.error.message;
         }
-        this.modalService.open(this.error, { centered: true });
+        this.sharedModalService.openErrorModal(this.Status);
       }
     });
   }

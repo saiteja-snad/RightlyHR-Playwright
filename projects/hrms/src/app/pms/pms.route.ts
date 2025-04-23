@@ -18,8 +18,7 @@ export default [
     { path: 'review-cycle/create', component: CreateComponent }, 
     { path: 'review-cycle/update', component: UpdateComponent }, 
     { path: 'review-cycle/view', component: ViewComponent }, 
-    { path: 'apprisal', component: ApprisalListComponent,
-    },
+    { path: 'apprisal', component: ApprisalListComponent,},
     { path: 'assessment-form', component: AssessmentFormComponent},
     { path: 'myPerformance', component: MyPerformanceReviewComponent,
         children: [

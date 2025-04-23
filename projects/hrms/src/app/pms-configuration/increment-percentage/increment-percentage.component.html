@@ -29,42 +29,48 @@
                     </tr>
                 </thead>
                 <tbody>
-                     @if(IncementalDetailsget.length>0){
-                        @for (item of IncementalDetailsget; track $index) {
-                            <tr >
-                                <td>{{item?.reviewCycleName?item?.reviewCycleName:'-' }}
-                                    
-                                  </td>
-              
-                                  <td>{{item?.deptName?( getNamesAsString(item?.deptName, 'departments')):'-' }}</td>
-                                  <td>{{item?.subdeptName? (getNamesAsString(item?.subdeptName, 'subDepartmentName')):'-' }}</td>
-                                  <td>{{item?.locationName?( getNamesAsString(item?.locationName, 'locationName')):'-' }}</td>
-                                  <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}</td>
-                                  <td>{{item?.rating?item?.rating:'-'}}
-                                  </td>
-                                  <td class="text-center">
-                                    <div class="dropdown">
-                                      <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                      </a>
-                                      <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item"  (click)="editDetails(item)">Update</a></li>
-                                        <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"(click)="openDelete(confirmation, item.id)">Delete</a></li>
-                                        <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Initiated'" (click)="viewDetails(item)">View</a></li>
+                    @if(!dataload){
+                        @if(IncementalDetailsget.length>0){
+                            @for (item of IncementalDetailsget; track $index) {
+                                <tr >
+                                    <td>{{item?.reviewCycleName?item?.reviewCycleName:'-' }}
                                         
-                                      </ul>
-                                    </div>
-                                  </td>
+                                      </td>
+                  
+                                      <td>{{item?.deptName?( getNamesAsString(item?.deptName, 'departments')):'-' }}</td>
+                                      <td>{{item?.subdeptName? (getNamesAsString(item?.subdeptName, 'subDepartmentName')):'-' }}</td>
+                                      <td>{{item?.locationName?( getNamesAsString(item?.locationName, 'locationName')):'-' }}</td>
+                                      <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}</td>
+                                      <td>{{item?.rating?item?.rating:'-'}}
+                                      </td>
+                                      <td class="text-center">
+                                        <div class="dropdown">
+                                          <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                          </a>
+                                          <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item"  (click)="editDetails(item)">Update</a></li>
+                                            <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"(click)="openDelete(confirmation, item.id)">Delete</a></li>
+                                            <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Initiated'" (click)="viewDetails(item)">View</a></li>
+                                            
+                                          </ul>
+                                        </div>
+                                      </td>
+                                </tr>
+                            }
+                          
+                         }
+                         @else {
+                            <tr>
+                                <app-no-data-found></app-no-data-found>
+            
                             </tr>
-                        }
-                      
-                     }
-                     @else {
-                        <tr>
-                            <app-no-data-found></app-no-data-found>
-        
-                        </tr>
-                     }
+                         }
+                    }
+                    @else {
+                        <app-data-loader-content/>
+                    }
+                    
                   </tbody>
             </table>
         </div>

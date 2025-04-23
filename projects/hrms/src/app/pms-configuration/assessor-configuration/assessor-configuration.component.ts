@@ -17,6 +17,7 @@ import { AuthService } from '../../services/auth.service';
 import { UpdateAssessorComponent } from './update-assessor/update-assessor.component';
 import { ViewAssessorComponent } from './view-assessor/view-assessor.component';
 import { AddAssessorComponent } from './add-assessor/add-assessor.component';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-assessor-configuration',
@@ -26,11 +27,12 @@ import { AddAssessorComponent } from './add-assessor/add-assessor.component';
     FormsModule,
     PaginatorModule,
     DropdownModule,
-    NoDataFoundComponent,],
+    NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './assessor-configuration.component.html',
   styleUrl: './assessor-configuration.component.scss'
 })
 export class AssessorConfigurationComponent implements OnInit , OnDestroy {
+  dataload=false;
   totalRecords = 100;
   first: any = 1;
   rows: any = 10;
@@ -108,6 +110,7 @@ export class AssessorConfigurationComponent implements OnInit , OnDestroy {
   }
   //function to get the globalpermissions details
   getAllAssesorConfigurationdata(): void {
+    this.dataload=true;
     this.subscription = this.http
       .getReviewCyclesteam(
         `Assessor/GetAssessors`,
@@ -124,7 +127,9 @@ export class AssessorConfigurationComponent implements OnInit , OnDestroy {
         error: (err: any) => {
           console.log('errors', err);
         },
-        complete: () => {},
+        complete: () => {
+          this.dataload=false;
+        },
       });
   }
   getNamesAsString(array: any, type: string): string {

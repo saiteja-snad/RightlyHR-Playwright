@@ -1,4 +1,4 @@
-import { Component, model, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, model, OnDestroy, OnInit, TemplateRef, viewChild, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -10,10 +10,12 @@ import { environment } from '../../../environments/environment';
 import { NgbModal, NgbModalRef, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IReviewCycleEmployee } from './review-cycle-emp.model';
+import { PaginatorModule } from 'primeng/paginator';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-apprisal-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, NgbPagination],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent],
   templateUrl: './apprisal-list.component.html',
   styleUrl: './apprisal-list.component.scss'
 })
@@ -54,8 +56,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   page = 1;
   pageSize = 10;
+  rows = 10;
   collectionSize!: number;
-  searchQuery = ''
+  searchQuery = '';
+  first = 0;
+  totalRecords = 0;
+
   modalRef!: NgbModalRef;
 
   promotedOptions = [
@@ -63,8 +69,16 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     { label: 'No', value: false }
   ];
 
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
+
   @ViewChild('loading') loading: any;
   @ViewChild('addEmployee') addEmployee: any;
+  @ViewChild('confirmation') confirmation: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit() {
@@ -76,6 +90,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.initiatetemplatedropdownsForm();
     this.initialupdatereviewtemplatedropdownsForm();
     this.initiondateForm();
+    this.getAuthorityDetails();
+    this.getAppraisalAuthorityDetails();
   }
 
   constructor(
@@ -192,8 +208,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   // }
 
   onReviewCycleChange(selectedValue: any): void {
-    // this.dependentdropdowns.get('promoted')?.reset();
-  
+      
     const selectedId = selectedValue.value;
     if (!selectedId) {
       console.error('No value selected.');
@@ -202,9 +217,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   
     const selectedCycle = this.getSelectedCycle(selectedId);
     if (!selectedCycle) {
-      console.error('Selected review cycle not found.');
       return;
     }
+
     this.selectedReviewCycle = selectedCycle;
     this.reviewCycleID = selectedCycle.id
   
@@ -214,14 +229,13 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     const { locations, sublocations, departments, subdepartments } = selectedCycle;
     this.updateDropdowns(locations, sublocations, departments, subdepartments);
   
-    // Patching values into the form
     this.patchFormValues(selectedId, departments, subdepartments, locations, sublocations);
   
-    // Set additional fields for further use
     this.setAdditionalFields(locations, sublocations, departments, subdepartments);
   
     const params = this.buildParams(selectedCycle.id);
-    console.log(params);
+    this.first = 0;
+    this.searchText = null;
     this.getEmployeesOfTheReviewCycle(params);
   }
   
@@ -231,7 +245,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   
   updateStatuses(status: string) {
     this.createdStatuses = status.trim().toLowerCase() === 'created' ? ['created'] : [];
-    console.log(this.createdStatuses);
   }
   
   resetDropdownData() {
@@ -266,10 +279,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
   
   buildParams(reviewCycleId: any) {
-    console.log(reviewCycleId)
     return {
-      page: this.page,
-      pageSize: this.pageSize,
+      page: 1,
+      pageSize: 10,
       reviewcycleid: reviewCycleId,
       promotion: this.promoted?.value || '',
     };
@@ -277,7 +289,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   
   onPromotedChange(event: any): void {
     this.promoted = this.dependentdropdowns.get('promoted')?.value
-    console.log(this.promoted)
     const params = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
@@ -287,25 +298,32 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.getEmployeesOfTheReviewCycle(params);
   }
 
-  onPageChange(newPage: number) {
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+
     const params = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize
     };
-    console.log('Page changed to:', this.page);
+
     this.getEmployeesOfTheReviewCycle(params);
   }
 
   onPageSizeChange(newPageSize: number) {
-    console.log('Page size changed to:', newPageSize);
+    this.pageSize = newPageSize;
+    this.rows = newPageSize; 
     this.page = 1;
-    console.log(this.page)
+    this.first = 0;
+
     const params = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize
     };
+
     this.getEmployeesOfTheReviewCycle(params);
   }
 
@@ -319,24 +337,21 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   getEmployeesOfTheReviewCycle(params: any, fetchAll = false): void {
     this.dataload = true;
-    const pageSize = fetchAll ? 10000 : this.pageSize;
-    params.pageSize = pageSize;
-    params.pageNumber = this.pageSize;
+    params.pageSize = fetchAll ? 10000 : this.pageSize;
+
     this.http.getDataIncludeParams("ReviewCycleItem", params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.listOfAllEmployees = data.items || [];
         this.reportOfAllEmployees = data.items || [];
         this.filteredEmployees = this.listOfAllEmployees;
-
         this.collectionSize = data.totalCount;
-        this.dataload = false;
+
         if (this.searchText) {
           this.filterEmployees();
         }
-        this.getEmployeesOfTheReviewCycleforReport()
+        this.getEmployeesOfTheReviewCycleforReport();
       },
       error: (err) => {
-        console.error('Error getting employees:', err);
         this.dataload = false;
       },
       complete: () => {
@@ -353,11 +368,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.dataload = true;
     this.http.getDataIncludeParams("ReviewCycleItem", params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        console.log(data)
         this.reportOfAllEmployees = data.items || [];
       },
       error: (err) => {
-        console.error('Error getting employees:', err);
         this.dataload = false;
       },
       complete: () => {
@@ -390,7 +403,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       }
     });
     this.selectedIds = this.allSelected ? this.filteredEmployees.filter(emp => emp.status !== 'Review on Hold').map(emp => emp.id) : [];
-    console.log(this.selectedIds);
   }
 
   onCheckboxChange(event: any, id: number): void {
@@ -398,7 +410,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     if (employee) {
       employee.selected = event.target.checked;
 
-      // Update selected IDs array
       if (employee.selected) {
         if (!this.selectedIds.includes(id)) {
           this.selectedIds.push(id);
@@ -411,28 +422,24 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Check header checkbox state
     const allSelected = this.filteredEmployees.every(emp => emp.selected);
     const headerCheckbox = document.getElementById('flexCheckDefaultHeader') as HTMLInputElement;
 
     if (headerCheckbox) {
       if (allSelected) {
-        headerCheckbox.checked = true; // All rows are selected
+        headerCheckbox.checked = true; 
       } else {
-        headerCheckbox.checked = false; // Deselect header checkbox
+        headerCheckbox.checked = false; 
       }
     }
     const anySelected = this.filteredEmployees.some(emp => emp.selected);
-    // Clear selectedIds array if no rows are selected
     if (!anySelected) {
       this.selectedIds = [];
     }
-    console.log('Selected IDs:', this.selectedIds);
   }
 
   openModal(content: any) {
-    console.log(content)
-    this.modalService.open(content, { centered: true })
+    this.modalService.open(content, { centered: true });
   }
 
   OnClickToassesinreviewTemplate(data: any) {
@@ -449,82 +456,72 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   downloadPromotionletter(iteamid: any) {
-    console.log(iteamid);
-
     this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.id}`, { responseType: 'blob' as 'json' })
       .pipe(takeUntil(this.destroy$)).subscribe({
-
         next: (data: Blob) => {
-          console.log('Received byte data:', data);
-          const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+          const blob = new Blob([data], { type: 'application/pdf' }); 
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${iteamid.reviewEmployeeIdName}-Promotion Letter.pdf`; // Set file name
+          a.download = `${iteamid.reviewEmployeeIdName}-Promotion Letter.pdf`; 
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
-          // this.Status = 'Promotion Letter Downloaded Successfully';
           this.modal.openSuccessModal('Promotion Letter Downloaded Successfully');
-          // this.modalService.open(this.success, { centered: true });
         },
         error: (err) => {
-          console.error('Error downloading letter:', err);
-          this.Status = 'Failed to download letter';
+          this.modal.openErrorModal(err.error.message? err.error.message : 'Failed to download letter');
         },
       });
   }
 
   downloadletter(iteamid: any) {
-    console.log(iteamid);
-
     this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.id}`, { responseType: 'blob' as 'json' })
       .pipe(takeUntil(this.destroy$)).subscribe({
-
         next: (data: Blob) => {
-          console.log('Received byte data:', data);
-          const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+          const blob = new Blob([data], { type: 'application/pdf' }); 
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${iteamid.reviewEmployeeIdName}-Appraisal Letter.pdf`; // Set file name
+          a.download = `${iteamid.reviewEmployeeIdName}-Appraisal Letter.pdf`; 
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
-          // this.Status = 'Appraisal Letter Downloaded Successfully';
-          // this.modalService.open(this.success, { centered: true });
           this.modal.openSuccessModal('Appraisal Letter Downloaded Successfully');
         },
         error: (err) => {
-          console.error('Error downloading letter:', err);
-          this.Status = 'Failed to download letter';
+          this.modal.openErrorModal('Failed to download letter');
         },
       });
   }
 
   holdemployee(seletedid: any) {
     this.modalRef = this.modalService.open(this.loading, { centered: true });
+    
     const payload = {
       status: 'Review on Hold',
       createdBy: this.empinfo.employeeId,
     }
+
     this.http.putData(`ReviewCycleItem/updatestatus/${seletedid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         if (this.modalRef) {
           this.modalRef.close();
         }
-        this.modalService.dismissAll()
+        this.modalService.dismissAll();
         this.modal.openSuccessModal('Employee is Kept on Hold');
-        this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
       },
       error: (err) => {
-        console.error('Error updating review template:', err);
         if (this.modalRef) {
           this.modalRef.close();
         }
+        this.modal.openErrorModal( err.error.message? err.error.message : 'Error updating review template');
       },
+      complete: () =>{
+        this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+      }
     });
   }
 
@@ -540,41 +537,31 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     });
   }
 
-  assignReviewTemplate() {
+  assignReviewTemplate(form: FormGroup) {
     this.modalRef = this.modalService.open(this.loading, { centered: true });
-    console.log(this.selectedemployeereviewtemplate)
+    const formData= form.value;
+
     const payload = {
-      reviewTemplateId: this.reviewtemplatedropdowns.value.reviewTemplateId,
+      reviewTemplateId: formData.reviewTemplateId.formId,
     }
+
     const id = this.selectedIds.toString();
     this.http.putData(`ReviewCycleItem/update/${id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         if (this.modalRef) {
           this.modalRef.close();
         }
-        this.modalService.dismissAll()
-        this.reviewtemplatedropdowns.reset()
-        this.selectedIds = [];
-        // this.Status = 'Form Assigned Successfully'
-        // this.modalService.open(this.success, { centered: true });
-        this.modal.openSuccessModal('Form Assigned Successfully')
-        this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+        this.modalService.dismissAll();
+        this.modal.openSuccessModal('Form Assigned Successfully');
       },
       error: (err) => {
         this.selectedIds = [];
-        console.error('Error updating review template:', err);
         if (err.status === 404) {
-          // this.Status ='Select atleast one employee to assign the template';
-          // this.modalService.open(this.errormessagecloseall, { centered: true });
           this.modal.openErrorModal('Select atleast one employee to assign the template');
         }
         else if (err.status === 400) {
-          // this.Status =err.error.message || 'An error occurred while assigning the template';
-          // this.modalService.open(this.errormessagecloseall, { centered: true });
           this.modal.openErrorModal(err.error.message || 'An error occurred while assigning the template');
         } else {
-          // this.Status =err.error.details || 'An error occurred while assigning the template';
-          // this.modalService.open(this.errormessagecloseall, { centered: true });
           this.modal.openErrorModal(err.error.message || 'An error occurred while assigning the template');
         }
         if (this.modalRef) {
@@ -583,6 +570,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.selectedIds = [];
+        this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+        this.reviewtemplatedropdowns.reset();
       },
     });
   }
@@ -616,7 +605,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   status!: string;
   onclickStatusupdate(status: string) {
     this.status = status;
-    console.log(this.status);
   }
 
   authorityDetailsForAppraisal = [] as any;
@@ -624,17 +612,30 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     const offertype = 'Appraisal Letter'
     this.http.getData(`SignaturesList?LetterType=${offertype}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.authorityDetailsForAppraisal = data
+        // this.authorityDetailsForAppraisal = data
+        this.authorityDetailsForAppraisal = data.map((user: any) => ({
+          ...user,
+          fullName: `${user.firstName} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName}`
+        }));
       }
     })
   }
 
-  genarateAppraisalletter(iteamid: any) {
-    console.log(iteamid)
-    this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${iteamid}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
+  genarateAppraisalletter(itemId: any, form: FormGroup) {
+    const formData = form.value;
+    const params = new URLSearchParams({
+      reviewcycleitemId: itemId,
+      employeeId: this.empinfo.employeeId,
+      lettertype: 'performanceappraisal',
+      effectivedate: formData.effectiveFromDATE,
+      signatureempId: formData.signaturename.employeeId,
+      status: this.status
+    });
+
+    this.http.getData(`AppraisalLetter/generateappraisalletter/?${params.toString()}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
+          this.modalService.dismissAll();
           this.modal.openSuccessModal('Appraisal Letter Generated Successfully');
         },
         error: (err) => {
@@ -652,8 +653,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
           this.Effectivedatefrom.reset();
         }
-      })
-
+    })
   }
 
   initiondateForm() {
@@ -667,7 +667,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     if (id) {
       this.selectedIds.push(id);
       this.status = status;
-      console.log(this.status);
     }
   }
 
@@ -676,86 +675,121 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
           this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
         },
         error: (err: any) => {
-          console.error('Error generating letters:', err);
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
           } else {
             this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
           }
+        },
+        complete: () => {
+          this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+        }
+    });
+  }
+
+  sendLetters(): void {
+    const reviewCycleItemIds = this.selectedIds || this.allSelected;
+  
+    if (!reviewCycleItemIds || reviewCycleItemIds.length === 0) {
+      this.modal.openErrorModal('No review cycle items selected.');
+      return;
+    }
+  
+    const reviewcycleitemIdStr = Array.isArray(reviewCycleItemIds)
+      ? reviewCycleItemIds.join(',')
+      : reviewCycleItemIds;
+  
+    const params = new URLSearchParams({
+      reviewcycleitemId: reviewcycleitemIdStr,
+      employeeId: this.empinfo.employeeId.toString(),
+      lettertype: 'performanceappraisal',
+      status: this.status
+    });
+  
+    this.http.postletters(`AppraisalLetter/releaseappraisalletter?${params.toString()}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.modalService.dismissAll();
+          this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
+        },
+        error: (err: any) => {
+          const errorMessage = err.error?.details || 'An error occurred while sending letters';
+          this.modal.openErrorModal(errorMessage);
+        },
+        complete: () => {
+          this.getEmployeesOfTheReviewCycle({reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize});
         }
       });
   }
-
+  
   authorityDetailsForPromotion = [] as any;
   getAuthorityDetails() {
     const offertype = 'Promotion Letter'
     this.http.getData(`SignaturesList?LetterType=${offertype}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.authorityDetailsForPromotion = data
+        // this.authorityDetailsForPromotion = data
+        this.authorityDetailsForAppraisal = data.map((user: any) => ({
+          ...user,
+          fullName: `${user.firstName} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName}`
+        })); 
       }
     })
   }
 
-  genaratePromotionletter(iteamid: any) {
-    console.log(iteamid)
-    this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${iteamid}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`,)
+  genaratePromotionletter(itemId: any, form: FormGroup) {
+    const formData = form.value;
+
+    const params = new URLSearchParams({
+      reviewcycleitemId: itemId,
+      employeeId: this.empinfo.employeeId,
+      lettertype: 'PromotionLetter',
+      effectivedate: formData.effectiveFromDATE,
+      signatureempId: formData.signaturename.employeeId,
+      status: this.status
+    });
+
+    this.http.getData(`AppraisalLetter/generateappraisalletter/?${params.toString()}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
-          console.log(data)
-
-          this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
-          // this.Status = 'Promotion Letter Generated Successfully'
-          // this.modalService.open(this.success, { centered: true });
-          this.modal.openSuccessModal('Promotion Letter Generated Successfully')
-          this.Effectivedatefrom.reset()
+          this.modalService.dismissAll();
+          this.modal.openSuccessModal('Promotion Letter Generated Successfully');
         },
         error: (err) => {
-          console.error('Error generating letter:', err);
           if (err.status === 500) {
-            // this.Status = err.error.details || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessage, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
           else if (err.status === 409) {
-            // this.Status = err.error.message || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessagecloseall, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
           else {
-            // this.Status = err.error.details || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessagecloseall, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
         },
+        complete: () =>{
+          this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+          this.Effectivedatefrom.reset();
+        }
       })
   }
 
   SentpromationLetters(): void {
-    console.log(this.selectedIds);
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
-        // this.Status = 'Promotion Letter Sent Successfully';
-        // this.modalService.open(this.success, { centered: true });
         this.modal.openSuccessModal('Promotion Letter Sent Successfully');
       },
       error: (err: any) => {
-        console.error('Error generating letters:', err);
         if (err.status === 500) {
-          // this.Status = err.error.details || 'An error occurred while sending letters';
-          // this.modalService.open(this.errormessage, { centered: true });
           this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
         } else {
-          // this.Status = err.error.message || 'An error occurred while sending letters';
-          // this.modalService.open(this.errormessage, { centered: true });
           this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
         }
+      },
+      complete: () => {
+        this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
       }
     });
   }
@@ -797,11 +831,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   onEmployeeChange(event: any): void {
-    const selectedEmployeeId = event.target.value;
-    console.log(selectedEmployeeId)
+    const selectedEmployeeId = event.value?.employeeId;
     const selectedEmployee = this.employeesList.find(
       (employee: any) => employee.employeeId == selectedEmployeeId
-    ); // Find the employee details
+    );
 
     if (selectedEmployee) {
       this.addEmployeeForm.patchValue({
@@ -809,7 +842,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         team: selectedEmployee.subdepartmentName ?? '',
         location: selectedEmployee.locationName ?? '',
         subLocation: selectedEmployee.subLocationName ?? '',
-
       });
     }
   }
@@ -824,11 +856,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.modalRef = this.modalService.open(this.loading, { centered: true });
     const payload = {
       reviewCycleHeaderId: this.selectedReviewCycle.id,
-      reviewEmployeeId: this.addEmployeeForm.value.employeeName,
+      reviewEmployeeId: this.addEmployeeForm.value.employeeName.employeeId,
       status: 'Self Assessment Pending',
       createdBy: this.empinfo.employeeId,
       createdAt: new Date()
     }
+
     this.http.postdata('reviewCycleHeader/reviewitem', payload).subscribe({
       next: (data: any) => {
         if (this.modalRef) {
@@ -841,7 +874,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         if (this.modalRef) {
           this.modalRef.close(); 
         }
-        console.error('Error adding employee:', err);
       },
       complete:()=>{
         this.addEmployeeForm.reset();
@@ -893,11 +925,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       'HR Over All Rating': employee.hroverallrating || '-',
     }));
 
-    const fileType = 'excel'; // Define the file type
+    const fileType = 'excel'; 
     this.reviewCyclename = payload[0]['Review Cycle Name']
     this.http.postDatareport(`reviewCycleHeader/export?fileType=${fileType}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: Blob) => {
-        console.log('Export successful', response);
         const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -911,7 +942,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.modal.openSuccessModal('Appraisal Report Downloaded Successfully');
       },
       error: (err: any) => {
-        console.error('Error exporting data:', err);
+        this.modal.openErrorModal(err.error.message ? err.error.message : 'Error exporting data')
       }
     });
   }
@@ -933,7 +964,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   generateLetters(): void {
-    console.log(this.selectedIds);
     this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
@@ -941,7 +971,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modal.openSuccessModal('Appraisal Letters Generated Successfully');
         },
         error: (err: any) => {
-          console.error('Error generating letters:', err);
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
           }
@@ -970,35 +999,24 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   generatepromationLetters(): void {
-    console.log(this.selectedIds);
     this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
-          // this.Status = 'Promotion Letter Generated Successfully';
-          // this.modalService.open(this.success, { centered: true });
+        next: (data: any) => { 
           this.modal.openSuccessModal('Promotion Letter Generated Successfully');
           this.Effectivedatefrom.reset();
-
         },
         error: (err: any) => {
-          console.error('Error generating letters:', err);
           if (err.status === 500) {
-            // this.Status = err.error.details || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessage, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
           }
           else if (err.status === 409) {
-            // this.Status = err.error.message || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessagecloseall, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
           }
           else {
-            // this.Status = err.error.details || 'An error occurred while generating letters';
-            // this.modalService.open(this.errormessagecloseall, { centered: true });
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
           }
+        },
+        complete: () =>{
           this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
         }
       });
@@ -1007,6 +1025,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   closeModal() {
     this.Effectivedatefrom.reset();
     this.reviewtemplatedropdowns.reset();
+    this.modalService.dismissAll();
+  }
+
+  openConfirmation(){
+    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static'})
+  }
+
+  close(){
     this.modalService.dismissAll();
   }
 

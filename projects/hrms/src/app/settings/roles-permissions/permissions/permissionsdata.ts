@@ -185,6 +185,10 @@ export const permissionsData = [
     { fields: 'Appointment Status', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Offer Status', View: false, Update: false, Create: false, Delete: false },
 
+    //Manage Shifts Tab
+    { fields: 'Pending For Submit', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Published Shifts', View: false, Update: false, Create: false, Delete: false },
+
     //Expenses Type
     { fields: 'Expenses Type', View: false, Update: false, Create: false, Delete: false },
 
@@ -199,6 +203,8 @@ export const permissionsData = [
     { fields: 'Manage Weekends Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Manage DST Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Expense Types Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
 
     //Time Off Tabs Sections
     { fields: 'Leave Category Tab', View: false, Update: false, Create: false, Delete: false },

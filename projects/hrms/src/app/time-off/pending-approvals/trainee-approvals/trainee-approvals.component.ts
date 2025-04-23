@@ -24,6 +24,7 @@ import { TraineeApprovalsTabsComponent } from "../../../shared/time-off-module-t
   styleUrl: './trainee-approvals.component.scss'
 })
 export class TraineeApprovalsComponent {
+  isLoading= false;
   private customsetup: any;
   private datePipe: DatePipe;
   selectedLeaveData: any = {
@@ -150,7 +151,8 @@ export class TraineeApprovalsComponent {
     this.getEmployeedatabyid(this.selectedLeaveData);
   }
 
-  handleAccept(f: NgForm) {
+  handleAccept(f:NgForm) {
+    this.isLoading=true;
     let requestBody = {
       status: 'Approved',
       comments: this.selectedLeaveData.trcomments,
@@ -167,18 +169,20 @@ export class TraineeApprovalsComponent {
           this.conformationPopup.openSuccessModal('Request Accepted Successfully')
         },
         error: (reason: any) => {
+          this.isLoading=false
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+           this.isLoading=false;
+           this.getAllPendingApprovals();
+           this.selectedLeaveData.trcomments='';
         },
       });
   }
 
   //function to send the rejected status and comments
-  handleReject(f: NgForm) {
+  handleReject(f:NgForm) {
+    this.isLoading=true
     let requestBody = {
       status: 'Rejected',
       comments: this.selectedLeaveData.rejectedReason,
@@ -190,12 +194,17 @@ export class TraineeApprovalsComponent {
       )
       .subscribe({
         next: (respone: any) => {
+          this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Request Rejected Successfully')
         },
         error: (reason: any) => {
+          this.isLoading=false
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
+          this.isLoading=false;
+          this.getAllPendingApprovals();
+          this.selectedLeaveData={};
         },
       });
   }

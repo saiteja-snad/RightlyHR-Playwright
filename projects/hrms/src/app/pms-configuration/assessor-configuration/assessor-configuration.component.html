@@ -47,7 +47,7 @@
                                                         (click)="editDetails(item)">Update</a></li>
                                               
                                                 <li *ngIf="item?.reviewCycleHeaderStatus==='Created'"><a class="dropdown-item"
-                                                        (click)="openDelete(confirmation, item)">Delete</a></li>
+                                                        (click)="openDelete(confirmation, item.index)">Delete</a></li>
 
                                                         <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'"><a class="dropdown-item"
                                                             (click)="editDetails(item)">Update</a></li>

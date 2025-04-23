@@ -13,7 +13,6 @@ import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 
 export class JobDetailsComponent implements OnInit {
   subscription!: Subscription;
-  currentStep = 1;
   prospectiveEmployeeData = {} as any;
   jobApplicationData: any;
   empdata = {} as any;
@@ -36,10 +35,8 @@ export class JobDetailsComponent implements OnInit {
   constructor(private router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
-    const storedStep = localStorage.getItem('currentStep');
-    if (storedStep) {
-      this.currentStep = parseInt(storedStep);
-    }
+    const storedstep = 1;
+    localStorage.setItem('currentStep', storedstep.toString());
     this.prospectiveEmployeeData = JSON.parse(localStorage.getItem('prospectiveemppersonaldata') || '{}');
     this.getJobApplicationDetails();
     this.getprospectivempdata();
@@ -49,10 +46,8 @@ export class JobDetailsComponent implements OnInit {
     let employeeId = parseInt(this.prospectiveEmployeeData.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.empdata = data;
         this.substatus = this.empdata.substatus?.toLowerCase()
-        console.log(this.substatus);
         const OfferLetter = ['offer letter generated', 'offer letter released', 'offer letter regenerated', 'offer letter accepted'];
         const DocumentsInReview = ['documents submitted', 'document in review' ,'documents verified'];
         const DocumentsRequeste = ['requested documents'];
@@ -76,7 +71,6 @@ export class JobDetailsComponent implements OnInit {
         this.checkStatus();
       },
       error: (reason: any) => {
-        console.log(reason);
         if (reason.status == 401) {
           localStorage.clear();
           this.router.navigate(['']);
@@ -90,10 +84,8 @@ export class JobDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingJobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.jobApplicationData = data[0];
-        console.log(this.jobApplicationData);
       },
       error: (err: any) => {
-        console.log(err);
         if (err.status = 401) {
           this.http.logOut();
         }

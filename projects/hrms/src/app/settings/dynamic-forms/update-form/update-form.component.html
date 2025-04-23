@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <p class="component-header mb-0" (click)="backToTableView()">
+        <p class="component-header mb-0" (click)="openModal(navigateToTable,{size:'md',centered: true})">
             <i class="bi bi-arrow-90deg-left me-2"></i>{{'Update Form'}}
         </p>
     </div>
@@ -10,9 +10,9 @@
         <form [formGroup]="updateForm">
             <div>
                 <div class="row mb-4">
-                    <!-- Form fields, similar to createForm, prefilled with data -->
+                    <!-- Form Name -->
                     <div class="col-md-4">
-                        <label class="form-label" for="formHeader">Form Name <span class="text-danger">*</span></label>
+                        <label class="form-label" for="formHeader">Form Name<span class="text-danger">*</span></label>
                         <input formControlName="formHeader" class="form-control" placeholder="Enter Form Name" />
                         <small class="text-danger"
                             *ngIf="updateForm.get('formHeader')?.errors?.['required'] && updateForm.get('formHeader')?.touched">
@@ -22,7 +22,7 @@
                             Form Name must not exceed 255 characters
                         </small>
                     </div>
-
+                    <!-- Module Name -->
                     <div class="col-md-4 custom-p-select-content">
                         <label class="content-heading mb-2">Module Name <span class="text-danger">*</span></label>
                         <p-select [options]="modules" optionLabel="moduleName" [filter]="false" [showClear]="false"
@@ -32,7 +32,6 @@
                             <ng-template let-selectedOption pTemplate="selectedItem">
                                 {{ selectedOption?.moduleName }}
                             </ng-template>
-
                             <!-- Dropdown item template -->
                             <ng-template let-module pTemplate="item">
                                 {{ module.moduleName }}
@@ -43,35 +42,31 @@
                             Module Name is required.
                         </small>
                     </div>
+                    <!-- Rating Scale Range -->
                     <div class="col-md-4 custom-p-select-content">
                         <label class="content-heading mb-2">Rating Scale Range<span class="text-danger">*</span></label>
                         <p-select [options]="uniqueRatingScaleRanges" [filter]="false" [showClear]="false"
                             class="form-select custom-select" formControlName="ratingScaleRange"
                             placeholder="Select Rating Scale Range" (onChange)="onRatingScaleRangeChange($event)">
-
                             <!-- Selected item template -->
                             <ng-template let-selectedOption pTemplate="selectedItem">
                                 {{ selectedOption?.minimum }} to {{ selectedOption?.maximum }}
                             </ng-template>
-
                             <!-- Dropdown item template -->
                             <ng-template let-range pTemplate="item">
                                 {{ range.minimum }} to {{ range.maximum }}
                             </ng-template>
-
                         </p-select>
-
-
                         <small class="text-danger"
                             *ngIf="updateForm.get('ratingScaleRange')?.errors?.['required'] && updateForm.get('ratingScaleRange')?.touched">
                             Rating Scale Range is required.
                         </small>
-
                     </div>
                 </div>
 
                 <div class="row mb-4">
-                    <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.moduleName !== 'PMS' ">
+                    <!-- Overall Rating -->
+                    <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !== 24 ">
                         <label class="form-label" for="overAllRating">Overall Rating <span
                                 class="text-danger">*</span></label>
                         <input type="number" formControlName="overAllRating" class="form-control"
@@ -84,8 +79,8 @@
                             Overall Rating Rating must be at least 1.
                         </small>
                     </div>
-
-                    <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.moduleName !==  'PMS' ">
+                    <!-- Cut Off Rating -->
+                    <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !==  24 ">
                         <label class="form-label" for="cutOffRating">Cut Off Rating <span
                                 class="text-danger">*</span></label>
                         <input type="number" formControlName="cutOffRating" class="form-control"
@@ -109,6 +104,7 @@
                         [formGroupName]="sectionIndex" ngbAccordionItem cdkDrag [collapsed]="false" #sectionElement>
                         <div class="p-3 section-header" ngbAccordionHeader>
                             <div class="col-md-12 mt-1 d-flex gap-4">
+                                <!-- Drag Handle -->
                                 <div class="drag-div" *ngIf="updateSections.controls.length > 1">
                                     <button class="drag-btn" cdkDragHandle>
                                         <i class="bi bi-grip-vertical"></i>
@@ -117,6 +113,7 @@
                                 <div>
                                     <button ngbAccordionButton></button>
                                 </div>
+                                <!-- Section Name -->
                                 <div class="col-md-3">
                                     <label class="form-label">Section Name <span class="text-danger">*</span></label>
                                     <input formControlName="sectionName" class="form-control rounded-2"
@@ -132,6 +129,7 @@
                                         </small>
                                     </div>
                                 </div>
+                                <!-- Section Type -->
                                 <div class="col-md-3 custom-p-select-content">
                                     <label class="form-label">Choose Section Type <span
                                             class="text-danger">*</span></label>
@@ -159,7 +157,7 @@
                                         </small>
                                     </div>
                                 </div>
-
+                                <!-- Section Weightage -->
                                 <div class="col-md-3">
                                     <label class="form-label">Section Weightage <span
                                             class="text-danger">*</span></label>
@@ -184,6 +182,7 @@
                                         </small>
                                     </div>
                                 </div>
+                                <!-- Remove Section  -->
                                 <div class="col-md-3">
                                     <i class="bi bi-trash text-danger" style="cursor: pointer;"
                                         (click)="removeUpdateSection(sectionIndex)"></i>
@@ -193,7 +192,7 @@
 
                         <div ngbAccordionCollapse>
                             <div class="p-3">
-                                <!-- Section Name and Weightage -->
+                                <!-- Rating Scale Types -->
                                 <div class="col-md-3 mb-4" *ngIf="section.get('sectionType')?.value === 'rating'">
                                     <div class="d-flex custom-p-select-content">
                                         <p-select [options]="filteredRatingScaleTypes" optionLabel="ratingType"
@@ -217,12 +216,14 @@
                                         [formGroupName]="questionIndex" cdkDrag>
                                         <div class="mb-3 p-3 border rounded">
                                             <div class="d-flex gap-3">
+                                                <!-- Drag Handle -->
                                                 <div class="question-drag"
                                                     *ngIf="getUpdateQuestions(sectionIndex).controls.length > 1">
                                                     <button class="drag-btn" cdkDragHandle>
                                                         <i class="bi bi-grip-vertical"></i>
                                                     </button>
                                                 </div>
+                                                <!-- Question Weightage -->
                                                 <div class="col-md-3">
                                                     <label class="form-label">Question Weightage <span
                                                             class="text-danger">*</span></label>
@@ -231,7 +232,6 @@
                                                             class="form-control hide-input rounded-2"
                                                             placeholder="Enter Question Weightage" min="1"
                                                             (input)="restrictToNumbers($event)">
-                                                        <!-- <span class="text-danger">*</span> -->
                                                     </div>
                                                     <small class="text-danger"
                                                         *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
@@ -241,39 +241,30 @@
                                                         *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
                                                         Question Weightage must be at least 1.
                                                     </small>
-                                                    <!-- <small class="text-danger" *ngIf="validateTotalWeightage(sectionIndex)">
-                                    Total weightage of questions cannot exceed section weightage.
-                                  </small> -->
-                                                    <!-- <small class="text-danger" *ngIf="updateForm.errors?.['weightageNotEqualTo100']  && question.get('questionWeightage')?.touched">
-                                    Sum of all question weightage should be equal to 100
-                                  </small> -->
-
-                                                    <small class="text-danger" *ngIf="!question.get('questionWeightage')?.errors?.['required'] && 
-                                         updateForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] && 
-                                         question.get('questionWeightage')?.touched">
+                                                    <small class="text-danger"
+                                                        *ngIf="!question.get('questionWeightage')?.errors?.['required'] && 
+                                                                                             updateForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] && 
+                                                                                             question.get('questionWeightage')?.touched">
                                                         <span class="error">Total question weightage in this section
                                                             must be 100.</span>
                                                     </small>
                                                 </div>
-
+                                                <!-- Target -->
                                                 <div class="col-md-3">
-                                                    <label class="form-label">Target <span
+                                                    <label class="form-label">Target<span
                                                             class="text-danger">*</span></label>
                                                     <div class="d-flex">
                                                         <input type="text" formControlName="target"
                                                             class="form-control hide-input rounded-2"
                                                             placeholder="Enter Target"
                                                             (input)="validateInput(question.get('target'))">
-                                                        <!-- <span class="text-danger">*</span> -->
                                                     </div>
                                                     <small class="text-danger"
                                                         *ngIf="question.get('target')?.errors?.['required'] && question.get('target')?.touched">
                                                         Target is required.
                                                     </small>
-                                                    <!-- <small class="text-danger" *ngIf="question.get('target')?.errors?.['min'] && question.get('target')?.touched">
-                                      Target must be at least 1.
-                                  </small> -->
                                                 </div>
+                                                <!-- Unit of Measurement -->
                                                 <div class="col-md-3">
                                                     <label class="form-label">Unit of Measurement <span
                                                             class="text-danger">*</span></label>
@@ -288,11 +279,9 @@
                                                         *ngIf="question.get('unitofmeasurement')?.errors?.['required'] && question.get('unitofmeasurement')?.touched">
                                                         Unit of Measurement is required
                                                     </small>
-                                                    <!-- <small class="text-danger" *ngIf="question.get('unitofmeasurement')?.errors?.['min'] && question.get('unitofmeasurement')?.touched">
-                                    Enter Unit of Measurement must be at least 1.
-                                </small> -->
                                                 </div>
                                             </div>
+                                            <!-- Question -->
                                             <div class="mt-3">
                                                 <div class="d-flex">
                                                     <input formControlName="question"
@@ -310,6 +299,7 @@
                                                     Question must not exceed 1000 characters
                                                 </small>
                                             </div>
+                                            <!-- Rating Section Options -->
                                             <div>
                                                 <ng-container
                                                     *ngFor="let scale of getRatingScaleOptions(section.get('ratingScaleType')?.value)">
@@ -319,6 +309,7 @@
                                                     </div>
                                                 </ng-container>
                                             </div>
+                                            <!-- Question Required -->
                                             <div class="d-flex justify-content-end">
                                                 <div
                                                     class="col-md-1 d-flex align-items-center justify-content-center required-switch">
@@ -356,6 +347,7 @@
                                                     <i class="bi bi-grip-vertical"></i>
                                                 </button>
                                             </div>
+                                            <!-- Question Type -->
                                             <div class="col-md-3"
                                                 *ngIf="section.get('sectionType')?.value === 'normal'">
                                                 <div class="d-flex">
@@ -432,7 +424,7 @@
                                                     Question Type is required.
                                                 </small>
                                             </div>
-
+                                            <!-- Question Weightage -->
                                             <div class="col-md-3">
                                                 <div class="d-flex">
                                                     <input type="number" formControlName="questionWeightage"
@@ -449,9 +441,6 @@
                                                     *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
                                                     Question Weightage must be at least 1.
                                                 </small>
-                                                <!-- <small class="text-danger" *ngIf="validateTotalWeightage(sectionIndex)">
-                                Total weightage of questions cannot exceed section weightage.
-                              </small> -->
                                                 <small class="text-danger" *ngIf="!question.get('questionWeightage')?.errors?.['required'] && 
                              updateForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] && 
                              question.get('questionWeightage')?.touched">
@@ -460,7 +449,7 @@
                                                 </small>
                                             </div>
                                         </div>
-
+                                        <!-- Question Input -->
                                         <div class="mt-3">
                                             <div class="d-flex">
                                                 <input formControlName="question"
@@ -512,7 +501,7 @@
                                                 (click)="addUpdateOption(sectionIndex, questionIndex)">Add
                                                 Option</button>
                                         </div>
-
+                                        <!-- Question Type => Text | Textarea-->
                                         <div *ngIf="question.get('type')?.value === 'text' || question.get('type')?.value === 'text area'"
                                             class="mt-2">
                                             <textarea *ngIf="question.get('type')?.value === 'text area'"
@@ -530,6 +519,7 @@
                                                 </ng-container>
                                             </div>
                                         </div>
+                                        <!-- Question required -->
                                         <div class="d-flex justify-content-end">
                                             <div
                                                 class="col-md-1 d-flex align-items-center justify-content-center required-switch">
@@ -545,12 +535,13 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                            <!-- Remove Question Button -->
                                             <div class="col-md-1 d-flex align-items-center justify-content-center">
                                                 <i class="bi bi-trash text-danger" style="cursor: pointer;"
                                                     (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
                                             </div>
                                         </div>
-                                        <!-- Remove Question Button -->
+
                                     </div>
                                 </div>
                                 <div class="d-flex flex-column">
@@ -571,13 +562,15 @@
                     </small>
                 </div>
                 <div class="mt-3 sticky-bottom">
+                    <!-- Add Section -->
                     <button type="button" class="custom-btn btn-primary me-2" (click)="addUpdateSection()">
                         Add Section
                     </button>
-                    <!-- <p class="mt-3  text-danger"> "Please fill the all required fields."</p> -->
+                    <!-- Save as Draft -->
                     <button type="button" class="custom-btn btn-primary me-2" *ngIf="formStatus === 'draft'"
-                        (click)="openconfirmationModel(confirmationtosaveasdraft)"
-                        [disabled]="updateForm.invalid || isDraftType">Save as Draft</button>
+                        [disabled]="updateForm.invalid" (click)="openconfirmationModel(confirmationtosaveasdraft)">
+                        Save as Draft</button>
+                    <!-- Submit | Update -->
                     <button type="button" class="custom-btn btn-primary "
                         (click)="openconfirmationModel(confirmationtosave);statuscheck(formStatus)"
                         [disabled]="updateForm.invalid">
@@ -591,41 +584,36 @@
 
 <ng-template #confirmationtosaveasdraft let-modal>
     <div class="modal-body text-center p-5" ngbAutofocus>
-        <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="imgg mb-4">
+        <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="imgg mb-4"> -->
         <p class="mb-4 confirm-text text-wrap">Are you sure you want to Save?</p>
         <div class="d-flex justify-content-around pt-3">
-            <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
-            <button class="modal-btn yes-btn" (click)="onSaveSubmit();modal.dismiss() ">Yes</button>
+            <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button class="custom-btn btn-primary" (click)="onSaveSubmit();modal.dismiss() ">Yes</button>
         </div>
     </div>
 </ng-template>
 
+
 <ng-template #confirmationtosave let-modal>
     <div class="modal-body text-center p-5" ngbAutofocus>
-        <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="imgg mb-3">
+        <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="imgg mb-3"> -->
         <p class="confirm-text text-wrap mb-4">Are you sure you want to {{statusvalue}}?</p>
         <div class="d-flex justify-content-around pt-3">
-            <button class="modal-btn no-btn" (click)="modal.dismiss()">No</button>
-            <button class="modal-btn yes-btn"
+            <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button class="custom-btn btn-primary"
                 (click)="onUpdate(formStatus === 'draft' ? 'submit':'update');modal.dismiss() ">Yes</button>
         </div>
     </div>
 </ng-template>
 
-<ng-template #successhide let-modal>
-    <div class="modal-body text-center p-5" ngbAutofocus>
-        <i class="bi bi-check-circle-fill mb-3"></i>
-        <h4 class="text-center inactive-poptext" id="successMsg">{{ successMessage }}</h4>
-    </div>
-</ng-template>
 
 <ng-template #navigateToTable let-modal>
     <div class="modal-body text-center p-5" ngbAutofocus>
-        <img src="./assets/images/Vector@2x.png" alt="vector image" class="imgg mb-3" />
+        <!-- <img src="./assets/images/Vector@2x.png" alt="vector image" class="imgg mb-3" /> -->
         <h5 class="want my-4">Are you sure you want to go back?</h5>
         <div class="d-flex justify-content-around pt-3">
-            <button type="button" class="modal-btn no-btn">No</button>
-            <button type="button" class="modal-btn yes-btn" (click)="backToTableView()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="backToTableView()">Yes</button>
         </div>
     </div>
 </ng-template>

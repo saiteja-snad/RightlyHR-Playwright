@@ -9,21 +9,23 @@ import { PopupService } from '../../common-services/popup.service';
 import { DataService } from '../../common-services/data.service';
 import { UpdateExperienceDetailsComponent } from './update-experience-details/update-experience-details.component';
 import { Router } from '@angular/router';
+import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-experience-details',
-  imports: [CommonModule, DateFormatPipe],
+  imports: [CommonModule, DateFormatPipe, DetailedStepProgressbarComponent],
   templateUrl: './experience-details.component.html',
   styleUrl: './experience-details.component.scss'
 })
+
 export class ExperienceDetailsComponent {
   subscription!: Subscription;
   getempexpdata = [] as any;
   prosempdata = {} as any;
   ExperienceDetails !: File;
-  selectExperience:any;
+  selectExperience: any;
   @ViewChild('deletepopup') deletepopup: any;
 
-  constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { 
+  constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private openPopup: PopupService, private getData: DataService) {
     effect(() => {
       if (this.getData.getExperience()) {
         this.getexperiencedetails();
@@ -33,6 +35,8 @@ export class ExperienceDetailsComponent {
   }
 
   ngOnInit(): void {
+    const storedstep = 6;
+    localStorage.setItem('currentStep', storedstep.toString());
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
     this.getexperiencedetails();
   }
@@ -48,16 +52,19 @@ export class ExperienceDetailsComponent {
     modalRef.componentInstance.experienceData = data;
   }
 
-  openDelete(event:any) {
+  openDelete(event: any) {
     this.selectExperience = event;
     this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
   }
+
   navigateNext() {
     this.router.navigate(['/review']);
   }
-  navigateemergency(){
+
+  navigateemergency() {
     this.router.navigate(['/emergency-details']);
   }
+
   //function to get all experiences 
   getexperiencedetails() {
     let EmployeeId = parseInt(this.prosempdata.employeeId)
@@ -105,7 +112,7 @@ export class ExperienceDetailsComponent {
     })
   }
 
-  close(){
+  close() {
     this.modalService.dismissAll();
   }
 

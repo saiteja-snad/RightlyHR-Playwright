@@ -83,7 +83,7 @@ export class DraftsExpensesComponent {
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [null, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [null,]
+      attachment_url: [null, Validators.required]
     });
   }
 
@@ -238,9 +238,9 @@ export class DraftsExpensesComponent {
      })
    }
  
+ 
+  submitepxenses(form: FormGroup) {
 
-  submitepxenses(form: FormGroup): void {
-    if (form.valid) {
       this.spinnerLoader=true
       const payload = {
         expenses_ID: this.updataid,
@@ -322,14 +322,12 @@ export class DraftsExpensesComponent {
           },
         });
       }
-    } else {
-      console.log('Form is invalid');
-    }
+    
   }
 
 
   saveasDraft(form: FormGroup): void {
-    if (form.valid) {
+   
       this.saveasDraftloder=true
       const payload = {
         expenses_ID: this.updataid,
@@ -421,9 +419,7 @@ export class DraftsExpensesComponent {
           },
         });
       }
-    } else {
-      console.log('Form is invalid');
-    }
+   
   }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });

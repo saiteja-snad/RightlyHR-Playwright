@@ -224,7 +224,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
 
           // Assuming data.path contains the uploaded file path
           const uploadedFilePath = data.path;
-          this.expenseItems.at(index).get('attachment_url')?.setValue(uploadedFilePath);
+          this.expenseItems.at(index)?.get('attachment_url')?.setValue(uploadedFilePath);
         },
         error: (error: any) => {
           console.error('Error uploading file:', error);

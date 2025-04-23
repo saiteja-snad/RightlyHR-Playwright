@@ -60,7 +60,7 @@ export class SubCatagoryComponent {
 
   intialupdateasetsubcatarys() {
     this.assetcataeryupdateForm = this.fb.group({
-      assetCategory: [{ value: null, disabled: true }, null, Validators.required],
+      assetCategory: [{ value: null, disabled: true }, Validators.required],
       assetSubCategory: [null,[Validators.required, Validators.maxLength(30),Validators.pattern('^[a-zA-Z][a-zA-Z\s\S]*$')]],
     
     })

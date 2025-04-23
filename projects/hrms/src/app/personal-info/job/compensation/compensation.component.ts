@@ -42,7 +42,7 @@ export class CompensationComponent {
   ngOnInit() {
     this.intizationFrom()
     this.intizationupdateFrom()
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getCompensationempid()
     this.getFrequency()
     this.getpaytype()

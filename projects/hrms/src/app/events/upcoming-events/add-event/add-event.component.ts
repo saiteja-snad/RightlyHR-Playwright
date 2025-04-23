@@ -70,11 +70,12 @@ export class AddEventComponent implements OnInit {
           reader.readAsDataURL(selectedFile);
         } else {
           this.conformationPopup.openErrorModal('File size exceeds the allowed limit of 2MB.');
+          this.spinnerLoader=false;
           if (this.postEventsData) this.postEventsData.attachmentUrl = null;
           event.target.value = '';
         }
       } else {
-        this.conformationPopup.openErrorModal('Invalid file type. Only PNG and JPEG files are allowed.');
+        this.conformationPopup.openErrorModal('Invalid file type. Only PNG and JPG files are allowed.');
         if (this.postEventsData) this.postEventsData.attachmentUrl = null;
         event.target.value = '';
       }
@@ -85,7 +86,10 @@ export class AddEventComponent implements OnInit {
     }
   }
   
-
+  getToday(): string {
+    return new Date().toISOString().split('T')[0]
+  }
+  
   postevents(customEventForm: FormGroup): void {
     if (customEventForm.valid) {
       this.spinnerLoader=true
@@ -97,7 +101,7 @@ export class AddEventComponent implements OnInit {
         empId: this.Employeeinfo.employeeId,
         isDeleted: false,
         eventTitle: formdata.eventTitle,
-        attachmentUrl: this.postEventsData.attachmentUrl
+        attachmentUrl: this.postEventsData.attachmentUrl || null
       };
 
       this.subscription = this.http.postdata(`CustomEvents`, data).subscribe({
@@ -112,9 +116,11 @@ export class AddEventComponent implements OnInit {
           }
         },
         error: (err: any) => {
+          this.spinnerLoader=false
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal('Insertion of data failed');
-        }
+        },
+
       });
     } else {
       // Optional: mark all controls as touched to trigger validation UI

@@ -136,7 +136,7 @@ export class AssessorConfigurationComponent implements OnInit , OnDestroy {
         return array.map((item: any) => item.locationName).join(', ');
       case 'subLocationName':
         return array.map((item: any) => item.subLocationName).join(', ');
-      case 'departments':
+      case 'departmentName':
         return array.map((item: any) => item.departmentName).join(', ');
       case 'subDepartmentName':
         return array.map((item: any) => item.subDepartmentName).join(', ');

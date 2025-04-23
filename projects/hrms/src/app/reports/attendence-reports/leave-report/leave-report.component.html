@@ -6,7 +6,9 @@
         <div>
           <form [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()">
             <div class="d-flex align-items-center gap-3">
-      
+              <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
+                Clear All
+              </button>
               <!-- Employee -->
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
@@ -44,14 +46,10 @@
       
               <!-- Leave Category -->
               <div class="d-flex align-items-center gap-2">
-                <div class="custom-p-select-content">
-                <select title="text" class="form-select custom-select" placeholder="Select Leave Category"
-                        formControlName="leaveCategory"
-                        (change)="onLeaveChangeYearly($event)">
-                  <option value="" disabled>Select Leave Category</option> 
+                <select title="text" class="form-select custom-select" formControlName="leaveCategory">
+                  <option value="" disabled>Select Leave Category</option>
                   <option *ngFor="let category of uniqueLeaveCategory" [value]="category">{{ category }}</option>
                 </select>
-                </div>
               </div>
       
               <!-- Buttons -->

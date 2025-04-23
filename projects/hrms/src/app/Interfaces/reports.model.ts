@@ -174,7 +174,7 @@ export interface IAttendanceDetails{
   // selectedLeaveEmployeeId?: any;
   // selectedDateRange?: { startDate: Dayjs; endDate: Dayjs };
   // selectedMonth?: any;
-   selectedLeave?: any;
+  LeaveName?: any;
   // selectedLeaveManager?: any;
   FusionEmpId?: string;
   EmployeeName?: string;

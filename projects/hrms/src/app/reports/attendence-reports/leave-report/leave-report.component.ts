@@ -80,9 +80,18 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeForm();
     this.loggedInUser = this.authService.getToken();
-    this.getYearlyReports();
     this.getEmployeeId();
+    this.getAttendanceReports();
     this.getTeam();
+  }
+  clearAllFilters(): void {
+    this.LeaveReportForm.reset({
+      employee: null,
+      manager: null,
+      dateRange: null,
+      leaveCategory: '',
+      year: ''
+    });
   }
 
   initializeForm() {
@@ -98,27 +107,29 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
     this.subscription = this.http
-
+  
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
           console.log(data);
-
+  
           console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.fusionEmployeeId
+              fullName: `${
+                employee.fusionEmployeeId
                   ? employee.fusionEmployeeId + ' - '
                   : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
             };
           });
           const filteredEmployees = employeedata.filter((element: any) => {
             return element.employeeId != loggedInUser.employeeId;
           });
-
+  
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
             ...filteredEmployees
@@ -129,7 +140,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+  
   getTeam() {
     this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
       next: (data: any) => {
@@ -141,10 +152,10 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       error: (reason: any) => console.log(reason),
     });
   }
-
-  getYearlyReports() {
+  
+  getAttendanceReports() {
     this.isLoading = true;
-    this.subscription = this.reportsService.getYearlyReports({}).subscribe({
+    this.subscription = this.reportsService.getAttendanceReports({}).subscribe({
       next: (res: any) => {
         this.extractUniqueYearlyFilters(res);
         this.isLoading = false;
@@ -152,27 +163,11 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       error: (err: any) => console.log(err)
     });
   }
-
+  
   extractUniqueYearlyFilters(data: any[]): void {
-    this.employeeiddetails = Array.from(new Map(data.map((item: any) => [item.fusionEmpId, item])).values())
-      .map((item: any) => ({
-        fusionEmpId: item.fusionEmpId,
-        fullName: `${item.fusionEmpId} - ${item.employeeName}`
-      }));
-
-    this.teamdetails = Array.from(new Map(data
-      .filter(item => item.teamManagerName)
-      .map(item => [item.teamManagerName, item])).values())
-      .map((item: any) => ({
-        id: item.teamManagerEmpID,
-        firstName: item.teamManagerName.split(' ')[0],
-        middleName: '',
-        lastName: item.teamManagerName.split(' ').slice(1).join(' ')
-      }));
-
     this.uniqueLeaveCategory = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
   }
-
+  
   selectYearlyEmployee(employee: any, event: Event) {
     event.stopPropagation();
     this.selectedEmployeeId = employee?.fusionEmpId ?? null;
@@ -202,46 +197,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
-  // generateYearlyReport(form: FormGroup): void {
-  //   const formData = form.value;
-  //   if (!this.selectedEmployeeId && !this.selectedWfhManager && !this.selectedYear && !this.selectedLeave) {
-  //     return;
-  //   }
 
-  //   const params = new URLSearchParams();
-  //   if (this.selectedEmployeeId) params.append('FusionEmpId', this.selectedEmployeeId);
-
-  //   const startDate = this.parseDate(formData.worked_Date.startDate);
-  //   const endDate = this.parseDate(formData.worked_Date.endDate);
-  //   params.append('StartDate', this.formatDate(startDate));
-  //   params.append('EndDate', this.formatDate(endDate));
-
-  //   // dateRange: {
-  //   //   startDate: formData.worked_Date.startDate;
-  //   //   endDate: formData.worked_Date.endDate,
-  //   // },
-  //   if (this.selectedMonth !== null) {
-  //     params.append('WorkedMonth', this.selectedMonth.toString());
-  //   }
-  //   if (this.selectedLeave) params.append('LeaveName', this.selectedLeave);
-  //   if (this.selectedWfhManager) {
-  //     params.append('teamManagerName', this.selectedWfhManager);
-  //   }
-
-
-  //   const endpoint = `Reports/Leave_Reports${params.toString() ? '?' + params.toString() : ''}`;
-  //   this.http.getData(endpoint).subscribe({
-  //     next: (data: any) => {
-  //       this.filteredYearlyRecord = data;
-  //       if (data.length === 0) {
-  //         // show modal: no data
-  //       } else {
-  //         console.log('Fetched Yearly Record:', this.filteredYearlyRecord);
-  //       }
-  //     },
-  //     error: (error: any) => console.error('Error fetching Yearly records:', error)
-  //   });
-  // }
   generateleaveReport(): void {
     const formValue = this.LeaveReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
@@ -273,7 +229,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       }
   
       if (formValue.leaveCategory) {
-        request.selectedLeave = formValue.leaveCategory;
+        request.LeaveName = formValue.leaveCategory;
       }
   
       if (formValue.manager) {
@@ -391,7 +347,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Yearly Summary Report');
-    XLSX.writeFile(wb, 'Leave_Summary_Report.xlsx');
+    XLSX.writeFile(wb, 'Leave_Report.xlsx');
   }
 
 

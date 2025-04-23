@@ -75,11 +75,19 @@ export class LeaveSummaryReportComponent {
   ngOnInit(): void {
     this.initializeForm();
     this.loggedInUser = this.authService.getToken();
-    this.getYearlyReports();
     this.getEmployeeId();
+    this.getLeaveSummaryReport();
     this.getTeam();
   }
-  
+  clearAllFilters(): void {
+    this.lvSummeryReportForm.reset({
+      employee: null,
+      manager: null,
+      leaveCategory: '',
+       year: ''
+    });
+  }
+
   initializeForm() {
     this.lvSummeryReportForm = this.fb.group({
       employee: [null, Validators.required],
@@ -140,9 +148,9 @@ export class LeaveSummaryReportComponent {
     });
   }
  
-  getYearlyReports() {
+  getLeaveSummaryReport() {
     this.isLoading = true;
-    this.subscription = this.reportsService.getYearlyReports({}).subscribe({
+    this.subscription = this.reportsService.getLeaveSummaryReport({}).subscribe({
       next: (res: any) => {
         this.extractUniqueYearlyFilters(res);
         this.isLoading = false;
@@ -152,25 +160,8 @@ export class LeaveSummaryReportComponent {
   }
   
   extractUniqueYearlyFilters(data: any[]): void {
-    this.employeeiddetails = Array.from(new Map(data.map((item: any) => [item.fusionEmpId, item])).values())
-      .map((item: any) => ({
-        fusionEmpId: item.fusionEmpId,
-        fullName: `${item.fusionEmpId} - ${item.employeeName}`
-      }));
-  
-    this.teamdetails = Array.from(new Map(data
-      .filter(item => item.teamManagerName)
-      .map(item => [item.teamManagerName, item])).values())
-      .map((item: any) => ({
-        id: item.teamManagerEmpID,
-        firstName: item.teamManagerName.split(' ')[0],
-        middleName: '',
-        lastName: item.teamManagerName.split(' ').slice(1).join(' ')
-      }));
-  
     this.uniqueLeaveCategory = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
   }
-  
   selectYearlyEmployee(employee: any, event: Event) {
     event.stopPropagation();
     this.selectedEmployeeId = employee?.fusionEmpId ?? null;

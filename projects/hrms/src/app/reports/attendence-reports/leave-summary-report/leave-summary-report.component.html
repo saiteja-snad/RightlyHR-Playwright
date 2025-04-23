@@ -6,7 +6,9 @@
         <div>
           <form [formGroup]="lvSummeryReportForm" (ngSubmit)="leavesummeryReport()">
             <div class="d-flex align-items-center gap-3">
-      
+              <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
+                Clear All
+              </button>
               <!-- Employee -->
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
@@ -34,22 +36,14 @@
               </div>
       
               <!-- Leave Category -->
+              
               <div class="d-flex align-items-center gap-2">
                 <select title="text" class="form-select custom-select" formControlName="leaveCategory">
                   <option value="" disabled>Select Leave Category</option>
                   <option *ngFor="let category of uniqueLeaveCategory" [value]="category">{{ category }}</option>
                 </select>
               </div>
-      
-          
-              <div class="d-flex align-items-center gap-2">
-                <select title="text" class="form-select custom-select"
-                        formControlName="year"
-                        (change)="onYearChange($event)">
-                  <option value="" disabled>Select Year</option>
-                  <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-                </select>
-              </div>
+            
               <!-- Buttons -->
               <div class="d-flex gap-2">
                 <button type="submit" class="custom-btn btn-secondary" [disabled]="lvSummeryReportForm.invalid">

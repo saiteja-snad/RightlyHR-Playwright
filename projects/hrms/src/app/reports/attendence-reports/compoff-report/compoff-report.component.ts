@@ -78,7 +78,6 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeForm();
     this.loggedInUser = this.authService.getToken();
-    this.getYearlyReports();
     this.getEmployeeId();
     this.getTeam();
   }
@@ -92,7 +91,16 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       year: ['']
     });
   }
-  
+  clearAllFilters(): void {
+    this.compoffReportForm.reset({
+      employee: null,
+      manager: null,
+      dateRange: null,
+      leaveCategory: '',
+      year: ''
+    });
+  }
+
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
     this.subscription = this.http
@@ -139,9 +147,9 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     });
   }
  
-  getYearlyReports() {
+  getcompOffReports() {
     this.isLoading = true;
-    this.subscription = this.reportsService.getYearlyReports({}).subscribe({
+    this.subscription = this.reportsService.getcompOffReports({}).subscribe({
       next: (res: any) => {
         this.extractUniqueYearlyFilters(res);
         this.isLoading = false;

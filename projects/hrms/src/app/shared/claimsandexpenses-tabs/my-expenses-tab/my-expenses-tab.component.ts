@@ -11,6 +11,6 @@ import { TabsModule } from 'primeng/tabs';
 
 export class MyExpensesTabComponent {
   navTabs: any[] = [
-    { label: 'My Expenes', link: '/claimsandexpenses/expenses' },
+    { label: 'Expenses', link: '/claimsandexpenses/expenses' },
   ];
 }

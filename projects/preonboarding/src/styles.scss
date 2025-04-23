@@ -138,6 +138,18 @@ a {
     color: var(--btn-color-ts);
 }
 
+.accepted-btn {
+    background-color: #0AAD01;
+    color: #FFFFFF;
+    border: 1px solid #0AAD01;
+}
+
+.rejected-btn {
+    background-color: #E3544C;
+    color: #FFFFFF;
+    border: 1px solid #E3544C;
+}
+
 // disable-btn
 .btn-primary:disabled {
     opacity: 0.5;
@@ -422,20 +434,8 @@ input[type="file"] {
     }
 }
 
-.result-popup-content {
-    padding: 3rem;
-    text-align: center;
-
-    .confirmation-icon {
-        width: 5rem;
-    }
-
-    .confirmation-text {
-        font-weight: 500;
-        font-size: var(--fontsize20);
-        line-height: 2rem;
-        color: #06274F;
-    }
+.confirmation-icon {
+    width: 4.5rem;
 }
 
 .confirmation-text {
@@ -443,6 +443,15 @@ input[type="file"] {
     font-size: var(--fontsize20);
     line-height: 2rem;
     color: #06274F;
+}
+
+.result-popup-content {
+    padding: 3rem;
+    text-align: center;
+
+    .confirmation-icon {
+        width: 5rem;
+    }
 }
 
 .progress-bar {

@@ -53,7 +53,7 @@ export class CreateComponent {
   openCancelationPopUp() {
     this.modalService.open(this.cancelationConfirmation, { centered: true });
   }
-  
+
   initializeReviewCycleForm() {
     this.reviewCycleForm = this.fb.group(
       {
@@ -254,7 +254,7 @@ export class CreateComponent {
     this.isLoading = true;
     console.log(this.reviewCycleForm.value.locationId)
     if (this.reviewCycleForm.valid) {
-      const data = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+      const data = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
       const reviewCycleData = {
         reviewCycleName: this.reviewCycleForm.value.reviewCycleName,
         startDate: this.reviewCycleForm.value.startDate,
@@ -274,13 +274,15 @@ export class CreateComponent {
       };
       this.http.postdata('reviewCycleHeader', reviewCycleData).subscribe({
         next: (response) => {
-          this.conformationPopup.openSuccessModal('Review Cycle Created Successfully');
           this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Review Cycle Created Successfully');
+          // 
         },
 
         error: (error) => {
-          this.conformationPopup.openErrorModal('error.error.Message');
           this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal('error.error.Message');
+          // this.modalService.dismissAll();
         },
       });
     } else {

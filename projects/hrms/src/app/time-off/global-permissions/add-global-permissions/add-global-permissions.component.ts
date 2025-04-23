@@ -321,12 +321,7 @@ this.requestForm.get('teamSelectedOptions')?.setValue(null);
 const value=this.requestForm.get('department')?.value;
 this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).subscribe({
   next: (data: any) => {
-    //console.log(data)
     this.teamDetails = data;
-    // .map((item: any) => ({
-    //   ...item,
-    //   selectedAllGroup: 'Group 1'
-    // }));
   },
   error:(err:any)=>{
     console.log(err)
@@ -336,6 +331,7 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
     this.requestForm.get('teamSelectedOptions')?.setValue(null);
   },
 })
+
 }
   close() {
     this.modalService.dismissAll();
@@ -440,14 +436,6 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
       },
     })
   }
-
-
-close1(){
-  // this.modalService.dismissAll();
-  // this.requestForm.reset();
-  window.location.reload();
- 
-}
   onTypeChange(): void {
     const selectedType =this.requestForm.get('name')?.value;
     this.selectedPermissionId = this.permissionsType.find((t) => t.name === selectedType)?.id;

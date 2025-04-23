@@ -14,5 +14,6 @@ export class AttendanceEligibilityCriteriaTabsComponent {
     { label: 'WFH Entitlement Criteria', route: '/settings/timeoff-configurations/eligibility-criterias/wfh' },
     { label: 'Permissions', route: '/settings/timeoff-configurations/eligibility-criterias/permissions' },
     { label: 'Permissions Eligibilty Criteria', route: '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria' },
+    { label: 'Global Permissions', route: '/settings/timeoff-configurations/eligibility-criterias/global-permissions' },
   ];
 }

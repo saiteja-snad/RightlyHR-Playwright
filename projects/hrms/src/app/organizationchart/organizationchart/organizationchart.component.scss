@@ -1,0 +1,64 @@
+.card {
+    position: relative;
+    width: 100%;
+    height: calc(100dvh - 10rem);
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    overflow: auto;
+    border: none;
+}
+
+.image-content {
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+    border-radius: 50%;
+    border: 5px solid #2e427d;
+    margin-bottom: 0.25rem !important;
+}
+
+.custom-organition-data{
+    background-color: transparent !important;
+    color: #003366;
+    border: none !important;
+    color: #003366;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+
+
+
+
+
+
+
+.p-organizationchart .p-organizationchart-line-down {
+    border: 1px solid #c3bebe !important;
+    background: none !important;
+}
+
+.p-organizationchart .p-organizationchart-line-top {
+    border-top: 2px solid #c3bebe !important;
+    border-color: none !important;
+}
+
+.p-organizationchart .p-organizationchart-line-left {
+    border-right: 2px solid #c3bebe !important;
+    border-color: none !important;
+}
+
+.p-organizationchart .p-organizationchart-node-content {
+    color: black !important;
+}
+
+.jobrole {
+    color: rgb(102, 97, 97);
+}
+
+.name {
+    color: black;
+}
+
+.department {
+    color: rgb(170, 165, 165);
+}

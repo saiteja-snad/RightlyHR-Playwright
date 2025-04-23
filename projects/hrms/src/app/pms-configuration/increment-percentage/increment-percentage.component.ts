@@ -96,11 +96,12 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.updateData = data;
   }
   viewDetails(data: any) {
-    this.modalService.open(ViewIncrementComponent, {
+    const modalRef = this.modalService.open(ViewIncrementComponent, {
       centered: true,
       backdrop: 'static',
       size: 'lg',
     });
+    modalRef.componentInstance.updateData = data;
   }
   //function to get the globalpermissions details
   getAllIncrementalPercentagedata(): void {

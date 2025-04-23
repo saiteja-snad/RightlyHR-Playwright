@@ -59,8 +59,7 @@
                 </div>
         
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Roles & Responsibilities<span
-                            class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Roles & Responsibilities</label>
                     <textarea class="form-control custom-input" formControlName="description"></textarea>
                     <div *ngIf="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched" class="error-msg">
                         Roles & Responsibilities is required
@@ -72,7 +71,7 @@
                 </div>
         
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">Contact Name<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Contact Name</label>
                     <input type="text" class="form-control custom-input" formControlName="previousContactName">
                     <div *ngIf="experienceForm.get('previousContactName')?.invalid && experienceForm.get('previousContactName')?.touched" class="error-msg">
                         Contact Name is required
@@ -80,7 +79,7 @@
                 </div>
         
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">Contact Number<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Contact Number</label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                         <lib-country-list [selectedCountryConfig]="selectedCountryConfig"  [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig" class="country-input"
                          (onCountryChange)="onCountryChange($event)"></lib-country-list>
@@ -101,7 +100,7 @@
                 </div>
         
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">Work Email<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Work Email</label>
                     <input type="email" class="form-control custom-input" formControlName="previousContactEmail">
                     <div *ngIf="experienceForm.get('previousContactEmail')?.invalid && experienceForm.get('previousContactEmail')?.touched" class="error-msg">
                         Work Email is required

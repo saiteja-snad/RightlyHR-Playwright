@@ -5,7 +5,7 @@ import { environment } from "../../environments/environment.dev";
 
 
 export function loggerCallback(logLevel:LogLevel,message:string){
-    console.log(message);
+    // console.log(message);
 }
 
 
@@ -91,4 +91,4 @@ export function getAccessToken(): Promise<string>{
         
     });
     
-}
+} 

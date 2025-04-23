@@ -364,8 +364,6 @@ export class AssetsManagmentComponent {
           this.subLocationsDropdown = [];
           this.locationfromdata.patchValue({ subLocationId: null });
           window.location.reload()
-          this.locationfromdata.reset()
-          this.http.assetslocationIdSubject.complete()
           this.locationfromdata.get('subLocationId')?.disable()
           localStorage.removeItem('assetsublocationId');
           localStorage.removeItem('assetlocationId');
@@ -600,7 +598,5 @@ export class AssetsManagmentComponent {
     this.destroy$.unsubscribe();
     localStorage.removeItem('assetlocationId');
     localStorage.removeItem('assetsublocationId');
-    this.locationfromdata.reset()
-    this.http.assetslocationIdSubject.complete()
   }
 }

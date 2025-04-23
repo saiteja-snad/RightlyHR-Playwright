@@ -38,7 +38,7 @@
                 </p-dropdown>
             </div>
             }
-            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId)">
+            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId);this.selectedEmployee=null">
                 <i class="bi bi-plus me-2"></i>My Attendance
             </button>
         </div>
@@ -120,7 +120,7 @@
                     <tbody>
                         @if(!dataLoader){
                             @if(statusCounts$.value){
-                                <ng-container *ngIf="statusCounts$ | async as statusCounts;else nodata">
+                                <ng-container *ngIf="statusCounts$ | async as statusCounts">
                                     @for (status of statusCounts | keyvalue; track $index) {
                                     <tr>
                                         <td>{{ status.key.toUpperCase() }}</td>
@@ -128,11 +128,11 @@
                                     </tr>
                                     }
                                 </ng-container>
-                                <ng-template #nodata>
+                                @if(statusCounts$.value.length<=0){
                                     <tr>
                                         <td><app-no-data-found/> </td>
-                                    </tr>
-                                </ng-template>
+                                    </tr> 
+                                }
                             }
                            @else {
                             <tr>

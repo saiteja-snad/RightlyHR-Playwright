@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormBuilder, NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
@@ -14,16 +19,10 @@ import { IReviewCycle, RatingDetail } from './increment.modal';
 
 @Component({
   selector: 'app-add-increment',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    Select,
-    TranslateModule,
-  ],
+  imports: [CommonModule, FormsModule, Select, TranslateModule],
   templateUrl: './add-increment.component.html',
   styleUrl: './add-increment.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class AddIncrementComponent implements OnInit, OnDestroy {
   empinfo = {} as any;
@@ -31,8 +30,8 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
   ratingrangeloop: number[] = [];
   postincrementalpercentage = {} as any;
   ratingscaledetailsarray = [] as any;
-  Status:any;
-  isLoading=false;
+  Status: any;
+  isLoading = false;
   myForm!: NgForm;
   deleteId: any;
   removerow: any;
@@ -41,11 +40,9 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
   @ViewChild('deletesuccess') deletesuccess: any;
   @ViewChild('deleterowincrement') deleterowincrement: any;
   constructor(
-    private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
     private http: HttpService,
-    private fb: FormBuilder,
     private modalService: NgbModal,
     public rbac: RbacService
   ) {}
@@ -53,40 +50,50 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getReviewCycledata();
   }
-    // Function to get all review cycle data
-    getReviewCycledata() {
-      this.subscription = this.http.getData(`reviewCycleHeader`).subscribe({
-        next: (data: any) => {
-          console.log('Review Cycle Data:', data);
-          this.reviewCycleDropDownData = data.items as IReviewCycle[];
-        },
-        error: (err: any) => {
-          console.error('Error fetching review cycle data:', err);
-        },
-      });
-    }
-   // Function to get review cycle data by ID and patch the form
-   getReviewCycledataById() {
+  // Function to get all review cycle data
+  getReviewCycledata() {
+    this.subscription = this.http.getData(`reviewCycleHeader`).subscribe({
+      next: (data: any) => {
+        this.reviewCycleDropDownData = data.items as IReviewCycle[];
+      },
+      error: (err: any) => {
+        console.error('Error fetching review cycle data:', err);
+      },
+    });
+  }
+  // Function to get review cycle data by ID and patch the form
+  getReviewCycledataById() {
     let id: any;
     if (this.postincrementalpercentage.id) {
       id = this.postincrementalpercentage.id;
     }
     this.subscription = this.http.getData(`reviewCycleHeader/${id}`).subscribe({
       next: (data: any) => {
-        console.log('Fetched Review Cycle Details:', data);
         this.reviewCycledetailyById = data;
         // Patch the form fields
         if (this.postincrementalpercentage) {
-
-          this.postincrementalpercentage.department = data[0]?.departments?.map((loc: any) => loc?.departmentName).join(', '),
-            this.postincrementalpercentage.ratingId = data.id,
-            this.postincrementalpercentage.location = data[0]?.locations?.map((loc: any) => loc?.locationName).join(', '),
-            this.postincrementalpercentage.sublocation = data[0]?.sublocations?.map((loc: any) => loc?.subLocationName).join(', '),
-            this.postincrementalpercentage.team = data[0]?.subdepartments?.map((loc: any) => loc?.subDepartmentName).join(', '),
-            this.postincrementalpercentage.ratingscale = `${data[0]?.minimumRatingScale ?? ''} to ${data[0]?.maximumRatingScale ?? ''}`
+          (this.postincrementalpercentage.department = data[0]?.departments
+            ?.map((loc: any) => loc?.departmentName)
+            .join(', ')),
+            (this.postincrementalpercentage.ratingId = data.id),
+            (this.postincrementalpercentage.location = data[0]?.locations
+              ?.map((loc: any) => loc?.locationName)
+              .join(', ')),
+            (this.postincrementalpercentage.sublocation = data[0]?.sublocations
+              ?.map((loc: any) => loc?.subLocationName)
+              .join(', ')),
+            (this.postincrementalpercentage.team = data[0]?.subdepartments
+              ?.map((loc: any) => loc?.subDepartmentName)
+              .join(', ')),
+            (this.postincrementalpercentage.ratingscale = `${
+              data[0]?.minimumRatingScale ?? ''
+            } to ${data[0]?.maximumRatingScale ?? ''}`);
         }
         // Generate dynamic rating rows
-        this.getdetailsrelatedtoreviewcycle(data[0].minimumRatingScale, data[0].maximumRatingScale);
+        this.getdetailsrelatedtoreviewcycle(
+          data[0].minimumRatingScale,
+          data[0].maximumRatingScale
+        );
       },
       error: (err: any) => {
         console.error('Error fetching review cycle by ID:', err);
@@ -97,7 +104,7 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
     });
   }
   openModal(content: any) {
-    this.modalService.open(content, { centered: true })
+    this.modalService.open(content, { centered: true });
   }
   close() {
     this.modalService.dismissAll();
@@ -108,76 +115,70 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
     this.ratingrangeloop = [];
     this.ratingscaledetailsarray = [];
   }
-    //function to open the model popup
-    openconfirmationModel(content: any) {
-      this.modalService.open(content, { centered: true });
-    }
-    //function to open the model popup
-    openconfirmationModelforcancle(content: any, form: any) {
-      this.myForm = form
-      this.modalService.open(content, { centered: true });
-    }
-    //function to delete
-    openDeletepopup(content: any, id: any) {
-      console.log(id)
-      this.deleteId = id
-      console.log(this.deleteId)
-      this.modalService.open(content, { centered: true });
-    }
+  //function to open the model popup
+  openconfirmationModel(content: any) {
+    this.modalService.open(content, { centered: true });
+  }
+  //function to open the model popup
+  openconfirmationModelforcancle(content: any, form: any) {
+    this.myForm = form;
+    this.modalService.open(content, { centered: true });
+  }
+  //function to delete
+  openDeletepopup(content: any, id: any) {
+    this.deleteId = id;
+    this.modalService.open(content, { centered: true });
+  }
   validateNumber(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const numericValue = inputElement.value.replace(/[^0-9]/g, ''); // Allow only numeric characters
     inputElement.value = numericValue;
   }
-    //function to add the columns based on max and min values 
-    getdetailsrelatedtoreviewcycle(start: any, end: any) {
-      // Clear the previous range before adding new values
-      this.ratingrangeloop = [];
-      this.ratingscaledetailsarray = [];
-      const range = [];
-      for (let i = start; i <= end; i++) {
-        range.push(i);
-      }
-      this.ratingrangeloop = range;
-      // Add initial rows dynamically
-      if (this.ratingrangeloop.length > 0) {
-        this.addRow();
-      }
-  
+  //function to add the columns based on max and min values
+  getdetailsrelatedtoreviewcycle(start: any, end: any) {
+    // Clear the previous range before adding new values
+    this.ratingrangeloop = [];
+    this.ratingscaledetailsarray = [];
+    const range = [];
+    for (let i = start; i <= end; i++) {
+      range.push(i);
     }
-  
-    // Add Row to FormArray
-    addRow() {
-      // Create a new row with empty values for minvalue, maxvalue, and ratingDetails
-      const newRow = {
-        minvalue: null,
-        maxvalue: null,
-        ratingDetails: [] as RatingDetail[],
-      };
-  
-      // Populate the ratingDetails based on the existing ratingrangeloop
-      this.ratingrangeloop.forEach((columnValue) => {
-        newRow.ratingDetails.push({
-          percentage: null,
-          ratingcolumns: columnValue, // Use the current rating column values
-        });
+    this.ratingrangeloop = range;
+    // Add initial rows dynamically
+    if (this.ratingrangeloop.length > 0) {
+      this.addRow();
+    }
+  }
+
+  // Add Row to FormArray
+  addRow() {
+    // Create a new row with empty values for minvalue, maxvalue, and ratingDetails
+    const newRow = {
+      minvalue: null,
+      maxvalue: null,
+      ratingDetails: [] as RatingDetail[],
+    };
+
+    // Populate the ratingDetails based on the existing ratingrangeloop
+    this.ratingrangeloop.forEach((columnValue) => {
+      newRow.ratingDetails.push({
+        percentage: null,
+        ratingcolumns: columnValue, // Use the current rating column values
       });
-  
-      // Push the new row into the existing array reference
-      this.ratingscaledetailsarray.push(newRow);
-  
-      console.log('Updated ratingscaledetailsarray:', this.ratingscaledetailsarray);
-    }
-    // Delete Row from FormArray
-    deleteRow(index: number): void {
-  
-      // Remove the row at the specified index
-      this.ratingscaledetailsarray.splice(index, 1);
-      this.conformationPopup.openSuccessModal('Row Deleted Successfully')
-    }
-      // Handle form submission
+    });
+
+    // Push the new row into the existing array reference
+    this.ratingscaledetailsarray.push(newRow);
+  }
+  // Delete Row from FormArray
+  deleteRow(index: number): void {
+    // Remove the row at the specified index
+    this.ratingscaledetailsarray.splice(index, 1);
+    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+  }
+  // Handle form submission
   onSubmit() {
-    this.isLoading=true;
+    this.isLoading = true;
     const loggedinuser = this.authService.getToken();
     const currentDate = new Date();
     if (this.postincrementalpercentage) {
@@ -194,42 +195,39 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
             ratingColumn: JSON.stringify(detail.ratingcolumns),
             percentage: detail.percentage,
             createdAt: currentDate,
-            isDeleted: false
+            isDeleted: false,
           }))
         ),
       };
-
-      console.log('Final Payload:', payload);
-
       this.http.postdata(`IncrementalPercentage`, payload).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Increment Percentage Configurations Added Successfully')
+          this.conformationPopup.openSuccessModal(
+            'Increment Percentage Configurations Added Successfully'
+          );
         },
         error: (err: any) => {
-         this.isLoading=false;
-          console.log(err)
+          this.isLoading = false;
+          console.log(err);
           if (err.status === 404) {
-            this.conformationPopup.openErrorModal('The requested resource was not found. Please check the URL or contact the administrator for assistance.')
-           
+            this.conformationPopup.openErrorModal(
+              'The requested resource was not found. Please check the URL or contact the administrator for assistance.'
+            );
           } else if (err.status === 500) {
-            this.conformationPopup.openErrorModal(err.error.details)
-            
+            this.conformationPopup.openErrorModal(err.error.details);
           } else {
-            this.conformationPopup.openErrorModal(err.error.message)
-         
+            this.conformationPopup.openErrorModal(err.error.message);
           }
-          
         },
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         complete: () => {
-          this.isLoading=false;
+          this.isLoading = false;
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             global: true,
           }));
         },
-      })
+      });
     }
   }
   ngOnDestroy(): void {

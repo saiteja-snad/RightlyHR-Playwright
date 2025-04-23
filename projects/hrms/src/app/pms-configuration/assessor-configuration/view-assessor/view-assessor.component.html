@@ -1,1 +1,128 @@
-<p>view-assessor works!</p>
+<div class="custom-main-popup-container" ngbAutofocus>
+    <div class="d-flex justify-content-between align-items-center popup-header-border p-3">
+        <div>
+            <p class="popup-heading mb-0">{{'Create Assessor Configuration'| translate}}</p>
+        </div>
+        <div>
+            <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+    </div>
+    <div class="custom-main-popup-content p-4">
+        <form name="Postincrementalpercentage" #UpdateAssesorDetails="ngForm"
+        (ngSubmit)="UpdateAssesorDetails.valid">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="custom-p-select-content">
+              <label for="reviewcycle" class="form-label custom-label">Review Cycle Name<span class="text-danger">*</span></label>
+              <p-select   [options]="reviewCycleDropDownData" optionValue="id" optionLabel="reviewCycleName" [filter]="true"
+              id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel" [(ngModel)]="updateassesorConfiguration.reviewCycleId"
+              filterBy="item_text" [showClear]="true" [disabled]="true" placeholder="Please Select Review Cycle Name"  class="form-select w-100" >
+              </p-select>
+              <small class="text-danger" *ngIf="reviewcycle.touched && reviewcycle.invalid">
+                Review Cycle Name is required
+              </small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div>
+              <label for="department" class="form-label custom-label">Department<span class="text-danger">*</span></label>
+              <input class="form-control custom-input" #deparment="ngModel" [(ngModel)]="updateassesorConfiguration.department"
+                id="department" name="department" aria-label="Default select example" placeholder="Department" disabled>
+              <small class="text-danger"
+                *ngIf="(deparment.touched &&  reviewcycle.invalid) || (deparment.invalid && UpdateAssesorDetails.submitted)">
+                Department is required
+              </small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div>
+              <label for="team" class="form-label custom-label">Team<span class="text-danger">*</span></label>
+              <input class="form-control custom-input" aria-label="Default select example" id="team" name="team" #team="ngModel"
+                [(ngModel)]="updateassesorConfiguration.team" placeholder="Team" disabled>
+              <small class="text-danger"
+                *ngIf="(team.touched &&  team.invalid) || (team.invalid && UpdateAssesorDetails.submitted)">
+                Team is required
+              </small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div>
+              <label for="location" class="form-label custom-label">Location<span class="text-danger">*</span></label>
+              <input class="form-control custom-input" aria-label="Default select example" id="location" name="location"
+                #location="ngModel" [(ngModel)]="updateassesorConfiguration.location" placeholder="Location" disabled>
+              <small class="text-danger"
+                *ngIf="(location.touched &&  location.invalid) || (location.invalid && UpdateAssesorDetails.submitted)">
+                Location is required
+              </small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div>
+              <label for="sublocation" class="form-label custom-label">Sub Location<span class="text-danger">*</span></label>
+              <input class="form-control custom-input" aria-label="Default select example" id="sublocation" name="sublocation"
+                #sublocation="ngModel" [(ngModel)]="updateassesorConfiguration.sublocation" placeholder="Sub Location"
+                disabled>
+              <small class="text-danger"
+                *ngIf="(sublocation.touched && sublocation.invalid) || (sublocation.invalid && UpdateAssesorDetails.submitted)">
+                Sub Location is required
+              </small>
+            </div>
+          </div>
+          <div class="modal-table-content w-100">
+            <table class="w-100">
+                <thead>
+                    <th>Assessor</th>
+                    <th>Deadline Date</th>
+                    <th class="text-center">Ratings</th>
+                    <th class="text-center">Comments</th>
+                    <!-- <th class="text-center">View</th> -->
+                    <th class="text-center">Action(s)</th>
+                    <th class="th-bg"></th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let detail of assesorDetails; let i = index">
+                        <td>
+                            <div class="custom-p-select-content">
+                                <p-select   [options]="reviewCycleData" optionValue="value" optionLabel="value" [filter]="true"
+                                name="assessors" id="assesor-{{i}}" name="assesor-{{i}}"
+                                    [(ngModel)]="detail.assessors" required  [disabled]="true"
+                                filterBy="value" [showClear]="true" placeholder="Select an Assessor"  class="form-select w-100">
+                                </p-select>
+                            </div>
+                        </td>
+                        <td>
+                            <input type="date" class="form-control mb-2" [(ngModel)]="detail.deadlineindays"
+                                (ngModelChange)="checkRowState(i)" id="deadlineindays-{{i}}" disabled
+                                name="deadlineindays-{{i}}" required [min]="currentDate">
+                            <ng-container *ngIf="detail?.assessors?.toLowerCase()==='hr'"
+                                onkeypress="return false;">
+                                <div class="custom-p-select-content">
+                                    <p-select   [options]="activeEmplist" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                                    id="assesorid-{{i}}" name="employeename"  #employeename="ngModel" [disabled]="true"
+                                    [(ngModel)]="detail.assessorempId" required
+                                    filterBy="fullName" [showClear]="true" placeholder="Select Employee Name"  class="form-select w-100">
+                                    </p-select>
+                                </div>
+                               
+                            </ng-container>
+
+                        </td>
+                        <td class="text-center">
+                            <input class="form-check-input" type="checkbox" [(ngModel)]="detail.rating" disabled
+                                id="rating-{{i}}" name="rating-{{i}}" >
+                        </td>
+                        <td class="text-center">
+                            <input class="form-check-input" type="checkbox" [(ngModel)]="detail.comments" disabled
+                                id="comments-{{i}}" name="comments-{{i}}" >
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        </div>
+     
+      </form>
+    </div>
+</div>
+

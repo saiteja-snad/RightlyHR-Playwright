@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, catchError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment.dev';
 import { ApprovalStatusCount } from '../Interfaces/timoff-model';
 
@@ -60,6 +60,13 @@ export class HttpService {
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
+
+   eventAddedSource = new Subject<void>();
+  eventAdded$ = this.eventAddedSource.asObservable();
+
+  notifyEventAdded() {
+    this.eventAddedSource.next();
+  }
 
  private triggerSignal = signal(false);
  readonly trigger = this.triggerSignal;

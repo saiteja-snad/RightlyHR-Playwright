@@ -5,7 +5,7 @@
             <div class="mb-4">
                 <div class="custom-settings-add-input input-group">
                     <input type="text" class="form-control custom-input" placeholder="Please enter permission" formControlName="name" 
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <span class="input-group-text" id="saluation">
                         <button type="submit" class="custom-btn btn-primary" [disabled]="permissionsForm.invalid">{{'Add'}}</button>
                     </span>
@@ -78,7 +78,7 @@
                     <label for="name" class="form-label"
                         style="font-weight: bolder;">Permission</label>
                     <input type="text" name="name" formControlName="name" class="form-control" autocomplete="off"
-                        id="backgroundcheckstatus1" (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        id="backgroundcheckstatus1" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                         <div *ngIf="permissionUpdateForm.get('name')?.touched && permissionUpdateForm.get('name')?.invalid" class="error-msg mt-2">
                             <div *ngIf="permissionUpdateForm.get('name')?.errors?.['required']">{{'Permission is required'}}</div>
                         </div>

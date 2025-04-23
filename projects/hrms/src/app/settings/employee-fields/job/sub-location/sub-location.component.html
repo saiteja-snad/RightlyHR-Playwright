@@ -41,7 +41,7 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="AddLocation"
                         placeholder="Please enter sublocation"
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"  />
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"  />
                     <div *ngIf="AddForm.get('AddLocation')?.touched && AddForm.get('AddLocation')?.invalid"
                         class="error-msg">
                         {{ 'Sub location is required' | translate }}.
@@ -145,7 +145,7 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateSubLocation"
                         placeholder="Please enter sub location" 
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('UpdateSubLocation')?.invalid && updateForm.get('UpdateSubLocation')?.touched"
                         class="error-msg">
                         {{ 'Sub location is required' | translate }}.

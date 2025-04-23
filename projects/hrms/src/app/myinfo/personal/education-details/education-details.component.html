@@ -161,7 +161,7 @@
         <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary">Add</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="educationForm.invalid">Add</button>
         </div>
       </form>
     </div>

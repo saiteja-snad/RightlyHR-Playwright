@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AssetCategory } from '../../../Interfaces/assets-management.model';
 import { Select } from 'primeng/select';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-sub-catagory',

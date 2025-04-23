@@ -6,6 +6,9 @@
       <form [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
         <div class="d-flex align-items-center gap-3">
   
+          <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
+            Clear All
+          </button>
           <!-- Employee -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">

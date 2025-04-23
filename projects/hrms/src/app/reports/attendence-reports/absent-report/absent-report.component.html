@@ -5,6 +5,11 @@
       
         <form [formGroup]="absentReportForm" (ngSubmit)="generateAbsentReport()">
           <div class="d-flex align-items-center gap-3 flex-wrap">
+
+            <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
+              Clear All
+            </button>
+
             <!-- Employee -->
             <div class="d-flex align-items-center gap-2">
               <div class="custom-p-select-content">

@@ -222,6 +222,16 @@ generateYearlyReport(): void {
     error: (error: any) => console.error('Error fetching Yearly records:', error),
   });
 }
+
+clearAllFilters(): void {
+  this.yearlyReportForm.reset({
+    employee: null,
+    manager: null,
+    leaveCategory: '',
+    year: ''
+  });
+}
+
   exportToExcelYearly(): void {
     // Define header mappings
     const HEADER_MAPPINGS: { [key: string]: string } = {

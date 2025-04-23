@@ -264,6 +264,15 @@ export class AbsentReportComponent {
     });
   }
   
+  clearAllFilters(): void {
+    this.absentReportForm.reset({
+      employee: null,
+      manager: null,
+      frequency: '',
+      dateRange: null,
+      month: ''
+    });
+  }
 
   formatDate(date: Date): string {
     return date.toISOString().split('T')[0];

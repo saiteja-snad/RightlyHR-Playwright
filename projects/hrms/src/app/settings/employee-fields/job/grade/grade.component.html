@@ -69,16 +69,15 @@
           <tr>
             <th>Grade Name</th>
             <th>Job grade</th>
-            <th class="text-center">Actions</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Grade Details.update') || rbac.allowedToAccess('Grade Details.delete')">Actions</th>
           </tr>
         </thead>
         <tbody>
           <ng-container>
-            @if (rbac.allowedToAccess('Grade Details.view')) {
             <tr *ngFor="let roles of gradedetails"> 
               <td>{{roles.gradeName}}</td>
               <td>{{roles.jobGrade}}</td>
-              <td class="text-center">
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Grade Details.update') || rbac.allowedToAccess('Grade Details.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -98,7 +97,6 @@
                 </div>
               </td>
             </tr>
-          }
           </ng-container>
           <!-- No Data Found Template -->
           <!-- <ng-template #noDataTemplate>

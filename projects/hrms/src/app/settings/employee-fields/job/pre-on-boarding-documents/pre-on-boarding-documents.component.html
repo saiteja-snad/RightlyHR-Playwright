@@ -107,7 +107,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Pre Onboard Documents.view')) {
                 <ng-container *ngFor="let preonboarding of preonboardingDetails">
                     <tr>
                         <td>{{ preonboarding.documentName }}</td>
@@ -135,7 +134,7 @@
                         <!-- Actions dropdown -->
                         <td class="text-center">
                             <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
+                                <span type="button" data-bs-toggle="dropdown" *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
@@ -154,7 +153,6 @@
                         </td>
                     </tr>
                 </ng-container>
-            }
             </tbody>
         </table>
     </div>

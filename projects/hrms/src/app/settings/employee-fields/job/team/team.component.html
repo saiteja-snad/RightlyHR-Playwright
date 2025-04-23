@@ -89,17 +89,16 @@
           <th>Department Name</th>
           <th>Team Name</th>
           <th>Team Manager</th>
-          <th class="text-center">Actions</th>
+          <th class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">Actions</th>
         </tr>
       </thead>
       <tbody>
-        @if (rbac.allowedToAccess('Team.view')) {}
         <ng-container>
           <tr *ngFor="let teams of teamdetailsdata">
             <td>{{teams.departmentName}}</td>
             <td>{{teams.subdepartmentName}}</td>
             <td>{{teams.firstName}} {{teams.middleName}} {{teams.lastName}}</td>
-            <td class="text-center">
+            <td class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>

@@ -73,16 +73,15 @@
           <tr>
             <th>Type</th>
             <th>Duration</th>
-            <th class="text-center">Actions</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')">Actions</th>
           </tr>
         </thead>
         <tbody>
-          @if (rbac.allowedToAccess('Probation Details.view')) {
           <ng-container>
             <tr *ngFor="let pro of ProbationDetails">
               <td>{{pro.value}}</td>
               <td>{{pro.noOfDays}}</td>
-              <td class="text-center">
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -103,7 +102,6 @@
               </td>
             </tr>
           </ng-container>
-        }
         </tbody>
       </table>
     </div>

@@ -9,7 +9,7 @@
           <tr>
             <th>Job Role</th>
             <th>Grade Name</th>
-            <th class="text-center">Actions</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Job Role.update') || rbac.allowedToAccess('Job Role.delete')">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -17,7 +17,7 @@
             <tr *ngFor="let roles of JobroleDetails">
               <td>{{roles.designationName}}</td>
               <td>{{roles.gradeName}}</td>
-              <td class="text-center">
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Job Role.update') || rbac.allowedToAccess('Job Role.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>

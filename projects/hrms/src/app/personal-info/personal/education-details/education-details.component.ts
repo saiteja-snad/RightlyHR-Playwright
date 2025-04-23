@@ -8,8 +8,9 @@ import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-education-details',

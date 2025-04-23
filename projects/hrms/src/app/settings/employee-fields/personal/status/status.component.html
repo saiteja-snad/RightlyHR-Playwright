@@ -5,7 +5,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter status"
                     formControlName="status" aria-label="stat" aria-describedby="stat"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="statusForm.invalid">{{'Add'|translate}}</button></span>
@@ -69,7 +69,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="statusname"
                         placeholder="Please enter status"
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('statusname')?.touched && updateForm.get('statusname')?.invalid" class="error-msg mt-2">
                         <div *ngIf="updateForm.get('statusname')?.errors?.['required']">{{'Status name is required'|translate}}</div>
                     </div>

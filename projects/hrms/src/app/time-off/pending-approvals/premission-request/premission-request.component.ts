@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { PremissionsRequestTabsComponent } from "../../../shared/pending-approvals-tabs/premissions-request-tabs/premissions-request-tabs.component";
+import { PremissionsRequestTabsComponent } from "../../../shared/time-off-module-tabs/pending-approvals-tabs/premissions-request-tabs/premissions-request-tabs.component";
+
 
 @Component({
   selector: 'app-premission-request',

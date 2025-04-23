@@ -14,6 +14,7 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 import { RbacService } from '../../../services/rbac.service';
+import { AuthService } from '../../../services/auth.service';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class ProbationPendingApprovalsComponent {
       private modalService: NgbModal, 
       private http: HttpService,
       public rbac: RbacService,
+      private authService: AuthService,
     ) {}
   
     openModal(content: any) {
@@ -65,23 +67,19 @@ export class ProbationPendingApprovalsComponent {
     }
 
     getAllPendingApprovals() {
-      // let loggedInUser = this.authService.getToken();
-      let EmployeeId = parseInt(this.LOGIN.employeeId);
-      console.log(EmployeeId);
+      let loggedInUser = this.authService.getToken();
+      let EmployeeId = loggedInUser.employeeId;
       this.subscription = this.http
         .getData(
           `PendingApproval/employee/${EmployeeId}?moduleId=20&approvedType=EMP`
         )
         .subscribe({
           next: (data: any) => {
-            console.log(data.data);
             this.probationDetails = data.data.filter(
               (item: any) =>
                 item.approvalHeader.status != 'Processed' &&
                 item.approvalHeader.status != 'Rejected'
             );
-            console.log(this.probationDetails);
-            
             // this.filterPendingApprovalsByModule();
           },
           error: (reason) => console.log(reason),

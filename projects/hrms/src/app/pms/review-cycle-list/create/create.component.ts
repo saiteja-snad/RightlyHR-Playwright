@@ -273,18 +273,19 @@ export class CreateComponent implements OnInit,OnDestroy{
         next: (response) => {
           this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Review Cycle Created Successfully');
+          this.http.reviewCycleTriggerSignal.set(true);
         },
         error: (error) => {
-          this.conformationPopup.openErrorModal('error.error.Message');
+          this.conformationPopup.openErrorModal(error.error.Message);
           console.error('Error:', error);
         },
       });
     } else {
       this.reviewCycleForm.markAllAsTouched();
     }
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 3000);
+    // setTimeout(() => {
+    //   this.modalService.dismissAll();
+    // }, 3000);
   }
 
   OnClickLocation(event: any) {

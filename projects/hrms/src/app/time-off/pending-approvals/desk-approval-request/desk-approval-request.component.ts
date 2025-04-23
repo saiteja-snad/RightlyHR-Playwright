@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { DeskRequestTabsComponent } from "../../../shared/pending-approvals-tabs/desk-request-tabs/desk-request-tabs.component";
+import { DeskRequestTabsComponent } from "../../../shared/time-off-module-tabs/pending-approvals-tabs/desk-request-tabs/desk-request-tabs.component";
+
 
 @Component({
   selector: 'app-desk-approval-request',

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,45 +15,53 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
 
 @Component({
   selector: 'app-review-cycle-list',
-  imports: [CommonModule, FormsModule, NgbPopoverModule, PaginatorModule, TranslateModule,DataLoaderContentComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgbPopoverModule,
+    PaginatorModule,
+    TranslateModule,
+    DataLoaderContentComponent,
+  ],
   templateUrl: './review-cycle-list.component.html',
-  styleUrl: './review-cycle-list.component.scss'
+  styleUrl: './review-cycle-list.component.scss',
 })
 export class ReviewCycleListComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   filteredDetails: any[] = [];
-  jobLocationDropDownData: any
-  subLocationsDropdown: any
-  seletedid: any
-  totalRecords = 100
+  jobLocationDropDownData: any;
+  subLocationsDropdown: any;
+  seletedid: any;
+  totalRecords = 100;
   first: any = 1;
   rows: any = 10;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 25, value: 25 },
   ];
   page = 1;
   pageSize = 10;
   collectionSize = 100;
   searchText = '';
-  reviewCyclesList: any[] = []
+  reviewCyclesList: any[] = [];
   dataload = false;
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   @ViewChild('confirmation') confirmation: any;
 
-  onRowsChange() {
-    this.first = 0;
-
-  }
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-
-  }
-
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,) {
+  constructor(
+    private router: Router,
+    private http: HttpService,
+    private modalService: NgbModal,
+    private conformationPopup: OpenModalService
+  ) {
+    effect(() => {
+      if (this.http.reviewCycleTriggerSignal()) {
+        this.getAllReviewCyclesList(this.page, this.pageSize);
+        this.http.reviewCycleTriggerSignal.set(false);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -61,7 +69,19 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   openAdd() {
-    this.modalService.open(CreateComponent, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(CreateComponent, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
+  }
+
+  onRowsChange() {
+    this.first = 0;
+  }
+  onPageChange(event: PaginatorState) {
+    this.first = event.first;
+    this.rows = event.rows;
   }
 
   onUpdate(cycle: any) {
@@ -73,17 +93,17 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.updateData = cycle;
   }
 
-  onClickView(cycle: any) { 
-   const modalRef = this.modalService.open(ViewComponent, {
-          centered: true,
-          backdrop: 'static',
-          size: 'lg',
-        });
-        modalRef.componentInstance.updateData = cycle;
+  onClickView(cycle: any) {
+    const modalRef = this.modalService.open(ViewComponent, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
+    modalRef.componentInstance.updateData = cycle;
   }
 
   onClickYes() {
-    this.modalService.dismissAll()
+    this.modalService.dismissAll();
   }
 
   getNamesAsString(array: any, type: string) {
@@ -102,39 +122,51 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true })
+    this.modalService.open(content, { centered: true });
   }
 
   getAllLocations() {
-    this.subscription = this.http.getData("JobLocation/getAllLocations").subscribe({
-      next: (data: any) => {
-        this.jobLocationDropDownData = data.map((location: any) => {
-          return {
-            ...location,
-            fullName: `${location.jobLocationName}`,
-            selectedAllGroup: 'Group 3',
-          };
-        });
-      }
-    })
+    this.subscription = this.http
+      .getData('JobLocation/getAllLocations')
+      .subscribe({
+        next: (data: any) => {
+          this.jobLocationDropDownData = data.map((location: any) => {
+            return {
+              ...location,
+              fullName: `${location.jobLocationName}`,
+              selectedAllGroup: 'Group 3',
+            };
+          });
+        },
+      });
   }
 
   getSubLocationByid(ValuesForSublocation: any) {
-    this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation}`).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.subLocationsDropdown = data.jobSubLocations.map((subLocation: any) => {
-          return {
-            ...subLocation,
-            fullName: `${subLocation.subLocationName}`,
-            selectedAllGroup: 'Group 4',
-          };
-        });
-      }
-    })
+    this.subscription = this.http
+      .getData(
+        `JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation}`
+      )
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.subLocationsDropdown = data.jobSubLocations.map(
+            (subLocation: any) => {
+              return {
+                ...subLocation,
+                fullName: `${subLocation.subLocationName}`,
+                selectedAllGroup: 'Group 4',
+              };
+            }
+          );
+        },
+      });
   }
 
-  getAllReviewCyclesList(pagenum: number, pagesize: number, fetchAll: boolean = false): void {
+  getAllReviewCyclesList(
+    pagenum: number,
+    pagesize: number,
+    fetchAll: boolean = false
+  ): void {
     const pageSize = fetchAll ? 10000 : this.pageSize; // Fetch all records if fetchAll is true
     const params = {
       page: pagenum,
@@ -142,37 +174,45 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       // searchQuery: this.searchText
     };
     this.dataload = true;
-    this.subscription = this.http.getpagentiontData("reviewCycleHeader", params).subscribe({
-      next: (data: any) => {
-        this.collectionSize = data.totalCount;
-        this.reviewCyclesList = data.items || [];
-        this.filteredDetails = this.reviewCyclesList;
-        if (this.searchText) {
-          this.filterDetails();
-        }
-        this.dataload = false;
-      },
-      error: (err: any) => {
-        console.log("errors", err);
-        this.dataload = false;
-      },
-      complete: () => {
-        this.dataload = false;
-      },
-    });
+    this.subscription = this.http
+      .getpagentiontData('reviewCycleHeader', params)
+      .subscribe({
+        next: (data: any) => {
+          this.collectionSize = data.totalCount;
+          this.reviewCyclesList = data.items || [];
+          this.filteredDetails = this.reviewCyclesList;
+          if (this.searchText) {
+            this.filterDetails();
+          }
+          this.dataload = false;
+        },
+        error: (err: any) => {
+          console.log('errors', err);
+          this.dataload = false;
+        },
+        complete: () => {
+          this.dataload = false;
+        },
+      });
   }
 
   filterDetails(): void {
     if (!this.searchText) {
-      this.filteredDetails = this.reviewCyclesList.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+      this.filteredDetails = this.reviewCyclesList.slice(
+        (this.page - 1) * this.pageSize,
+        this.page * this.pageSize
+      );
       this.collectionSize = this.reviewCyclesList.length;
     } else {
       const searchTextLower = this.searchText.toLowerCase();
-      const filtered = this.reviewCyclesList.filter(item => {
+      const filtered = this.reviewCyclesList.filter((item) => {
         return this.objectContainsText(item, searchTextLower);
       });
       this.collectionSize = filtered.length;
-      this.filteredDetails = filtered.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+      this.filteredDetails = filtered.slice(
+        (this.page - 1) * this.pageSize,
+        this.page * this.pageSize
+      );
     }
     this.page = 1; // Reset to the first page
   }
@@ -185,10 +225,12 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       return obj.toString().toLowerCase().includes(text);
     }
     if (Array.isArray(obj)) {
-      return obj.some(item => this.objectContainsText(item, text));
+      return obj.some((item) => this.objectContainsText(item, text));
     }
     if (typeof obj === 'object' && obj !== null) {
-      return Object.values(obj).some(val => this.objectContainsText(val, text));
+      return Object.values(obj).some((val) =>
+        this.objectContainsText(val, text)
+      );
     }
     return false;
   }
@@ -196,49 +238,57 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   HoldReviewCycle(cycle: any) {
     const fusionUser = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
     const data = {
-      status: "Review on Hold",
+      status: 'Review on Hold',
       createdBy: fusionUser.employeeId,
-    }
-    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
-      next: (response) => {
-        this.closeModal()
-        this.onCreateCycleFormSubmitted()
-        this.conformationPopup.openSuccessModal('Review Cycle is Kept on Hold')
-      },
-      error: (error) => {
-        this.conformationPopup.openErrorModal(error.error.message)
-        console.error('Error:', error);
-      }
-    });
+    };
+    this.http
+      .putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data)
+      .subscribe({
+        next: (response) => {
+          this.closeModal();
+          this.onCreateCycleFormSubmitted();
+          this.conformationPopup.openSuccessModal(
+            'Review Cycle is Kept on Hold'
+          );
+        },
+        error: (error) => {
+          this.conformationPopup.openErrorModal(error.error.message);
+          console.error('Error:', error);
+        },
+      });
   }
 
   ResumeReviewCycle(cycle: any) {
     const fusionUser = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
     const data = {
-      status: "Resume",
+      status: 'Resume',
       createdBy: fusionUser.employeeId,
-    }
-    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
-      next: (response) => {
-        this.closeModal()
-        this.onCreateCycleFormSubmitted()
-        this.conformationPopup.openSuccessModal('Review Cycle is Resumed Successfully')
-      },
-      error: (error) => {
-        this.conformationPopup.openErrorModal(error.error.reason)
-        console.error('Error:', error);
-      }
-    });
+    };
+    this.http
+      .putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data)
+      .subscribe({
+        next: (response) => {
+          this.closeModal();
+          this.onCreateCycleFormSubmitted();
+          this.conformationPopup.openSuccessModal(
+            'Review Cycle is Resumed Successfully'
+          );
+        },
+        error: (error) => {
+          this.conformationPopup.openErrorModal(error.error.reason);
+          console.error('Error:', error);
+        },
+      });
   }
 
   onCreateCycleFormSubmitted() {
-    this.page = 1
-    this.pageSize = 10
-    this.getAllReviewCyclesList(this.page, this.pageSize)
+    this.page = 1;
+    this.pageSize = 10;
+    this.getAllReviewCyclesList(this.page, this.pageSize);
   }
 
   closeModal() {
-    this.openCancelationPopUp()
+    this.openCancelationPopUp();
   }
 
   openCancelationPopUp() {
@@ -248,26 +298,29 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   initiateReviewCycle(cycle: any) {
     const fusionUser = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
     const data = {
-      status: "Initiated",
+      status: 'Initiated',
       createdBy: fusionUser.employeeId,
-    }
-    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
-      next: (response) => {
-        this.closeModal()
-        this.onCreateCycleFormSubmitted()
-        this.conformationPopup.openSuccessModal('Review Cycle Initiated Successfully')
-      },
-      error: (error) => {
-        this.conformationPopup.openErrorModal(error.error.reason)
-        console.error('Error:', error);
-      }
-    });
+    };
+    this.http
+      .putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data)
+      .subscribe({
+        next: (response) => {
+          // this.closeModal();
+          this.onCreateCycleFormSubmitted();
+          this.conformationPopup.openSuccessModal(
+            'Review Cycle Initiated Successfully'
+          );
+        },
+        error: (error) => {
+          this.conformationPopup.openErrorModal(error.error.reason);
+          console.error('Error:', error);
+        },
+      });
   }
 
   ngOnDestroy(): void {
     if (this.subscription) {
-      this.subscription.unsubscribe()
+      this.subscription.unsubscribe();
     }
   }
-
 }

@@ -2,11 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbPaginationModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { PaginatorModule } from 'primeng/paginator';
+import { Router } from '@angular/router';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-team-complete-reviews',
@@ -15,6 +17,7 @@ import { PaginatorModule } from 'primeng/paginator';
   styleUrl: './team-complete-reviews.component.scss'
 })
 export class TeamCompleteReviewsComponent {
+  subscription!: Subscription;
   dataload=false;
   employeeId!:number;
   searchQuery = '';
@@ -52,8 +55,8 @@ export class TeamCompleteReviewsComponent {
   }
 
   constructor(
-    private readonly modalService: NgbModal,
-    private readonly http: HttpService
+    private readonly modalService: NgbModal,private conformationPopup: OpenModalService,
+    private readonly http: HttpService,private router: Router,
   ) { }
   
   fetchReviewCycles(): void {
@@ -119,6 +122,80 @@ export class TeamCompleteReviewsComponent {
 
   closeModal(){
     this.modalService.dismissAll();
+  }
+
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorType:string, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
+    console.log(currentStage)
+    const queryParams = {
+      reviewCycleItemId: reviewCycleItemId,
+      currentStage: currentStage,
+      assessorType: assessorType,
+      assessorItemId: assessorItemId,
+      reviewCycles: JSON.stringify(this.reviewCycles), // Ensure this.reviewCycles is defined
+      reviewEmployeeId: reviewEmployeeId,
+      reviewcycleitemformresponseid: reviewcycleitemformresponseid,
+      formresponseid: formresponseid
+    };
+
+    localStorage.setItem('queryParams', JSON.stringify(queryParams));
+
+    this.router.navigate(['/pms/assessment']);
+  }
+
+  downloadPromotionletter(iteamid: any) {
+    console.log(iteamid);
+
+    this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+
+      next: (data: Blob) => {
+        console.log('Received byte data:', data);
+        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PerformancePromotion_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.conformationPopup.openSuccessModal('Promotion Letter Downloaded Successfully')
+        // this.Status = 'Promotion Letter Downloaded Successfully';
+        // this.modalService.open(this.success, { centered: true });
+      },
+      error: (err) => {
+        console.error('Error downloading letter:', err);
+        this.conformationPopup.openErrorModal('Failed to download letter')
+        // this.Status = 'Failed to download letter';
+      },
+    });
+  }
+
+  downloadletter(iteamid: any) {
+    console.log(iteamid);
+
+    this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+
+      next: (data: Blob) => {
+        console.log('Received byte data:', data);
+        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PerformanceAppraisal_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.conformationPopup.openSuccessModal('Appraisal Letter Downloaded Successfully')
+        // this.Status = 'Appraisal Letter Downloaded Successfully';
+        // this.modalService.open(this.success, { centered: true });
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('Failed to download letter')
+        // console.error('Error downloading letter:', err);
+        // this.Status = 'Failed to download letter';
+      },
+    });
   }
 
   ngOnDestroy() {

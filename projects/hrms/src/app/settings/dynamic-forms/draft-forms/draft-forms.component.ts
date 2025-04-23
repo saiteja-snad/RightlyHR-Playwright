@@ -28,6 +28,7 @@ import {
 import { IJob } from '../../../Interfaces/letters-model';
 import { SearchFormPipe } from '../search-form.pipe';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-draft-forms',
@@ -38,7 +39,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
     TranslateModule,
     FormsModule,
     SearchFormPipe,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './draft-forms.component.html',
   styleUrl: './draft-forms.component.scss',
 })
@@ -57,6 +59,8 @@ export class DraftFormsComponent implements OnInit, OnDestroy {
   updateDetails = {} as IDynamicForm;
   seletedid: any;
   empinfo = {} as IJob;
+  loader = true;
+
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -144,21 +148,24 @@ export class DraftFormsComponent implements OnInit, OnDestroy {
   }
 
   getAllFormDetails() {
+    this.loader = true;
     this.http
       .getData('Form/getAllFormDetails')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
+          this.loader = false;
           this.allFormsDetails = (data as IAllFormsData[]).filter(
             (form) => form.status === 'draft'
           );
-
           // Set formStatus based on fetched data
           this.formStatus = data.status;
+          
 
-          // Check if form status is 'Draft' or 'Active'
-          console.log('Form status:', this.formStatus);
-        },
+        },error: (err) =>{
+          this.loader = false;
+          this.allFormsDetails = [];
+        }
       });
   }
 

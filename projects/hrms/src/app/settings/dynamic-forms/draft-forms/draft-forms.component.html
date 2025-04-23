@@ -1,3 +1,4 @@
+@if(!loader){
 <div class="card-top-content py-3">
     <div class="row">
         <div class="col-md-4">
@@ -70,6 +71,7 @@
           
     </table>
 </div>
+}@else { <app-data-loader-content />}
 
 
 <ng-template #confirmPopUp let-modal>

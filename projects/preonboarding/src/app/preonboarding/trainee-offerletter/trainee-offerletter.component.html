@@ -1,216 +1,237 @@
 <div class="custom-main-component-container">
-    <div class="component-header mb-3">Offer Letter</div>
-    <div class="card custom-main-sub-content p-4">
-        <div class="letter-data-content p-4">
-            <div class="d-flex justify-content-center">
-                <div>
-                    <div class="letter-page-content" id="pdfContent1">
-                        <div class="letter-page-sub-content">
-                            <br />
-                            <div class="d-flex justify-content-end my-4">
-                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+    <div class="my-3">
+        <app-detailed-step-progressbar />
+    </div>
+
+    <div class="component-data-content">
+        <div class="component-header mb-3">Offer Letter</div>
+        <div class="card custom-main-sub-content p-4">
+            <div class="letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+                    <div>
+                        <div class="letter-page-content" id="pdfContent1">
+                            <div class="letter-page-sub-content">
+                                <br />
+                                <div class="d-flex justify-content-end my-4">
+                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                </div>
+                                <div class="w-100 mt-5 mb-4">
+                                    <p class="letter-header text-center mb-0">OFFER LETTER</p>
+                                </div>
+                                <div class="letter-div">
+                                    <div class="row">
+                                        <div class="col-md-8" style="margin-left: -34px;">
+                                            <ul>
+                                                <li class="letter-text"
+                                                    *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
+                                                    Name:</li>
+                                                <ng-template #fullname>
+                                                    <li class="letter-text">{{traineeEmpData.firstName}}
+                                                        {{traineeEmpData.middleName}}
+                                                        {{traineeEmpData.lastName}},
+                                                    </li>
+                                                </ng-template>
+                                                <li class="letter-text"
+                                                    *ngIf="!traineeEmpData.addressLine1;else address">
+                                                    Address:</li>
+                                                <ng-template #address>
+                                                    <li class="letter-text">{{traineeEmpData.addressLine1}},</li>
+                                                    <li class="letter-text">{{traineeEmpData.addressLine2}},</li>
+                                                    <li class="letter-text">{{traineeEmpData.city}},
+                                                        {{traineeEmpData.state}},</li>
+                                                    <li class="letter-text">{{traineeEmpData.country}} -
+                                                        {{traineeEmpData.zipCode}}.</li>
+                                                </ng-template>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-4 fw-bolder">
+                                            <p class=" text-end p-0">Date: {{traineeEmpData.offerSentDate | dateformat}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="letter-heading-div" style="margin-bottom: 10px;">
+                                    <p><strong>Dear {{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
+                                            {{traineeEmpData.lastName}}</strong>,</p>
+                                </div>
+
+                                <div class="watermark">
+                                    <p class="paragraph mb-4">
+                                        The details of your internship offer are as follows:
+                                    </p>
+                                    <ol class="liststylenumber">
+                                        <li class="paragraph mb-lg-4 p-3">
+                                            <strong>Start Date and Duration: </strong>Your internship will commence on
+                                            <u><strong>{{traineeEmpData.dateOfJoining | dateformat}}</strong></u> and is
+                                            expected to complete on
+                                            lasting for a period of <strong><u>{{this.traineeEmpData.trainingEndDate |
+                                                    dateformat}}</u></strong>.
+                                        </li>
+                                        <li class="paragraph mb-lg-4 p-3"> <strong>Working Hours and Location:
+                                            </strong>The
+                                            standard working hours
+                                            are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at
+                                            RightlyHR, Floor#16, Vijay
+                                            Krishna Towers, Madhava Reddy Colony,
+                                            Gachibowli, HYD - 500032. Occasionally, you may be required to work
+                                            additional
+                                            hours or remotely,
+                                            depending on the nature of the projects and
+                                            business requirements.
+                                        </li>
+                                        <li class="paragraph mb-lg-4 p-3"><strong>Reporting Manager: </strong>You will
+                                            be
+                                            reporting to <u>
+                                                {{traineeEmpData.reportingmanagerName }}</u></li>
+                                        <li class="paragraph mb-lg-4 p-3">
+                                            <strong>Stipend/Salary and Benefits: </strong>During the internship period,
+                                            you’re eligible to receive
+                                            Rs.10,000/- per month as a stipend/salary. After successful completion of
+                                            the
+                                            internship period, you
+                                            will be appointed as an employee of RightlyHR with a CTC of <b>
+                                                {{traineeEmpData.salary}}</b> per annum.
+                                        </li>
+                                        <li class="paragraph mb-lg-4 p-3">
+                                            <strong>Responsibilities: </strong>Your primary responsibilities will be
+                                            explained by your reporting
+                                            manager during the onboarding process. We expect you to conduct yourself
+                                            professionally and adhere to
+                                            company policies and procedures at all times.
+                                        </li>
+                                        <li class="paragraph mb-lg-4 p-3">
+                                            <strong>Confidentiality and Non-Disclosure: </strong>As an intern, you will
+                                            have
+                                            access to sensitive and
+                                            proprietary information. You are required to sign and adhere to the
+                                            Confidentiality and Non-Disclosure
+                                            Agreement, which will be provided separately.
+                                        </li>
+                                        <li class="paragraph mb-lg-4 p-3">
+                                            <strong>Evaluation and Feedback: </strong>Your performance will be evaluated
+                                            periodically. Constructive
+                                            feedback will be provided to help you grow and make the most out of this
+                                            opportunity.
+                                        </li>
+                                        <li class="paragraph mb-lg-4 p-3">
+                                            <strong>Termination: </strong>The company may terminate this internship by
+                                            providing 15 days written
+                                            notice or the company is having a right to terminate this internship
+                                            immediately, in case of poor
+                                            performance.
+                                        </li>
+                                    </ol>
+                                </div>
                             </div>
-                            <div class="w-100 mt-5 mb-4">
-                                <p class="letter-header text-center mb-0">OFFER LETTER</p>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD - 500032</p>
                             </div>
-                            <div class="letter-div">
-                                <div class="row">
-                                    <div class="col-md-8" style="margin-left: -34px;">
-                                        <ul>
-                                            <li class="letter-text"
-                                                *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
-                                                Name:</li>
-                                            <ng-template #fullname>
-                                                <li class="letter-text">{{traineeEmpData.firstName}}
+                        </div>
+
+                        <div class="letter-page-content my-4" id="pdfContent2">
+                            <div class="letter-page-sub-content">
+                                <br />
+                                <div class="d-flex justify-content-end my-4">
+                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                </div>
+                                <div class="pt-2">
+                                    <div *ngIf="true">
+                                        <!-- <app-letterhead></app-letterhead> -->
+                                    </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 7rem;"></div>
+                                    </ng-template>
+                                    <div class="p-3">
+                                        <p *ngIf="(traineeEmpData.note)" class="paragraph mb-lg-4"><b>Note:</b>
+                                            {{traineeEmpData.note}} </p>
+                                        <p class="paragraph mb-lg-4">Please confirm your acceptance of this offer by
+                                            signing
+                                            and returning a
+                                            scanned copy of this letter within 1 day to <u
+                                                style="color: rgb(0, 110, 255);"><b>hr&#64;RightlyHR.com</b></u></p>
+                                        <p class="paragraph mb-lg-4">We are excited about the possibility of you joining
+                                            our
+                                            team and look forward
+                                            to a productive and successful internship.</p>
+                                        <p class="paragraph mb-lg-4">Sincerely,</p>
+                                        <p class="paragraph mb-lg-4"><b>For RightlyHR</b></p>
+                                    </div>
+
+                                    <div class="p-3">
+                                        <p class="m-0 family2" style="font-family: Segoe script; font-size: large;">
+                                            {{traineeEmpData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
+                                        <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1">{{authorityDesignation}} </p>
+                                        <br>
+                                        <hr>
+                                        <br>
+                                        <p class="paragraph mb-lg-4 ">I, <u><strong>{{traineeEmpData.firstName}}
                                                     {{traineeEmpData.middleName}}
-                                                    {{traineeEmpData.lastName}},
-                                                </li>
-                                            </ng-template>
-                                            <li class="letter-text" *ngIf="!traineeEmpData.addressLine1;else address">
-                                                Address:</li>
-                                            <ng-template #address>
-                                                <li class="letter-text">{{traineeEmpData.addressLine1}},</li>
-                                                <li class="letter-text">{{traineeEmpData.addressLine2}},</li>
-                                                <li class="letter-text">{{traineeEmpData.city}},
-                                                    {{traineeEmpData.state}},</li>
-                                                <li class="letter-text">{{traineeEmpData.country}} -
-                                                    {{traineeEmpData.zipCode}}.</li>
-                                            </ng-template>
-                                        </ul>
+                                                    {{traineeEmpData.lastName}}
+                                                </strong></u>, acknowledge that I have read and understood the terms of
+                                            this
+                                            Internship Offer, and I
+                                            accept the offer as outlined above.</p>
                                     </div>
-                                    <div class="col-md-4 fw-bolder">
-                                        <p class=" text-end p-0">Date: {{traineeEmpData.offerSentDate | dateformat}}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="letter-heading-div" style="margin-bottom: 10px;">
-                                <p><strong>Dear {{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
-                                        {{traineeEmpData.lastName}}</strong>,</p>
-                            </div>
-
-                            <div class="watermark">
-                                <p class="paragraph mb-4">
-                                    The details of your internship offer are as follows:
-                                </p>
-                                <ol class="liststylenumber">
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Start Date and Duration: </strong>Your internship will commence on
-                                        <u><strong>{{traineeEmpData.dateOfJoining | dateformat}}</strong></u> and is
-                                        expected to complete on
-                                        lasting for a period of <strong><u>{{this.traineeEmpData.trainingEndDate |
-                                                dateformat}}</u></strong>.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3"> <strong>Working Hours and Location: </strong>The
-                                        standard working hours
-                                        are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at
-                                        RightlyHR, Floor#16, Vijay
-                                        Krishna Towers, Madhava Reddy Colony,
-                                        Gachibowli, HYD - 500032. Occasionally, you may be required to work additional
-                                        hours or remotely,
-                                        depending on the nature of the projects and
-                                        business requirements.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3"><strong>Reporting Manager: </strong>You will be
-                                        reporting to <u>
-                                            {{traineeEmpData.reportingmanagerName }}</u></li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Stipend/Salary and Benefits: </strong>During the internship period,
-                                        you’re eligible to receive
-                                        Rs.10,000/- per month as a stipend/salary. After successful completion of the
-                                        internship period, you
-                                        will be appointed as an employee of RightlyHR with a CTC of <b>
-                                            {{traineeEmpData.salary}}</b> per annum.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Responsibilities: </strong>Your primary responsibilities will be
-                                        explained by your reporting
-                                        manager during the onboarding process. We expect you to conduct yourself
-                                        professionally and adhere to
-                                        company policies and procedures at all times.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Confidentiality and Non-Disclosure: </strong>As an intern, you will have
-                                        access to sensitive and
-                                        proprietary information. You are required to sign and adhere to the
-                                        Confidentiality and Non-Disclosure
-                                        Agreement, which will be provided separately.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Evaluation and Feedback: </strong>Your performance will be evaluated
-                                        periodically. Constructive
-                                        feedback will be provided to help you grow and make the most out of this
-                                        opportunity.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Termination: </strong>The company may terminate this internship by
-                                        providing 15 days written
-                                        notice or the company is having a right to terminate this internship
-                                        immediately, in case of poor
-                                        performance.
-                                    </li>
-                                </ol>
-                            </div>
-                        </div>
-                        <div class="letter-footer text-center">
-                            <p class="company-name">RightlyHR</p>
-                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
-                        </div>
-                    </div>
-
-                    <div class="letter-page-content my-4" id="pdfContent2">
-                        <div class="letter-page-sub-content">
-                            <br />
-                            <div class="d-flex justify-content-end my-4">
-                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
-                            </div>
-                            <div class="pt-2">
-                                <div *ngIf="true">
-                                    <!-- <app-letterhead></app-letterhead> -->
-                                </div>
-                                <ng-template #doc>
-                                    <div style="margin-bottom: 7rem;"></div>
-                                </ng-template>
-                                <div class="p-3">
-                                    <p *ngIf="(traineeEmpData.note)" class="paragraph mb-lg-4"><b>Note:</b>
-                                        {{traineeEmpData.note}} </p>
-                                    <p class="paragraph mb-lg-4">Please confirm your acceptance of this offer by signing
-                                        and returning a
-                                        scanned copy of this letter within 1 day to <u
-                                            style="color: rgb(0, 110, 255);"><b>hr&#64;RightlyHR.com</b></u></p>
-                                    <p class="paragraph mb-lg-4">We are excited about the possibility of you joining our
-                                        team and look forward
-                                        to a productive and successful internship.</p>
-                                    <p class="paragraph mb-lg-4">Sincerely,</p>
-                                    <p class="paragraph mb-lg-4"><b>For RightlyHR</b></p>
-                                </div>
-                                
-                                <div class="p-3">
-                                    <p class="m-0 family2" style="font-family: Segoe script; font-size: large;">{{traineeEmpData.authorityName}}</p>
-                                    <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
-                                    <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
-                                    <p class="m-0 paragraph boldsize1">{{authorityDesignation}} </p>
-                                    <br>
-                                    <hr>
-                                    <br>
-                                    <p class="paragraph mb-lg-4 ">I, <u><strong>{{traineeEmpData.firstName}}
+                                    <div class="p-3">
+                                        <p class="Signature mb-3 mt-4">Signature: <span
+                                                *ngIf="traineeEmpData.firstName; else signaturename1"
+                                                class="family2">{{traineeEmpData.firstName}}
                                                 {{traineeEmpData.middleName}}
-                                                {{traineeEmpData.lastName}}
-                                            </strong></u>, acknowledge that I have read and understood the terms of this
-                                        Internship Offer, and I
-                                        accept the offer as outlined above.</p>
-                                </div>
-                                <div class="p-3">
-                                    <p class="Signature mb-3 mt-4">Signature: <span
-                                            *ngIf="traineeEmpData.firstName; else signaturename1"
-                                            class="family2">{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
-                                            {{traineeEmpData.lastName}}</span><ng-template #signaturename1>
-                                            _________________________</ng-template></p>
-                                    <p class="Signature mb-3 mt-4">Date: {{currentDate|dateformat}}</p>
+                                                {{traineeEmpData.lastName}}</span><ng-template #signaturename1>
+                                                _________________________</ng-template></p>
+                                        <p class="Signature mb-3 mt-4">Date: {{currentDate|dateformat}}</p>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD - 500032</p>
+                            </div>
                         </div>
-                        <div class="letter-footer text-center">
-                            <p class="company-name">RightlyHR</p>
-                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
-                        </div>
-                    </div>   
-                    <p class="error-msg text-center">Note: This acknowledgment is system-generated</p>
+                        <p class="error-msg text-center">Note: This acknowledgment is system-generated</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
-        <!-- <div class="justify-content-start"> -->
-        <button class="custom-btn btn-secondary rounded-pill px-5 justify-content-start"  (click)="navigatePrevious()">Onboarding Documents</button>
-         <!-- </div> -->
-        @if(loadingcircle){
+        <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
+            <!-- <div class="justify-content-start"> -->
+            <button class="custom-btn btn-secondary rounded-pill px-5 justify-content-start"
+                (click)="navigatePrevious()">Onboarding Documents</button>
+            <!-- </div> -->
+            @if(loadingcircle){
             <div *ngIf="loadingcircle" class="spinner-border text-primary me-4 mt-2" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-        }
-        @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
+            }
+            @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
             <button class="custom-btn btn-primary px-5" (click)="downloadoffer()">Download</button>
-        }
-        @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
+            }
+            @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
             <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
-        }
-        @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+            }
+            @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
             <button class="custom-btn accepted-btn px-5">Accepted</button>
-        } 
-        @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
+            }
+            @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
             <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
-        }
-        @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
+            }
+            @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
             <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
-        }
-        @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
+            }
+            @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
             <button class="btn btn-primary rounded-pill px-5" (click)="navigatefirst()">Close</button>
-        }
-        @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+            }
+            @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
             <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
-        }
+            }
+        </div>
     </div>
 </div>
 

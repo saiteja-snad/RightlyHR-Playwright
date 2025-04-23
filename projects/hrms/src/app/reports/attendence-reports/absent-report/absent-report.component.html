@@ -5,12 +5,16 @@
       
         <form [formGroup]="absentReportForm" (ngSubmit)="generateAbsentReport()">
           <div class="d-flex align-items-center gap-3 flex-wrap">
+
+            <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
+              Clear All
+            </button>
+
             <!-- Employee -->
             <div class="d-flex align-items-center gap-2">
               <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-                          [showClear]="false" formControlName="employee" placeholder="Select Employee" class="form-select custom-select"
-                          (onChange)="selectAbsentEmployee($event.value)">
+                          [showClear]="false" formControlName="employee" placeholder="Select Employee" class="form-select custom-select">
                   <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                   <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                 </p-select>
@@ -21,8 +25,7 @@
             <div class="d-flex align-items-center gap-2">
               <div class="custom-p-select-content">
                 <p-select [options]="teamdetails" optionLabel="firstName" [filter]="true" [showClear]="false"
-                          formControlName="manager" placeholder="Select Manager" class="form-select custom-select"
-                          (onChange)="selectAbsentManager($event.value)">
+                          formControlName="manager" placeholder="Select Manager" class="form-select custom-select">
                   <ng-template #selectedItem let-selectedOption>
                     {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
                   </ng-template>
@@ -35,9 +38,7 @@
       
             <!-- Frequency Dropdown -->
             <div class="d-flex align-items-center gap-2">
-              <select title="text" class="form-select"
-                      formControlName="frequency"
-                      (change)="onFrequencyChange($event)">
+              <select title="text" class="form-select" formControlName="frequency">
                 <option value="" disabled>Select Frequency</option>
                 <option value="month">Month wise</option>
                 <option value="date">Date wise</option>
@@ -48,15 +49,12 @@
             <div class="d-flex align-items-center gap-2" *ngIf="absentReportForm.get('frequency')?.value === 'date'">
               <input type="text" class="form-control custom-input" ngxDaterangepickerBootstrap formControlName="dateRange"
                      [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
-                     [isInvalidDate]="isInvalidDate" [showClearButton]="true" placeholder="Please Select Date" readonly
-                     (ngModelChange)="onDateRangeChangeabsent($event)" />
+                     [isInvalidDate]="isInvalidDate" [showClearButton]="true" placeholder="Please Select Date" readonly/>
             </div>
       
             <!-- Month Dropdown -->
             <div class="d-flex align-items-center gap-2" *ngIf="absentReportForm.get('frequency')?.value === 'month'">
-              <select title="text" class="form-select"
-                      formControlName="month"
-                      (change)="onMonthChangeAbsent($event)">
+              <select title="text" class="form-select" formControlName="month">
                 <option value="" disabled>Select Month</option>
                 <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
               </select>
@@ -64,16 +62,11 @@
       
             <!-- Buttons -->
             <div class="d-flex gap-2">
-              <button type="submit"
-                      class="custom-btn btn-secondary"
-                      [disabled]="absentReportForm.invalid">
+              <button type="submit"class="custom-btn btn-secondary" [disabled]="absentReportForm.invalid">
                 Generate
               </button>
       
-              <button type="button"
-                      class="custom-btn btn-primary"
-                      (click)="exportToExcelAbsent()"
-                      [disabled]="absentReportForm.invalid">
+              <button type="button" class="custom-btn btn-primary" (click)="exportToExcelAbsent()" [disabled]="absentReportForm.invalid">
                 Export
               </button>
             </div>
@@ -86,54 +79,50 @@
       <app-attandace-report-tabs />
     </div>
   
-    @if (isLoading) {
-
-      }
-      @else {
-        <div class="custom-table-content">
-          <table id="wfhReportTable" class="content w-100">
-            <thead>
+    <div class="custom-table-content">
+      <table class="content w-100">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Team Manager</th>
+            <th>Location</th>
+            <th>Sub Location</th>
+            <th>Shift</th>
+            <th>Leave Type</th>
+            <th>Leave Period</th>
+            <th>Days</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredAbsentRecord && filteredAbsentRecord.length > 0) {
+            @for (record of filteredAbsentRecord; track record) {
               <tr>
-                <th>Employee ID</th>
-                <th>Employee Name</th>
-                <th>Department</th>
-                <th>Team Manager</th>
-                <th>Location</th>
-                <th>Sub Location</th>
-                <th>Shift</th>
-                <th>Leave Type</th>
-                <th>Leave Period</th>
-                <th>Days</th>
+                <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+                <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+                <td class="td-center">{{ record.department ?? '-' }}</td>
+                <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+                <td class="td-center">{{ record.location ?? '-' }}</td>
+                <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+                <td class="td-center">{{ record.shift ?? '-' }}</td>
+                <td class="td-center">{{ record.leaveType ?? '-' }}</td>
+                <td class="td-center">
+                  {{ record.startDate ?? '-' | date:'dd-MMM-yyyy' }} to {{ record.endDate ?? '-' | date:'dd-MMM-yyyy' }}
+                </td>
+                <td class="td-center">{{ record.days ?? '-' }}</td>
               </tr>
-            </thead>
-            <tbody>
-              @if (!filteredAbsentRecord || filteredAbsentRecord.length === 0) {
-                <tr>
-                  <td colspan="9" class="text-center">No records found</td>
-                </tr>
-              }
-              @else {
-                @for (record of filteredAbsentRecord; track $index) {
-                  <tr>
-                    <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-                    <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-                    <td class="td-center">{{ record.department ?? '-' }}</td>
-                    <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-                    <td class="td-center">{{ record.location ?? '-' }}</td>
-                    <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-                    <td class="td-center">{{ record.shift ?? '-' }}</td>
-                    <td class="td-center">{{ record.leaveType ?? '-' }}</td>
-                    <td class="td-center">{{record.startDate ?? '-' | date:'dd-MMM-yyyy'}}
-                        to
-                        {{record.endDate ?? '-' | date:'dd-MMM-yyyy'}}</td>
-                    <td class="td-center">{{record.days ?? '-'}}</td>
-                  </tr>
-                }
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+            }
+          } @else {
+            <tr>
+              <td colspan="10" class="text-center">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
       
   </div>
 

@@ -2,22 +2,20 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { ProgressService } from '../../common-services/progress.service';
 import { Subscription } from 'rxjs';
 import { IdocumentType } from '../../models/documents.model';
 import { HttpService } from '../../http-services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
 import { Location } from '@angular/common';
-
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { PopupService } from '../../common-services/popup.service';
 import { Ipersonal } from '../../models/personal-details.model';
 import { DateFormatPipe } from '../../Pipes/date-format.pipe';
-
+import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-onboarding-documents',
-  imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbTooltipModule, NgxDocViewerModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbTooltipModule, NgxDocViewerModule, RouterModule, DetailedStepProgressbarComponent],
   templateUrl: './onboarding-documents.component.html',
   styleUrl: './onboarding-documents.component.scss'
 })
@@ -29,7 +27,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   loadingcircle: boolean = false;
   file: any;
   documentType: any;
-  employeeinfo= {} as any;
+  employeeinfo = {} as any;
   prosempdata = {} as any;
   getDocumentsDetails = [] as any;
   submitbuttondisable: boolean = false;
@@ -48,26 +46,26 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   @ViewChild('viewpopup') viewpopup: any;
   @ViewChild('confirmationPopup') confirmationPopup: any;
 
-  constructor(private router: Router, private modalService: NgbModal, private ProgressServices: ProgressService,
-    private http: HttpService, private location: Location, private fb: FormBuilder , private openPopup:PopupService) { }
+  constructor(private router: Router, private modalService: NgbModal, private http: HttpService, private location: Location,
+     private fb: FormBuilder, private openPopup: PopupService) { }
 
   ngOnInit(): void {
-    this.employeeinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
-    console.log(this.prosempdata);
+    this.employeeinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
     this.getprospectivempdata();
     this.initializeForm();
+    const storedstep = 2;
+    localStorage.setItem('currentStep',storedstep.toString());
   }
- // Prospective Employee Data
+
+  // Prospective Employee Data
   getprospectivempdata() {
     let employeeId = parseInt(this.employeeinfo.employeeId);
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.prosempdata = data as Ipersonal; 
+        this.prosempdata = data as Ipersonal;
         this.getDocuments();
       },
       error: (reason: any) => {
-        console.log(reason);
         if (reason.status == 401) {
           localStorage.clear();
           this.router.navigate(['']);
@@ -75,12 +73,15 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
-  navigatePrevious(){
+
+  navigatePrevious() {
     this.router.navigate(['/personal-details']);
   }
+
   initializeForm() {
     this.documentForm = this.fb.group({
       documentType: [{ value: '', disabled: true }, Validators.required],
@@ -165,8 +166,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   errorMsg = 'Special characters are not allowed';
   onClickEditDocument(data: any) {
     this.documentSelectFields = JSON.parse(JSON.stringify(data));
-    console.log(this.documentSelectFields);
-    this.isMandatory = false
+    this.isMandatory = false;
     if (this.documentSelectFields.documentType?.toLowerCase() === "pan") {
       this.isMandatory = this.documentSelectFields.isMandatory
       this.IdentityMaxNumber = 10;
@@ -228,7 +228,6 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
         this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', IdentityfilePath, this.documentAttachment)
           .subscribe({
             next: (data: any) => {
-              console.log(data);
               this.modalService.dismissAll();
             }
           });
@@ -236,7 +235,6 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       let filePath = `/FusionDocuments/Employee Documents/Pre Onboarding Documents/${this.prosempdata.employeeId}`;
       this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, this.documentAttachment).subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data) {
             this.file = null
           }
@@ -254,10 +252,10 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
           this.subscription = this.http.postData(`PreonboardingDocuments/Update`, postdata).subscribe({
             next: (data: any) => {
               this.openPopup.openSuccess("Document uploaded successfully");
-              setTimeout(() => { 
+              setTimeout(() => {
                 this.modalService.dismissAll();
                 this.getDocuments();
-              }, 2000);  
+              }, 2000);
             }
           })
         },
@@ -265,13 +263,13 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
           console.log(reason);
           if (reason.status == 400) {
             this.openPopup.openError(reason.error.Message);
-          }else{
+          } else {
             this.openPopup.openError("file upload  is failed");
           }
-          setTimeout(() => { 
+          setTimeout(() => {
             this.modalService.dismissAll();
             this.getDocuments();
-          }, 2000); 
+          }, 2000);
         },
       });
     }
@@ -309,7 +307,6 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
     let Id = this.prosempdata.employeeId
     this.subscription = this.http.getData(`PreonboardingDocuments/Preonboarding/${Id}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.getDocumentsDetails = data;
         let disablerejectvalue = !this.getDocumentsDetails.some((element: any) => {
           return element.status === 'Rejected';
@@ -385,7 +382,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
         this.submitNotification();
         this.emailacknowledgementtoemp();
         this.openPopup.openSuccess("Submitted Successfully, We’ll get back to you soon!!");
-        setTimeout(() => { 
+        setTimeout(() => {
           this.modalService.dismissAll();
           this.http.logOut();
         }, 2000);

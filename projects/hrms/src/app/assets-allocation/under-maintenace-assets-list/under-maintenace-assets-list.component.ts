@@ -9,10 +9,12 @@ import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { Select } from 'primeng/select';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-under-maintenace-assets-list',
-  imports: [CommonModule,ReactiveFormsModule,FormsModule,NoDataFoundComponent,Select],
+  imports: [CommonModule,ReactiveFormsModule,FormsModule,NoDataFoundComponent,Select,PaginatorModule, DropdownModule],
   templateUrl: './under-maintenace-assets-list.component.html',
   styleUrl: './under-maintenace-assets-list.component.scss',
   providers: [DatePipe]
@@ -22,9 +24,15 @@ export class UnderMaintenaceAssetsListComponent {
   subscription!: Subscription;
   selectedLocationId: any;
   selectedSubLocationId: any;
-  page = 1;
-  pageSize = 10;
-  collectionSize = 100;
+  first:any = 1;
+  rows:any = 10;
+  totalRecords = 100;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
   loading = false;
   storeassetid: any
   warrantydateMismatch = false;
@@ -142,7 +150,7 @@ export class UnderMaintenaceAssetsListComponent {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
-        this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
+        this.getassetsdata(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
         this.getcount(Value,  this.selectedSubLocationId,this.Status);
       }
     })
@@ -151,19 +159,19 @@ export class UnderMaintenaceAssetsListComponent {
 
   getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
     const params = {
-      page: pagenum,
-      pageSize: pagesize,
+      first: pagenum,
+      rows: pagesize,
       searchQuery: this.searchQuery,
       locationid: locationid,
       status: Assetsstatus,
       sublocationid: sublocationid
     };
     this.loading = true;
-    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.page, params.pageSize, params.searchQuery).subscribe({
+    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
       next: (res: any) => {
         this.assetslist.next(res.items);
         this.loading = false;
-        this.collectionSize = res.totalCount;
+        this.totalRecords = res.totalCount;
       },
       error: (error: any) => {
         this.loading = false;
@@ -260,14 +268,26 @@ export class UnderMaintenaceAssetsListComponent {
   getToday(): string {
     return new Date().toISOString().split('T')[0]
   }
+   onRowsChange() {
+      this.first = 1;
+      this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    
+    }
+    onPageChange(event: PaginatorState) {
+      this.first = event.first;
+      this.rows = event.rows;
+      this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    
+  
+    }
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
       // localStorage.setItem('assetsdata', JSON.stringify(this.assets.value))
-      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
     if (event === '') {
-      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
   }
 
@@ -325,7 +345,7 @@ export class UnderMaintenaceAssetsListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset Updated Successfully ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+          this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
           this.assetForm.reset();
         },
         error: (error) => {
@@ -595,7 +615,7 @@ export class UnderMaintenaceAssetsListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Available Successfully ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+          this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
 
         },
         error: (err) => {

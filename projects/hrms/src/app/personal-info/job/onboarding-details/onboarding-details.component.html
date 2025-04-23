@@ -9,12 +9,12 @@
             </div>
             <div class="d-flex justify-content-end gap-2" *ngIf="buttons">
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="button" class="custom-btn btn-primary" (click)="showButtons();onSubmit()">Save</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="onSubmit();showButtons()">Save</button>
             </div>
         </div>
 
         <!--input content-->
-        <form [formGroup]="onboardingForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="onboardingForm" >
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="status" class="form-label custom-label mb-2">Status</label>
@@ -79,9 +79,11 @@
                     <label for="noticePeriodStatus" class="form-label custom-label mb-2">Notice Period Status
                         <span class="text-danger">*</span></label>
                     <!-- <input type="text" class="form-control custom-input"  formControlName="noticePeriodStatus"> -->
+                  <div class="custom-p-select-content">
                     <p-select [options]="noticePeriod" optionLabel="name" formControlName="noticePeriodStatus"
-                        placeholder="Select Notice Period" class="form-select custom-select">
-                    </p-select>
+                    placeholder="Select Notice Period" class="form-select custom-select">
+                </p-select>
+                  </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('noticePeriodStatus')?.invalid && onboardingForm.get('noticePeriodStatus')?.touched">
                         Notice Period Status is required
@@ -224,7 +226,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label">Employment Type Status</label>
                     <input type="text" class="form-control custom-input" formControlName="empType"
-                        [disabled]="empdata.empstatus.toLowerCase() == 'trainee prospective' || !isEditing"
+                        
                         placeholder="Employment type status" />
                 </div>
         
@@ -232,7 +234,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label">Trainee Start Date</label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                        [disabled]="empdata.empstatus.toLowerCase() == 'trainee prospective' || !isEditing " />
+                        />
                 </div>
                 }
         
@@ -247,7 +249,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label">Duration of Training</label>
                     <input type="text" class="form-control custom-input" formControlName="durationOfTrainee" placeholder="Duration of Training"
-                        [disabled]="empdata.empstatus === 'Trainee Prospective' || !isEditing " (keypress)="letters($event)"
+                        (keypress)="letters($event)"
                         appNameConversion />
                 </div>
         

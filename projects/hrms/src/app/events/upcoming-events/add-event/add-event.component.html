@@ -1,5 +1,5 @@
 <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-3" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border" ngbAutofocus>
         <div class="pt-2">
             <p class="popup-heading mb-0">Add Event</p>
         </div>
@@ -7,7 +7,7 @@
             <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content">
         <form [formGroup]="customEventForm" (ngSubmit)="postevents(customEventForm)">
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -30,13 +30,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-12 mb-3">
+                <div class="col-md-12">
                     <label for="description" class="form-label custom-label mb-2">Event Description<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" formControlName="eventMessage" placeholder="Please enter description" id="description"></textarea>
                     <div *ngIf="customEventForm.get('eventMessage')?.errors?.['required']  && customEventForm.get('title')?.touched" class="error-msg">
                         Event Description is requied
                     </div>
-                    <div class="character-count mt-1 text-end">
+                    <div class="form-label custom-label my-1 text-end">
                         {{ customEventForm.get("eventMessage")?.value?.length || 0 }}/250
                       </div>
                 </div>
@@ -45,12 +45,12 @@
                     <label for="file" class="form-label custom-label mb-2">Attachment</label>
                     <input type="file" class="form-control custom-input"  (change)="onFileSelected($event)" id="file" >
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                        <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
-                          The file size should be less than 25MB.</p>
+                        <p class="note-text"><span class="note">Note:</span> Only Image are allowed. The file size should be less than 25MB.</p>
                       </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-end gap-3 mt-4">
+
+            <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">Close</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="customEventForm.invalid || spinnerLoader">
                   @if(spinnerLoader) {

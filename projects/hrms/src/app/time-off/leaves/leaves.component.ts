@@ -173,7 +173,7 @@ export class LeavesComponent {
       leaveType: [null, Validators.required],
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
-      availing: [{value : '',disabled: true}, Validators.required, ], 
+      availing: [{value : '',disabled: true}], 
       fulldayavailing: [{value : '',disabled: true}], 
       reason: ['', [Validators.required]]
     });
@@ -1110,6 +1110,7 @@ export class LeavesComponent {
     this.isDayTypeselected = true;
     if (daytype === 'half') {
       this.leaveFormData.isDaytype = true;
+      this.leaveForm.patchValue({ fulldayavailing: null });
       this.enableButton = true;
       if(this.leaveForm.get('availing')?.value === 'firsthalf'){
         this.selectedValue = '1'
@@ -1121,8 +1122,14 @@ export class LeavesComponent {
     else if (daytype === 'full') {
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
-      this.leaveForm.patchValue({ fulldayavailing: '2' });
-      this.leaveForm.get('availing')?.disable();
+      this.toggleFullDayOptions(false);
+      if(this.dateDiff > 1){
+        this.leaveForm.get('availing')?.disable();
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+      }
+      else{
+        this.leaveForm.get('availing')?.enable();
+      }
       this.selectedValue = '2'
     }
   }
@@ -1151,7 +1158,14 @@ export class LeavesComponent {
 
   toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
-    //this.leaveForm.patchValue({ availing: '' }); // Reset selection
+    this.leaveForm.get('fulldayavailing')?.clearValidators();
+    this.leaveForm.patchValue({ fulldayavailing: null });
+  }
+
+  toggleFullDayOptions(isFullDay: boolean) {
+    this.enableButton = isFullDay;
+    this.leaveForm.get('availing')?.clearValidators();
+    this.leaveForm.patchValue({ availing: null });
   }
 
  
@@ -1159,6 +1173,8 @@ export class LeavesComponent {
       console.log('Starting leave submission process...');
       this.isSubmitted = true;
       this.isLoading = true;
+      console.log(this.leaveForm);
+      
       if (!this.leaveForm.invalid) {
         this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
         let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

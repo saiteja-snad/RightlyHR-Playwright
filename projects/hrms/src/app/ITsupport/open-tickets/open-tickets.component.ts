@@ -141,7 +141,7 @@ export class OpenTicketsComponent {
     this.selectedAssigneeId = id;
   }
   onUpdate(){
-    
+    this.isLoading = true;
     console.log(this.itSupportForm.value);
     this.itTicketDetails.id = this.selectedTickets.id;
     this.itTicketDetails.empId = this.selectedTickets.empId;
@@ -162,7 +162,7 @@ export class OpenTicketsComponent {
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {
        console.log(data);
-       this.confirmation.openSuccessModal('Ticket raised successfully');
+       this.confirmation.openSuccessModal('Ticket updated successfully');
        localStorage.setItem('ticketDetails', JSON.stringify(data));
        setTimeout(() => {
         this.itSupportForm.reset();

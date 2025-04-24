@@ -185,30 +185,6 @@ export const permissionsData = [
     { fields: 'Appointment Status', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Offer Status', View: false, Update: false, Create: false, Delete: false },
 
-    //Manage Shifts Tab
-    { fields: 'Pending For Submit', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Published Shifts', View: false, Update: false, Create: false, Delete: false },
-
-    //Manage Policies Tab
-    { fields: 'Pending For Policies Submit', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Published Policies', View: false, Update: false, Create: false, Delete: false },
-
-    //Manage Holidays Tab
-    { fields: 'Pending For Holidays Submit', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Published Holidays', View: false, Update: false, Create: false, Delete: false },
-
-    //Manage Weekends Tab
-    { fields: 'Pending For Submission', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Published', View: false, Update: false, Create: false, Delete: false },
-
-    //Expense Configuration Tab
-    { fields: 'Expense Configuration', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Expense Allowed Days', View: false, Update: false, Create: false, Delete: false },
-
-    //Manage DST Tab
-    { fields: 'DST Pending For Submission', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'DST Published', View: false, Update: false, Create: false, Delete: false },
-
     //Expenses Type
     { fields: 'Expenses Type', View: false, Update: false, Create: false, Delete: false },
 

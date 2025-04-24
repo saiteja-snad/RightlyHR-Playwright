@@ -530,6 +530,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.selectedIds = [];
         this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
         this.reviewtemplatedropdowns.reset();
+        this.reviewtemplatedropdowns.reset();
       },
     });
   }
@@ -977,9 +978,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   closeModal() {
-    this.Effectivedatefrom.reset();
     this.reviewtemplatedropdowns.reset();
     this.modalService.dismissAll();
+    this.Effectivedatefrom.reset();
   }
 
   openConfirmation(){
@@ -988,6 +989,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   close(){
     this.modalService.dismissAll();
+    this.addEmployeeForm.reset();
+    this.reviewtemplatedropdowns.reset();
+    this.Effectivedatefrom.reset();
   }
 
   ngOnDestroy() {

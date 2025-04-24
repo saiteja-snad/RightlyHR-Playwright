@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div><span class="component-sub-header">{{'Manage Policies' | translate}}</span></div>
-      <div class="custom-add-btn" *ngIf="rbac.allowedToAccess('Pending For Policies Submit.create')">
+      <div class="custom-add-btn" *ngIf="rbac.allowedToAccess('Manage Policies Tab.create')">
         <i class="bi bi-plus plus-icon me-1" (click)="nagvition()"></i>Add New
       </div>
     </div>
@@ -16,7 +16,7 @@
             <th>{{'Shift Name' | translate}}</th>
             <th>{{'Status' | translate}}</th>
             <th>{{'Added By' | translate}}</th>
-            <th *ngIf="rbac.allowedToAccess('Pending For Policies Submit.update')">{{'Action(s)' | translate}}</th>
+            <th *ngIf="rbac.allowedToAccess('Manage Policies Tab.update')">{{'Action(s)' | translate}}</th>
   
           </tr>
         </thead>
@@ -30,7 +30,7 @@
             <td>{{item.shiftName}}</td>
             <td>{{item.status}}</td>
             <td>{{item.addedbyName}}</td>
-            <td *ngIf="rbac.allowedToAccess('Pending For Policies Submit.update')">
+            <td *ngIf="rbac.allowedToAccess('Manage Policies Tab.update')">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>

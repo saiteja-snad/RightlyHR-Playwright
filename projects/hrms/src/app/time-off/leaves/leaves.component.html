@@ -117,7 +117,7 @@
                             [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
                         <small class="error-message text-danger"
                             *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">
-                            End Date is required or cannot be before Start Date
+                            End Date is required
                         </small>
 
                         <!-- Weekend Error -->
@@ -197,7 +197,7 @@
 
                 <div *ngIf="dateDifference &&  isDayTypeselected">
 
-                    <div *ngIf="dateDifference &&  isDayTypeselected">
+                    <!-- <div *ngIf="dateDifference &&  isDayTypeselected">
                         <ng-container
                             *ngIf="leaveFormData.isDaytype ? (dateDifference / 2) <= remainingLeaves : dateDifference <= remainingLeaves; else error">
                             Booked {{ selectedleave?.category?.name }} :
@@ -208,7 +208,7 @@
                             :
                             dateDifference === 1 ? 'Day' : 'Days' }}
                         </ng-container>
-                    </div>
+                    </div> -->
 
 
                     <ng-template #error class=" ">

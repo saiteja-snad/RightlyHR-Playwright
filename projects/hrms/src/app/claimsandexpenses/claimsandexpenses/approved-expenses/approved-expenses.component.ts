@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { IExpense, IExpenseHeaders, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
+import { ExpenseEntity, IExpense, IExpenseHeader, IExpenseHeaders,  } from '../../../Interfaces/claimsandexpenses.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -25,6 +25,7 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
+  commentsrecivced = [] as any
 
    expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
@@ -32,7 +33,7 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
  
     searchTerm: any = ''
-  expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
+  expenesEmplyeedata=new BehaviorSubject< ExpenseEntity[]>([])
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -41,7 +42,10 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
 
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+  comments_Function(comments: any) {
+    this.commentsrecivced = comments
   }
 
 
@@ -144,6 +148,8 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
     this.modalService.dismissAll();
     this.openModal(this.viewattamchment)
   }
+
+ 
 
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -34,7 +34,7 @@
           <label for="salutation" class="form-label custom-label mb-2">Salutation<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="Titledetails" optionValue="titlename" optionLabel="titlename"
+            <p-select [options]="Titledetails" optionLabel="titlename"  optionValue="titlename"
               placeholder="Please select salutation" formControlName="salutation"
               class="form-select custom-select"></p-select>
           </div>
@@ -77,7 +77,7 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="gender" class="form-label custom-label mb-2">Gender<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="Gender" optionLabel="genderName" placeholder="Please select gender"
+            <p-select [options]="Gender" optionLabel="genderName" optionValue="genderName" placeholder="Please select gender"
               formControlName="gender" class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('gender')?.invalid && basicInfoForm.get('gender')?.touched" class="error-msg">
@@ -113,7 +113,7 @@
           <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="Maritaldetails" optionLabel="maritalstatus1" placeholder="Please select marital status"
+            <p-select [options]="Maritaldetails" optionLabel="maritalstatus1" optionValue="maritalstatus1" placeholder="Please select marital status"
               formControlName="maritalStatus" class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('maritalStatus')?.invalid && basicInfoForm.get('maritalStatus')?.touched"

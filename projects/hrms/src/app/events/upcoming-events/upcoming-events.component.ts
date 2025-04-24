@@ -146,9 +146,9 @@ export class UpcomingEventsComponent {
     if (customEventupdateForm.valid) {
       this.spinnerLoader=true
       const formdata = customEventupdateForm.value;
-  
+ 
       const data = {
-      eventId: this.selectedevetid.eventId,
+      eventId: this.selectedevetid,
         eventDate: formdata.eventDate,
         eventMessage: formdata.eventMessage,
         empId: this.Employeeinfo.employeeId,

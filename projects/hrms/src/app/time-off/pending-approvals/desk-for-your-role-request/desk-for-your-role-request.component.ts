@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { Entity } from '../../../Interfaces/claimsandexpenses.model';
+
 import { HttpService } from '../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+
 
 @Component({
   selector: 'app-desk-for-your-role-request',
@@ -21,7 +22,7 @@ export class DeskForYourRoleRequestComponent {
   deskiteam: any
   updataid: any
   assiginemploye: any
-  deskheaderpending: Entity[] = [];
+  deskheaderpending: any[] = [];
   deskid: any;
   selectedexpenesid: any
   subscription!: Subscription
@@ -52,7 +53,7 @@ export class DeskForYourRoleRequestComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.deskheaderpending = (data.data as Entity[]).filter(item => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+          this.deskheaderpending = (data.data as any[]).filter(item => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
           console.log(this.deskheaderpending)
 
           // this.filterPendingExpenses()

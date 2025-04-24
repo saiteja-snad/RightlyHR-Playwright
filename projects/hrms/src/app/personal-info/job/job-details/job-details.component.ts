@@ -13,9 +13,10 @@ import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environments/environment.dev';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, TranslateModule, Select, ReactiveFormsModule, DateformatPipe],
+  imports: [CommonModule, TranslateModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })

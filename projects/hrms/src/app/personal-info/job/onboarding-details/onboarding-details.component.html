@@ -4,10 +4,11 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-            @if(!buttons && (empinfo.substatus.toLowerCase() === 'offer letter accepted'  )){
+            <!-- @if(!buttons && (empinfo.substatus.toLowerCase() === 'offer letter accepted'  )){ -->
             <div >
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-            </div>}
+            </div>
+        <!-- } -->
             @if(buttons){
             <div class="d-flex justify-content-end gap-2">
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>

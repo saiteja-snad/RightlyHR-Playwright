@@ -14,6 +14,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-regularization-for-your-role-request',
@@ -63,13 +64,13 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {  
     this.rejectForm = this.fb.group({
-      comments: ['',[Validators.required,Validators.maxLength(250)]],
+      comments: ['',[Validators.required,Validators.maxLength(250),noWhitespaceValidator]],
     }); 
 
   }

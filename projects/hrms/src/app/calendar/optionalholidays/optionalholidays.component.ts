@@ -4,9 +4,11 @@ import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/holiday-tabs.component";
+import { Select } from 'primeng/select';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-optionalholidays',
-  imports: [ReactiveFormsModule, CommonModule, HolidayTabsComponent],
+  imports: [ReactiveFormsModule, CommonModule, HolidayTabsComponent, Select, NoDataFoundComponent],
   templateUrl: './optionalholidays.component.html',
   styleUrl: './optionalholidays.component.scss'
 })

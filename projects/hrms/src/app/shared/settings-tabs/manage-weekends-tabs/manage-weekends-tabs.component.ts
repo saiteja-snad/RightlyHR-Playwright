@@ -21,18 +21,8 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
   ) {}
 
   allNavLinks = [
-    {
-      label: 'Pending for submission',
-      route: '/settings/employee-fields/manage-weekends/pending-for-submission',
-      count: 0,
-      permission: { feature: 'Pending For Submission', action: 'view' }
-    },
-    {
-      label: 'Published',
-      route: '/settings/employee-fields/manage-weekends/published-weekends',
-      count: 0,
-      permission: { feature: 'Published', action: 'view' }
-    }
+    { label: 'Pending for submission',route: '/settings/employee-fields/manage-weekends/pending-for-submission',count: 0 },
+    { label: 'Published',route: '/settings/employee-fields/manage-weekends/published-weekends',count: 0 }
   ];
 
   ngOnInit(): void {
@@ -53,13 +43,7 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
               return { ...link, count: publishedCount };
             }
             return link;
-          })
-          .filter(link =>
-            link.permission &&
-            link.permission.feature &&
-            link.permission.action &&
-            this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-          );
+          });
       }
     });
   }

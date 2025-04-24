@@ -15,7 +15,7 @@
 
         <div class="custom-setting-right-content p-3">
             <form [formGroup]="createAssigneeForm" autocomplete="off" (ngSubmit)="createAssignee(createAssigneeForm)" class="mb-4">
-                <div class="d-flex align-items-center gap-2" *ngIf="rbac.allowedToAccess('Assignee Tab.create')">
+                <div class="d-flex align-items-center gap-2">
                     <div class="custom-p-select-content">
                         <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
                             optionLabel="fullName" placeholder="Search User" class="w-100" [filter]="true" filterBy="fullName"
@@ -47,7 +47,7 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th *ngIf="rbac.allowedToAccess('Assignee Tab.delete')">Actions</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,7 +56,7 @@
                                 <span *ngIf="user.middleName"> {{ user.middleName }} </span>
                                 {{ user.lastName }}
                             </td>
-                            <td (click)="onUserClick(user)" *ngIf="rbac.allowedToAccess('Assignee Tab.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                            <td (click)="onUserClick(user)"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                     class="settings-common-icon">
                             </td>
                         </tr>

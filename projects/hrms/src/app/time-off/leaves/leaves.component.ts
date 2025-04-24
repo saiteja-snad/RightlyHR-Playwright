@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
@@ -174,11 +174,16 @@ export class LeavesComponent {
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
       availing: [{value : '',disabled: true}, Validators.required, ], 
-      reason: ['', [Validators.required]]
+      fulldayavailing: [{value : '',disabled: true}, Validators.required,], 
+      reason: ['', [Validators.required, this.noWhitespaceValidator]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     
+  }
+  noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    return isWhitespace ? { whitespace: true } : null;
   }
   updateHalfDayOptions() {
     const start = this.leaveForm.get('startdate')?.value;
@@ -187,9 +192,12 @@ export class LeavesComponent {
     if (start && end) {
       this.leaveForm.get('halfDay')?.enable();
       this.leaveForm.get('availing')?.enable();
+      this.leaveForm.get('fulldayavailing')?.enable();
+
     } else {
       this.leaveForm.get('halfDay')?.disable();
       this.leaveForm.get('availing')?.disable();
+      this.leaveForm.get('fulldayavailing')?.disable();
      
     }
   }
@@ -327,7 +335,7 @@ export class LeavesComponent {
 
   onleaveSelect(categoryId: number) {
     this.leaveFormData.categoryId = categoryId;
-    
+
     this.isSubmitted = false;
     this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails
     // this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
@@ -346,7 +354,7 @@ export class LeavesComponent {
     // Handle probation leave balance if applicable
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
       const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
-    
+
       // Update remaining leaves for probation
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
@@ -355,11 +363,11 @@ export class LeavesComponent {
       }
     } else {
       this.remainingProbationLeaves = 0;
-    }    
-    // Call calculateDateDifference function here
-    if (this.startDate && this.endDate) {
-      this.calculateDateDifference(this.startDate, this.endDate);
     }
+    // Call calculateDateDifference function here
+    // if (this.startDate && this.endDate) {
+    //   this.calculateDateDifference(this.startDate, this.endDate);
+    // }
     setTimeout(() => {
       if (this.startDate?.control) { // Ensure control exists
       }
@@ -372,21 +380,21 @@ export class LeavesComponent {
     this.onEndDateChange();
     this.checkWeekends(action);
     this.dateCheckWithHolidayOrWeekend(action)
-    if (!this.startDate) {
-      // Clear the end date when the start date is cleared
-      this.endDate = null;
+  //   if (!this.startDate) {
+  //     // Clear the end date when the start date is cleared
+  //     this.endDate = null;
 
-      // Optionally reset any errors or validations tied to the end date
-      this.isWeekOffSelectedEndate = false; // Example: Resetting the weekend error
-      this.isHolidaySelectedEndate = false; // Example: Resetting the holiday error
-      this.issEndDategreater = true; // Example: Resetting "End Date should be greater than Start Date" error
-  }
+  //     // Optionally reset any errors or validations tied to the end date
+  //     this.isWeekOffSelectedEndate = false; // Example: Resetting the weekend error
+  //     this.isHolidaySelectedEndate = false; // Example: Resetting the holiday error
+  //     this.issEndDategreater = true; // Example: Resetting "End Date should be greater than Start Date" error
+  // }
   }
   
   updateStartDateValidity1(): void {
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
-    if (!this.startDate || !this.endDate || this.startDate <= this.endDate) {
+    if (this.startDate <= this.endDate) {
       this.startdatevalid = true;
     } else {
       this.startdatevalid = false;
@@ -540,19 +548,11 @@ export class LeavesComponent {
   
   onStartDateChange() {
     // Set the min and max for the end date based on the selected start date
+    
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     this.minEndDate = this.startDate;
     this.maxEndDate = `${new Date(this.startDate).getFullYear() + 1}-12-31`;
-    if (!this.startDate) {
-      // Clear the end date if start date is cleared
-      this.endDate = null;
-
-      // Reset end date related errors
-      this.isWeekOffSelectedEndate = false;
-      this.isHolidaySelectedEndate = false;
-      this.issEndDategreater = true;
-    }
   }
   getholidaybyempid() {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -1121,6 +1121,8 @@ export class LeavesComponent {
     else if (daytype === 'full') {
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
+      this.leaveForm.patchValue({ fulldayavailing: '2' });
+      this.leaveForm.get('availing')?.disable();
       this.selectedValue = '2'
     }
   }

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgbModalRef, NgbModalConfig, NgbModal, NgbNavModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -9,12 +9,14 @@ import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-assessment-form',
   imports: [CommonModule, FormsModule, NgbPaginationModule,
     ReactiveFormsModule,
-    NgbNavModule, DateformatPipe, RouterModule,SelectModule  ],
+    NgbNavModule, DateformatPipe, RouterModule, SelectModule, DataLoaderContentComponent, TranslateModule],
   templateUrl: './assessment-form.component.html',
   styleUrl: './assessment-form.component.scss'
 })
@@ -49,8 +51,6 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
   tmOverAllRating = 0;
   hrOverAllRating = 0;
   hrOverAllRatingForProrata = 0;
-  @ViewChild('success') success: any;
-  @ViewChild('error') error: any;
   @ViewChild('loading') loading: any;
   modalRef!: NgbModalRef;
   dynamicBindLabel = 'designationName';
@@ -260,7 +260,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
         } else {
           this.Status = err.error.message;
         }
-        this.sharedModalService.openErrorModal(this.error);
+        this.sharedModalService.openErrorModal(this.Status);
         this.dataload = false;
       },
       complete: () => {

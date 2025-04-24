@@ -30,6 +30,7 @@ export class SettingsJobTabsComponent {
     { label: 'Sub Location', route: '/settings/employee-fields/job/sub-location' },
     { label: 'Pre Onboarding Documents', route: '/settings/employee-fields/job/pre-on-boarding-documents' },
     { label: 'Serving period', route: '/settings/employee-fields/job/serving-period' },
-    { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details' }
+    { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details' },
+    { label: 'Consultancy', route: '/settings/employee-fields/job/consultancy' }
   ];
 }

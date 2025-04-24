@@ -235,7 +235,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     //payload
       const payload = {
         identityId: this.selectedIdentityId,
-        identityType: formData.identityupdateType?.documentName,
+        identityType: formData.identityupdateType?.identityType1,
         attachment: this.IdentityAttachment || '',
         empId: this.empinfo.employeeId,
         isDeleted: false

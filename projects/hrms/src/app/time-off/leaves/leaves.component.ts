@@ -174,17 +174,17 @@ export class LeavesComponent {
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
       availing: [{value : '',disabled: true}, Validators.required, ], 
-      fulldayavailing: [{value : '',disabled: true}, Validators.required,], 
-      reason: ['', [Validators.required, this.noWhitespaceValidator]]
+      fulldayavailing: [{value : '',disabled: true}], 
+      reason: ['', [Validators.required]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     
   }
-  noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
-    const isWhitespace = (control.value || '').trim().length === 0;
-    return isWhitespace ? { whitespace: true } : null;
-  }
+  // noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+  //   const isWhitespace = (control.value || '').trim().length === 0;
+  //   return isWhitespace ? { whitespace: true } : null;
+  // }
   updateHalfDayOptions() {
     const start = this.leaveForm.get('startdate')?.value;
     const end = this.leaveForm.get('enddate')?.value;

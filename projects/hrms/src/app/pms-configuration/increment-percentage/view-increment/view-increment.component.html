@@ -1,5 +1,5 @@
 <div class="custom-main-popup-container" ngbAutofocus>
-  <div class="d-flex justify-content-between align-items-center popup-header-border p-3">
+  <div class="custom-poup-header-content popup-header-border">
     <div>
       <p class="popup-heading mb-0">{{'View Increment Percentage'| translate}}</p>
     </div>
@@ -7,123 +7,114 @@
       <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
     </div>
   </div>
-  <div class="custom-main-popup-content p-4">
-    <form name="Updateincrementalpercentage" #Updateincrementalpercentage="ngForm"
-      (ngSubmit)="Updateincrementalpercentage.valid">
+
+  <div class="custom-main-popup-content">
+    <form name="Updateincrementalpercentage" #Updateincrementalpercentage="ngForm" (ngSubmit)="Updateincrementalpercentage.valid">
       <div class="row">
         <div class="col-md-6 mb-3">
+          <label for="reviewcycle" class="form-label custom-label">Review Cycle Name<span
+              class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <label for="reviewcycle" class="form-label custom-label">Review Cycle Name<span
-                class="text-danger">*</span></label>
-            <p-select [disabled]="true" [options]="reviewCycleDropDownData" optionValue="id"
-              optionLabel="reviewCycleName" [filter]="true" id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel"
+            <p-select [disabled]="true" [options]="reviewCycleDropDownData" optionValue="id" optionLabel="reviewCycleName"
+              [filter]="true" id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel"
               [(ngModel)]="UpdateIncrementalpercentage.reviewCycleId" filterBy="item_text" [showClear]="true"
-              placeholder="Please Select Review Cycle Name" class="form-select w-100">
+              placeholder="Please Select Review Cycle Name" class="form-select custom-select">
             </p-select>
-
-            <small class="text-danger"
-              *ngIf="(reviewcycle.touched &&  reviewcycle.invalid) || (reviewcycle.invalid && Updateincrementalpercentage.submitted)">
-              Review Cycle Name is required
-            </small>
+          </div>
+          <div class="error-msg"
+            *ngIf="(reviewcycle.touched &&  reviewcycle.invalid) || (reviewcycle.invalid && Updateincrementalpercentage.submitted)">
+            Review Cycle Name is required
           </div>
         </div>
+    
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="ratingscale" class="form-label custom-label">Rating Scale<span
-                class="text-danger">*</span></label>
-            <input class="form-control" aria-label="Default select example" id="ratingscale" name="ratingscale"
-              #ratingscale="ngModel" [(ngModel)]="UpdateIncrementalpercentage.ratingscale" placeholder="Rating Scale"
-              disabled>
-            <small class="text-danger"
-              *ngIf="(team.touched &&  team.invalid) || (team.invalid && Updateincrementalpercentage.submitted)">
-              Rating Scale is required
-            </small>
+          <label for="ratingscale" class="form-label custom-label">Rating Scale<span class="text-danger">*</span></label>
+          <input class="form-control" aria-label="Default select example" id="ratingscale" name="ratingscale"
+            #ratingscale="ngModel" [(ngModel)]="UpdateIncrementalpercentage.ratingscale" placeholder="Rating Scale"
+            disabled>
+          <div class="error-msg"
+            *ngIf="(team.touched &&  team.invalid) || (team.invalid && Updateincrementalpercentage.submitted)">
+            Rating Scale is required
           </div>
         </div>
+    
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="department" class="form-label custom-label">Department<span class="text-danger">*</span></label>
-            <input class="form-control" #deparment="ngModel" [(ngModel)]="UpdateIncrementalpercentage.department"
-              id="department" name="department" aria-label="Default select example" placeholder="Department" disabled>
-            <small class="text-danger"
-              *ngIf="(deparment.touched &&  reviewcycle.invalid) || (deparment.invalid && Updateincrementalpercentage.submitted)">
-              Department is required
-            </small>
+          <label for="department" class="form-label custom-label">Department<span class="text-danger">*</span></label>
+          <input class="form-control" #deparment="ngModel" [(ngModel)]="UpdateIncrementalpercentage.department"
+            id="department" name="department" aria-label="Default select example" placeholder="Department" disabled>
+          <div class="error-msg"
+            *ngIf="(deparment.touched &&  reviewcycle.invalid) || (deparment.invalid && Updateincrementalpercentage.submitted)">
+            Department is required
           </div>
         </div>
+    
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="team" class="form-label custom-label">Team<span class="text-danger">*</span></label>
-            <input class="form-control" aria-label="Default select example" id="team" name="team" #team="ngModel"
-              [(ngModel)]="UpdateIncrementalpercentage.team" placeholder="Team" disabled>
-            <small class="text-danger"
-              *ngIf="(team.touched &&  team.invalid) || (team.invalid && Updateincrementalpercentage.submitted)">
-              Team is required
-            </small>
+          <label for="team" class="form-label custom-label">Team<span class="text-danger">*</span></label>
+          <input class="form-control" aria-label="Default select example" id="team" name="team" #team="ngModel"
+            [(ngModel)]="UpdateIncrementalpercentage.team" placeholder="Team" disabled>
+          <div class="error-msg"
+            *ngIf="(team.touched &&  team.invalid) || (team.invalid && Updateincrementalpercentage.submitted)">
+            Team is required
           </div>
         </div>
+    
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="location" class="form-label custom-label">Location<span class="text-danger">*</span></label>
-            <input class="form-control" aria-label="Default select example" id="location" name="location"
-              #location="ngModel" [(ngModel)]="UpdateIncrementalpercentage.location" placeholder="Location" disabled>
-            <small class="text-danger"
-              *ngIf="(location.touched &&  location.invalid) || (location.invalid && Updateincrementalpercentage.submitted)">
-              Location is required
-            </small>
+          <label for="location" class="form-label custom-label">Location<span class="text-danger">*</span></label>
+          <input class="form-control" aria-label="Default select example" id="location" name="location" #location="ngModel"
+            [(ngModel)]="UpdateIncrementalpercentage.location" placeholder="Location" disabled>
+          <div class="error-msg"
+            *ngIf="(location.touched &&  location.invalid) || (location.invalid && Updateincrementalpercentage.submitted)">
+            Location is required
           </div>
         </div>
+    
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="sublocation" class="form-label custom-label">Sub Location<span
-                class="text-danger">*</span></label>
-            <input class="form-control" aria-label="Default select example" id="sublocation" name="sublocation"
-              #sublocation="ngModel" [(ngModel)]="UpdateIncrementalpercentage.sublocation" placeholder="Sub Location"
-              disabled>
-            <small class="text-danger"
-              *ngIf="(sublocation.touched && sublocation.invalid) || (sublocation.invalid && Updateincrementalpercentage.submitted)">
-              Sub Location is required
-            </small>
+          <label for="sublocation" class="form-label custom-label">Sub Location<span class="text-danger">*</span></label>
+          <input class="form-control" aria-label="Default select example" id="sublocation" name="sublocation"
+            #sublocation="ngModel" [(ngModel)]="UpdateIncrementalpercentage.sublocation" placeholder="Sub Location"
+            disabled>
+          <div class="error-msg"
+            *ngIf="(sublocation.touched && sublocation.invalid) || (sublocation.invalid && Updateincrementalpercentage.submitted)">
+            Sub Location is required
           </div>
-        </div>
-        <div class="modal-table-content w-100 mt-3">
-          <table class="w-100">
-            <thead>
-              <tr>
-                <th>Increment Percentage/Rating</th>
-                <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Iterate through FormArray (ratingscaledetails) -->
-              <tr *ngFor="let detail of ratingscaledetailsarray; let i = index">
-                <td>
-                  <div class="d-flex">
-                    <div>
-                      <input type="number" class="form-control value-input" [(ngModel)]="detail.min" id="min-{{i}}"
-                        name="min-{{i}}" min="0" placeholder="Min" disabled required />
-                    </div>
-                    <div class="pt-2">
-                      <span class="mx-2">-</span>
-                    </div>
-                    <div>
-                      <input type="number" class="form-control value-input" [(ngModel)]="detail.max" id="max-{{i}}"
-                        name="max-{{i}}" min="0" placeholder="Max" disabled required />
-                    </div>
-                  </div>
-                </td>
-                <td *ngFor="let column of detail.ratingDetails; let j = index" class="text-center text-td">
-                  <input type="number" class="form-control number-input" [(ngModel)]="column.percentage" min="0"
-                    id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}" placeholder="Percentage" disabled
-                    required />
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
+    
+      <div class="form-select custom-select">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Increment Percentage/Rating</th>
+              <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Iterate through FormArray (ratingscaledetails) -->
+            <tr *ngFor="let detail of ratingscaledetailsarray; let i = index">
+              <td>
+                <div class="d-flex">
+                  <div>
+                    <input type="number" class="form-control value-input" [(ngModel)]="detail.min" id="min-{{i}}"
+                      name="min-{{i}}" min="0" placeholder="Min" disabled required />
+                  </div>
+                  <div class="pt-2">
+                    <span class="mx-2">-</span>
+                  </div>
+                  <div>
+                    <input type="number" class="form-control value-input" [(ngModel)]="detail.max" id="max-{{i}}"
+                      name="max-{{i}}" min="0" placeholder="Max" disabled required />
+                  </div>
+                </div>
+              </td>
+              <td *ngFor="let column of detail.ratingDetails; let j = index" class="text-center text-td">
+                <input type="number" class="form-control number-input" [(ngModel)]="column.percentage" min="0"
+                  id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}" placeholder="Percentage" disabled required />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </form>
-
   </div>
 </div>

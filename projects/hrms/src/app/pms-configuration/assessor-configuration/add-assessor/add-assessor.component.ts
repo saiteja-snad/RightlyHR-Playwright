@@ -12,13 +12,13 @@ import { RbacService } from '../../../services/rbac.service';
 import { IReviewCycle } from '../../increment-percentage/add-increment/increment.modal';
 import { IDesignationNames } from './add-assessor.modal';
 import moment from 'moment';
-
 @Component({
   selector: 'app-add-assessor',
   imports: [CommonModule, FormsModule, Select, TranslateModule],
   templateUrl: './add-assessor.component.html',
   styleUrl: './add-assessor.component.scss',
 })
+
 export class AddAssessorComponent implements OnInit, OnDestroy {
   empinfo = {} as any;
   subscription!: Subscription;
@@ -36,13 +36,10 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
   activeEmplist = [] as any;
   @ViewChild('deletesuccess') deletesuccess: any;
   @ViewChild('deleterowincrement') deleterowincrement: any;
-  constructor(
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
-    private http: HttpService,
-    private modalService: NgbModal,
-    public rbac: RbacService
-  ) {}
+
+  constructor(private authService: AuthService, private conformationPopup: OpenModalService, private http: HttpService,
+    private modalService: NgbModal, public rbac: RbacService) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getReviewCycledata();
@@ -51,41 +48,36 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     const currentdate = moment();
     this.currentDate = this.formatDate(currentdate);
   }
+
   formatDate(date: any) {
     return date?.split('T')[0];
   }
+
   getAllasessors() {
-    this.subscription = this.http
-      .getData('entityAttributeValues?entity=PMS&attribute=assessorconfig')
-      .subscribe({
-        next: (data: any) => {
-          this.reviewCycleData = data;
-          console.log(data);
-        },
-      });
+    this.subscription = this.http.getData('entityAttributeValues?entity=PMS&attribute=assessorconfig').subscribe({
+      next: (data: any) => {
+        this.reviewCycleData = data;
+      },
+    });
   }
+
   //function to get all active employees list
   getAllActiveEmpList() {
-    this.subscription = this.http
-      .getData(`Employeedata/ActiveEmployees`)
-      .subscribe({
+    this.subscription = this.http.getData(`Employeedata/ActiveEmployees`).subscribe({
         next: (res: any) => {
           this.activeEmplist = res.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${
-                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.fusionEmpId ? 
+                employee.fusionEmpId + ' - ' : '' }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
             };
           });
-          console.log(this.activeEmplist);
         },
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        error: (err: unknown) => {},
+        error: (err: unknown) => { },
       });
   }
+
   // Check row state and trigger UI updates
   checkRowState(index: number) {
     const detail = this.assesorDetails[index];
@@ -97,20 +89,22 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
       console.log(`Row ${index} is incomplete`);
     }
   }
+
   initialAddRowCall() {
     this.assesorDetails = [];
     this.addRow();
   }
+
   // Helper function to check if a row is filled
   isRowFilled(detail: any): boolean {
     // Check if mandatory fields are filled
     return !!(detail.assessors && detail.deadlineindays);
   }
+
   // Function to get all review cycle data
   getReviewCycledata() {
     this.subscription = this.http.getData(`reviewCycleHeader`).subscribe({
       next: (data: any) => {
-        console.log('Review Cycle Data:', data);
         this.reviewCycleDropDownData = data.items as IReviewCycle[];
       },
       error: (err: any) => {
@@ -118,6 +112,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   // Function to get review cycle data by ID and patch the form
   getReviewCycledataById() {
     let id: any;
@@ -129,24 +124,15 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
         this.reviewCycledetailyById = data;
         // Patch the form fields
         if (this.postassesorConfiguration) {
-          (this.postassesorConfiguration.department = data[0]?.departments
-            ?.map((loc: any) => loc?.departmentName)
-            .join(', ')),
-            (this.postassesorConfiguration.ratingId = data.id),
-            (this.postassesorConfiguration.location = data[0]?.locations
-              ?.map((loc: any) => loc?.locationName)
-              .join(', ')),
-            (this.postassesorConfiguration.sublocation = data[0]?.sublocations
-              ?.map((loc: any) => loc?.subLocationName)
-              .join(', ')),
-            (this.postassesorConfiguration.team = data[0]?.subdepartments
-              ?.map((loc: any) => loc?.subDepartmentName)
-              .join(', '));
+          (this.postassesorConfiguration.department = data[0]?.departments?.map((loc: any) => loc?.departmentName).join(', ')),
+          (this.postassesorConfiguration.ratingId = data.id),
+          (this.postassesorConfiguration.location = data[0]?.locations?.map((loc: any) => loc?.locationName).join(', ')),
+          (this.postassesorConfiguration.sublocation = data[0]?.sublocations?.map((loc: any) => loc?.subLocationName).join(', ')),
+          (this.postassesorConfiguration.team = data[0]?.subdepartments?.map((loc: any) => loc?.subDepartmentName).join(', '));
           this.initialAddRowCall();
         }
       },
       error: (err: any) => {
-        console.error('Error fetching review cycle by ID:', err);
         this.postassesorConfiguration = {};
       },
     });
@@ -155,24 +141,29 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
   openModal(content: any) {
     this.modalService.open(content, { centered: true });
   }
+
   closeModal() {
     this.modalService.dismissAll();
     this.postassesorConfiguration = {}; // Reset the form
   }
+
   //function to open the model popup
   openconfirmationModel(content: any) {
     this.modalService.open(content, { centered: true });
   }
+
   //function to open the model popup
   openconfirmationModelforcancle(content: any, form: any) {
     this.myForm = form;
     this.modalService.open(content, { centered: true });
   }
+
   //function to delete
   openDeletepopup(content: any, id: any) {
     this.deleteId = id;
     this.modalService.open(content, { centered: true });
   }
+
   clearindexdata(index: any) {
     if (this.assesorDetails && this.assesorDetails[index]) {
       // Clear the data for the specific index
@@ -186,6 +177,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
       };
     }
   }
+
   // Add Row to FormArray
   addRow() {
     const newRow = {
@@ -198,18 +190,19 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     };
     this.assesorDetails.push(newRow);
   }
+
   // Delete Row from FormArray
   deleteRow(index: number): void {
     this.assesorDetails.splice(index, 1);
     this.conformationPopup.openSuccessModal('Row Deleted Successfully');
   }
+
   // Handle form submission
   onSubmit() {
     this.isLoading = true;
     const loggedinuser = this.authService.getToken();
     const currentDate = new Date();
     if (this.postassesorConfiguration) {
-      console.log(this.assesorDetails);
       const payload = {
         reviewCycleId: this.postassesorConfiguration.id,
         isDeleted: false,
@@ -226,23 +219,15 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
           assessorEmployeeIds: row?.assessorempId?.toString(),
         })),
       };
-
-      console.log('Final Payload:', payload);
-
       this.http.postdata(`Assessor/AddAssessor`, payload).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(
-            'Assessor Configurations Added Successfully'
-          );
+          this.conformationPopup.openSuccessModal('Assessor Configurations Added Successfully');
         },
         error: (err: any) => {
           this.isLoading = false;
-          console.log(err);
           if (err.status === 404) {
-            this.conformationPopup.openErrorModal(
-              'The requested resource was not found. Please check the URL or contact the administrator for assistance.'
-            );
+            this.conformationPopup.openErrorModal('The requested resource was not found. Please check the URL or contact the administrator for assistance.');
           } else if (err.status === 500) {
             this.conformationPopup.openErrorModal(err.error.Message);
           } else {
@@ -260,6 +245,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
       });
     }
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

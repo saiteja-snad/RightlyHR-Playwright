@@ -1,155 +1,156 @@
 /* assessmentformcreation.component.css */
-
 /* Form container */
 .form-container {
-    width: 80%;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Form header */
-  .form-header {
-    text-align: center;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-  }
-  
-  /* Form fields */
-  .form-field {
-    margin-bottom: 15px;
-  }
-  
-  /* Label styles */
-  .form-label {
-    display: block;
-    /* font-weight: bold; */
-    margin-bottom: 5px;
-  }
-  
-  /* Input styles */
-  .form-control {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form header */
+.form-header {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+/* Form fields */
+.form-field {
+  margin-bottom: 15px;
+}
+
+/* Label styles */
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Input styles */
+.form-control {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Error message for invalid inputs */
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+}
+
+/* Submit button */
+.form-submit {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-submit:hover {
+  background-color: #45a049;
+  /* Darker green */
+}
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+  .form-container {
     width: 100%;
-    padding: 8px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  /* Error message for invalid inputs */
-  .error-message {
-    color: red;
-    font-size: 0.875rem;
-  }
-  
-  /* Submit button */
-  .form-submit {
-    background-color: #4CAF50; /* Green */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .form-submit:hover {
-    background-color: #45a049; /* Darker green */
-  }
-  
-  /* Responsive design */
-  @media screen and (max-width: 600px) {
-    .form-container {
-      width: 100%;
-      padding: 10px;
-    }
-  }
-  .scrollable-container {
-    max-height: 1000px; 
-    overflow-y: auto; 
-    border: 1px solid #ccc; 
-    border-radius: 5px;
     padding: 10px;
   }
-  .inactive-success {
-    background-color:  #0573D6;
-    border-radius: 14px;
-    padding: 11px 51px 13px 52px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-  }
-  
-  .inactive-no {
-    background-color: #979797;
-    border-radius: 14px;
-    padding: 11px 55px 13px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-  }
-  /* .page-div{
-    padding: 20px 110px;
-    box-shadow: 0 4px 8px 0 rgba(0.2, 0.2, 0.2, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.20);
-    height: 370mm;
-    width: 270mm;
-    page-break-after: always;
-  } */
-  /* General styling for the page container */
-  .page-div {
-    padding: 20px 110px;
-    box-shadow: 0 4px 8px 0 rgba(0.2, 0.2, 0.2, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.20);
-    width: 230mm;
-    height: auto; 
-    margin-bottom: 40px; 
-    overflow: hidden;
-  }
-  .previous{
-  color:  #0573D6;
+}
+
+.scrollable-container {
+  max-height: 1000px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.inactive-success {
+  background-color: #0573D6;
+  border-radius: 14px;
+  padding: 11px 51px 13px 52px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.inactive-no {
+  background-color: #979797;
+  border-radius: 14px;
+  padding: 11px 55px 13px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* General styling for the page container */
+.page-div {
+  padding: 20px 110px;
+  box-shadow: 0 4px 8px 0 rgba(0.2, 0.2, 0.2, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.20);
+  width: 230mm;
+  height: auto;
+  margin-bottom: 40px;
+  overflow: hidden;
+}
+
+.previous {
+  color: #0573D6;
   border-radius: none;
+}
+
+.page-div:first-of-type {
+  margin-bottom: 40px;
+}
+
+.page-div+.page-div {
+  margin-top: 40px;
+}
+
+@media print {
+  .page-div {
+    box-shadow: none;
+    page-break-after: always;
+    page-break-inside: avoid;
   }
-  .page-div:first-of-type {
-    margin-bottom: 40px; 
+
+  .no-print {
+    display: none;
   }
-  
-  .page-div + .page-div {
-    margin-top: 40px; 
-  }
-  
-  @media print {
-    .page-div {
-        box-shadow: none; 
-        page-break-after: always;
-        page-break-inside: avoid;
-    }
-  
-    .no-print {
-        display: none;
-    }
-  }
-  .error-msg {
+}
+
+.error-msg {
   color: red;
-  }
-  .exclalmation-img{
+}
+
+.exclalmation-img {
   width: 48px;
   height: 48px;
-  }
-  .want{
-    color: #3f434a;
-    font-size: 20px;
-    font-weight: 500;
-  }
-  .bi-check-circle-fill{
-  color:  #0573D6;
+}
+
+.want {
+  color: #3f434a;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.bi-check-circle-fill {
+  color: #0573D6;
   font-size: 3rem;
-  
-  }
-  .save {
+}
+
+.save {
   background-color: #0573d6;
   color: #fff;
   font-size: 15px;
   font-weight: 500;
   width: 8vw;
   border-radius: 14px;
-  }
+}

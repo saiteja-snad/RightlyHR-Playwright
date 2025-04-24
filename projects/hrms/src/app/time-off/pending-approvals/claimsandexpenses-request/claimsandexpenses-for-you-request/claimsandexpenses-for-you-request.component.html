@@ -1,17 +1,10 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
   <div>
     <!--Input search-->
-    <div class="input-group custom-search mb-4">
-      <span class="input-group-text custom-input-group-search" id="basic-addon1"
-        ><i class="bi bi-search"></i
-      ></span>
-      <input
-        type="search"
-        class="form-control custom-search-input"
-        placeholder="Search here"
-        aria-label="Username"
-        aria-describedby="basic-addon1"
-      />
+    <div class="input-group custom-search mb-3">
+      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+      <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+        aria-describedby="basic-addon1" />
     </div>
 
     <div class="custom-table-content">
@@ -30,9 +23,7 @@
         </thead>
         <tbody>
           @if (rbac.allowedToAccess('Expenses Tab.view')) {
-          <ng-container
-            *ngIf="expenseheaderpending!.length > 0; else noDataTemplate"
-          >
+          <ng-container *ngIf="expenseheaderpending!.length > 0; else noDataTemplate">
             <tr *ngFor="let leave of expenseheaderpending; let i = index">
               <td>{{ leave.entity.employeeName }}</td>
               <td>{{ leave.entity.expenseType }}</td>
@@ -46,33 +37,25 @@
                   </a>
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li>
-                      <a
-                        class="dropdown-item"
-                        (click)="
+                      <a class="dropdown-item" (click)="
                           openModal(viewDetailsModal);
                           viewItem(leave.entity.expenses_ID)
-                        "
-                        *ngIf="rbac.allowedToAccess('Expenses Tab.view')"><i class="bi bi-paperclip me-2"></i>View</a
-                      >
+                        " *ngIf="rbac.allowedToAccess('Expenses Tab.view')"><i
+                          class="bi bi-paperclip me-2"></i>View</a>
                     </li>
                   </ul>
                 </div>
               </td>
               <td>
                 <div>
-                  <span  *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
+                  <span *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
                     <a type="button" placement="top">
-                      <img
-                        src="images\info-fill.png"
-                        alt="info icon"
-                        (click)="
+                      <img src="images\info-fill.png" alt="info icon" (click)="
                           comments(
                             leave.entity.expenseApproverComments,
                             commentspopup
                           )
-                        "
-                        class="info-icon"
-                      />
+                        " class="info-icon" />
                     </a>
                   </span>
                 </div>
@@ -80,7 +63,7 @@
                   N/A
                 </ng-template>
               </td>
-              <td  class="text-center">
+              <td class="text-center">
                 <div class="dropdown">
                   <a type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -89,25 +72,17 @@
                     @if( leave.approvalHeader.currentapprovalStage !=
                     leave.approvalHeader.finalapprovalStage){
                     <li (click)="openApproveModal(approval, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
-                      <a class="dropdown-item"
-                        ><i class="bi bi-check-circle me-2"></i
-                        >{{ "Approve" | translate }}</a
-                      >
+                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
                     </li>
                     } @if( leave.approvalHeader.currentapprovalStage ==
                     leave.approvalHeader.finalapprovalStage){
                     <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
-                      <a class="dropdown-item"
-                        ><i class="bi bi-check-circle me-2"></i
-                        >{{ "Process" | translate }}</a
-                      >
+                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
                     </li>
                     }
-                    <li (click)="openRejectModal(rejectmodal, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.delete')">
-                      <a class="dropdown-item"
-                        ><i class="bi bi-x-circle me-2"></i
-                        >{{ "Reject" | translate }}</a
-                      >
+                    <li (click)="openRejectModal(rejectmodal, leave)"
+                      *ngIf="rbac.allowedToAccess('Expenses Tab.delete')">
+                      <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
                     </li>
                   </ul>
                 </div>
@@ -121,41 +96,9 @@
               </td>
             </tr>
           </ng-template>
-        }
+          }
         </tbody>
       </table>
-    </div>
-    <div class="pagination-content pt-2 w-100">
-      <div
-        class="d-flex justify-content-between align-items-center w-100 flex-wrap"
-      >
-        <!-- Dropdown for Rows per Page -->
-        <div class="d-flex align-items-center gap-3 p-2">
-          <!-- Bootstrap Select -->
-          <select
-            class="form-select custom-pagination-select"
-            [(ngModel)]="rows"
-            (ngModelChange)="onRowsChange()"
-          >
-            <option *ngFor="let option of options" [value]="option.value">
-              {{ option.label }}
-            </option>
-          </select>
-          <span class="pagination-label text-nowrap"
-            >Showing {{ first + 1 }} -
-            {{ first + rows > totalRecords ? totalRecords : first + rows }} of
-            {{ totalRecords }}</span
-          >
-        </div>
-
-        <!-- Pagination -->
-        <p-paginator
-          [first]="first"
-          [rows]="rows"
-          [totalRecords]="totalRecords"
-          (onPageChange)="onPageChange($event)"
-        ></p-paginator>
-      </div>
     </div>
   </div>
 </div>
@@ -174,28 +117,18 @@
       <form [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
         <div class="row">
           <div class="col-md-12 mb-3">
-            <label for="comments" class="form-label custom-label mb-2"
-              >{{ "Comments" | translate }}
-              <span class="text-danger">*</span></label
-            >
-            <textarea
-              class="form-control custom-input"
-              id="comments"
-              placeholder="Please provide comments"
-              formControlName="comments"
-              maxlength="250"
-            ></textarea>
+            <label for="comments" class="form-label custom-label mb-2">{{ "Comments" | translate }}
+              <span class="text-danger">*</span></label>
+            <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+              formControlName="comments" maxlength="250"></textarea>
             <!-- Character counter -->
             <div class="text-end small text-muted">
               {{ approveForm.get("comments")?.value?.length || 0 }}/250
             </div>
-            <div
-              class="error-msg"
-              *ngIf="
+            <div class="error-msg" *ngIf="
                 approveForm.get('comments')?.touched &&
                 approveForm.get('comments')?.invalid
-              "
-            >
+              ">
               <div *ngIf="approveForm.get('comments')?.errors?.['required']">
                 Comment is required.
               </div>
@@ -206,18 +139,10 @@
           </div>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
-          <button
-            type="reset"
-            class="custom-btn btn-secondary"
-            (click)="modal.dismiss()"
-          >
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">
             {{ "Cancel" | translate }}
           </button>
-          <button
-            type="submit"
-            class="custom-btn btn-primary"
-            [disabled]="approveForm.invalid"
-          >
+          <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
             {{ "Approve" | translate }}
           </button>
         </div>
@@ -237,31 +162,22 @@
           {{ "Are you sure you want to Reject?" | translate }}
         </h4>
       </div>
-      <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
+      <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)"
+        *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
         <div class="row">
           <div class="col-md-12 mb-3">
-            <label for="comments" class="form-label custom-label mb-2"
-              >{{ "Rejected Reason" | translate }}
-              <span class="text-danger">*</span></label
-            >
-            <textarea
-              class="form-control custom-input"
-              id="comments"
-              placeholder="Please provide reason for rejection"
-              formControlName="comments"
-              maxlength="250"
-            ></textarea>
+            <label for="comments" class="form-label custom-label mb-2">{{ "Rejected Reason" | translate }}
+              <span class="text-danger">*</span></label>
+            <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection"
+              formControlName="comments" maxlength="250"></textarea>
             <div class="text-end small text-muted">
               {{ rejectForm.get("comments")?.value?.length || 0 }}/250
             </div>
 
-            <div
-              class="error-msg"
-              *ngIf="
+            <div class="error-msg" *ngIf="
                 rejectForm.get('comments')?.touched &&
                 rejectForm.get('comments')?.invalid
-              "
-            >
+              ">
               <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
                 Rejected Reason is required.
               </div>
@@ -272,18 +188,10 @@
           </div>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
-          <button
-            type="reset"
-            class="custom-btn btn-secondary"
-            (click)="modal.dismiss()"
-          >
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">
             {{ "Cancel" | translate }}
           </button>
-          <button
-            type="submit"
-            class="custom-btn btn-primary"
-            [disabled]="rejectForm.invalid"
-          >
+          <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">
             {{ "Reject" | translate }}
           </button>
         </div>
@@ -293,9 +201,7 @@
 </ng-template>
 
 <!-- commentspopup -->
-<!-- commentspopup -->
 <ng-template #commentspopup let-modal>
-
   <div class="custom-main-popup-container">
     <div class="d-flex justify-content-between popup-header-border p-4">
       <div class="pt-2">
@@ -305,7 +211,6 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-
     <div class="custom-table mt-2">
       <table class="w-100">
         <thead>
@@ -327,10 +232,7 @@
       </table>
     </div>
   </div>
-
 </ng-template>
-
-
 
 <ng-template #viewDetailsModal let-modal>
   <div class="custom-main-popup-container">
@@ -342,7 +244,6 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-
     <div class="d-flex gap-5 p-3">
       <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
       <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
@@ -352,7 +253,7 @@
         <thead>
           <tr>
             <th>Expense Type</th>
-            <th>Expense  Name</th>
+            <th>Expense Name</th>
             <th>Expense Date</th>
             <th>Total Amount</th>
             <th>Status</th>
@@ -366,11 +267,9 @@
             <td>{{ item?.item_Name }}</td>
             <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
             <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
-          
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
             <td>
-
               <div class="d-flex gap-2">
                 <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
                   <i class="bi bi-download me-2"></i>Download
@@ -387,8 +286,6 @@
     </div>
   </div>
 </ng-template>
-
-
 
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>

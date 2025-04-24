@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Ilpid } from '../../Interfaces/timoff-model';
-import { HttpService } from '../../services/http.service';
-import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
+import { Ilpid } from '../../../Interfaces/timoff-model';
+import { AuthService } from '../../../services/auth.service';
+import { HttpService } from '../../../services/http.service';
+
 @Component({
   selector: 'app-leaves-approvaltabs',
   imports: [RouterModule, CommonModule, TabsModule],

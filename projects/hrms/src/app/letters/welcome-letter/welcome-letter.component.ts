@@ -1,19 +1,16 @@
-import { Component, ElementRef, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
-import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ElementRef, HostListener, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-welcome-letter',
   imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent],

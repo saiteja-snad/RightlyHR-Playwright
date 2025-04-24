@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-end mb-3" *ngIf="rbac.allowedToAccess('Leave Category Tab.create')">
         <button type="button" class="custom-btn btn-primary" data-bs-toggle="modal"
         data-bs-target="#requestdoc" ><i class="bi bi-plus"></i>Add Leave Category</button>
     </div>
@@ -40,7 +40,7 @@
                             <th>Display Color</th>
                             <th>Expires After (Days)</th>
                             <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th class="text-center" *ngIf="rbac.allowedToAccess('Leave Category Tab.update')">Actions</th>
                         </thead>
                         <tbody>
                             <ng-container *ngIf="(submissiondata).length; else noResults">
@@ -60,7 +60,7 @@
 
                                         {{details.status}}
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" *ngIf="rbac.allowedToAccess('Leave Category Tab.update')" >
                                         <a class="nav-link" data-bs-toggle="dropdown" style="cursor: pointer;">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </a>
@@ -127,7 +127,7 @@
                             <th>Display Color</th>
                             <th>Expires After (Days)</th>
                             <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th class="text-center"  *ngIf="rbac.allowedToAccess('Leave Category Tab.view')">Actions</th>
                         </thead>
                         <tbody>
                             <ng-container *ngIf="(publishedddata).length; else noResults">
@@ -144,7 +144,7 @@
                                             class="form-control input-content div-color-input" readonly disabled></td>
                                     <td class="center">{{details.validity}}</td>
                                     <td class="center">{{details.status}}</td>
-                                    <td class="text-center">
+                                    <td class="text-center" *ngIf="rbac.allowedToAccess('Leave Category Tab.view')">
                                         <a class="nav-link" data-bs-toggle="dropdown" style="cursor: pointer;">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </a>
@@ -156,7 +156,7 @@
                                                     <span class="me-4"><i
                                                             class="bi bi-pencil-fill pe-2"></i>Update</span>
                                                 </a>
-                                                <div class="text-center">
+                                                <div class="text-center" *ngIf="rbac.allowedToAccess('Leave Category Tab.view')">
                                                     <a data-bs-toggle="modal" data-bs-target="#updateprojectt"
                                                         (click)="viewLeavecategory()" (click)="onClick(details)"
                                                         (click)="selectDetails = details"

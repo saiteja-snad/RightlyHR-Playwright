@@ -4,15 +4,18 @@ import { Router, RouterModule } from '@angular/router';
 import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { SettingsPersonalTabsComponent } from "../../../shared/settings-tabs/settings-personal-tabs/settings-personal-tabs.component";
 import { SettingsJobTabsComponent } from "../../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component";
-import { ManageShiftsTabsComponent } from "../../../shared/manage-shifts-tabs/manage-shifts-tabs.component";
-import { ManageHolidaysTabsComponent } from "../../../shared/manage-holidays-tabs/manage-holidays-tabs.component";
-import { ManagePoliciesTabsComponent } from "../../../shared/manage-policies-tabs/manage-policies-tabs.component";
 import { SettingsExpenesConfigurtionsTabsComponent } from "../../../shared/settings-expenes-configurtions-tabs/settings-expenes-configurtions-tabs.component";
 import { ManageWeekendsTabsComponent } from "../../../shared/settings-tabs/manage-weekends-tabs/manage-weekends-tabs.component";
 import { ManageDstTabsComponent } from "../../../shared/settings-tabs/manage-dst-tabs/manage-dst-tabs.component";
+import { SettingsManageShitsTabsComponent } from "../../../shared/settings-tabs/settings-manage-shits-tabs/settings-manage-shits-tabs.component";
+import { SettingsManageHolidaysTabsComponent } from "../../../shared/settings-tabs/settings-manage-holidays-tabs/settings-manage-holidays-tabs.component";
+import { SettingsManagePoliciesTabsComponent } from "../../../shared/settings-tabs/settings-manage-policies-tabs/settings-manage-policies-tabs.component";
+
 @Component({
   selector: 'app-employee-fields-layout',
-  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent, ManageShiftsTabsComponent, ManageHolidaysTabsComponent, ManagePoliciesTabsComponent, SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent],
+  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent, 
+    SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent, SettingsManageShitsTabsComponent, 
+    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })

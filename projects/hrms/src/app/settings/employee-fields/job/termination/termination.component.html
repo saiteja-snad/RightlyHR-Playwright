@@ -25,7 +25,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Termination Reason.view')) {}
                 @for (termination of terminationDetails; track $index) {
                 <tr>
                     <td class="w-75">{{ termination.reason}}</td>

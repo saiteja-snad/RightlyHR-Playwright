@@ -41,7 +41,7 @@ constructor(
   ngOnInit(): void {
     this.saluationForm = this.fb.group({
      
-      saluation: ['', [Validators.required]]
+      saluation: ['', [Validators.required,Validators.pattern(/^(?! )[A-Za-z. ]+$/)]]
       });
       this.updateForm = this.fb.group({
         titlename: ['', [Validators.required]] 

@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Asset Vendor Details'|translate}}</span></div>
         <div class="custom-add-btn"  (click)="openModal(addassetevendor)"
-           >
+           *ngIf="rbac.allowedToAccess('Vendor Details.create')">
             <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
         </div>
     </div>
@@ -19,7 +19,7 @@
                         <th>Status </th>
                         <th>Email Address</th>
                         <th>Address </th>
-                        <th class="text-center">Action(s) </th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Vendor Details.update')">Action(s) </th>
 
                     </tr>
                 </thead>
@@ -33,7 +33,7 @@
                             <td>{{ asset.status }}</td>
                             <td>{{ asset.emailaddress }}</td>
                             <td>{{ asset.address }}</td>
-                            <td class="text-center">
+                            <td class="text-center" *ngIf="rbac.allowedToAccess('Vendor Details.update')">
                                 <div class="dropdown-container">
                                     <div class="dropdown">
 

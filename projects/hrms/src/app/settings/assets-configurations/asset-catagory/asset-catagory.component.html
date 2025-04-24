@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <!-- Add Input-->
     <div class="mb-4">
-        <form [formGroup]="assetCategorydata" (ngSubmit)="postasset(assetCategorydata)">
+        <form [formGroup]="assetCategorydata" (ngSubmit)="postasset(assetCategorydata)" *ngIf="rbac.allowedToAccess('Asset Catagory.create')">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter asset Category"
                     aria-label="role" aria-describedby="role" formControlName="assetcaassetCategory">
@@ -24,22 +24,22 @@
         <table class="w-100">
             <thead>
                 <th>Asset Category</th>
-                <th>Actions</th>
+                <th *ngIf="rbac.allowedToAccess('Asset Catagory.update') || rbac.allowedToAccess('Asset Catagory.delete')">Actions</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="((assetCategorys | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let asset of assetCategorys | async">
                         <td>{{asset.name}}</td>
-                        <td class="text-center">
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('Asset Catagory.update') || rbac.allowedToAccess('Asset Catagory.delete')">
                             <div class="d-flex gap-4">
 
-                                <div>
+                                <div *ngIf="rbac.allowedToAccess('Asset Catagory.update')">
                                     <a (click)="openupdate(updateassetcatgey, asset)"><img src="/settings-icon/edit.png"
                                             alt="edit icon" class="settings-common-icon">
                                     </a>
                                 </div>
 
-                                <div>
+                                <div *ngIf="rbac.allowedToAccess('Asset Catagory.delete')">
                                     <a (click)="opendelete(deleteconformation,asset)"><img
                                             src="/settings-icon/trash-2.png" alt="edit icon"
                                             class="settings-common-icon"></a>

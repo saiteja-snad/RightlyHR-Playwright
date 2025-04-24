@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-pending-holidays',
@@ -17,7 +18,7 @@ export class PendingHolidaysComponent {
   subscription!: Subscription
   allHolidays = [] as any;
 
-  constructor(public router: Router, private http: HttpService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit() {
     this.getAllHolidays();

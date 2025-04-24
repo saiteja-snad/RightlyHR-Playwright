@@ -42,6 +42,7 @@ export class AddressInfoComponent {
     this.initializeForm();
     this.getEmployeeId();
     this.addressForm.disable();
+    this.permanentAddresschanges();
 
 
   }
@@ -262,8 +263,20 @@ export class AddressInfoComponent {
       });
     }
   }
+permanentAddresschanges(){
+  this.addressForm.get('permanentAddressLine1')?.valueChanges.subscribe(() => this.handleManualChange());
+  this.addressForm.get('permanentAddressLine2')?.valueChanges.subscribe(() => this.handleManualChange());
+  this.addressForm.get('permanentCity')?.valueChanges.subscribe(() => this.handleManualChange());
+  this.addressForm.get('permanentState')?.valueChanges.subscribe(() => this.handleManualChange());
+  this.addressForm.get('permanentCountry')?.valueChanges.subscribe(() => this.handleManualChange());
+  this.addressForm.get('permanentZipCode')?.valueChanges.subscribe(() => this.handleManualChange());
+}
 
-
+handleManualChange(): void {
+  if (this.isChecked) {
+    this.isChecked = false;
+  }
+}
   showButtons(): void {
     this.buttons = !this.buttons;
     if (this.buttons) {

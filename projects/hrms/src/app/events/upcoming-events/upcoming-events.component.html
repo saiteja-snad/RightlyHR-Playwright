@@ -31,7 +31,7 @@
   <ng-template #maincontent>
     <div class="custom-events-main-content">
       <!--Todays Events-->
-      <div class="card events-section-card mb-4">
+      <div class="card events-section-card mb-4"  *ngIf="todaysEvents.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Today's Events</p>
         </div>
@@ -75,7 +75,7 @@
       </div>
 
       <!--Upcoming Events-->
-      <div class="card events-section-card mb-4">
+      <div class="card events-section-card mb-4" *ngIf="(getEventsData$ | async)?.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Custom Events</p>
         </div>
@@ -115,9 +115,15 @@
           </div>
         </div>
       </div>
+
+      <div class="no-data-wrapper"  *ngIf="(getEventsData$ | async)?.length === 0">
+        <app-no-data-found></app-no-data-found>
+      </div>
     </div>
   </ng-template>
 </div>
+
+
 
 <!--update Popup-->
 <ng-template #updateevets let-modal>

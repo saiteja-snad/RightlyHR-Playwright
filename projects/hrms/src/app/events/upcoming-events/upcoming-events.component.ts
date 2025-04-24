@@ -11,10 +11,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, DateformatPipe, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NoDataFoundComponent],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })
@@ -34,6 +35,7 @@ export class UpcomingEventsComponent {
   Employeeinfo: any;
   selectedImagePreview: any;
   selectedCustomEventField: any;
+  todaysEvents: any[] = [];
   constructor(private router: Router, private modalService: NgbModal, private http: HttpService, 
     private conformationPopup: OpenModalService, private fb: FormBuilder,public rbac: RbacService,) { }
   ngOnInit(): void {
@@ -86,7 +88,12 @@ export class UpcomingEventsComponent {
       .subscribe({
         next: (data) => {
           this.getEventsData$ = of(data);
-          this.CustomEventsCount$ = of((data as any[]).length);
+          this.CustomEventsCount$ = of((data as any[]).length)
+          const todayStr = new Date().toDateString();
+          this.todaysEvents = (data as any[]).filter((event: { eventDate: string | number | Date; }) =>
+            new Date(event.eventDate).toDateString() === todayStr
+          );
+
         },
         error: (err) => console.error('Error fetching events:', err)
       });

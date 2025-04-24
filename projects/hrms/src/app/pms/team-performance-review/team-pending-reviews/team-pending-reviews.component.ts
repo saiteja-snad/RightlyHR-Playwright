@@ -1,73 +1,137 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { Router } from '@angular/router';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-team-pending-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './team-pending-reviews.component.html',
   styleUrl: './team-pending-reviews.component.scss'
 })
-export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
-  dataload = false;
-  employeeId!: number;
-  searchQuery = '';
-
+export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
+  Status: any;
+  @ViewChild('createReviewCycle') createReviewCycle: any;
+  @ViewChild('confirmation') confirmation: any;
+  @ViewChild('success') success: any;
+  @ViewChild('error') error: any;
+  employeeId!: any;
   reviewCycles: any[] = [];
-  pendingReviews: any[] = [];
-  completedReviews: any[] = [];
-  filteredReviews: any[] = [];
-
+  searchQuery = '';
+  searchTerm = '';
   page = 1;
   pageSize = 10;
   collectionSize = 100;
   totalItems = 0;
-
-  destroy$: Subject<boolean> = new Subject();
+  activeTab = 'pending';
+  subscription!: Subscription;
+  dataload = false
+  completedReviews: any[] = [];
+  pendingReviews: any[] = [];
+  filteredReviews: any[] = [];
+  filteredCompletedReviews: any[] = []
+  constructor(
+    private readonly modalService: NgbModal,
+    private router: Router,
+    private http: HttpService) { }
 
   ngOnInit(): void {
-    const fusionuserString = localStorage.getItem('rightlyHrUser');
-    if (fusionuserString) {
-      const fusionuser = JSON.parse(fusionuserString);
-      this.employeeId = fusionuser.employeeId;
-    }
+    const fusionuser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.employeeId = fusionuser.employeeId;
     this.fetchReviewCycles();
   }
 
-  constructor(
-    private readonly modalService: NgbModal,
-    private readonly http: HttpService
-  ) { }
-
-  fetchReviewCycles(): void {
-    this.dataload = true;
-    this.http.getReviewCycles('reviewCycleHeader/getallperformances',
-      this.page, this.pageSize,
-      this.searchQuery,
-      this.employeeId.toString(),
-      'Team Manager,Reporting Manager,HR', 'Pending,Draft').pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data) => {
-          console.log(data)
+  fetchReviewCycles() {
+    this.dataload = true
+    this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery, this.employeeId, 'Team Manager,Reporting Manager,HR', 'Pending,Draft')
+      .subscribe({
+        next: (data: any) => {
           this.reviewCycles = data.items;
-          this.totalItems = data.totalCount || 0;
-
           this.pendingReviews = data.items;
-          console.log(this.pendingReviews)
           this.filteredReviews = this.pendingReviews;
           if (this.pendingReviews.length > 0) {
             this.collectionSize = data.totalCount;
           }
+          if (this.searchTerm) {
+            this.filterReviews();
+          }
         },
         error: (err) => {
-          console.error('Error fetching review cycles:', err);
+          this.dataload = false
         },
         complete: () => {
-          this.dataload = false;
-        },
+          this.dataload = false
+        }
       });
+  }
+
+
+  isPendingReview(status: string): boolean {
+    const pendingStatuses = [
+      'Employee Review Pending',
+      'Employee Assessment Pending',
+      'HR Review Pending',
+      'Reporting Manager Review Pending',
+      'Team Manager Review Pending',
+      'Draft'
+    ];
+    return pendingStatuses.includes(status);
+  }
+
+  filterReviews(): void {
+    const searchTextLower = this.searchQuery.toLowerCase();
+    if (this.activeTab === 'pending') {
+      if (this.searchQuery) {
+        this.filteredReviews = this.pendingReviews.filter(item => this.objectContainsText(item, searchTextLower));
+      } else {
+        this.filteredReviews = this.pendingReviews;
+      }
+      this.collectionSize = this.filteredReviews.length;
+    }
+  }
+
+  objectContainsText(obj: any, text: string): boolean {
+    if (typeof obj === 'string') {
+      return obj.toLowerCase().includes(text);
+    }
+    if (typeof obj === 'number') {
+      return obj.toString().toLowerCase().includes(text);
+    }
+    if (Array.isArray(obj)) {
+      return obj.some(item => this.objectContainsText(item, text));
+    }
+    if (typeof obj === 'object' && obj !== null) {
+      return Object.values(obj).some(val => this.objectContainsText(val, text));
+    }
+    return false;
+  }
+
+  onTabChange(tab: string): void {
+    this.activeTab = tab;
+    this.filterReviews();
+  }
+
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorType: string, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
+    console.log(currentStage)
+    const queryParams = {
+      reviewCycleItemId: reviewCycleItemId,
+      currentStage: currentStage,
+      assessorType: assessorType,
+      assessorItemId: assessorItemId,
+      reviewCycles: JSON.stringify(this.reviewCycles), 
+      reviewEmployeeId: reviewEmployeeId,
+      reviewcycleitemformresponseid: reviewcycleitemformresponseid,
+      formresponseid: formresponseid
+    };
+
+    localStorage.setItem('queryParams', JSON.stringify(queryParams));
+
+    this.router.navigate(['/pms/assessment-form']);
   }
 
   getDepartments(departments: any[]): string {
@@ -86,28 +150,68 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy{
     return sublocations?.map(subLoc => subLoc.subLocationName).join(', ') || '-';
   }
 
-  onPageChange(newPage: number): void {
-    this.page = newPage;
-    this.fetchReviewCycles();
-  }
-  onPageSizeChange(newPageSize: number) {
-    console.log('Page size changed to:', newPageSize);
-    console.log(this.page)
-    this.page = 1;
-    this.fetchReviewCycles();
+  openCreate() {
+    this.modalService.open(this.createReviewCycle, {
+      size: 'lg',
+      centered: true,
+    });
   }
 
-  onSearch(): void {
-    this.page = 1;
+  downloadPromotionletter(iteamid: any) {
+
+    this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+
+      next: (data: Blob) => {
+        console.log('Received byte data:', data);
+        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PerformancePromotion_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.Status = 'Promotion Letter Downloaded Successfully';
+        this.modalService.open(this.success, { centered: true });
+      },
+      error: (err) => {
+        this.Status = 'Failed to download letter';
+      },
+    });
+  }
+
+  downloadletter(iteamid: any) {
+
+    this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+
+      next: (data: Blob) => {
+        console.log('Received byte data:', data);
+        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PerformanceAppraisal_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.Status = 'Appraisal Letter Downloaded Successfully';
+        this.modalService.open(this.success, { centered: true });
+      },
+      error: (err) => {
+        this.Status = 'Failed to download letter';
+      },
+    });
   }
 
   closeModal() {
     this.modalService.dismissAll();
   }
 
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
-
 }

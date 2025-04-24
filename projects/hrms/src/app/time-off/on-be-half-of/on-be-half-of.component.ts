@@ -1,5 +1,4 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { OnBeHalfOfApprovalTabsComponent } from "../../shared/on-be-half-of-approval-tabs/on-be-half-of-approval-tabs.component";
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -14,10 +13,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { IJobdetails } from '../../Interfaces/job-model';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { OnBeHalfOfApprovalTabsComponent } from "../../shared/time-off-module-tabs/on-be-half-of-approval-tabs/on-be-half-of-approval-tabs.component";
 
 @Component({
   selector: 'app-on-be-half-of',
-  imports: [CommonModule, OnBeHalfOfApprovalTabsComponent, RouterModule, TranslateModule, Select, ReactiveFormsModule,],
+  imports: [CommonModule, RouterModule, TranslateModule, Select, ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss'
 })
@@ -54,7 +54,6 @@ export class OnBeHalfOfComponent {
   dateDifferenceedit: number = 0;
   maxDays: number = 0;
   Leavestaken: ILeavesTaken[] = [];
-  // timeoff = [] as ITimeoff[];
   leavetype = {} as Ileavesdatas;
   book: { [field: number]: number } = {};
   minDate!: string;
@@ -234,7 +233,6 @@ export class OnBeHalfOfComponent {
         this.employeeiddetails = data.filter((element: any) => element.employeeId != loggedInUser.employeeId)
           .map((employee: any) => ({
             ...employee,
-            // fullName: [  employee.employeeId ? employee.employeeId + ' - ' : '', employee.middleName, employee.lastName].filter(Boolean).join(' ')
             fullName: `${
               employee.employeeId ? employee.employeeId + ' - ' : ''
             }${employee.firstName} ${
@@ -263,7 +261,6 @@ export class OnBeHalfOfComponent {
       this.disablebuttonforemployeeid = false;
     }
   }
-
 
   private formatDatewithDate(date: Date): string | void {
     if (date) {
@@ -555,17 +552,10 @@ export class OnBeHalfOfComponent {
           // The employee is still on probation
           // Calculate the number of probation days
           let dateOfJoining = moment(this.leaveapplication.dateOfJoining);
-
           let startdate = moment(this.startDate);
-    
           let enddate = moment(this.endDate)
-       
           let Duration = this.leaveFormData.duration
-         
-          // console.log('Duration:',duration);
           let probationDaysDiff = startdate.diff(dateOfJoining, 'days');
-        
-
           // Divide by 30 and round down to the nearest 0.5 or whole number
           let months = 1;
           months += Math.floor(probationDaysDiff / 30);
@@ -675,8 +665,6 @@ export class OnBeHalfOfComponent {
     this.subscription = this.http.postdata(`LeaveBalance`, data).subscribe({
       next: (data: any) => {
         this.getCategoryDetails(data.empId);
-        // this.onleaveSelect(this.categoryId)
-        // this.Onclick(this.empiIdAftersubmission);
         this.getDataByLPID(data.empId);
       }
 
@@ -754,7 +742,7 @@ export class OnBeHalfOfComponent {
     while (currentDate <= end) {
       if (this.selectedleave && this.selectedleave.category) {
         if (this.selectedleave.category.excludeWeekends) {
-          if (this.orgweekend?.orgWeekendItems.some((item: any) => item.weekday === currentDate.format('dddd'))) {
+          if (this.orgweekend?.orgWeekendItems?.some((item: any) => item.weekday === currentDate.format('dddd'))) {
             diff -= 1;
           }
         }
@@ -763,20 +751,20 @@ export class OnBeHalfOfComponent {
           let filteredholidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => {
             return ele.isOptional != true
           })
-          if (filteredholidays.some((holiday: any) => moment(holiday.holidayDate).isSame(currentDate))) {
+          if (filteredholidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(currentDate))) {
             diff -= 1;
           }
         }
         else {
           diff -= 0;
         }
-        if (this.orgholidays?.orgHolidaysItems.some((holiday: any) => moment(holiday.holidayDate).isSame(startDate, 'day') && (holiday.isOptional === false || holiday.isOptional === null))) {
+        if (this.orgholidays?.orgHolidaysItems?.some((holiday: any) => moment(holiday.holidayDate).isSame(startDate, 'day') && (holiday.isOptional === false || holiday.isOptional === null))) {
           this.isNonOptionalHolidaySelected = true;
         } else {
           this.isNonOptionalHolidaySelected = false;
         }
         let nonOptionalHolidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => ele.isOptional === false || ele.isOptional == null);
-        if (nonOptionalHolidays.some((holiday: any) => moment(holiday.holidayDate).isSame(endDate, 'day'))) {
+        if (nonOptionalHolidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(endDate, 'day'))) {
           this.isHolidaySelectedEndate = true;
         } else {
           this.isHolidaySelectedEndate = false;
@@ -789,13 +777,13 @@ export class OnBeHalfOfComponent {
           for (let m = moment(startDate); m.diff(endDate, 'days') <= 0; m.add(1, 'days')) {
             dateRange.push(m.format('YYYY-MM-DD'));
           }
-          let isOptionalHolidayBetweenDates = dateRange.some(date => {
-            return !filteredholidays.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
+          let isOptionalHolidayBetweenDates = dateRange?.some(date => {
+            return !filteredholidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
           });
-          const isStartOptionalHoliday = this.orgholidays?.orgHolidaysItems.some((holiday: any) => {
+          const isStartOptionalHoliday = this.orgholidays?.orgHolidaysItems?.some((holiday: any) => {
             return moment(holiday.holidayDate).isSame(startDate, 'day') && holiday.isOptional === true;
           });
-          const isEndOptionalHoliday = this.orgholidays?.orgHolidaysItems.some((holiday: any) => {
+          const isEndOptionalHoliday = this.orgholidays?.orgHolidaysItems?.some((holiday: any) => {
             return moment(holiday.holidayDate).isSame(endDate, 'day') && holiday.isOptional === true;
           });
           if (isOptionalHolidayBetweenDates) {
@@ -939,7 +927,7 @@ export class OnBeHalfOfComponent {
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
     let captureHoliday: any;
-    const dayPresent = this.orgweekend.orgWeekendItems.some((holiday: any) => {
+    const dayPresent = this.orgweekend.orgWeekendItems?.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
         captureHoliday = holiday;
         return true;
@@ -1002,10 +990,10 @@ export class OnBeHalfOfComponent {
         element.holidayDate = currentDate.format('YYYY-MM-DD');
         // }
       });
-      const isDatePresent = this.orgholidays.orgHolidaysItems.some(
+      const isDatePresent = this.orgholidays.orgHolidaysItems?.some(
         (holiday: any) => holiday.holidayDate === selectedDate.format('YYYY-MM-DD')
       );
-      const isDateenddatePresent = this.orgholidays.orgHolidaysItems.some(
+      const isDateenddatePresent = this.orgholidays.orgHolidaysItems?.some(
         (holiday: any) => holiday.holidayDate === selectedendDate.format('YYYY-MM-DD')
       );
       let dateRange = [];
@@ -1013,8 +1001,8 @@ export class OnBeHalfOfComponent {
         dateRange.push(m.format('YYYY-MM-DD'));
       }
       // Check if any date in the range is NOT an optional holiday (i.e., a working day)
-      let isWorkingDayBetweenDates = dateRange.some(date => {
-        return this.orgholidays.orgHolidaysItems.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
+      let isWorkingDayBetweenDates = dateRange?.some(date => {
+        return this.orgholidays.orgHolidaysItems?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
     }
     if (this.orgholidays?.orgHolidaysItems && this.selectedleave?.category?.isOptionalHoliday) {
@@ -1024,18 +1012,18 @@ export class OnBeHalfOfComponent {
           element.holidayDate = currentDate.format('YYYY-MM-DD');
         }
       });
-      const isDatePresent = filteredData.some(
+      const isDatePresent = filteredData?.some(
         (holiday: any) => holiday.holidayDate === selectedDate.format('YYYY-MM-DD')
       );
-      const isDateenddatePresent = filteredData.some(
+      const isDateenddatePresent = filteredData?.some(
         (holiday: any) => holiday.holidayDate === selectedendDate.format('YYYY-MM-DD')
       );
       let dateRange = [];
       for (let m = moment(selectedDate); m.diff(selectedendDate, 'days') <= 0; m.add(1, 'days')) {
         dateRange.push(m.format('YYYY-MM-DD'));
       }
-      let isWorkingDayBetweenDates = dateRange.some(date => {
-        return filteredData.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
+      let isWorkingDayBetweenDates = dateRange?.some(date => {
+        return filteredData?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
     }
   }
@@ -1073,7 +1061,7 @@ export class OnBeHalfOfComponent {
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
     let captureHoliday: any;
-    const dayPresent = this.orgweekend.orgWeekendItems.some((holiday: any) => {
+    const dayPresent = this.orgweekend.orgWeekendItems?.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
         captureHoliday = holiday;
         return true;
@@ -1131,4 +1119,5 @@ export class OnBeHalfOfComponent {
       this.issEndDategreater = true;
     }
   }
+  
 }

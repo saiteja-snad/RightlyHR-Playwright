@@ -1,85 +1,79 @@
 <div class="custom-main-component-container">
-
-    <div class="component-header my-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <span>Review</span>
-            </div>
-
-        </div>
+    <div class="my-3">
+        <app-detailed-step-progressbar />
     </div>
 
-    <!-- show this when no details -->
-    <div class="hidescrool">
-        <div>
-            <div class="accordion" id="accordionExample">
-                <div class="accordion-item border">
+    <div class="component-data-content">
+        <div class="component-header mb-4">Review</div>
+
+        <!-- show this when no details -->
+        <div class="custom-main-sub-content">
+            <div class="accordion mb-5">
+                <!--Personal Details-->
+                <div class="accordion-item mb-3">
                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                            aria-expanded="true" aria-controls="collapseOne">
                             Personal Details
                         </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            <div>
-                                <div >
-                                    <table style="width: 100%;border: 1px solid rgb(207, 207, 207);">
-                                        <thead>
-                                            <tr>
-                                                <th class="thh bg-white" scope="col">First Name</th>
-                                                <td class="tdd bg-white">{{empDetails?.firstName}}</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th class="thh tabbg" scope="col">Middle Name</th>
-                                                <td class="tdd tabbg">{{empDetails?.middleName ?? 'N/A'}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="thh bg-white" scope="col">Last Name</th>
-                                                <td class="tdd bg-white">{{empDetails?.lastName ?? 'N/A'}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="thh tabbg" scope="col">Personal Mail ID</th>
-                                                <td class="tdd tabbg">{{empDetails?.emailaddress ?? 'N/A'}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="thh bg-white" scope="col">Salutation</th>
-                                                <td class="tdd bg-white">{{empDetails?.title ?? 'N/A'}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="thh bg-white" scope="col">Mobile Number With Country</th>
-                                                <td class="tdd bg-white">{{empDetails?.mobilePhoneCountryCode}} </td>
-                                            </tr>
-                                            <tr>
-                                                <th class="thh bg-white" scope="col">Date Of Birth</th>
-                                                <td class="tdd bg-white">{{empDetails?.dob | dateFormat }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="thh tabbg" scope="col">Blood Group</th>
-                                                <td class="tdd tabbg">{{empDetails?.bloodGroup ?? 'N/A'}}</td>
-                                            </tr>
-                                            <tr *ngFor="let aplication of appliccationData">
-                                                <th class="thh bg-white" scope="col">Location</th>
-                                                <td class="tdd bg-white">{{aplication?.lopcation ?? 'N/A'}}</td>
-                                            </tr>
-                                            <tr *ngFor="let aplication of appliccationData">
-                                                <th class="thh tabbg" scope="col">Sub Location</th>
-                                                <td class="tdd tabbg">{{aplication?.subLocation ?? 'N/A'}}</td>
-                                            </tr>
-                                            <tr *ngFor="let aplication of appliccationData">
-                                                <th class="thh bg-white" scope="col">Designation</th>
-                                                <td class="tdd bg-white">{{aplication?.jobRole ?? 'N/A'}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                        <div class="accordion-body d-flex justify-content-center">
+                            <div class="custom-table-content w-75">
+                                <table class="w-100 personal-details-table">
+                                    <tr>
+                                        <td>First Name</td>
+                                        <td>{{empDetails?.firstName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Middle Name</td>
+                                        <td>{{empDetails?.middleName ?? 'N/A'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Last Name</td>
+                                        <td>{{empDetails?.lastName ?? 'N/A'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Personal Mail ID</td>
+                                        <td>{{empDetails?.emailaddress ?? 'N/A'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Salutation</td>
+                                        <td>{{empDetails?.title ?? 'N/A'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mobile Number Witd Country</td>
+                                        <td>{{empDetails?.mobilePhoneCountryCode}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Date Of Birtd</td>
+                                        <td>{{empDetails?.dob | dateFormat }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Blood Group</td>
+                                        <td>{{empDetails?.bloodGroup ?? 'N/A'}}</td>
+                                    </tr>
+                                    <tr *ngFor="let aplication of appliccationData">
+                                        <td>Location</td>
+                                        <td>{{aplication?.lopcation ?? 'N/A'}}</td>
+                                    </tr>
+                                    <tr *ngFor="let aplication of appliccationData">
+                                        <td>Sub Location</td>
+                                        <td>{{aplication?.subLocation ?? 'N/A'}}</td>
+                                    </tr>
+                                    <tr *ngFor="let aplication of appliccationData">
+                                        <td>Designation</td>
+                                        <td>{{aplication?.jobRole ?? 'N/A'}}</td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="accordion-item border mt-3" *ngIf="eduDetails?.length >0">
+
+                <!--Education Details-->
+                <div class="accordion-item mb-3" *ngIf="eduDetails?.length >0">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -87,9 +81,9 @@
                         </button>
                     </h2>
                     <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
+                        <div class="accordion-body p-4">
                             <div class="custom-table-content">
-                                <table class="mt-2" style="width: 100%;">
+                                <table class="w-100">
                                     <thead>
                                         <tr>
                                             <th scope="col">EDUCATION</th>
@@ -110,15 +104,13 @@
                                             <td>{{ed.degreeEndDate | dateFormat}}</td>
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
-                                                <a class="text-view"
-                                                   
-                                                    (click)="onViewClick(ed.attachment);openModal(myModall)"><i
+                                                <a class="text-view" (click)="onViewClick(ed.attachment);openModal(myModall)"><i
                                                         class="bi bi-paperclip"></i>View</a>
                                                 <ng-template #downloadView>
                                                     <button class="view-btn"
                                                         (click)="onSelectDownload(ed.attachment)">Download</button>
                                                 </ng-template>
-
+        
                                             </td>
                                         </tr>
                                     </tbody>
@@ -127,7 +119,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="accordion-item border mt-3" *ngIf="experiance?.length>0">
+
+                <!--Experience Details-->
+                <div class="accordion-item mb-3" *ngIf="experiance?.length>0">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
@@ -135,9 +129,9 @@
                         </button>
                     </h2>
                     <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
+                        <div class="accordion-body p-4">
                             <div class="custom-table-content">
-                                <table class=" mt-2" style="width: 100%;">
+                                <table class="w-100">
                                     <thead>
                                         <tr>
                                             <th scope="col">COMPANY NAME</th>
@@ -154,67 +148,59 @@
                                             <td> {{exp.employmentType}}</td>
                                             <td>{{exp.jobTitle }}</td>
                                             <td>{{exp.fromDate | dateFormat}}</td>
-                                            <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate 
-                                                    | dateFormat}}</span>
+                                            <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate | dateFormat}}</span>
                                                 <ng-template #todate>
                                                     <div class="centerhypen">-</div>
                                                 </ng-template>
                                             </td>
-                                            <td>
-                                                {{exp.attachment ? "" : ''}}
-                                                <a class="view-text"
-                                                  type="button"  *ngIf="exp.attachment.endsWith('jpg')||exp.attachment.toLowerCase().endsWith('jpeg')||exp.attachment.toLowerCase().endsWith('png') ;else downloadView"
+                                            <td>{{exp.attachment ? "" : ''}}
+                                                <a class="view-text" type="button"
+                                                    *ngIf="exp.attachment.endsWith('jpg')||exp.attachment.toLowerCase().endsWith('jpeg')||exp.attachment.toLowerCase().endsWith('png') ;else downloadView"
                                                     (click)="onViewClick(exp.attachment);openModal(myModall)"><i
                                                         class="bi bi-paperclip">View</i></a>
                                                 <ng-template #downloadView>
-                                                    <div *ngIf="exp.attachment =='' ;else documentdownload"
-                                                        class="centerhypen"> -</div>
+                                                    <div *ngIf="exp.attachment =='' ;else documentdownload" class="centerhypen">
+                                                        -</div>
                                                     <ng-template #documentdownload>
-                                                        <a type="button" (click)="onSelectDownload(exp.attachment)"> <i
-                                                                class="bi bi-download  me-1"></i>Download</a>
+                                                        <a type="button" (click)="onSelectDownload(exp.attachment)">
+                                                            <i class="bi bi-download  me-1"></i>Download</a>
                                                     </ng-template>
                                                     <!-- <a type="button" style="color: blue" (click)="onSelectDownload(exp.attachment)"> <i class="bi bi-download me-1"></i>Download</a> -->
                                                 </ng-template>
-
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="form-check pt-5 ms-3">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" [(ngModel)]="isCheckedoffer">
-            <label class="form-check-label custom-label" for="flexCheckDefau">
-                Offer Letter Accepted
-            </label>
-
-        </div>
-    </div>
-
-    <div class="footer-btn-content d-flex justify-content-between pt-3">
-        <button class="custom-btn btn-secondary rounded-pill px-3" (click)="navigatePrevious()">
-            Experience Details
-        </button>
-        <div>
-            <div *ngIf="loadingcircle" class="spinner-border text-primary me-3" role="status">
-                <span class="visually-hidden">Loading...</span>
+        
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" [(ngModel)]="isCheckedoffer">
+                <label class="form-check-label custom-label" for="flexCheckDefau">Offer Letter Accepted</label>
             </div>
-            <button *ngIf="!isCheckedoffer " class="custom-btn btn-primary rounded-pill" data-bs-toggle="modal"
-                (click)="openconformatioModal(submitornot)">
-                Submit
+        </div>
+
+        <div class="footer-btn-content d-flex justify-content-between pt-4">
+            <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">
+                Experience Details
             </button>
-            <button *ngIf="isCheckedoffer " [disabled]="this.prosempdata.substatus==='Offer letter Accepted'"
-                class="custom-btn btn-primary rounded-pill 5 " (click)="openconformatioModal(submitornot)">
-                Submit
-            </button>
+            <div>
+                <div *ngIf="loadingcircle" class="spinner-border text-primary me-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <button *ngIf="!isCheckedoffer" class="custom-btn btn-primary px-5" (click)="openconformatioModal(submitornot)">
+                    Submit
+                </button>
+                <button *ngIf="isCheckedoffer" [disabled]="this.prosempdata.substatus === 'Offer letter Accepted'" class="custom-btn btn-primary px-5"
+                 (click)="openconformatioModal(submitornot)">
+                    Submit
+                </button>
+            </div>
         </div>
     </div>
-
 </div>
 
 <!--Submit Modal -->
@@ -224,9 +210,9 @@
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
             <p class="confirmation-text mb-4">Are you sure you want to submit?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="submitReviw()">Yes</button>
+        <div class="d-flex justify-content-center gap-5 pt-3">
+            <button class="custom-btn btn-secondary w-100" (click)="modal.dismiss()">No</button>
+            <button class="custom-btn btn-primary w-100" (click)="submitReviw()">yes</button>
         </div>
     </div>
 </ng-template>

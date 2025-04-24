@@ -3,8 +3,7 @@ import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
@@ -13,15 +12,15 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
 import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
-import { IaddressemployeeDetails, IAuthority } from '../../Interfaces/letters-model';
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
-
+import { IAuthority } from '../../Interfaces/letters-model';
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-address-proof-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })
+
 export class AddressProofLetterComponent {
   addressdata: { name: string, value: string }[] = [
     { name: 'Current Address', value: 'C' },
@@ -37,21 +36,18 @@ export class AddressProofLetterComponent {
     { id: 3, name: 'HR Executive' },
     { id: 4, name: 'Data Analyst' }
   ];
-
   location: { id: number; name: string }[] = [
     { id: 1, name: 'New York' },
     { id: 2, name: 'Los Angeles' },
     { id: 3, name: 'Chicago' },
     { id: 4, name: 'Houston' }
   ];
-
   sublocation: { id: number; name: string; locationId: number }[] = [
     { id: 1, name: 'Brooklyn', locationId: 1 },
     { id: 2, name: 'Downtown', locationId: 1 },
     { id: 3, name: 'Hollywood', locationId: 2 },
     { id: 4, name: 'South Side', locationId: 3 }
   ];
-
   employees = [
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
@@ -93,7 +89,6 @@ export class AddressProofLetterComponent {
     private http: HttpService,
     private httpclient: HttpClient,
     private router: Router,
-    private authService: AuthService,
     // private _userAcessService:UserAccessService,
     private elementRef: ElementRef,
     config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder, 

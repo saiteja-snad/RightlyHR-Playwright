@@ -1,18 +1,13 @@
-.accepted-btn {
-    background-color: #0AAD01;
-    color: #FFFFFF;
-    border: 1px solid #0AAD01;
-}
-
-.rejected-btn {
-    background-color: #E3544C;
-    color: #FFFFFF;
-    border: 1px solid #E3544C;
+.custom-main-sub-content {
+    width: 100%;
+    height: calc(100dvh - 22rem);
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .logo-image {
-    width: 16rem;
-    height: 4.8rem;
+    width: 12rem;
+    height: 3.5rem;
 }
 
 .list-style-none {
@@ -27,16 +22,13 @@
     margin-right: 8px;
 }
 
-table,
-th,
-td {
+table,th,td {
     border: 1px solid #474747;
     border-collapse: collapse;
     color: #000;
 }
 
-th,
-td {
+th,td {
     padding: 6px 20px;
 }
 
@@ -46,9 +38,7 @@ th {
 }
 
 .salary-details-table {
-
-    tr:nth-child(4),
-    tr:nth-child(9) {
+    tr:nth-child(4),tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -57,11 +47,11 @@ th {
     }
 }
 
-.note {
+.note{
     font-weight: 600;
 }
 
-.count-text {
+.count-text{
     font-size: 14px;
     font-weight: 400;
 }

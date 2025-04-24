@@ -13,6 +13,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { UpdateIncrementComponent } from './update-increment/update-increment.component';
 import { ViewIncrementComponent } from './view-increment/view-increment.component';
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-increment-percentage',
@@ -24,11 +25,13 @@ import { ViewIncrementComponent } from './view-increment/view-increment.componen
     PaginatorModule,
     DropdownModule,
     NoDataFoundComponent,
+    DataLoaderContentComponent,
   ],
   templateUrl: './increment-percentage.component.html',
   styleUrl: './increment-percentage.component.scss',
 })
 export class IncrementPercentageComponent implements OnInit, OnDestroy {
+  dataload = false;
   totalRecords = 100;
   first: any = 1;
   rows: any = 10;
@@ -84,7 +87,6 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
   }
   openDelete(content: any, id: any) {
     this.deleteId = id;
-    console.log(this.deleteId);
     this.modalService.open(content, { centered: true });
   }
   editDetails(data: any) {
@@ -96,14 +98,16 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.updateData = data;
   }
   viewDetails(data: any) {
-    this.modalService.open(ViewIncrementComponent, {
+    const modalRef = this.modalService.open(ViewIncrementComponent, {
       centered: true,
       backdrop: 'static',
       size: 'lg',
     });
+    modalRef.componentInstance.updateData = data;
   }
   //function to get the globalpermissions details
   getAllIncrementalPercentagedata(): void {
+    this.dataload = true;
     this.subscription = this.http
       .getReviewCyclesteam(
         `IncrementalPercentage`,
@@ -113,14 +117,15 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.IncementalDetailsget = response?.items;
           this.totalRecords = response?.totalCount;
         },
         error: (err: any) => {
           console.log('errors', err);
         },
-        complete: () => {},
+        complete: () => {
+          this.dataload = false;
+        },
       });
   }
   getNamesAsString(array: any, type: string): string {
@@ -148,14 +153,13 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
       .postdata(`IncrementalPercentage/delete?id=${this.deleteId}`, payLoad)
       .subscribe({
         next: (response: any) => {
-          //console.log(response)
           this.conformationPopup.openSuccessModal(
             'Incremental Percentage Deleted Sucessfully'
           );
           this.getAllIncrementalPercentagedata();
         },
         error: (err: any) => {
-          //console.log(err)
+          console.log(err);
 
           if (err.status === 404) {
             this.conformationPopup.openErrorModal(

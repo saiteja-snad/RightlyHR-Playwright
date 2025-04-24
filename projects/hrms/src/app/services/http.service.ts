@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, catchError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment.dev';
 import { ApprovalStatusCount } from '../Interfaces/timoff-model';
 
@@ -48,6 +48,7 @@ export class HttpService {
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
+  reviewCycleTriggerSignal = signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -61,6 +62,13 @@ export class HttpService {
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
 
+   eventAddedSource = new Subject<void>();
+  eventAdded$ = this.eventAddedSource.asObservable();
+
+  notifyEventAdded() {
+    this.eventAddedSource.next();
+  }
+
  private triggerSignal = signal(false);
  readonly trigger = this.triggerSignal;
  triggerActionSignal() {
@@ -73,6 +81,7 @@ resetTriggerSignal() {
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }
+  
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
     //function to update the desk Updatelocation
@@ -182,6 +191,12 @@ resetTriggerSignal() {
     );
   }
 
+  DownloadDataWithQuerydata(endpoint: string, params: any): Observable<any> {
+    return this.http.post(endpoint, params, {
+      observe: 'response',
+      responseType: 'blob'
+    });
+  }
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);
   }

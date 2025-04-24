@@ -1,73 +1,151 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbPaginationModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { PaginatorModule } from 'primeng/paginator';
+import { Router } from '@angular/router';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-team-complete-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, PaginatorModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './team-complete-reviews.component.html',
   styleUrl: './team-complete-reviews.component.scss'
 })
-export class TeamCompleteReviewsComponent {
-  dataload=false;
-  employeeId!:number;
-  searchQuery = '';
+export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
+  Status: any;
 
+  employeeId!: any;
   reviewCycles: any[] = [];
-  pendingReviews: any[] = []; 
-  completedReviews: any[] = [];
-  filteredReviews: any[] = [];
-
+  searchQuery = '';
+  searchTerm = '';
   page = 1;
   pageSize = 10;
-  collectionSize=100;
+  collectionSize = 100;
   totalItems = 0;
+  activeTab = 'completed';
+  subscription!: Subscription;
+  dataload = false
+  completedReviews: any[] = [];
+  pendingReviews: any[] = [];
+  filteredReviews: any[] = [];
+  filteredCompletedReviews: any[] = []
 
-  destroy$: Subject<boolean> = new Subject();
+  @ViewChild('createReviewCycle') createReviewCycle: any;
+  @ViewChild('confirmation') confirmation: any;
+  @ViewChild('success') success: any;
+  @ViewChild('error') error: any;
   
+  constructor(
+    private readonly modalService: NgbModal,
+    private router: Router,
+    private http: HttpService) { }
+
   ngOnInit(): void {
-    const fusionuserString = localStorage.getItem('rightlyHrUser');
-    if (fusionuserString) {
-      const fusionuser = JSON.parse(fusionuserString);
-      this.employeeId = fusionuser.employeeId;
-    }
+    const fusionuser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.employeeId = fusionuser.employeeId;
     this.fetchReviewCycles();
   }
 
-  constructor(
-    private readonly modalService: NgbModal,
-    private readonly http: HttpService
-  ) { }
-  
-  fetchReviewCycles(): void {
-    this.dataload=true;
-    this.http.getReviewCycles('reviewCycleHeader/getallperformances', 
-      this.page, this.pageSize, 
-      this.searchQuery, 
-      this.employeeId.toString(), 
-      'Team Manager,Reporting Manager,HR', 'Submitted,Re-Submitted' ).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data) => {
-          console.log(data)
+  fetchReviewCycles() {
+    this.dataload = true
+    this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery, this.employeeId, 'Team Manager,Reporting Manager,HR', 'Submitted,Re-Submitted')
+      .subscribe({
+        next: (data: any) => {
           this.reviewCycles = data.items;
-          this.totalItems = data.totalCount || 0;
-          
-          this.pendingReviews =  data.items;
-          console.log(this.pendingReviews)
-          this.filteredReviews = this.pendingReviews;
-          if(this.pendingReviews.length>0){
+          this.completedReviews = data.items;
+          this.filteredCompletedReviews = this.completedReviews;
+          if (this.completedReviews.length > 0) {
             this.collectionSize = data.totalCount;
           }
+          if (this.searchTerm) {
+            this.filterReviews();
+          }
+          this.dataload = false
         },
         error: (err) => {
-          console.error('Error fetching review cycles:', err);
+          this.dataload = false;
         },
         complete: () => {
-          this.dataload=false;
-        },
+          this.dataload = false
+        }
       });
+  }
+
+  isPendingReview(status: string): boolean {
+    const pendingStatuses = [
+      'Employee Review Pending',
+      'Employee Assessment Pending',
+      'HR Review Pending',
+      'Reporting Manager Review Pending',
+      'Team Manager Review Pending',
+      'Draft'
+    ];
+    return pendingStatuses.includes(status);
+  }
+
+  filterReviews(): void {
+    const searchTextLower = this.searchTerm.toLowerCase();
+    if (this.activeTab === 'pending') {
+      if (this.searchTerm) {
+        this.filteredReviews = this.pendingReviews.filter(item => this.objectContainsText(item, searchTextLower));
+      } else {
+        this.filteredReviews = this.pendingReviews;
+      }
+      this.collectionSize = this.filteredReviews.length;
+    } else if (this.activeTab === 'completed') {
+      if (this.searchTerm) {
+        this.filteredCompletedReviews = this.completedReviews.filter(item => this.objectContainsText(item, searchTextLower));
+      } else {
+        this.filteredCompletedReviews = this.completedReviews;
+      }
+      this.collectionSize = this.filteredCompletedReviews.length;
+    }
+  }
+
+  objectContainsText(obj: any, text: string): boolean {
+    if (typeof obj === 'string') {
+      return obj.toLowerCase().includes(text);
+    }
+    if (typeof obj === 'number') {
+      return obj.toString().toLowerCase().includes(text);
+    }
+    if (Array.isArray(obj)) {
+      return obj.some(item => this.objectContainsText(item, text));
+    }
+    if (typeof obj === 'object' && obj !== null) {
+      return Object.values(obj).some(val => this.objectContainsText(val, text));
+    }
+    return false;
+  }
+
+  onTabChange(tab: string): void {
+    this.activeTab = tab;
+    this.filterReviews();
+  }
+
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorType: string, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
+    console.log(currentStage)
+    const queryParams = {
+      reviewCycleItemId: reviewCycleItemId,
+      currentStage: currentStage,
+      assessorType: assessorType,
+      assessorItemId: assessorItemId,
+      reviewCycles: JSON.stringify(this.reviewCycles), // Ensure this.reviewCycles is defined
+      reviewEmployeeId: reviewEmployeeId,
+      reviewcycleitemformresponseid: reviewcycleitemformresponseid,
+      formresponseid: formresponseid
+    };
+
+    localStorage.setItem('queryParams', JSON.stringify(queryParams));
+
+    // Navigate to the assessment route
+    this.router.navigate(['/pms/assessment-form']);
   }
 
   getDepartments(departments: any[]): string {
@@ -86,28 +164,73 @@ export class TeamCompleteReviewsComponent {
     return sublocations?.map(subLoc => subLoc.subLocationName).join(', ') || '-';
   }
 
-  onPageChange(newPage: number): void {
-    this.page = newPage;
-    this.fetchReviewCycles();
-  }
-  onPageSizeChange(newPageSize: number) {
-    console.log('Page size changed to:', newPageSize);
-    console.log(this.page)
-    this.page=1;
-    this.fetchReviewCycles();
+  openCreate() {
+    this.modalService.open(this.createReviewCycle, {
+      size: 'lg',
+      centered: true,
+    });
   }
 
-  onSearch(): void {
-    this.page = 1; 
+  downloadPromotionletter(iteamid: any) {
+    console.log(iteamid);
+
+    this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+
+      next: (data: Blob) => {
+        console.log('Received byte data:', data);
+        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PerformancePromotion_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.Status = 'Promotion Letter Downloaded Successfully';
+        this.modalService.open(this.success, { centered: true });
+      },
+      error: (err) => {
+        console.error('Error downloading letter:', err);
+        this.Status = 'Failed to download letter';
+      },
+    });
   }
 
-  closeModal(){
+  downloadletter(iteamid: any) {
+    console.log(iteamid);
+
+    this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+
+      next: (data: Blob) => {
+        console.log('Received byte data:', data);
+        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PerformanceAppraisal_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.Status = 'Appraisal Letter Downloaded Successfully';
+        this.modalService.open(this.success, { centered: true });
+      },
+      error: (err) => {
+        console.error('Error downloading letter:', err);
+        this.Status = 'Failed to download letter';
+      },
+    });
+  }
+
+  closeModal() {
     this.modalService.dismissAll();
   }
 
-  ngOnDestroy() {
-   this.destroy$.next(true);
-   this.destroy$.unsubscribe();
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
 }

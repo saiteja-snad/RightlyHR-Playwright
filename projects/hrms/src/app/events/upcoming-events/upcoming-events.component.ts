@@ -40,6 +40,10 @@ export class UpcomingEventsComponent {
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.getCustomEvents()
     this.initiateForm()
+
+    this.http.eventAdded$.subscribe(() => {
+      this.getCustomEvents(); 
+    });
   }
 
 
@@ -48,7 +52,7 @@ export class UpcomingEventsComponent {
       eventDate: [null, [Validators.required, this.futureDateValidator()]],
       eventTitle: [null, [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
       eventMessage: [null, [Validators.required, Validators.maxLength(250)]],
-      imageUrl: ['']
+      imageUrl: [null]
     });
   }
 
@@ -114,44 +118,27 @@ export class UpcomingEventsComponent {
     this.selectedImagePreview = eventsdata.attachmentUrl || null;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
-
-  onFileSelected(event: any) {
+  onFileSelected(event: any): void {
     const selectedFile: File = event.target.files[0];
+    const fileType = selectedFile?.type;
+    const maxSize = 2 * 1024 * 1024; // 2MB
   
-    if (selectedFile) {
-      const fileType = selectedFile.type;
+    if (!selectedFile) return;
   
-      if (fileType === 'image/png' || fileType === 'image/jpeg') {
-        const maxSize = 2 * 1024 * 1024; // 2MB
-  
-        if (selectedFile.size <= maxSize) {
-          const reader = new FileReader();
-  
-          // Ensure the objects are initialized before setting properties
-          if (!this.postEventsData) this.postEventsData = {};
-          if (!this.selectedCustomEventField) this.selectedCustomEventField = {};
-  
-          reader.onload = (e: any) => {
-            const base64String = e.target.result;
-            this.postEventsData.attachmentUrl = base64String;
-            this.selectedCustomEventField.attachmentUrl = base64String;
-          };
-  
-          reader.readAsDataURL(selectedFile);
-        } else {
-          this.conformationPopup.openErrorModal('File size exceeds the allowed limit of 2MB.');
-          if (this.postEventsData) this.postEventsData.attachmentUrl = null;
-          event.target.value = '';
-        }
+    if (fileType === 'image/png' || fileType === 'image/jpeg') {
+      if (selectedFile.size <= maxSize) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.customEventupdateForm.patchValue({ imageUrl: e.target.result });
+        };
+        reader.readAsDataURL(selectedFile);
       } else {
-        this.conformationPopup.openErrorModal('Invalid file type. Only PNG and JPEG files are allowed.');
-        if (this.postEventsData) this.postEventsData.attachmentUrl = null;
+        this.conformationPopup.openErrorModal('File size exceeds 2MB.');
         event.target.value = '';
       }
     } else {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PNG and JPG are allowed.');
       event.target.value = '';
-      if (this.postEventsData) this.postEventsData.attachmentUrl = null;
-      if (this.selectedCustomEventField) this.selectedCustomEventField.attachmentUrl = null;
     }
   }
   
@@ -167,7 +154,7 @@ export class UpcomingEventsComponent {
         empId: this.Employeeinfo.employeeId,
         isDeleted: false,
         eventTitle: formdata.eventTitle,
-        attachmentUrl:  this.postEventsData.attachmentUrl  // this should be base64 from your file input
+        attachmentUrl:  formdata.imageUrl || null
       };
   
       this.subscription = this.http.postdata(`CustomEvents/Update`, data).subscribe({
@@ -180,6 +167,7 @@ export class UpcomingEventsComponent {
         
         },
         error: (err: any) => {
+          this.spinnerLoader=false;
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal('Insertion of data failed');
         }

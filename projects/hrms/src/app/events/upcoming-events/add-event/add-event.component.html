@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="eventDate" class="form-label custom-label mb-2">Event Date<span class="text-danger">*</span></label>
-                    <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
+                    <input type="datetime-local" class="form-control custom-input" id="eventDate"  onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
                     <div *ngIf="customEventForm.get('required')?.touched" class="error-msg">Event date is required.</div>
                     <div *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')"
                         class="error-msg">Event date cannot be in the past.
@@ -36,11 +36,14 @@
                     <div *ngIf="customEventForm.get('eventMessage')?.errors?.['required']  && customEventForm.get('title')?.touched" class="error-msg">
                         Event Description is requied
                     </div>
+                    <div class="character-count mt-1 text-end">
+                        {{ customEventForm.get("eventMessage")?.value?.length || 0 }}/250
+                      </div>
                 </div>
                 
                 <div class="col-md-12 mb-3">
                     <label for="file" class="form-label custom-label mb-2">Attachment</label>
-                    <input type="file" class="form-control custom-input"  (change)="onFileSelected($event)" id="file"  formControlName="imageUrl">
+                    <input type="file" class="form-control custom-input"  (change)="onFileSelected($event)" id="file" >
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
                           The file size should be less than 25MB.</p>

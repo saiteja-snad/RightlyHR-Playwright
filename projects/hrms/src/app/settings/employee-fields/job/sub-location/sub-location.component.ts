@@ -24,6 +24,7 @@ export class SubLocationComponent {
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
+  locationDetail:any;
   @ViewChild('addpopup') addpopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   @ViewChild('deletepopup') deletepopup: any;
@@ -50,9 +51,15 @@ export class SubLocationComponent {
       updateLocation: ['', [Validators.required]],
     });
     this.getSubLocation();
-
+    this.getLocation();
   }
-
+  getLocation() {
+    this.http.getData('JobLocation/GetJobLocations').subscribe((data: any) => {
+      this.locationDetail = data;
+      // this.locationDetail = data.map((item: any) => item.jobLocationName);
+      console.log("joblocation", this.locationDetail);
+    });
+  }
   // // Method to open the add modal dialog
   openDialog() {
     this.modalService.open(this.addpopup, {

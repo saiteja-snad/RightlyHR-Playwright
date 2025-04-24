@@ -100,13 +100,13 @@ export class EmergencyContactDetailsComponent {
     this.contactForm = this.fb.group({
       contact1: this.fb.group({
         name: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.email]],
         mobile: ['', Validators.required],
         relationship: ['', Validators.required],
       }),
       contact2: this.fb.group({
         name: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.email]],
         mobile: ['', Validators.required],
         relationship: ['', Validators.required],
       })

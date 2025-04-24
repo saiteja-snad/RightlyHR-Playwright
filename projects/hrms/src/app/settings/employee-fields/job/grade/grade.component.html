@@ -27,7 +27,7 @@
               class="form-control custom-input"
               formControlName="Addgrade"
               placeholder="Please enter grade name" 
-              (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" 
+              (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" 
             />
             <div *ngIf="AddForm.get('Addgrade')?.touched && AddForm.get('Addgrade')?.invalid" class="error-msg">
               {{ 'Grade name is required' | translate }}.
@@ -41,7 +41,7 @@
             </label>
             <div class="custom-p-select-content">
             <input type="text"class="form-control custom-input" formControlName="jobgrade" placeholder="Please enter job grade" 
-            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" />
+            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
             </div>
             <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid" class="error-msg mt-2">
               <div *ngIf="AddForm.get('jobgrade')?.errors?.['required']">{{'Grade is required'|translate}}</div>
@@ -133,7 +133,7 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
                         placeholder="Please enter job role" 
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" >
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" >
                     <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched"
                         class="error-msg">
                         {{'Grade name is required'|translate}}.
@@ -147,7 +147,7 @@
 
                     <div class="custom-p-select-content">
                         <input type="text"class="form-control custom-input" formControlName="updategraderole" placeholder="Please enter job grade" 
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"  />
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"  />
                     </div>
 
                 </div>

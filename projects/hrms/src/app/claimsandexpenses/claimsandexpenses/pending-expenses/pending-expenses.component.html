@@ -114,7 +114,7 @@
 
 <ng-template #viewDetailsModal let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
         <p class="popup-heading mb-0">Expenses Details</p>
       </div>
@@ -123,11 +123,11 @@
       </div>
     </div>
 
-    <div class="d-flex gap-5 p-3">
+    <div class="d-flex gap-5 pt-3 ps-4">
       <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
-      <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
+      <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
     </div>
-    <div class="custom-table">
+    <div class="custom-table p-3">
       <table class="w-100">
         <thead>
           <tr>
@@ -171,7 +171,7 @@
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
         <p class="popup-heading mb-0">Expenses Details</p>
       </div>

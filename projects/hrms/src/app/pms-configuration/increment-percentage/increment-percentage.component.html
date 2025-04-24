@@ -3,7 +3,7 @@
         <div class="component-header">
             Increment Percentage
         </div>
-        
+
         <div>
             <button class="custom-btn btn-primary" (click)="openAdd()">Create</button>
         </div>
@@ -11,10 +11,13 @@
     <div class="w-100">
         <!--Input search-->
         <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" [(ngModel)]="searchValue" (ngModelChange)="getAllIncrementalPercentagedata()" class="form-control custom-search-input" placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                    class="bi bi-search"></i></span>
+            <input type="search" [(ngModel)]="searchValue" (ngModelChange)="getAllIncrementalPercentagedata()"
+                class="form-control custom-search-input" placeholder="Search" aria-label="Username"
+                aria-describedby="basic-addon1">
         </div>
-      
+
         <div class="custom-table-content w-100">
             <table class="w-100">
                 <thead>
@@ -25,54 +28,63 @@
                         <th>Location</th>
                         <th>Sub Location</th>
                         <th>Rating Scale</th>
-                        <th >Action</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                     @if(IncementalDetailsget.length>0){
-                        @for (item of IncementalDetailsget; track $index) {
-                            <tr >
-                                <td>{{item?.reviewCycleName?item?.reviewCycleName:'-' }}
-                                    
-                                  </td>
-              
-                                  <td>{{item?.deptName?( getNamesAsString(item?.deptName, 'departments')):'-' }}</td>
-                                  <td>{{item?.subdeptName? (getNamesAsString(item?.subdeptName, 'subDepartmentName')):'-' }}</td>
-                                  <td>{{item?.locationName?( getNamesAsString(item?.locationName, 'locationName')):'-' }}</td>
-                                  <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}</td>
-                                  <td>{{item?.rating?item?.rating:'-'}}
-                                  </td>
-                                  <td class="text-center">
-                                    <div class="dropdown">
-                                      <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                      </a>
-                                      <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item"  (click)="editDetails(item)">Update</a></li>
-                                        <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"(click)="openDelete(confirmation, item.id)">Delete</a></li>
-                                        <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Initiated'" (click)="viewDetails(item)">View</a></li>
-                                        
-                                      </ul>
-                                    </div>
-                                  </td>
-                            </tr>
-                        }
-                      
-                     }
-                     @else {
-                        <tr>
-                            <app-no-data-found></app-no-data-found>
-        
-                        </tr>
-                     }
-                  </tbody>
+                    @if(!dataload){
+                    @if(IncementalDetailsget.length>0){
+                    @for (item of IncementalDetailsget; track $index) {
+                    <tr>
+                        <td>{{item?.reviewCycleName?item?.reviewCycleName:'-' }}
+
+                        </td>
+
+                        <td>{{item?.deptName?( getNamesAsString(item?.deptName, 'departments')):'-' }}</td>
+                        <td>{{item?.subdeptName? (getNamesAsString(item?.subdeptName, 'subDepartmentName')):'-' }}</td>
+                        <td>{{item?.locationName?( getNamesAsString(item?.locationName, 'locationName')):'-' }}</td>
+                        <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}
+                        </td>
+                        <td>{{item?.rating?item?.rating:'-'}}
+                        </td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" (click)="editDetails(item)">Update</a></li>
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"
+                                            (click)="openDelete(confirmation, item.id)">Delete</a></li>
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Initiated'"
+                                            (click)="viewDetails(item)">View</a></li>
+
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+
+                    }
+                    @else {
+                    <tr>
+                        <app-no-data-found></app-no-data-found>
+
+                    </tr>
+                    }
+                    }
+                    @else {
+                    <app-data-loader-content />
+                    }
+
+                </tbody>
             </table>
         </div>
         <div class="pagination-content pt-2 w-100">
             <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                
+
                 <div class="d-flex align-items-center gap-3 p-2">
-                    
+
                     <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
                         (ngModelChange)="onRowsChange()">
                         <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
@@ -91,13 +103,13 @@
 </div>
 <ng-template #confirmation let-modal>
     <div class="modal-body p-4" ngbAutofocus>
-      <div class="mb-4 text-center">
-        <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon"> -->
-      </div>
-      <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to delete?</p>
-      <div class="d-flex justify-content-around pt-3">
-        <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-        <button class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">Yes</button>
-      </div>
+        <div class="mb-4 text-center">
+            <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon"> -->
+        </div>
+        <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to delete?</p>
+        <div class="d-flex justify-content-around pt-3">
+            <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">Yes</button>
+        </div>
     </div>
-  </ng-template>
+</ng-template>

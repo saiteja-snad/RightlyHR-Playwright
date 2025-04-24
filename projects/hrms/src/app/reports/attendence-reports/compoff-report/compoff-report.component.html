@@ -1,95 +1,77 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <!--header-->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+      <!-- Header -->
       <div class="component-header">Reports</div>
-  
-      <div class="d-flex gap-3">
-       
-       <!-- Search Employee ID or Name -->
-        @if (isCompOffTabActive) {
-            <div class="custom-dropdown" ##dropdown  (click)="CompOfftoggleDropdown()">
-              <input type="text" class="form-select" [(ngModel)]="searchTerm" style="cursor: pointer;"
-                placeholder="Search Employee ID or Name" (input)="CompOfffilterEmployees()">
-              
-              <ul class="dropdown-menu px-2" [class.show]="isDropdownOpen"
-                style="cursor: pointer;width: 17%;max-height:50vh;overflow-y: auto;">
-                
-                <li (click)="selectCompOffEmployee(null, $event)">All Employees</li>
-          
-                @for (employee of filteredCompOffEmployees; track employee.fusionEmpId) {
-                  <li (click)="selectCompOffEmployee(employee, $event)" style="white-space: nowrap;">
-                    {{ employee.fusionEmpId }} - {{ employee.employeeName }}
-                  </li>
-                }
-              </ul>
-            </div>
-            
-          }
-         <!-- data select -->
-        <div class="d-flex align-items-center gap-2">
-          <label class="custom-label text-nowrap">Date of Joining</label>
-          <div>
-            <input type="text" name="empMasterDataDateRange" ngxDaterangepickerBootstrap [autoApply]="true" readonly
-              placeholder="Please Select Date of Joining" [ranges]="ranges" [alwaysShowCalendars]="true"
-              [locale]="localeOptions" [showClearButton]="true" [(ngModel)]="empMasterDataDOJDateRange"
-              class="form-control custom-input" />
-          </div>
-        </div>
-        <!-- team manager -->
-        <div class="d-flex align-items-center gap-2">
-          <label class="custom-label text-nowrap">Employee Name</label>
-          <div class="">
-            @if (isCompOffTabActive) {
-              <div class="position-relative" #compoffdropdown style="width: 310px; margin-left: 1%;">
-                <input
-                  type="text"
-                  class="form-select"
-                  placeholder="Search Team Manager"
-                  [(ngModel)]="selectedCompoffManager"
-                  (input)="filterCompoffManagers($event)"
-                  (click)="toggleCompoffManagerDropdown()"
-                  style="cursor: pointer;"
-                >
-            
-                @if (isDropdownOpencompoff) {
-                  <ul
-                    class="dropdown-menu show px-2"
-                    style="width: 100%; max-height: 200px; overflow-y: auto; position: absolute; z-index: 1000;"
-                  >
-                    @for (manager of filteredCompoffManagers; track manager.id) {
-                      <li
-                        (click)="selectCompoffManager(manager)"
-                        style="cursor: pointer; white-space: nowrap;"
-                      >
-                        {{ manager.id }} - {{ manager.name }}
-                      </li>
-                    }
-                  </ul>
-                }
+    
+      <div>
+        <form [formGroup]="compoffReportForm" (ngSubmit)="generateCompoffReport()">
+          <div class="d-flex align-items-center gap-3">
+            <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
+              Clear All
+            </button>
+             <!-- Employee -->
+             <div class="d-flex align-items-center gap-2">
+              <div class="custom-p-select-content">
+                <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="false"
+                          formControlName="employee" placeholder="Select Employee" class="form-select custom-select">
+                  <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                  <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                </p-select>
               </div>
-            }
+            </div>
+           
+            <!-- Team Manager -->
+            <div class="d-flex align-items-center gap-2">
+              <div class="custom-p-select-content">
+                <p-select [options]="teamdetails" [filter]="true" [showClear]="false" optionLabel="firstName" formControlName="manager"
+                          placeholder="Select Manager" class="form-select custom-select">
+                  <ng-template #selectedItem let-selectedOption>
+                    {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+                  </ng-template>
+                  <ng-template let-manager #item>
+                    {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                  </ng-template>
+                </p-select>
+              </div>
+            </div>
+    
+            <!-- Date Range -->
+            <div class="d-flex align-items-center gap-2">
+              <div>
+                <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
+                       [locale]="localeOptions" [showClearButton]="true" placeholder="Please Select Date" formControlName="dateRange"
+                       [startKey]="'startDate'" [endKey]="'endDate'" readonly />
+              </div>
+            </div>
+    
+            <!-- Buttons -->
+            <div class="d-flex gap-2">
+              <button type="submit" class="custom-btn btn-secondary" [disabled]="compoffReportForm.invalid">
+                Generate
+              </button>
+              <button type="button" class="custom-btn btn-primary"
+                      (click)="exportToExcelYearly()" [disabled]="compoffReportForm.invalid">
+                Export
+              </button>
+            </div>
           </div>
-        </div>
-  
-        <div class="d-flex gap-2">
-          <button (click)="getcompOffReports()" class="custom-btn btn-secondary">Generate</button>
-          <button [disabled]="this.employeeMasterData.length === 0" class="custom-btn btn-primary" (click)="exportToExcelCompOff()">Export</button>
-        </div>
+        </form>
       </div>
     </div>
-  
-    <div class="mb-3">
-      <app-attandace-report-tabs/>
-    </div>
-  
-    @if(isLoading){
-      
+    
+
+  <div class="mb-3">
+    <app-attandace-report-tabs />
+  </div>
+
+  @if (isLoading) {
+
     }
     @else {
-    <div class="custom-table-content">
-      <table id="employeeMasterData" class="content w-100">
-        <thead>
-            <tr>
+      <div class="custom-table-content">
+        <table id="compoffReportTable" class="content w-100">
+          <thead>
+              <tr>
                 <th>Employee ID</th>
                 <th>Employee Name</th>
                 <th>Department</th>
@@ -100,32 +82,38 @@
                 <th>Worked Date</th>
                 <th>Entitled Days</th>
                 <th>Duratoion</th>
-            </tr>
-        </thead>
-        <tbody>
-          @if(employeeMasterData.length === 0){
-          <tr>
-            <td>No records found</td>
-          </tr>
-          }
-          @else {
-          @for (record of employeeMasterData; track $index) {
-            <tr>
-                <td>{{record.fusionEmpId}}</td>
-                <td>{{record.employeeName}}</td>
-                <td>{{record.department}}</td>
-                <td>{{record.teamManagerName}}</td>
-                <td>{{record.location}}</td>
-                <td>{{record.subLocation}}</td>
-                <td>{{record.shift}}</td>
-                <td>{{record.worked_Date|dateformat}}</td>
-                <td>{{record.entitlementDays}}</td>
-                <td>{{record.duration}}</td>
-            </tr>
-          }
-          }
-        </tbody>
-      </table>
-    </div>
+              </tr>
+          </thead>
+          <tbody>
+            @if (!filteredCompoffRecord || filteredCompoffRecord.length === 0) {
+              <tr>
+                <td colspan="9" class="text-center">
+                  <app-no-data-found></app-no-data-found></td>
+              </tr>
+            }
+            @else {
+              @for (record of filteredCompoffRecord; track $index) {
+                <tr>
+                  <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+                  <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+                  <td class="td-center">{{ record.department ?? '-' }}</td>
+                  <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+                  <td class="td-center">{{ record.location ?? '-' }}</td>
+                  <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+                  <td class="td-center">{{ record.shift ?? '-' }}</td>
+                  <td class="td-center">{{record.leaveType ?? '-' }}</td>
+                  <td class="td-center">
+                      {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
+                    </td>
+                  <td class="td-center">{{record.entitlementDays ?? '-' }}</td>
+                  <td class="td-center">{{record.duration ?? '-'}}</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
     }
-  </div>
+    
+</div>
+

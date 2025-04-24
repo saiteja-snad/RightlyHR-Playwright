@@ -1,7 +1,7 @@
-<div class="custom-main-component-container mt-3" *ngIf="rbac.allowedToAccess('Separation Requests Tab.view')">
+<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Separation Requests Tab.view')">
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search here"
@@ -335,7 +335,7 @@
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="reset" class="custom-btn btn-secondary"
                         (click)=" resetForm();">{{'Cancel'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid||isLoading">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid||isLoading||!buttondisable">
                         @if(!isLoading){
                         {{'Approve'|translate}}
                         }
@@ -596,7 +596,7 @@
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="resetForm(); modal.dismiss()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="acceptFormforprocess.invalid||isLoading">
+                        [disabled]="acceptFormforprocess.invalid||isLoading||!buttondisable">
                         @if(!isLoading){
                         {{'Approve'|translate}}
                         }

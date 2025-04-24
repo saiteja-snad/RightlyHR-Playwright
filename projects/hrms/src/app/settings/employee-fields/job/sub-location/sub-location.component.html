@@ -70,16 +70,15 @@
                 <tr>
                     <th>Location</th>
                     <th>Sub Location</th>
-                    <th class="text-center">Actions</th>
+                    <th class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || rbac.allowedToAccess('Sub Location.delete')">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Sub Location.view')) {
                 <ng-container>
                     <tr *ngFor="let subloc of SubLocationdetails">
                         <td>{{subloc.jobLocationName}}</td>
                         <td>{{subloc.jobSubLocationName}}</td>
-                        <td class="text-center">
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || rbac.allowedToAccess('Sub Location.delete')">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -100,7 +99,6 @@
                         </td>
                     </tr>
                 </ng-container>
-            }
             </tbody>
         </table>
     </div>

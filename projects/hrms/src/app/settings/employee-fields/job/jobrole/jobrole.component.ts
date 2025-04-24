@@ -76,7 +76,7 @@ export class JobroleComponent {
   getgradeid() {
     this.subscription = this.http.getData('GradeTable').subscribe({
       next: (data: any) => {
-        console.log(data);
+        // console.log(data);
         this.gradedetails = data;
       },
     });

@@ -2,7 +2,7 @@
 <div class="card-top-content py-3">
     <div class="row float-end ">
         <div class="col-md-12">
-            <div class="mb-3">
+            <div class="mb-3" *ngIf="rbac.allowedToAccess('Form Settings.create')">
                <button class="custom-btn btn-primary"(click)="openModal(addRatingScale,{size:'lg'})" >{{'Add Rating Scale'}}</button>
             </div>
         </div>
@@ -15,7 +15,7 @@
                 <th>{{'Rating Type' | translate}}</th>
                 <th>{{'Min-Rating Scale' | translate}}</th>
                 <th>{{'Max-Rating Scale' | translate}}</th>
-                <th>{{'Actions' | translate}}</th>
+                <th *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">{{'Actions' | translate}}</th>
             </tr>
         </thead>
         <tbody>
@@ -25,18 +25,18 @@
                 <td >{{ formSetting.ratingType }}</td>
                   <td >{{ formSetting.minimumRatingScale }}</td>
                   <td >{{ formSetting.maximumRatingScale }}</td>
-                  <td >
+                  <td *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">
                     <div class="dropdown">
                       <span type="button" data-bs-toggle="dropdown">
                         <i class="bi bi-three-dots-vertical"></i>
                       </span>
                       <ul class="dropdown-menu custom-dropdown-menu">
-                        <li >
+                        <li *ngIf="rbac.allowedToAccess('Form Settings.update')">
                           <a class="dropdown-item" (click)="assignValues(formSetting.ratingType)">
                             <i class="bi bi-pencil me-2"></i>Update
                           </a>
                         </li>
-                        <li >
+                        <li *ngIf="rbac.allowedToAccess('Form Settings.delete')">
                           <a class="dropdown-item" (click)="openDeleteModal(formSetting.ratingType)">
                             <i class="bi bi-trash3 me-2"></i>Delete
                           </a>

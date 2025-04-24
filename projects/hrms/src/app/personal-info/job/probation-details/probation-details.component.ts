@@ -7,7 +7,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 @Component({
   selector: 'app-probation-details',

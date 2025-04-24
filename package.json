@@ -6,14 +6,14 @@
     "start": "ng serve",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build": "ng build --configuration production",
-    "qa": "ng build --configuration qa",
-    "dev": "ng build --configuration dev",
+    "build": "ng build hrms --configuration production",
+    "qa": "ng build hrms --configuration qa",
+    "dev": "ng build hrms --configuration dev",
     "snad-rightlyhr": "ng build --configuration snad-rightlyhr",
-    "preonbordingDetails-build": "ng build preonbordingDetails --configuration production",
-    "preonbordingDetails-qa": "ng build preonbordingDetails --configuration qa",
-    "preonbordingDetails-dev": "ng build preonbordingDetails --configuration dev",
-    "preonbordingDetails-snad-rightlyhr": "ng build preonbordingDetails --configuration snad-rightlyhr"
+    "preonboarding-build": "ng build preonboarding --configuration production",
+    "preonboarding-qa": "ng build preonboarding --configuration qa",
+    "preonboarding-dev": "ng build preonboarding --configuration dev",
+    "preonboarding-snad-rightlyhr": "ng build preonboarding --configuration snad-rightlyhr"
   },
   "private": true,
   "dependencies": {

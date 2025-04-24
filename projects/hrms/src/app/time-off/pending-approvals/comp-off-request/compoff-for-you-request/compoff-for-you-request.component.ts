@@ -23,6 +23,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { IPendingApprovals } from '../../../../Interfaces/pendingapprovalsmodel';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-compoff-for-you-request',
@@ -75,13 +76,13 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 

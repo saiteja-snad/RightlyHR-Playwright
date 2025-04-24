@@ -5,7 +5,7 @@
         <div class="component-header">Settings</div>
     </div>
     <div class="mb-3">
-        <button class="custom-btn btn-primary" (click)="navigateToCreateFormComponent()">Create a Form</button>
+        <button class="custom-btn btn-primary" (click)="navigateToCreateFormComponent()" *ngIf="rbac.allowedToAccess('Dynamic-form.create')">Create a Form</button>
     </div>
    </div>
     <!--tabs content-->

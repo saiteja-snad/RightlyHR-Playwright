@@ -37,7 +37,7 @@ export class InterviewRoundComponent implements OnInit {
     private http: HttpService,
     private fb: FormBuilder,
     public formValidations: FormValidationsService,
-    // public rbac: RbacService,
+     public rbac: RbacService,
   ) {}
 
   interviewForm!: FormGroup;
@@ -77,7 +77,7 @@ export class InterviewRoundComponent implements OnInit {
         this.modalService.dismissAll();
         this.interviewForm.reset();
         this.getInterview();
-        this.conformationPopup.openSuccessModal('round name  added successfully');
+        this.conformationPopup.openSuccessModal('interview added successfully');
       },
       error: (reason: any) => {
         console.error('Error:', reason);
@@ -155,7 +155,7 @@ export class InterviewRoundComponent implements OnInit {
       next: () => {
         this.getInterview();
         modal.close();
-        this.conformationPopup.openSuccessModal('Round name deleted successfully');
+        this.conformationPopup.openSuccessModal('Interview  deleted successfully');
       },
       error: (err: any) => {
         console.error('Delete interview failed:', err);

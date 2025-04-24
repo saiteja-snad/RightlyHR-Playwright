@@ -25,7 +25,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Frequency.view')) {}
                 @for (freq of FrequencyDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ freq.frequency1}}</td>

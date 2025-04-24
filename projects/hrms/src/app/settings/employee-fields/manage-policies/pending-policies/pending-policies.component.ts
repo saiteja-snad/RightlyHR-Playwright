@@ -7,6 +7,7 @@ import { FormBuilder} from '@angular/forms';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { RbacService } from '../../../../services/rbac.service';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class PendingPoliciesComponent {
   subscription!: Subscription
   allPolicies = [] as any;
 
-  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder) { }
+  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService) { }
   
   ngOnInit(): void {
     this.getAllPolicies();

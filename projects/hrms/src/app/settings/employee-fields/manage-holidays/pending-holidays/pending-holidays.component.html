@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">{{'Holidays Management' | translate}}</span></div>
-    <div class="custom-add-btn" (click)="nagvition()">
+    <div class="custom-add-btn" (click)="nagvition()" *ngIf="rbac.allowedToAccess('Pending For Holidays Submit.create')">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
     </div>
   </div>
@@ -12,12 +12,12 @@
       <thead>
         <tr>
           <th>{{'Year' | translate}}</th>
-          <th>{{'Location' | translate}}</th>
+          <th>{{'Location' | translate}}</th> 
           <th>{{'Sub Location' | translate}}</th>
           <th>{{'Shift Name' | translate}}</th>
           <th>{{'Status' | translate}}</th>
           <th>{{'Added By' | translate}}</th>
-          <th>{{'Action(s)' | translate}}</th>
+          <th *ngIf="rbac.allowedToAccess('Pending For Holidays Submit.update')">{{'Action(s)' | translate}}</th>
 
         </tr>
       </thead>
@@ -31,7 +31,7 @@
           <td>{{item.shiftName}}</td>
           <td>{{item.status}}</td>
           <td>{{item.addedbyName}}</td>
-          <td>
+          <td *ngIf="rbac.allowedToAccess('Pending For Holidays Submit.update')">
             <div class="dropdown">
               <span type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>

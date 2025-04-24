@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder } from '@angular/forms';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-published-policies',
@@ -19,7 +20,7 @@ export class PublishedPoliciesComponent {
   subscription!: Subscription
   allPolicies = [] as any;
 
-  constructor(public router: Router, private http: HttpService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
   
   ngOnInit(): void {
     this.getAllPolicies();

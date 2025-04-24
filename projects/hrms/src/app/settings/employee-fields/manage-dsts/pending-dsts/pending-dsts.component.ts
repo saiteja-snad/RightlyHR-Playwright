@@ -8,6 +8,7 @@ import { ManageDST } from '../dsts.modal';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-pending-dsts',
@@ -24,7 +25,8 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     private modalService: NgbModal,
-    private router: Router
+    private router: Router,
+    public rbac: RbacService
   ) {}
 
   ngOnInit(): void {

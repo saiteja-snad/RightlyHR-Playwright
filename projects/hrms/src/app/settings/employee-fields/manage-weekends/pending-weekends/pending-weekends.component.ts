@@ -6,6 +6,7 @@ import { HttpService } from '../../../../services/http.service';
 import { IWeekends } from './weekends.model';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
    selector: 'app-pending-weekends',
    imports: [CommonModule, NgbPopoverModule, TranslateModule],
@@ -20,6 +21,7 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
    constructor(
       private router: Router,
       private http: HttpService,
+      public rbac: RbacService
    ) { }
 
    ngOnInit(): void {

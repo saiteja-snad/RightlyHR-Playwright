@@ -4,10 +4,11 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-            @if(!buttons && (empinfo.substatus.toLowerCase() === 'offer letter accepted'  )){
-            <div >
-                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-            </div>}
+            @if (!buttons && empinfo?.substatus && empinfo?.substatus?.toLowerCase() === 'offer letter accepted') {
+                <div>
+                  <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+                </div>
+              }
             @if(buttons){
             <div class="d-flex justify-content-end gap-2">
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
@@ -69,7 +70,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="probationStatus" class="form-label custom-label mb-2">Probation Status</label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="probation" optionLabel="probationstatus" formControlName="probationStatus"
+                        <p-select [options]="probation" optionLabel="probationstatus1" formControlName="probationStatus"
                             placeholder="Select Probation Status" class="form-select custom-select">
                         </p-select>
                     </div>

@@ -244,6 +244,7 @@ export class AddressInfoComponent {
   copyCurrentAddress(event: Event): void {
      this.isChecked = (event.target as HTMLInputElement).checked;
     if (this.isChecked) {
+      
       this.addressForm.patchValue({
         permanentAddressLine1: this.addressForm.value.currentAddressLine1,
         permanentAddressLine2: this.addressForm.value.currentAddressLine2,

@@ -13,7 +13,7 @@ import { IPermissionType } from '../../../Interfaces/timoff-model';
 import { IDepartment } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({

@@ -54,7 +54,7 @@
                                     <td class="center">{{details.categoryCode}}</td>
                                     <td class="center"><input type="color" [(ngModel)]="details.categoryColor"
                                             style="width: 50%;margin-inline: auto;"
-                                            class="form-control input-content small-color-input" readonly disabled></td>
+                                            class="form-control input-content div-color-input" readonly disabled></td>
                                     <td class="center">{{details.validity}}</td>
                                     <td class="center">
 
@@ -141,7 +141,7 @@
                                     <td class="center">{{details.categoryCode}}</td>
                                     <td class="center"><input type="color" [(ngModel)]="details.categoryColor"
                                             style="width: 50%;margin-inline: auto;"
-                                            class="form-control input-content small-color-input" readonly disabled></td>
+                                            class="form-control input-content div-color-input" readonly disabled></td>
                                     <td class="center">{{details.validity}}</td>
                                     <td class="center">{{details.status}}</td>
                                     <td class="text-center">
@@ -223,9 +223,9 @@
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
                                 </select>
-                                <small class="error-msg" *ngIf="year.invalid && (year.touched || OrganizationPolicy.submitted)">
+                                <div class="error-msg" *ngIf="year.invalid && (year.touched || OrganizationPolicy.submitted)">
                                     Year is required
-                                </small>
+                                </div>
                             </div>
                         </div>
                         <!-- Location -->
@@ -238,8 +238,8 @@
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{location.jobLocationName}}</option>
                                 </select>
-                                <small class="error-msg" *ngIf="(location.touched && location.invalid)|| (location.invalid && OrganizationPolicy.submitted)">
-                                    Location is required </small>
+                                <div class="error-msg" *ngIf="(location.touched && location.invalid)|| (location.invalid && OrganizationPolicy.submitted)">
+                                    Location is required </div>
                             </div>
                         </div>
                         <!-- Sub Location -->
@@ -255,8 +255,8 @@
                                         {{item.jobSubLocationName}}
                                     </option>
                                 </select>
-                                <small class="error-msg" *ngIf="(sublocation.touched && sublocation.invalid)|| (sublocation.invalid && OrganizationPolicy.submitted)">Sub
-                                    Location is required </small>
+                                <div class="error-msg" *ngIf="(sublocation.touched && sublocation.invalid)|| (sublocation.invalid && OrganizationPolicy.submitted)">Sub
+                                    Location is required </div>
                             </div>
                         </div>
     
@@ -272,8 +272,8 @@
                                         <option *ngFor="let item of allShifts.orgShiftsItems" [value]="item.id">{{item.shiftName}}</option>
                                     </ng-container>
                                 </select>
-                                <small class="error-msg" *ngIf="(shifts.touched && shifts.invalid)|| (shifts.invalid && OrganizationPolicy.submitted)">
-                                    Shift is required </small>
+                                <div class="error-msg" *ngIf="(shifts.touched && shifts.invalid)|| (shifts.invalid && OrganizationPolicy.submitted)">
+                                    Shift is required </div>
                             </div>
                         </div>
     
@@ -292,8 +292,8 @@
                                     <option [ngValue]="1">General</option>
                                     <option [ngValue]="0">Flexible</option>
                                 </select>
-                                <small class="error-msg" *ngIf="(leaveType.touched && leaveType.invalid)|| (leaveType.invalid && OrganizationPolicy.submitted)">
-                                    Leave Category Type is required </small>
+                                <div class="error-msg" *ngIf="(leaveType.touched && leaveType.invalid)|| (leaveType.invalid && OrganizationPolicy.submitted)">
+                                    Leave Category Type is required </div>
                             </div>
                         </div>
     
@@ -304,9 +304,9 @@
                                 <input type="text" #name="ngModel" name="name" [(ngModel)]="postOrgPloicyDetails.name"
                                     (keypress)="restrictInput($event)" class="form-control input-content" id="name"
                                     autocomplete="off" placeholder="Please enter name " required>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(name.touched && name.invalid)|| (color.invalid && OrganizationPolicy.submitted)">
-                                    Leave Category Name is required </small>
+                                    Leave Category Name is required </div>
                             </div>
                         </div>
     
@@ -318,8 +318,8 @@
                                     [(ngModel)]="postOrgPloicyDetails.categoryCode"
                                     (keypress)="restrictInputLeavecode($event)" class="form-control input-content"
                                     id="code" autocomplete="off" placeholder="Please enter code " required>
-                                <small class="error-msg" *ngIf="(code.touched && code.invalid)|| (color.invalid && OrganizationPolicy.submitted)">
-                                    Leave Category Code is required </small>
+                                <div class="error-msg" *ngIf="(code.touched && code.invalid)|| (color.invalid && OrganizationPolicy.submitted)">
+                                    Leave Category Code is required </div>
                             </div>
                         </div>
     
@@ -331,9 +331,9 @@
                                     (keypress)="restrictInputNumbers($event)"
                                     [(ngModel)]="postOrgPloicyDetails.validity" class="form-control input-content"
                                     id="validdates" autocomplete="off" placeholder="Please enter valid days " required>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(validdates.touched && validdates.invalid)|| (validdates.invalid && OrganizationPolicy.submitted)">Valid
-                                    Days is required </small>
+                                    Days is required </div>
                             </div>
                         </div>
     
@@ -346,8 +346,8 @@
                                     (ngModelChange)="postOrgPloicyDetails.categoryColor = postOrgPloicyDetails.categoryColor.charAt(0).toUpperCase() + postOrgPloicyDetails.categoryColor.slice(1)"
                                     (keypress)="restrictInput($event)" class="form-control input-content mt-2"
                                     id="color" placeholder="Please enter color " required>
-                                <small class="error-msg" *ngIf="(color.touched && color.invalid)|| (color.invalid && OrganizationPolicy.submitted)">
-                                    Leave Category Color is required </small>
+                                <div class="error-msg" *ngIf="(color.touched && color.invalid)|| (color.invalid && OrganizationPolicy.submitted)">
+                                    Leave Category Color is required </div>
                             </div>
                         </div>
     
@@ -382,9 +382,9 @@
                                     <option [ngValue]="1">Male</option>
                                     <option [ngValue]="0">Female</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(gender.touched && gender.invalid)|| (gender.invalid && OrganizationPolicy.submitted)">
-                                    Allowed Gender is required </small>
+                                    Allowed Gender is required </div>
                             </div>
                         </div>
     
@@ -401,9 +401,9 @@
                                     <option [ngValue]="1">Married</option>
                                     <option [ngValue]="2">Unmarried</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(MaritalStatus.touched && MaritalStatus.invalid)|| (MaritalStatus.invalid && OrganizationPolicy.submitted)">Allowed
-                                    Marital Status is required </small>
+                                    Marital Status is required </div>
                             </div>
                         </div>
     
@@ -419,9 +419,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ExcludeWeekends.touched && ExcludeWeekends.invalid)|| (ExcludeWeekends.invalid && OrganizationPolicy.submitted)">
-                                    Exclude Weekends is required </small>
+                                    Exclude Weekends is required </div>
                             </div>
                         </div>
     
@@ -437,9 +437,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ExcludeHolidays.touched && ExcludeHolidays.invalid)|| (ExcludeHolidays.invalid && OrganizationPolicy.submitted)">
-                                    Exclude Holidays is required </small>
+                                    Exclude Holidays is required </div>
     
                             </div>
                         </div>
@@ -458,9 +458,9 @@
                                     <option [ngValue]="false">No</option>
     
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(OptionalHolidays.touched && OptionalHolidays.invalid)|| (OptionalHolidays.invalid && OrganizationPolicy.submitted)">
-                                    Is Optioanl Holiday is required </small>
+                                    Is Optioanl Holiday is required </div>
     
                             </div>
                         </div>
@@ -481,9 +481,9 @@
                                     <option [ngValue]="false">No</option>
     
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(HalfDaysAllowed.touched && HalfDaysAllowed.invalid)|| (HalfDaysAllowed.invalid && OrganizationPolicy.submitted)">
-                                    Half Day Leave Allowed is required </small>
+                                    Half Day Leave Allowed is required </div>
     
     
                             </div>
@@ -501,9 +501,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ProRataLeaveAllocation.touched && ProRataLeaveAllocation.invalid)|| (ProRataLeaveAllocation.invalid && OrganizationPolicy.submitted)">
-                                    Pro Rata Leave Allocation is required </small>
+                                    Pro Rata Leave Allocation is required </div>
                             </div>
                         </div>
     
@@ -525,9 +525,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(FutureDatesAllowed.touched && FutureDatesAllowed.invalid)|| (FutureDatesAllowed.invalid && OrganizationPolicy.submitted)">
-                                    Future Dates Allowed is required </small>
+                                    Future Dates Allowed is required </div>
                             </div>
                         </div>
     
@@ -544,18 +544,18 @@
                                     autocomplete="off" min="1" [disabled]="!postOrgPloicyDetails.futureDatesAllowed">
     
                                 <!-- Required Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.futureDatesAllowed && FutureDatesAllowedUnits.touched && 
                         (postOrgPloicyDetails.futureDatesAllowedDays === null || postOrgPloicyDetails.futureDatesAllowedDays === undefined)">
                                     Future Dates Allowed days are required
-                                </small>
+                                </div>
     
                                 <!-- Minimum Value Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.futureDatesAllowed && FutureDatesAllowedUnits.touched && 
                         postOrgPloicyDetails.futureDatesAllowedDays !== null && postOrgPloicyDetails.futureDatesAllowedDays < 1">
                                     Future Dates Allowed days must be at least 1
-                                </small>
+                                </div>
                             </div>
                         </div>
     
@@ -580,9 +580,9 @@
                                     <option [ngValue]="false">No</option>
     
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(PastDatesAllowed.touched && PastDatesAllowed.invalid)|| (PastDatesAllowed.invalid && OrganizationPolicy.submitted)">
-                                    Past Dates Allowed is required </small>
+                                    Past Dates Allowed is required </div>
     
                             </div>
                         </div>
@@ -601,18 +601,18 @@
                                     placeholder="No. of days" min="1">
     
                                 <!-- Required Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.pastDateAllowed && PastDatesAllowedUnits.touched && 
                         (postOrgPloicyDetails.pastDatesAllowedDays === null || postOrgPloicyDetails.pastDatesAllowedDays === undefined)">
                                     Past Dates Allowed days are required
-                                </small>
+                                </div>
     
                                 <!-- Minimum Value Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.pastDateAllowed && PastDatesAllowedUnits.touched && 
                         postOrgPloicyDetails.pastDatesAllowedDays !== null && postOrgPloicyDetails.pastDatesAllowedDays < 1">
                                     Past Dates Allowed days must be at least 1
-                                </small>
+                                </div>
                             </div>
                         </div>
     
@@ -635,9 +635,9 @@
                                     <option [ngValue]="false">No</option>
     
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(CarryForwardLeave.touched && CarryForwardLeave.invalid)|| (CarryForwardLeave.invalid && OrganizationPolicy.submitted)">
-                                    Carry Forward Leave is required </small>
+                                    Carry Forward Leave is required </div>
     
                             </div>
                         </div>
@@ -656,18 +656,18 @@
                                     [(ngModel)]="postOrgPloicyDetails.carryForwardAllowedValue" min="1">
     
                                 <!-- Required Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.carryForwardAllowed && CarryForwardLeaveUnits.touched && 
                         (postOrgPloicyDetails.carryForwardAllowedValue === null || postOrgPloicyDetails.carryForwardAllowedValue === undefined)">
                                     Carry Forward days are required
-                                </small>
+                                </div>
     
                                 <!-- Minimum Value Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.carryForwardAllowed && CarryForwardLeaveUnits.touched && 
                         postOrgPloicyDetails.carryForwardAllowedValue !== null && postOrgPloicyDetails.carryForwardAllowedValue < 1">
                                     Carry Forward days must be at least 1
-                                </small>
+                                </div>
     
                             </div>
                         </div>
@@ -690,9 +690,9 @@
                                     <option [ngValue]="false">No</option>
     
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(EncashLeave.touched && EncashLeave.invalid)|| (EncashLeave.invalid && OrganizationPolicy.submitted)">
-                                    Encash Allowed is required </small>
+                                    Encash Allowed is required </div>
     
                             </div>
                         </div>
@@ -711,18 +711,18 @@
                                     id="EncashLeaveUnits" placeholder="No. of days" min="1">
     
                                 <!-- Required Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.encashAllowedType && EncashLeaveUnits.touched && 
                         (postOrgPloicyDetails.encashAllowedValue === null || postOrgPloicyDetails.encashAllowedValue === undefined)">
                                     Encash days are required
-                                </small>
+                                </div>
     
                                 <!-- Minimum Value Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.encashAllowedType && EncashLeaveUnits.touched && 
                         postOrgPloicyDetails.encashAllowedValue !== null && postOrgPloicyDetails.encashAllowedValue < 1">
                                     Encash days must be at least 1
-                                </small>
+                                </div>
     
                             </div>
                         </div>
@@ -746,9 +746,9 @@
                                     <option [ngValue]="false">No</option>
     
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(NoticePeriod.touched && NoticePeriod.invalid)|| (NoticePeriod.invalid && OrganizationPolicy.submitted)">
-                                    Allow Leaves is required </small>
+                                    Allow Leaves is required </div>
     
                             </div>
                         </div>
@@ -766,18 +766,18 @@
                                     id="NoticePeriodUnits" placeholder="No. of days" min="1">
     
                                 <!-- Required Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.noticeperiodAllowedType && NoticePeriodUnits.touched && 
                         (postOrgPloicyDetails.noticePeriodAllowedValue === null || postOrgPloicyDetails.noticePeriodAllowedValue === undefined)">
                                     Maximum Leaves Allowed Per Month is required
-                                </small>
+                                </div>
     
                                 <!-- Minimum Value Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.noticeperiodAllowedType && NoticePeriodUnits.touched && 
                         postOrgPloicyDetails.noticePeriodAllowedValue !== null && postOrgPloicyDetails.noticePeriodAllowedValue < 1">
                                     Maximum Leaves Allowed Per Month must be at least 1
-                                </small>
+                                </div>
     
                             </div>
                         </div>
@@ -801,9 +801,9 @@
                                     <option [ngValue]="false">No</option>
     
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ProbationPeriod.touched && ProbationPeriod.invalid)|| (ProbationPeriod.invalid && OrganizationPolicy.submitted)">
-                                    Allow Leaves is required </small>
+                                    Allow Leaves is required </div>
     
                             </div>
                         </div>
@@ -823,17 +823,17 @@
                                     placeholder="No. of days" min="1">
     
                                 <!-- Required Error Message -->
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="postOrgPloicyDetails.isProbationAllowed && ProbationPeriodUnits.touched && 
                         (postOrgPloicyDetails.probationDays === null || postOrgPloicyDetails.probationDays === undefined)">
                                     Maximum Leaves Allowed Per Month is required
-                                </small>
+                                </div>
     
                                 <!-- Minimum Value Error Message -->
-                                <small class="error-msg" *ngIf="postOrgPloicyDetails.isProbationAllowed && ProbationPeriodUnits.touched && 
+                                <div class="error-msg" *ngIf="postOrgPloicyDetails.isProbationAllowed && ProbationPeriodUnits.touched && 
                         postOrgPloicyDetails.probationDays !== null && postOrgPloicyDetails.probationDays < 1">
                                     Maximum Leaves Allowed Per Month must be at least 1
-                                </small>
+                                </div>
     
                             </div>
                         </div>
@@ -925,10 +925,10 @@
                                     <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="year.invalid && (year.touched || OrganizationPolicyUpdate.submitted)">
                                     Year is required
-                                </small>
+                                </div>
                             </div>
                         </div>
 
@@ -944,9 +944,9 @@
                                     <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">
                                         {{location.jobLocationName}}</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(location.touched && location.invalid)|| (location.invalid && OrganizationPolicyUpdate.submitted)">Location
-                                    is required </small>
+                                    is required </div>
                             </div>
                         </div>
 
@@ -964,9 +964,9 @@
                                         {{item.jobSubLocationName}}
                                     </option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(sublocation.touched && sublocation.invalid)|| (sublocation.invalid && OrganizationPolicyUpdate.submitted)">Sub
-                                    Location is required </small>
+                                    Location is required </div>
                             </div>
                         </div>
 
@@ -984,9 +984,9 @@
                                             {{item.shiftName}}</option>
                                     </ng-container>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(shifts.touched && shifts.invalid)|| (shifts.invalid && OrganizationPolicy.submitted)">Shift
-                                    is required </small>
+                                    is required </div>
                             </div>
                         </div>
                         <div class=" popuprow rounded col-12 mb-1">
@@ -1007,9 +1007,9 @@
                                     <option [ngValue]="1">General</option>
                                     <option [ngValue]="0">Flexible</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(leaveType.touched && leaveType.invalid)|| (leaveType.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Leave Category Type is required </small>
+                                    Leave Category Type is required </div>
 
                             </div>
                         </div>
@@ -1022,10 +1022,10 @@
                                     [disabled]="isFieldsDisabled" class="form-control input-content" id="name"
                                     placeholder="Please enter name " (keypress)="restrictInput($event)" required>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(name.touched && name.invalid)|| (name.invalid && OrganizationPolicyUpdate.submitted)">Leave
                                     Category Name
-                                    is required </small>
+                                    is required </div>
 
                             </div>
                         </div>
@@ -1039,10 +1039,10 @@
                                     class="form-control input-content" id="code" placeholder="Please enter code "
                                     required>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(code.touched && code.invalid)|| (color.invalid && OrganizationPolicyUpdate.submitted)">Leave
                                     Category Code
-                                    is required </small>
+                                    is required </div>
 
                             </div>
                         </div>
@@ -1058,10 +1058,10 @@
                                     class="form-control input-content" id="validity"
                                     placeholder="Please enter validity " required>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(validity.touched && validity.invalid)|| (validity.invalid && OrganizationPolicyUpdate.submitted)">Valid
                                     Days is
-                                    required </small>
+                                    required </div>
 
                             </div>
                         </div>
@@ -1076,10 +1076,10 @@
                                     class="form-control input-content" id="color" placeholder="Please enter color "
                                     required>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(color.touched && color.invalid)|| (color.invalid && OrganizationPolicyUpdate.submitted)">Leave
                                     Category Color
-                                    is required </small>
+                                    is required </div>
                             </div>
                         </div>
 
@@ -1115,9 +1115,9 @@
                                     <option [ngValue]="1">Male</option>
                                     <option [ngValue]="0">Female</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(gender.touched && gender.invalid)|| (gender.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Allowed Gender is required </small>
+                                    Allowed Gender is required </div>
                             </div>
                         </div>
 
@@ -1139,10 +1139,10 @@
                                     <option [ngValue]="2">Unmarried</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(MaritalStatus.touched && MaritalStatus.invalid)|| (MaritalStatus.invalid && OrganizationPolicyUpdate.submitted)">Allowed
                                     Marital
-                                    Status is required </small>
+                                    Status is required </div>
 
                             </div>
                         </div>
@@ -1165,9 +1165,9 @@
                                     <option [ngValue]="false">No</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ExcludeWeekends.touched && ExcludeWeekends.invalid)|| (ExcludeWeekends.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Exclude Weekends is required </small>
+                                    Exclude Weekends is required </div>
                             </div>
                         </div>
 
@@ -1186,9 +1186,9 @@
                                     <option [ngValue]="false">No</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ExcludeHolidays.touched && ExcludeHolidays.invalid)|| (ExcludeHolidays.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Exclude Holidays is required </small>
+                                    Exclude Holidays is required </div>
 
                             </div>
                         </div>
@@ -1208,9 +1208,9 @@
                                     <option [ngValue]="false">No</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(OptionalHoliday.touched && OptionalHoliday.invalid)|| (OptionalHoliday.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Is Optioanl Holiday is required </small>
+                                    Is Optioanl Holiday is required </div>
 
                             </div>
                         </div>
@@ -1233,9 +1233,9 @@
                                     <option [ngValue]="false">No</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(HalfDaysAllowed.touched && HalfDaysAllowed.invalid)|| (HalfDaysAllowed.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Half Days Allowed is required </small>
+                                    Half Days Allowed is required </div>
                             </div>
                         </div>
 
@@ -1253,9 +1253,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ProRataLeaveAllocation.touched && ProRataLeaveAllocation.invalid)|| (ProRataLeaveAllocation.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Pro Rata Leave Allocation is required </small>
+                                    Pro Rata Leave Allocation is required </div>
 
                             </div>
                         </div>
@@ -1279,9 +1279,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(FutureDatesAllowed.touched && FutureDatesAllowed.invalid)|| (FutureDatesAllowed.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Future Dates Allowed is required </small>
+                                    Future Dates Allowed is required </div>
 
                             </div>
                         </div>
@@ -1301,9 +1301,9 @@
                                     [disabled]="isFieldsDisabled || !selectDetails.futureDatesAllowed">
                                 <input *ngIf="!selectDetails.futureDatesAllowed" type="text" class="form-control"
                                     [value]="selectDetails.futureDatesAllowedDays" disabled>
-                                <small class="error-msg" *ngIf="(FutureDatesAllowedUnits.touched && FutureDatesAllowedUnits.invalid)|| (FutureDatesAllowedUnits.invalid && 
+                                <div class="error-msg" *ngIf="(FutureDatesAllowedUnits.touched && FutureDatesAllowedUnits.invalid)|| (FutureDatesAllowedUnits.invalid && 
                          OrganizationPolicyUpdate.submitted)">
-                                    Future Dates Allowed value is required </small>
+                                    Future Dates Allowed value is required </div>
                             </div>
                         </div>
 
@@ -1324,9 +1324,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(PastDatesAllowed.touched && PastDatesAllowed.invalid)|| (PastDatesAllowed.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Past Dates Allowed is required </small>
+                                    Past Dates Allowed is required </div>
                             </div>
                         </div>
 
@@ -1345,9 +1345,9 @@
                                     [disabled]="isFieldsDisabled || !selectDetails.pastDateAllowed">
                                 <input *ngIf="!selectDetails.pastDateAllowed" type="text" class="form-control"
                                     [value]="selectDetails.pastDatesAllowedDays" disabled>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(PastDatesAllowedUnits.touched && PastDatesAllowedUnits.invalid)|| (PastDatesAllowedUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Past Dates Allowed value is required </small>
+                                    Past Dates Allowed value is required </div>
                             </div>
                         </div>
 
@@ -1369,9 +1369,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(CarryForwardLeave.touched && CarryForwardLeave.invalid)|| (CarryForwardLeave.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Carry Forward Leave is required </small>
+                                    Carry Forward Leave is required </div>
                             </div>
                         </div>
 
@@ -1389,9 +1389,9 @@
                                     [disabled]="isFieldsDisabled || !selectDetails.carryForwardAllowed">
                                 <input *ngIf="!selectDetails.carryForwardAllowed" type="text" class="form-control"
                                     [value]="selectDetails.carryForwardAllowedValue" disabled>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(CarryForwardLeaveUnits.touched && CarryForwardLeaveUnits.invalid)|| (CarryForwardLeaveUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Carry Forward Leave value is required </small>
+                                    Carry Forward Leave value is required </div>
                             </div>
                         </div>
 
@@ -1411,9 +1411,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(EncashLeave.touched && EncashLeave.invalid)|| (EncashLeave.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Encash Leave is required </small>
+                                    Encash Leave is required </div>
                             </div>
                         </div>
 
@@ -1432,9 +1432,9 @@
                                 <input *ngIf="!selectDetails.encashAllowedType" type="text" class="form-control"
                                     [value]="selectDetails.encashAllowedValue" disabled>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(EncashLeaveUnits.touched && EncashLeaveUnits.invalid)|| (EncashLeaveUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Encash Leave days is required </small>
+                                    Encash Leave days is required </div>
                             </div>
                         </div>
 
@@ -1454,9 +1454,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(NoticePeriod.touched && NoticePeriod.invalid)|| (NoticePeriod.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Allow Leaves is required </small>
+                                    Allow Leaves is required </div>
                             </div>
                         </div>
 
@@ -1476,9 +1476,9 @@
                                 <input *ngIf="!selectDetails.noticeperiodAllowedType" type="text" class="form-control"
                                     [value]="selectDetails.noticePeriodAllowedValue" disabled>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(NoticePeriodUnits.touched && NoticePeriodUnits.invalid)|| (NoticePeriodUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Maximum Leaves Allowed Per Month is required </small>
+                                    Maximum Leaves Allowed Per Month is required </div>
                             </div>
                         </div>
 
@@ -1500,9 +1500,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ProbationPeriod.touched && ProbationPeriod.invalid)|| (ProbationPeriod.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Allow Leaves is required </small>
+                                    Allow Leaves is required </div>
                             </div>
                         </div>
 
@@ -1521,9 +1521,9 @@
                                 <input *ngIf="!selectDetails.isProbationAllowed" type="text" class="form-control"
                                     [value]="selectDetails.probationDays" disabled>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ProbationPeriodUnits.touched && ProbationPeriodUnits.invalid)|| (ProbationPeriodUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Maximum Leaves Allowed is required </small>
+                                    Maximum Leaves Allowed is required </div>
                             </div>
                         </div>
 
@@ -1573,10 +1573,10 @@
                                     <option [ngValue]="undefined" disabled>Select</option>
                                     <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="year.invalid && (year.touched || OrganizationPolicyUpdate.submitted)">
                                     Year is required
-                                </small>
+                                </div>
                             </div>
                         </div>
 
@@ -1591,9 +1591,9 @@
                                     <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">
                                         {{location.jobLocationName}}</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(location.touched && location.invalid)|| (location.invalid && OrganizationPolicyUpdate.submitted)">Location
-                                    is required </small>
+                                    is required </div>
                             </div>
                         </div>
 
@@ -1615,9 +1615,9 @@
                                 </select>
 
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(sublocation.touched && sublocation.invalid)|| (sublocation.invalid && OrganizationPolicyUpdate.submitted)">Sub
-                                    Location is required </small>
+                                    Location is required </div>
                             </div>
                         </div>
 
@@ -1638,10 +1638,10 @@
                                             {{item.shiftName}}</option>
                                     </ng-container>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(shifts.touched && shifts.invalid)|| (shifts.invalid && OrganizationPolicy.submitted)">Shift
 
-                                    is required </small>
+                                    is required </div>
                             </div>
                         </div>
                         <div class=" popuprow rounded col-12 mb-1">
@@ -1664,9 +1664,9 @@
                                     <option [ngValue]="0">Flexible</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(leaveType.touched && leaveType.invalid)|| (leaveType.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Leave Category Type is required </small>
+                                    Leave Category Type is required </div>
 
                             </div>
                         </div>
@@ -1680,11 +1680,11 @@
                                     autocomplete="off" placeholder="Please enter name "
                                     (keypress)="restrictInput($event)" required>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(name.touched && name.invalid)|| (name.invalid && OrganizationPolicyUpdate.submitted)">Leave
                                     Category
                                     Name
-                                    is required </small>
+                                    is required </div>
 
                             </div>
                         </div>
@@ -1698,11 +1698,11 @@
                                     [(ngModel)]="selectDetails.categoryCode" class="form-control input-content"
                                     id="code" placeholder="Please enter code " required>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(code.touched && code.invalid)|| (color.invalid && OrganizationPolicyUpdate.submitted)">Leave
                                     Category
                                     Code
-                                    is required </small>
+                                    is required </div>
 
                             </div>
                         </div>
@@ -1718,10 +1718,10 @@
                                     [(ngModel)]="selectDetails.validity" class="form-control input-content"
                                     id="validity" placeholder="Please enter validity " required>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(validity.touched && validity.invalid)|| (validity.invalid && OrganizationPolicyUpdate.submitted)">Valid
                                     Days is
-                                    required </small>
+                                    required </div>
 
                             </div>
                         </div>
@@ -1736,10 +1736,10 @@
                                     class="form-control input-content" id="color" placeholder="Please enter color "
                                     required>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(color.touched && color.invalid)|| (color.invalid && OrganizationPolicyUpdate.submitted)">Leave
                                     Category Color
-                                    is required </small>
+                                    is required </div>
 
                             </div>
                         </div>
@@ -1784,9 +1784,9 @@
                                     <option [ngValue]="1">Male</option>
                                     <option [ngValue]="0">Female</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(gender.touched && gender.invalid)|| (gender.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Allowed Gender is required </small>
+                                    Allowed Gender is required </div>
                             </div>
                         </div>
 
@@ -1808,10 +1808,10 @@
                                     <option [ngValue]="2">Unmarried</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(MaritalStatus.touched && MaritalStatus.invalid)|| (MaritalStatus.invalid && OrganizationPolicyUpdate.submitted)">Allowed
                                     Marital
-                                    Status is required </small>
+                                    Status is required </div>
 
                             </div>
                         </div>
@@ -1834,9 +1834,9 @@
                                     <option [ngValue]="false">No</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ExcludeWeekends.touched && ExcludeWeekends.invalid)|| (ExcludeWeekends.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Exclude Weekends is required </small>
+                                    Exclude Weekends is required </div>
 
 
                             </div>
@@ -1857,9 +1857,9 @@
                                     <option [ngValue]="false">No</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ExcludeHolidays.touched && ExcludeHolidays.invalid)|| (ExcludeHolidays.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Exclude Holidays is required </small>
+                                    Exclude Holidays is required </div>
 
                             </div>
                         </div>
@@ -1877,9 +1877,9 @@
                                     <option [ngValue]="false">No</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(OptionalHolidays.touched && OptionalHolidays.invalid)|| (OptionalHolidays.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Is Optioanl Holiday is required </small>
+                                    Is Optioanl Holiday is required </div>
 
                             </div>
                         </div>
@@ -1901,9 +1901,9 @@
                                     <option [ngValue]="false">No</option>
 
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(HalfDaysAllowed.touched && HalfDaysAllowed.invalid)|| (HalfDaysAllowed.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Half Days Allowed is required </small>
+                                    Half Days Allowed is required </div>
 
 
                             </div>
@@ -1923,9 +1923,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ProRataLeaveAllocation.touched && ProRataLeaveAllocation.invalid)|| (ProRataLeaveAllocation.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Future Dates Allowed is required </small>
+                                    Future Dates Allowed is required </div>
 
                             </div>
                         </div>
@@ -1952,9 +1952,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(FutureDatesAllowed.touched && FutureDatesAllowed.invalid)|| (FutureDatesAllowed.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Future Dates Allowed is required </small>
+                                    Future Dates Allowed is required </div>
 
                             </div>
                         </div>
@@ -1976,9 +1976,9 @@
                                 <input *ngIf="!selectDetails.futureDatesAllowed" type="text" class="form-control"
                                     [value]="selectDetails.futureDatesAllowedDays" disabled>
 
-                                <small class="error-msg" *ngIf="(FutureDatesAllowedUnits.touched && FutureDatesAllowedUnits.invalid)|| (FutureDatesAllowedUnits.invalid && 
+                                <div class="error-msg" *ngIf="(FutureDatesAllowedUnits.touched && FutureDatesAllowedUnits.invalid)|| (FutureDatesAllowedUnits.invalid && 
                                  OrganizationPolicyUpdate.submitted)">
-                                    Future Dates Allowed value is required </small>
+                                    Future Dates Allowed value is required </div>
                             </div>
                         </div>
 
@@ -1999,9 +1999,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(PastDatesAllowed.touched && PastDatesAllowed.invalid)|| (PastDatesAllowed.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Past Dates Allowed is required </small>
+                                    Past Dates Allowed is required </div>
                             </div>
                         </div>
 
@@ -2020,9 +2020,9 @@
                                     [disabled]="isFieldsDisabled || !selectDetails.pastDateAllowed">
                                 <input *ngIf="!selectDetails.pastDateAllowed" type="text" class="form-control"
                                     [value]="selectDetails.pastDatesAllowedDays" disabled>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(PastDatesAllowedUnits.touched && PastDatesAllowedUnits.invalid)|| (PastDatesAllowedUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Past Dates Allowed value is required </small>
+                                    Past Dates Allowed value is required </div>
                             </div>
                         </div>
 
@@ -2044,9 +2044,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(CarryForwardLeave.touched && CarryForwardLeave.invalid)|| (CarryForwardLeave.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Carry Forward Leave is required </small>
+                                    Carry Forward Leave is required </div>
                             </div>
                         </div>
 
@@ -2064,9 +2064,9 @@
                                     [disabled]="isFieldsDisabled || !selectDetails.carryForwardAllowed">
                                 <input *ngIf="!selectDetails.carryForwardAllowed" type="text" class="form-control"
                                     [value]="selectDetails.carryForwardAllowedValue" disabled>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(CarryForwardLeaveUnits.touched && CarryForwardLeaveUnits.invalid)|| (CarryForwardLeaveUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Carry Forward Leave value is required </small>
+                                    Carry Forward Leave value is required </div>
                             </div>
                         </div>
 
@@ -2086,9 +2086,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(EncashLeave.touched && EncashLeave.invalid)|| (EncashLeave.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Encash Leave is required </small>
+                                    Encash Leave is required </div>
                             </div>
                         </div>
 
@@ -2107,9 +2107,9 @@
                                 <input *ngIf="!selectDetails.encashAllowedType" type="text" class="form-control"
                                     [value]="selectDetails.encashAllowedValue" disabled>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(EncashLeaveUnits.touched && EncashLeaveUnits.invalid)|| (EncashLeaveUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Encash Leave days is required </small>
+                                    Encash Leave days is required </div>
                             </div>
                         </div>
 
@@ -2129,9 +2129,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(NoticePeriod.touched && NoticePeriod.invalid)|| (NoticePeriod.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Allow Leaves is required </small>
+                                    Allow Leaves is required </div>
                             </div>
                         </div>
 
@@ -2151,9 +2151,9 @@
                                 <input *ngIf="!selectDetails.noticeperiodAllowedType" type="text" class="form-control"
                                     [value]="selectDetails.noticePeriodAllowedValue" disabled>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(NoticePeriodUnits.touched && NoticePeriodUnits.invalid)|| (NoticePeriodUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Maximum Leaves Allowed Per Month is required </small>
+                                    Maximum Leaves Allowed Per Month is required </div>
                             </div>
                         </div>
 
@@ -2175,9 +2175,9 @@
                                     <option [ngValue]="true">Yes</option>
                                     <option [ngValue]="false">No</option>
                                 </select>
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ProbationPeriod.touched && ProbationPeriod.invalid)|| (ProbationPeriod.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Allow Leaves is required </small>
+                                    Allow Leaves is required </div>
                             </div>
                         </div>
 
@@ -2196,9 +2196,9 @@
                                 <input *ngIf="!selectDetails.isProbationAllowed" type="text" class="form-control"
                                     [value]="selectDetails.probationDays" disabled>
 
-                                <small class="error-msg"
+                                <div class="error-msg"
                                     *ngIf="(ProbationPeriodUnits.touched && ProbationPeriodUnits.invalid)|| (ProbationPeriodUnits.invalid && OrganizationPolicyUpdate.submitted)">
-                                    Maximum Leaves Allowed is required </small>
+                                    Maximum Leaves Allowed is required </div>
                             </div>
                         </div>
 

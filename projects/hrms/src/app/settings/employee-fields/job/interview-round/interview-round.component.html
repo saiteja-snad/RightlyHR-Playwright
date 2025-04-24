@@ -1,0 +1,102 @@
+<div class="custom-main-component-container">
+    <form [formGroup]="interviewForm" (ngSubmit)="onSubmit()">
+        <!-- <form [formGroup]="bankForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('interview round.create')"> -->
+        <!-- Add Input-->
+        <div class="mb-4">
+            <div class="custom-settings-add-input input-group">
+                <input type="text" class="form-control custom-input" placeholder="Please enter interview round"
+                    formControlName="interview" aria-label="interview" aria-describedby="interview"
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                <span class="input-group-text" id="gender">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="interviewForm.invalid">{{'Add'|translate}}</button></span>
+            </div>
+            <div *ngIf="interviewForm.get('interview')?.touched && interviewForm.get('interview')?.invalid" class="error-msg mt-2">
+                <div *ngIf="interviewForm.get('interview')?.errors?.['required']">{{'interview round is required'|translate}}</div>
+            </div>
+        </div>
+    </form>
+
+    <!--Data Content-->
+    <div class="custom-settings-data-table">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="col-span-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- @if (rbac.allowedToAccess('Bank Names.view')) { -->
+                @for (interview of interviewdetails; track $index) {
+                <tr>
+                    
+                    <td class="w-75">{{ interview.roundname}}</td>
+                    <td class="w-25">
+                        <div class="d-flex gap-4">
+                            <!--Update-->
+                            <div>
+                                <a (click)="openupdate(interview)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                        class="settings-common-icon"></a>
+                            </div>
+                            <!--Delete-->
+                            <div>
+                                <a (click)="opendelete(interview)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                        class="settings-common-icon"></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                }
+            
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form [formGroup]="updateForm" >
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="d-flex justify-content-between popup-header-border p-3">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Edit roundname '|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content p-4">
+                <div class="mb-4">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'interview'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="roundname1"
+                        placeholder="Please enter round name" 
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    <div *ngIf="updateForm.get('roundname1')?.touched && updateForm.get('roundname1')?.invalid" class="error-msg mt-2">
+                        <div *ngIf="updateForm.get('roundname1')?.errors?.['required']">{{'Round  name is required'|translate}}</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-5 w-100 pt-3">
+                    <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary w-50 py-2" (click)="updateinterview(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="modal-body" ngbAutofocus>
+        <div class="custom-main-popup-content text-center p-4">
+            <div class="py-4">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            </div>
+            <div class="d-flex gap-5 pt-2 w-100">
+                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDeleteinterview(modal)">{{'Yes'|translate}}</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

@@ -35,9 +35,9 @@ export class ViewShiftComponent {
   shiftid: any;
   hideBUTTON = false;
   isDisabled = true;
-  navTabs: any[] = [
-    { label: 'Clone Shifts', link: '/claimsandexpenses/addexpens' },
-  ];
+  // navTabs: any[] = [
+  //   { label: 'Clone Shifts', link: '/claimsandexpenses/addexpens' },
+  // ];
   disabled: boolean | undefined;
 
   constructor(
@@ -75,7 +75,16 @@ export class ViewShiftComponent {
       shifts: this.fb.array([this.createShift()])
     });
   }
+  isDeleteDisabled: boolean = false;
 
+  deleteShift(index: number) {
+    if (this.shifts.length > 1) {
+      this.shifts.removeAt(index);
+      this.isDeleteDisabled = false; // allow delete if more than 1
+    } else {
+      this.isDeleteDisabled = true; // disable delete button
+    }
+  }
   addShift() {
     this.shifts.push(this.createShift());
     this.hideBUTTON = true;

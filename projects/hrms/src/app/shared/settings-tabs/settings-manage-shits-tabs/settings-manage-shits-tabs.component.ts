@@ -38,12 +38,12 @@ export class SettingsManageShitsTabsComponent {
         this.pendingCount = this.pendingsubmittedshifts.length;
         const allLinks = [
           {
-            label: `Pending For Submit [${this.pendingCount}]`,
+            label: `Pending For Submission [${this.pendingCount}]`,
             route: '/settings/employee-fields/manage-shifts/pending-for-submit',
             permission: { feature: 'Pending For Submit', action: 'view' }
           },
           {
-            label: `Published Shifts [${this.publishedCount}]`,
+            label: `Published [${this.publishedCount}]`,
             route: '/settings/employee-fields/manage-shifts/published-shifts',
             permission: { feature: 'Published Shifts', action: 'view' }
           }

@@ -2,10 +2,10 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <p class="component-header cursor mb-0" (click)="nagvition()"><i class="bi bi-arrow-90deg-left me-2"></i>
-                {{'Add Shits'|translate}}</p>
+                {{'Clone Shifts'|translate}}</p>
         </div>
     </div>
-    <div class="component-nav-tabs-container card px-2 mb-3">
+    <!-- <div class="component-nav-tabs-container card px-2 mb-3">
         <p-tabs value="0" scrollable>
             <p-tablist>
                 <ng-container *ngFor="let tab of navTabs;">
@@ -17,7 +17,7 @@
                 </ng-container>
             </p-tablist>
         </p-tabs>
-    </div>
+    </div> -->
 
 
     <div class="card custom-card">
@@ -79,9 +79,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3 mt-5">
+                        <div class="col-md-3 mb-3 mt-5"style="margin-top: 2.4rem !important">
                             <button type="button" class="custom-btn btn-primary" (click)="addShift()">
-                                <i class="bi bi-plus me-2"></i> {{'Add New Shift'|translate}}
+                                <i class="bi bi-plus me-2"></i> {{'Add New'|translate}}
                             </button>
                         </div>
                     </div>
@@ -95,7 +95,8 @@
                                     <label class="form-label custom-label">{{'Shift Code'|translate}}<span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control custom-input" formControlName="shiftCode"
-                                        placeholder="Please enter shift code" (input)="checkDuplicate(i)"  />
+                                        placeholder="Please enter shift code" (input)="checkDuplicate(i)"(keydown)="preventMinus($event)"
+                                        (paste)="blockNegativePaste($event)"  />
                                     <div *ngIf="shift.get('shiftCode')?.invalid && (shift.get('shiftCode')?.dirty || shift.get('shiftCode')?.touched)"
                                         class="error-msg">
                                         <span *ngIf="shift.get('shiftCode')?.errors?.['required']">{{'Shift code is required '|translate}}</span>
@@ -109,7 +110,8 @@
                                     <label class="form-label custom-label">{{'Shift Name'|translate}}<span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control custom-input" formControlName="shiftName"
-                                        placeholder="Please enter shift name" (input)="checkDuplicate1(i)" />
+                                        placeholder="Please enter shift name" (input)="checkDuplicate1(i)"(keydown)="preventMinus($event)"
+                                        (paste)="blockNegativePaste($event)" />
                                     <div *ngIf="shift.get('shiftName')?.invalid && (shift.get('shiftName')?.dirty || shift.get('shiftName')?.touched)"
                                         class="error-msg">
                                         <span *ngIf="shift.get('shiftName')?.errors?.['required']">{{'Shift name is required'|translate}}</span>
@@ -128,7 +130,7 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Start Time'|translate}}<span
                                             class="text-danger">*</span></label>
-                                    <input type="time" class="form-control custom-input" formControlName="startTime" />
+                                    <input type="time" class="form-control custom-input" formControlName="startTime"  />
                                     <div *ngIf="shift.get('startTime')?.invalid && (shift.get('startTime')?.dirty || shift.get('startTime')?.touched)"
                                         class="error-msg">
                                         <span *ngIf="shift.get('startTime')?.errors?.['required']">{{'Start time is required||translate'}}</span>
@@ -139,7 +141,7 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'End Time'|translate}}<span
                                             class="text-danger">*</span></label>
-                                    <input type="time" class="form-control custom-input" formControlName="endTime" />
+                                    <input type="time" class="form-control custom-input" formControlName="endTime"  />
                                     <div *ngIf="shift.get('endTime')?.invalid && (shift.get('endTime')?.dirty || shift.get('endTime')?.touched)"
                                         class="error-msg">
                                         <span *ngIf="shift.get('endTime')?.errors?.['required']">{{'End time is required' |translate}}</span>
@@ -150,42 +152,72 @@
 
                                 <!-- Grace Period -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Grace Period'|translate}}</label>
+                                    <label class="form-label custom-label">{{'Allowed Grace Period (min)'|translate}}<span
+                                        class="text-danger">*</span></label>
                                     <input type="number" class="form-control custom-input" formControlName="gracePeriod"
-                                        placeholder="Grace period" />
+                                        placeholder="Grace period"min="0"(keydown)="preventMinus($event)"
+                                        (paste)="blockNegativePaste($event)"  />
+                                        <div *ngIf="shift.get('gracePeriod')?.invalid && (shift.get('gracePeriod')?.dirty || shift.get('gracePeriod')?.touched)"
+                                        class="error-msg">
+                                        <span *ngIf="shift.get('gracePeriod')?.errors?.['required']">{{'Grace Period is required' |translate}}</span>
+                                    </div>
                                 </div>
 
                                 <!-- Lates Allowed -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Lates Allowed'|translate}}</label>
+                                    <label class="form-label custom-label">{{'Lates Allowed(Days)'|translate}}<span
+                                        class="text-danger">*</span></label>
                                     <input type="number" class="form-control custom-input"
-                                        formControlName="latesAllowed" placeholder="Lates allowed" />
+                                        formControlName="latesAllowed" placeholder="Lates allowed"min="0"(keydown)="preventMinus($event)"
+                                        (paste)="blockNegativePaste($event)"  />
+                                        <div *ngIf="shift.get('latesAllowed')?.invalid && (shift.get('latesAllowed')?.dirty || shift.get('latesAllowed')?.touched)"
+                                        class="error-msg">
+                                        <span *ngIf="shift.get('latesAllowed')?.errors?.['required']">{{'LatesAllowed is required' |translate}}</span>
+                                    </div>
                                 </div>
 
                                 <!-- Break Time -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Break Time'|translate}}</label>
+                                    <label class="form-label custom-label">{{'Allowed Break Time(Hrs)'|translate}}<span
+                                        class="text-danger">*</span></label>
                                     <input type="number" class="form-control custom-input" formControlName="breakTime"
-                                        placeholder="Break time" />
+                                        placeholder="Break time" min="0"(keydown)="preventMinus($event)"
+                                        (paste)="blockNegativePaste($event)" />
+                                        <div *ngIf="shift.get('breakTime')?.invalid && (shift.get('breakTime')?.dirty || shift.get('breakTime')?.touched)"
+                                        class="error-msg">
+                                        <span *ngIf="shift.get('breakTime')?.errors?.['required']">{{'BreakTime is required' |translate}}</span>
+                                    </div>
                                 </div>
 
                                 <!-- Half Day Minimum Hours -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Half Day Min Hrs'|translate}}</label>
+                                    <label class="form-label custom-label">{{'Half Day Min Hrs'|translate}}<span
+                                        class="text-danger">*</span></label>
                                     <input type="number" class="form-control custom-input"
-                                        formControlName="halfDayMinHrs" placeholder="Half day min hrs" />
+                                        formControlName="halfDayMinHrs" placeholder="Half day min hrs" min="0"(keydown)="preventMinus($event)"
+                                        (paste)="blockNegativePaste($event)" />
+                                        <div *ngIf="shift.get('halfDayMinHrs')?.invalid && (shift.get('halfDayMinHrs')?.dirty || shift.get('halfDayMinHrs')?.touched)"
+                                        class="error-msg">
+                                        <span *ngIf="shift.get('halfDayMinHrs')?.errors?.['required']">{{'HalfDay is required' |translate}}</span>
+                                    </div>
                                 </div>
 
                                 <!-- Full Day Minimum Hours -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Full Day Min Hrs'|translate}}</label>
+                                    <label class="form-label custom-label">{{'Full Day Min Hrs'|translate}}<span
+                                        class="text-danger">*</span></label>
                                     <input type="number" class="form-control custom-input"
-                                        formControlName="fullDayMinHrs" placeholder="Full day min hrs" />
+                                        formControlName="fullDayMinHrs" placeholder="Full day min hrs"min="0"(keydown)="preventMinus($event)"
+                                        (paste)="blockNegativePaste($event)"  />
+                                        <div *ngIf="shift.get('fullDayMinHrs')?.invalid && (shift.get('fullDayMinHrs')?.dirty || shift.get('fullDayMinHrs')?.touched)"
+                                        class="error-msg">
+                                        <span *ngIf="shift.get('fullDayMinHrs')?.errors?.['required']">{{'FullDay is required' |translate}}</span>
+                                    </div>
                                 </div>
 
                                 <!-- Delete Icon -->
                                 <div class="col-md-2 mt-4 d-flex align-items-center justify-content-end">
-                                    <button type="button" class="custom-icon btn" (click)="shifts.removeAt(i)">
+                                    <button type="button" class="custom-icon btn" (click)="deleteShift(i)">
                                         <i class="bi bi-trash text-danger"></i>
                                     </button>
                                 </div>
@@ -195,7 +227,7 @@
 
                     </div>
 
-                    <div class="custom-modal-footer">
+                    <div class="d-flex gap-3 justify-content-end">
                         <button type="button" class="custom-btn btn-secondary" (click)="Cancel()">{{'Cancel'|translate}}</button>
                         <button type="submit" class="custom-btn btn-primary"
                         [disabled]="shiftForm.invalid || !isAllShiftsValid || isDuplicateCodeName1.includes(true)|| isDuplicateCodeName.includes(true)">{{'Submit'|translate}}</button>

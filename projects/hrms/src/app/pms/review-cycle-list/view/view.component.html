@@ -1,5 +1,5 @@
 <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between align-items-center popup-header-border p-3">
+    <div class="custom-poup-header-content popup-header-border">
         <div>
             <p class="popup-heading mb-0">{{'View Review Cycle Details'|translate}}</p>
         </div>
@@ -7,141 +7,140 @@
             <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
     </div>
-    <div class="custom-main-popup-content p-3">
+    <div class="custom-main-popup-content">
         <form [formGroup]="reviewCycleupdateForm" (ngSubmit)="onReviewCycleintialUpdate()">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Review Cycle Name'|translate}}<span class="text-danger">*</span></label>
-                        <input class="form-control" id="reviewCycleName" formControlName="reviewCycleName" type="text"
-                            placeholder="Please enter review cycle name" aria-label="default input example">
-                    </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('reviewCycleName')?.touched && reviewCycleupdateForm.get('reviewCycleName')?.hasError('required')">
-                        <small class="text-danger">Review Cycle Name is required</small>
+                    <label for="" class="form-label custom-label">{{'Review Cycle Name'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <input class="form-control custom-input" id="reviewCycleName" formControlName="reviewCycleName"
+                        type="text" placeholder="Please enter review cycle name" aria-label="default input example">
+                    <div *ngIf="reviewCycleupdateForm.get('reviewCycleName')?.touched && reviewCycleupdateForm.get('reviewCycleName')?.hasError('required')"
+                        class="error-msg">
+                        Review Cycle Name is required
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Review Cycle Type' |translate}}<span class="text-danger">*</span></label>
+                    <label for="" class="form-label custom-label">{{'Review Cycle Type' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
                         <p-select [options]="ReviewCycleTypes" optionLabel="value" optionValue="value"
                             placeholder="Please select review cycle type" formControlName="reviewCycleType"
                             class="form-select custom-select">
                         </p-select>
                     </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('reviewCycleType')?.touched && reviewCycleupdateForm.get('reviewCycleType')?.hasError('required')">
-                        <small class="text-danger">Review Cycle Type is required</small>
+                    <div *ngIf="reviewCycleupdateForm.get('reviewCycleType')?.touched && reviewCycleupdateForm.get('reviewCycleType')?.hasError('required')"
+                        class="error-msg">Review Cycle Type is required
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="departmentId" class="form-label">{{'Department'|translate}}<span
-                                class="text-danger">*</span></label>
+                    <label for="departmentId" class="form-label custom-label">{{'Department'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="departmentDetails"
                             formControlName="departmentId" optionLabel="departmentName" optionValue="sno"
                             placeholder="Please select department(s)" (onChange)="onDepartmentNameChange($event);" />
                     </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('departmentId')?.touched && reviewCycleupdateForm.get('departmentId')?.hasError('required')">
-                        <small class="text-danger">Department is required</small>
+                    <div *ngIf="reviewCycleupdateForm.get('departmentId')?.touched && reviewCycleupdateForm.get('departmentId')?.hasError('required')"
+                        class="error-msg">
+                        Department is required
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="subDepartmentId" class="form-label">{{'Team' |translate}}<span class="text-danger">*</span></label>
+                    <label for="subDepartmentId" class="form-label custom-label">{{'Team' |translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="subDepartmentsDropdownValues"
                             formControlName="subDepartmentId" optionValue="subdepartmentId"
                             optionLabel="subdepartmentName" placeholder="Please select team(s)" />
                     </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('subDepartmentId')?.touched && reviewCycleupdateForm.get('subDepartmentId')?.hasError('required')">
-                        <small class="text-danger">Team is required</small>
+                    <div *ngIf="reviewCycleupdateForm.get('subDepartmentId')?.touched && reviewCycleupdateForm.get('subDepartmentId')?.hasError('required')"
+                        class="error-msg">Team is required
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="locationId" class="form-label">{{'Location'|translate}}<span class="text-danger">*</span></label>
+                    <label for="locationId" class="form-label custom-label">{{'Location'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="jobLocationDropDownData"
                             optionValue="id" optionLabel="jobLocationName" formControlName="locationId"
                             placeholder="Please select location(s)" (onChange)="OnClickLocation($event)" />
                     </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('locationId')?.touched && reviewCycleupdateForm.get('locationId')?.hasError('required')">
-                        <small class="text-danger">Location is required</small>
+                    <div *ngIf="reviewCycleupdateForm.get('locationId')?.touched && reviewCycleupdateForm.get('locationId')?.hasError('required')"
+                        class="error-msg">
+                        Location is required
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="subLocationId" class="form-label">{{'Sub Location'|translate}}<span
-                                class="text-danger">*</span></label>
+                    <label for="subLocationId" class="form-label custom-label">{{'Sub Location'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="subLocationsDropdown"
                             formControlName="subLocationId" optionLabel="jobSubLocationName" optionValue="id"
                             placeholder="Please select sub location(s)" />
                     </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('subLocationId')?.touched && reviewCycleupdateForm.get('subLocationId')?.hasError('required')">
-                        <small class="text-danger">Sub Location is required</small>
+                    <div *ngIf="reviewCycleupdateForm.get('subLocationId')?.touched && reviewCycleupdateForm.get('subLocationId')?.hasError('required')"
+                        class="error-msg">
+                        Sub Location is required
                     </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Review Cycle Start Date'|translate}}<span
-                                class="text-danger">*</span></label>
-                        <input class="form-control" id="startDate" formControlName="startDate" type="date"
-                            [max]="todayDate" placeholder="Please select date" aria-label="default input example">
-                    </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('startDate')?.touched && reviewCycleupdateForm.get('startDate')?.hasError('required')">
-                        <small class="text-danger">Review Cycle Start Date is required</small>
+                    <label for="" class="form-label custom-label">{{'Review Cycle Start Date'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <input class="form-control custom-input" id="startDate" formControlName="startDate" type="date"
+                        [max]="todayDate" placeholder="Please select date" aria-label="default input example">
+                    <div *ngIf="reviewCycleupdateForm.get('startDate')?.touched && reviewCycleupdateForm.get('startDate')?.hasError('required')"
+                        class="error-msg">
+                        Review Cycle Start Date is required
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Review Cycle End Date'|translate}}<span class="text-danger">*</span></label>
-                        <input class="form-control" id="endDate" formControlName="endDate" type="date"
-                            [disabled]="!reviewCycleupdateForm.get('startDate')?.valid" placeholder="Please select date"
-                            aria-label="default input example">
+                    <label for="" class="form-label custom-label">{{'Review Cycle End Date'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <input class="form-control custom-input" id="endDate" formControlName="endDate" type="date"
+                        [disabled]="!reviewCycleupdateForm.get('startDate')?.valid" placeholder="Please select date">
+                    <div *ngIf="reviewCycleupdateForm.get('endDate')?.touched && reviewCycleupdateForm.get('endDate')?.hasError('required')"
+                        class="error-msg">Review Cycle End Date is required
                     </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('endDate')?.touched && reviewCycleupdateForm.get('endDate')?.hasError('required')">
-                        <small class="text-danger">Review Cycle End Date is required</small>
-                    </div>
-                    <div *ngIf="reviewCycleupdateForm.errors?.['endDateInvalid']">
-                        <small class="text-danger">Review Cycle End date should be greater than the start date</small>
+                    <div *ngIf="reviewCycleupdateForm.errors?.['endDateInvalid']" class="error-msg">Review Cycle End
+                        date should be
+                        greater than the start date
                     </div>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Applicable Employees (Joined Before)'|translate}}<span
-                                class="text-danger">*</span></label>
-                        <input class="form-control" id="applicableEmployeesJoinedBefore"
-                            formControlName="applicableEmployeesJoinedBefore" type="date"
-                            placeholder="Please select date" aria-label="default input example">
-                    </div>
-                    <div
-                        *ngIf="reviewCycleupdateForm.get('applicableEmployeesJoinedBefore')?.touched && reviewCycleupdateForm.get('applicableEmployeesJoinedBefore')?.hasError('required')">
-                        <small class="text-danger">Applicable Employees (Joined Before) is required</small>
+                    <label for="" class="form-label custom-label">{{'Applicable Employees (Joined Before)'|translate}}<span class="text-danger">*</span></label>
+                    <input class="form-control custom-input" id="applicableEmployeesJoinedBefore"
+                        formControlName="applicableEmployeesJoinedBefore" type="date" placeholder="Please select date"
+                        aria-label="default input example">
+
+                    <div *ngIf="reviewCycleupdateForm.get('applicableEmployeesJoinedBefore')?.touched && reviewCycleupdateForm.get('applicableEmployeesJoinedBefore')?.hasError('required')"
+                        class="error-msg">
+                        Applicable Employees (Joined Before) is required
                     </div>
                 </div>
 
                 <div class="col-md-12">
-                    <label for="" class="form-label">{{'Description'|translate}}</label>
+                    <label for="" class="form-label custom-label">{{'Description'|translate}}</label>
                     <div class="textarea-container">
-                        <textarea class="form-control" id="description" formControlName="description" type="text"
-                            placeholder="Leave a comment here" id="floatingTextarea2" maxlength="250"
+                        <textarea class="form-control custom-input" id="description" formControlName="description"
+                            type="text" placeholder="Leave a comment here" id="floatingTextarea2" maxlength="250"
                             rows="3"></textarea>
-                        <div
-                            *ngIf="reviewCycleupdateForm.get('description')?.touched && reviewCycleupdateForm.get('description')?.hasError('required')">
-                            <small class="text-danger">Description is required.</small>
-                            <small *ngIf="reviewCycleupdateForm.get('description')?.errors?.['maxlength']">
+                        <div *ngIf="reviewCycleupdateForm.get('description')?.touched && reviewCycleupdateForm.get('description')?.hasError('required')"
+                            class="error-msg">
+                            <div>Description is required.</div>
+                            <div *ngIf="reviewCycleupdateForm.get('description')?.errors?.['maxlength']">
                                 Description not exceed 250 characters
-                            </small>
+                            </div>
                         </div>
-                        <div>
-                            {{ reviewCycleupdateForm.get("description")?.value?.length || 0 }}/250
-                        </div>
+                        <div>{{ reviewCycleupdateForm.get("description")?.value?.length || 0 }}/250</div>
                     </div>
                 </div>
 
@@ -152,7 +151,7 @@
                                 formControlName="applicableForIncrement" type="checkbox"
                                 [checked]="reviewCycleupdateForm.get('applicableForIncrement')?.value">
                         </div>
-                        <label for="" class="form-label">Increment Applicable</label>
+                        <label for="" class="form-label custom-label">Increment Applicable</label>
                     </div>
                 </div>
             </div>

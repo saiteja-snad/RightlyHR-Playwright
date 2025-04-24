@@ -1,7 +1,7 @@
 <div class="custom-main-component-container w-100">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <p class="component-header mb-0" (click)="navigate()">
+            <p class="component-header mb-0" (click)="openModal(Cancelback)">
                 <i class="bi bi-arrow-90deg-left me-2"></i>View Weekends
             </p>
         </div>
@@ -115,7 +115,7 @@
             </div>
 
             <div class="d-flex justify-content-end gap-3 pt-4">
-                <button type="button" class="custom-btn btn-secondary px-4" (click)="openConfirmation()">Cancel</button>
+                <button type="button" class="custom-btn btn-secondary px-4" (click)="openModal(confirmation)">Cancel</button>
                 <button type="button" class="custom-btn btn-primary px-4" (click)="navigateToClone()">Clone</button>
             </div>
         </form>
@@ -132,5 +132,19 @@
             <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">No</button>
             <button class="custom-btn btn-primary w-50  py-2" (click)="closeWeekend()">Yes</button>
         </div>
+    </div>
+</ng-template>
+
+<ng-template #Cancelback let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text">Are you sure you want to go back?</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary" (click)="closeWeekend();model.dismiss()">{{"Yes" |
+          translate}}</button>
+      </div>
     </div>
 </ng-template>

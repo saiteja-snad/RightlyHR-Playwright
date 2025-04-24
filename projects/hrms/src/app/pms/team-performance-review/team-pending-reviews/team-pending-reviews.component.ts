@@ -64,12 +64,9 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
     this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery, this.employeeId, 'Team Manager,Reporting Manager,HR', 'Pending,Draft')
       .subscribe({
         next: (data: any) => {
-          console.log(data)
           this.reviewCycles = data.items;
           this.totalItems = data.totalCount || 0;
-          
           this.pendingReviews =  data.items;
-          console.log(this.pendingReviews)
           this.filteredReviews = this.pendingReviews;
           if(this.pendingReviews.length>0){
             this.collectionSize = data.totalCount;
@@ -131,7 +128,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   }
 
   selfAssessment(reviewCycleItemId: number, currentStage: number, assessorType: string, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
-    console.log(currentStage)
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,
@@ -176,7 +172,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
 
       next: (data: Blob) => {
-        console.log('Received byte data:', data);
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -200,7 +195,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
 
       next: (data: Blob) => {
-        console.log('Received byte data:', data);
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');

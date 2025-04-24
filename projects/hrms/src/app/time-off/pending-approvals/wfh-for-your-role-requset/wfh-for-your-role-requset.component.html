@@ -153,8 +153,16 @@
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
                         translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
-                        translate}}</button>
+                    <!-- <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
+                        translate}}</button> -->
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
+                            @if(spinnerLoader){
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..'}}...</span>
+                            }@else {
+                            <span>{{'Approve'}}</span>
+                            }
+                        </button>
                 </div>
             </form>
         </div>
@@ -201,8 +209,16 @@
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
                         translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
-                        translate}}</button>
+                    <!-- <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
+                        translate}}</button> -->
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">
+                            @if(spinnerLoader){
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..'}}...</span>
+                            }@else {
+                            <span>{{'Reject'}}</span>
+                            }
+                        </button>
                 </div>
             </form>
         </div>

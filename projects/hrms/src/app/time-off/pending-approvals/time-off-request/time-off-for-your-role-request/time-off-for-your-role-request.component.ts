@@ -32,6 +32,7 @@ export class TimeOffForYourRoleRequestComponent {
   selectedLeaveData = {} as any;
   issubmitdiable: boolean = false;
   searchValue :any;
+  spinnerLoader = false;
   @ViewChild('commentspopup') modalContent: any;
   options = [
     { label: 10, value: 10 },

@@ -37,6 +37,7 @@ export class TimeOffForYouRequestComponent {
   leaveEntitlementsList ={} as ICategoryDetails;
   selectedLeaveData = {} as any;
   @ViewChild('commentspopup') modalContent: any;
+  spinnerLoader = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },

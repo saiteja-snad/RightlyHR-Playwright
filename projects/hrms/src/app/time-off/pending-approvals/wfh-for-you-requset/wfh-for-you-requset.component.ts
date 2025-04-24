@@ -61,6 +61,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  spinnerLoader = false;
   searchValue: any;
   constructor(
     private modalService: NgbModal,

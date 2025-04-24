@@ -56,6 +56,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   searchValue: any;
+  spinnerLoader = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,

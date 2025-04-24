@@ -116,8 +116,7 @@
                         <input type="date" class="form-control custom-input" formControlName="enddate"
                             [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
                         <small class="error-message text-danger"
-                            *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched) || 
-                                        (leaveFormData.startdate && leaveFormData.enddate && leaveFormData.enddate < leaveFormData.startdate)">
+                            *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">
                             End Date is required or cannot be before Start Date
                         </small>
 
@@ -133,7 +132,7 @@
                             Please select the working days
                         </small>
 
-                        <small class="error-message text-danger" *ngIf="leaveFormData.enddate && !issEndDategreater">
+                        <small class="error-message text-danger" *ngIf="leaveForm.get('enddate')?.value && !issEndDategreater">
                             End Date is less than Start Date
                         </small>
 
@@ -190,10 +189,10 @@
 
                         </div>
                     </div>
-                    <div class="text-danger"
+                    <!-- <div class="text-danger"
                         *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
                         Please select any of the option
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row">
                     <div class="col-md-12 mb-3">

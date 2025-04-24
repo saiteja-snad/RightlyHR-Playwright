@@ -341,8 +341,8 @@ export class LeavesComponent {
     this.isSubmitted = false;
     this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails
     console.log(this.selectedleave);
-    this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
-       console.log(this.enableHalfDayOptions)
+    // this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
+    //    console.log(this.enableHalfDayOptions)
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeHolidays) {
       this.getholidaybyempid();
     }
@@ -1189,7 +1189,7 @@ export class LeavesComponent {
 
   toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
-    this.leaveForm.patchValue({ availing: '' }); // Reset selection
+    //this.leaveForm.patchValue({ availing: '' }); // Reset selection
   }
 
  

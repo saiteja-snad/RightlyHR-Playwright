@@ -63,7 +63,6 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.assignHeading();
   }
   getEmployeeId(): void {
-    debugger
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {

@@ -43,11 +43,9 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
     public rbac: RbacService,
   ) {
     effect(() => {
-      if (this.http.tirggerCountSignal().wfh) {
+      if (this.http.wfhTriggerSignal()) {
         this.getWFHRequests();
-      this.http
-        .tirggerCountSignal
-        .update((status) => ({ ...status, wfh: false }));
+      this.http.wfhTriggerSignal.set;
       }
     });
   }

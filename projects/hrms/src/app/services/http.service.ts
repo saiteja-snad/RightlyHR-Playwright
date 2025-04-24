@@ -49,6 +49,7 @@ export class HttpService {
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
   reviewCycleTriggerSignal = signal<boolean>(false);
+  wfhTriggerSignal = signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }

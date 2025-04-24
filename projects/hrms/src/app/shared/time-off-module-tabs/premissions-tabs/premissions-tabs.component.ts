@@ -51,7 +51,7 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
             element.status === 'Waiting for Approval'
         ).length;
         this.approvalPermissionsRequestsCount = this.wfh.filter(
-          (element: { status: string }) => element.status === 'Processed'
+          (element: { status: string }) => element.status === 'Processed' || element.status === 'Approved'
         ).length;
         this.rejectedPermissionsRequestsCount = this.wfh.filter(
           (element: { status: string }) => element.status === 'Rejected'

@@ -58,7 +58,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
   intializeCompOffForm() {
     this.addCompOffForm = this.fb.group({
       workedDate: ['',
-        [Validators.required, this.onlyWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]
+        [Validators.required, this.afterJoiningDateValidator.bind(this)]
       ],
       availing: ['', Validators.required],
       halfType: [''],

@@ -65,7 +65,7 @@ export class PremissionsApprovedComponent implements OnInit,OnDestroy {
     .subscribe({
       next: (response: any) => {
         this.permissions = response as RegularizationRequest[];
-        this.approvedPerimisions = this.permissions.filter((element: { status: string }) => element.status === 'Approved');
+        this.approvedPerimisions = this.permissions.filter((element: { status: string }) => element.status === 'Approved' || element.status ==='Processed');
       },
       error: (error) => {
         console.error('Error fetching data:', error);

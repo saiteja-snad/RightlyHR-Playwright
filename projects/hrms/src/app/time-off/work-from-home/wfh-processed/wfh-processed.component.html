@@ -5,7 +5,7 @@
                 <tr>
                     <th>Worked Date</th>
                     <th>Availed</th>
-                    <th>Reason</th>
+                    <!-- <th>Reason</th> -->
                     <th>Applied Date</th>
                     <th>Status</th>
                 </tr>
@@ -21,7 +21,7 @@
                             <span *ngSwitchCase="2">Full Day</span>
                             <span *ngSwitchDefault>-</span>
                         </td>
-                        <td>
+                        <!-- <td>
                             <div>
                                 <span>
                                     <a type="button" placement="top" [ngbPopover]="reason">
@@ -34,7 +34,7 @@
                                     </ng-template>
                                 </span>
                             </div>
-                        </td>
+                        </td> -->
                         <td>{{ wfhRequest.requestedDate | dateformat }}</td>
                         <td>{{ wfhRequest.status }}</td>
                     </tr>

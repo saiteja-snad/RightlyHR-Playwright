@@ -90,4 +90,21 @@ export class FormValidationsService {
     }
   }
 
+
+  validateInput(control: AbstractControl | null) {
+    if (!control) return; // Ensure control exists
+    let value = control.value || ''; // Ensure value is a string
+
+    // Remove leading spaces
+    value = value.replace(/^\s+/, '');
+
+    // Prevent starting with special characters
+    if (/^[^a-zA-Z0-9]/.test(value)) {
+      value = value.replace(/^[^a-zA-Z0-9]+/, '');
+    }
+
+    control.setValue(value, { emitEvent: false });
+  }
+
+
 }

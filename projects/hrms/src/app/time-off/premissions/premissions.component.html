@@ -24,7 +24,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Request Premission</p>
+                <p class="popup-heading mb-0">Request Permission</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();this.permissionForm.reset()"><img src="icons/close.png" alt="Close Icon"
@@ -78,7 +78,7 @@
                         <label for="reason" class="form-label custom-label mb-2">Reason <span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
-                            placeholder="Type here" maxlength="250" placeholder="Type Here"></textarea>
+                            placeholder="Type here" maxlength="250" placeholder="Type Here" (input)="formsValidation.validateInput(permissionForm.get('reason'))" ></textarea>
                         <div class="text-end small text-muted">
                             {{ permissionForm.get('reason')?.value?.length || 0 }}/250
                         </div>

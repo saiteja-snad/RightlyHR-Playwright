@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -48,7 +48,9 @@ export class WfhRejectedComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private http: HttpService,
     public rbac: RbacService,
-  ) {}
+  ) {
+    
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

@@ -87,10 +87,10 @@
                                 <p-select [options]="allEmployees" [filter]="true" filterBy="firstName" [showClear]="true"
                                 optionLabel="fullName" optionValue="employeeId" (onChange)="colleagueDetails($event.value)" placeholder="Please select employee"
                                 formControlName="name" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                <!-- <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
                                     }}</ng-template>
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
-                                    }}</ng-template>
+                                    }}</ng-template> -->
                             </p-select>
                             }
                         </div>

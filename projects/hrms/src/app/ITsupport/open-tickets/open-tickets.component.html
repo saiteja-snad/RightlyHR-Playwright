@@ -238,7 +238,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Action'| translate}}<span class="text-danger">*</span></label>
                         <p-select [options]="status"
-                                optionLabel="label" optionValue="name" placeholder="Please select status"
+                                optionLabel="label" optionValue="" placeholder="Please select status"
                                 formControlName="ticketStatus" class="custom-select w-100">
                             </p-select>
                         <div *ngIf="itSupportForm.get('ticketStatus')?.invalid && itSupportForm.get('ticketStatus')?.touched">
@@ -255,8 +255,8 @@
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
                                     }}</ng-template>
                             </p-select>
-                        <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
-                            <div class="error-msg">{{'Comments is required' | translate}}</div>
+                        <div *ngIf="itSupportForm.get('assignedto')?.invalid && itSupportForm.get('assignedto')?.touched">
+                            <div class="error-msg">{{'Assigned To is required' | translate}}</div>
                         </div>
                     </div>
                     

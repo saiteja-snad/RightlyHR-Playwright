@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { IDepartment } from '../../Interfaces/letters-model';
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
   selector: 'app-open-tickets',
@@ -24,17 +25,24 @@ export class OpenTicketsComponent {
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   ticketRaisedFor :any []=[];
-  status :any []=[];
+  status =  [
+    { value: 'Open', label: 'Open' },
+    { value: 'Closed', label: 'Closed' },
+    { value: 'Await On User', label: 'Await On User' },
+    { value: 'Rejected', label: 'Rejected' }
 
+  ];
   departmentDetails = [] as IDepartment[];
   teamTicketDetails: any = {};
   allEmployees = [] as any [];
   selectedTickets: any = {};
+  itTicketDetails = {} as any;
 
   constructor(
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private fb: FormBuilder,
+    private confirmation: OpenModalService
   ) {}
 
   
@@ -44,13 +52,6 @@ export class OpenTicketsComponent {
       { value: 'Self', label: 'Self' },
       { value: 'Colleague', label: 'Colleague' }
     ];
-    this.status = [
-      { value: 'Open', label: 'Open' },
-      { value: 'Closed', label: 'Closed' },
-      { value: 'Await On User', label: 'Await On User' },
-      { value: 'Rejected', label: 'Rejected' }
-
-    ];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     
     this.teamTicketDetails = JSON.parse(localStorage.getItem('ticketDetails') || '{}');
@@ -58,7 +59,7 @@ export class OpenTicketsComponent {
 
     this.getuserticketsbyempid();
     this.itSupportForm = this.fb.group({
-      employee: [{ value: '', disabled: true }, Validators.required],
+      employee: [{ value: 'Self', disabled: true }, Validators.required],
       name: [{ value: '', disabled: true }, Validators.required],
       email: [{ value: '', disabled: true }, Validators.required],
       phoneNumber: [{ value: '', disabled: true }, Validators.required], 
@@ -71,9 +72,7 @@ export class OpenTicketsComponent {
       description: [{ value: '', disabled: true }, [Validators.required]],
       comments : ['', [Validators.required]],
       assignedto : [null, [Validators.required]],
-
-
-
+      ticketStatus: ['', [Validators.required]]
     });
   }
   
@@ -92,7 +91,7 @@ export class OpenTicketsComponent {
       priority: this.selectedTickets.priority,
       subject : this.selectedTickets.subject,
       description: this.selectedTickets.description,
-      ticketStatus: this.selectedTickets.ticketStatus,
+      ticketStatus: this.status.find((status) => status.label === this.selectedTickets.ticketStatus),
     });
     console.log(ticket);
     
@@ -142,8 +141,46 @@ export class OpenTicketsComponent {
     this.selectedAssigneeId = id;
   }
   onUpdate(){
+    
+    console.log(this.itSupportForm.value);
+    this.itTicketDetails.id = this.selectedTickets.id;
+    this.itTicketDetails.empId = this.selectedTickets.empId;
+    this.itTicketDetails.subdeptId = this.selectedTickets.subdeptId;
+    this.itTicketDetails.deskNo = this.selectedTickets.deskNo;
+    this.itTicketDetails.type = this.selectedTickets.type;
+    this.itTicketDetails.ticketStatus = this.itSupportForm.value.ticketStatus.label;
+    this.itTicketDetails.priority = this.selectedTickets.priority;
+    this.itTicketDetails.subject = this.selectedTickets.subject;
+    this.itTicketDetails.description = this.selectedTickets.description;
+    this.itTicketDetails.stepsToReplicate = this.selectedTickets.stepsToReplicate;
+    this.itTicketDetails.comments = this.itSupportForm.value.comments;
+    this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.toString();
+    this.itTicketDetails.attachmentUrl = null;
+    this.itTicketDetails.createdAt = this.selectedTickets.createdAt;
+    this.itTicketDetails.updatedAt = new Date().toISOString();;
+    this.itTicketDetails.isdeleted = false
+    this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
+      next: (data: any) => {
+       console.log(data);
+       this.confirmation.openSuccessModal('Ticket raised successfully');
+       localStorage.setItem('ticketDetails', JSON.stringify(data));
+       setTimeout(() => {
+        this.itSupportForm.reset();
+        this.modalService.dismissAll();
+        this.getuserticketsbyempid();
+       }, 2000);
+       this.isLoading = false;
 
-  }
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.confirmation.openErrorModal(err.error.Message);
+        this.isLoading = false;
+      },
+      complete: () => {
+
+      }
+    });  }
   
 
 }

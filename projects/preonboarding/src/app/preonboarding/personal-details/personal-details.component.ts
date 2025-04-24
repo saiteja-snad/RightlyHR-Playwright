@@ -202,7 +202,7 @@ export class PersonalDetailsComponent implements OnInit {
   copyCurrentAddress(event: any) {
     if (event.target.checked) {
       const currentAddress = this.personalDetailsForm.get('currentAddress')?.value;
-      this.personalDetailsForm.patchValue({
+      this.personalDetailsForm?.patchValue({
         permanentAddress: {
           addressLine1: currentAddress?.addressLine1 || null,
           addressLine2: currentAddress?.addressLine2 || null,

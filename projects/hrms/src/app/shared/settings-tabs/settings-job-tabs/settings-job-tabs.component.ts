@@ -50,7 +50,7 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Compensation Reason', route: '/settings/employee-fields/job/compensation-reason', permission: { feature: 'Compensation Reason', action: 'view' } },
     { label: 'Location', route: '/settings/employee-fields/job/location', permission: { feature: 'Location', action: 'view' } },
     { label: 'Sub Location', route: '/settings/employee-fields/job/sub-location', permission: { feature: 'Sub Location', action: 'view' } },
-    { label: 'Pre Onboarding Documents', route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: { feature: 'Pre Onboarding Documents', action: 'view' } },
+    { label: 'Pre Onboarding Documents', route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: { feature: 'Pre Onboard Documents', action: 'view' } },
     { label: 'Serving period', route: '/settings/employee-fields/job/serving-period', permission: { feature: 'Serving Period', action: 'view' } },
     { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details', permission: { feature: 'Probation Details', action: 'view' } },
   ];

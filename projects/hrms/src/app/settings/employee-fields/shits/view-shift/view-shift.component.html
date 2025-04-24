@@ -27,10 +27,12 @@
                     <div class="row g-2 mb-3">
                         <!-- Year -->
                         <div class="col-md-3 mb-3">
-                            <label class="form-label custom-label mb-2">{{'Year'|translate}} <span class="text-danger">*</span></label>
+                            <label class="form-label custom-label mb-2">{{'Year'|translate}} <span
+                                    class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select formControlName="year" placeholder="Select Year" [options]="years" [readonly]="isDisabled"
-                                    class="form-select custom-select readonly-style" [disabled]="isDisabled"></p-select>
+                                <p-select formControlName="year" placeholder="Select Year" [options]="years"
+                                    [readonly]="isDisabled" class="form-select custom-select readonly-style"
+                                    [disabled]="isDisabled"></p-select>
                             </div>
 
                             <div class="error-msg"
@@ -47,8 +49,9 @@
                             <label class="form-label custom-label mb-2">{{'Location'|translate}} <span
                                     class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select formControlName="location" placeholder="Select Sub Location" [readonly]="isDisabled"
-                                    optionLabel="jobLocationName" optionValue="id" class="form-select custom-select readonly-style"
+                                <p-select formControlName="location" placeholder="Select Sub Location"
+                                    [readonly]="isDisabled" optionLabel="jobLocationName" optionValue="id"
+                                    class="form-select custom-select readonly-style"
                                     [disabled]="!shiftForm.get('location')?.valid" [options]="locations">
                                 </p-select>
                             </div>
@@ -66,9 +69,10 @@
                             <label class="form-label custom-label mb-2"> {{'Sub Location'|translate}} <span
                                     class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
-                                <p-select formControlName="subLocation" placeholder="Select Sub Location" [readonly]="isDisabled"
-                                    optionLabel="jobSubLocationName"  optionValue="id" [options]="sublocation"
-                                    [disabled]="!shiftForm.get('location')?.valid" class="form-select custom-select readonly-style">
+                                <p-select formControlName="subLocation" placeholder="Select Sub Location"
+                                    [readonly]="isDisabled" optionLabel="jobSubLocationName" optionValue="id"
+                                    [options]="sublocation" [disabled]="!shiftForm.get('location')?.valid"
+                                    class="form-select custom-select readonly-style">
                                 </p-select>
                             </div>
                             <div class="error-msg"
@@ -78,7 +82,7 @@
                                     {{'Sub Location is required'|translate}}
                                 </div>
                             </div>
-                        </div>                    
+                        </div>
                     </div>
                     <div formArrayName="shifts">
                         <div *ngFor="let shift of shifts.controls; let i = index" [formGroupName]="i"
@@ -89,11 +93,13 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Shift Code'|translate}}<span
                                             class="text-danger">*</span></label>
-                                    <input type="text" class="form-control custom-input readonly-style" formControlName="shiftCode" [readonly]="isDisabled"
+                                    <input type="text" class="form-control custom-input readonly-style"
+                                        formControlName="shiftCode" [readonly]="isDisabled"
                                         placeholder="Please enter shift code" />
                                     <div *ngIf="shift.get('shiftCode')?.invalid && (shift.get('shiftCode')?.dirty || shift.get('shiftCode')?.touched)"
                                         class="error-msg">
-                                        <span *ngIf="shift.get('shiftCode')?.errors?.['required']">{{'Shift code is required '|translate}}</span>
+                                        <span *ngIf="shift.get('shiftCode')?.errors?.['required']">{{'Shift code is
+                                            required '|translate}}</span>
                                     </div>
                                 </div>
 
@@ -101,28 +107,33 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Shift Name'|translate}}<span
                                             class="text-danger">*</span></label>
-                                    <input type="text" class="form-control custom-input readonly-style" formControlName="shiftName" [readonly]="isDisabled"
+                                    <input type="text" class="form-control custom-input readonly-style"
+                                        formControlName="shiftName" [readonly]="isDisabled"
                                         placeholder="Please enter shift name" />
                                     <div *ngIf="shift.get('shiftName')?.invalid && (shift.get('shiftName')?.dirty || shift.get('shiftName')?.touched)"
                                         class="error-msg">
-                                        <span *ngIf="shift.get('shiftName')?.errors?.['required']">{{'Shift name is required'|translate}}</span>
+                                        <span *ngIf="shift.get('shiftName')?.errors?.['required']">{{'Shift name is
+                                            required'|translate}}</span>
                                     </div>
                                 </div>
 
                                 <!-- Color -->
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Color'|translate}}</label>
-                                    <input type="color" class="form-control custom-input readonly-style" [readonly]="isDisabled" formControlName="color" />
+                                    <input type="color" class="form-control custom-input readonly-style"
+                                        [readonly]="isDisabled" formControlName="color" />
                                 </div>
 
                                 <!-- Start Time -->
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Start Time'|translate}}<span
                                             class="text-danger">*</span></label>
-                                    <input type="time" class="form-control custom-input readonly-style" [readonly]="isDisabled" formControlName="startTime" />
+                                    <input type="time" class="form-control custom-input readonly-style"
+                                        [readonly]="isDisabled" formControlName="startTime" />
                                     <div *ngIf="shift.get('startTime')?.invalid && (shift.get('startTime')?.dirty || shift.get('startTime')?.touched)"
                                         class="error-msg">
-                                        <span *ngIf="shift.get('startTime')?.errors?.['required']">{{'Start time is required||translate'}}</span>
+                                        <span *ngIf="shift.get('startTime')?.errors?.['required']">{{'Start time is
+                                            required||translate'}}</span>
                                     </div>
                                 </div>
 
@@ -130,10 +141,12 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'End Time'|translate}}<span
                                             class="text-danger">*</span></label>
-                                    <input type="time" class="form-control custom-input readonly-style" [readonly]="isDisabled" formControlName="endTime" />
+                                    <input type="time" class="form-control custom-input readonly-style"
+                                        [readonly]="isDisabled" formControlName="endTime" />
                                     <div *ngIf="shift.get('endTime')?.invalid && (shift.get('endTime')?.dirty || shift.get('endTime')?.touched)"
                                         class="error-msg">
-                                        <span *ngIf="shift.get('endTime')?.errors?.['required']">{{'End time is required'|translate}}</span>
+                                        <span *ngIf="shift.get('endTime')?.errors?.['required']">{{'End time is
+                                            required'|translate}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -142,36 +155,40 @@
                                 <!-- Grace Period -->
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Grace Period'|translate}}</label>
-                                    <input type="number" class="form-control custom-input readonly-style" [readonly]="isDisabled" formControlName="gracePeriod"
+                                    <input type="number" class="form-control custom-input readonly-style"
+                                        [readonly]="isDisabled" formControlName="gracePeriod"
                                         placeholder="Grace period" />
                                 </div>
 
                                 <!-- Lates Allowed -->
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Lates Allowed'|translate}}</label>
-                                    <input type="number" class="form-control custom-input readonly-style" [readonly]="isDisabled"
-                                        formControlName="latesAllowed" placeholder="Lates allowed" />
+                                    <input type="number" class="form-control custom-input readonly-style"
+                                        [readonly]="isDisabled" formControlName="latesAllowed"
+                                        placeholder="Lates allowed" />
                                 </div>
 
                                 <!-- Break Time -->
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Break Time'|translate}}</label>
-                                    <input type="number" class="form-control custom-input readonly-style" [readonly]="isDisabled" formControlName="breakTime"
-                                        placeholder="Break time" />
+                                    <input type="number" class="form-control custom-input readonly-style"
+                                        [readonly]="isDisabled" formControlName="breakTime" placeholder="Break time" />
                                 </div>
 
                                 <!-- Half Day Minimum Hours -->
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Half Day Min Hrs'|translate}}</label>
-                                    <input type="number" class="form-control custom-input readonly-style" [readonly]="isDisabled"
-                                        formControlName="halfDayMinHrs" placeholder="Half day min hrs" />
+                                    <input type="number" class="form-control custom-input readonly-style"
+                                        [readonly]="isDisabled" formControlName="halfDayMinHrs"
+                                        placeholder="Half day min hrs" />
                                 </div>
 
                                 <!-- Full Day Minimum Hours -->
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Full Day Min Hrs'|translate}}</label>
-                                    <input type="number" class="form-control custom-input readonly-style" [readonly]="isDisabled"
-                                        formControlName="fullDayMinHrs" placeholder="Full day min hrs" />
+                                    <input type="number" class="form-control custom-input readonly-style"
+                                        [readonly]="isDisabled" formControlName="fullDayMinHrs"
+                                        placeholder="Full day min hrs" />
                                 </div>
 
                                 <!-- Delete Icon -->
@@ -187,11 +204,14 @@
                     </div>
 
                     <div class=" d-flex justify-content-end gap-3 p-3">
-                        <button type="button" class="custom-btn btn-secondary" (click)="Cancel()">{{'Cancel'|translate}}</button>
-                        <button type="button" class="custom-btn btn-secondary" *ngIf="!hideBUTTON" (click)="cloneshiftsPolicy1(shiftId)" [disabled]="shiftForm.invalid">{{'Clone'|translate}}</button>
+                        <button type="button" class="custom-btn btn-secondary"
+                            (click)="Cancel()">{{'Cancel'|translate}}</button>
+                        <button type="button" class="custom-btn btn-secondary" *ngIf="!hideBUTTON"
+                            (click)="cloneshiftsPolicy1(shiftId)"
+                            [disabled]="shiftForm.invalid">{{'Clone'|translate}}</button>
                         <!-- <button type="button" class="custom-btn btn-secondary" *ngIf="!hideBUTTON" (click)="publish()" [disabled]="shiftForm.invalid">Publish</button> -->
                         <!-- <button type="submit" class="custom-btn btn-primary" -->
-                            <!-- [disabled]="shiftForm.invalid">Submit</button> -->
+                        <!-- [disabled]="shiftForm.invalid">Submit</button> -->
                     </div>
 
                 </form>
@@ -204,16 +224,17 @@
 </div>
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-4">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
-                <p class="confirmation-text">{{'Are you sure you want to Cancel?'|translate}}</p>
-            </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-            </div>
+    <div class="result-popup-content" ngbAutofocus>
+
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Cancel?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary "
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>
-  </ng-template>
+
+</ng-template>

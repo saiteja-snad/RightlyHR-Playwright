@@ -26,8 +26,8 @@
 
 <ng-template #expensesallowmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Update Expense Allowed Days</p>
             </div>
             <div>
@@ -35,7 +35,7 @@
                         class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content">
             <form [formGroup]="dateconfigurationForm" (ngSubmit)="updatedate(dateconfigurationForm);modal.dismiss()">
                 <div class="mb-3">
                     <label for="value" class="form-label custom-label mb-2">Duration <span
@@ -52,9 +52,9 @@
                         </span>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end gap-3 pt-4">
-                    <button type="button" class="btn btn-secondary" (click)="modal.dismiss();resetform()">Close</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="dateconfigurationForm.invalid">Update</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();resetform()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="dateconfigurationForm.invalid">Update</button>
                 </div>
             </form>
         </div>

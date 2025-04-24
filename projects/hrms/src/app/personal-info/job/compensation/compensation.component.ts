@@ -159,6 +159,7 @@ export class CompensationComponent {
       next: (data: any) => {
         console.log(data)
         this.modalService.dismissAll()
+        this.getCompensationempid()
         this.conformationPopup.openSuccessModal("Compensation added successfully")
 
       },

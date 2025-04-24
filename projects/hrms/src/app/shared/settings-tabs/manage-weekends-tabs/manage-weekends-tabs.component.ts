@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-manage-weekends-tabs',
@@ -12,50 +13,55 @@ import { HttpService } from '../../../services/http.service';
 })
 export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
+  public navLinks: any[] = [];
 
   constructor(
-    private http: HttpService
-  ) { }
+    private http: HttpService, 
+    public rbac: RbacService
+  ) {}
+
+  allNavLinks = [
+    {
+      label: 'Pending for submission',
+      route: '/settings/employee-fields/manage-weekends/pending-for-submission',
+      count: 0,
+      permission: { feature: 'Pending For Submission', action: 'view' }
+    },
+    {
+      label: 'Published',
+      route: '/settings/employee-fields/manage-weekends/published-weekends',
+      count: 0,
+      permission: { feature: 'Published', action: 'view' }
+    }
+  ];
 
   ngOnInit(): void {
     this.getAllWeekend();
   }
 
-  navLinks = [
-    {
-      label: 'Pending for submission',
-      route: '/settings/employee-fields/manage-weekends/pending-for-submission',
-      count: 0
-    },
-    {
-      label: 'Published',
-      route: '/settings/employee-fields/manage-weekends/published-weekends',
-      count: 0
-    },
-  ];
-
   getAllWeekend() {
     this.http.getData(`OrgWeekendHeader/getAll`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        console.log(data);
         const pendingCount = data.filter((item: any) => item.status === 'Pending for submission').length;
         const publishedCount = data.filter((item: any) => item.status === 'Published').length;
 
-        this.navLinks = [
-          {
-            label: 'Pending for submission',
-            route: '/settings/employee-fields/manage-weekends/pending-for-submission',
-            count: pendingCount
-          },
-          {
-            label: 'Published',
-            route: '/settings/employee-fields/manage-weekends/published-weekends',
-            count: publishedCount
-          }
-        ];
-
+        this.navLinks = this.allNavLinks
+          .map(link => {
+            if (link.label === 'Pending for submission') {
+              return { ...link, count: pendingCount };
+            } else if (link.label === 'Published') {
+              return { ...link, count: publishedCount };
+            }
+            return link;
+          })
+          .filter(link =>
+            link.permission &&
+            link.permission.feature &&
+            link.permission.action &&
+            this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
+          );
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {

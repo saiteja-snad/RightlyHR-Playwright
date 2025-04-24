@@ -10,6 +10,7 @@ import { IActiveEmployee } from './active-employees.model';
 import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-role-assignee',
@@ -38,6 +39,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private modal: OpenModalService,
     private modalService: NgbModal,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

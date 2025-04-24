@@ -17,6 +17,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { RbacService } from '../../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [
@@ -77,13 +78,13 @@ export class ClaimsandexpensesForYouRequestComponent
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250,),noWhitespaceValidator]],
     });
   }
 

@@ -19,7 +19,7 @@ import moment from 'moment';
 import { TohoursPipe } from "../../Pipes/tohours.pipe";
 import { LeaveType } from '../../Interfaces/timoff-model';
 import { Select } from 'primeng/select';
-import { environment } from '../../../environments/environment.dev';
+import { environment } from '../../../environments/environment';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({

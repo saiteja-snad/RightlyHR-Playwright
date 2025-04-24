@@ -148,32 +148,32 @@ export class PersonalDetailsComponent implements OnInit {
       lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
       gender: [null, Validators.required],
       salutation: [null, Validators.required],
-      phonenumber: [null, [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      phonenumber: [null, [Validators.required,]],
       dob: [null, Validators.required],
       bloodGroup: [null],
-      location: [{ value: null, disabled: true }, Validators.required],
-      subLocation: [{ value: null, disabled: true }, Validators.required],
-      designation: [{ value: null, disabled: true }, Validators.required],
+      location: [{ value: null, disabled: true },],
+      subLocation: [{ value: null, disabled: true }, ],
+      designation: [{ value: null, disabled: true },],
       personalEmail: [{ value: null, disabled: true }, Validators.required],
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
         addressLine1: [null, [Validators.required,Validators.maxLength(100)]],
-        addressLine2: [null, Validators.required,Validators.maxLength(100)],
-        city: [null, Validators.required,Validators.maxLength(30)],
-        state: [null, Validators.required,Validators.maxLength(30)],
-        country: [null, Validators.required ,Validators.maxLength(30)],
-        zipCode: [null, Validators.required,Validators.pattern('^[0-6]{6}$')],
+        addressLine2: [null, [Validators.required,Validators.maxLength(100)]],
+        city: [null, [Validators.required,Validators.maxLength(30)]],
+        state: [null, [Validators.required,Validators.maxLength(30)]],
+        country: [null, [Validators.required ,Validators.maxLength(30)]],
+        zipCode: [null, [Validators.required,Validators.pattern('^[0-6]{6}$')]],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: [null, Validators.required,Validators.maxLength(100)],
-        addressLine2: [null, Validators.required,Validators.maxLength(100)],
-        city: [null, Validators.required,Validators.maxLength(30)],
-        state: [null, Validators.required,Validators.maxLength(30)],
-        country: [null, Validators.required,Validators.maxLength(30)],
-        zipCode: [null, Validators.required,Validators.pattern('^[0-6]{6}$')],
+        addressLine1: [null, [Validators.required,Validators.maxLength(100)]],
+        addressLine2: [null, [Validators.required,Validators.maxLength(100)]],
+        city: [null, [Validators.required,Validators.maxLength(30)]],
+        state: [null, [Validators.required,Validators.maxLength(30)]],
+        country: [null, [Validators.required,Validators.maxLength(30)]],
+        zipCode: [null, [Validators.required,Validators.pattern('^[0-6]{6}$')]],
       }),
     });
   }
@@ -202,7 +202,7 @@ export class PersonalDetailsComponent implements OnInit {
   copyCurrentAddress(event: any) {
     if (event.target.checked) {
       const currentAddress = this.personalDetailsForm.get('currentAddress')?.value;
-      this.personalDetailsForm.patchValue({
+      this.personalDetailsForm?.patchValue({
         permanentAddress: {
           addressLine1: currentAddress?.addressLine1 || null,
           addressLine2: currentAddress?.addressLine2 || null,
@@ -222,7 +222,10 @@ export class PersonalDetailsComponent implements OnInit {
     }
     return true;
   }
-
+  checkvalidation(){
+    
+    console.log(this.personalDetailsForm)
+  }
   //function formate the data 
   formatDate(date: Date): string {
     return formatDate(date, 'yyyy-MM-dd', 'en-US');

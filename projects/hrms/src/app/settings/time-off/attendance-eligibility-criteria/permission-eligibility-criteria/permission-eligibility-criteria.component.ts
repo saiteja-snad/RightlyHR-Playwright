@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 
 @Component({
@@ -23,7 +24,7 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
   validationError!:any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private http: HttpService,private sharedModalService: OpenModalService,) {}
+  constructor(private http: HttpService,private sharedModalService: OpenModalService,public rbac: RbacService) {}
 
   ngOnInit(): void {
     this.getdatabyentriy();

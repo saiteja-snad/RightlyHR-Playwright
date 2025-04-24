@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { IFormDetails, ISection } from './assessmentform';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../../services/rbac.service';
 

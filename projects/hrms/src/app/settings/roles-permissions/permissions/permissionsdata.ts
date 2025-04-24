@@ -185,6 +185,30 @@ export const permissionsData = [
     { fields: 'Appointment Status', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Offer Status', View: false, Update: false, Create: false, Delete: false },
 
+    //Manage Shifts Tab
+    { fields: 'Pending For Submit', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Published Shifts', View: false, Update: false, Create: false, Delete: false },
+
+    //Manage Policies Tab
+    { fields: 'Pending For Policies Submit', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Published Policies', View: false, Update: false, Create: false, Delete: false },
+
+    //Manage Holidays Tab
+    { fields: 'Pending For Holidays Submit', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Published Holidays', View: false, Update: false, Create: false, Delete: false },
+
+    //Manage Weekends Tab
+    { fields: 'Pending For Submission', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Published', View: false, Update: false, Create: false, Delete: false },
+
+    //Expense Configuration Tab
+    { fields: 'Expense Configuration', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expense Allowed Days', View: false, Update: false, Create: false, Delete: false },
+
+    //Manage DST Tab
+    { fields: 'DST Pending For Submission', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'DST Published', View: false, Update: false, Create: false, Delete: false },
+
     //Expenses Type
     { fields: 'Expenses Type', View: false, Update: false, Create: false, Delete: false },
 
@@ -199,6 +223,31 @@ export const permissionsData = [
     { fields: 'Manage Weekends Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Manage DST Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Expense Types Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
+
+     // Settings Roles Section    
+     { fields: 'Role Tab', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Role Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Assignee Tab', View: false, Update: false, Create: false, Delete: false },
+
+    // Settings Assest Configuration Section    
+    { fields: 'Vendor Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Catagory', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Sub Catagory', View: false, Update: false, Create: false, Delete: false },
+
+    // TimeOff Attendece Eligibility Criteria  
+    { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'WFH Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attndance Eligibility Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Permission Elgibility Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+
+     // Settings Dynamic Forms Section    
+     { fields: 'Active Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Inactive Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Draft Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Form Settings', View: false, Update: false, Create: false, Delete: false },
 
     //Time Off Tabs Sections
     { fields: 'Leave Category Tab', View: false, Update: false, Create: false, Delete: false },

@@ -4,15 +4,14 @@ import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal,} from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-bank-loan-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],

@@ -5,7 +5,6 @@ import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Valid
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
-import { LeavesApprovaltabsComponent } from "../../shared/leaves-approvaltabs/leaves-approvaltabs.component";
 import { RouterModule } from '@angular/router';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
@@ -16,10 +15,12 @@ import { environment } from '../../../environments/environment.dev';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
+import { LeavesApprovaltabsComponent } from "../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component";
 
 @Component({
   selector: 'app-leaves',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, LeavesApprovaltabsComponent,RouterModule,ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss'
 })

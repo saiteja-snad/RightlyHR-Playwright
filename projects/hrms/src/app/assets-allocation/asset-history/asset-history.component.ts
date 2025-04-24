@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-asset-history',
-  imports: [CommonModule, TabsModule, RouterModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, TabsModule, RouterModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
   templateUrl: './asset-history.component.html',
   styleUrl: './asset-history.component.scss'
 })
@@ -29,6 +30,7 @@ export class AssetHistoryComponent {
 
   constructor(private readonly http: HttpService,
     public readonly route: ActivatedRoute,
+    public router: Router, 
 
   ) {
 
@@ -44,7 +46,9 @@ export class AssetHistoryComponent {
       }
     });
   }
-
+  navigateassets(){
+    this.router.navigate(['/desk/management/all-desks']);
+  }
 
   tranferasetdata(assetId: any) {
     this.subscription = this.http.getData(`AssetTransaction/transfer-history?assetId=${assetId}`)

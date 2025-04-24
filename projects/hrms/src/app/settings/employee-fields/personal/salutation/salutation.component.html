@@ -5,7 +5,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter saluation"
                     formControlName="saluation" aria-label="saluation" aria-describedby="saluation"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    >
                 <span class="input-group-text" id="saluation">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="saluationForm.invalid">{{'Add'|translate}}</button></span>
@@ -14,6 +14,9 @@
                 class="error-msg mt-2">
                 <div *ngIf="saluationForm.get('saluation')?.errors?.['required']">{{'Saluation is required'|translate}}
                 </div>
+                <div *ngIf="saluationForm.get('saluation')?.errors?.['pattern']">
+                    Only letters, spaces (not at start) are allowed.
+                  </div>
             </div>
         </div>
     </form>

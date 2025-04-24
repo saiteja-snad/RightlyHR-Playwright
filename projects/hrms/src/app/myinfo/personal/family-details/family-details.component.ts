@@ -96,7 +96,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   //get family relations dropdown
   getFamilyRelations() {
     this.subscription = this.http
-      .getData('Relationship?isDependent=true')
+      .getData('Relationship')
       .subscribe({
         next: (data: any) => {
           this.familyRelations = data as IRelation[];

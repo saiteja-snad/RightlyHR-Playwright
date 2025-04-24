@@ -136,7 +136,7 @@
           <div class="col-md-6 mb-3">
             <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
                 class="text-danger">*</span></label>
-            <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
+            <input type="datetime-local" class="form-control custom-input" id="eventDate"  onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
             <div *ngIf="customEventupdateForm.get('required')?.touched" class="error-msg">Event date is required.</div>
             <div *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
                 class="error-msg">Event date cannot be in the past.

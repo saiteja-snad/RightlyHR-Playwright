@@ -32,7 +32,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     { name: 'O-' }
   ];
   Gender: IGender[] = [];
-  Titledetails: ITitle[] = [];
+  titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
   buttons = false
   constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService,
@@ -82,7 +82,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       fusionEmpId: data.fusionEmpId,
-      salutation: data.title,
+       salutation: this.titledetails.find((item: any) => item.titlename === data.title)|| data.title,
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
@@ -101,7 +101,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
     const updatePayload = {
       employeeId: formValue.employeeId,
-      title: formValue.salutation,
+      title: formValue.salutation.titlename,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
@@ -171,7 +171,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
-        this.Titledetails = data as ITitle[];
+        this.titledetails = data as ITitle[];
       },
     });
   }

@@ -64,7 +64,18 @@ export class UpcomingEventsComponent {
       return selectedDate < today ? { pastDate: true } : null;
     };
   }
-
+  getToday(): string {
+    const now = new Date();
+    const pad = (n: number) => n < 10 ? '0' + n : n;
+  
+    const year = now.getFullYear();
+    const month = pad(now.getMonth() + 1);
+    const day = pad(now.getDate());
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
   getCustomEvents() {
 
     this.http.getData(`CustomEvents/Getbyorder?month=${this.currentMonth}&year=${this.currentYear}`)
@@ -108,7 +119,10 @@ export class UpcomingEventsComponent {
 
   openModalupdate(content: any, eventsdata: any): void {
     this.selectedevetid=eventsdata.eventId
-    const formattedDate = new Date(eventsdata.eventDate).toISOString().slice(0, 16);
+    const localDate = new Date(eventsdata.eventDate);
+    const pad = (n: number) => n < 10 ? '0' + n : n;
+    const formattedDate = `${localDate.getFullYear()}-${pad(localDate.getMonth() + 1)}-${pad(localDate.getDate())}T${pad(localDate.getHours())}:${pad(localDate.getMinutes())}`;
+  
     this.customEventupdateForm.patchValue({
       eventDate: formattedDate,
       eventTitle: eventsdata.eventTitle || '',

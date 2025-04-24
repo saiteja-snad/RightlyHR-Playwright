@@ -106,17 +106,17 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   initializeupdatejobForm(): void {
     this.jobDetailsupdateForm = this.fb.group({
-      effectiveDate: ['', Validators.required],
-      jobRole: ['', Validators.required],
+      effectiveDate: [null, Validators.required],
+      jobRole: [null, Validators.required],
       grade: [{ value: null, disabled: true }, Validators.required],
-      department: ['', Validators.required],
-      team: ['', Validators.required],
-      teamManager: [{ value: '', disabled: true }, Validators.required],
-      reportingManager: ['', Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
-      shiftName: ['', Validators.required],
-      jobType: ['', Validators.required],
+      department: [null, Validators.required],
+      team: [null, Validators.required],
+      teamManager: [{ value: null, disabled: true }, Validators.required],
+      reportingManager: [null, Validators.required],
+      location: [null, Validators.required],
+      subLocation: [null, Validators.required],
+      shiftName: [null, Validators.required],
+      jobType: [null, Validators.required],
     });
   }
 
@@ -477,7 +477,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
           subLocation: this.subLocationsDropdown.find(
             (sub: { jobSubLocationName: any; }) => sub.jobSubLocationName === data.subLocation
           ),
-          shiftName: this.shiftDropdowns.find((shift: { shiftName: any; }) => shift.shiftName === data.shiftName),
+          shiftName: this.shiftDropdowns.find((shift: { shiftName: any; }) => shift.shiftName === data.shiftName) || data.shiftName,
           teamManager: this.teamManagerName,
           jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
           reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
@@ -633,7 +633,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       jobRole: formData.jobRole.designationName ?? this.selectedData.jobRole,
       subdeptId: formData.team.subdepartmentId ?? this.selectedData.subdeptId,
       status: "Active",
-      shiftId: formData.shiftName.id ?? this.selectedData.shiftId,
+      shiftId: formData.shiftName ?? this.selectedData.shiftId,
       locationid: formData.location.id ?? this.selectedData.locationid,
       sublocationid: formData.subLocation.id ?? this.selectedData.sublocationid,
       gradeId: this.selectedData.gradeId,
@@ -645,6 +645,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     // Make the POST request to delete the job details
     this.subscription = this.http.postdata("JobDetails/UPDATER", sdata).subscribe({
       next: (data: any) => {
+        this.modalService.dismissAll(); // Close the modal
         this.conformationPopup.openSuccessModal('Job Details updated successfully');
         this.getJobDetails();
       },

@@ -18,7 +18,7 @@
         <div class="myinfo-input-content">
             <form [formGroup]="addressForm">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Current Address')){
+                    @if(this.rbac.allowedToAccess('Current Address.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                                 class="text-danger">*</span></label>
@@ -31,14 +31,14 @@
                         </div>
                     </div>
                     }
-                    @if(this.rbac.allowedToAccess('Basic Information.view')){
+                    @if(this.rbac.allowedToAccess('Current Address.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
                         <input type="text" class="form-control custom-input" id="currentAddressLine2"
                             formControlName="currentAddressLine2" placeholder="Please enter address line">
                     </div>
                     }
-                    @if(this.rbac.allowedToAccess('Basic Information.view')){
+                    @if(this.rbac.allowedToAccess('Current Address.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentCity" class="form-label custom-label mb-2">City<span
                                 class="text-danger">*</span></label>
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     }
-                    @if(this.rbac.allowedToAccess('Basic Information.view')){
+                    @if(this.rbac.allowedToAccess('Current Address.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentState" class="form-label custom-label mb-2">State<span
                                 class="text-danger">*</span></label>
@@ -64,7 +64,7 @@
                         </div>
                     </div>
                     }
-                    @if(this.rbac.allowedToAccess('Basic Information.view')){
+                    @if(this.rbac.allowedToAccess('Current Address.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentCountry" class="form-label custom-label mb-2">Country<span
                                 class="text-danger">*</span></label>
@@ -78,7 +78,7 @@
                         </div>
                     </div>
                     }
-                    @if(this.rbac.allowedToAccess('Basic Information.view')){
+                    @if(this.rbac.allowedToAccess('Current Address.view')){
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
                                 class="text-danger">*</span></label>
@@ -103,7 +103,7 @@
             <div>
                 <div class="address-sub-header mb-3">Permanent Address</div>
                 <div class="form-check">
-                    <input class="form-check-input custom-check" type="checkbox" id="sameAsCurrent"
+                    <input class="form-check-input custom-check" type="checkbox" id="sameAsCurrent"  [checked]="isChecked"
                         (change)="copyCurrentAddress($event)">
                     <label class="form-check-label custom-check-label" for="sameAsCurrent">
                         Same as Current Address
@@ -115,7 +115,7 @@
         <!-- Reactive Form -->
         <form [formGroup]="addressForm">
             <div class="row">
-                @if(this.rbac.allowedToAccess('Basic Information.view')){
+                @if(this.rbac.allowedToAccess('Current Address.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                             class="text-danger">*</span></label>
@@ -128,13 +128,13 @@
                         </div>
                     </div>
                 </div>}
-                @if(this.rbac.allowedToAccess('Basic Information.view')){
+                @if(this.rbac.allowedToAccess('Current Address.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
                     <input type="text" class="form-control custom-input" id="permanentAddressLine2"
                         formControlName="permanentAddressLine2" placeholder="Please enter address line">
                 </div>}
-                @if(this.rbac.allowedToAccess('Basic Information.view')){
+                @if(this.rbac.allowedToAccess('Current Address.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentCity" class="form-label custom-label mb-2">City<span
                             class="text-danger">*</span></label>
@@ -146,7 +146,7 @@
                         <div *ngIf="addressForm.get('permanentCity')?.errors?.['required']">City is required</div>
                     </div>
                 </div>}
-                @if(this.rbac.allowedToAccess('Basic Information.view')){
+                @if(this.rbac.allowedToAccess('Current Address.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentState" class="form-label custom-label mb-2">State<span
                             class="text-danger">*</span></label>
@@ -158,7 +158,7 @@
                         <div *ngIf="addressForm.get('permanentState')?.errors?.['required']">State is required</div>
                     </div>
                 </div>}
-                @if(this.rbac.allowedToAccess('Basic Information.view')){
+                @if(this.rbac.allowedToAccess('Current Address.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
                             class="text-danger">*</span></label>
@@ -170,7 +170,7 @@
                         <div *ngIf="addressForm.get('permanentCountry')?.errors?.['required']">Country is required</div>
                     </div>
                 </div>}
-                @if(this.rbac.allowedToAccess('Basic Information.view')){
+                @if(this.rbac.allowedToAccess('Current Address.view')){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="permanentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
                             class="text-danger">*</span></label>

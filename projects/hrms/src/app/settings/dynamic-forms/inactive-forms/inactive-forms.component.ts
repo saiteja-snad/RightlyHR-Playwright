@@ -31,9 +31,10 @@ import {
 import { IJob } from '../../../Interfaces/letters-model';
 import { SearchFormPipe } from '../search-form.pipe';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-inactive-forms',
   imports: [
@@ -84,6 +85,7 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private sharedModalService: OpenModalService,
+    public rbac: RbacService
   ) {
     config.backdrop = 'static';
     config.keyboard = false;

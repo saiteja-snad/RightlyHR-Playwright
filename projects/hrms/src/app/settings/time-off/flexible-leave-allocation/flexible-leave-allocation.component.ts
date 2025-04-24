@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-flexible-leave-allocation',
@@ -33,6 +34,7 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
     private http: HttpService,
      private modal: OpenModalService,
      private modalService: NgbModal,
+     public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

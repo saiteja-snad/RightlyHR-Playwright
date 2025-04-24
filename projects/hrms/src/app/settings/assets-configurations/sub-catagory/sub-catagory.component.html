@@ -3,7 +3,7 @@
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">{{'Asset Sub Catagory'|translate}}</span></div>
-    <div class="custom-add-btn" (click)="openModal(addassetescataerys)">
+    <div class="custom-add-btn" (click)="openModal(addassetescataerys)" *ngIf="rbac.allowedToAccess('Vendor Details.create')">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
     </div>
   </div>
@@ -16,7 +16,7 @@
             <th >Asset Category</th>
             <th >Asset Sub Category</th>
 
-            <th>Action(s)</th>
+            <th *ngIf="rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.delete')">Action(s)</th>
 
           </tr>
         </thead>
@@ -26,16 +26,16 @@
             <tr *ngFor="let asset of categoridata | async">
               <td >{{ getAssetCatData(asset.parentId) }}</td>
               <td >{{ asset.name }}</td>
-              <td class="text-center">
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.delete')">
                 <div class="d-flex gap-4">
 
-                  <div>
+                  <div *ngIf="rbac.allowedToAccess('Vendor Details.update')">
                     <a (click)="openupdate(updateassetescataerys, asset)"><img src="/settings-icon/edit.png"
                         alt="edit icon" class="settings-common-icon">
                     </a>
                   </div>
 
-                  <div>
+                  <div *ngIf="rbac.allowedToAccess('Vendor Details.delete')">
                     <a (click)="opendelete(deleteconformation,asset)"><img src="/settings-icon/trash-2.png"
                         alt="edit icon" class="settings-common-icon"></a>
                   </div>
@@ -60,8 +60,8 @@
   <ng-template #addassetescataerys let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
 
-      <div class="d-flex justify-content-between popup-header-border p-3">
-        <div class="pt-2">
+      <div class="custom-poup-header-content popup-header-border">
+        <div >
           <p class="popup-heading mb-0"> Add Asset Sub Category</p>
         </div>
         <div>
@@ -70,7 +70,7 @@
         </div>
       </div>
 
-      <div class="custom-main-popup-content p-3">
+      <div class="custom-main-popup-content ">
 
         <form [formGroup]="assetcataeryForm" (ngSubmit)="postassetscatry(assetcataeryForm); modal.dismiss()">
           <div class="row">
@@ -111,7 +111,7 @@
             </div>
           </div>
 
-          <div class="d-flex justify-content-end gap-3">
+          <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
             <button type="submit" class="custom-btn btn-primary" [disabled]="assetcataeryForm.invalid">Submit</button>
           </div>
@@ -126,15 +126,15 @@
   <ng-template #updateassetescataerys let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
 
-      <div class="d-flex justify-content-between popup-header-border p-3">
-        <div class="pt-2">
+      <div class="custom-poup-header-content popup-header-border">
+        <div >
           <p class="popup-heading mb-0">Update Asset Sub Category </p>
         </div>
         <div>
           <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
       </div>
-      <div class="custom-main-popup-content p-3">
+      <div class="custom-main-popup-content ">
         <form [formGroup]="assetcataeryupdateForm"
           (ngSubmit)="updateastessubcategory(assetcataeryupdateForm);modal.dismiss()">
           <div class="row">
@@ -172,7 +172,7 @@
               </div>
             </div>
           </div>
-          <div class="d-flex justify-content-end gap-3">
+          <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
             <button type="submit" class="custom-btn btn-primary"
               [disabled]="assetcataeryupdateForm.invalid">Update</button>
@@ -187,10 +187,10 @@
   <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
       <div>
-        <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+        <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
         <p class="confirmation-text mb-4">Are you sure you want to delete the Asset Category?</p>
       </div>
-      <div class="d-flex justify-content-center gap-3 mt-4">
+      <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
         <button type="submit" class="custom-btn btn-primary" (click)="deleteasstescatagorydata()">Yes</button>
       </div>

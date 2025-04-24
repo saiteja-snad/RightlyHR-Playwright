@@ -6,6 +6,7 @@ import { HttpService } from '../../../services/http.service';
 import { EmployeeService } from '../../../services/employee.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-leave-alloctaion',
   imports: [CommonModule, FormsModule],
@@ -26,7 +27,7 @@ export class LeaveAlloctaionComponent {
   shiftDetails = [] as any[];
   yearsList: number[] = [];
 
-  constructor(private _employeeService: EmployeeService, private http: HttpService) { }
+  constructor(private _employeeService: EmployeeService, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

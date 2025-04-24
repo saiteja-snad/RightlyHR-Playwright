@@ -6,7 +6,7 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Router } from '@angular/router';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, NgForm } from '@angular/forms';
 import { Ipersonal } from '../../../Interfaces/members-model';
 import { CommonModule } from '@angular/common';
 import { IJob } from '../../../Interfaces/onboarding-documents';
@@ -55,11 +55,17 @@ export class OnboardingRequestsComponent {
     this.getEmployeeId();
     this.getOnboardrequest();
   }
+
+  openmodel(content: any) {
+    this.modalService.open(content, { centered: true })
+  }
+
   isStatusAllowed(): boolean {
     const allowedStatuses = ['waiting for approval', 'approved', 'processed'];
     const hasAllowedStatus = this.dynamicData.value.some((ele: any) => allowedStatuses.includes(ele.status?.toLowerCase()));
     return hasAllowedStatus;
   }
+
   isTrainingEndDateComplete() {
     // Get the training end date from your data (assuming it's stored in empdata)
     if (this.empdata.trainingEndDate) {
@@ -209,9 +215,10 @@ export class OnboardingRequestsComponent {
   }
 
   onboardstatuschange() {
+    this.empdata.onboardstatus = true;
     this.empdata.substatus = 'Trainee Onboarded'
   }
-
+  
   myApproverCommentss: any;
   approverComments(value: any) {
     this.myApproverCommentss = value;
@@ -230,7 +237,7 @@ export class OnboardingRequestsComponent {
     console.log(this.appcomment)
   }
 
-  jobtab(job: FormGroup) {
+  jobtab() {
     console.log(this.empinfo)
     if (this.previousEmpData.issalaryhold != this.empdata.issalaryhold) {
       let EventsData = {
@@ -303,7 +310,7 @@ export class OnboardingRequestsComponent {
           }, 2000);
         }
       },
-      complete: () => job.reset()
+      // complete: () => job.reset()
     })
   }
 

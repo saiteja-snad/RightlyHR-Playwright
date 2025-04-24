@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-desk-for-you-request',
@@ -42,7 +43,7 @@ export class DeskForYouRequestComponent {
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
 
   }

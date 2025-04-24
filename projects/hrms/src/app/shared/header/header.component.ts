@@ -77,4 +77,27 @@ export class HeaderComponent {
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
+
+  showPmsTabs(): boolean {
+    const includeRoutes = [
+      '/pms/review-cycle',
+      '/pms/review-cycle/create',
+      '/pms/review-cycle/update',
+      '/pms/review-cycle/view',
+      '/pms/apprisal',
+      '/pms/myPerformance/pending-review',
+      '/pms/myPerformance/completed-review',
+      '/pms/team-performance/pending-review',
+      '/pms/team-performance/completed-review',
+    ];
+    return includeRoutes.includes(this.router.url);
+  }
+
+  showPmsConfigurationTabs(): boolean {
+    const includeRoutes = [
+      '/pmsconfiguration/assessor',
+      '/pmsconfiguration/increment',
+    ];
+    return includeRoutes.includes(this.router.url);
+  }
 }

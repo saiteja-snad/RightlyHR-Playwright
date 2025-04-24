@@ -8,30 +8,43 @@
 
 
 
-    <div class="custom-table-content ">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Expense Title</th>
-                    <th>Expense Date</th>
-                    <th>Total Amount</th>
+                    <th>Ticket ID</th>
+                    <th>Ticket Priority</th>
+                    <th>Subject</th>
+                    <th>Requester</th>
+                    <th>Requested Date</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Assignee</th>
                     <th>Status</th>
-                    <th class="text-center">Actions</th>
-
+                    <th>Updated Date</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-                  
-                    </ng-container> -->
-                <!-- No Data Found Template -->
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                </ng-template>
+                @if (tickets.length > 0) {
+                <tr *ngFor="let ticket of tickets">
+                    <td>{{ticket.id}}</td>
+                    <td>{{ticket.priority ?? '-'}}</td>
+                    <td>{{ticket.subject ?? '-'}}</td>
+                    <td>{{ticket.employeeName ?? '-'}}</td>
+                    <td>{{ticket.createdAt | date}} </td>
+                    <td>{{ticket.departmentName ?? '-'}}</td>
+                    <td>{{ticket.subdepartmentName ?? '-'}}</td>
+                    <td>{{ticket.assigneeName ?? '-'}}</td>
+                    <td>{{ticket.ticketStatus ?? '-'}}</td>
+                    <td>{{ticket.updatedAt | date}}</td>
+
+                </tr>
+                }
+                @else{
+                <tr>
+                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                </tr>
+                }
             </tbody>
         </table>
     </div>

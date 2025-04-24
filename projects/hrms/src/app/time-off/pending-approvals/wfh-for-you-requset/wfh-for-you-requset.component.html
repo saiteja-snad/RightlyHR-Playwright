@@ -5,7 +5,7 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
-            aria-label="Username" aria-describedby="basic-addon1">
+            aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
 
         <div class="custom-table-content">
@@ -24,7 +24,7 @@
                 </thead>
                 <tbody>
                     @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
-                    @if (((leaves | async) ?? []).length > 0) {
+                    @if (((leaves | async) ?? []).length > 0 ) {
                         @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ;  track leave.approvalHeader.id){
                         <tr>
                             <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
@@ -40,7 +40,8 @@
                                             </a>
                                             <ng-template #reason>
                                                 <div>
-                                                    <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                                                    <p class="mb-0">{{leave.entity.attendanceRequestDescription
+                                                    }} </p>
                                                 </div>
                                             </ng-template>
                                         </span>
@@ -224,7 +225,7 @@
     <div class="modal-body" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">{{"Comments" | translate}}</p>
+                <p class="popup-heading mb-0">{{"Approver Comments" | translate}}</p>
             </div>
             <div>
                 <button type="button" class="btn-close" aria-label="Close"
@@ -239,7 +240,7 @@
                         <tr>
                             <th>{{'Comments' | translate}}</th>
                             <th>{{'Commented By'|translate}}</th>
-                            <th>{{"Date" | translate}}</th>
+                            <th>{{"Approved Date" | translate}}</th>
                             <th>{{'Commented By ID' | translate}}</th>
                         </tr>
                     </thead>

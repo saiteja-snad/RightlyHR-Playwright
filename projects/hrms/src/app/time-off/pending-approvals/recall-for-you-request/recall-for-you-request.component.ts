@@ -17,8 +17,9 @@ import {
   ISeparationRequest,
 } from '../separation-for-you-request/separation-for-you-request';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-recall-for-you-request',
@@ -78,16 +79,16 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   formInializer(){
     this.recallAcceptFormForProcess = this.fb.group({
       recallReason: [null,
-        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/),noWhitespaceValidator]
       ]
     });
     this.recallAcceptForm = this.fb.group({
       AcceptReason: [null,
-        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/),noWhitespaceValidator]
       ]
     });
     this.rejectSeparationForm = this.fb.group({
-      notes: [null,[Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+      notes: [null,[Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/),noWhitespaceValidator]
       ]
     });
   }

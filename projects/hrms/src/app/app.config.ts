@@ -14,7 +14,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 // import {MsalInterceptor,MSAL_INSTANCE,MsalInterceptorConfiguration,MsalGuardConfiguration,MSAL_GUARD_CONFIG,MSAL_INTERCEPTOR_CONFIG,
 //         MsalService,MsalGuard,MsalBroadcastService,ProtectedResourceScopes,} from '@azure/msal-angular';
 // import { protectedResources } from './azure/auth-config';
-// import { environment } from '../environments/environment.dev';
+// import { environment } from '../environments/environment';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthService } from './services/auth.service';
 import { MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalBroadcastService, MsalGuard, MsalInterceptor, MsalService } from '@azure/msal-angular';

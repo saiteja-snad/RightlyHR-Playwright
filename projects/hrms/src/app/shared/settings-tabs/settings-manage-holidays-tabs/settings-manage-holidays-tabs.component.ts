@@ -11,27 +11,8 @@ import { RbacService } from '../../../services/rbac.service';
 })
 export class SettingsManageHolidaysTabsComponent {
 
-  public navLinks: any[] = [];
-
-  constructor(public rbac: RbacService) {
-    this.navLinks = this.allNavLinks.filter(link =>
-      link.permission &&
-      link.permission.feature &&
-      link.permission.action &&
-      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-    );
-  }
-
-  allNavLinks = [
-    {
-      label: 'Pending For Submit',
-      route: '/settings/employee-fields/manage-holidays/pending-for-submit',
-      permission: { feature: 'Pending For Holidays Submit', action: 'view' }
-    },
-    {
-      label: 'Published Holidays',
-      route: '/settings/employee-fields/manage-holidays/published-holidays',
-      permission: { feature: 'Published Holidays', action: 'view' }
-    }
+  navLinks = [
+    { label: 'Pending For Submit',route: '/settings/employee-fields/manage-holidays/pending-for-submit'},
+    { label: 'Published Holidays',route: '/settings/employee-fields/manage-holidays/published-holidays'}
   ];
 }

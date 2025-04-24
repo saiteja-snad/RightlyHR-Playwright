@@ -14,10 +14,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingapprovals.pipe";
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-time-off-for-you-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe,NoDataFoundComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule,TranslateModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe,NoDataFoundComponent],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss'
 })
@@ -204,7 +205,7 @@ export class TimeOffForYouRequestComponent {
       next: (respone: any) => {
         console.log(respone);
         this.conformationPopup.openSuccessModal(
-          'Request Accepted Successfully');
+          'Request Approved Successfully');
           setTimeout( () => {
             this.modalService.dismissAll();
             window.location.reload();
@@ -213,7 +214,7 @@ export class TimeOffForYouRequestComponent {
       error: (reason: any) => {
         console.log(reason);
         this.conformationPopup.openErrorModal(
-          'Request Accepted Failed');
+          'Request Approval Failed');
       },
       complete: () => {
 

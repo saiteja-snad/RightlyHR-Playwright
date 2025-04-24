@@ -18,7 +18,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 
 @Component({

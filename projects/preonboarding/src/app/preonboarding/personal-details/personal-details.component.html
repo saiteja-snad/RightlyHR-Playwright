@@ -127,7 +127,7 @@
                     <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="bloodGroups" optionLabel="name" optionValue="value" id="bloodGroup"
-                            formControlName="bloodGroup" placeholder="Please select blood group"
+                            formControlName="bloodGroup" (onChange)="checkvalidation()" placeholder="Please select blood group"
                             class="form-select custom-select">
                         </p-select>
                     </div>

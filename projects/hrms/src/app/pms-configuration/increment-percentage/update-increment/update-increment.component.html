@@ -76,58 +76,56 @@
             *ngIf="(sublocation.touched && sublocation.invalid) || (sublocation.invalid && Updateincrementalpercentage.submitted)">
             Sub Location is required
           </div>
-        </div>
+        </div>       
+      </div>
 
-        <div class="custom-table-content mb-3">
-          <table class="w-100">
-            <thead>
-              <tr>
-                <th>Increment Percentage/Rating</th>
-                <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
-                <th class="text-center">Action(s)</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Iterate through FormArray (ratingscaledetails) -->
-              <tr *ngFor="let detail of ratingscaledetailsarray; let i = index">
-                <td>
-                  <div class="d-flex">
-                    <div>
-                      <input type="number" class="form-control value-input" [(ngModel)]="detail.min"
-                        (input)="validateNumber($event)" id="min-{{i}}" name="min-{{i}}" min="0" placeholder="Min"
-                        required />
-                    </div>
-                    <div class="pt-2">
-                      <span class="mx-2">-</span>
-                    </div>
-                    <div>
-                      <input type="number" class="form-control value-input" [(ngModel)]="detail.max"
-                        (input)="validateNumber($event)" id="max-{{i}}" name="max-{{i}}" min="0" placeholder="Max"
-                        required />
-                    </div>
+      <div class="custom-table-content mb-3">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Increment Percentage/Rating</th>
+              <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
+              <th class="text-center">Action(s)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Iterate through FormArray (ratingscaledetails) -->
+            <tr *ngFor="let detail of ratingscaledetailsarray; let i = index">
+              <td>
+                <div class="d-flex">
+                  <div>
+                    <input type="number" class="form-control value-input" [(ngModel)]="detail.min"
+                      (input)="validateNumber($event)" id="min-{{i}}" name="min-{{i}}" min="0" placeholder="Min"
+                      required />
                   </div>
-                </td>
-                <td *ngFor="let column of detail.ratingDetails; let j = index" class="text-center text-td">
-                  <input type="number" class="form-control number-input" [(ngModel)]="column.percentage" min="0"
-                    id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}" placeholder="Percentage"
-                    (input)="validateNumber($event)" required />
-                </td>
-                <td class="text-center">
-                  <button class="custom-delete-btn" *ngIf="i >= 1" type="button"
-                    (click)="openModal(deleterowincrement);removerow=i">
-                    <i class="bi bi-trash3 text-danger"></i></button>
-                </td>
-                <td>
-                  <button class="custom-add-btn" type="button" (click)="addRow()"
-                    [disabled]="Updateincrementalpercentage.invalid">
-                    <i class="bi bi-plus-circle-fill"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                  <div class="pt-2">
+                    <span class="mx-2">-</span>
+                  </div>
+                  <div>
+                    <input type="number" class="form-control value-input" [(ngModel)]="detail.max"
+                      (input)="validateNumber($event)" id="max-{{i}}" name="max-{{i}}" min="0" placeholder="Max"
+                      required />
+                  </div>
+                </div>
+              </td>
+              <td *ngFor="let column of detail.ratingDetails; let j = index" class="text-center text-td">
+                <input type="number" class="form-control number-input" [(ngModel)]="column.percentage" min="0"
+                  id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}" placeholder="Percentage"
+                  (input)="validateNumber($event)" required />
+              </td>
+              <td class="text-center">
+                <a *ngIf="i >= 1" class="custom-action-btn" (click)="openModal(deleterowincrement);removerow=i">
+                  <i class="bi bi-trash3 text-danger custom-action-btn-icon"></i></a>
+              </td>
+              <td>
+                <button type="button" (click)="addRow()" class="custom-action-btn" [disabled]="Updateincrementalpercentage.invalid">
+                  <i class="bi bi-plus-circle-fill custom-action-btn-icon"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="custom-modal-footer">

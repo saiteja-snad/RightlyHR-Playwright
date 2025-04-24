@@ -7,102 +7,95 @@
 
             <div class="mt-4">
                 <div *ngFor="let item of dynamicFormHeader" class="row row-cols-2">
-                  <div *ngFor="let question of item.questions" class="col">
-                    <p class="m-0 mb-1">{{question.question}}
-                      <span *ngIf="question.question === 'Emp.ID:'">{{dynamicFormDetails.fusionEmployeeId}}</span>
-                      <span *ngIf="question.question === 'Emp.Name:'">{{dynamicFormDetails.employeeName}}</span>
-                      <span *ngIf="question.question === 'Designation:'">{{dynamicFormDetails.designation}}</span>
-                      <span *ngIf="question.question === 'Location:'">{{dynamicFormDetails.sublocation}},
-                        {{dynamicFormDetails.location}}</span>
-                      <span *ngIf="question.question === 'DOJ:'">{{dynamicFormDetails.dateOfJoining | dateformat }}</span>
-                      <span *ngIf="question.question === 'Department:'">{{dynamicFormDetails.departmentname}}</span>
-                      <span *ngIf="question.question === 'Reviewer ID:'">{{dynamicFormDetails.reviewerFusionEmployeeId}}</span>
-                      <span *ngIf="question.question === 'Reviewer Name:'">{{dynamicFormDetails.reviewerName}}</span>
-                      <span *ngIf="question.question === 'Reporting Manager Name:'">{{dynamicFormDetails.rmName}}</span>
-                      <span *ngIf="question.question === 'Team Manager Name:'">{{dynamicFormDetails.tmName}}</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-
-            <div>
-
-                <form name="personal" #personal="ngForm">
-                    <div class="document-header-div"
-                        *ngFor="let section of dynamicFormQuestions;let sectionIndex=index">
-
-                        <div class="mb-3 mt-2">
-                            <span class="job-header bold">{{section.sectionName}}</span>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-8 col-lg-10"
-                                *ngFor="let questions of section.questions let questionIndex=index">
-                                <div class="mb-6">
-                                    <label for="exampleFormControlInput1"
-                                        class="form-label">{{questions.question}}</label>
-                                </div>
-                            </div>
-                            <div >
-                                <!-- <div *ngIf="questions?.type=='checkbox';else another"> -->
-                                    <!-- <div *ngFor="let options of questions?.optionsData; let optionIndex = index"> -->
-                                        <div class="d-flex">
-                                            <input type="checkbox" class="me-2" checked disabled
-                                               >
-                                            <span>{{section.questions ? section.questions[0].optionsData.option : ''}}</span>
-                                        <!-- </div> -->
-                                    </div>
-                                <!-- </div> -->
-                                <ng-template #another>
-                                    <textarea type="text" class="form-control" id="EmployeeId" placeholder="EmployeeId"
-                                        name="EmployeeId"></textarea>
-                                    <label class="form-label" for="textAreaExample"></label>
-                                </ng-template>
-                            </div>
-                        </div>
-                        <hr>
+                    <div *ngFor="let question of item.questions" class="col">
+                        <p class="m-0 mb-1">{{question.question}}
+                            <span *ngIf="question.question === 'Emp.ID:'">{{dynamicFormDetails.fusionEmployeeId}}</span>
+                            <span *ngIf="question.question === 'Emp.Name:'">{{dynamicFormDetails.employeeName}}</span>
+                            <span *ngIf="question.question === 'Designation:'">{{dynamicFormDetails.designation}}</span>
+                            <span *ngIf="question.question === 'Location:'">{{dynamicFormDetails.sublocation}},
+                                {{dynamicFormDetails.location}}</span>
+                            <span *ngIf="question.question === 'DOJ:'">{{dynamicFormDetails.dateOfJoining | dateformat
+                                }}</span>
+                            <span
+                                *ngIf="question.question === 'Department:'">{{dynamicFormDetails.departmentname}}</span>
+                            <span
+                                *ngIf="question.question === 'Reviewer ID:'">{{dynamicFormDetails.reviewerFusionEmployeeId}}</span>
+                            <span
+                                *ngIf="question.question === 'Reviewer Name:'">{{dynamicFormDetails.reviewerName}}</span>
+                            <span
+                                *ngIf="question.question === 'Reporting Manager Name:'">{{dynamicFormDetails.rmName}}</span>
+                            <span
+                                *ngIf="question.question === 'Team Manager Name:'">{{dynamicFormDetails.tmName}}</span>
+                        </p>
                     </div>
 
-                    <div class="mt-4">
-                        <p class="bold">{{dynamicFormFooter[0]?.sectionName}}</p>
-                        <span *ngFor="let item of dynamicFormFooter[0]?.questions">
+                </div>
+            </div>
+
+            <form name="personal" #personal="ngForm">
+                <div class="document-header-div" *ngFor="let section of dynamicFormQuestions;let sectionIndex=index">
+
+                    <div class="mb-3 mt-2">
+                        <span class="job-header bold">{{section.sectionName}}</span>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-8 col-lg-10"
+                            *ngFor="let questions of section.questions let questionIndex=index">
+                            <div class="mb-6">
+                                <label for="exampleFormControlInput1" class="form-label">{{questions.question}}</label>
+                            </div>
+                        </div>
+                        <div>
+                            <!-- <div *ngIf="questions?.type=='checkbox';else another"> -->
+                            <!-- <div *ngFor="let options of questions?.optionsData; let optionIndex = index"> -->
+                            <div class="d-flex">
+                                <input type="checkbox" class="me-2" checked disabled>
+                                <span>{{section.questions ? section.questions[0].optionsData.option : ''}}</span>
+                                <!-- </div> -->
+                            </div>
+                            <!-- </div> -->
+                            <ng-template #another>
+                                <textarea type="text" class="form-control" id="EmployeeId" placeholder="EmployeeId"
+                                    name="EmployeeId"></textarea>
+                                <label class="form-label" for="textAreaExample"></label>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+
+                <div class="mt-4">
+                    <p class="bold">{{dynamicFormFooter[0]?.sectionName}}</p>
+                    <span *ngFor="let item of dynamicFormFooter[0]?.questions">
+                        <div>
                             <div>
-                                <div>
-                                    <p>{{item.question}} </p>
-                                </div>
-                                <!-- <div>
+                                <p>{{item.question}} </p>
+                            </div>
+                            <!-- <div>
                       <span *ngIf="item.question=='Employee Signature:'" style="font-family: autographsignatureFont; font-size: xx-large;"> {{dynamicFormDetails.employeeName}}</span>
                       <span *ngIf="item.question=='Reviewer Signature:'" style="font-family: autographsignatureFont; font-size: xx-large;"> {{dynamicFormDetails.reviewerName}}</span>
                     </div> -->
-                                <!-- <div class="mb-3" *ngFor="let options of item.optionsData"> -->
-                                    <span *ngIf="item.optionsData.meta">
-                                        <textarea
-                                            placeholder="Text area" class="form-control" rows="2" cols="40"
-                                            name="textarea" id="textarea" minlength="0" maxlength="250" 
-                                            
-                                            [(ngModel)]="item.optionsData.meta"></textarea>
-                                        <!-- <p *ngIf="dynamicformSubmit.textarea">{{dynamicformSubmit.textarea?.length}}/250
+                            <!-- <div class="mb-3" *ngFor="let options of item.optionsData"> -->
+                            <span *ngIf="item.optionsData.meta">
+                                <textarea placeholder="Text area" class="form-control" rows="2" cols="40"
+                                    name="textarea" id="textarea" minlength="0" maxlength="250"
+                                    [(ngModel)]="item.optionsData.meta"></textarea>
+                                <!-- <p *ngIf="dynamicformSubmit.textarea">{{dynamicformSubmit.textarea?.length}}/250
                                         </p> -->
-                                    </span>
-                                    <div *ngIf="item.optionsData.option && !item.optionsData.meta">
-                                        <input type="checkbox" class="me-2" checked disabled
-                                        >
-                                             <span >{{item.optionsData.option}}</span>
-                                    </div>
-                                   
-                                <!-- </div> -->
-
+                            </span>
+                            <div *ngIf="item.optionsData.option && !item.optionsData.meta">
+                                <input type="checkbox" class="me-2" checked disabled>
+                                <span>{{item.optionsData.option}}</span>
                             </div>
 
-                        </span>
-                        <p>Over all rating: {{dynamicFormDetails.metadata?.Overallrating|number : '1.2-2'}}</p>
-                    </div>
-                </form>
-            </div>
+                            <!-- </div> -->
+
+                        </div>
+
+                    </span>
+                    <p>Over all rating: {{dynamicFormDetails.metadata?.Overallrating|number : '1.2-2'}}</p>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-
-
-
-

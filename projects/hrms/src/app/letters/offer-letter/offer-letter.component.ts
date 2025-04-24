@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
@@ -12,13 +11,13 @@ import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, LettersTabComponent,TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, LettersheaderComponent, DateformatPipe, LetterFooterComponent],

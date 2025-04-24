@@ -308,7 +308,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{"No" | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="holdemployee(seletedid)">{{"Yes" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="holdemployee(seletedid)">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -346,7 +346,7 @@
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openConfirmation()">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary"
+                    <button type="submit" class="custom-btn btn-primary"
                         [disabled]="reviewtemplatedropdowns.invalid">{{'Assign' | translate}}</button>
                 </div>
             </form>
@@ -363,7 +363,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="resumeanemployee(seletedid)">{{"Yes" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="resumeanemployee(seletedid)">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -428,7 +428,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="SentLetters()">{{"Yes" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="SentLetters()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -477,8 +477,8 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmation()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
             </div>
         </form>
@@ -494,7 +494,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="SentpromationLetters()">{{"Yes" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="SentpromationLetters()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -566,7 +566,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="openConfirmation()">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" [disabled]="addEmployeeForm.invalid">{{'Submit' | translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addEmployeeForm.invalid">{{'Submit' | translate}}</button>
                 </div>
             </div>
         </form>
@@ -582,7 +582,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="reportdata()">{{"Yes" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="reportdata()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -629,7 +629,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
             </div>
         </form>
@@ -675,8 +675,8 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmation()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
             </div>
         </form>

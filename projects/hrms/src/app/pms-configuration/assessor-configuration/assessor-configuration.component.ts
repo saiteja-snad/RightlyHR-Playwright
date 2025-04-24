@@ -23,9 +23,6 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
 
 export class AssessorConfigurationComponent implements OnInit, OnDestroy {
   dataload = false;
-  totalRecords = 100;
-  first: any = 1;
-  rows: any = 10;
   empinfo = {} as any;
   subscription!: Subscription;
   searchValue: any;
@@ -37,21 +34,23 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-  onRowsChange() {
-    this.first = 1;
-  }
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-  }
+
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  searchQuery = '';
+  first = 0;
+  totalRecords = 0;
+  searchText = '';
+  
   assessorDetailsget: any[] = [];
 
   constructor(private http: HttpService, private modalService: NgbModal, 
     private conformationPopup: OpenModalService, public rbac: RbacService ) {
-    // Signal reaction for employee switch
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
-        this.getAllAssesorConfigurationdata();
+        this.getAllAssesorConfigurationdata(this.page, this.pageSize);
         this.http.tirggerCountSignal.update((status) => ({
           ...status,
           global: false,
@@ -62,7 +61,7 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getAllAssesorConfigurationdata();
+    this.getAllAssesorConfigurationdata(this.page, this.pageSize);
   }
 
   openAdd() {
@@ -84,15 +83,46 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.updateData = data;
   }
 
+  onSearchTextChange(): void {
+    this.page = 1;        
+    this.first = 0; 
+    this.getAllAssesorConfigurationdata(this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getAllAssesorConfigurationdata(this.page, this.pageSize);
+  }
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.getAllAssesorConfigurationdata(this.page, this.pageSize);
+  }
+
   //function to get the globalpermissions details
-  getAllAssesorConfigurationdata(): void {
+  getAllAssesorConfigurationdata(pagenum: number, pagesize: number): void {
+    const params: { pageNumber: number; pageSize: number; searchparam?: string } = {
+      pageNumber: pagenum,
+      pageSize: pagesize,
+    };
+    
+    if (this.searchText) {
+      params.searchparam = this.searchText;
+    }
+
     this.dataload = true;
-    this.subscription = this.http.getReviewCyclesteam(`Assessor/GetAssessors`, this.first, this.rows, this.searchValue).subscribe({
+    this.subscription = this.http.getpagentiontData(`Assessor/GetAssessors`, params).subscribe({
       next: (response: any) => {
-        this.assessorDetailsget = response?.items;
-        this.totalRecords = response?.totalCount;
+        this.assessorDetailsget = response.items || [];
+        this.collectionSize = response.totalCount;
       },
       error: (err: any) => {
+        this.dataload = false;
         console.log('errors', err);
       },
       complete: () => {
@@ -126,7 +156,7 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     };
     this.http.postdata(`Assessor/delete?id=${this.deleteId}`, payload).subscribe({
       next: (response: any) => {
-        this.getAllAssesorConfigurationdata();
+        this.getAllAssesorConfigurationdata(this.page, this.pageSize);
         this.conformationPopup.openSuccessModal('Deleted Successfully')
       },
       error: (err: any) => {

@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModal, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-team-pending-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, PaginatorModule],
   templateUrl: './team-pending-reviews.component.html',
   styleUrl: './team-pending-reviews.component.scss'
 })
@@ -24,17 +25,29 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   reviewCycles: any[] = [];
   searchQuery = '';
   searchTerm = '';
-  page = 1;
-  pageSize = 10;
-  collectionSize = 100;
-  totalItems = 0;
   activeTab = 'pending';
   subscription!: Subscription;
   dataload = false
   completedReviews: any[] = [];
   pendingReviews: any[] = [];
   filteredReviews: any[] = [];
-  filteredCompletedReviews: any[] = []
+  filteredCompletedReviews: any[] = [];
+
+  page = 1;
+  pageSize = 10;
+  collectionSize = 100;
+  totalItems = 0;
+  rows = 10;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
+
+  first = 0;
+
+
   constructor(
     private readonly modalService: NgbModal,
     private router: Router,
@@ -51,14 +64,15 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
     this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery, this.employeeId, 'Team Manager,Reporting Manager,HR', 'Pending,Draft')
       .subscribe({
         next: (data: any) => {
+          console.log(data)
           this.reviewCycles = data.items;
-          this.pendingReviews = data.items;
+          this.totalItems = data.totalCount || 0;
+          
+          this.pendingReviews =  data.items;
+          console.log(this.pendingReviews)
           this.filteredReviews = this.pendingReviews;
-          if (this.pendingReviews.length > 0) {
+          if(this.pendingReviews.length>0){
             this.collectionSize = data.totalCount;
-          }
-          if (this.searchTerm) {
-            this.filterReviews();
           }
         },
         error: (err) => {
@@ -204,6 +218,24 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first
+
+    this.fetchReviewCycles();
+  }
+
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.fetchReviewCycles();
+  }
+
 
   closeModal() {
     this.modalService.dismissAll();

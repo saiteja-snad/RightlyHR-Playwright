@@ -118,7 +118,7 @@
 
                                     @if(item?.approvalHeader?.currentapprovalStage ==
                                     item?.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModal(processmodal);handleRequest(item)" *ngIf="!rbac.allowedToAccess('Separation Requests Tab.update')"><a
+                                    <li (click)="openModal(processmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')"><a
                                             class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                     </li>
                                     }

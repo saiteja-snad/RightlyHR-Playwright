@@ -1,19 +1,17 @@
 
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="component-header">
-            {{'Review Cycle List' | translate}}
-        </div>
+        <div class="component-header">{{'Review Cycle List' | translate}}</div>
 
         <div>
             <button class="custom-btn btn-primary" (click)="openAdd()">{{'Create Review cycle'|translate}}</button>
         </div>
     </div>
 
-    <div class="mb-4">
-        <div class="input-group">
-            <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here..."
+    <div class="w-100">
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search"
                 [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username"
                 aria-describedby="basic-addon1">
         </div>
@@ -105,50 +103,61 @@
         }@else{<app-data-loader-content />}
 </div>
 
-
 <ng-template #cancelationConfirmation let-modal>
-    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center" ngbAutofocus>
-        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Cancel?</h4>
-        <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="onClickYes()">Yes</button>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="onClickYes()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>
 
 <ng-template #holdconformation let-modal>
-    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center" ngbAutofocus>
-        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-        <p class="mb-4 confirm-text text-center">Are you sure you want to Hold the Review Cycle?</p>
-        <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary"
-                (click)="HoldReviewCycle(seletedid);modal.dismiss()">Yes</button>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Hold the Review Cycle?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="HoldReviewCycle(seletedid);modal.dismiss()">
+                {{'Yes'|translate}}
+            </button>
         </div>
     </div>
 </ng-template>
 
 <ng-template #Resumeconformation let-modal>
-    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center" ngbAutofocus>
-        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-        <p class="mb-4 confirm-text text-center">Are you sure you want to Resume the Review cycle?</p>
-        <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary"
-                (click)="ResumeReviewCycle(seletedid);modal.dismiss()">Yes</button>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Resume the Review cycle?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="ResumeReviewCycle(seletedid);modal.dismiss()">
+                {{'Yes'|translate}}
+            </button>
         </div>
     </div>
 </ng-template>
 
 <ng-template #intialconformation let-modal>
-    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center" ngbAutofocus>
-        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Initiate the Review Cycle?</h4>
-        <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Initiate the Review Cycle?</p>
+        </div>
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary"
-                (click)="initiateReviewCycle(seletedid);modal.dismiss()">{{'Yes'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="initiateReviewCycle(seletedid);modal.dismiss()">
+                {{'Yes'|translate}}
+            </button>
         </div>
     </div>
 </ng-template>

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -28,6 +27,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',
 })
+
 export class ReviewCycleListComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   filteredDetails: any[] = [];
@@ -56,12 +56,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   @ViewChild('confirmation') confirmation: any;
 
-  constructor(
-    private router: Router,
-    private http: HttpService,
-    private modalService: NgbModal,
-    private conformationPopup: OpenModalService
-  ) {
+  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService) {
     effect(() => {
       if (this.http.reviewCycleTriggerSignal()) {
         this.getAllReviewCyclesList(this.page, this.pageSize);
@@ -75,11 +70,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   openAdd() {
-    this.modalService.open(CreateComponent, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    this.modalService.open(CreateComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   onRowsChange() {
@@ -106,20 +97,12 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   onUpdate(cycle: any) {
-    const modalRef = this.modalService.open(UpdateComponent, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    const modalRef = this.modalService.open(UpdateComponent, { centered: true, backdrop: 'static', size: 'lg' });
     modalRef.componentInstance.updateData = cycle;
   }
 
   onClickView(cycle: any) {
-    const modalRef = this.modalService.open(ViewComponent, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    const modalRef = this.modalService.open(ViewComponent, { centered: true, backdrop: 'static', size: 'lg' });
     modalRef.componentInstance.updateData = cycle;
   }
 
@@ -147,40 +130,32 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   getAllLocations() {
-    this.subscription = this.http
-      .getData('JobLocation/getAllLocations')
-      .subscribe({
-        next: (data: any) => {
-          this.jobLocationDropDownData = data.map((location: any) => {
-            return {
-              ...location,
-              fullName: `${location.jobLocationName}`,
-              selectedAllGroup: 'Group 3',
-            };
-          });
-        },
-      });
+    this.subscription = this.http.getData('JobLocation/getAllLocations').subscribe({
+      next: (data: any) => {
+        this.jobLocationDropDownData = data.map((location: any) => {
+          return {
+            ...location,
+            fullName: `${location.jobLocationName}`,
+            selectedAllGroup: 'Group 3',
+          };
+        });
+      },
+    });
   }
 
   getSubLocationByid(ValuesForSublocation: any) {
-    this.subscription = this.http
-      .getData(
-        `JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation}`
-      )
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.subLocationsDropdown = data.jobSubLocations.map(
-            (subLocation: any) => {
-              return {
-                ...subLocation,
-                fullName: `${subLocation.subLocationName}`,
-                selectedAllGroup: 'Group 4',
-              };
-            }
-          );
-        },
-      });
+    this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation}`).subscribe({
+      next: (data: any) => {
+        this.subLocationsDropdown = data.jobSubLocations.map((subLocation: any) => {
+            return {
+              ...subLocation,
+              fullName: `${subLocation.subLocationName}`,
+              selectedAllGroup: 'Group 4',
+            };
+          }
+        );
+      },
+    });
   }
 
   getAllReviewCyclesList(pagenum: number, pagesize: number): void {
@@ -194,22 +169,24 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     }
     
     this.dataload = true;
-    this.subscription = this.http
-      .getpagentiontData('reviewCycleHeader', params)
-      .subscribe({
-        next: (data: any) => {
-          this.reviewCyclesList = data.items || [];
-          this.filteredDetails = this.reviewCyclesList;
-          this.collectionSize = data.totalCount;
-        },
-        error: (err: any) => {
-          console.log('errors', err);
-          this.dataload = false;
-        },
-        complete: () => {
-          this.dataload = false;
-        },
-      });
+    this.subscription = this.http.getpagentiontData('reviewCycleHeader', params).subscribe({
+      next: (data: any) => {
+        this.collectionSize = data.totalCount;
+        this.reviewCyclesList = data.items || [];
+        this.filteredDetails = this.reviewCyclesList;
+        if (this.searchText) {
+          this.filterDetails();
+        }
+        this.dataload = false;
+      },
+      error: (err: any) => {
+        console.log('errors', err);
+        this.dataload = false;
+      },
+      complete: () => {
+        this.dataload = false;
+      },
+    });
   }
 
   filterDetails(): void {
@@ -257,21 +234,17 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       status: 'Review on Hold',
       createdBy: fusionUser.employeeId,
     };
-    this.http
-      .putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data)
-      .subscribe({
-        next: (response) => {
-          this.closeModal();
-          this.onCreateCycleFormSubmitted();
-          this.conformationPopup.openSuccessModal(
-            'Review Cycle is Kept on Hold'
-          );
-        },
-        error: (error) => {
-          this.conformationPopup.openErrorModal(error.error.message);
-          console.error('Error:', error);
-        },
-      });
+    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
+      next: (response) => {
+        this.closeModal();
+        this.onCreateCycleFormSubmitted();
+        this.conformationPopup.openSuccessModal('Review Cycle is Kept on Hold');
+      },
+      error: (error) => {
+        this.conformationPopup.openErrorModal(error.error.message);
+        console.error('Error:', error);
+      },
+    });
   }
 
   ResumeReviewCycle(cycle: any) {
@@ -280,21 +253,17 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       status: 'Resume',
       createdBy: fusionUser.employeeId,
     };
-    this.http
-      .putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data)
-      .subscribe({
-        next: (response) => {
-          this.closeModal();
-          this.onCreateCycleFormSubmitted();
-          this.conformationPopup.openSuccessModal(
-            'Review Cycle is Resumed Successfully'
-          );
-        },
-        error: (error) => {
-          this.conformationPopup.openErrorModal(error.error.reason);
-          console.error('Error:', error);
-        },
-      });
+    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
+      next: (response) => {
+        this.closeModal();
+        this.onCreateCycleFormSubmitted();
+        this.conformationPopup.openSuccessModal('Review Cycle is Resumed Successfully');
+      },
+      error: (error) => {
+        this.conformationPopup.openErrorModal(error.error.reason);
+        console.error('Error:', error);
+      },
+    });
   }
 
   onCreateCycleFormSubmitted() {
@@ -317,21 +286,17 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       status: 'Initiated',
       createdBy: fusionUser.employeeId,
     };
-    this.http
-      .putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data)
-      .subscribe({
-        next: (response) => {
-          // this.closeModal();
-          this.onCreateCycleFormSubmitted();
-          this.conformationPopup.openSuccessModal(
-            'Review Cycle Initiated Successfully'
-          );
-        },
-        error: (error) => {
-          this.conformationPopup.openErrorModal(error.error.reason);
-          console.error('Error:', error);
-        },
-      });
+    this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
+      next: (response) => {
+        // this.closeModal();
+        this.onCreateCycleFormSubmitted();
+        this.conformationPopup.openSuccessModal('Review Cycle Initiated Successfully');
+      },
+      error: (error) => {
+        this.conformationPopup.openErrorModal(error.error.reason);
+        console.error('Error:', error);
+      },
+    });
   }
 
   ngOnDestroy(): void {

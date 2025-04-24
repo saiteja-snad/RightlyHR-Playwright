@@ -5,6 +5,7 @@ import { IJobdetails } from '../../../Interfaces/job-model';
 import { Iorgcategoryleaves } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
+import { RbacService } from '../../../services/rbac.service';
 
 
 
@@ -69,6 +70,7 @@ export class LeaveCategoeryComponent implements OnInit {
 
   constructor(
     private http: HttpService,
+    public rbac: RbacService,
   ) {
     // Get the current year
     const currentYear = new Date().getFullYear();

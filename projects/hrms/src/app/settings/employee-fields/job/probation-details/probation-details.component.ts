@@ -61,7 +61,7 @@ export class ProbationDetailsComponent {
           this.ProbationDetails = data;
         },
       error: (err: any) => {
-        console.log(err);
+        // console.log(err);
 
       },
       complete: () => {
@@ -80,14 +80,14 @@ export class ProbationDetailsComponent {
     const moduleId=environment.ProbationrequestmoduleId;
     this.subscription = this.http.getData(`ProbationFlow/settingsconfigvalue/${moduleId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
+        // console.log(data);
         this.getProbationconfigValues = data;
         this.getProbationconfigValues = this.getProbationconfigValues.filter(
           (item: any) => !this.ProbationDetails.find((selectedItem: any) => selectedItem.configValueId  == item.id)
         );
     },
       error: (err) => {
-        console.error('Error fetching data:', err);
+        // console.error('Error fetching data:', err);
       }
     });
   }
@@ -122,7 +122,7 @@ export class ProbationDetailsComponent {
   // Method to open the update modal dialog
   openupdateDialog(probationDetailslist: any) {
     this.selectedId = probationDetailslist.id;
-    console.log("update details:" + probationDetailslist.value);
+    // console.log("update details:" + probationDetailslist.value);
     this.updateForm.patchValue({ Type: probationDetailslist.value });
     this.updateForm.patchValue({ Duration: probationDetailslist.noOfDays });
     this.modalService.open(this.updatepopup, {

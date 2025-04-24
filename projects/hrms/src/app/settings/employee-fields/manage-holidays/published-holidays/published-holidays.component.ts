@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-published-holidays',
@@ -19,7 +20,7 @@ export class PublishedHolidaysComponent {
   subscription!: Subscription
   allHolidays = [] as any;
 
-  constructor(public router: Router, private http: HttpService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit() {
     this.getAllHolidays();

@@ -52,16 +52,25 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       teamMembers: [null, Validators.required],
       reportingManager: [null, Validators.required]
     });
-    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
     this.initializeForm();
     this.initialzerevoke();
+    this.getEmployeeId();
     this.getAllTeammembersList();
     this.getEmployee();
     this.emppersonalinfo = JSON.parse(localStorage.getItem("personaldata") || '{}')
     this.getTraineeofferdetails();
     this.assignHeading();
   }
-
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.empdata = data;
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
   emailForRequestDoc() {
     this.isLoading = true;
     let loggedInUser = this.authService.getToken();

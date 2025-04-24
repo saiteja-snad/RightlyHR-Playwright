@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-form-settings',
@@ -50,6 +51,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     config: NgbModalConfig,
     private cdr: ChangeDetectorRef,
     private sharedModalService: OpenModalService,
+    public rbac: RbacService
   ) {
     config.backdrop = 'static';
     config.keyboard = false;

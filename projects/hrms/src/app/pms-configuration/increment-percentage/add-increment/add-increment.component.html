@@ -1,159 +1,147 @@
 <div class="custom-main-popup-container" ngbAutofocus>
-  <div class="d-flex justify-content-between align-items-center popup-header-border p-3">
+  <div class="custom-poup-header-content popup-header-border">
     <div>
       <p class="popup-heading mb-0">{{'Create New Increment Percentage'| translate}}</p>
     </div>
     <div>
-      <a (click)="openconfirmationModelforcancle(cancel,Postincrementalpercentage)"><img src="icons/close.png"
-          alt="Close Icon" class="close-icon"></a>
+      <a (click)="openconfirmationModelforcancle(cancel,Postincrementalpercentage)">
+        <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
     </div>
   </div>
-  <div class="custom-main-popup-content p-4">
-    <form name="Postincrementalpercentage" #Postincrementalpercentage="ngForm"
-      (ngSubmit)="Postincrementalpercentage.valid && onSubmit()">
+
+  <div class="custom-main-popup-content">
+    <form name="Postincrementalpercentage" #Postincrementalpercentage="ngForm" (ngSubmit)="Postincrementalpercentage.valid && onSubmit()">
       <div class="row">
         <div class="col-md-6 mb-3">
+          <label for="reviewcycle" class="form-label custom-label">Review Cycle Name<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <label for="reviewcycle" class="form-label custom-label">Review Cycle Name<span
-                class="text-danger">*</span></label>
             <p-select [options]="reviewCycleDropDownData" optionValue="id" optionLabel="reviewCycleName" [filter]="true"
               id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel" [(ngModel)]="postincrementalpercentage.id"
               filterBy="reviewCycleName" [showClear]="true" placeholder="Please Select Review Cycle Name"
-              class="form-select w-100" (onChange)="getReviewCycledataById()">
+              class="form-select custom-select" (onChange)="getReviewCycledataById()">
             </p-select>
-            <small class="text-danger" *ngIf="reviewcycle.touched && reviewcycle.invalid">
-              Review Cycle Name is required
-            </small>
+          </div>
+          <div class="error-msg" *ngIf="reviewcycle.touched && reviewcycle.invalid">
+            Review Cycle Name is required
           </div>
         </div>
+
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="ratingscale" class="form-label custom-label">Rating Scale<span
-                class="text-danger">*</span></label>
-            <input class="form-control custom-input" aria-label="Default select example" id="ratingscale"
-              name="ratingscale" #ratingscale="ngModel" [(ngModel)]="postincrementalpercentage.ratingscale"
-              placeholder="Rating Scale" disabled>
-            <small class="text-danger"
-              *ngIf="(team.touched &&  team.invalid) || (team.invalid && Postincrementalpercentage.submitted)">
-              Rating Scale is required
-            </small>
+          <label for="ratingscale" class="form-label custom-label">Rating Scale<span class="text-danger">*</span></label>
+          <input class="form-control custom-input" aria-label="Default select example" id="ratingscale" name="ratingscale"
+            #ratingscale="ngModel" [(ngModel)]="postincrementalpercentage.ratingscale" placeholder="Rating Scale" disabled>
+          <div class="error-msg" *ngIf="(team.touched &&  team.invalid) || (team.invalid && Postincrementalpercentage.submitted)">
+            Rating Scale is required
           </div>
         </div>
+
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="department" class="form-label custom-label">Department<span class="text-danger">*</span></label>
-            <input class="form-control custom-input" #deparment="ngModel"
-              [(ngModel)]="postincrementalpercentage.department" id="department" name="department"
-              aria-label="Default select example" placeholder="Department" disabled>
-            <small class="text-danger"
-              *ngIf="(deparment.touched &&  reviewcycle.invalid) || (deparment.invalid && Postincrementalpercentage.submitted)">
-              Department is required
-            </small>
+          <label for="department" class="form-label custom-label">Department<span class="text-danger">*</span></label>
+          <input class="form-control custom-input" #deparment="ngModel" [(ngModel)]="postincrementalpercentage.department"
+            id="department" name="department" aria-label="Default select example" placeholder="Department" disabled>
+          <div class="error-msg"
+            *ngIf="(deparment.touched &&  reviewcycle.invalid) || (deparment.invalid && Postincrementalpercentage.submitted)">
+            Department is required
           </div>
         </div>
+
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="team" class="form-label custom-label">Team<span class="text-danger">*</span></label>
-            <input class="form-control custom-input" aria-label="Default select example" id="team" name="team"
-              #team="ngModel" [(ngModel)]="postincrementalpercentage.team" placeholder="Team" disabled>
-            <small class="text-danger"
-              *ngIf="(team.touched &&  team.invalid) || (team.invalid && Postincrementalpercentage.submitted)">
-              Team is required
-            </small>
+          <label for="team" class="form-label custom-label">Team<span class="text-danger">*</span></label>
+          <input class="form-control custom-input" aria-label="Default select example" id="team" name="team" #team="ngModel"
+            [(ngModel)]="postincrementalpercentage.team" placeholder="Team" disabled>
+          <div class="error-msg" *ngIf="(team.touched &&  team.invalid) || (team.invalid && Postincrementalpercentage.submitted)">
+            Team is required
           </div>
         </div>
+
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="location" class="form-label custom-label">Location<span class="text-danger">*</span></label>
-            <input class="form-control custom-input" aria-label="Default select example" id="location" name="location"
-              #location="ngModel" [(ngModel)]="postincrementalpercentage.location" placeholder="Location" disabled>
-            <small class="text-danger"
-              *ngIf="(location.touched &&  location.invalid) || (location.invalid && Postincrementalpercentage.submitted)">
-              Location is required
-            </small>
+          <label for="location" class="form-label custom-label">Location<span class="text-danger">*</span></label>
+          <input class="form-control custom-input" aria-label="Default select example" id="location" name="location"
+            #location="ngModel" [(ngModel)]="postincrementalpercentage.location" placeholder="Location" disabled>
+          <div class="error-msg"
+            *ngIf="(location.touched &&  location.invalid) || (location.invalid && Postincrementalpercentage.submitted)">
+            Location is required
           </div>
         </div>
+
         <div class="col-md-6 mb-3">
-          <div>
-            <label for="sublocation" class="form-label custom-label">Sub Location<span
-                class="text-danger">*</span></label>
-            <input class="form-control custom-input" aria-label="Default select example" id="sublocation"
-              name="sublocation" #sublocation="ngModel" [(ngModel)]="postincrementalpercentage.sublocation"
-              placeholder="Sub Location" disabled>
-            <small class="text-danger"
-              *ngIf="(sublocation.touched && sublocation.invalid) || (sublocation.invalid && Postincrementalpercentage.submitted)">
-              Sub Location is required
-            </small>
+          <label for="sublocation" class="form-label custom-label">Sub Location<span class="text-danger">*</span></label>
+          <input class="form-control custom-input" aria-label="Default select example" id="sublocation" name="sublocation"
+            #sublocation="ngModel" [(ngModel)]="postincrementalpercentage.sublocation" placeholder="Sub Location" disabled>
+          <div class="error-msg"
+            *ngIf="(sublocation.touched && sublocation.invalid) || (sublocation.invalid && Postincrementalpercentage.submitted)">
+            Sub Location is required
           </div>
-        </div>
-        <div class="modal-table-content w-100 mt-3">
-          <table class="w-100">
-            <thead>
-              <tr>
-                <th>Increment Percentage/Rating</th>
-                <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
-                <th class="text-center">Action(s)</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Iterate through FormArray (ratingscaledetails) -->
-              <tr *ngFor="let detail of ratingscaledetailsarray; let i = index">
-                <td>
-                  <div class="d-flex">
-                    <div>
-                      <input type="number" class="form-control value-input" [(ngModel)]="detail.minvalue" id="min-{{i}}"
-                        name="min-{{i}}" min="0" placeholder="Min" (input)="validateNumber($event)" required />
-                    </div>
-                    <div class="pt-2">
-                      <span class="mx-2">-</span>
-                    </div>
-                    <div>
-                      <input type="number" class="form-control value-input" [(ngModel)]="detail.maxvalue" id="max-{{i}}"
-                        name="max-{{i}}" min="0" (input)="validateNumber($event)" placeholder="Max" required />
-                    </div>
-                  </div>
-                </td>
-                <td *ngFor="let column of detail.ratingDetails; let j = index" class="text-center text-td">
-                  <input type="number" class="form-control number-input" [(ngModel)]="column.percentage"
-                    (input)="validateNumber($event)" min="0" id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}"
-                    placeholder="Percentage" required />
-                </td>
-                <td class="text-center"><a *ngIf="i>=1" (click)="openModal(deleterowincrement);removerow=i"><i
-                      class="bi bi-trash3 text-danger"></i></a></td>
-                <td><button type="button" class="custom-add-btn" (click)="addRow()"
-                    [disabled]="Postincrementalpercentage.invalid"><i class="bi bi-plus-circle-fill"></i></button></td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
-      <div class="d-flex justify-content-end gap-3 pt-4">
-        <button type="button" class="custom-btn btn-secondary px-5"
+
+      <div class="custom-table-content mb-3">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Increment Percentage/Rating</th>
+              <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
+              <th class="text-center">Action(s)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Iterate through FormArray (ratingscaledetails) -->
+            <tr *ngFor="let detail of ratingscaledetailsarray; let i = index">
+              <td>
+                <div class="d-flex">
+                  <div>
+                    <input type="number" class="form-control value-input" [(ngModel)]="detail.minvalue" id="min-{{i}}"
+                      name="min-{{i}}" min="0" placeholder="Min" (input)="validateNumber($event)" required />
+                  </div>
+                  <div class="pt-2">
+                    <span class="mx-2">-</span>
+                  </div>
+                  <div>
+                    <input type="number" class="form-control value-input" [(ngModel)]="detail.maxvalue" id="max-{{i}}"
+                      name="max-{{i}}" min="0" (input)="validateNumber($event)" placeholder="Max" required />
+                  </div>
+                </div>
+              </td>
+              <td *ngFor="let column of detail.ratingDetails; let j = index" class="text-center text-td">
+                <input type="number" class="form-control number-input" [(ngModel)]="column.percentage"
+                  (input)="validateNumber($event)" min="0" id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}"
+                  placeholder="Percentage" required />
+              </td>
+              <td class="text-center"><a *ngIf="i>=1" (click)="openModal(deleterowincrement);removerow=i">
+                <i class="bi bi-trash3 text-danger"></i></a></td>
+              <td><button type="button" class="custom-add-btn" (click)="addRow()"
+                  [disabled]="Postincrementalpercentage.invalid"><i class="bi bi-plus-circle-fill"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary"
           (click)="openconfirmationModelforcancle(cancel,Postincrementalpercentage)">{{'Close'|translate}}</button>
-        <button type="button" class="custom-btn btn-primary px-5"
+        <button type="button" class="custom-btn btn-primary"
           [disabled]="Postincrementalpercentage.invalid||!postincrementalpercentage.id||isLoading"
           (click)="openconfirmationModel(confirmationtosave)">{{'Save'|translate}}</button>
       </div>
     </form>
   </div>
 </div>
+
 <ng-template #deleterowincrement let-modal>
-  <div class="modal-body p-4" ngbAutofocus>
-    <div class="mb-4 text-center">
-      <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon"> -->
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to Delete?</p>
     </div>
-    <p class="mb-4 confirm-text text-center">Are you sure you want to Delete?</p>
-    <div class="d-flex justify-content-around pt-3">
-      <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-      <button class="custom-btn btn-primary" (click)="deleteRow(removerow);modal.dismiss()" [disabled]="isLoading">
-        @if(!isLoading){
-        {{'Yes'|translate}}
-        }
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="deleteRow(removerow);modal.dismiss()" [disabled]="isLoading">
+        @if(!isLoading){ {{'Yes'|translate}} }
         @else {
         <div class="d-flex">
-          <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-          </div>
+          <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
           <div> {{'Submitting'|translate}}</div>
         </div>
         }
@@ -161,28 +149,29 @@
     </div>
   </div>
 </ng-template>
+
 <ng-template #cancel let-modal>
-  <div class="modal-body p-4" ngbAutofocus>
-    <div class="mb-4 text-center">
-      <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon"> -->
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to close?</p>
     </div>
-    <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to close?</p>
-    <div class="d-flex justify-content-around pt-3">
-      <button class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-      <button class="custom-btn btn-primary" (click)="closeModal()">{{'Yes'|translate}}</button>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="closeModal()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>
 
 <ng-template #confirmationtosave let-modal>
-  <div class="modal-body p-4" ngbAutofocus>
-    <div class="mb-4 text-center">
-      <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon"> -->
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to save?</p>
     </div>
-    <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to save?</p>
-    <div class="d-flex justify-content-around pt-3">
-      <button class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-      <button class="custom-btn btn-primary" (click)="onSubmit();modal.dismiss() " [disabled]="isLoading">
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="onSubmit();modal.dismiss() " [disabled]="isLoading">
         @if(!isLoading){
         {{'Yes'|translate}}
         }
@@ -193,7 +182,6 @@
           <div> {{'Submitting'|translate}}</div>
         </div>
         }
-
       </button>
     </div>
   </div>

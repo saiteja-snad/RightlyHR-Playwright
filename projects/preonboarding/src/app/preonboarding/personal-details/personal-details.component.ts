@@ -3,7 +3,7 @@ import { Component, effect, OnInit, signal, ViewChild, ViewEncapsulation } from 
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, MaxLengthValidator, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IAddress, IGender, IJobdetails, Ipersonal, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
@@ -158,22 +158,22 @@ export class PersonalDetailsComponent implements OnInit {
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
-        addressLine1: [null, Validators.required],
-        addressLine2: [null, Validators.required],
-        city: [null, Validators.required],
-        state: [null, Validators.required],
-        country: [null, Validators.required],
-        zipCode: [null, Validators.required,],
+        addressLine1: [null, [Validators.required,Validators.maxLength(100)]],
+        addressLine2: [null, Validators.required,Validators.maxLength(100)],
+        city: [null, Validators.required,Validators.maxLength(30)],
+        state: [null, Validators.required,Validators.maxLength(30)],
+        country: [null, Validators.required ,Validators.maxLength(30)],
+        zipCode: [null, Validators.required,Validators.pattern('^[0-6]{6}$')],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: [null, Validators.required],
-        addressLine2: [null, Validators.required],
-        city: [null, Validators.required],
-        state: [null, Validators.required],
-        country: [null, Validators.required],
-        zipCode: [null, Validators.required,],
+        addressLine1: [null, Validators.required,Validators.maxLength(100)],
+        addressLine2: [null, Validators.required,Validators.maxLength(100)],
+        city: [null, Validators.required,Validators.maxLength(30)],
+        state: [null, Validators.required,Validators.maxLength(30)],
+        country: [null, Validators.required,Validators.maxLength(30)],
+        zipCode: [null, Validators.required,Validators.pattern('^[0-6]{6}$')],
       }),
     });
   }
@@ -202,7 +202,7 @@ export class PersonalDetailsComponent implements OnInit {
   copyCurrentAddress(event: any) {
     if (event.target.checked) {
       const currentAddress = this.personalDetailsForm.get('currentAddress')?.value;
-      this.personalDetailsForm.patchValue({
+      this.personalDetailsForm?.patchValue({
         permanentAddress: {
           addressLine1: currentAddress?.addressLine1 || null,
           addressLine2: currentAddress?.addressLine2 || null,

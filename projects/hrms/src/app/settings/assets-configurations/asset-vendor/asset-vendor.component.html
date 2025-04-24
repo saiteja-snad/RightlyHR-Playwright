@@ -1,9 +1,9 @@
 <div class="custom-main-component-container">
-
+  
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Asset Vendor Details'|translate}}</span></div>
         <div class="custom-add-btn"  (click)="openModal(addassetevendor)"
-           >
+           *ngIf="rbac.allowedToAccess('Vendor Details.create')">
             <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
         </div>
     </div>
@@ -19,7 +19,7 @@
                         <th>Status </th>
                         <th>Email Address</th>
                         <th>Address </th>
-                        <th class="text-center">Action(s) </th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Vendor Details.update')">Action(s) </th>
 
                     </tr>
                 </thead>
@@ -33,7 +33,7 @@
                             <td>{{ asset.status }}</td>
                             <td>{{ asset.emailaddress }}</td>
                             <td>{{ asset.address }}</td>
-                            <td class="text-center">
+                            <td class="text-center" *ngIf="rbac.allowedToAccess('Vendor Details.update')">
                                 <div class="dropdown-container">
                                     <div class="dropdown">
 
@@ -81,8 +81,8 @@
         <ng-template #addassetevendor let-modal>
             <div class="custom-main-popup-container" ngbAutofocus>
 
-                <div class="d-flex justify-content-between popup-header-border p-3">
-                    <div class="pt-2">
+                <div class="custom-poup-header-content popup-header-border">
+                    <div >
                         <p class="popup-heading mb-0">Add Vendor Details</p>
                     </div>
                     <div>
@@ -91,7 +91,7 @@
                     </div>
                 </div>
 
-                <div class="custom-main-popup-content p-3">
+                <div class="custom-main-popup-content ">
 
                     <form [formGroup]="assetForm" (ngSubmit)="postvendor(assetForm); modal.dismiss()">
                         <div class="row">
@@ -232,7 +232,7 @@
                             </div>
 
                         </div>
-                        <div class="d-flex justify-content-end gap-3">
+                        <div class="custom-modal-footer">
                             <button type="button" class="custom-btn btn-secondary"
                                 (click)="modal.dismiss()">Close</button>
                             <button type="submit" class="custom-btn btn-primary"
@@ -251,7 +251,7 @@
                     <p class="confirmation-text mb-4">Are you sure you want to Inactive?</p>
                 </div>
 
-                <div class="d-flex justify-content-center gap-3 mt-4">
+                <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
                         No
                     </button>
@@ -270,7 +270,7 @@
                     <p class="confirmation-text mb-4">Are you sure you want to Active?</p>
                 </div>
 
-                <div class="d-flex justify-content-center gap-3 mt-4">
+                <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
                     <button type="submit" class="custom-btn btn-primary"
                         (click)="updateactivevendor(assetverderupdataform);model.dismiss()">Yes</button>
@@ -281,8 +281,8 @@
 
         <ng-template #updateanassets let-modal>
             <div class="custom-main-popup-container" ngbAutofocus>
-                <div class="d-flex justify-content-between popup-header-border p-3">
-                    <div class="pt-2">
+                <div class="custom-poup-header-content popup-header-border">
+                    <div >
                         <p class="popup-heading mb-0">Update Vendor Details</p>
                     </div>
                     <div>
@@ -290,7 +290,7 @@
                                 alt="Close Icon" class="close-icon"></a>
                     </div>
                 </div>
-                <div class="custom-main-popup-content p-3">
+                <div class="custom-main-popup-content ">
                     <form [formGroup]="assetverderupdataform"
                         (ngSubmit)="updatevendor(assetverderupdataform); modal.dismiss()">
                         <div class="row">
@@ -435,7 +435,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-3">
+                        <div class="custom-modal-footer">
                             <button type="button" class="custom-btn btn-secondary"
                                 (click)="modal.dismiss();assetverderupdataform.reset()">Close</button>
                             <button type="submit" class="custom-btn btn-primary"

@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-assets-details',
-  imports: [CommonModule, TabsModule, RouterModule],
+  imports: [CommonModule, TabsModule, RouterModule,TranslateModule],
   templateUrl: './view-assets-details.component.html',
   styleUrl: './view-assets-details.component.scss'
 })
@@ -23,7 +24,7 @@ export class ViewAssetsDetailsComponent {
   ];
   constructor(private readonly http: HttpService,
     public readonly route: ActivatedRoute,
-
+    public router: Router, 
   ) {
 
   }
@@ -36,7 +37,9 @@ export class ViewAssetsDetailsComponent {
       }
     });
   }
-
+  navigateassets(){
+    this.router.navigate(['/assets-management/all-assets']);
+  }
 
   fetchAssetDetails(assetId: any) {
     this.subscription = this.http.getData(`AssetMaster/${assetId}`)

@@ -24,6 +24,9 @@ export class PersonalJobTabsComponent implements OnInit {
     { label: 'Certification Details', link: '/personalinfo/job/certifications',permission: { feature: 'Employee Certification Details', action: 'view' } },
     { label: 'Probation Details', link: '/personalinfo/job/probation-details',permission: { feature: 'Employee Probation Details', action: 'view' } },
     { label: 'Onboarding Request', link: '/personalinfo/job/onboarding-requests',permission: { feature: 'Employee Onboarding Request', action: 'view' } },
+    { label: 'Compensation', link: '/personalinfo/job/compensation-details',permission: { feature: 'Compensation Details', action: 'view' } },
+    { label: 'Desk', link: '/personalinfo/job/desk-details' },
+    { label: 'Assets', link: '/personalinfo/job/assets-details',permission: { feature: 'Assets', action: 'view' } },
   
   ];
   constructor(public rbac: RbacService) { }

@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="custom-poup-header-content popup-header-border">
         <div>
             <p class="component-header cursor mb-0" (click)="nagvition()"><i class="bi bi-arrow-90deg-left me-2"></i>
                 {{'Add Shits'|translate}}</p>
@@ -195,7 +195,7 @@
 
                     </div>
 
-                    <div class=" d-flex justify-content-end gap-3 p-3">
+                    <div class="custom-modal-footer">
                         <button type="button" class="custom-btn btn-secondary" (click)="Cancel()">{{'Cancel'|translate}}</button>
                         <button type="submit" class="custom-btn btn-primary"  [disabled]="shiftForm.invalid || isDuplicateCodeName1.includes(true)|| isDuplicateCodeName.includes(true)" >{{'Submit'|translate}}</button>
                     </div>
@@ -210,16 +210,16 @@
 </div>
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-4">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+    <div class="result-popup-content" ngbAutofocus>
+       
+            <div >
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to Cancel?'|translate}}</p>
             </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
-    </div>
+
   </ng-template>

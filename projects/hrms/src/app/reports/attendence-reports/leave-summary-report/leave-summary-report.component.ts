@@ -14,7 +14,7 @@ import { SelectModule } from 'primeng/select';
 import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { ILeavesummery } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 @Component({

@@ -48,7 +48,7 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications menu-card">
                                 <a 
-                                    (click)="onboardstatuschange() ">Ready for Onboard</a>
+                                    (click)="onboardstatuschange();openmodel(readyforonboard) ">Ready for Onboard</a>
                             </div>
                         </td>
                     </tr>
@@ -109,17 +109,17 @@
     </div>
 </div>
 
-<ng-template #offerLetterModal let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img ">
-        </div>
-        <div class="text-center mb-3">
-            Are you sure you want to Onboard?
-        </div>
-        <div class="text-center mb-4">
-            <!-- <button type="button" class="btn btn-primary" (click)="jobtab(job)">Yes</button> -->
-            <button type="button" class="btn btn-secondary ms-2" (click)="closeonBoard()">No</button>
+<ng-template #readyforonboard let-modal>
+    <div class="custom-main-popup-container p-5" ngbAutofocus>
+        <div class="custom-main-popup-content text-center">
+            <div class="mb-5">
+                <img src="images\conformation.png" alt="Confirmation icon" class="confirmation-icon mb-3">
+                <p class="confirmation-text">Are you sure you want to Onboard?</p>
+            </div>
+            <div class="d-flex gap-5 w-100">
+                <button class="custom-btn btn-secondary w-50" (click)="closeonBoard()">Close</button>
+                <button class="custom-btn btn-primary w-50" (click)="jobtab()">Yes</button>
+            </div>
         </div>
     </div>
 </ng-template>

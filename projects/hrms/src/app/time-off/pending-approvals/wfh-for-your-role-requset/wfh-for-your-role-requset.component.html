@@ -51,7 +51,11 @@
                                 <a type="button" placement="top" >
                                     <img src="images\info-fill.png" alt="info icon" (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)" class="info-icon">
                                 </a>
-                                
+                                <ng-template #reason>
+                                    <div>
+                                        <p class="mb-0">{{leave.entity.attendanceApprovalcomments}} </p>
+                                    </div>
+                                </ng-template>
                             </span>
                         </div></td>
                         <td>{{leave.entity.attendanceRequestAppliedDate

@@ -119,7 +119,7 @@
                         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
                             <span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-                            formControlName="comments" maxlength="250"></textarea>
+                            formControlName="comments" maxlength="250" ></textarea>
                             <!-- Character counter -->
                         <div class="text-end small text-muted">
                             {{ approveForm.get('comments')?.value?.length || 0 }}/250

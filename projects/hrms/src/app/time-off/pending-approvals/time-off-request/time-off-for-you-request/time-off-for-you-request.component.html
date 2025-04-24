@@ -53,16 +53,19 @@
                         </td>
                         <td>
                             <div>
-                                <span>
-                                    <a type="button" placement="top">
-                                        <img src="images\info-fill.png" alt="info icon"
-                                            (click)="comments(item.entity.leaveApproverComments,commentspopup)"
-                                            class="info-icon">
-                                    </a>
-
-                                </span>
+                              <ng-container *ngIf="item.entity.leaveApproverComments?.comments?.trim(); else noComments">
+                                <a type="button" placement="top">
+                                  <img src="images/info-fill.png" alt="info icon"
+                                       (click)="comments(item.entity.leaveApproverComments, commentspopup)"
+                                       class="info-icon">
+                                </a>
+                              </ng-container>
+                              <ng-template #noComments>
+                                <span>-</span>
+                              </ng-template>
                             </div>
-                        </td>
+                        </td>                          
+                          
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">

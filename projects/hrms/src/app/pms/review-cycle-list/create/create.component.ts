@@ -8,14 +8,14 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Select } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TranslateModule } from '@ngx-translate/core';
-
 @Component({
   selector: 'app-create',
   imports: [CommonModule, FormsModule, NgbPopoverModule, ReactiveFormsModule, Select, TranslateModule, MultiSelectModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
-export class CreateComponent implements OnInit,OnDestroy{
+
+export class CreateComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   reviewCyclesList: any;
   reviewCycleForm!: FormGroup;
@@ -31,11 +31,8 @@ export class CreateComponent implements OnInit,OnDestroy{
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   todayDate = new Date().toISOString().split('T')[0]
 
-  constructor(
-    public readonly modalService: NgbModal,
-    private readonly http: HttpService,
-    private readonly fb: FormBuilder, private conformationPopup: OpenModalService,
-  ) { }
+  constructor(public readonly modalService: NgbModal, private readonly http: HttpService,
+    private readonly fb: FormBuilder, private conformationPopup: OpenModalService,) { }
 
   ngOnInit(): void {
     this.initializeReviewCycleForm();
@@ -71,12 +68,10 @@ export class CreateComponent implements OnInit,OnDestroy{
       },
       { validators: [this.startDateEndDateValidator(), this.joinDateEndDateValidator()] }
     );
-
     this.reviewCycleForm.get('startDate')?.valueChanges.subscribe(() => {
       this.toggleDateFields();
       this.reviewCycleForm.updateValueAndValidity();
     });
-
     this.toggleDateFields();
   }
 
@@ -116,12 +111,10 @@ export class CreateComponent implements OnInit,OnDestroy{
       const joinDate = control.get('applicableEmployeesJoinedBefore')?.value;
       const startDate = control.get('startDate')?.value;
       const endDate = control.get('endDate')?.value;
-
       if (joinDate && startDate && endDate) {
         const join = new Date(joinDate);
         const start = new Date(startDate);
         const end = new Date(endDate);
-
         if (join <= start || join >= end) {
           return { joinDateInvalid: true };
         }
@@ -148,10 +141,10 @@ export class CreateComponent implements OnInit,OnDestroy{
       return isValid ? null : { whitedespritionspace: true };
     };
   }
+
   toggleDateFields(): void {
     const startDateControl = this.reviewCycleForm.get('startDate');
     const startDateValid = !!startDateControl?.value && startDateControl.valid;
-
     if (startDateValid) {
       this.reviewCycleForm.get('endDate')?.enable();
       this.reviewCycleForm.get('dueDate')?.enable();
@@ -175,25 +168,22 @@ export class CreateComponent implements OnInit,OnDestroy{
   }
 
   getSubDepartmentsByDepID(id: any) {
-    this.subscription = this.http
-      .getData(`Subdepartments/Getnames/V2/${id}`)
-      .subscribe({
-        next: (data: any) => {
-          this.subDepartmentsDropdownValues = data.map((subDepartment: any) => {
-            return {
-              ...subDepartment,
-              fullName: `${subDepartment.subDepartmentName}`,
-              selectedAllGroup: 'Group 2',
-            };
-          });
-        },
-      });
+    this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${id}`).subscribe({
+      next: (data: any) => {
+        this.subDepartmentsDropdownValues = data.map((subDepartment: any) => {
+          return {
+            ...subDepartment,
+            fullName: `${subDepartment.subDepartmentName}`,
+            selectedAllGroup: 'Group 2',
+          };
+        });
+      },
+    });
   }
 
   getAllDepartments() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
-        console.log(data);
         this.departmentDetails = data.map((department: any) => {
           return {
             ...department,
@@ -206,19 +196,17 @@ export class CreateComponent implements OnInit,OnDestroy{
   }
 
   getAllLocations() {
-    this.subscription = this.http
-      .getData('JobLocation/getAllLocations')
-      .subscribe({
-        next: (data: any) => {
-          this.jobLocationDropDownData = data.map((location: any) => {
-            return {
-              ...location,
-              fullName: `${location.jobLocationName}`,
-              selectedAllGroup: 'Group 3',
-            };
-          });
-        },
-      });
+    this.subscription = this.http.getData('JobLocation/getAllLocations').subscribe({
+      next: (data: any) => {
+        this.jobLocationDropDownData = data.map((location: any) => {
+          return {
+            ...location,
+            fullName: `${location.jobLocationName}`,
+            selectedAllGroup: 'Group 3',
+          };
+        });
+      },
+    });
   }
 
   getAllReviewCycleTypes() {
@@ -226,14 +214,11 @@ export class CreateComponent implements OnInit,OnDestroy{
       entity: 'PMS',
       attribute: 'reviewType',
     };
-    this.subscription = this.http
-      .getDataIncludeParams('entityAttributeValues', params)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.ReviewCycleTypes = data;
-        },
-      });
+    this.subscription = this.http.getDataIncludeParams('entityAttributeValues', params).subscribe({
+      next: (data: any) => {
+        this.ReviewCycleTypes = data;
+      },
+    });
   }
 
   onComplete() {
@@ -263,8 +248,7 @@ export class CreateComponent implements OnInit,OnDestroy{
         subLocationId: this.reviewCycleForm.value.subLocationId.join(','),
         departmentId: this.reviewCycleForm.value.departmentId.join(','),
         subDepartmentId: this.reviewCycleForm.value.subDepartmentId.join(','),
-        applicableEmployeesJoinedBefore:
-          this.reviewCycleForm.value.applicableEmployeesJoinedBefore,
+        applicableEmployeesJoinedBefore: this.reviewCycleForm.value.applicableEmployeesJoinedBefore,
         description: this.reviewCycleForm.value.description,
         status: 'Created',
         createdBy: data.employeeId,
@@ -283,9 +267,6 @@ export class CreateComponent implements OnInit,OnDestroy{
     } else {
       this.reviewCycleForm.markAllAsTouched();
     }
-    // setTimeout(() => {
-    //   this.modalService.dismissAll();
-    // }, 3000);
   }
 
   OnClickLocation(event: any) {
@@ -302,7 +283,6 @@ export class CreateComponent implements OnInit,OnDestroy{
   getSubLocationByid(ValuesForSublocation: any) {
     this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.subLocationsDropdown = data.jobSubLocations.map((subLocation: any) => {
           return {
             ...subLocation,
@@ -319,5 +299,4 @@ export class CreateComponent implements OnInit,OnDestroy{
       this.subscription.unsubscribe()
     }
   }
-
 }

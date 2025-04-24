@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -10,13 +9,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../services/open-modal.service';
-
 @Component({
   selector: 'app-view',
   imports: [CommonModule, FormsModule, NgbPopoverModule, ReactiveFormsModule, Select, TranslateModule, MultiSelectModule],
   templateUrl: './view.component.html',
   styleUrl: './view.component.scss'
 })
+
 export class ViewComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   empinfo = {} as any;
@@ -40,8 +39,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   todayDate = new Date().toISOString().split('T')[0]
   @Input() updateData: any
 
-  constructor(private router: Router,
-    private conformationPopup: OpenModalService, private fb: FormBuilder,
+  constructor( private conformationPopup: OpenModalService, private fb: FormBuilder,
     private http: HttpService, private modalService: NgbModal) {
   }
 
@@ -75,7 +73,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     this.reviewCycleupdateForm.get('startDate')?.valueChanges.subscribe(() => {
       this.dueDateAfterStartDateValidator('startDate')
       this.startDateEndDateValidator()
-    });  
+    });
   }
 
   closeModal() {
@@ -134,7 +132,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     };
     this.reviewCycleupdateForm.patchValue({
       reviewCycleName: cycle.reviewCycleName,
-      startDate: formatDate(cycle.startDate), 
+      startDate: formatDate(cycle.startDate),
       endDate: formatDate(cycle.endDate),
       dueDate: formatDate(cycle.dueDate),
       reviewCycleType: cycle.reviewCycleType,
@@ -177,7 +175,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   getSubLocationByid(ValuesForSublocation: any) {
     this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.subLocationsDropdown = data.jobSubLocations.map((subLocation: any) => {
           return {
             ...subLocation,
@@ -203,7 +200,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   getAllDepartments() {
     this.subscription = this.http.getData("Department").subscribe({
       next: (data: any) => {
-        console.log(data);
         this.departmentDetails = data.map((department: any) => {
           return {
             ...department,
@@ -236,8 +232,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.getDataIncludeParams("entityAttributeValues", params).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.ReviewCycleTypes = data
+        this.ReviewCycleTypes = data;
       }
     })
   }
@@ -289,7 +284,6 @@ export class ViewComponent implements OnInit, OnDestroy {
       searchQuery: this.searchText
     };
     this.dataload = true;
-
     this.subscription = this.http.getpagentiontData("reviewCycleHeader", params).subscribe({
       next: (data: any) => {
         this.collectionSize = data.totalCount;

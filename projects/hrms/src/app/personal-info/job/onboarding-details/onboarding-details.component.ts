@@ -25,7 +25,7 @@ export class OnboardingDetailsComponent {
   Statusdetails: any;
   probation = [] as IProbation[];
   noticePeriod  = [{id : 1, name : 'Yes'}, {id : 2, name : 'No'}]
-  empinfo = {} as IJob;
+  empinfo :any = {} as IJob;
   backgroundDetails = [] as IBackground[];
   branchLocations = [] as IBranchLocation[]
   empdata: Ipersonal = {} as Ipersonal;
@@ -271,7 +271,12 @@ export class OnboardingDetailsComponent {
     this.subscription = this.http.getData("ProbationStatus").subscribe({
       next: (data: any) => {
         console.log(data);
+      if(data){
         this.probation = data as IProbation[];
+      }
+      else{
+        this.probation = [] as IProbation[];
+      }
       }
     })
   }

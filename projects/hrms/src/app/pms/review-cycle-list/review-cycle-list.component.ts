@@ -12,6 +12,7 @@ import { ViewComponent } from './view/view.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-review-cycle-list',
@@ -22,7 +23,8 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
     PaginatorModule,
     TranslateModule,
     DataLoaderContentComponent,
-  ],
+    NoDataFoundComponent
+],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',
 })
@@ -32,21 +34,25 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   jobLocationDropDownData: any;
   subLocationsDropdown: any;
   seletedid: any;
-  totalRecords = 100;
-  first: any = 1;
-  rows: any = 10;
+  searchText = '';
+  reviewCyclesList: any[] = [];
+  dataload = false;
+
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  searchQuery = '';
+  first = 0;
+  totalRecords = 0;
+
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
-    { label: 25, value: 25 },
+    { label: 25, value: 25 }
   ];
-  page = 1;
-  pageSize = 10;
-  collectionSize = 100;
-  searchText = '';
-  reviewCyclesList: any[] = [];
-  dataload = false;
+
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   @ViewChild('confirmation') confirmation: any;
 
@@ -79,9 +85,24 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   onRowsChange() {
     this.first = 0;
   }
-  onPageChange(event: PaginatorState) {
+
+  onSearchTextChange(): void {
+    this.getAllReviewCyclesList(this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
     this.first = event.first;
-    this.rows = event.rows;
+    this.getAllReviewCyclesList(this.page, this.pageSize);
+  }
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.getAllReviewCyclesList(this.page, this.pageSize);
   }
 
   onUpdate(cycle: any) {
@@ -162,29 +183,24 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       });
   }
 
-  getAllReviewCyclesList(
-    pagenum: number,
-    pagesize: number,
-    fetchAll: boolean = false
-  ): void {
-    const pageSize = fetchAll ? 10000 : this.pageSize; // Fetch all records if fetchAll is true
-    const params = {
+  getAllReviewCyclesList(pagenum: number, pagesize: number): void {
+    const params: { page: number; pageSize: number; searchQuery?: string } = {
       page: pagenum,
-      pageSize: pageSize,
-      // searchQuery: this.searchText
+      pageSize: pagesize,
     };
+    
+    if (this.searchText) {
+      params.searchQuery = this.searchText;
+    }
+    
     this.dataload = true;
     this.subscription = this.http
       .getpagentiontData('reviewCycleHeader', params)
       .subscribe({
         next: (data: any) => {
-          this.collectionSize = data.totalCount;
           this.reviewCyclesList = data.items || [];
           this.filteredDetails = this.reviewCyclesList;
-          if (this.searchText) {
-            this.filterDetails();
-          }
-          this.dataload = false;
+          this.collectionSize = data.totalCount;
         },
         error: (err: any) => {
           console.log('errors', err);

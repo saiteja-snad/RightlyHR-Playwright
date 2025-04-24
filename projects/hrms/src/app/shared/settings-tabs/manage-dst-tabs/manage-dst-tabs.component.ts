@@ -18,18 +18,8 @@ export class ManageDstTabsComponent implements OnInit, OnDestroy {
   public navLinks: any[] = [];
 
   allNavLinks = [
-    {
-      label: 'Pending for submission',
-      route: '/settings/employee-fields/manage-dsts/pending-for-submission',
-      count: 0,
-      permission: { feature: 'DST Pending For Submission', action: 'view' }
-    },
-    {
-      label: 'Published',
-      route: '/settings/employee-fields/manage-dsts/published-dsts',
-      count: 0,
-      permission: { feature: 'DST Published', action: 'view' }
-    }
+    { label: 'Pending for submission',route: '/settings/employee-fields/manage-dsts/pending-for-submission',count: 0},
+    { label: 'Published',route: '/settings/employee-fields/manage-dsts/published-dsts',count: 0 }
   ];
 
   constructor(private http: HttpService, public rbac: RbacService) { }
@@ -53,13 +43,7 @@ export class ManageDstTabsComponent implements OnInit, OnDestroy {
               return { ...link, count: publishedCount };
             }
             return link;
-          })
-          .filter(link =>
-            link.permission &&
-            link.permission.feature &&
-            link.permission.action &&
-            this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-          );
+          });
       },
     });
   }

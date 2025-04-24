@@ -2,7 +2,7 @@
     <div>
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div><span class="component-sub-header">{{'Expense Configurations'|translate}}</span></div>
-            <div class="custom-add-btn"   (click)="openModal(addExpensesmodal)" *ngIf="rbac.allowedToAccess('Expense Configuration.create')">
+            <div class="custom-add-btn"   (click)="openModal(addExpensesmodal)" *ngIf="rbac.allowedToAccess('Expense Tab.create')">
               <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
             </div>
           </div>
@@ -13,22 +13,22 @@
                 <table class="w-100">
                     <thead>
                         <th>Expense Type</th>
-                        <th *ngIf="rbac.allowedToAccess('Expense Configuration.update') || rbac.allowedToAccess('Expense Configuration.delete')">Actions</th>
+                        <th *ngIf="rbac.allowedToAccess('Expense Tab.update') || rbac.allowedToAccess('Expense Tab.delete')">Actions</th>
                     </thead>
                     <tbody>
                      
                         <tr *ngFor="let exp of expense">
                             <td>{{exp.expenseType}}</td>
-                            <td *ngIf="rbac.allowedToAccess('Expense Configuration.update') || rbac.allowedToAccess('Expense Configuration.delete')">
+                            <td *ngIf="rbac.allowedToAccess('Expense Tab.update') || rbac.allowedToAccess('Expense Tab.delete')">
                                 <div class="d-flex gap-4">
                                     <!--Update-->
                                     <div>
-                                        <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="rbac.allowedToAccess('Expense Configuration.update')"><img
+                                        <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="rbac.allowedToAccess('Expense Tab.update')"><img
                                                 src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
                                     </div>
                                     <!--Delete-->
                                     <div>
-                                        <a (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Expense Configuration.delete')"><img src="/settings-icon/trash-2.png"
+                                        <a (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Expense Tab.delete')"><img src="/settings-icon/trash-2.png"
                                                 alt="edit icon" class="settings-common-icon"></a>
                                     </div>
                                 </div>

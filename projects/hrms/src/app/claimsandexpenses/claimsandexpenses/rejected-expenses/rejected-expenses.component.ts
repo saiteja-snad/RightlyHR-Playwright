@@ -23,7 +23,7 @@ export class RejectedExpensesComponent {
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
-
+  commentsrecivced = [] as any
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
@@ -41,6 +41,10 @@ export class RejectedExpensesComponent {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
+  comments_Function(comments: any) {
+    this.commentsrecivced = comments
+  }
+
 
   getexpensesheaderbyemployeeid(): void {
     const cleanSearchQuery = this.searchTerm || ''

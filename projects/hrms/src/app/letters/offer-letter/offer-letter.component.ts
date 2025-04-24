@@ -935,7 +935,6 @@ console.log(formValues);
   }
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
-    debugger
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.loading = true;
     this.prospectiveEmpData.employeeId= this.prospectiveEmpData.empId,

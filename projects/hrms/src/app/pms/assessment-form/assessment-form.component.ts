@@ -134,7 +134,8 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
   }
 
   cancle() {
-    this.router.navigate(['/pms/my-performance-review']);
+    this.modalService.dismissAll(); 
+    this.remove();
   }
 
   //function to open the model popup

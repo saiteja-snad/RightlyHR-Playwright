@@ -43,10 +43,10 @@
                         <td>{{item?.rating?item?.rating:'-'}}</td>
                         <td class="text-center">
                             <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu">
+                                  </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
                                     <li><a class="dropdown-item" (click)="editDetails(item)">Update</a></li>
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"
                                             (click)="openDelete(confirmation, item.id)">Delete</a></li>

@@ -9,11 +9,11 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>Expense Title</th>
-          <th>Expense Date</th>
-          <th>Total Amount</th>
-          <th>Status</th>
-          <th class="text-center">Actions</th>
+          <th>{{'Expense Title'  | translate}}</th>
+          <th>{{'Expense Date'  | translate}}</th>
+          <th>{{'Total Amount'  | translate}}</th>
+          <th>{{'Status'  | translate}}</th>
+          <th class="text-center">{{'Actions'  | translate}}</th>
         </tr>
       </thead>
       <tbody>
@@ -55,14 +55,14 @@
   <div class="custom-main-popup-container">
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Expenses Details</p>
+        <p class="popup-heading mb-0">{{'Expenses Details' | translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
     <div class="d-flex gap-5 pt-3 ps-4">
-      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
+      <b class="expenses-title-text">{{'Expense Title' | translate}} : {{ expenseheaderiteams.expenses_Title }}</b>
       <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
     </div>
     <div class="custom-table p-3">
@@ -108,7 +108,7 @@
   <div class="custom-main-popup-container">
     <div class="d-flex justify-content-between popup-header-border p-4">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Expenses Details</p>
+        <p class="popup-heading mb-0">{{'Expenses Details' | translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss();openModal(viewDetailsModal); ExpenseViewURL = null; ExpenseImageUrl = null"><img
@@ -117,7 +117,7 @@
     </div>
     <div class="modal-body text-center">
       <p *ngIf="!ExpenseImageUrl; else imageView">
-        <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+        <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" ></ngx-doc-viewer>
       </p>
       <ng-template #imageView>
         <img [src]="ExpenseImageUrl" alt="My Image" class="modal-image" />

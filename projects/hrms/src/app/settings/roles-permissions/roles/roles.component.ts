@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { Iroles } from './roles.model';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-roles',
@@ -30,7 +31,8 @@ export class RolesComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private http: HttpService,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

@@ -226,6 +226,29 @@ export const permissionsData = [
     { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
 
+     // Settings Roles Section    
+     { fields: 'Role Tab', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Role Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Assignee Tab', View: false, Update: false, Create: false, Delete: false },
+
+    // Settings Assest Configuration Section    
+    { fields: 'Vendor Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Catagory', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Sub Catagory', View: false, Update: false, Create: false, Delete: false },
+
+    // TimeOff Attendece Eligibility Criteria  
+    { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'WFH Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attndance Eligibility Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Permission Elgibility Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+
+     // Settings Dynamic Forms Section    
+     { fields: 'Active Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Inactive Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Draft Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Form Settings', View: false, Update: false, Create: false, Delete: false },
+
     //Time Off Tabs Sections
     { fields: 'Leave Category Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Leave Allocation Tab', View: false, Update: false, Create: false, Delete: false },

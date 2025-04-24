@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-desk-details',
-  imports: [TabsModule,RouterModule,CommonModule],
+  imports: [TabsModule,RouterModule,CommonModule,TranslateModule,],
   templateUrl: './view-desk-details.component.html',
   styleUrl: './view-desk-details.component.scss'
 })
@@ -23,7 +24,7 @@ export class ViewDeskDetailsComponent {
 
   constructor(private readonly http: HttpService,
     public readonly route: ActivatedRoute,
-
+    public router: Router, 
   ) {
 
   }
@@ -44,9 +45,6 @@ export class ViewDeskDetailsComponent {
       next: (response: any) => {
         this.deskResponse = response;
 
-    
-     
-
       },
       error: (reason: any) => {
         console.log(reason);
@@ -54,5 +52,12 @@ export class ViewDeskDetailsComponent {
     });
   }
 
-
+  navigateassets() {
+    this.router.navigate(['/desk/management/all-desks']);
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

@@ -53,8 +53,8 @@
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-3">
-                <div class="pt-2">
+            <div class="custom-poup-header-content popup-header-border">
+                <div >
                     <p class="popup-heading mb-0">{{'Edit Bank Name'|translate}}</p>
                 </div>
                 <div>
@@ -72,9 +72,9 @@
                         <div *ngIf="updateForm.get('bankName2')?.errors?.['required']">{{'Bank name is required'|translate}}</div>
                     </div>
                 </div>
-                <div class="d-flex gap-5 w-100 pt-3">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="updateBank(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateBank(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -83,15 +83,15 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
+    <div class="result-popup-content" ngbAutofocus>
         <div class="custom-main-popup-content text-center p-4">
             <div class="py-4">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
             <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDeleteBank(modal)">{{'Yes'|translate}}</button>
+                <button type="button" class="custom-btn btn-secondary "(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary " (click)="onDeleteBank(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
     </div>

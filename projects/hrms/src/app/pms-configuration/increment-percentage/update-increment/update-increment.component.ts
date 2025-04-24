@@ -10,13 +10,13 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { IReviewCycle, RatingDetail } from '../add-increment/increment.modal';
-
 @Component({
   selector: 'app-update-increment',
   imports: [CommonModule, FormsModule, Select, TranslateModule],
   templateUrl: './update-increment.component.html',
   styleUrl: './update-increment.component.scss',
 })
+
 export class UpdateIncrementComponent implements OnInit, OnDestroy {
   empinfo = {} as any;
   subscription!: Subscription;
@@ -34,38 +34,27 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
   @ViewChild('deletesuccess') deletesuccess: any;
   @ViewChild('deleterowincrement') deleterowincrement: any;
   @Input() updateData: any;
-  constructor(
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
-    private http: HttpService,
-    private modalService: NgbModal,
-    public rbac: RbacService
-  ) {}
+
+  constructor(private authService: AuthService, private conformationPopup: OpenModalService, private http: HttpService,
+     private modalService: NgbModal, public rbac: RbacService) { }
+
   ngOnInit(): void {
     this.editDetails(this.updateData);
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getReviewCycledata();
   }
+
   editDetails(Values: any) {
     // Populate the form with the selected values
     this.UpdateIncrementalpercentage = {
       id: Values.id,
       reviewCycleId: Values.reviewCycleId,
-      department: Values.deptName
-        .map((dept: any) => dept.departmentName)
-        .join(', '),
-      location: Values.locationName
-        .map((loc: any) => loc.locationName)
-        .join(', '),
-      team: Values.subdeptName
-        .map((loc: any) => loc.subDepartmentName)
-        .join(', '),
-      sublocation: Values.sublocationName
-        .map((loc: any) => loc.subLocationName)
-        .join(', '),
+      department: Values.deptName.map((dept: any) => dept.departmentName).join(', '),
+      location: Values.locationName.map((loc: any) => loc.locationName).join(', '),
+      team: Values.subdeptName.map((loc: any) => loc.subDepartmentName).join(', '),
+      sublocation: Values.sublocationName.map((loc: any) => loc.subLocationName).join(', '),
       ratingscale: Values.rating,
     };
-
     // Populate the rating range loop
     if (this.UpdateIncrementalpercentage.ratingscale) {
       const ratingscale = this.UpdateIncrementalpercentage.ratingscale;
@@ -75,7 +64,6 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
         (_, i) => start + i
       );
     }
-
     // Map itemsdata to ratingscaledetailsarray
     this.ratingscaledetailsarray = Values?.itemsdata.map((item: any) => {
       return {
@@ -89,11 +77,8 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
         })),
       };
     });
-    console.log(
-      'Updated ratingscaledetailsarray:',
-      this.ratingscaledetailsarray
-    );
   }
+
   // Function to get all review cycle data
   getReviewCycledata() {
     this.subscription = this.http.getData(`reviewCycleHeader`).subscribe({
@@ -105,37 +90,45 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true });
   }
+
   close() {
     this.modalService.dismissAll();
   }
+
   closeModal() {
     this.modalService.dismissAll();
     this.UpdateIncrementalpercentage = {}; // Reset the form
     this.ratingrangeloop = [];
     this.ratingscaledetailsarray = [];
   }
+
   //function to open the model popup
   openconfirmationModel(content: any) {
     this.modalService.open(content, { centered: true });
   }
+
   //function to open the model popup
   openconfirmationModelforcancle(content: any, form: any) {
     this.myForm = form;
     this.modalService.open(content, { centered: true });
   }
+
   //function to delete
   openDeletepopup(content: any, id: any) {
     this.deleteId = id;
     this.modalService.open(content, { centered: true });
   }
+
   validateNumber(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const numericValue = inputElement.value.replace(/[^0-9]/g, ''); // Allow only numeric characters
     inputElement.value = numericValue;
   }
+
   //function to add the columns based on max and min values
   getdetailsrelatedtoreviewcycle(start: any, end: any) {
     // Clear the previous range before adding new values
@@ -160,7 +153,6 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
       maxvalue: null,
       ratingDetails: [] as RatingDetail[],
     };
-
     // Populate the ratingDetails based on the existing ratingrangeloop
     this.ratingrangeloop.forEach((columnValue) => {
       newRow.ratingDetails.push({
@@ -168,10 +160,10 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
         ratingcolumns: columnValue, // Use the current rating column values
       });
     });
-
     // Push the new row into the existing array reference
     this.ratingscaledetailsarray.push(newRow);
   }
+
   // Delete Row from FormArray
   deleteRow(index: number): void {
     if (this.ratingscaledetailsarray[index]) {
@@ -185,6 +177,7 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
     this.conformationPopup.openSuccessModal('Row Deleted Successfully');
     this.deleterow();
   }
+
   deleterow() {
     // this.modalRef = this.modalService.open(this.loading, { centered: true });
     const loggedinuser = this.authService.getToken();
@@ -216,7 +209,7 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
         ],
       };
       this.http.postdata(`IncrementalPercentage/update`, payload).subscribe({
-        next: (response: any) => {},
+        next: (response: any) => { },
         error: (err: any) => {
           console.log(err);
         },
@@ -227,6 +220,7 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
       });
     }
   }
+
   // Handle form submission
   updateincermement() {
     this.isLoading = true;
@@ -259,13 +253,12 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
           ),
         ],
       };
+
       this.http.postdata(`IncrementalPercentage/update`, payload).subscribe({
         next: (response: any) => {
           //console.log(response
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(
-            'Incremental Percentage Updated Successfully'
-          );
+          this.conformationPopup.openSuccessModal('Incremental Percentage Updated Successfully');
         },
         error: (err: any) => {
           this.isLoading = false;
@@ -291,6 +284,7 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
       });
     }
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

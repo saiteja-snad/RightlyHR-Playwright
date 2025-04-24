@@ -90,7 +90,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
 
   // Fetch identity dropdown options
   getIdentityDropDown(): void {
-    this.subscription = this.http.getData(`OnboardingDocumentsList?identity=true`).subscribe({
+    this.subscription = this.http.getData(`IdentityType`).subscribe({
       next: (data: any) => {
         this.getidentitydropdetails = data;
         console.log('Identity dropdown:', this.getidentitydropdetails);
@@ -180,7 +180,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     return {
 
       empId: parseInt(this.empinfo.employeeId),
-      identityType: this.identityForm.get('identityType')?.value?.documentName,
+      identityType: this.identityForm.get('identityType')?.value?.identityType1,
       identityNumber: this.identityForm.get('identityNumber')?.value,
       attachment: attachmentPath || '',
 

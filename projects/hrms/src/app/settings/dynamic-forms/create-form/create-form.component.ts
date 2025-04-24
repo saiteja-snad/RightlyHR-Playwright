@@ -5,7 +5,7 @@ import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsM
 import { Router } from '@angular/router';
 import { NgbAccordionModule, NgbModal, NgbModalConfig, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { HttpService } from '../../../services/http.service';
 import { IDynamicForm, IRatingScale } from '../../../Interfaces/dynamic-forms.model';
 import { CommonModule,Location  } from '@angular/common';

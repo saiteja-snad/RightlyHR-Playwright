@@ -17,8 +17,9 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-recall-for-your-role-request',
@@ -78,16 +79,16 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   formInializer(){
     this.recallAcceptFormForProcess = this.fb.group({
       recallReason: [null,
-        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/),noWhitespaceValidator]
       ]
     });
     this.recallAcceptForm = this.fb.group({
       AcceptReason: [null,
-        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/),noWhitespaceValidator]
       ]
     });
     this.rejectSeparationForm = this.fb.group({
-      notes: [null,[Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]
+      notes: [null,[Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/),noWhitespaceValidator]
       ]
     });
   }

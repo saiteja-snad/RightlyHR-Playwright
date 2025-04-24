@@ -12,7 +12,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import dayjs from 'dayjs';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootstrap";
 import { Dayjs } from 'dayjs';
 import { IAttendanceDetails } from '../../../Interfaces/reports.model';

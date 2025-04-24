@@ -12,8 +12,9 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-regularization-for-you-request',
@@ -63,13 +64,13 @@ export class RegularizationForYouRequestComponent implements OnInit,OnDestroy {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {  
     this.rejectForm = this.fb.group({
-      comments: ['',[Validators.required,Validators.maxLength(250)]],
+      comments: ['',[Validators.required,Validators.maxLength(250),noWhitespaceValidator]],
     }); 
 
   }

@@ -935,13 +935,14 @@ console.log(formValues);
   }
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
+    debugger
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.loading = true;
     this.prospectiveEmpData.employeeId= this.prospectiveEmpData.empId,
     this.prospectiveEmpData.empstatus= 'Prospective',
     this.prospectiveEmpData.emailaddress= data.personalEmail,
     this.prospectiveEmpData.contactnumber=parseInt(data.phoneNumber),
-    this.prospectiveEmpData. emailId= this.employeeaddress.emailId,
+    this.prospectiveEmpData.emailId= this.employeeaddress.emailId,
     this.prospectiveEmpData.fusionEmpId= data.fusionPlusEmpId,
     this.prospectiveEmpData.insurance=this.employeeaddress.insurance,
     this.prospectiveEmpData.generateOffer= true,
@@ -953,6 +954,7 @@ console.log(formValues);
     this.prospectiveEmpData.dateOfJoining= this.employeeForm.get('dateOfJoining')?.value,
     this.prospectiveEmpData.substatus= 'Offer Letter Generated',
     this.prospectiveEmpData.password= this.employeeaddress.password
+    this.prospectiveEmpData.reportsTo=this.prospectiveEmpData.reportsTo.toString();
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
@@ -1093,7 +1095,7 @@ console.log(formValues);
       subdeptId: data.subdepartmentId,
       createddate: data.jobCreatedate,
       gradeId: data.gradeId,
-      reportsTo: data.reportsTo.toString(),
+      reportsTo: parseInt(data.reportsTo),
       shiftId: data.shiftId,
       jobTypeId: this.jobtypeId,
     };

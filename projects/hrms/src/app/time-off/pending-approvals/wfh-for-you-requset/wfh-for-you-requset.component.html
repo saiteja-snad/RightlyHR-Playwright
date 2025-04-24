@@ -24,7 +24,7 @@
                 </thead>
                 <tbody>
                     @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
-                    @if (((leaves | async) ?? []).length > 0 ) {
+                    @if ((((leaves | async) ?? []) | wfhsearchfilter: searchValue).length > 0) {
                         @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ;  track leave.approvalHeader.id){
                         <tr>
                             <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>

@@ -10,7 +10,7 @@ import {
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
@@ -24,6 +24,7 @@ import { IPendingApprovals } from '../../../../Interfaces/pendingapprovalsmodel'
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
+import { WfhsearchfilterPipe } from "../../../../Pipes/wfhsearchfilter.pipe";
 
 @Component({
   selector: 'app-compoff-for-you-request',
@@ -36,8 +37,9 @@ import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitesp
     NoDataFoundComponent,
     DateformatPipe,
     ReactiveFormsModule,
-    TranslateModule
-  ],
+    TranslateModule,
+    WfhsearchfilterPipe
+],
   templateUrl: './compoff-for-you-request.component.html',
   styleUrl: './compoff-for-you-request.component.scss',
 })
@@ -53,7 +55,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  leaves = [] as AttendanceRequest[];
+  // leaves = [] as AttendanceRequest[];
+  leaves = new BehaviorSubject<AttendanceRequest[]>([]);
   approverComments = [] as any[];
   selectedLeaveData = {} as AttendanceRequest;
   // approverComments = [] as AttendanceRequestC[];
@@ -61,6 +64,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  searchValue: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -96,7 +100,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           console.log(response);
-          this.leaves = response.data as AttendanceRequest[];
+          // this.leaves = response.data as AttendanceRequest[];
+          this.leaves.next(response.data);
           console.log(this.leaves);
         },
         error: (reason) => console.log(reason),

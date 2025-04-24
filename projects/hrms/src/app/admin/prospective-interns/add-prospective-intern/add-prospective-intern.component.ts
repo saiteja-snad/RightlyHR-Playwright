@@ -44,8 +44,7 @@ export class AddProspectiveInternComponent {
   @ViewChild('pospectivecreate') private readonly pospectivecreate!:NgbModal;
   sublocation: any[] | undefined;
   employeementType: { id: number; name: string }[] = [
-    { id: 1, name: 'Fresher' },
-    { id: 2, name: 'Experienced' }
+    { id: 1, name: 'Trainee' },
   ];
 
   constructor(private router: Router,

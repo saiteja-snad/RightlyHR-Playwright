@@ -13,17 +13,17 @@ import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-model';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
-
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-apprisal-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss'
 })
+
 export class ApprisalLetterComponent {
   allempdata = [] as IJob[];
   subscription!: Subscription;
@@ -1136,5 +1136,4 @@ export class ApprisalLetterComponent {
      
     })
   }
-
 }

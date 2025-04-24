@@ -1,0 +1,16 @@
+<div class="component-side-nav-tabs-container py-3">
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/wfh/waiting-for-approval']" routerLinkActive="active-nav-link">Waiting For Approval ({{waitingForApprovalWFHCount}})</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/wfh/approved']" routerLinkActive="active-nav-link">Approved ({{approvedWFHRequestsCount}})</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/wfh/processed']" routerLinkActive="active-nav-link">Processed ({{processedWFHRequestsCount}})</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/wfh/rejected']" routerLinkActive="active-nav-link">Rejected ({{rejectedWFHRequestsCount}})</a>
+    </li>
+  </ul>
+</div>

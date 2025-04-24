@@ -12,7 +12,6 @@ import { ProbationExtensionLetterComponent } from "./probation-extension-letter/
 import { WelcomeLetterComponent } from "./welcome-letter/welcome-letter.component";
 import { TraineeAppointmentLetterComponent } from "./trainee-appointment-letter/trainee-appointment-letter.component";
 import { TraineeOfferLetterComponent } from "./trainee-offer-letter/trainee-offer-letter.component";
-import { LettersheaderComponent } from "../shared/lettersheader/lettersheader.component";
 
 export default [
     { path: '', redirectTo: '/letters/offer-letter', pathMatch: 'full' },
@@ -29,5 +28,4 @@ export default [
     { path: 'probation-confirmation-letter', component: ProbationConfirmationLetterComponent },
     { path: 'probation-extension-letter', component: ProbationExtensionLetterComponent },
     { path: 'welcome-letter', component: WelcomeLetterComponent },
-    {path:'lettersheader',component:LettersheaderComponent}
 ] as Route[];

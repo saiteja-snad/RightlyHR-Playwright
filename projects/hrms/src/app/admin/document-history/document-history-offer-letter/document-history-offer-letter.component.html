@@ -64,7 +64,7 @@
 
 <ng-template #rejectpopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Reject Reason</p>
             </div>
@@ -72,7 +72,7 @@
                 <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content">
             <form [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateOfferDetails()">
                 <div class="mb-3">
                     <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
@@ -83,9 +83,9 @@
                         {{'Reason'| translate}}.
                     </div>
                 </div>
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="button" class="custom-btn btn-secondary px-4" (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>

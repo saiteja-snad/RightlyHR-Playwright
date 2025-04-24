@@ -1093,7 +1093,7 @@ console.log(formValues);
       subdeptId: data.subdepartmentId,
       createddate: data.jobCreatedate,
       gradeId: data.gradeId,
-      reportsTo: data.reportsTo,
+      reportsTo: data.reportsTo.toString(),
       shiftId: data.shiftId,
       jobTypeId: this.jobtypeId,
     };

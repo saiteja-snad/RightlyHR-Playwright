@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { environment } from '../../../environments/environment
+import { environment } from '../../../environments/environment';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';

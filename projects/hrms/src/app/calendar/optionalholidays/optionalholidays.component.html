@@ -1,16 +1,22 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <p class="component-header cursor mb-0"> Holidays</p>
+      <p class="component-header cursor mb-0">Holidays</p>
     </div>
-  
+
     <div class="d-flex gap-2 align-items-center">
       <label class="custom-label text-nowrap">Select year:</label>
       <div class="custom-p-select-content">
         <form [formGroup]="optionalholidaysform">
-          <select formControlName="selectedYear" class="form-select" (change)="onYearChange()"
-            aria-label="Default select example">
-            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+          <select
+            formControlName="selectedYear"
+            class="form-select"
+            (change)="onYearChange()"
+            aria-label="Default select example"
+          >
+            <option *ngFor="let year of years" [value]="year">
+              {{ year }}
+            </option>
           </select>
         </form>
       </div>
@@ -18,20 +24,34 @@
   </div>
 
   <div class="mb-3">
-    <app-holiday-tabs/>
+    <app-holiday-tabs />
   </div>
 
-  <div >
+  <div>
     <div class="card holiday-card mb-3">
-      <div class="d-flex gap-3 align-items-center">
-        <div class="card holiday-icon-card">
-          <img src="icons\holidays-icon.png" alt="Event Icon" class="holiday-icon">
+      <ng-container
+        *ngIf="orgHolidayItemsArrayTrue.length > 0"
+      >
+        <div
+          *ngFor="let item of orgHolidayItemsArrayTrue"
+          class="card holiday-card mb-3"
+        >
+          <div class="d-flex gap-3 align-items-center">
+            <div class="card holiday-icon-card">
+              <img
+                src="icons\holidays-icon.png"
+                alt="Event Icon"
+                class="holiday-icon"
+              />
+            </div>
+            <div>
+              
+              <p class="holiday-name mb-0">{{ item.holidayName }}</p>
+              <p class="date mb-0">{{ item.holidayDate | date: 'EEEE, dd MMMM' }}</p>
+            </div>
+          </div>
         </div>
-        <div>
-          <p class="holiday-name mb-0">Tech Treck</p>
-          <p class="date mb-0">08-Jan-2025</p>
-        </div>
-      </div>
+      </ng-container>
     </div>
   </div>
 </div>

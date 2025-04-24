@@ -12,10 +12,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingapprovals.pipe";
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-time-off-for-your-role-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule,TranslateModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe, NoDataFoundComponent],
   templateUrl: './time-off-for-your-role-request.component.html',
   styleUrl: './time-off-for-your-role-request.component.scss'
 })

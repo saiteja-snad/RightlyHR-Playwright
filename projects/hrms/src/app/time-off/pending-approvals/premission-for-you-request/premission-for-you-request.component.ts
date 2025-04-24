@@ -23,6 +23,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-premission-for-you-request',
@@ -74,13 +75,13 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {  
     this.rejectForm = this.fb.group({
-      comments: ['',[Validators.required,Validators.maxLength(250)]],
+      comments: ['',[Validators.required,Validators.maxLength(250),noWhitespaceValidator]],
     }); 
 
   }

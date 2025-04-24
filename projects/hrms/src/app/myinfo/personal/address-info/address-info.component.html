@@ -103,7 +103,7 @@
             <div>
                 <div class="address-sub-header mb-3">Permanent Address</div>
                 <div class="form-check">
-                    <input class="form-check-input custom-check" type="checkbox" id="sameAsCurrent"  [(ngModel)]="isChecked"
+                    <input class="form-check-input custom-check" type="checkbox" id="sameAsCurrent"  [checked]="isChecked"
                         (change)="copyCurrentAddress($event)">
                     <label class="form-check-label custom-check-label" for="sameAsCurrent">
                         Same as Current Address

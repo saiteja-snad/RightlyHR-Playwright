@@ -194,6 +194,39 @@
                         Please select any of the option
                     </div> -->
                 </div>
+
+                <div *ngIf="dateDifference &&  isDayTypeselected">
+
+                    <div *ngIf="dateDifference &&  isDayTypeselected">
+                        <ng-container
+                            *ngIf="leaveFormData.isDaytype ? (dateDifference / 2) <= remainingLeaves : dateDifference <= remainingLeaves; else error">
+                            Booked {{ selectedleave?.category?.name }} :
+                            {{ leaveFormData.isDaytype ?
+                            (dateDifference / 2) : dateDifference }}
+                            {{ leaveFormData.isDaytype ?
+                            (dateDifference / 2) === 1 || (dateDifference / 2) === 0.5 ? 'Day' : 'Days'
+                            :
+                            dateDifference === 1 ? 'Day' : 'Days' }}
+                        </ng-container>
+                    </div>
+
+
+                    <ng-template #error class=" ">
+                        <p class="error-message" style="color: red;"
+                            *ngIf="leaveFormData.isDaytype && isDayTypeselected">The leave balance for
+                            {{ selectedleave.category?.name }} is insufficient. </p>
+                        <p class="error-message" style="color: red;"
+                            *ngIf="!leaveFormData.isDaytype && isDayTypeselected">The leave balance for
+                            {{ selectedleave.category?.name }} is insufficient. </p>
+
+                       
+                            <!-- <small  class="error-message text-danger" *ngIf="(isoptionalnotallowedatWorkingdate) "> Please select optional holiday  
+                            </small>  -->
+                    </ng-template>
+
+                </div>
+
+                <p> Balance {{ selectedleave.category?.name }}  : {{ remainingLeaves }}</p> 
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Reason For Leave'| translate}}<span class="text-danger">*</span></label>
@@ -203,7 +236,9 @@
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">{{'Close'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
-                        [disabled]="(leaveForm.invalid || isWeekOffSelected || isHolidaySelected || isNonOptionalHolidaySelected ) && isLoading">
+                        [disabled]="(leaveForm.invalid 
+                                    || isWeekOffSelected || isHolidaySelectedEndate
+                                     || isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) ) || isLoading">
                         <span *ngIf="!isLoading">
                             {{'Request'| translate}}
                         </span>

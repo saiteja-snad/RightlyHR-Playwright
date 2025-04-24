@@ -1371,7 +1371,8 @@ export class LeavesComponent {
             console.error('Error occurred while submitting leave:', err);
             this.conformationPopup.openErrorModal(
               err.error.message);
-            this.isSubmitted = false;
+            this.isLoading = true;
+            this.isLoading = false;
           }
         });
       } 

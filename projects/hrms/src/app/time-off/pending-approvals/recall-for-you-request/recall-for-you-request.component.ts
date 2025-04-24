@@ -17,7 +17,7 @@ import {
   ISeparationRequest,
 } from '../separation-for-you-request/separation-for-you-request';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 
 @Component({

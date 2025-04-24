@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { IAbsentReportRequest, IWfhReportRequest } from '../../../Interfaces/reports.model';
 import { AuthService } from '../../../services/auth.service';

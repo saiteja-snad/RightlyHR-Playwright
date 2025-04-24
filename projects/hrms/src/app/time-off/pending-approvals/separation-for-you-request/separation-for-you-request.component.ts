@@ -15,7 +15,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 
 @Component({

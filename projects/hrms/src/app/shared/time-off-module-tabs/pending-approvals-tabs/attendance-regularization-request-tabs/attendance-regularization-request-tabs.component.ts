@@ -3,7 +3,7 @@ import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { Subject } from 'rxjs';
-import { environment } from '../../../../../environments/environment.dev';
+import { environment } from '../../../../../environments/environment';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';

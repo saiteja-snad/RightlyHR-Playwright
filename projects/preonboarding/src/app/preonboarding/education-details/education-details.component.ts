@@ -11,7 +11,7 @@ import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import { PopupService } from '../../common-services/popup.service';
 import { UpdateEducationDetailsComponent } from './update-education-details/update-education-details.component';
 import { DataService } from '../../common-services/data.service';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({

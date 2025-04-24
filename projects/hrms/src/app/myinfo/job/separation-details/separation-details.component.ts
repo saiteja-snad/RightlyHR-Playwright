@@ -16,7 +16,7 @@ import { HttpService } from '../../../services/http.service';
 import { Router } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-separation-details',

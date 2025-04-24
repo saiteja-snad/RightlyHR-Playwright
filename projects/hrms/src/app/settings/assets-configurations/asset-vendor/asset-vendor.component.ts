@@ -256,6 +256,8 @@ export class AssetVendorComponent {
 
 
   }
+
+ 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

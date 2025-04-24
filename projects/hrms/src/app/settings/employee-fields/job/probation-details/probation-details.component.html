@@ -5,8 +5,8 @@
 <ng-template #addpopup let-modal>
   <form [formGroup]="AddForm">
     <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="d-flex justify-content-between popup-header-border p-4">
-        <div class="pt-2">
+      <div class="custom-poup-header-content popup-header-border">
+        <div >
           <p class="popup-heading mb-0">{{ 'Probation Details' | translate }}</p>
         </div>
         <div>
@@ -16,7 +16,7 @@
         </div>
       </div>
 
-      <div class="custom-main-popup-content p-5">
+      <div class="custom-main-popup-content ">
 
         <!--Type -->
         <div class="mb-4">
@@ -52,11 +52,11 @@
       </div>
 
         <!-- Buttons -->
-        <div class="d-flex gap-5 pt-4 w-100">
-          <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
             {{ 'Close' | translate }}
           </button>
-          <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addPtobationDetails(modal)"
+          <button type="button" class="custom-btn btn-primary" (click)="addPtobationDetails(modal)"
             [disabled]="AddForm.invalid">
             {{ 'Add' | translate }}
           </button>
@@ -114,8 +114,8 @@
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
+            <div class="custom-poup-header-content popup-header-border">
+                <div >
                     <p class="popup-heading mb-0">{{'Job Role' | translate}}</p>
                 </div>
                 <div>
@@ -124,7 +124,7 @@
                     </a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-5">
+            <div class="custom-main-popup-content">
                   <!--Type -->
           <div class="mb-4">
             <label for="Type" class="form-label custom-label mb-2">
@@ -159,10 +159,10 @@
                 <div *ngIf="updateForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
             </div>
         </div>
-            <div class="d-flex gap-5 pt-4 w-100">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
+            <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close' |
                         translate}}</button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
+                    <button type="button" class="custom-btn btn-primary " (click)="updateJobroletype(modal)"
                         [disabled]="updateForm.invalid">
                         {{'update' | translate}}
                     </button>
@@ -175,16 +175,16 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-5">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+    <div class="result-popup-content" ngbAutofocus>
+      
+            <div >
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
-    </div>
+ 
 </ng-template>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -11,7 +11,7 @@ import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-address-info',
-  imports: [CommonModule, ReactiveFormsModule,],
+  imports: [CommonModule, ReactiveFormsModule,FormsModule],
   templateUrl: './address-info.component.html',
   styleUrl: './address-info.component.scss'
 })
@@ -41,7 +41,6 @@ export class AddressInfoComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.getEmployeeId();
-    ;
     this.addressForm.disable();
 
 
@@ -240,10 +239,10 @@ export class AddressInfoComponent {
         },
       });
   }
-
+  isChecked=false
   copyCurrentAddress(event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    if (isChecked) {
+     this.isChecked = (event.target as HTMLInputElement).checked;
+    if (this.isChecked) {
       this.addressForm.patchValue({
         permanentAddressLine1: this.addressForm.value.currentAddressLine1,
         permanentAddressLine2: this.addressForm.value.currentAddressLine2,
@@ -254,15 +253,17 @@ export class AddressInfoComponent {
       });
     } else {
       this.addressForm.patchValue({
-        permanentAddressLine1: '',
-        permanentAddressLine2: '',
-        permanentCity: '',
-        permanentState: '',
-        permanentCountry: '',
-        permanentZipCode: '',
+        permanentAddressLine1:this.permanentAddress?.addressLine1 || '',
+        permanentAddressLine2: this.permanentAddress?.addressLine2 || '',
+        permanentCity: this.permanentAddress?.city || '',
+        permanentState: this.permanentAddress?.state || '',
+        permanentCountry:  this.permanentAddress?.country || '',
+        permanentZipCode:  this.permanentAddress?.zipCode || '',
       });
     }
   }
+
+
   showButtons(): void {
     this.buttons = !this.buttons;
     if (this.buttons) {

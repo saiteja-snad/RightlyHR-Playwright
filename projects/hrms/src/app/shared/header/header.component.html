@@ -26,10 +26,10 @@
                 <div *ngIf="isActive('/reports')">
                     <app-reports-main-tabs/>
                 </div>
-                <div *ngIf="isActive('/pms')">
+                <div *ngIf="showPmsTabs()">
                     <app-pms-tabs/>
                 </div>
-                <div *ngIf="isActive('pmsconfiguration')">
+                <div *ngIf="showPmsConfigurationTabs()">
                     <app-pms-settings-tabs/>
                 </div>
             </div> 

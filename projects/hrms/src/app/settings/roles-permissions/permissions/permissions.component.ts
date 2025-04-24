@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { permissionsData } from './permissionsdata';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-permissions',
   imports: [CommonModule, FormsModule, AutoCompleteModule],
@@ -27,7 +28,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
-  constructor(private http: HttpService, private modalService: NgbModal, private modal: OpenModalService) { }
+  constructor(private http: HttpService, private modalService: NgbModal, private modal: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.getAllroles();

@@ -26,20 +26,25 @@
             </div>
 
             <div *ngIf="isActive('/settings/employee-fields/manage-shifts')">
-                <app-manage-shifts-tabs />
+                <app-settings-manage-shits-tabs />
             </div>
+
             <div *ngIf="isActive('/settings/employee-fields/manage-holidays')">
-                <app-manage-holidays-tabs></app-manage-holidays-tabs>
+                <app-settings-manage-holidays-tabs />
             </div>
+
             <div *ngIf="isActive('/settings/employee-fields/manage-policies')">
-                <app-manage-policies-tabs></app-manage-policies-tabs>
+                <app-settings-manage-policies-tabs/>
             </div>
+
             <div *ngIf="isActive('/settings/employee-fields/expenes')">
                 <app-settings-expenes-configurtions-tabs />
             </div>
+
             <div *ngIf="isActive('/settings/employee-fields/manage-weekends')">
                 <app-manage-weekends-tabs />
             </div>
+
             <div *ngIf="isActive('/settings/employee-fields/manage-dsts')">
                 <app-manage-dst-tabs />
             </div>

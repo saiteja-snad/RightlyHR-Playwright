@@ -70,16 +70,15 @@
           <tr>
             <th>Serving Period Type</th>
             <th>Duration</th>
-            <th class="text-center">Actions</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Serving Period.update') || rbac.allowedToAccess('Serving Period.delete')">Actions</th>
           </tr>
         </thead>
         <tbody>
-          @if (rbac.allowedToAccess('Serving Period.view')) {}
           <ng-container>
             <tr *ngFor="let sp of servingPeriodDetails"> 
               <td>{{sp.servingPeriodType}}</td>
               <td>{{sp.duration}}</td>
-              <td class="text-center">
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Serving Period.update') || rbac.allowedToAccess('Serving Period.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>

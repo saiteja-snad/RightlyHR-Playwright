@@ -25,7 +25,6 @@
               </tr>
           </thead>
           <tbody>
-            @if(rbac.allowedToAccess('Background check Status.view')) {
               @for (back of BackgroundCheckDetail; track $index) {
               <tr>
                   <td class="w-75">{{ back.backgroundcheckstatus1}}</td>
@@ -38,14 +37,13 @@
                           </div>
                           <!--Delete-->
                           <div>
-                              <a (click)="opendelete(back)" *ngIf="rbac.allowedToAccess('Background check Status.update')"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                              <a (click)="opendelete(back)" *ngIf="rbac.allowedToAccess('Background check Status.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                       class="settings-common-icon"></a>
                           </div>
                       </div>
                   </td>
               </tr>
               }
-            }
           </tbody>
       </table>
   </div>

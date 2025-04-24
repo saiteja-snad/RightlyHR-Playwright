@@ -25,7 +25,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Department.view')) {
                 @for (dep of DepartmentDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ dep.departmentName}}</td>
@@ -45,7 +44,6 @@
                     </td>
                 </tr>
                 }
-            }
             </tbody>
         </table>
     </div>

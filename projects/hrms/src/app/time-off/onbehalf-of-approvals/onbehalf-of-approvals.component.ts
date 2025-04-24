@@ -13,7 +13,9 @@ import { CompOffEntitlementComponent } from "./comp-off-entitlement/comp-off-ent
 import { TimeOffComponent } from "./time-off/time-off.component";
 @Component({
   selector: 'app-onbehalf-of-approvals',
-  imports: [CommonModule, RouterModule, TranslateModule, ReactiveFormsModule, DropdownModule, WfhComponent, PermissionsComponent, CompOffEntitlementComponent, TimeOffComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, ReactiveFormsModule,
+     DropdownModule, WfhComponent, PermissionsComponent, CompOffEntitlementComponent,
+      TimeOffComponent],
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss'
 })
@@ -64,7 +66,7 @@ export class OnbehalfOfApprovalsComponent {
     });
   }
 
-  Onclick(Value: any) {
+  Onclick(Value:any) {
     if (Value) {
       this.employeedata = Value;
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(Value));

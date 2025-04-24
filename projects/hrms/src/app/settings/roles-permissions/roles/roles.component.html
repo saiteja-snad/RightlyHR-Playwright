@@ -2,7 +2,7 @@
     <!-- Add Input-->
     <div class="mb-4">
         <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
-            <div class="custom-settings-add-input input-group">
+            <div class="custom-settings-add-input input-group" *ngIf="rbac.allowedToAccess('Role Tab.create')">
                 <input type="text" class="form-control custom-input" placeholder="Please enter role" aria-label="role"
                     aria-describedby="role" formControlName="role">
                 <span class="input-group-text" id="role">
@@ -26,16 +26,16 @@
                 @for(role of rolesdetails ; track role) {
                 <tr>
                     <td class="w-75">{{role.name}}</td>
-                    <td class="w-25">
+                    <td class="w-25" *ngIf="rbac.allowedToAccess('Role Tab.update') || rbac.allowedToAccess('Role Tab.delete')">
                         <div class="d-flex gap-4">
                             <!--Update-->
-                            <div>
+                            <div *ngIf="rbac.allowedToAccess('Role Tab.update')">
                                 <a (click)="openupdate(role)"><img src="/settings-icon/edit.png" alt="edit icon"
                                         class="settings-common-icon">
                                 </a>
                             </div>
                             <!--Delete-->
-                            <div>
+                            <div *ngIf="rbac.allowedToAccess('Role Tab.delete')">
                                 <a (click)="opendelete(role)"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>

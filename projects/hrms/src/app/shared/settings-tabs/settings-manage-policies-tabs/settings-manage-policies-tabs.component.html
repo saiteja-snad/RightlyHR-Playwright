@@ -1,1 +1,9 @@
-<p>settings-manage-policies-tabs works!</p>
+<div class="component-side-nav-tabs-container py-3">
+    <ul class="nav flex-column">
+        <li class="nav-item" *ngFor="let link of navLinks">
+            <a class="nav-link" [routerLink]="[link.route]" routerLinkActive="active-nav-link">
+                {{ link.label }}
+            </a>
+        </li>
+    </ul>
+</div>

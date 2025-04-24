@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { AssetCategory } from '../../../Interfaces/assets-management.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-asset-catagory',
@@ -31,7 +32,8 @@ export class AssetCatagoryComponent {
     private fb: FormBuilder, 
     private conformationPopup: OpenModalService,
     private http: HttpService,
-    public formValidation: FormValidationService
+    public formValidation: FormValidationService,
+    public rbac: RbacService
     
   ) { }
   ngOnInit() {

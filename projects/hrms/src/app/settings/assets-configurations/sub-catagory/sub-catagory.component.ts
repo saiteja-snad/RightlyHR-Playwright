@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AssetCategory } from '../../../Interfaces/assets-management.model';
 import { Select } from 'primeng/select';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-sub-catagory',
@@ -36,7 +37,8 @@ export class SubCatagoryComponent {
     private fb: FormBuilder, 
     private conformationPopup: OpenModalService,
     private http: HttpService,
-    public formValidation: FormValidationService
+    public formValidation: FormValidationService,
+    public rbac: RbacService
     
   ) { }
   ngOnInit() {

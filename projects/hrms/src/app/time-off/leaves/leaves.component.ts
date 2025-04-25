@@ -365,9 +365,9 @@ export class LeavesComponent {
       this.remainingProbationLeaves = 0;
     }
     // Call calculateDateDifference function here
-    // if (this.startDate && this.endDate) {
-    //   this.calculateDateDifference(this.startDate, this.endDate);
-    // }
+    if (this.startDate && this.endDate) {
+      this.calculateDateDifference(this.startDate, this.endDate);
+    }
     setTimeout(() => {
       if (this.startDate?.control) { // Ensure control exists
       }
@@ -519,8 +519,8 @@ export class LeavesComponent {
         return this.orgholidays.orgHolidaysItems?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
       this.isHolidaySelected = isDatePresent;
-      this.isHolidaySelected=isDateenddatePresent;
-      this.isHolidaySelected=isWorkingDayBetweenDates;
+      // this.isHolidaySelected=isDateenddatePresent;
+      //this.isHolidaySelected=isWorkingDayBetweenDates;
     }
     if (this.orgholidays?.orgHolidaysItems && this.selectedleave?.category?.isOptionalHoliday) {
       let filteredData = this.orgholidays.orgHolidaysItems.forEach((element: any) => {
@@ -543,9 +543,81 @@ export class LeavesComponent {
       let isWorkingDayBetweenDates = dateRange?.some(date => {
         return filteredData?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
+      // this.isHolidaySelected = isDatePresent;
+      this.isoptionalnotallowedatWorkingdate=isDatePresent;
+      //this.isHolidaySelected=isWorkingDayBetweenDates;
     }
   }
   
+  dateCheckWithHolidayOrWeekendForEndDateChange(action: string) {
+    let selectedDate: any;
+    let selectedendDate: any;
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    if (action == 'add') {
+      
+      if (this.startDate) {
+        selectedDate = moment(this.startDate);
+      }
+      if (this.endDate) {
+        selectedendDate = moment(this.endDate);
+      }
+    }
+    // if (action == 'update') {
+    //   selectedDate = moment(this.selectedfields.startdate);
+    // }
+    if (this.orgholidays?.orgHolidaysItems && !this.selectedleave?.category?.isOptionalHoliday) {
+      this.orgholidays.orgHolidaysItems.forEach((element: any) => {
+        const currentDate = moment(element.holidayDate);
+        // if(element.isOptional!=true){
+        element.holidayDate = currentDate.format('YYYY-MM-DD');
+        // }
+      });
+      const isDatePresent = this.orgholidays.orgHolidaysItems?.some(
+        (holiday: any) => holiday.holidayDate === selectedDate.format('YYYY-MM-DD')
+      );
+      const isDateenddatePresent = this.orgholidays.orgHolidaysItems?.some(
+        (holiday: any) => holiday.holidayDate === selectedendDate.format('YYYY-MM-DD')
+      );
+      let dateRange = [];
+      for (let m = moment(selectedDate); m.diff(selectedendDate, 'days') <= 0; m.add(1, 'days')) {
+        dateRange.push(m.format('YYYY-MM-DD'));
+      }
+      // Check if any date in the range is NOT an optional holiday (i.e., a working day)
+      let isWorkingDayBetweenDates = dateRange?.some(date => {
+        return this.orgholidays.orgHolidaysItems?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
+      });
+      // this.isHolidaySelected = isDatePresent;
+      this.isHolidaySelectedEndate=isDateenddatePresent;
+      //this.isHolidaySelected=isWorkingDayBetweenDates;
+    }
+    if (this.orgholidays?.orgHolidaysItems && this.selectedleave?.category?.isOptionalHoliday) {
+      let filteredData = this.orgholidays.orgHolidaysItems.forEach((element: any) => {
+        const currentDate = moment(element.holidayDate);
+        if (element.isOptional != true) {
+          element.holidayDate = currentDate.format('YYYY-MM-DD');
+        }
+      });
+      const isDatePresent = filteredData?.some(
+        (holiday: any) => holiday.holidayDate === selectedDate.format('YYYY-MM-DD')
+      );
+      const isDateenddatePresent = filteredData?.some(
+        (holiday: any) => holiday.holidayDate === selectedendDate.format('YYYY-MM-DD')
+      );
+      let dateRange = [];
+      for (let m = moment(selectedDate); m.diff(selectedendDate, 'days') <= 0; m.add(1, 'days')) {
+        dateRange.push(m.format('YYYY-MM-DD'));
+      }
+      // Check if any date in the range is NOT an optional holiday (i.e., a working day)
+      let isWorkingDayBetweenDates = dateRange?.some(date => {
+        return filteredData?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
+      });
+
+      // this.isHolidaySelected = isDatePresent;
+      this.isoptionalnotallowedatWorkingdate=isDateenddatePresent;
+      //this.isHolidaySelected=isWorkingDayBetweenDates;
+    }
+  }
   onStartDateChange() {
     // Set the min and max for the end date based on the selected start date
     
@@ -589,7 +661,7 @@ export class LeavesComponent {
     this.updateEndDateValidity();
     this.updateStartDateValidity1();
     this.checkWeekendsEndate(action);
-    this.dateCheckWithHolidayOrWeekend(action);
+    this.dateCheckWithHolidayOrWeekendForEndDateChange(action);
   }
   updateEndDateValidity(): void {
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
@@ -1033,9 +1105,11 @@ export class LeavesComponent {
         }
         let nonOptionalHolidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => ele.isOptional === false || ele.isOptional == null);
         if (nonOptionalHolidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(endDate, 'day'))) {
-          this.isHolidaySelectedEndate = true; // Set the flag if end date is a non-optional holiday
+          this.isHolidaySelectedEndate = true; 
+          this.isHolidaySelected = true;// Set the flag if end date is a non-optional holiday
         } else {
           this.isHolidaySelectedEndate = false;
+          
         }
         if (this.selectedleave.category.isOptionalHoliday) {
           let filteredholidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => {

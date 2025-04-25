@@ -91,6 +91,9 @@
                             *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
                             Start Date is required
                         </small>
+                        <small class="error-message text-danger" *ngIf="isoptionalnotallowedatWorkingdate">
+                            Selected date is an Optional holiday
+                        </small>
                         <small class="error-message text-danger" *ngIf="(isHolidaySelected)">
                             Selected date is a holiday
                         </small>
@@ -105,9 +108,7 @@
                             *ngIf="!isstimeoffValid && leaveForm.get('startdate')?.value">
                             The start date must be after the date of joining.
                         </small>
-                        <small class="error-message text-danger" *ngIf="isNonOptionalHolidaySelected">
-                            Selected date is a holiday
-                        </small>
+                        
 
                     </div>
                     <div class="col-md-6 mb-3">
@@ -135,10 +136,14 @@
                         <small class="error-message text-danger" *ngIf="leaveForm.get('enddate')?.value && !issEndDategreater">
                             End Date is less than Start Date
                         </small>
-
+                        <small class="error-message text-danger" *ngIf="isoptionalnotallowedatWorkingdate">
+                            Selected date is a optional holiday
+                        </small>
                         <small class="error-message text-danger" *ngIf="isHolidaySelectedEndate">
                             Selected date is a holiday
                         </small>
+
+                        
                     </div>
                 </div>
                 <div class="row">

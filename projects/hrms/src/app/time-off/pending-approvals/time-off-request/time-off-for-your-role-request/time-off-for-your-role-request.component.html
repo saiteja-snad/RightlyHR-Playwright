@@ -104,13 +104,13 @@
                     <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
                         totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
                 </div>
-
                 <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
                     (onPageChange)="onPageChange($event)"></p-paginator>
             </div>
         </div>
     </div>
 </div>
+
 <ng-template #commentspopup let-modal>
     <div class="modal-body">
         <div class="d-flex justify-content-between popup-header-border p-4">
@@ -122,7 +122,6 @@
                     (click)="modal.dismiss('Cross click')"></button>
             </div>
         </div>
-
         <div class="custom-main-component-container">
             <div class="custom-table-content mt-2">
                 <table class="table">
@@ -147,6 +146,7 @@
         </div>
     </div>
 </ng-template>
+
 <!-- rejectpopup -->
 <ng-template #rejectPopup let-modal>
     <div class="modal-body">
@@ -183,13 +183,11 @@
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                             <span>{{'Loading..'}}...</span>
                             }@else {
-                            <span>{{'Reject'}}</span>
+                            <span>{{'Reject'| translate}}</span>
                             }
                         </button>
                 </div>
             </form>
         </div>
     </div>
-
-
 </ng-template>

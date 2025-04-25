@@ -15,17 +15,20 @@
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
             <form [formGroup]="employeeForm" (ngSubmit)="postBankLoanLetterFormSubmit(employeeForm)">
+                <!-- Employee Name -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
-                            class="custom-select w-100" (onChange)="Onclick($event)">
+                        <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            [showClear]="false" placeholder="Please select employee" formControlName="fusionEmpId"
+                            class="custom-select w-100" (onChange)="onClickEmployee($event)">
                         </p-select>
                     </div>
                     <div class="error-msg" *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                         Employee is required</div>
                 </div>
+
+                <!-- Key Responsibitites -->
                 <div class="mb-3">
                     <label for="note" class="form-label custom-label mb-2">Key Responsibility<span class="error-msg">*</span></label>
                     <textarea formControlName="note" placeholder="Please enter key responsibility" maxlength="250"
@@ -36,19 +39,34 @@
                         <div *ngIf="employeeForm.get('note')?.errors?.['maxlength']">Roles and Responsibilities cannot exceed 250 characters</div>
                     </div>
                 </div>
+
+                <!-- Signature Authority -->
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-                            class="form-select custom-select" formControlName="authorityid" (onChange)="onclickDesignation($event.value)">
+                        <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                            class="form-select custom-select" formControlName="authorityid" (onChange)="onclickDesignation($event)">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched" class="error-msg">
                         Signature Authority Name is required
                     </div>
                 </div>
+
+                <div *ngIf="jobErrorMessage" class="error-msg">
+                    {{ jobErrorMessage }}
+                </div>
+
                 <div class="d-flex flex-wrap gap-3 pt-4">
-                    <button type="submit" class="custom-btn btn-primary">Generate Welcome Letter</button>
+                    <button type="submit" class="custom-btn btn-primary"  [disabled]="employeeForm.invalid">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Welcome Letter' | translate}}</span>
+                        </ng-template>
+                    </button>
                 </div>
             </form>
         </div>
@@ -57,7 +75,7 @@
             <div class="d-flex justify-content-center">
                 <div>
                     <!--page-1-->
-                    <div class="letter-page-content" id="pdfContent1">
+                    <div class="letter-page-content" id="pdfContent">
                         <div class="letter-page-sub-content">
                             <div class="mb-3 pt-5">
                                 <img src="./public\images\Logo 3 (1).png" alt="Company Logo" class="header-image">
@@ -88,7 +106,7 @@
                                 <p><b>Welcome to RightlyHR.!</b></p>
                                 <p>We are excited to have you onboard and look forward to the
                                     remarkable contributions you will make as part of our team. As the new
-                                    <span><b>{{ bankloanLetterData.jobRole}}</b></span>,
+                                    <span *ngIf="selectedEmployeeJobDetails?.jobRole"><b>{{selectedEmployeeJobDetails.jobRole}}</b></span>,
                                     you’ll be joining a group of dedicated and talented professionals committed
                                     to delivering excellence in everything we do.
                                 </p>
@@ -96,7 +114,7 @@
                                     positive, collaborative work environment where everyone can grow and succeed
                                     together. With your expertise, we are confident that you will play a pivotal role in
                                     shaping the future of our ERP Services.</p>
-                                <p *ngIf="bankloanLetterData.note">{{bankloanLetterData.note}}</p>
+                                <p *ngIf="employeeForm.get('note')?.value">{{employeeForm.get('note')?.value}}</p>
                                 <p>We understand that starting a new position can sometimes
                                     feel overwhelming, but please know that we are here to support you every step of the way.
                                     If you have any questions or need guidance, feel free to reach out to me or your
@@ -105,17 +123,17 @@
                                     with us and can’t wait to see what we will achieve together.</p>
                                 <p>Best wishes,</p>
                                 <ul class="px-0 content-text">
-                                    <li *ngIf="bankloanLetterData.authorityName && bankloanLetterData.authorityName.trim() !== ''"
+                                    <li *ngIf="authorityFullName && authorityFullName"
                                      style="font-family: Segoe script; font-size: large;">
-                                        {{ bankloanLetterData.authorityName }}
+                                        {{ authorityFullName }}
                                     </li>
                                     <li
-                                        *ngIf="bankloanLetterData.authorityName && bankloanLetterData.designation && bankloanLetterData.designation.trim() !== ''">
-                                        {{ bankloanLetterData.designation }}
+                                        *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
+                                        {{ selectedAuthority.designation }}
                                     </li>
                                     <li
-                                        *ngIf="bankloanLetterData.authorityName && bankloanLetterData.workEmail && bankloanLetterData.workEmail.trim() !== ''">
-                                        {{ bankloanLetterData.workEmail }}
+                                        *ngIf="authorityFullName && selectedEmployee.workEmail && selectedEmployee.workEmail">
+                                        {{ selectedEmployee.workEmail }}
                                     </li>
                                 </ul>
                             </div>

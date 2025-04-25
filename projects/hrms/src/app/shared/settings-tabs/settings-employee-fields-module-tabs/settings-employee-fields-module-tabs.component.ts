@@ -37,8 +37,7 @@ export class SettingsEmployeeFieldsModuleTabsComponent implements OnInit {
   allTabs: any[] = [
     { label: 'Personal', link: '/settings/employee-fields/personal', permission: { feature: 'Personal Tab', action: 'view' } },
     { label: 'Job', link: '/settings/employee-fields/job',permission: { feature: 'Job Tab', action: 'view' } },
-    { label: 'Status', permission: { feature: 'Status Tab', action: 'view' }  },
-    { label: 'Document', permission: { feature: 'Document Tab', action: 'view' }  },
+    { label: 'Document',link: '/settings/employee-fields/documents', permission: { feature: 'Document Tab', action: 'view' }  },
     { label: 'Manage Shifts', link: '/settings/employee-fields/manage-shifts', permission: { feature: 'Manage Shifts Tab', action: 'view' } },
     { label: 'Manage Policies', link: '/settings/employee-fields/manage-policies', permission: { feature: 'Manage Policies Tab', action: 'view' } },
     { label: 'Manage Holidays', link: '/settings/employee-fields/manage-holidays', permission: { feature: 'Manage Holidays Tab', action: 'view' } },

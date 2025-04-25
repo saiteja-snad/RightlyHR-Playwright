@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
+    <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
       [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
   </div>
 
@@ -148,33 +148,16 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content p-3">
       <div  *ngFor="let comment of commentsrecivced">
         <div class="card p-3">
-          <div class="card-body">
-            <div class="row mb-3">
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Comments</p>
-                {{ comment.comments }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Commented by</p>
-                {{ comment.addedName }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Date</p>
-                {{ comment.addedDate | date: 'short' }}
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Commented by ID</p>
-                {{ comment.addedByFusionEmpId }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Status</p>
-                {{ comment.action }}
-              </div>
+          <div *ngFor="let comment of commentsrecivced" >
+            <div class="mb-0">
+              <p> <b>Commented by:</b> {{ comment.addedName }} </p>
+              <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+              <p> <b>Processed Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+              <p><b>Status:</b> {{ comment.action }}</p>
+              <p> <b>Comments:</b> {{ comment.comments }} </p>
             </div>
           </div>
         </div>

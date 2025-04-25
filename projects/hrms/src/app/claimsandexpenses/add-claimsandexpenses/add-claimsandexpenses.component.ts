@@ -69,13 +69,13 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
 
   createExpenseItem(): FormGroup {
     return this.fb.group({
-      item_expense: [null,],
+      item_expense: [null,Validators.required],
       item_Name: [null, [Validators.required, Validators.maxLength(50)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [null, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [null ]
+      attachment_url: [null, Validators.required],
     });
   }
 
@@ -109,7 +109,16 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     this.opendeletModal(this.deleteconformation)
 
   }
-  
+
+  //   vldateofjoin1(): void {
+  //   if (this..expensedate < this.empinfo.dateOfJoining) {
+  //     this.istimeoffValid = false;
+  //     this.timeoffValid = false;
+  //   } else {
+  //     this.istimeoffValid = true;
+  //     this.timeoffValid = true;
+  //   }
+  // }
   removeExpense() {
     this.expenseItems.removeAt(this.removeindex);
     this.calculateTotalExpensesAmount();

@@ -4,18 +4,17 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-            @if (!buttons && empinfo?.substatus && empinfo?.substatus?.toLowerCase() === 'offer letter accepted') {
-                <div>
-                  <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-                </div>
-              }
-            @if(buttons){
-            <div class="d-flex justify-content-end gap-2">
+
+            <!-- Show edit icon if employee status is 'Active' and buttons are not visible -->
+            <div *ngIf="!buttons && empinfo?.empstatus?.toLowerCase() === 'active'">
+                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+            </div>
+
+            <!-- Show buttons if 'buttons' is true -->
+            <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()"
-                    (click)="onSubmit()">Save</button>
-            </div>                
-        }
+                <button type="submit" class="custom-btn btn-primary" (click)="onSubmit()">Save</button>
+            </div>
         </div>
 
         <!--input content-->

@@ -32,14 +32,14 @@
             placeholder="Select shift" class="form-select custom-select"></p-select>
         </div>
         <div>
-          <button type="button" class="custom-btn btn-primary" (click)="addHolidayRow()">
+          <button type="button" [disabled]="holidayForm?.get('year')?.invalid || holidayForm?.get('location')?.invalid || holidayForm?.get('subLocation')?.invalid || holidayForm?.get('shift')?.invalid" class="custom-btn btn-primary" (click)="addMomentRow()">
             <i class="bi bi-plus me-2"></i> {{'Add Holidays' | translate}} 
           </button>
         </div>
       </div>
 
-      <div class="">
-          <div class="card custom-background-card p-3 mb-4" formArrayName="holidays" *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
+      <div class="" formArrayName="holidays">
+          <div class="card custom-background-card p-3 mb-4"  *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
             <div class="row">
               <div class="col-md-5">
                 <label class="form-label custom-label">{{'Holiday Name' | translate}}<span class="text-danger">*</span></label>
@@ -64,7 +64,11 @@
           </div>
           <!-- Submit Button -->
       </div>
-      <button class="custom-btn btn-primary mt-3" type="submit">{{'Submit' | translate}}</button>
+
+      <div class="d-flex justify-content-end ">
+        <button class="custom-btn btn-primary mt-3" [disabled]="holidayForm.invalid"  type="submit">{{'Submit' | translate}}</button>
+      </div>
+      
     </div>
   </form>
 </div>

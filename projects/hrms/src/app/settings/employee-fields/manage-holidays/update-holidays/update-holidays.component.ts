@@ -120,7 +120,7 @@ export class UpdateHolidaysComponent {
       next: (response: any) => {
         console.log(response);
         this.confirmation.openSuccessModal('Holidays updated successfully');
-        
+        this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
         
       },
       error: (err) => {
@@ -171,7 +171,7 @@ export class UpdateHolidaysComponent {
       next: (response: any) => {
         console.log(response);
         this.confirmation.openSuccessModal('Holidays published successfully');
-        
+        this.router.navigate(['/settings/employee-fields/manage-holidays/published-holidays']);
         
       },
       error: (err) => {

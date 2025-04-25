@@ -10,6 +10,7 @@
           <th>Status</th>
         </tr>
       </thead>
+      
       <tbody>
         <ng-container *ngIf="approvedRemotes!.length > 0; else noDataTemplate">
           <tr *ngFor="let RemoteRequest of approvedRemotes; let i = index">
@@ -32,9 +33,7 @@
             </td>
           </tr>
         </ng-template>
-
       </tbody>
-
     </table>
   </div>
 </div>

@@ -119,9 +119,9 @@
 
                 <!-- Action Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary px-4"
+                    <button type="reset" class="custom-btn btn-secondary"
                         (click)="modal.dismiss();this.addCompOffForm.reset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="addCompOffForm.invalid || spinnerLoader || !(isHolidaySelected  || isWeekOffSelected)">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addCompOffForm.invalid || spinnerLoader || !(isHolidaySelected  || isWeekOffSelected)">
                         @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading..'}}...</span>

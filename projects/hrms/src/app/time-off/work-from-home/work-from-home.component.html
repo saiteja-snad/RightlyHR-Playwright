@@ -37,6 +37,7 @@
                 <a (click)="modal.dismiss();addWFHForm.reset();"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
+
         <div class="custom-main-popup-content">
             <form [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form"
                 *ngIf="rbac.allowedToAccess('Workfromhome Tab.create')">
@@ -65,9 +66,7 @@
                             <div class="form-check">
                                 <input type="radio" class="form-check-input" id="halfDay" value="Half Day"
                                     formControlName="availing">
-
                                 <label class="form-check-label custom-label" for="halfDay">Half Day</label>
-
                                 <!-- Half Day Selection -->
                                 <div class="row" *ngIf="addWFHForm.get('availing')?.value === 'Half Day'">
                                     <div class="col-md-12 mb-3">
@@ -79,6 +78,7 @@
                                                     formControlName="halfType">
                                                 <label class="form-check-label" for="firstHalf">First Half</label>
                                             </div>
+
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" id="secondHalf" [value]="3"
                                                     formControlName="halfType">
@@ -88,6 +88,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="form-check">
                                 <input type="radio" class="form-check-input" id="fullDay" value="Full Day"
                                     formControlName="availing" [value]="2" (change)="updateDuration()">
@@ -98,20 +99,13 @@
 
                     <!-- Reason -->
                     <div class="col-md-12 mb-3">
-                        <label for="reason" class="form-label custom-label mb-2">Reason<span
-                                class="text-danger">*</span></label>
+                        <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
                             maxlength="250" placeholder="Type here" (input)="formsValidation.validateInput(addWFHForm.get('reason'))"></textarea>
-
                         <!-- Character counter -->
-                        <div class="text-end small text-muted">
-                            {{ addWFHForm.get('reason')?.value?.length || 0 }}/250
-                        </div>
-                        <div class="error-msg"
-                            *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">
-                            <div *ngIf="addWFHForm.get('reason')?.errors?.['required']">
-                                Reason is required.
-                            </div>
+                        <div class="form-label custom-label text-end my-1">{{ addWFHForm.get('reason')?.value?.length || 0 }}/250</div>
+                        <div class="error-msg" *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">
+                            <div *ngIf="addWFHForm.get('reason')?.errors?.['required']">Reason is required.</div>
                             <div *ngIf="addWFHForm.get('reason')?.errors?.['maxlength']">
                                 Reason cannot exceed 250 characters.
                             </div>
@@ -128,9 +122,10 @@
                 </div>
                 <!-- Action Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary px-4"
+                    <button type="reset" class="custom-btn btn-secondary"
                         (click)="modal.dismiss();this.addWFHForm.reset();availablebalance = 0">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="addWFHForm.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="addWFHForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading..'}}...</span>

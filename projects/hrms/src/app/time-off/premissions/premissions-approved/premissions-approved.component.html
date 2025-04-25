@@ -22,32 +22,23 @@
                         
                         <td>
                             <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{permissionRequest.notes}} </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{permissionRequest.notes}} </p>
+                                </ng-template>
                             </div>
                         </td>
                         @if(permissionRequest.status !== 'Processed'){
                         <td>
                             <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">
-                                                {{permissionRequest.regularizationApproverComments[0].comments}} </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{permissionRequest.regularizationApproverComments[0].comments}} </p>
+                                </ng-template>
                             </div>
                         </td>
                         }@else {
@@ -57,6 +48,7 @@
                         <td>{{permissionRequest.status}}</td>
                     </tr>
                 </ng-container>
+
                 <ng-template #noDataTemplate>
                     <tr>
                         <td colspan="6">

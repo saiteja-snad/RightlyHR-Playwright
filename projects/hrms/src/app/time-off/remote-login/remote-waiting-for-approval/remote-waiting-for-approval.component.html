@@ -10,9 +10,8 @@
           <!-- <th>Status</th> -->
         </tr>
       </thead>
-      <tbody>
-      <tbody>
 
+      <tbody>
         <ng-container *ngIf="approvedRemotes!.length > 0; else noDataTemplate">
           <tr *ngFor="let RemoteRequest of approvedRemotes; let i = index">
             <td>{{ RemoteRequest.startTime ? (RemoteRequest.startTime | dateformat) : ' -' }}</td>
@@ -23,25 +22,20 @@
               <span *ngSwitchDefault>-</span>
             </td>
             <td>
-              <div class="mt-2">
-                <span *ngIf="RemoteRequest.reason;else res">
-                  <a type="button" placement="top" [ngbPopover]="reason">
-                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                  </a>
-                  <ng-template #reason>
-                    <div>
-                      <p class="mb-0">{{RemoteRequest.reason}}</p>
-                    </div>
-                  </ng-template>
-                </span>
-                <ng-template #res>-</ng-template>
+              <div class="mt-2" *ngIf="RemoteRequest.reason;else res">
+                <a type="button" placement="top" [ngbPopover]="reason">
+                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{RemoteRequest.reason}}</p>
+                </ng-template>
               </div>
+              <ng-template #res>-</ng-template>
             </td>
             <td>{{ RemoteRequest.requestedDate | dateformat }}</td>
             <!-- <td>{{ RemoteRequest.status }}</td> -->
           </tr>
         </ng-container>
-
         <ng-template #noDataTemplate>
           <tr>
             <td colspan="4">
@@ -49,9 +43,7 @@
             </td>
           </tr>
         </ng-template>
-
       </tbody>
-
     </table>
   </div>
 </div>

@@ -27,63 +27,56 @@
                 <p class="popup-heading mb-0">Request Permission</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();this.permissionForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss();this.permissionForm.reset()">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
+        
         <div class="custom-main-popup-content">
             <form [formGroup]="permissionForm" (ngSubmit)="applyPermission(permissionForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="Date" class="form-label custom-label mb-2">Date<span
-                                class="text-danger">*</span></label>
+                        <label for="Date" class="form-label custom-label mb-2">Date<span class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="permissionDate" id="Date"
                             onkeydown="return false" placeholder="Select Date" autocomplete="off"  [min]="getPastDate()" [max]="getFutureDate()" />
                         <div *ngIf="permissionForm.get('permissionDate')?.touched && permissionForm.get('permissionDate')?.invalid"
                             class="error-msg">
                             Permission Date is required.
                         </div>
-
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="duration" class="form-label custom-label mb-2">Duration<span
-                                class="text-danger">*</span></label>
+                        <label for="duration" class="form-label custom-label mb-2">Duration<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="duration" optionLabel="name" id="duration" formControlName="duration"
                                 placeholder="Please select duration" class="form-select custom-select" />
-                            <div *ngIf="permissionForm.get('duration')?.touched && permissionForm.get('duration')?.invalid"
-                                class="error-msg">
-                                Duration is required.
-                            </div>
+                        </div>
+                        <div *ngIf="permissionForm.get('duration')?.touched && permissionForm.get('duration')?.invalid" class="error-msg">
+                            Duration is required.
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label for="leaveType" class="form-label custom-label mb-2">Premission Type<span
-                                class="text-danger">*</span></label>
+                        <label for="leaveType" class="form-label custom-label mb-2">Premission Type<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="leaveTypes" optionLabel="name" formControlName="leaveType"
-                                placeholder="Please select permission type" id="leaveType"
-                                class="form-select custom-select" />
-                            <div *ngIf="permissionForm.get('leaveType')?.touched && permissionForm.get('leaveType')?.invalid"
-                                class="error-msg">
-                                Premission Type is required.
-                            </div>
+                                placeholder="Please select permission type" id="leaveType" class="form-select custom-select" />
+                        </div>
+                        <div *ngIf="permissionForm.get('leaveType')?.touched && permissionForm.get('leaveType')?.invalid" class="error-msg">
+                            Premission Type is required.
                         </div>
                     </div>
-                </div>
-                <div class="row">
+
                     <div class="col-md-12 mb-3">
-                        <label for="reason" class="form-label custom-label mb-2">Reason <span
-                                class="text-danger">*</span></label>
+                        <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
                             placeholder="Type here" maxlength="250" placeholder="Type Here" (input)="formsValidation.validateInput(permissionForm.get('reason'))" ></textarea>
-                        <div class="text-end small text-muted">
+                            <div class="form-label custom-label text-end my-1">
                             {{ permissionForm.get('reason')?.value?.length || 0 }}/250
                         </div>
-                        <div class="error-msg"
-                            *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid">
+                        <div class="error-msg" *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid">
                             <div *ngIf="permissionForm.get('reason')?.errors?.['required']">
                                 Reason is required.
                             </div>
@@ -93,6 +86,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();this.permissionForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="permissionForm.invalid || spinnerLoader">

@@ -122,7 +122,7 @@
                             Issued Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="issuedDate"
-                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" />
+                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'"  onkeypress="return false" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('issuedDate')?.invalid && certificationForm.get('issuedDate')?.touched">
                             Issued Date is required
@@ -135,7 +135,7 @@
                             Expiry Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="expiryDate"
-                            formControlName="expiryDate" [min]="certificationForm.get('issuedDate')?.value" />
+                            formControlName="expiryDate"  onkeypress="return false" [min]="certificationForm.get('issuedDate')?.value" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('expiryDate')?.invalid && certificationForm.get('expiryDate')?.touched">
                             Expiry Date is required
@@ -230,7 +230,7 @@
                         <label for="issuedDate" class="form-label custom-label mb-2 ">
                             Issued Date <span class="text-danger">*</span>
                         </label>
-                        <input type="date" class="form-control custom-input" id="issuedDate"
+                        <input type="date" class="form-control custom-input" id="issuedDate"  onkeypress="return false"
                             formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('issuedDate')?.invalid && updateCertificationForm.get('issuedDate')?.touched">
@@ -243,7 +243,7 @@
                         <label for="expiryDate" class="form-label custom-label mb-2">
                             Expiry Date <span class="text-danger">*</span>
                         </label>
-                        <input type="date" class="form-control custom-input" id="expiryDate"
+                        <input type="date" class="form-control custom-input" id="expiryDate"  onkeypress="return false"
                             formControlName="expiryDate" [min]="updateCertificationForm.get('issuedDate')?.value" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('expiryDate')?.invalid && updateCertificationForm.get('expiryDate')?.touched">

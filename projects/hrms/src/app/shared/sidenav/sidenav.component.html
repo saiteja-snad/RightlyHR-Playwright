@@ -69,8 +69,18 @@
         </ul>
     </div>
     <div class="sidenav-footer-content text-center py-4">
-        <a class="logout-text">
+        <a class="logout-text" (click)="openlogoutModal()">
             <i class="bi bi-box-arrow-right me-2"></i><span>Logout</span>
         </a>
     </div>
 </div>
+
+<ng-template #logoutpopup let-modal>
+    <div class="result-popup-content text-center" ngbAutofocus>
+        <p class="confirmation-text mb-5">Are you sure you want to logout?</p>
+        <div class="d-flex justify-content-center w-100 gap-5">
+            <button class="custom-btn btn-secondary w-50 py-3 px-5" (click)="close()">Close</button>
+            <button class="custom-btn btn-primary w-50 py-3 px-5" (click)="onLogout()">Logout</button>
+        </div>
+    </div>
+</ng-template>

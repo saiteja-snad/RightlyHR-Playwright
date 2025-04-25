@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
@@ -30,9 +30,6 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ];
   
-  
-
-  @ViewChild('confirmation') confirmation!: TemplateRef<any>
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -71,7 +68,7 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
       week3: [false],
       week4: [false],
       week5: [false]
-    });
+    }, { validators: this.atLeastOneWeekSelected()});
   }
 
   get weekends(): FormArray {
@@ -88,6 +85,20 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
 
   removeWeekend(index: number): void {
     this.weekends.removeAt(index);
+  }
+
+  atLeastOneWeekSelected(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const week1 = control.get('week1')?.value;
+      const week2 = control.get('week2')?.value;
+      const week3 = control.get('week3')?.value;
+      const week4 = control.get('week4')?.value;
+      const week5 = control.get('week5')?.value;
+  
+      const atLeastOneChecked = week1 || week2 || week3 || week4 || week5;
+  
+      return atLeastOneChecked ? null : { atLeastOneWeekRequired: true };
+    };
   }
 
   getAllYears() {
@@ -230,8 +241,8 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     });
   }
 
-  openConfirmation(){
-    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
+  openModal(content: any,) {
+    this.modalService.open(content, { centered: true })
   }
 
   closeWeekend(){

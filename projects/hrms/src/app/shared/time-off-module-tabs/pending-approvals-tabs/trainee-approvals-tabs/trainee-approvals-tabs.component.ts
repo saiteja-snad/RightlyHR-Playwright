@@ -19,7 +19,7 @@ export class TraineeApprovalsTabsComponent {
   pendingApprovalCount = {} as ApprovalStatusCount[];
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
-    { label: 'Intern Details', link: '/time-off/pending-approvals/trainee-approvals' },
+    { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals' },
   ];
 
   constructor(public readonly router: Router, private http: HttpService) { }
@@ -36,7 +36,7 @@ export class TraineeApprovalsTabsComponent {
       next: (data: ApprovalStatusCount[]) => {
         this.pendingApprovalCount = data.find(item => item.moduleId === moduleId) ? [data.find(item => item.moduleId === moduleId)!] : [];
         this.navTabs = [
-          { label: 'Intern Details', link: '/time-off/pending-approvals/trainee-approvals', count: this.pendingApprovalCount.at(0)?.forYou ?? 0 },
+          { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals', count: this.pendingApprovalCount.at(0)?.forYou ?? 0 },
         ];
       },
       error: (err) => console.error('Error fetching approvals:', err),

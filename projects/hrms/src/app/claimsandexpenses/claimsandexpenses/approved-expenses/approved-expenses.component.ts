@@ -42,7 +42,11 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
 
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  openupdateModal(content: any) {
+    this.modalService.open(content, { centered: true,size:'lg', backdrop: 'static' });
   }
   comments_Function(comments: any) {
     this.commentsrecivced = comments

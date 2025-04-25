@@ -597,7 +597,7 @@ export class DraftsExpensesComponent {
 
   delteitem(i: number) {
     this.removeindex = i
-    this.modalService.dismissAll();
+    // this.modalService.dismissAll();
     this.opendeletModal(this.deleteconformation)
 
   }
@@ -605,16 +605,13 @@ export class DraftsExpensesComponent {
   removeExpense() {
     this.expenseItems.removeAt(this.removeindex);
     this.calculateTotalExpensesAmount();
-    this.modalService.dismissAll()
-    this.conformationPopup.openSuccessModal("Expene iteam deleted successfully")
-    setTimeout(() => {
-      this.openModal(this.updateModal)
-    }, 2000);
+    // this.modalService.dismissAll()
+    this.conformationPopup.openSuccessModal("Expense item deleted successfully")
+    // setTimeout(() => {
+    //   this.openModal(this.updateModal)
+    // }, 2000);
   }
-  notdeleted(){
-    this.modalService.dismissAll();
-    this.openModal(this.updateModal)
-  }
+ 
 
 
   ngOnDestroy(): void {

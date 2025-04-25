@@ -27,6 +27,7 @@ export class ExperienceDetailsComponent {
   selectExperience: any;
   DocViewURL!: any;
   DocImageUrl!: any;
+  empDetails={} as any;
   @ViewChild('viewpopup') viewpopup: any;
   @ViewChild('deletepopup') deletepopup: any;
 
@@ -44,8 +45,22 @@ export class ExperienceDetailsComponent {
     localStorage.setItem('currentStep', storedstep.toString());
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
     this.getexperiencedetails();
+    this.getpersonalDetails();
   }
-
+  getpersonalDetails() {
+    let employeeId = parseInt(this.prosempdata.employeeId);
+    this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.empDetails = data;
+      },
+      error: (err: any) => {
+        console.log(err);
+        if (err.status = 401) {
+          this.http.logOut();
+        }
+      }
+    });
+  }
   openExperience() {
     this.modalService.open(AddExperienceDetailtsComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }

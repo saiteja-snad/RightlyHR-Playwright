@@ -127,6 +127,7 @@ export class PremissionForYourRoleRequestComponent
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -156,10 +157,11 @@ export class PremissionForYourRoleRequestComponent
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
-
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }

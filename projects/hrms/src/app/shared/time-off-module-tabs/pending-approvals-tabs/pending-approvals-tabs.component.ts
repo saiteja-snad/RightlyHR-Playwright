@@ -71,9 +71,9 @@ export class PendingApprovalsTabsComponent {
     {
       label: 'Desk Request',
       route: '/time-off/pending-approvals/desk-approval',
-      moduleId: environment.deskAllocationModuleId,
+      moduleId: environment.deskAllocationModuleId, permission: { feature: 'Desk Tab', action: 'view' }
     },
-
+    
     {
       label: 'Probation Details',
       route: '/time-off/pending-approvals/probation-request',

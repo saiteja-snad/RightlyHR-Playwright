@@ -150,6 +150,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -179,15 +180,18 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           error: (reason: any) => {
           this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }
   }
 
   handleReject(rejectForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
       const requestBody = {
@@ -219,9 +223,11 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           error: (reason: any) => {
           this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }

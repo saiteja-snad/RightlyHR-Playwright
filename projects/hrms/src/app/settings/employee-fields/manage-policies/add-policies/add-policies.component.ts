@@ -39,7 +39,7 @@ export class AddPoliciesComponent {
   
   
     constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService) { }
-  
+
   
     ngOnInit(): void {
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -49,25 +49,31 @@ export class AddPoliciesComponent {
         location: [null,Validators.required],
         subLocation: [null,Validators.required],
         shift : [null,Validators.required],
-        policies: this.fb.array([])
+        policies: this.fb.array([]),
       });
   
-      this.addPolicyRow();
+      // this.addPolicyRow();
     }
-  
-    get policies(): FormArray {
-      return this.policiesForm.get('policies') as FormArray;
-    }
-  
     
     addPolicyRow() {
-      const policyGroup = this.fb.group({
-        policyName: [''],
-        policyFile: [''],
-        policyDescription: ['']
+     return this.fb.group({
+        policyName: ['',Validators.required],
+        policyFile: ['',Validators.required],
+        policyDescription: ['',Validators.required]
       });
-      this.policies.push(policyGroup);
     }
+
+    get policies(): FormArray {
+      return this.policiesForm?.get('policies') as FormArray;
+    }
+
+    addMomentRow() {
+      // if (this.policies.length < 4) {
+        this.policies.push(this.addPolicyRow());
+      // } else {
+      // }
+    }
+  
   
     removePolicyRow(index: number) {
       this.policies.removeAt(index);
@@ -100,7 +106,7 @@ export class AddPoliciesComponent {
           console.log(response);
           localStorage.setItem('personaldata', JSON.stringify(response))
           this.confirmation.openSuccessModal('Policies added successfully');
-          
+          this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
           
         },
         error: (err) => {

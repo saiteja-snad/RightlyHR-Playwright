@@ -38,10 +38,10 @@ export class IdentitytypeComponent {
   }
   ngOnInit(): void {
     this.IdentityForm = this.fb.group({
-      IdentityType: ['', [Validators.required]]
+      IdentityType: ['', [Validators.required,Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      IdentityType: ['', [Validators.required]]
+      IdentityType: ['', [Validators.required, Validators.maxLength(50)]]
     });
 
     this.getIdentityType();
@@ -62,7 +62,7 @@ export class IdentitytypeComponent {
     this.subscription = this.http.postdata('IdentityType', request).subscribe({
       next: () => {
         this.getIdentityType();
-        this.conformationPopup.openSuccessModal('Identity type added successfully');
+        this.conformationPopup.openSuccessModal('Identity Type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -85,7 +85,7 @@ export class IdentitytypeComponent {
           this.getIdentityType();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Identity type updated successfully');
+          this.conformationPopup.openSuccessModal('Identity Type updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -120,7 +120,7 @@ export class IdentitytypeComponent {
       next: () => {
         this.getIdentityType();
         modal.close();
-        this.conformationPopup.openSuccessModal('Identity type deleted successfully');
+        this.conformationPopup.openSuccessModal('Identity Type deleted successfully');
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

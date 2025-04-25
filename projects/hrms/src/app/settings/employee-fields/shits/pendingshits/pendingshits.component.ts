@@ -28,12 +28,24 @@ export class PendingshitsComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
   }
-
+  getShiftNames(shift: any) {
+    return shift.orgShiftsItems.map((item: any) => item.shiftName).join(', ');
+  }
   getShifts(): void {
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {
         this.shiftsData = data;
-        this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
+       // this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
+       this.pendingsubmittedshifts = data
+  .filter((item: any) => item.status === "Pending for Submission")
+  .map((item: any) => {
+    return {
+      ...item,
+      shiftName: item.orgShiftsItems?.[0]?.shiftName || 'N/A' // fallback if missing
+    };
+  });
+
+        console.log("pending",this.pendingsubmittedshifts);
       }, error(err) {
         console.log("expensesheadererror", err)
       },

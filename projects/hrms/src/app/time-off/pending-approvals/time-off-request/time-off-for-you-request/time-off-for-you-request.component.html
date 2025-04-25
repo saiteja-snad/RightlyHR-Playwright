@@ -267,7 +267,7 @@
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" aria-label="Close"
                     type="reset">Cancel</button>
                     <button ype="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
-                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments">
+                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
                         @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading..'}}...</span>
@@ -312,7 +312,7 @@
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" aria-label="Close"
                         type="reset">Cancel</button>
                         <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
-                        [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments">
+                        [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
                             @if(spinnerLoader){
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                             <span>{{'Loading..'}}...</span>

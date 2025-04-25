@@ -41,17 +41,16 @@ export class BankNameComponent implements OnInit {
 
   ngOnInit(): void {
     this.bankForm = this.fb.group({
-      bank: [null, [Validators.required]],
+      bank: [null, [Validators.required, Validators.maxLength(100)]],
     });
     this.updateForm = this.fb.group({
-      bankName2: ['', Validators.required],
+      bankName2: ['',[Validators.required, Validators.maxLength(100)]],
     });
     this.getBank();
   }
   getBank() {
     this.subscription = this.http.getData('Bank').subscribe({
       next: (data: any) => {
-        console.log(data);
         this.bankdetails = data as any[];
       },
       error: (reason: any) => {
@@ -65,19 +64,16 @@ export class BankNameComponent implements OnInit {
       IsDeleted: 'Active',
     };
 
-    console.log('Sending request:', request);
-
     this.subscription = this.http.postdata('Bank', request).subscribe({
       next: (data: any) => {
-        console.log('Response:', data);
         this.modalService.dismissAll();
         this.bankForm.reset();
         this.getBank();
-        this.conformationPopup.openSuccessModal('Bank added successfully');
+        this.conformationPopup.openSuccessModal('Bank Name added successfully');
       },
       error: (reason: any) => {
-        console.error('Error:', reason);
-        this.conformationPopup.openErrorModal('Failed to add bank data');
+        const errorMessage = reason.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       },
     });
   }
@@ -88,7 +84,6 @@ export class BankNameComponent implements OnInit {
   }
 
   opendelete(bank: any) {
-    console.log(bank);
     this.selectedDeleteBank = bank;
     this.modalService.open(this.deletepopup, {
       centered: true,
@@ -119,13 +114,12 @@ export class BankNameComponent implements OnInit {
             modal.close();
             this.updateForm.reset();
             this.conformationPopup.openSuccessModal(
-              'Bank updated successfully'
+              'Bank Name updated successfully'
             );
           },
           error: (err: any) => {
-            this.conformationPopup.openErrorModal(
-              'Update failed. Please try again.'
-            );
+            const errorMessage = err.error?.Message;
+            this.conformationPopup.openErrorModal(errorMessage);
           },
         });
     }
@@ -144,11 +138,11 @@ export class BankNameComponent implements OnInit {
       next: () => {
         this.getBank();
         modal.close();
-        this.conformationPopup.openSuccessModal('Bank deleted successfully');
+        this.conformationPopup.openSuccessModal('Bank Name deleted successfully');
       },
       error: (err: any) => {
-        console.error('Delete bank failed:', err);
-        this.conformationPopup.openErrorModal('Failed to delete bank data');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       },
     });
   }

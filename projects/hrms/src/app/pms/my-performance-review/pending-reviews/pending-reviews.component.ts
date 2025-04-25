@@ -66,12 +66,9 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
       this.employeeId.toString(), 
       'Employee', 'Pending,Draft' ).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
-          console.log(data)
           this.reviewCycles = data.items;
           this.totalItems = data.totalCount || 0;
-          
           this.pendingReviews =  data.items;
-          console.log(this.pendingReviews)
           this.filteredReviews = this.pendingReviews;
           if(this.pendingReviews.length>0){
             this.collectionSize = data.totalCount;
@@ -103,13 +100,6 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
     return sublocations?.map(subLoc => subLoc.subLocationName).join(', ') || '-';
   }
 
-  // onPageSizeChange(newPageSize: number) {
-  //   console.log('Page size changed to:', newPageSize);
-  //   console.log(this.page)
-  //   this.page=1;
-  //   this.fetchReviewCycles();
-  // }
-
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize; 
@@ -133,7 +123,6 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
   }
 
   selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
-    console.log(currentStage)
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,

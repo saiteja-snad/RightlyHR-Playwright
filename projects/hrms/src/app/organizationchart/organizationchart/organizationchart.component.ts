@@ -10,6 +10,8 @@ import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DomSanitizer } from '@angular/platform-browser';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-organizationchart',
@@ -67,60 +69,75 @@ export class OrganizationchartComponent {
 
   }
 
-  onSelectprofilePicDownload(employee: any) {
-    console.log('Downloading file for employee:', employee);
+ 
+  downloadChart(format: 'pdf' | 'jpg'): void {
+    const chartElement = document.querySelector('.organization-chart-container'); 
   
-    return this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee).pipe(
-      map((res: any) => {
-        if (res && res.body) {
-          const contentType = res.headers?.get('content-type') || 'application/octet-stream';
-          const blob = new Blob([res.body], { type: contentType });
+    if (!chartElement) {
+      console.error('Chart element not found!');
+      return;
+    }
   
-          const contentDisposition = res.headers?.get('content-disposition');
-          let filename = 'download';
+    // Set the width and height to capture the entire chart
+    const originalWidth = chartElement.scrollWidth;
+    const originalHeight = chartElement.scrollHeight;
   
-          if (contentDisposition) {
-            const match = contentDisposition.match(/filename="?(.+?)"?$/);
-            if (match && match[1]) {
-              filename = match[1];
-            }
-          } else if (employee?.fileName) {
-            filename = employee.fileName;
-          }
-  
-          // Append extension if missing
-          if (!filename.includes('.')) {
-            if (contentType.includes('pdf')) filename += '.pdf';
-            else if (contentType.includes('jpeg')) filename += '.jpg';
-            else if (contentType.includes('png')) filename += '.png';
-          }
-  
-          // Download as image or pdf
-          const link = document.createElement('a');
-          link.href = URL.createObjectURL(blob);
-          link.download = filename;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(link.href);
-  
-          return null;
-        } else {
-          console.error('Failed to download file: No body in response');
-          return 'images/alternate.png';
-        }
-      }),
-      catchError((error) => {
-        console.error('Error downloading file:', error);
-        return of('images/alternate.png');
-      })
+    // Temporarily set the chart container's dimensions to ensure the entire chart is rendered
+    const originalStyle = chartElement.getAttribute('style');
+    chartElement.setAttribute(
+      'style',
+      `width: ${originalWidth}px; height: ${originalHeight}px; overflow: visible;`
     );
+  
+    // Log the chart dimensions
+    console.log('Chart dimensions:', originalWidth, originalHeight);
+  
+    html2canvas(chartElement as HTMLElement, {
+      width: originalWidth,
+      height: originalHeight,
+      scale: 2,
+      
+    })
+      .then((canvas) => {
+        const imageData = canvas.toDataURL('image/png');
+  
+        if (format === 'pdf') {
+          // Generate PDF
+          const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape mode
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+  
+          const canvasWidth = canvas.width;
+          const canvasHeight = canvas.height;
+  
+          // Calculate scaling factor to fit the chart within the PDF page
+          const scaleFactor = Math.min(pageWidth / canvasWidth, pageHeight / canvasHeight);
+  
+          const imgWidth = canvasWidth * scaleFactor;
+          const imgHeight = canvasHeight * scaleFactor;
+  
+          pdf.addImage(imageData, 'PNG', 0, 0, imgWidth, imgHeight);
+          pdf.save('organization-chart.pdf');
+        } else if (format === 'jpg') {
+          // Generate JPG
+          const link = document.createElement('a');
+          link.href = imageData;
+          link.download = 'organization-chart.jpg';
+          link.click();
+        }
+      })
+      .catch((error) => {
+        console.error('Error capturing chart:', error);
+      })
+      .finally(() => {
+        // Restore the original style of the chart container
+        if (originalStyle) {
+          chartElement.setAttribute('style', originalStyle);
+        } else {
+          chartElement.removeAttribute('style');
+        }
+      });
   }
-  
-  
-  
-  
-  
   
 
   getOrghierarchy(employeeId?: any) {
@@ -134,16 +151,16 @@ export class OrganizationchartComponent {
           console.log(response);
           if (response.length > 0) {
             this.data = response  || [];
-            this.data.forEach((employee: any) => {
-              this.onSelectprofilePicDownload(employee.data.image).subscribe((imageUrl: any) => {
-                employee.data.imageUrl = imageUrl;
-              });
-              // employee.children?.forEach((child: any) => {
-              //   this.onSelectprofilePicDownload(child.data.image).subscribe((imageUrl: any) => {
-              //     child.data.imageUrl = imageUrl;
-              //   });
-              // });
-            });
+            // this.data.forEach((employee: any) => {
+            //   this.onSelectprofilePicDownload(employee.data.image).subscribe((imageUrl: any) => {
+            //     employee.data.imageUrl = imageUrl;
+            //   });
+            //   employee.children?.forEach((child: any) => {
+            //     this.onSelectprofilePicDownload(child.data.image).subscribe((imageUrl: any) => {
+            //       child.data.imageUrl = imageUrl;
+            //     });
+            //   });
+            // });
 
             this.isDataPresent = false;
           } else {

@@ -171,4 +171,10 @@ export class OnboardingDetailsComponent {
   
       })
     }
+
+    ngOnDestroy(): void {
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+      }
+    }
 }

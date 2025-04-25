@@ -11,11 +11,12 @@ import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import { PopupService } from '../../common-services/popup.service';
 import { UpdateEducationDetailsComponent } from './update-education-details/update-education-details.component';
 import { DataService } from '../../common-services/data.service';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, DateFormatPipe,NgxDocViewerModule],
+  imports: [CommonModule, DateFormatPipe, NgxDocViewerModule, DetailedStepProgressbarComponent],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
@@ -27,6 +28,7 @@ export class EducationDetailsComponent {
   DocViewURL!: any;
   DocImageUrl!: any;
   @ViewChild('viewpopup') viewpopup: any;
+
   constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private openPopup: PopupService, private getData: DataService) {
     effect(() => {
       if (this.getData.getEducation()) {
@@ -37,6 +39,8 @@ export class EducationDetailsComponent {
   }
 
   ngOnInit(): void {
+    const storedstep = 4;
+    localStorage.setItem('currentStep',storedstep.toString());
     this.empinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
     this.getEducationEmpid();
   }

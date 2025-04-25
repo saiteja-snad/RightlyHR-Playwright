@@ -8,6 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-bank-details',
@@ -26,7 +27,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   proofValid: boolean = true;
   bankdocument: any
   displayblankdocument:any
-  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeBankDetailsForm();
@@ -173,7 +174,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
       accountName: this.bankDetailsForm.get('accountName')?.value,
       accountNo: this.bankDetailsForm.get('accountNo')?.value,
       ifscCode: this.bankDetailsForm.get('ifscCode')?.value,
-      isPrimary: this.bankDetailsForm.get('isPrimary')?.value,
+      isPrimary: this.bankDetailsForm.get('isPrimary')?.value || false,
      
     };
   }
@@ -262,7 +263,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
         accountName: formData.accountNameupdate, // Account holder's name
         accountNo: formData.accountNoupdate, // Account number
         ifscCode: formData.ifscCodeupdate,
-        isPrimary: formData.isPrimaryupdate,
+        isPrimary: formData.isPrimaryupdate || false, // Primary account flag
         isDeleted: false,
 
       };

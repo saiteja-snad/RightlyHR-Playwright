@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
@@ -40,7 +41,8 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {
     effect(() =>{
       if (this.http.tirggerCountSignal().compOff) {
@@ -57,7 +59,6 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo);
     this.getCompOffRequest();
  
   }
@@ -75,12 +76,10 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
 
   getCompOffRequest() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
     this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (response: any) => {
-        console.log(response);
         this.compOff = response;
         this.waitingForApprovalCompOff = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval');
         this.waitingForApprovalCompOffCount = this.waitingForApprovalCompOff.length;

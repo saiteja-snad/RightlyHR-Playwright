@@ -1,22 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { WfhApprovaltabsComponent } from "../../shared/wfh-approvaltabs/wfh-approvaltabs.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
 import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
-
+import { RbacService } from '../../services/rbac.service';
+import { WfhApprovaltabsComponent } from "../../shared/time-off-module-tabs/wfh-approvaltabs/wfh-approvaltabs.component";
 @Component({
   selector: 'app-work-from-home',
-  imports: [CommonModule, RouterModule, WfhApprovaltabsComponent,ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
 })
+
 export class WorkFromHomeComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   halfDayValue = {} as any;
@@ -33,15 +34,12 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   hours!: any;
   duration!: any;
   spinnerLoader = false;
-  availablebalance!:number
+  availablebalance!: number
   totalbalance: any;
 
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private sharedModalService: OpenModalService
-  ) {}
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
+    private sharedModalService: OpenModalService, public rbac: RbacService,) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.intializewfhForm();
@@ -51,15 +49,10 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.fullDayValue = JSON.parse(
       localStorage.getItem('filterFullDayData') || '{}'
     );
-
     this.getDataByLPID();
     this.getWorkfromhomeCriteria();
     this.handleAvailingChange()
-  
-
-
   }
-
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -67,8 +60,8 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
   intializewfhForm() {
     this.addWFHForm = this.fb.group({
-      workedDate: ['', 
-        [Validators.required, ]
+      workedDate: ['',
+        [Validators.required,]
       ],
       availing: ['', Validators.required],
       halfType: [''],
@@ -76,7 +69,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  handleAvailingChange(){
+  handleAvailingChange() {
     this.addWFHForm.get('availing')?.valueChanges.subscribe(value => {
       const halfTypeControl = this.addWFHForm.get('halfType');
       if (value === 'Half Day') {
@@ -92,8 +85,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   updateDuration() {
-    console.log(this.workFromHomedata.startTimeProp);
-    console.log(this.workFromHomedata.endTimeProp);
     if (
       this.workFromHomedata.startTimeProp &&
       this.workFromHomedata.endTimeProp
@@ -122,11 +113,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       // if(this.workFromHomedata.duration >= 9){
       //   this.timeValudationError=false;
       // }
-      console.log(this.workFromHomedata.startTimeProp);
-      console.log(this.workFromHomedata.endTimeProp);
-      console.log(this.hours, this.minutes);
-      console.log(durationAsFloat);
-      console.log(this.workFromHomedata.duration);
       const orgHalfDayWFHCritera = parseFloat(this.halfDayValue.value);
       if (this.workFromHomedata.duration < orgHalfDayWFHCritera) {
         this.workFromHomedata.duration = null;
@@ -142,6 +128,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       }
     }
   }
+
   ngAfterViewInit() {
     const workedDate = this.addWFHForm.get('workedDate')?.value;
     if (workedDate) {
@@ -149,65 +136,33 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  // noWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
-  //   if (control.value) {
-  //     const date = new Date(control.value);
-  //     const day = date.getDay();
-  //     // Check if the day is Saturday (6) or Sunday (0)
-  //     if (day === 0 || day === 6) {
-  //       return { weekend: true };
-  //     }
-  //   }
-  //   return null;
-  // }
-  //   // Custom Validator: Ensure date is after the date of joining
-  //   afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
-  //     if (control.value && this.empinfo.dateOfJoining) {
-  //       const selectedDate = new Date(control.value);
-  //       const joiningDate = new Date(this.empinfo.dateOfJoining);
-  //       console.log(joiningDate)
-  //       // Check if the selected date is before the date of joining
-  //       if (selectedDate < joiningDate) {
-  //         return { beforeJoining: true };
-  //       }
-  //     }
-  //     return null;
-  //   }
   getWFHBal(currentDate: any) {
     let empId = this.empinfo.employeeId;
     // let currentDate = new Date().toISOString().split('T')[0];
-  this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
+    this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        console.log(response);
-     
-        if(response){
+        if (response) {
           this.totalbalance = response.totalBalance;
           this.availablebalance = response.availableBalance
         }
-
-        console.log(this.totalbalance);
-
       },
       error: (reason: any) => console.log(reason)
     })
   }
+
   getDataByLPID() {
     let emp = this.empinfo.employeeId;
     this.http.getData(`Timeoff/LPID/${emp}`).subscribe({
       next: (response: any) => {
-        console.log(response);
-
         this.lpdata = response;
-        console.log(this.lpdata); // the response data stored in the lpdata varable//
       },
       error: (reason: any) => console.log(reason),
     });
   }
 
   getWorkfromhomeCriteria() {
-    this.http.getData(`WorkFromHomeEligibilityCriteria`).subscribe({
+    this.http.getData(`WorkFromHomeEligibilityCriteria`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.Workfromhome = response;
         const filterminhoursData = this.Workfromhome.find(
           (item: any) => item.name === 'maxDuration'
@@ -216,19 +171,11 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         const filterHalfDayData = this.Workfromhome.find(
           (item: any) => item.name === 'minHalfDayHours'
         );
-        console.log(filterHalfDayData);
-        localStorage.setItem(
-          'filterHalfDayData',
-          JSON.stringify(filterHalfDayData)
-        );
+        localStorage.setItem('filterHalfDayData', JSON.stringify(filterHalfDayData));
         const filterFullDayData = this.Workfromhome.find(
           (item: any) => item.name === 'minFullDayHours'
         );
-        console.log(filterFullDayData);
-        localStorage.setItem(
-          'filterFullDayData',
-          JSON.stringify(filterFullDayData)
-        );
+        localStorage.setItem('filterFullDayData', JSON.stringify(filterFullDayData));
       },
       error: (reason: any) => console.log(reason),
     });
@@ -245,32 +192,18 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   dateTimeValidations() {
-    const formattedStartTime = moment(
-      this.workFromHomedata.startTimeProp
-    ).format('HH:mm');
-    const formattedEndTime = moment(this.workFromHomedata.endTimeProp).format(
-      'HH:mm'
-    );
+    const formattedStartTime = moment(this.workFromHomedata.startTimeProp).format('HH:mm');
+    const formattedEndTime = moment(this.workFromHomedata.endTimeProp).format('HH:mm');
     // Split start and end time strings into hours and minutes
-    const [startHours, startMinutes] = formattedStartTime
-      .split(':')
-      .map(Number);
+    const [startHours, startMinutes] = formattedStartTime.split(':').map(Number);
     const [endHours, endMinutes] = formattedEndTime.split(':').map(Number);
-    let startDate = moment(this.workFromHomedata.startTimeProp).format(
-      'YYYY-MM-DD'
-    );
-    let endDate = moment(this.workFromHomedata.endTimeProp).format(
-      'YYYY-MM-DD'
-    );
+    let startDate = moment(this.workFromHomedata.startTimeProp).format('YYYY-MM-DD');
+    let endDate = moment(this.workFromHomedata.endTimeProp).format('YYYY-MM-DD');
     // Convert start and end times to total minutes
     const startTimeMinutes = startHours * 60 + startMinutes;
     const endTimeMinutes = endHours * 60 + endMinutes;
-
     // Check if start time is greater than end time
-    if (
-      startDate > endDate ||
-      (startDate === endDate && startTimeMinutes > endTimeMinutes)
-    ) {
+    if (startDate > endDate || (startDate === endDate && startTimeMinutes > endTimeMinutes)) {
       this.timeValudationError = true;
     } else {
       this.timeValudationError = false;
@@ -281,13 +214,9 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   applyWFH(addForm: FormGroup) {
-    console.log(addForm);
-
     if (addForm.valid) {
       const formData = addForm.value;
-
       const isFullDay = +formData.availing === 2;
-  
       const payload = {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
@@ -301,28 +230,19 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         requestedBy: this.empinfo.employeeId,
         requestedDate: new Date(),
       };
-      console.log(payload);
-      
       this.spinnerLoader = true;
-      this.http.postdata('AttendanceRequests', payload).subscribe({
+      this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          // this.getCompOffRequest();
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal(
-            'Request submitted successfully'
-          );
+          this.sharedModalService.openSuccessModal('Request submitted successfully');
           this.getWFHBal(null)
-
           setTimeout(() => {
             window.location.reload();
-          }
-        , 2000);
+          }, 2000);
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             wfh: true,
           }));
-     
-
           //write a signal to trigger the get all count in the side bar
         },
         error: (err: any) => {
@@ -335,8 +255,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         },
       });
     }
-
-  
   }
 
   formatDate(date: string | Date): string {

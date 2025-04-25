@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <p class="component-header mb-0" (click)="navigateDashboard()"><i class="bi bi-arrow-90deg-left me-2"></i>{{'Probation Employees'|translate}}
+            <p class="component-header mb-0">
+                <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Probation Employees'|translate}}
             </p>
         </div>
         <div class="dropdown">
@@ -9,25 +10,28 @@
                 <i class="bi bi-plus me-2"></i>{{'Generate Documents'| translate}}
             </button>
             <ul class="dropdown-menu custom-dropdown-menu">
-                <li><a class="dropdown-item" [routerLink]="['/admin/letters/probation-confirmation-letter']"
-                        routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>Probation
-                        Confirmation Letter</a></li>
-                <li><a class="dropdown-item" [routerLink]="['/admin/letters/probation-extension-letter']"
-                        routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>Probation Extension
-                        Letter</a></li>
+                <li>
+                    <a class="dropdown-item" [routerLink]="['/admin/letters/probation-confirmation-letter']"
+                     routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>Probation Confirmation Letter</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" [routerLink]="['/admin/letters/probation-extension-letter']"
+                     routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>Probation Extension Letter</a>
+                </li>
             </ul>
         </div>
     </div>
+
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                 placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
-      <div class="custom-table-content"> 
+        <div class="custom-table-content">
+            @if (!loader) {
             <table class="w-100">
                 <thead>
                     <tr>
@@ -45,56 +49,45 @@
                     <tr *ngFor="let item of probationemp | probationpipe : searchValue">
                         <td>
                             <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
-                            <ng-template #fusionid>
-                                -
-                            </ng-template>
-                        </td>
-                        <td> <span *ngIf="item.firstName;else fistname"> </span>{{item?.firstName}} {{item?.middleName}}
-                            {{item?.lastName}}
-                            <ng-template #fistname>
-                                -
-                            </ng-template>
-                        </td>
-                        <td><span *ngIf="item.workEmail;else workemail"> {{item.workEmail}}</span>
-                            <ng-template #workemail>
-                                -
-                            </ng-template>
-                        </td>
-                        <td><span *ngIf="item?.contactnumber;else contactnumb"> {{item.contactnumber}}</span>
-                            <ng-template #contactnumb>
-                                -
-                            </ng-template>
+                            <ng-template #fusionid> - </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | date
-                                }}</span>
-                            <ng-template #prostartdate>
-                                -
-                            </ng-template>
+                           
+                            <span *ngIf="item.firstName;else fistname"> </span>
+                            <a class="select-item cursor" (click)="select(item)">
+                            {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
+                            <ng-template #fistname> - </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate |
-                                date}}</span>
-                            <ng-template #proenddate>
-                                -
-                            </ng-template>
+                            <span *ngIf="item.workEmail;else workemail"> {{item.workEmail}}</span>
+                            <ng-template #workemail> - </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate |
-                                date}}</span>
-                            <ng-template #proextenddate>
-                                -
-                            </ng-template>
+                            <span *ngIf="item?.contactnumber;else contactnumb"> {{item.contactnumber}}</span>
+                            <ng-template #contactnumb> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | date }}</span>
+                            <ng-template #prostartdate> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate | date}}</span>
+                            <ng-template #proenddate> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate | date}}</span>
+                            <ng-template #proextenddate> - </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
-                            <ng-template #designation>
-                                -
-                            </ng-template>
+                            <ng-template #designation> - </ng-template>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            } @else {
+            <app-data-loader-content />
+            }
         </div>
     </div>
 </div>

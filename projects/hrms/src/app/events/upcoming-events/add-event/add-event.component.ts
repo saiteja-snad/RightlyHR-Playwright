@@ -23,6 +23,7 @@ export class AddEventComponent implements OnInit {
   Employeeinfo = {} as any;
   selectedCustomEventField: any;
   spinnerLoader=false
+  postEventsData:any
   constructor(public router: Router, private fb: FormBuilder,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal,) { }
 
@@ -41,54 +42,47 @@ export class AddEventComponent implements OnInit {
       eventDate: ['', [Validators.required, this.futureDateValidator()]],
       eventTitle: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
       eventMessage: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/), Validators.maxLength(250)]],
-      imageUrl: [null]
+      imageUrl: ['']
     });
   }
-
-  // onFileSelected(event: any) {
-  //   const selectedFile: File = event.target.files[0];
-
-  //   // Check if a file was selected
-  //   if (selectedFile) {
-  //     // Check file type
-  //     const fileType = selectedFile.type;
-  //     if (fileType === 'image/png' || fileType === 'image/jpeg') {
-
-  //       // Check file size
-  //       const maxSize = 2 * 1024 * 1024; // 2MB in bytes
-  //       if (selectedFile.size <= maxSize) {
-  //         const reader = new FileReader();
-  //         reader.onload = (e: any) => {
-  //           // e.target.result contains the file URL
-  //           this.postEventsData.attachmentUrl = e.target.result;
-  //           this.selectedCustomEventField.attachmentUrl = e.target.result;
-  //         };
-  //         // Read the file as a data URL (base64 encoded)
-  //         reader.readAsDataURL(selectedFile);
-  //       } else {
-  //         // File size exceeds 2MB, show an error message or handle it accordingly
-  //         this.dataFailureMsg('File size exceeds the allowed limit of 2MB.');
-  //         this.postEventsData.attachmentUrl = null;
-  //         // Reset the input field by setting its value to an empty string
-  //         event.target.value = '';
-  //       }
-  //     } else {
-  //       // File type is not PNG or JPEG, show an error message or handle it accordingly
-  //       this.dataFailureMsg('Invalid file type. Only PNG and JPEG files are allowed.');
-  //       this.postEventsData.attachmentUrl = null;
-  //       // Reset the input field by setting its value to an empty string
-  //       event.target.value = '';
-
-  //     }
-  //   } else {
-  //     // Reset the input field by setting its value to an empty string
-  //     event.target.value = '';
-  //     this.postEventsData.attachmentUrl = null;
-  //     this.selectedCustomEventField.attachmentUrl = null;
-  //   }
-  // }
-
-
+  onFileSelected(event: any): void {
+    const selectedFile: File = event.target.files[0];
+    const fileType = selectedFile?.type;
+    const maxSize = 2 * 1024 * 1024; // 2MB
+  
+    if (!selectedFile) return;
+  
+    if (fileType === 'image/png' || fileType === 'image/jpeg') {
+      if (selectedFile.size <= maxSize) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.customEventForm.patchValue({ imageUrl: e.target.result });
+        };
+        reader.readAsDataURL(selectedFile);
+      } else {
+        this.conformationPopup.openErrorModal('File size exceeds 2MB.');
+        event.target.value = '';
+      }
+    } else {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PNG and JPG are allowed.');
+      event.target.value = '';
+    }
+  }
+  
+  
+  getToday(): string {
+    const now = new Date();
+    const pad = (n: number) => n < 10 ? '0' + n : n;
+  
+    const year = now.getFullYear();
+    const month = pad(now.getMonth() + 1);
+    const day = pad(now.getDate());
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+  
   postevents(customEventForm: FormGroup): void {
     if (customEventForm.valid) {
       this.spinnerLoader=true
@@ -100,24 +94,27 @@ export class AddEventComponent implements OnInit {
         empId: this.Employeeinfo.employeeId,
         isDeleted: false,
         eventTitle: formdata.eventTitle,
-        attachmentUrl: formdata.imageUrl // this should be base64 from your file input
+        attachmentUrl: formdata.imageUrl || null
       };
 
       this.subscription = this.http.postdata(`CustomEvents`, data).subscribe({
         next: (response: any) => {
           if (response) {
             this.spinnerLoader=false
+            this.http.notifyEventAdded();
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Event added successfully');
             // Optionally send custom emails or reset the form
             this.CustomEmail();
-
+            // window.location.reload()
           }
         },
         error: (err: any) => {
+          this.spinnerLoader=false
           this.modalService.dismissAll();
           this.conformationPopup.openErrorModal('Insertion of data failed');
-        }
+        },
+
       });
     } else {
       // Optional: mark all controls as touched to trigger validation UI

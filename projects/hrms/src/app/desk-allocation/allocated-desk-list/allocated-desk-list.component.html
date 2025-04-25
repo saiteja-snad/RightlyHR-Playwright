@@ -1,1 +1,272 @@
-<p>allocated-desk-list works!</p>
+<div class="custom-main-component-container mt-3">
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+      <input type="search" class="form-control custom-input custom-search-input" placeholder="search Here"
+        aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
+        aria-describedby="basic-addon1">
+    </div>
+    <ng-container *ngIf="loading; else maincontent">
+      <ng-template #loadingSpinner>
+        <div class="loader-placeholder-content text-center">
+          <div>
+            <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
+          </div>
+        </div>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+  
+    <ng-template #maincontent>
+  
+      <div class="custom-table-content">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Desk ID</th>
+              <th>Desk Type</th>
+              <th>Allocated To</th>
+              <th>Location</th>
+              <th>Sub Location</th>
+  
+              <th>Desk Status</th>
+              <th>Approver</th>
+              <th class="text-center">Action(s)</th>
+  
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
+              <tr *ngFor="let desk of desklist | async">
+                <td>{{ desk.deskName }}</td>
+                <td>{{ desk.deskType }}</td>
+                <td>{{ desk.allocatedToDetails?.employeeName || 'N/A' }}</td>
+  
+                <td>{{ desk.location?.jobLocationName }}</td>
+                <td>{{ desk.subLocation?.jobSubLocationName }}</td>
+  
+                <td>{{ desk.deskStatus }}</td>
+                <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
+  
+                <td class="text-center">
+                  <div class="dropdown">
+                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </a>
+  
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                
+                
+                        <li>
+                          <a class="dropdown-item"
+                            (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
+                            Reallocate desk
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
+                            Release Desk
+                          </a>
+                        </li>
+  
+                      <li>
+                        <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
+                          View Desk Details
+                        </a>
+                      </li>
+  
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <!-- No Data Found Template -->
+            <ng-template #noDataTemplate>
+              <tr>
+                <td>
+                  <app-no-data-found />
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+    </ng-template>
+  </div>
+  
+  
+  
+  <ng-template #reallcatedeskmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+  
+      <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">Reallocate an Desk</p>
+        </div>
+        <div>
+          <a (click)="modal.dismiss();reassiginForm.reset()"><img src="icons/close.png" alt="Close Icon"
+              class="close-icon"></a>
+        </div>
+      </div>
+      <div class="custom-main-popup-content p-3">
+  
+        <form [formGroup]="reassiginForm" (ngSubmit)="postReallocateAssets(reassiginForm)">
+  
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="subLocation" class="form-label custom-label mb-2 custom-label mb-2">Select Shift<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shifts"
+                  placeholder="Please select shift" class="form-select custom-select"></p-select>
+              </div>
+              <div class="error-msg" *ngIf="reassiginForm.get('shifts')?.invalid && reassiginForm.get('shifts')?.touched">
+                shift is required
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="desk" class="form-label custom-label mb-2 custom-label mb-2">Desk ID<span
+                  class="text-danger">*</span></label>
+              <input type="text" formControlName="deskid" class="form-control custom-input" />
+            </div>
+  
+            <div class="col-md-6 mb-3">
+              <label for="asseTID" class="form-label custom-label mb-2 custom-label mb-2">Select Employee<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+                  (onChange)="onEmployeeSelect($event)" formControlName="employeeName"
+                  placeholder="Please select employee" class="form-select custom-select"></p-select>
+              </div>
+              <div class="error-msg"
+                *ngIf="reassiginForm.get('employeeName')?.invalid && reassiginForm.get('employeeName')?.touched">
+                Employee is required
+              </div>
+            </div>
+  
+            <div class="col-md-6 mb-3">
+              <label for="Approval" class="form-label custom-label mb-2 custom-label mb-2">
+                Select Approver<span class="text-danger">*</span>
+              </label>
+              <div class="custom-p-select-content">
+                <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+                  formControlName="approvid" placeholder="Please select approver" class="form-select custom-select"
+                  (onChange)="onApprovalSelects($event)"></p-select>
+              </div>
+              <div class="error-msg"
+                *ngIf="reassiginForm.get('approvid')?.invalid && reassiginForm.get('approvid')?.touched">
+                Approver is required
+              </div>
+            </div>
+          </div>
+  
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="reassiginForm.invalid">Submit</button>
+          </div>
+        </form>
+  
+      </div>
+    </div>
+  
+  </ng-template>
+
+  <ng-template #relasedesk let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">Release an Desk</p>
+        </div>
+        <div>
+          <a (click)="modal.dismiss();realseForm.reset();openModal(realseconforamation)"><img src="icons/close.png"
+              alt="Close Icon" class="close-icon"></a>
+        </div>
+      </div>
+  
+      <div class="custom-main-popup-content p-3">
+        <form [formGroup]="realseForm" (ngSubmit)="updatedeskitemrelease(realseForm)">
+  
+          <div class="row ">
+            <div class="col-md-12 mb-3">
+              <label for="Department" class="form-label custom-label mb-2">Select Reason <span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="deskrealse" optionLabel="value" formControlName="deskrealse"
+                  placeholder="Please select reason" class="form-select custom-select"></p-select>
+              </div>
+              <div class="error-msg"
+                *ngIf="realseForm.controls['deskrealse'].invalid && (realseForm.controls['deskrealse'].touched || realseForm.controls['deskrealse'].dirty)">
+                <div class="error-msg" *ngIf="realseForm.controls['deskrealse'].errors?.['required']">
+                  Reason is required</div>
+              </div>
+            </div>
+  
+            <div class="col-12 mb-3">
+              <label class="form-label custom-label mb-2 ">
+                Additional Comments
+              </label>
+              <div class="textarea-container">
+                <textarea class="form-control custom-input" formControlName="reason"
+                  placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+                <!-- Error messages -->
+                <div>
+                  <div class="error-msg" *ngIf="realseForm.get('reason')?.invalid && realseForm.get('reason')?.touched">
+                    <div *ngIf="realseForm.get('reason')?.errors?.['required']">
+                      Additional Comments is required.
+                    </div>
+                    <div *ngIf="realseForm.get('reason')?.errors?.['maxlength']">
+                      Additional Comments must not exceed 250 characters.
+                    </div>
+                  </div>
+                </div>
+                <!-- Character count -->
+                <div class="mt-2 text-end">
+                  {{ realseForm.get("reason")?.value?.length || 0 }}/250
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary"
+              (click)="openModal(realseconforamation);modal.dismiss()">Cancel</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="realseForm.invalid">Submit</button>
+          </div>
+  
+        </form>
+      </div>
+    </div>
+  
+  </ng-template>
+  
+  
+  
+  <ng-template #realseconforamation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
+      </div>
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" class="custom-btn btn-secondary" (click)="openModal(relasedesk);modal.dismiss()">No</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="conformationpoppup();modal.dimiss()">Yes</button>
+      </div>
+    </div>
+  
+  </ng-template>
+  
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+  
+
+  
+
+  
+

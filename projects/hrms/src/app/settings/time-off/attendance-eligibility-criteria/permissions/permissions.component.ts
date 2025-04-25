@@ -16,6 +16,7 @@ import {
 } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-permissions',
   imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule],
@@ -34,7 +35,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService,
+    public rbac: RbacService
   ) {}
 
   ngOnInit(): void {

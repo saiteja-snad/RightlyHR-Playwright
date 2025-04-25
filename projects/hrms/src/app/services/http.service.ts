@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, catchError } from 'rxjs';
-import { environment } from '../../environments/environment.dev';
+import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { ApprovalStatusCount } from '../Interfaces/timoff-model';
 
 
@@ -15,11 +15,15 @@ export class HttpService {
     wfh: boolean;
     employeeId: number;
     permission: boolean;
+    remote:boolean;
+    global:boolean
   }>({
     compOff: false,
     wfh: false,
     employeeId: 0,
     permission: false,
+    remote:false,
+    global:false
   });
   tirggerPendingApprovalCountSignal = signal<{
     compOff: boolean;
@@ -28,7 +32,8 @@ export class HttpService {
     separation: boolean;
     recall: boolean;
     expenses:boolean;
-    nodue:boolean
+    nodue:boolean,
+    
   }>({
     compOff: false,
     wfh: false,
@@ -37,8 +42,13 @@ export class HttpService {
     recall: false,
     expenses: false,
     nodue:false,
+   
   });
-
+  desklocationIdSubject = new BehaviorSubject<string | null>(null);
+  desksublocationIdSubject = new BehaviorSubject<string | null>(null);
+  assetslocationIdSubject = new BehaviorSubject<string | null>(null);
+  assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
+  reviewCycleTriggerSignal = signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -52,9 +62,48 @@ export class HttpService {
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
 
+   eventAddedSource = new Subject<void>();
+  eventAdded$ = this.eventAddedSource.asObservable();
+
+  notifyEventAdded() {
+    this.eventAddedSource.next();
+  }
+
+ private triggerSignal = signal(false);
+ readonly trigger = this.triggerSignal;
+ triggerActionSignal() {
+  this.triggerSignal.set(true);
+}
+resetTriggerSignal() {
+  this.triggerSignal.set(false);
+}
+
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }
+  
+  desklocationId$ = this.desklocationIdSubject.asObservable();
+  desksublocationId$ = this.desksublocationIdSubject.asObservable();
+    //function to update the desk Updatelocation
+    deskUpdateLocationId(id: string | null) {
+      this.desklocationIdSubject.next(id);
+    }
+    //function to update the desk sublocation
+    deskUpdateSubLocationId(id: string | null) {
+      this.desksublocationIdSubject.next(id);
+    }
+
+    assetslocationId$ = this.assetslocationIdSubject.asObservable();
+    assetssublocationId$ = this.assetssublocationIdSubject.asObservable();
+      //function to update the desk Updatelocation
+      assetsUpdateLocationId(id: string | null) {
+        this.assetslocationIdSubject.next(id);
+      }
+      //function to update the desk sublocation
+      assetsUpdateSubLocationId(id: string | null) {
+        this.assetssublocationIdSubject.next(id);
+      }
+
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
@@ -101,7 +150,7 @@ export class HttpService {
   }
 
   get(url: string, options?: any) {
-    return this.http.get(url, options);
+    return this.http.get(`${this.ApiUrl}${url}`, options);
   }
   getByDownload<T>(endpoint: string, options?: object): Observable<T> {
     return this.http.get<T>(`${this.ApiUrl}${endpoint}`, options);
@@ -142,6 +191,12 @@ export class HttpService {
     );
   }
 
+  DownloadDataWithQuerydata(endpoint: string, params: any): Observable<any> {
+    return this.http.post(endpoint, params, {
+      observe: 'response',
+      responseType: 'blob'
+    });
+  }
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);
   }
@@ -168,6 +223,67 @@ export class HttpService {
     return this.http.post<any>(`${this.ApiUrl}${url}`, data);
   }
 
+  getstatusdesk(
+    url: string,
+    selectedLocationId: any,
+    selectedSubLocationId: any,
+    status: string,
+    page: number,
+    pageSize: number,
+    searchQuery: string
+  ): any {
+    const params: { [key: string]: any } = {
+      locationid: selectedLocationId,
+      sublocationid: selectedSubLocationId,
+      DeskStatus: status,
+      pageNumber: page,
+      pageSize: pageSize,
+      searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
+    };
+
+    // Build the query string dynamically, excluding null or undefined values
+    const queryString = Object.entries(params)
+      .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    // Construct the full URL
+    const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
+
+    // Make the HTTP GET request
+    return this.http.get(dataUrl);
+  }
+
+  getassetsdesk(
+    url: string,
+    selectedLocationId: any,
+    selectedSubLocationId: any,
+    status: string,
+    page: number,
+    pageSize: number,
+    searchQuery: string
+  ): any {
+    const params: { [key: string]: any } = {
+      locationid: selectedLocationId,
+      sublocationid: selectedSubLocationId,
+      status: status,
+      page: page,
+      pageSize: pageSize,
+      searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
+    };
+
+    // Build the query string dynamically, excluding null or undefined values
+    const queryString = Object.entries(params)
+      .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    // Construct the full URL
+    const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
+
+    // Make the HTTP GET request
+    return this.http.get(dataUrl);
+  }
   postProbation(
     url: string,
     employeeId: number,
@@ -379,4 +495,31 @@ export class HttpService {
     this.deskWiatingforapprovalCountsubject.next(count);
   }
 
+  assetCountSubject = new BehaviorSubject<number>(0);
+  avilableassetCountSubject = new BehaviorSubject<number>(0);
+  allocatedassetCountSubject = new BehaviorSubject<number>(0);
+  undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
+  inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
+
+  setAssetCount(count: number) {
+    this.assetCountSubject.next(count);
+  }
+
+  setavilableAssetCount(count: number) {
+    this.avilableassetCountSubject.next(count);
+  }
+
+
+  setallocatedAssetCount(count: number) {
+    this.allocatedassetCountSubject.next(count);
+  }
+
+  setundermatinaceAssetCount(count: number) {
+    this.undermatinaceassetCountSubject.next(count);
+  }
+
+
+  setinactiveSubjectAssetCount(count: number) {
+    this.inactiveaceassetCountSubject.next(count);
+  }
 }

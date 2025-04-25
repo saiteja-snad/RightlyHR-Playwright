@@ -13,6 +13,8 @@ import { ProbationdetailsPipe } from "../../../Pipes/probationdetails.pipe";
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
+import { RbacService } from '../../../services/rbac.service';
+import { AuthService } from '../../../services/auth.service';
 
 
 @Component({
@@ -37,7 +39,12 @@ export class ProbationPendingApprovalsComponent {
       { label: 20, value: 20 },
       { label: 25, value: 25 }
     ];
-    constructor(private modalService: NgbModal, private http: HttpService) {}
+    constructor(
+      private modalService: NgbModal, 
+      private http: HttpService,
+      public rbac: RbacService,
+      private authService: AuthService,
+    ) {}
   
     openModal(content: any) {
       this.modalService.open(content, {centered: true,backdrop: 'static' });
@@ -53,30 +60,26 @@ export class ProbationPendingApprovalsComponent {
     }
 
     ngOnInit(): void {
-      this.LOGIN = JSON.parse(localStorage.getItem('fusionuser') || '{}');
+      this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       //console.log(this.isformsubmit);
       this.getProbationExtendDays();
       this.getAllPendingApprovals();
     }
 
     getAllPendingApprovals() {
-      // let loggedInUser = this.authService.getToken();
-      let EmployeeId = parseInt(this.LOGIN.employeeId);
-      console.log(EmployeeId);
+      let loggedInUser = this.authService.getToken();
+      let EmployeeId = loggedInUser.employeeId;
       this.subscription = this.http
         .getData(
           `PendingApproval/employee/${EmployeeId}?moduleId=20&approvedType=EMP`
         )
         .subscribe({
           next: (data: any) => {
-            console.log(data.data);
             this.probationDetails = data.data.filter(
               (item: any) =>
                 item.approvalHeader.status != 'Processed' &&
                 item.approvalHeader.status != 'Rejected'
             );
-            console.log(this.probationDetails);
-            
             // this.filterPendingApprovalsByModule();
           },
           error: (reason) => console.log(reason),

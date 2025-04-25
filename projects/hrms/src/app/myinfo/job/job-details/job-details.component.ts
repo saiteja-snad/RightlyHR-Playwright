@@ -10,7 +10,7 @@ import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import moment from 'moment';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
@@ -32,6 +32,8 @@ export class JobDetailsComponent {
   separationRequestForm!: FormGroup;
   jobDetailsupdateForm!: FormGroup;
   jobdetails = new BehaviorSubject<any[]>([]);
+  
+  subLocationsDropdown: any = []; 
   teamDropdownValues: any[] = [];
   teamManagerDropdownValues: any[] = [];
   selectedDepartmentId: number = 0;
@@ -397,7 +399,6 @@ export class JobDetailsComponent {
       });
   }
 
-  subLocationsDropdown: any = []; // To store the dynamically fetched sub-locations
 
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation.id) {
@@ -928,4 +929,10 @@ export class JobDetailsComponent {
       this.showSaperationDots = false;
     }
   }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 }

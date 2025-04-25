@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,8 +16,8 @@ import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model'
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
-
-
+import { RbacService } from '../../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [
@@ -68,7 +68,8 @@ export class ClaimsandexpensesForYouRequestComponent
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -77,13 +78,13 @@ export class ClaimsandexpensesForYouRequestComponent
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250,),noWhitespaceValidator]],
     });
   }
 
@@ -93,7 +94,7 @@ export class ClaimsandexpensesForYouRequestComponent
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=EMP`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
@@ -146,7 +147,7 @@ export class ClaimsandexpensesForYouRequestComponent
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -185,7 +186,7 @@ export class ClaimsandexpensesForYouRequestComponent
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -222,7 +223,7 @@ export class ClaimsandexpensesForYouRequestComponent
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
           this.modalService.dismissAll();
@@ -257,7 +258,7 @@ export class ClaimsandexpensesForYouRequestComponent
   viewItem(expid: number) {
     console.log(expid);
     this.updataid = expid;
-    this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
+    this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.expenseheaderiteams = data;
       },
@@ -315,7 +316,7 @@ export class ClaimsandexpensesForYouRequestComponent
   onViewAttachement(url: any) {
     if (url?.endsWith('jpg') || url?.endsWith('png') || url?.endsWith('jpeg')) {
       this.http
-        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
             const blob = new Blob([res['body']], { type: 'image/png' });

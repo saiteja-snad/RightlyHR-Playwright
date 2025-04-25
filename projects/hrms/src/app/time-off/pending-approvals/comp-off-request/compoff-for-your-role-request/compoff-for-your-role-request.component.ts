@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
@@ -15,6 +15,9 @@ import {
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
+import { WfhsearchfilterPipe } from "../../../../Pipes/wfhsearchfilter.pipe";
 @Component({
   selector: 'app-compoff-for-your-role-request',
   imports: [
@@ -26,8 +29,9 @@ import { TranslateModule } from '@ngx-translate/core';
     NoDataFoundComponent,
     DateformatPipe,
     TranslateModule,
-    ReactiveFormsModule
-  ],
+    ReactiveFormsModule,
+    WfhsearchfilterPipe
+],
   templateUrl: './compoff-for-your-role-request.component.html',
   styleUrl: './compoff-for-your-role-request.component.scss',
 })
@@ -43,7 +47,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  leaves = [] as AttendanceRequest[];
+  leaves = new BehaviorSubject<AttendanceRequest[]>([]);
   approverComments = [] as any[];
   selectedLeaveData = {} as AttendanceRequest;
   // approverComments = [] as AttendanceRequestC[];
@@ -51,11 +55,14 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  searchValue: any;
+  spinnerLoader = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -65,13 +72,13 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
@@ -81,11 +88,10 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=3&approvedType=ROLE`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaves = response.data as AttendanceRequest[];
-       
+          this.leaves.next(response.data);
         },
         error: (reason) => console.log(reason),
       });
@@ -121,7 +127,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.sharedModalService.openSuccessModal(
@@ -138,6 +144,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -150,7 +157,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.sharedModalService.openSuccessModal(
@@ -162,15 +169,18 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }
   }
 
   handleReject(rejectForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
       const requestBody = {
@@ -182,11 +192,11 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.sharedModalService.openSuccessModal(
-              'Request Rejcted Successfully'
+              'Request Rejected Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
@@ -196,9 +206,11 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }

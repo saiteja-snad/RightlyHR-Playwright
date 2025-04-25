@@ -9,9 +9,9 @@ import { Router } from '@angular/router';
 import moment from 'moment';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 import { OpenModalService } from '../../services/open-modal.service';
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-probation-extension-letter',
   imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],
@@ -126,17 +126,19 @@ export class ProbationExtensionLetterComponent {
   pathValuesFuction() {
     const formValues = this.probationExtensionForm.value;
     console.log(formValues);
-    this.probationExtensionLetterData.firstName = formValues.employeeId.firstName,
-    this.probationExtensionLetterData.middleName = formValues.employeeId.middleName,
-    this.probationExtensionLetterData.lastName = formValues.employeeId.lastName,
-    this.probationExtensionLetterData.fusionEmpId = formValues.employeeId.fusionEmpId,
-    this.probationExtensionLetterData.jobRole = formValues.employeeId.jobDetails.jobRole,
-    this.probationExtensionLetterData.department = formValues.employeeId.firstName,
-    this.probationExtensionLetterData.workLocation = formValues.employeeId.jobDetails.subLocation+ ', '+formValues.employeeId.jobDetails.lopcation,
-    this.probationExtensionLetterData.dateofprobationextension = formValues.issuedDate,
-    this.probationExtensionLetterData.Documenttype = formValues.Documenttype;
-    this.probationExtensionLetterData.authorityName = formValues.authorityid.fullName,
-    this.probationExtensionLetterData.authorityDesignation = formValues.authorityid.designation
+    this.probationExtensionLetterData.firstName = formValues.employeeId?.firstName,
+    this.probationExtensionLetterData.middleName = formValues.employeeId?.middleName,
+    this.probationExtensionLetterData.lastName = formValues.employeeId?.lastName,
+    this.probationExtensionLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
+    this.probationExtensionLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
+    this.probationExtensionLetterData.department = formValues.employeeId?.firstName,
+    this.probationExtensionLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation+ ', '+formValues.employeeId?.jobDetails?.lopcation,
+    this.probationExtensionLetterData.dateofprobationextension = formValues?.issuedDate,
+    this.probationExtensionLetterData.Documenttype = formValues?.Documenttype;
+    this.probationExtensionLetterData.authorityName = formValues.authorityid?.fullName,
+    this.probationExtensionLetterData.authorityDesignation = formValues.authorityid?.designation,
+    this.probationExtensionLetterData.employeeId = formValues.employeeId?.employeeId
+
   }
 
   async postProbationExtensionLetterFormSubmit() {
@@ -201,8 +203,28 @@ export class ProbationExtensionLetterComponent {
 
   Documenturlresult: any;
   postProbationDetails(docurl: string) {
+    let payload = {
+      probationId : this.getProbationDetails.probationId,
+      formId : this.getProbationDetails.formId,
+      employeeId : this.getProbationDetails.employeeId,
+      responseId : this.getProbationDetails.responseId,
+      probationStartDate : this.getProbationDetails.probationStartDate,
+      probationEndDate : this.getProbationDetails.probationEndDate,
+      probationExtendedDate : this.getProbationDetails.probationExtendedDate,
+      status : this.getProbationDetails.status,
+      createdBy : this.getProbationDetails.createdBy,
+      updatedBy : this.getProbationDetails.updatedBy,
+      probationDays : this.getProbationDetails.probationDays,
+      raisedBy : this.getProbationDetails.raisedBy,
+      documentURL : docurl,
+      parentId : this.getProbationDetails.parentId,
+      probationExtendedCount : this.getProbationDetails.probationExtendedCount,
+      meta : this.getProbationDetails.meta,
+      appliedDate : this.getProbationDetails.appliedDate,
+      comments : this.getProbationDetails.comments
+    }
     this.getProbationDetails.documentURL = docurl;
-    this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', this.getProbationDetails).subscribe({
+    this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
       next: (data: any) => {
         console.log(data);
         this.Documenturlresult = data.documentURL;
@@ -228,8 +250,8 @@ export class ProbationExtensionLetterComponent {
   probationExtendeEmail() {
     let pdata =
     {
-      "employeeId": this.probationExtensionLetterData.employeeId,
-      "documentUrl": this.Documenturlresult
+      employeeId: this.probationExtensionLetterData.employeeId,
+      documentUrl: this.Documenturlresult
     }
     this.subscription = this.http.postdata(`CustomEmail/ExtensionofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {

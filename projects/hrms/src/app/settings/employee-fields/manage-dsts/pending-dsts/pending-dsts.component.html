@@ -1,0 +1,58 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Manage DST</span></div>
+        <div class="custom-add-btn" (click)="addDST()" *ngIf="rbac.allowedToAccess('Manage DST Tab.create')">
+            <i class="bi bi-plus plus-icon me-1"></i>Add New
+        </div>
+    </div>
+
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'Year' | translate}}</th>
+                    <th>{{"Location" | translate}}</th>
+                    <th>{{"sub Location" | translate}}</th>
+                    <th>{{"shift name" | translate}}</th>
+                    <th>{{'status' | translate}}</th>
+                    <th>{{'added by' | translate}}</th>
+                    <th class="text-center" *ngIf="rbac.allowedToAccess('Manage DST Tab.update')">{{'action(s)' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="pendingDSTs!.length > 0; else noDataTemplate">
+                    <tr *ngFor="let pendingDST of pendingDSTs; let i = index">
+                        <td>{{pendingDST.applicableYear}} </td>
+                        <td>{{pendingDST.jobLocationName}} </td>
+                        <td>{{pendingDST.jobSubLocationName}}</td>
+                        <td>{{pendingDST.shiftName}}</td>
+                        <td>{{pendingDST.status}} </td>
+                        <td>{{pendingDST.firstName}} {{pendingDST.middleName}} {{pendingDST.lastName}}</td>
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('Manage DST Tab.update')">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" (click)="navigateToUpdateDSTComponent(pendingDST)">
+                                            <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td colspan="7">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+    </div>
+</div>

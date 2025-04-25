@@ -8,6 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-basic-info',
@@ -15,7 +16,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
-export class BasicInfoComponent implements OnInit,OnDestroy{
+export class BasicInfoComponent implements OnInit, OnDestroy {
   basicInfoForm!: FormGroup;
   subscription!: Subscription
   emsployedata: any
@@ -31,10 +32,11 @@ export class BasicInfoComponent implements OnInit,OnDestroy{
     { name: 'O-' }
   ];
   Gender: IGender[] = [];
-  Titledetails: ITitle[] = [];
+  titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
   buttons = false
-  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService,
+    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -49,14 +51,14 @@ export class BasicInfoComponent implements OnInit,OnDestroy{
 
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
-      employeeId: ['', Validators.required],
-      fusionEmpId: ['', Validators.required],
+      employeeId: [null, Validators.required],
+      fusionEmpId: [null, Validators.required],
       salutation: [null, Validators.required],
-      firstName: ['', Validators.required],
-      middleName: [''],
-      lastName: ['', Validators.required],
+      firstName: [null, Validators.required],
+      middleName: [null],
+      lastName: [null, Validators.required],
       gender: [null, Validators.required],
-      dob: ['', Validators.required],
+      dob: [null, Validators.required],
       bloodGroup: [null, Validators.required],
       maritalStatus: [null, Validators.required],
     });
@@ -80,18 +82,16 @@ export class BasicInfoComponent implements OnInit,OnDestroy{
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       fusionEmpId: data.fusionEmpId,
-      salutation: data.title,
+       salutation: this.titledetails.find((item: any) => item.titlename === data.title)|| data.title,
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
-      gender: this.Gender.find((item: any) => item.genderName === data.gender || this.empinfo.gender) || this.empinfo.gender,
+      gender: data.gender,
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalStatus: this.Maritaldetails.find(
-        (item: any) => item.maritalstatus1 === data.maritalStatus
-      ),
+      maritalStatus: data.maritalStatus
     });
-    console.log(this.basicInfoForm.value);
+    console.log('datapatch',this.basicInfoForm.value);
 
   }
 
@@ -101,14 +101,14 @@ export class BasicInfoComponent implements OnInit,OnDestroy{
 
     const updatePayload = {
       employeeId: formValue.employeeId,
-      title: formValue.salutation,
+      title: formValue.salutation.titlename,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
-      gender: formValue.gender.genderName,
+      gender: formValue.gender,
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup.name,
-      maritalStatus: formValue.maritalStatus?.maritalstatus1,
+      maritalStatus: formValue.maritalStatus,
       empStatus: 'Active',
       emailaddress: this.empinfo.emailaddress,
       workEmail: this.empinfo.workEmail,
@@ -130,13 +130,13 @@ export class BasicInfoComponent implements OnInit,OnDestroy{
       probationStatus: this.empinfo.probationStatus,
       noticePeriod: this.empinfo.noticePeriod,
       backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-      issalaryhold:this.empinfo.issalaryhold,
+      issalaryhold: this.empinfo.issalaryhold,
       pf: this.empinfo.pf,
-      esic:this.empinfo.esic,
+      esic: this.empinfo.esic,
       pt: this.empinfo.pt,
       totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
       allowWFH: this.empinfo.allowWFH,
-      workLocation:this.empinfo.workLocation,
+      workLocation: this.empinfo.workLocation,
       wfhManagerId: this.empinfo.wfhManagerId
 
     };
@@ -171,7 +171,7 @@ export class BasicInfoComponent implements OnInit,OnDestroy{
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
-        this.Titledetails = data as ITitle[];
+        this.titledetails = data as ITitle[];
       },
     });
   }

@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { subLocationData } from './sub-location-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-sub-location',
@@ -23,6 +24,7 @@ export class SubLocationComponent {
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
+  locationDetail:any;
   @ViewChild('addpopup') addpopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   @ViewChild('deletepopup') deletepopup: any;
@@ -33,7 +35,8 @@ export class SubLocationComponent {
     private fb: FormBuilder, 
     private http: HttpService, 
     private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }
@@ -48,9 +51,15 @@ export class SubLocationComponent {
       updateLocation: ['', [Validators.required]],
     });
     this.getSubLocation();
-
+    this.getLocation();
   }
-
+  getLocation() {
+    this.http.getData('JobLocation/GetJobLocations').subscribe((data: any) => {
+      this.locationDetail = data;
+      // this.locationDetail = data.map((item: any) => item.jobLocationName);
+      console.log("joblocation", this.locationDetail);
+    });
+  }
   // // Method to open the add modal dialog
   openDialog() {
     this.modalService.open(this.addpopup, {

@@ -1,0 +1,48 @@
+.custom-btn-width {
+    font-size: var(--fontsize12);
+    width: max-content;
+    padding: 0.3rem 1rem;
+}
+
+.selected-data-content {
+    .custom-component-left-content,
+    .custom-setting-right-content {
+        height: calc(100dvh - 25rem);
+    }
+
+    .selected-fields-table {
+        height: calc(100dvh - 30rem);
+    }
+
+    .custom-data-table {
+        height: calc(100dvh - 20rem);
+
+        .custom-table-content {
+            height: calc(100dvh - 25rem);
+        }
+    }
+}
+
+.custom-fields-content {
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid #DEE8F3;
+
+        th {
+            background-color: #EDF5FF;
+            padding: 0.5rem;
+            color: #222222;
+            font-size: var(--fontsize14);
+            font-weight: 500;
+        }
+
+        td {
+            color: #222222;
+            font-size: var(--fontsize14);
+            font-weight: 400;
+            padding: 0.25rem 0.75rem;
+        }
+    }
+}

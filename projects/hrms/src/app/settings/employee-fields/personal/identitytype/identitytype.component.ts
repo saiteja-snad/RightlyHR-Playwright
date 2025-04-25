@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-identitytype',
@@ -31,15 +32,16 @@ export class IdentitytypeComponent {
     private http: HttpService, 
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }
   ngOnInit(): void {
     this.IdentityForm = this.fb.group({
-      IdentityType: ['', [Validators.required]]
+      IdentityType: ['', [Validators.required,Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      IdentityType: ['', [Validators.required]]
+      IdentityType: ['', [Validators.required, Validators.maxLength(50)]]
     });
 
     this.getIdentityType();
@@ -60,7 +62,7 @@ export class IdentitytypeComponent {
     this.subscription = this.http.postdata('IdentityType', request).subscribe({
       next: () => {
         this.getIdentityType();
-        this.conformationPopup.openSuccessModal('Identity type added successfully');
+        this.conformationPopup.openSuccessModal('Identity Type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -83,7 +85,7 @@ export class IdentitytypeComponent {
           this.getIdentityType();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Identity type updated successfully');
+          this.conformationPopup.openSuccessModal('Identity Type updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -118,7 +120,7 @@ export class IdentitytypeComponent {
       next: () => {
         this.getIdentityType();
         modal.close();
-        this.conformationPopup.openSuccessModal('Identity type deleted successfully');
+        this.conformationPopup.openSuccessModal('Identity Type deleted successfully');
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

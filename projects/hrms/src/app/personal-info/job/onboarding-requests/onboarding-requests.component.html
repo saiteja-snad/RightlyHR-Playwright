@@ -1,16 +1,13 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center">
-        <div> <span class="education-sub-header">Onboarding Request</span></div>
-        <div class="plus-button">
-            <!-- @if((!isStatusAllowed() && isTrainingEndDateComplete()) || (buttonviewwhenExtended && !isStatusAllowed())){ -->
-             @if(this.rbac.allowedToAccess('Employee Onboarding Request.view') && empdata.empstatus.toLowerCase() !== 'trainee active'){
-                <a class="anchor " (click)="requestForOnboard()"><i class="bi bi-plus plus-icon "></i> <span
-                    class="plus-text">Request For Onboard</span>
-            </a>
-             }
-            <!-- } -->
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Onboarding Request</span></div>
+        @if(this.rbac.allowedToAccess('Employee Onboarding Request.view') && empdata.empstatus.toLowerCase() ==
+        'trainee active' && dynamicData.value.length<=0){
+        <div class="custom-add-btn" (click)="requestForOnboard()"><i class="bi bi-plus plus-icon me-1"></i>Request For
+            Onboard</div>
+        }
     </div>
+
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
@@ -18,53 +15,51 @@
                     <th>REQUEST DATE</th>
                     <th>INTERNSHIP START DAY</th>
                     <th>INTERNSHIP END DAY</th>
-                    <th class="text-center">INTERNSHIP EXTENDED DATE</th>
-                    <th class="text-center">STATUS</th>
-                    <th class="text-center">INTERNSHIP FEEDBACK</th>
+                    <th >INTERNSHIP EXTENDED DATE</th>
+                    <th >STATUS</th>
+                    <th >INTERNSHIP FEEDBACK</th>
+                    <th ></th>
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="((dynamicData | async) ?? []).length > 0; else noDataTemplate">
-                <tr *ngFor="let item of dynamicData |async">
-                    <td>{{ item.requestedDate | dateformat }}</td>
-                    <td>{{ item.trainingStartDate | dateformat }}</td>
-                    <td>{{ item.trainingEndDate | dateformat }}</td>
-                    <td class="text-center">{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}
-                    </td>
-                    <td class="text-center">{{ item.status }}</td>
-                    <td class="text-center">
-                        <span *ngIf="item.feedbackComments;else feedbackComment">
-                            <div class="text-center" data-bs-toggle="modal" data-bs-target="#CommentsPopup"
-                                (click)="fustiontostorefeedback(item.feedbackComments)">
-                                <i class="bi bi-info-circle-fill "></i>
+                    <tr *ngFor="let item of dynamicData |async">
+                        <td>{{ item.requestedDate | dateformat }}</td>
+                        <td>{{ item.trainingStartDate | dateformat }}</td>
+                        <td>{{ item.trainingEndDate | dateformat }}</td>
+                        <td >{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}
+                        </td>
+                        <td >{{ item.status }}</td>
+                        <td class="text-center">
+                            <span *ngIf="item.feedbackComments;else feedbackComment">
+                                <div  data-bs-toggle="modal" data-bs-target="#CommentsPopup"
+                                    (click)="fustiontostorefeedback(item.feedbackComments)">
+                                    <i class="bi bi-info-circle-fill "></i>
+                                </div>
+                            </span>
+                            <ng-template #feedbackComment>-</ng-template>
+                        </td>
+
+                        <td *ngIf=" item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' "
+                            [ngClass]="{ 'disabled-button': isEditing }">
+
+                            <a class="nav-link" data-bs-toggle="dropdown"><i
+                                    class="bi bi-three-dots-vertical change"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications menu-card">
+                                <a 
+                                    (click)="onboardstatuschange();openmodel(readyforonboard) ">Ready for Onboard</a>
                             </div>
-                        </span>
-                        <ng-template #feedbackComment>-</ng-template>
-                    </td>
-
-                    <td><span *ngIf="item.reason"> {{ item.reason }}</span>
-                        <ng-template #reason>-</ng-template>
-                    </td>
-                    <td *ngIf=" item.status=='Processed'&& Readyforonboardbutton "
-                        [ngClass]="{ 'disabled-button': isEditing }">
-
-                        <a class="nav-link" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical change"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications menu-card">
-                            <a style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#offerLetterModal"
-                                (click)="onboardstatuschange() ">Ready for Onboard</a>
-
-                        </div>
-                    </td>
-                </tr>
-            </ng-container>
-            <ng-template #noDataTemplate>
-                <tr>
-                    <td>
-                        <app-no-data-found />
-                    </td>
-                </tr>
-            </ng-template>
+                        </td>
+                    </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td>
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </ng-template>
             </tbody>
         </table>
     </div>
@@ -97,9 +92,7 @@
                 <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 <div class="card mb-3">
-
                     <div class="cardd">
                         <div class=" row w-100 m-0 p-0">
                             <div class="p-0">
@@ -116,18 +109,17 @@
     </div>
 </div>
 
-
-<ng-template #offerLetterModal let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="./assets/images/Vector@2x.png" alt="" class="exclalmation-img ">
-        </div>
-        <div class=" text-center mb-3">
-            Are you sure you want to Onboard?
-        </div>
-        <div class="text-center mb-4">
-            <!-- <button type="button" class="btn btn-primary" (click)="jobtab(job)">Yes</button> -->
-            <button type="button" class="btn btn-secondary ms-2" (click)="closeonBoard()">No</button>
+<ng-template #readyforonboard let-modal>
+    <div class="custom-main-popup-container p-5" ngbAutofocus>
+        <div class="custom-main-popup-content text-center">
+            <div class="mb-5">
+                <img src="images\conformation.png" alt="Confirmation icon" class="confirmation-icon mb-3">
+                <p class="confirmation-text">Are you sure you want to Onboard?</p>
+            </div>
+            <div class="d-flex gap-5 w-100">
+                <button class="custom-btn btn-secondary w-50" (click)="closeonBoard()">Close</button>
+                <button class="custom-btn btn-primary w-50" (click)="jobtab()">Yes</button>
+            </div>
         </div>
     </div>
 </ng-template>

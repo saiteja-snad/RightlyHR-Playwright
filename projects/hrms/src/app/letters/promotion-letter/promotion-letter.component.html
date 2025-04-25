@@ -1,361 +1,361 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex py-3">
-            <div>
-                <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i
-                        class="bi bi-arrow-90deg-left me-2"></i>{{'Dashboard'| translate }}</p>
-            </div>
-            <div>
-                <span class="heading"><span class="px-2">>></span>{{'Promotion Letter'| translate }}</span>
-            </div>
+        <div>
+            <p class="component-header mb-0">
+                <i class="bi bi-arrow-90deg-left me-2" (click)="navigateDashboard()"></i>Promotion Letter
+            </p>
         </div>
     </div>
 
     <!--letter content-->
-    <div class="main-letter-content row">
-        <div class="col-sm-12 col-md-3">
-            <div class="card letter-fields-content p-4">
-                <form [formGroup]="employeeForm" (ngSubmit)="postPromotionLetterFormSubmit(employeeForm)">
-                    <div class="row">
-                        <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Search Employee'| translate }}<span class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
-                                    placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
-                                    (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
-                                </p-select>
-                                <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
-                                    <div class="error-msg">{{'Employee is required'| translate }}</div>
-                                </div>
-                                <small *ngIf="!disablebuttonforemployeeid" class="error-msg">
-                                    <p>{{'No results found'| translate }}</p>
-                                </small>
+    <div class="main-letter-content gap-4 d-flex w-100">
+        <div class="card letter-fields-content p-4">
+            <form [formGroup]="employeeForm" (ngSubmit)="postPromotionLetterFormSubmit(employeeForm)">
+                <div class="row">
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Search Employee'|
+                            translate }}<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
+                                filterBy="fullName" [showClear]="true" placeholder="Please select employee"
+                                formControlName="fusionEmpId" class="custom-select w-100"
+                                (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+                            </p-select>
+                            <div
+                                *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                                <div class="error-msg">{{'Employee is required'| translate }}</div>
                             </div>
+                            <small *ngIf="!disablebuttonforemployeeid" class="error-msg">
+                                <p>{{'No results found'| translate }}</p>
+                            </small>
                         </div>
-                        <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">{{'Date'| translate }} <span
-                                    class="error-msg">*</span></label>
-                            <input type="date" class="form-control custom-input" id="relievingDate"
-                                formControlName="dateofpromotion" [(ngModel)]="promotiondata.dateofpromotion"
-                                placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false"
-                                [ngClass]="{ 'is-invalid': employeeForm.get('dateofpromotion')?.invalid && employeeForm.get('dateofpromotion')?.touched || !isdateofpromotion }" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label custom-label mb-2">{{'Date'| translate }} <span
+                                class="error-msg">*</span></label>
+                        <input type="date" class="form-control custom-input" id="relievingDate"
+                            formControlName="dateofpromotion" [(ngModel)]="promotiondata.dateofpromotion"
+                            placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false"
+                            [ngClass]="{ 'is-invalid': employeeForm.get('dateofpromotion')?.invalid && employeeForm.get('dateofpromotion')?.touched || !isdateofpromotion }" />
 
-                            <!-- Error block shows for both required and custom logic -->
-                            <div *ngIf="employeeForm.get('dateofpromotion')?.touched">
-                                <div *ngIf="employeeForm.get('dateofpromotion')?.hasError('required')"
-                                    class="error-msg">
-                                    {{'Date is required'| translate }}
-                                </div>
-                                <small *ngIf="!isdateofpromotion" class="error-msg">
-                                    {{'Date should be after the date of probition end date'| translate }}
-                                </small>
+                        <!-- Error block shows for both required and custom logic -->
+                        <div *ngIf="employeeForm.get('dateofpromotion')?.touched">
+                            <div *ngIf="employeeForm.get('dateofpromotion')?.hasError('required')" class="error-msg">
+                                {{'Date is required'| translate }}
                             </div>
+                            <small *ngIf="!isdateofpromotion" class="error-msg">
+                                {{'Date should be after the date of probition end date'| translate }}
+                            </small>
                         </div>
-                        <div class="col-md-12 mb-4">
-                            <label class="form-label custom-label mb-2">{{'Document Type'| translate }} <span class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">                           
-                                <p-select [options]="employeementType" optionLabel="name" optionValue="value"
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label custom-label mb-2">{{'Document Type'| translate }} <span
+                                class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" optionValue="value"
                                 placeholder="Please select document type" [showClear]="true"
                                 [(ngModel)]="promotiondata.Documenttype" formControlName="Documenttype"
                                 inputId="documenttype" class="form-select custom-select">
                             </p-select>
-                            </div>
-                            <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
-                                <div class="error-msg">{{'Document Type is required'| translate }}</div>
-                            </div>
                         </div>
-                        <div class="col-xl-12 mb-4">
-                            <label class="form-label custom-label mb-2">{{'Note'| translate }}</label>
-                            <textarea class="form-control custom-input" formControlName="note"  [(ngModel)]="promotiondata.notes"
-                                placeholder="Leave a comment here"></textarea>
-                                <span>{{promotiondata.notes?.length?promotiondata.notes?.length:0}} /250</span>
-                                <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
-                                  <div class="error-msg">{{'Note is required'| translate }}</div>
-                              </div>
+                        <div
+                            *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+                            <div class="error-msg">{{'Document Type is required'| translate }}</div>
                         </div>
+                    </div>
+                    <div class="col-xl-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Note'| translate }}</label>
+                        <textarea class="form-control custom-input" formControlName="note"
+                            [(ngModel)]="promotiondata.notes" placeholder="Leave a comment here"></textarea>
+                        <span>{{promotiondata.notes?.length?promotiondata.notes?.length:0}} /250</span>
+                        <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
+                            <div class="error-msg">{{'Note is required'| translate }}</div>
+                        </div>
+                    </div>
 
-                        <div class="col-md-12 mb-4">
-                            <label for="exampleFormControlInput1" class="form-label custom-label mb-2"> {{'Signature Authority Name'| translate }}
-                              <span class="error-msg">*</span></label>
-                            <div class="custom-p-select-content">
-                              <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId" placeholder="Please select sub location"
-                                class="form-select custom-select" [(ngModel)]="promotiondata.authorityid" formControlName="authorityid" (onChange)="onclickDesignation()" />
-                            </div>
-                            <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                              <div class="error-msg">{{'Signature Authority Name is required'| translate }}</div>
-                            </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature
+                            Authority Name'|
+                            translate }}
+                            <span class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
+                                placeholder="Please select sub location" class="form-select custom-select"
+                                [(ngModel)]="promotiondata.authorityid" formControlName="authorityid"
+                                (onChange)="onclickDesignation()" />
                         </div>
-
+                        <div
+                            *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
+                            <div class="error-msg">{{'Signature Authority Name is required'| translate }}</div>
+                        </div>
                     </div>
-                    <div>
-                        <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please update the Employee Name,
-                            Address, Mobile Number, Email ID, Designation, PT, PF, ESIC, Place(work location),
-                            Salary in Personal and Job Tabs Before Generating the Document.</p>
-                    </div>
-                    <div class="d-flex flex-wrap gap-3 pt-4">
-                        <button type="submit" class="custom-btn btn-primary"[disabled]="!isdateofpromotion||!disablebuttonforemployeeid||!disablebuttonforauthority">{{'Generate Document'| translate }}</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div>
+                    <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please update the
+                        Employee Name,
+                        Address, Mobile Number, Email ID, Designation, PT, PF, ESIC, Place(work location),
+                        Salary in Personal and Job Tabs Before Generating the Document.</p>
+                </div>
+                <div class="d-flex flex-wrap gap-3 pt-4">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="!isdateofpromotion||!disablebuttonforemployeeid||!disablebuttonforauthority">
+                        {{'Generate Document'| translate }}</button>
+                </div>
+            </form>
         </div>
 
-        <div class="col-sm-12 col-md-9 cols-lg-8 col-xl-8 col-xxl-7">
-            <div class="card letter-data-content p-4">
-                <div class="d-flex justify-content-center">
-                    <div>
-                        <!--page-1-->
-                        <div class="letter-page-content" id="pdfContent1">
-                            <div class="letter-page-sub-content">
-                                <div *ngIf="promotiondata.Documenttype; else doc">
-                                    <app-lettersheader></app-lettersheader>
-                                </div>
-                                <ng-template #doc>
-                                    <div style="margin-bottom: 6.5rem;"></div>
-                                </ng-template>
-                                <!-- start of letter -->
-                                <div class="row">
-                                    <div class="mb-2 mt-2">
-                                        <div class="heading-div"><span class="letter-heading-all">Promotion Letter</span></div>
-                                    </div>
-                                    <div class="date-div mb-3">
-                                        <div class="date-div"><span class="letter-headingpromotion">Date: </span><span
-                                                class="letter-text">{{promotiondata.dateofpromotion| dateformat}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- start of paragraphs -->
+        <div class="card letter-data-content p-4">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <!--page-1-->
+                    <div class="letter-page-content" id="pdfContent1">
+                        <div class="letter-page-sub-content">
+                            <div *ngIf="promotiondata.Documenttype; else doc" class="soft-copy-letter">
+                                <app-lettersheader></app-lettersheader>
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
+                            <!-- start of letter -->
+                            <div class="letter-header text-center mb-4">Promotion Letter</div>
+                            <div class="mb-3"><span class="letter-sub-header">Date: </span>
+                                {{promotiondata.dateofpromotion| dateformat}}</div>
+                            <!-- start of paragraphs -->
+                            <div class="letter-sub-header mb-3">
+                                <p class="letter-headingpromotion mb-3">Dear {{promotiondata.firstName}}
+                                    {{promotiondata.middleName}} {{promotiondata.lastName}},</p>
+                            </div>
+                            <!-- second paragraph -->
+                                <p>
+                                    I hope this letter finds you well. Based on your exceptional performance, dedication
+                                    and contributions to our organization, you have been promoted to the position of
+                                    <b>{{promotiondata.jobRole}}</b>.
+                                    As a token of our appreciation for your exceptional performance, we are pleased to
+                                    inform you that you will be receiving a salary increase. Your new salary shall be
+                                    effective from
+                                    <span
+                                        *ngIf="!promotiondata.compeffectivedate;else effectivedate">_______________________</span>
+                                    <ng-template #effectivedate><b>{{promotiondata.compeffectivedate | dateformat}}
+                                        </b></ng-template> & with revised annual CTC of<b><span
+                                            *ngIf="!promotiondata.salary;else grossperanum"> </span>
+                                        <ng-template #grossperanum> &#8377;{{promotiondata.salary }}
+                                            /-.</ng-template></b>
+                                </p>
+                            <!-- <div class="table-scroll"> -->
+                            <!-- start of  first table -->
+                            <div class="salary-details-table mb-3">
+                                <table class="w-100">
+                                    <thead>
+                                        <tr>
+                                            <th class="p-1">Components in Salary</th>
+                                            <th class="text-end p-1">Per Month</th>
+                                            <th class="text-end p-1">Per Annum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="p-1">Basic Salary</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.basicSalary;else basic"></span>
+                                            </td>
+                                            <ng-template #basic
+                                                class="text-end p-1">{{promotiondata.basicSalary}}</ng-template>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.basicPerannum;else basicper"></span>
+                                                <ng-template #basicper>{{promotiondata.basicPerannum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1">HRA</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.hraSalary;else hra"></span>
+                                                <ng-template #hra>{{promotiondata.hraSalary}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.hraPerAnnum;else hraper"></span>
+                                                <ng-template #hraper>{{promotiondata.hraPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1">Educational Allowances</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.educationAllowances;else educ"> </span>
+                                                <ng-template #educ>{{promotiondata.educationAllowances}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.educationallowancesPerAnnum;else educper">
+                                                </span>
+                                                <ng-template
+                                                    #educper>{{promotiondata.educationallowancesPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1">Conveyance</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.Conveyance;else conv"></span>
+                                                <ng-template #conv>{{promotiondata.Conveyance}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.conveyancePerAnnum;else convper"></span>
+                                                <ng-template #convper>{{promotiondata.conveyancePerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1">Other allowances</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.otherAllowances;else other"> </span>
+                                                <ng-template #other>{{promotiondata.otherAllowances}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span
+                                                    *ngIf="!promotiondata.otherAllowancesPerAnnum;else otherper"></span>
+                                                <ng-template
+                                                    #otherper>{{promotiondata.otherAllowancesPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1"><b>Total Gross Salary</b></td>
+                                            <td class="text-end p-1 bold">
+                                                <span *ngIf="!promotiondata.totalGrossSalary;else totalgross"> </span>
+                                                <ng-template
+                                                    #totalgross>{{promotiondata.totalGrossSalary}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1 bold">
+                                                <span
+                                                    *ngIf="!promotiondata.totalGrossPerAnnum;else totalgrossper"></span>
+                                                <ng-template
+                                                    #totalgrossper>{{promotiondata.totalGrossPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1">PF Contribution by Employee</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.pfContribution;else pf"> </span>
+                                                <ng-template #pf>{{promotiondata.pfContribution}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.pfPreAnuum;else pfper"></span>
+                                                <ng-template #pfper>{{promotiondata.pfPreAnuum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1">ESI Contribution by Employee</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.employeeEsi;else esiemployees"> </span>
+                                                <ng-template #esiemployees>{{promotiondata.employeeEsi}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span
+                                                    *ngIf="!promotiondata.esiPerAnnumemployee;else esiemployee"></span>
+                                                <ng-template
+                                                    #esiemployee>{{promotiondata.esiPerAnnumemployee}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1">Professional Tax (PT)</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.professionalTax;else pftax"> </span>
+                                                <ng-template #pftax>{{promotiondata.professionalTax}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.professionalPerAnnum;else pftaxper"> </span>
+                                                <ng-template
+                                                    #pftaxper>{{promotiondata.professionalPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1"><b>Total Deductions (PF+ESI)</b></td>
+                                            <td class="text-end p-1 bold">
+                                                <span *ngIf="!promotiondata.totalDeduction;else totdec"> </span>
+                                                <ng-template #totdec>{{promotiondata.totalDeduction}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1 bold">
+                                                <span *ngIf="!promotiondata.totalDeductionsPerAnnum;else totdecper">
+                                                </span>
+                                                <ng-template
+                                                    #totdecper>{{promotiondata.totalDeductionsPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1"><b>Net Salary</b></td>
+                                            <td class="text-end p-1 bold">
+                                                <span *ngIf="!promotiondata.netSalary;else net"> </span>
+                                                <ng-template #net>{{promotiondata.netSalary}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1 bold">
+                                                <span *ngIf="!promotiondata.netSalaryPerAnnum;else netper"> </span>
+                                                <ng-template #netper>{{promotiondata.netSalaryPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="salary-details-table mb-3">
+                                <table class="secondtable w-100">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center;" colspan="3">CTC Calculation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="width:56%;" class="p-1">Employer PF Contribution</td>
+                                            <td style="width:21%;" class="text-end p-1">
+                                                <span *ngIf="!promotiondata.pfContribution;else pfempr"> </span>
+                                                <ng-template #pfempr>{{promotiondata.pfContribution}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.pfPreAnuum;else pfempper"> </span>
+                                                <ng-template #pfempper>{{promotiondata.pfPreAnuum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1">Employer ESI Contribution</td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.esicContribution;else esiempr"> </span>
+                                                <ng-template #esiempr>{{promotiondata.esicContribution}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1">
+                                                <span *ngIf="!promotiondata.esiPerAnnum;else esiempper"> </span>
+                                                <ng-template #esiempper>{{promotiondata.esiPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1"><b>CTC=Gross Salary +(PF+ESI)</b></td>
+                                            <td class="text-end p-1 bold">
+                                                <span *ngIf="!promotiondata.grossSalary;else gross"> </span>
+                                                <ng-template #gross>{{promotiondata.grossSalary}}</ng-template>
+                                            </td>
+                                            <td class="text-end p-1 bold">
+                                                <span *ngIf="!promotiondata.salary;else grossper"> </span>
+                                                <ng-template #grossper>{{promotiondata.salary}}</ng-template>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                            <p>{{promotiondata.notes}}</p>
+                            <div>
+                                <p> We hope that you will continue your progress with the same dedication and commitment. </p>
+                                <p>Once again, congratulations on your success and cheers to more good work in the future. </p>
+                                <p>We wish you all the best.</p>
+                            </div>
+
+                            <div>
+                                <p class="mb-0"><Span>Sincerely, </Span></p>
+                                <p class="letter-sub-header">for RightlyHR</p>
+                            </div>
+                            <div>
+                                <div style="font-family: Segoe script; font-size: large;" class="mt-4">{{promotiondata.authorityName}}</div>
                                 <div>
-                                    <p class="letter-headingpromotion mb-3">Dear {{promotiondata.firstName}}
-                                        {{promotiondata.middleName}} {{promotiondata.lastName}},</p>
-                                </div>
-                                <!-- second paragraph -->
-                                <div class="mb-3 mt-3">
-                                    <p class="letter-text">
-                                        I hope this letter finds you well. Based on your exceptional performance, dedication
-                                        and contributions to our organization, you have been promoted to the position of
-                                        <b>{{promotiondata.jobRole}}</b>.
-                                        As a token of our appreciation for your exceptional performance, we are pleased to
-                                        inform you that you will be receiving a salary increase. Your new salary shall be
-                                        effective from
-                                        <span *ngIf="!promotiondata.compeffectivedate;else effectivedate">_______________________</span>
-                                        <ng-template #effectivedate><b>{{promotiondata.compeffectivedate | dateformat}}
-                                            </b></ng-template> & with revised annual CTC of<b><span
-                                                *ngIf="!promotiondata.salary;else grossperanum"> </span>
-                                        <ng-template #grossperanum> &#8377;{{promotiondata.salary }} /-.</ng-template></b>
-                                    </p>
-                                </div>
-                                <!-- <div class="table-scroll"> -->
-                                <!-- start of  first table -->
-                                <div class="ms-3 me-3">
-                                    <table class="mytable mb-2 w-100">
-                                        <thead>
-                                            <tr>
-                                                <th class="p-1">Components in Salary</th>
-                                                <th class="text-end p-1">Per Month</th>
-                                                <th class="text-end p-1">Per Annum</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="p-1">Basic Salary</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.basicSalary;else basic"></span>
-                                                </td>
-                                                <ng-template #basic class="text-end p-1">{{promotiondata.basicSalary}}</ng-template>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.basicPerannum;else basicper"></span>
-                                                    <ng-template #basicper>{{promotiondata.basicPerannum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1">HRA</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.hraSalary;else hra"></span>
-                                                    <ng-template #hra>{{promotiondata.hraSalary}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.hraPerAnnum;else hraper"></span>
-                                                    <ng-template #hraper>{{promotiondata.hraPerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1">Educational Allowances</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.educationAllowances;else educ"> </span>
-                                                    <ng-template #educ>{{promotiondata.educationAllowances}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.educationallowancesPerAnnum;else educper">
-                                                    </span>
-                                                    <ng-template #educper>{{promotiondata.educationallowancesPerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1">Conveyance</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.Conveyance;else conv"></span>
-                                                    <ng-template #conv>{{promotiondata.Conveyance}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.conveyancePerAnnum;else convper"></span>
-                                                    <ng-template #convper>{{promotiondata.conveyancePerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1">Other allowances</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.otherAllowances;else other"> </span>
-                                                    <ng-template #other>{{promotiondata.otherAllowances}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.otherAllowancesPerAnnum;else otherper"></span>
-                                                    <ng-template #otherper>{{promotiondata.otherAllowancesPerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1"><b>Total Gross Salary</b></td>
-                                                <td class="text-end p-1 bold">
-                                                    <span *ngIf="!promotiondata.totalGrossSalary;else totalgross"> </span>
-                                                    <ng-template #totalgross>{{promotiondata.totalGrossSalary}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1 bold">
-                                                    <span *ngIf="!promotiondata.totalGrossPerAnnum;else totalgrossper"></span>
-                                                    <ng-template #totalgrossper>{{promotiondata.totalGrossPerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1">PF Contribution by Employee</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.pfContribution;else pf"> </span>
-                                                    <ng-template #pf>{{promotiondata.pfContribution}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.pfPreAnuum;else pfper"></span>
-                                                    <ng-template #pfper>{{promotiondata.pfPreAnuum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1">ESI Contribution by Employee</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.employeeEsi;else esiemployees"> </span>
-                                                    <ng-template #esiemployees>{{promotiondata.employeeEsi}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.esiPerAnnumemployee;else esiemployee"></span>
-                                                    <ng-template #esiemployee>{{promotiondata.esiPerAnnumemployee}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1">Professional Tax (PT)</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.professionalTax;else pftax"> </span>
-                                                    <ng-template #pftax>{{promotiondata.professionalTax}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.professionalPerAnnum;else pftaxper"> </span>
-                                                    <ng-template #pftaxper>{{promotiondata.professionalPerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1"><b>Total Deductions (PF+ESI)</b></td>
-                                                <td class="text-end p-1 bold">
-                                                    <span *ngIf="!promotiondata.totalDeduction;else totdec"> </span>
-                                                    <ng-template #totdec>{{promotiondata.totalDeduction}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1 bold">
-                                                    <span *ngIf="!promotiondata.totalDeductionsPerAnnum;else totdecper"> </span>
-                                                    <ng-template #totdecper>{{promotiondata.totalDeductionsPerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1"><b>Net Salary</b></td>
-                                                <td class="text-end p-1 bold">
-                                                    <span *ngIf="!promotiondata.netSalary;else net"> </span>
-                                                    <ng-template #net>{{promotiondata.netSalary}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1 bold">
-                                                    <span *ngIf="!promotiondata.netSalaryPerAnnum;else netper"> </span>
-                                                    <ng-template #netper>{{promotiondata.netSalaryPerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="ms-3 me-3 mt-4">
-                                    <table class="secondtable w-100">
-                                        <thead>
-                                            <tr>
-                                                <th style="text-align: center;" colspan="3">CTC Calculation</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td style="width:56%;" class="p-1">Employer PF Contribution</td>
-                                                <td style="width:21%;" class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.pfContribution;else pfempr"> </span>
-                                                    <ng-template #pfempr>{{promotiondata.pfContribution}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.pfPreAnuum;else pfempper"> </span>
-                                                    <ng-template #pfempper>{{promotiondata.pfPreAnuum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1">Employer ESI Contribution</td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.esicContribution;else esiempr"> </span>
-                                                    <ng-template #esiempr>{{promotiondata.esicContribution}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1">
-                                                    <span *ngIf="!promotiondata.esiPerAnnum;else esiempper"> </span>
-                                                    <ng-template #esiempper>{{promotiondata.esiPerAnnum}}</ng-template>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-1"><b>CTC=Gross Salary +(PF+ESI)</b></td>
-                                                <td class="text-end p-1 bold">
-                                                    <span *ngIf="!promotiondata.grossSalary;else gross"> </span>
-                                                    <ng-template #gross>{{promotiondata.grossSalary}}</ng-template>
-                                                </td>
-                                                <td class="text-end p-1 bold">
-                                                    <span *ngIf="!promotiondata.salary;else grossper"> </span>
-                                                    <ng-template #grossper>{{promotiondata.salary}}</ng-template>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <br>
-                                <p class="letter-text">{{promotiondata.notes}}</p>
-                                <div class="">
-                                    <p class="letter-text"> We hope that you will continue your progress with the same
-                                        dedication and commitment. </p>
-                                    <p class="letter-text">Once again, congratulations on your success and cheers to more
-                                        good work in the future. </p>
-                                    <p class="letter-text">We wish you all the best.</p>
-                                </div>
-        
-                                <div class="text-content-div">
-                                    <p style="margin-bottom: 0rem;"><Span class="letter-text">Sincerely, </Span></p>
-                                    <p class="letter-headingpromotion"><b>for RightlyHR</b>
-                                        <br>
-                                    </p>
-                                </div>
-                                <div>
-                                    <div style="font-family: Segoe script; font-size: large;" class="mt-4">
-                                        {{promotiondata.authorityName}}</div>
-                                    <div class="stamp-img">
-                                        <p class="m-0 paragraph boldsize1"><span> {{promotiondata.authorityName}}</span></p>
-                                        <p class="m-0 paragraph boldsize1"><span class="letter-text">{{authorityDesignation}}</span></p>
-                                        <br>
-                                    </div>
+                                    <p class="letter-sub-header">{{promotiondata.authorityName}}</p>
+                                    <p class="letter-sub-header">{{authorityDesignation}}</p>
                                 </div>
                             </div>
-                            <div class="letter-footer text-center">
-                                <p class="company-name">RightlyHR</p>
-                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
-                                    Gachibowli, HYD - 500032</p>
-                            </div>
+                        </div>
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
                 </div>
@@ -363,16 +363,17 @@
         </div>
     </div>
 </div>
-            <ng-template #successhide let-model>
-                <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-                    <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-                    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-                </div>
-            </ng-template>
 
-            <ng-template #errorhide let-model>
-                <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-                    <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-                    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
-                </div>
-            </ng-template>
+<ng-template #successhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+        <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
+    </div>
+</ng-template>
+
+<ng-template #errorhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+        <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
+    </div>
+</ng-template>

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-wfh-entitlemen-criteria',
   imports: [CommonModule, NoDataFoundComponent,FormsModule],
@@ -21,7 +22,7 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
   currentEntity!:string;
   validationError!:any;
 
-  constructor(private http: HttpService,private sharedModalService: OpenModalService,) {}
+  constructor(private http: HttpService,private sharedModalService: OpenModalService,public rbac: RbacService) {}
 
   ngOnInit(): void {
     this.WorkFromHomeEligibilityCriteria('WorkFromHomeEligibilityCriteria');

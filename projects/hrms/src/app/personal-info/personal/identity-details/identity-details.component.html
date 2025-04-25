@@ -1,15 +1,12 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center">
-        <div> <span class="identity-sub-header">Identity Details</span></div>
-        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective')){
-        <div class="plus-button">
-            <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
-                    (click)="openModal(addEducationmodal)" class="plus-text">Add
-                    New</span></span>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Identity Details</span></div>
+        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
+        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+        <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
         }
     </div>
-    <div class="custom-table-content mt-2">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
@@ -19,21 +16,19 @@
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase()
                     !== 'trainee prospective')){
                     <th class="text-center">Actions</th>}
-
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let identityDetails of getIdentitydetails | async">
-
                         <td>{{ identityDetails.identityType }}</td>
                         <td>{{ identityDetails.identityNumber }}</td>
-                        <td><span *ngIf="identityDetails.attachment;else noData" class="dowload-text"
-                                (click)="onSelectIdentityAttachmentDownload(identityDetails)"
-                                style="cursor: pointer;"><i
-                                    class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
-                                #noData>-</ng-template></td>
-                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective')){
+                        <td>
+                            <span *ngIf="identityDetails.attachment;else noData" class="dowload-text cursor" (click)="onSelectIdentityAttachmentDownload(identityDetails)">
+                                <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
+                        </td>
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
@@ -65,12 +60,12 @@
             </ng-template>
         </table>
     </div>
-
 </div>
 
+<!--Add popup-->
 <ng-template #addEducationmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add Identiy Details</p>
             </div>
@@ -85,7 +80,7 @@
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Type<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-dropdown [options]="getidentitydropdetails" optionLabel="documentName"
+                            <p-dropdown [options]="getidentitydropdetails" optionLabel="identityType1"
                                 formControlName="identityType" placeholder="Please select identity type"
                                 class="form-select custom-select"></p-dropdown>
                         </div>
@@ -101,10 +96,8 @@
                         <input type="text" formControlName="identityNumber" [maxlength]="IdentityMaxNumber"
                             [minlength]="IdentityMinNumber" class="form-control custom-input"
                             id="exampleFormControlInput1" placeholder="Please enter Identity Number">
-                        <div class="error-msg" *ngIf="
-                            identityForm.get('identityNumber')?.invalid &&
-                            (identityForm.get('identityNumber')?.touched || identityForm.get('identityNumber')?.dirty)
-                          ">
+                        <div class="error-msg" *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched 
+                        || identityForm.get('identityNumber')?.dirty)">
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['required']">
                                 Identity Number is required
                             </div>
@@ -116,8 +109,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
+               
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
@@ -135,7 +127,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3 mt-4">
+                <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid">Add</button>
                 </div>
@@ -144,10 +136,10 @@
     </div>
 </ng-template>
 
-
+<!--Update popup-->
 <ng-template #updateidentityModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Identiy Details</p>
             </div>
@@ -162,7 +154,7 @@
                         <label for="identityType" class="form-label custom-label mb-2">Identity Type<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-dropdown [options]="getidentitydropdetails" optionLabel="documentName"
+                            <p-dropdown [options]="getidentitydropdetails" optionLabel="identityType1"
                                 formControlName="identityupdateType" placeholder="Please select identity type"
                                 class="form-select custom-select"></p-dropdown>
                         </div>
@@ -191,9 +183,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
@@ -207,33 +197,30 @@
                             <b>{{ displayidentiydocument?.name || displayidentiydocument }}</b>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
-                                The file size should be less than 25MB.</p>
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed. The file size should be less than 25MB.</p>
                         </div>
-
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3 mt-4">
+                <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="identityupdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid">Update</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
 
+<!--Delete popup-->
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
             <p class="confirmation-text mb-4">Are you sure you want to delete the Identity Details?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
+        <div class="d-flex justify-content-center gap-3">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="identityDelete()">Yes</button>
         </div>
     </div>
-
 </ng-template>

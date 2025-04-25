@@ -7,12 +7,15 @@ import { ClaimsandexpensesLayoutComponent } from "../../claimsandexpenses/claims
 import { MsalGuard } from "@azure/msal-angular";
 import { PersonalinfoLayoutComponent } from "../../personal-info/personalinfo-layout/personalinfo-layout.component";
 import { PmsLayoutComponent } from "../../pms/pms-layout/pms-layout.component";
-import { PolicieslayoutComponent } from "../../policies/policieslayout/policieslayout.component";
-
-import { CalendarViewComponent } from "../../calendar/calendar-view/calendar-view.component";
-
 import { DeskAlloctionLayoutComponent } from "../../desk-allocation/desk-alloction-layout/desk-alloction-layout.component";
-import { CalenderLayOutComponent } from "../../calendar/calender-lay-out/calender-lay-out.component";
+import { PolicieslayoutComponent } from "../../policies/policieslayout/policieslayout.component";
+import { ReportsLayoutComponent } from "../../reports/reports-layout/reports-layout.component";
+import { AssetsAllocationsLayoutComponent } from "../../assets-allocation/assets-allocations-layout/assets-allocations-layout.component";
+import { ItsupportLayOutComponent } from "../../ITsupport/itsupport-lay-out/itsupport-lay-out.component";
+import { PmsConfigurationLayoutComponent } from "../../pms-configuration/pms-configuration-layout/pms-configuration-layout.component";
+import { OrganizationchartComponent } from "../../organizationchart/organizationchart/organizationchart.component";
+import { CalendarLayoutComponent } from "../../calendar/calendar-layout/calendar-layout.component";
+
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
     { path: 'admin', component: AdminLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../admin/admin.route') },
@@ -23,9 +26,12 @@ export default [
     { path: 'events', component: EventsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../events/events.route') },
     { path: 'claimsandexpenses', component: ClaimsandexpensesLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../claimsandexpenses/claimsandexpenses.route') },
     { path: 'pms', component: PmsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../pms/pms.route') },
+    { path: 'calendar', component: CalendarLayoutComponent,canActivate: [MsalGuard],loadChildren: () => import('../../calendar/calendar.route')},
     { path: 'policies', component:PolicieslayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../policies/policies.route') },
-    { path: 'calendar', component: CalenderLayOutComponent,canActivate: [MsalGuard],loadChildren: () => import('../../calendar/calendar.route')},
-   
-
-    { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../desk-allocation/desk.route')}
+    { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../desk-allocation/desk.route')},
+    { path: 'reports', component: ReportsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../reports/reports.routes')},
+    { path: 'assets-management', component: AssetsAllocationsLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../assets-allocation/assets-allocation.route')},
+    { path: 'it-support', component: ItsupportLayOutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../ITsupport/itsupport.route')},
+    { path: 'pmsconfiguration', component: PmsConfigurationLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../pms-configuration/pms-configuration.route')},
+    { path: 'organization-chart', component: OrganizationchartComponent, canActivate: [MsalGuard]}
 ] as Route[];

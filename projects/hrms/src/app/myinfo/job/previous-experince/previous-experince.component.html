@@ -122,7 +122,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="FromDate" formControlName="fromDate"
+                            <input type="date" class="form-control custom-input" id="FromDate" formControlName="fromDate"  onkeypress="return false"
                                 [min]="'1940-01-01'" [max]="currentDate | date: 'yyyy-MM-dd'"
                                 (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
@@ -130,14 +130,14 @@
                                 From Date is required
                             </div>
                             <div *ngIf="isCurrentdateDisable" class="error-msg">
-                                From date cannot be set in the future, and it should be on or before the current date.
+                                From date cannot be set in the future, and it should be on or before the current date
                             </div>
                         </div>
         
                         <div class="col-md-6 mb-3">
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
+                            <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"  onkeypress="return false"
                                 (change)="toDateValidation()" [max]="currentDate | date: 'yyyy-MM-dd'"
                                 [min]="employeeExperienceForm.get('fromDate')?.value" />
                             <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
@@ -216,13 +216,13 @@
                             class="error-msg">
                             Please Upload a file
                         </div>
-                        <div *ngIf="showError" class="error-msg">Only Pdf and image files are allowed.</div>
-                        <div *ngIf="showErrorr" class="error-msg">The file size should be less than 25MB.</div>
+                        <div *ngIf="showError" class="error-msg">Only Pdf and image files are allowed</div>
+                        <div *ngIf="showErrorr" class="error-msg">The file size should be less than 25MB</div>
         
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are
                                 allowed.
-                                The file size should be less than 25MB.</p>
+                                The file size should be less than 25MB</p>
                         </div>
                     </div>
         
@@ -304,7 +304,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="FromDate"
+                            <input type="date" class="form-control custom-input" id="FromDate"  onkeypress="return false"
                                 formControlName="fromDateupdate" [min]="'1940-01-01'"
                                 (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
@@ -312,7 +312,7 @@
                                 From Date is required
                             </div>
                             <div *ngIf="isCurrentdateDisable" class="error-msg">
-                                From date cannot be set in the future, and it should be on or before the current date.
+                                From date cannot be set in the future, and it should be on or before the current date
                             </div>
                         </div>
 
@@ -320,7 +320,7 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate"
-                                formControlName="toDateupdate" (change)="toDateValidation()"
+                                formControlName="toDateupdate" (change)="toDateValidation()"  onkeypress="return false"
                                 [max]="currentDate | date: 'yyyy-MM-dd'" />
 
                             <div *ngIf=" employeeExperienceupdateForm.get('toDateupdate')?.invalid &&
@@ -409,8 +409,8 @@
                                 class="error-msg">
                                 Please Upload a file
                             </div>
-                            <div *ngIf="showError" class="error-msg">Only Pdf and image files are allowed.</div>
-                            <div *ngIf="showErrorr" class="error-msg">The file size should be less than 25MB.</div>
+                            <div *ngIf="showError" class="error-msg">Only Pdf and image files are allowed</div>
+                            <div *ngIf="showErrorr" class="error-msg">The file size should be less than 25MB</div>
 
                             <div *ngIf="displaypreviousexperincedocument" class="mb-2 mt-2">
                                 {{ displaypreviousexperincedocument?.name || displaypreviousexperincedocument }}
@@ -418,7 +418,7 @@
 
                             <div class="d-flex justify-content-between align-items-center mt-2">
                                 <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are
-                                    allowed. The file size should be less than 25MB.</p>
+                                    allowed. The file size should be less than 25MB</p>
                             </div>
                         </div>
                     </div>

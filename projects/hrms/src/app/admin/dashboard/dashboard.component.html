@@ -4,8 +4,9 @@
       <p class="component-header mb-0">{{'Dashboard'| translate}}</p>
     </div>
     <div class="d-flex gap-3">
+      @if(this.rbac.allowedToAccess('Current Openings.view')){
       <button type="button" class="custom-btn btn-secondary">Current Openings</button>
-      @if(this.rbac.allowedToAccess('Generate Documents.view')){
+       } @if(this.rbac.allowedToAccess('Generate Documents.view')){
         <button type="button" class="custom-btn btn-primary" (click)="generateDocument()">Generate Documents</button>
       } 
     </div>
@@ -30,7 +31,7 @@
   </div>
 
   <!--Document History-->
-  <div class="my-3">
+  <div class="mb-3">
     <p class="component-header mb-0">{{'Document History' | translate}}</p>
   </div>
   

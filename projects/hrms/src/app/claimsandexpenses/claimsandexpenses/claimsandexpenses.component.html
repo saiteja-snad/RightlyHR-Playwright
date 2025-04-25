@@ -1,14 +1,18 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header cursor mb-0">My Expenses</p>
+        </div>
+        <div>
+            <button type="button" (click)="navigatetoAddExpenses()" class="custom-btn btn-primary">
+                <i class="bi bi-plus me-2"></i>Add New Expense
+            </button>
+        </div>
+    </div>
+    <div class="mb-3">
+        <app-expenes-header-tabs></app-expenes-header-tabs>
+    </div>
     <div>
-        <p class="component-header cursor mb-0">Expenses</p>
+        <router-outlet></router-outlet>
     </div>
-    <div class="d-flex gap-3">
-        <button type="button" (click)="navigatetoAddExpenses()" class="custom-btn btn-primary"><i class="bi bi-plus me-2"></i>Add New Expense</button>
-    </div>
-</div>
-<div>
-    <app-expenes-header-tabs></app-expenes-header-tabs>
-</div>
-<div>
-    <router-outlet></router-outlet>
 </div>

@@ -1,11 +1,11 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="statusForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="statusForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Status.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter status"
                     formControlName="status" aria-label="stat" aria-describedby="stat"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="statusForm.invalid">{{'Add'|translate}}</button></span>
@@ -32,12 +32,12 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(status)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                <a (click)="openupdate(status)" *ngIf="rbac.allowedToAccess('Status.update')"><img src="/settings-icon/edit.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(status)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                <a (click)="opendelete(status)" *ngIf="rbac.allowedToAccess('Status.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="statusname"
                         placeholder="Please enter status"
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('statusname')?.touched && updateForm.get('statusname')?.invalid" class="error-msg mt-2">
                         <div *ngIf="updateForm.get('statusname')?.errors?.['required']">{{'Status name is required'|translate}}</div>
                     </div>

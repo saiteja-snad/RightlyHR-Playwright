@@ -1,14 +1,13 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center">
-        <div> <span class="family-sub-header">Bank Details</span></div>
-        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
-        <div class="plus-button">
-            <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
-                    (click)="openModal(addBankModal)" class="plus-text">Add
-                    New</span></span>
-        </div>}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Bank Details</span></div>
+        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' 
+        && employedata.empstatus.toLowerCase() !== 'inactive' && employedata.empstatus.toLowerCase() !== 'trainee inactive')){
+            <div class="custom-add-btn" (click)="openModal(addBankModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+        }
     </div>
-    <div class="custom-table-content mt-2">
+
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
@@ -18,9 +17,8 @@
                     <th>IFSC Code</th>
                     <th>Proof</th>
                     <th>Primary Bank</th>
-                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective')){
+                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' )){
                     <th class="text-center">Actions</th>}
-
                 </tr>
             </thead>
             <tbody>
@@ -30,11 +28,10 @@
                         <td>{{bankiteams.accountName}}</td>
                         <td>{{bankiteams.accountNo}}</td>
                         <td>{{bankiteams.ifscCode}}</td>
-                        <td><span *ngIf="bankiteams.docUrl;else noData" class="dowload-text"
-                                (click)="onSelectBankProofDownload(bankiteams)" style="cursor: pointer;"><i
-                                    class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
-                                #noData>-</ng-template></td>
-
+                        <td>
+                            <span *ngIf="bankiteams.docUrl;else noData" class="dowload-text cursor" (click)="onSelectBankProofDownload(bankiteams)">
+                                <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
+                        </td>
                         <td>{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                         <td class="text-center">
                             <div class="dropdown">
@@ -57,7 +54,6 @@
                         </td>
                     </tr>
                 </ng-container>
-
                 <ng-template #noDataTemplate>
                     <tr>
                         <td>
@@ -68,12 +64,12 @@
             </tbody>
         </table>
     </div>
-
 </div>
 
+<!--Add popup-->
 <ng-template #addBankModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add New Bank Details</p>
             </div>
@@ -113,9 +109,7 @@
                                 letters</div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="accountNo" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
@@ -143,9 +137,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-12 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
                             only)<span class="text-danger">*</span></label>
@@ -161,41 +153,36 @@
                                 The file size should be less than 25MB.</p>
                         </div>
                     </div>
-                </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                         <div class="d-flex align-items-center">
-                            <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
+                            <div class="form-check form-switch" style="font-size: x-large;">
                                 <input class="form-check-input" type="checkbox" id="isPrimary"
                                     formControlName="isPrimary">
                             </div>
-                            <label for="isPrimary" class="form-label custom-label mt-3">Primary Bank</label>
+                            <label for="isPrimary" class="form-label custom-label ms-2">Primary Bank</label>
                         </div>
                     </div>
                 </div>
-
-                <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="bankDetailsForm.invalid">Add</button>
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="bankDetailsForm.invalid">Add</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
 
-
+<!--Update popup-->
 <ng-template #updateBankmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Bank Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();bankDetailsUpdateForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss();bankDetailsUpdateForm.reset()">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -228,9 +215,7 @@
                                 contain only letters</div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="accountNoupdate" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
@@ -261,9 +246,7 @@
                                 Code</div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-12 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
                             only)<span class="text-danger">*</span></label>
@@ -282,42 +265,37 @@
                                 The file size should be less than 25MB.</p>
                         </div>
                     </div>
-                </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                         <div class="d-flex align-items-center">
-                            <div class="form-check form-switch" style="font-size: x-large; margin-right: 4px;">
+                            <div class="form-check form-switch" style="font-size: x-large;">
                                 <input class="form-check-input" type="checkbox" id="isPrimary"
                                     formControlName="isPrimaryupdate">
                             </div>
-                            <label for="isPrimary" class="form-label custom-label mt-3">Primary Bank</label>
+                            <label for="isPrimary" class="form-label custom-label ms-2">Primary Bank</label>
                         </div>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="bankDetailsUpdateForm.invalid">Update</button>
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="bankDetailsUpdateForm.invalid">Update</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
 
-
+<!--Delete popup-->
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-        <p class="confirmation-text mb-4">Are you sure you want to delete the Bank details?</p>
-      </div>
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-        <button type="submit" class="custom-btn btn-primary" (click)="bankDelete()">Yes</button>
-      </div>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to delete the Bank details?</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="bankDelete()">Yes</button>
+        </div>
     </div>
-  
-  </ng-template>
+</ng-template>

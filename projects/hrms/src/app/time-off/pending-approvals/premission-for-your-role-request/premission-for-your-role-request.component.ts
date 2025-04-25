@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import {
   ICategoryDetails,
@@ -15,6 +15,9 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
 @Component({
   selector: 'app-premission-for-your-role-request',
   imports: [
@@ -26,15 +29,15 @@ import { TranslateModule } from '@ngx-translate/core';
     NoDataFoundComponent,
     DateformatPipe,
     ReactiveFormsModule,
-    TranslateModule
+    TranslateModule,
+    PermissionsearchPipe
   ],
 
   templateUrl: './premission-for-your-role-request.component.html',
   styleUrl: './premission-for-your-role-request.component.scss',
 })
 export class PremissionForYourRoleRequestComponent
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -46,20 +49,23 @@ export class PremissionForYourRoleRequestComponent
     { label: 25, value: 25 },
   ];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  leaves = [] as PermissionRequestResponse[];
+  leaves = new BehaviorSubject<PermissionRequestResponse[]>([]);
   approverComments = [] as any[];
-  // approverComments = [] as AttendanceRequestC[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
-  rejectForm!:FormGroup;
+  rejectForm!: FormGroup;
+  searchValue: any;
+  spinnerLoader = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService
-  ) {}
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
+  ) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
@@ -67,14 +73,14 @@ export class PremissionForYourRoleRequestComponent
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
   }
 
-  intializeRejectForm() {  
+  intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['',[Validators.required,Validators.maxLength(250)]],
-    }); 
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
+    });
 
   }
 
@@ -84,19 +90,21 @@ export class PremissionForYourRoleRequestComponent
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=18&approvedType=ROLE`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
-          this.leaves = response.data as PermissionRequestResponse[];
+          this.leaves.next(response.data);
           console.log(this.leaves);
         },
         error: (reason) => console.log(reason),
       });
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
   onRowsChange() {
     this.first = 0;
   }
@@ -104,11 +112,13 @@ export class PremissionForYourRoleRequestComponent
     this.first = event.first;
     this.rows = event.rows;
   }
+
   openApproveModal(content: any, request: PermissionRequestResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeApproveForm();
     this.selectedLeaveData = request;
   }
+
   openRejectModal(content: any, request: PermissionRequestResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeRejectForm();
@@ -116,6 +126,7 @@ export class PremissionForYourRoleRequestComponent
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -123,12 +134,11 @@ export class PremissionForYourRoleRequestComponent
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
-
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
@@ -144,10 +154,11 @@ export class PremissionForYourRoleRequestComponent
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
-
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }
@@ -164,7 +175,7 @@ export class PremissionForYourRoleRequestComponent
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
           this.modalService.dismissAll();
@@ -173,7 +184,7 @@ export class PremissionForYourRoleRequestComponent
           );
           this.selectedLeaveData = {} as PermissionRequestResponse;
           this.approveForm.reset();
-          
+
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
             permission: true,
@@ -191,7 +202,6 @@ export class PremissionForYourRoleRequestComponent
       });
   }
 
-
   handleReject(rejectForm: FormGroup): void {
     if (rejectForm.valid) {
       const formData = rejectForm.value;
@@ -204,21 +214,20 @@ export class PremissionForYourRoleRequestComponent
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        )
+        ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
-              'Request Rejcted Successfully'
+              'Request Rejected Successfully'
             );
             this.rejectForm.reset();
-            this.selectedLeaveData  = {} as PermissionRequestResponse;
+            this.selectedLeaveData = {} as PermissionRequestResponse;
             this.http.tirggerPendingApprovalCountSignal.update((status) => ({
               ...status,
               permission: true,
             }));
-            
-         
+
           },
           error: (reason: any) => {
             this.sharedModalService.openErrorModal(reason.error.Message);
@@ -229,6 +238,7 @@ export class PremissionForYourRoleRequestComponent
         });
     }
   }
+
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,
@@ -243,4 +253,5 @@ export class PremissionForYourRoleRequestComponent
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
+
 }

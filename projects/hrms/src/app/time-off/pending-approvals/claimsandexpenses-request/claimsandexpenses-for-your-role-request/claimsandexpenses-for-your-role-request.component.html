@@ -1,7 +1,7 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
   <div>
     <!--Input search-->
-    <div class="input-group custom-search mb-4">
+    <div class="input-group custom-search mb-3">
       <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
       <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
         aria-describedby="basic-addon1" />
@@ -22,6 +22,7 @@
           </tr>
         </thead>
         <tbody>
+          @if (rbac.allowedToAccess('Expenses Tab.view')) {
           <ng-container *ngIf="expenseheaderpending!.length > 0; else noDataTemplate">
             <tr *ngFor="let leave of expenseheaderpending; let i = index">
               <td>{{ leave.entity.employeeName }}</td>
@@ -39,7 +40,7 @@
                       <a class="dropdown-item" (click)="
                           openModal(viewDetailsModal);
                           viewItem(leave.entity.expenses_ID)
-                        "><i class="bi bi-paperclip me-2"></i>View</a>
+                        " *ngIf="rbac.allowedToAccess('Expenses Tab.view')"><i class="bi bi-paperclip me-2"></i>View</a>
                     </li>
                   </ul>
                 </div>
@@ -69,16 +70,16 @@
                   <ul class="dropdown-menu py-0">
                     @if( leave.approvalHeader.currentapprovalStage !=
                     leave.approvalHeader.finalapprovalStage){
-                    <li (click)="openApproveModal(approval, leave)">
+                    <li (click)="openApproveModal(approval, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
                       <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
                     </li>
                     } @if( leave.approvalHeader.currentapprovalStage ==
                     leave.approvalHeader.finalapprovalStage){
-                    <li (click)="handleProcess(leave)">
+                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
                       <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
                     </li>
                     }
-                    <li (click)="openRejectModal(rejectmodal, leave)">
+                    <li (click)="openRejectModal(rejectmodal, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.delete')">
                       <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
                     </li>
                   </ul>
@@ -93,28 +94,9 @@
               </td>
             </tr>
           </ng-template>
+        }
         </tbody>
       </table>
-    </div>
-    <div class="pagination-content pt-2 w-100">
-      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-        <!-- Dropdown for Rows per Page -->
-        <div class="d-flex align-items-center gap-3 p-2">
-          <!-- Bootstrap Select -->
-          <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
-            <option *ngFor="let option of options" [value]="option.value">
-              {{ option.label }}
-            </option>
-          </select>
-          <span class="pagination-label text-nowrap">Showing {{ first + 1 }} -
-            {{ first + rows > totalRecords ? totalRecords : first + rows }} of
-            {{ totalRecords }}</span>
-        </div>
-
-        <!-- Pagination -->
-        <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-          (onPageChange)="onPageChange($event)"></p-paginator>
-      </div>
     </div>
   </div>
 </div>
@@ -228,25 +210,14 @@
       </div>
     </div>
 
-    <div class="custom-table mt-2">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Comments</th>
-            <th>Commented By</th>
-            <th>Date</th>
-            <th>Commented By ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let comment of approverComments">
-            <td>{{ comment?.comments }}</td>
-            <td>{{ comment?.addedName }}</td>
-            <td>{{ comment?.addedDate | dateformat }}</td>
-            <td>{{ comment?.addedByFusionEmpId }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div *ngFor="let comment of approverComments" >
+      <div class="mb-0">
+        <p> <b>Commented by:</b> {{ comment.addedName }} </p>
+        <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+        <p> <b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+        <p><b>Status:</b> {{ comment.action }}</p>
+        <p> <b>Comments:</b> {{ comment.comments }} </p>
+      </div>
     </div>
   </div>
 

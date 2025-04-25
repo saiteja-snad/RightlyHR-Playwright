@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-shits',
@@ -10,7 +11,10 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class ShitsComponent {
 
-  constructor( public router:Router) { }
+  constructor( 
+    public router:Router,
+    public rbac: RbacService
+  ) { }
 
   nagvition(){
     this.router.navigate(['/settings/employee-fields/addshifts']);

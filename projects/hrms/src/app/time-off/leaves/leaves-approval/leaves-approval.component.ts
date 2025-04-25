@@ -10,13 +10,14 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-leaves-approval',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './leaves-approval.component.html',
   styleUrl: './leaves-approval.component.scss'
 })
+
 export class LeavesApprovalComponent {
   totalRecords = 100
   first: any = 0;
@@ -25,7 +26,6 @@ export class LeavesApprovalComponent {
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
-
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -33,24 +33,25 @@ export class LeavesApprovalComponent {
     { label: 25, value: 25 }
   ];
 
-
   onRowsChange() {
     this.first = 0;
-
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService) {
+  constructor(private http: HttpService,private authService: AuthService,public rbac: RbacService) {
 
   }
+
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getDataByLPID();
   }
+
   getDataByLPID() {
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({

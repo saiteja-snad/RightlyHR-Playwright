@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation, AfterViewInit, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-settings-employee-fields-module-tabs',
@@ -11,42 +12,38 @@ import { TabsModule } from 'primeng/tabs';
   encapsulation: ViewEncapsulation.None
 })
 
-export class SettingsEmployeeFieldsModuleTabsComponent implements AfterViewInit {
-  navTabs: any[] = [
-    { label: 'Personal', link: '/settings/employee-fields/personal' },
-    { label: 'Job', link: '/settings/employee-fields/job' },
-    { label: 'status', link: '/settings/employee-fields/job' },
-    { label: 'Document', link: '/settings/employee-fields/job' },
-    { label: 'Manage Shifts', link: '/settings/employee-fields/manage-shifts' },
-    { label: 'Manage Policies', link: '/settings/employee-fields/manage-policies' },
-    { label: 'Manage Holidays', link: '/settings/employee-fields/manage-holidays' },
-    { label: 'Manage Weekends', link: '/settings/employee-fields/job' },
-    { label: 'Expense Configurations', link: '/settings/employee-fields/expenes' },
-    { label: 'Manage DST', link: '/settings/employee-fields/job' },
-    { label: 'No Due Clearance', link: '/settings/employee-fields/no-due-clearnce' }
+export class SettingsEmployeeFieldsModuleTabsComponent implements OnInit {
+  public navTabs: any[] = [];
+  public defaultRoute: string = '';
+ 
+  constructor(
+    private rbac: RbacService
+  ){}
+
+  ngOnInit(): void {
+    this.navTabs = this.allTabs.filter(tab =>
+      tab.permission &&
+      tab.permission.feature &&
+      tab.permission.action &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+    );
+
+    if (this.navTabs.length > 0) {
+      this.defaultRoute = this.navTabs[0].route;
+    }
+
+  }
+
+  allTabs: any[] = [
+    { label: 'Personal', link: '/settings/employee-fields/personal', permission: { feature: 'Personal Tab', action: 'view' } },
+    { label: 'Job', link: '/settings/employee-fields/job',permission: { feature: 'Job Tab', action: 'view' } },
+    { label: 'Document',link: '/settings/employee-fields/documents', permission: { feature: 'Document Tab', action: 'view' }  },
+    { label: 'Manage Shifts', link: '/settings/employee-fields/manage-shifts', permission: { feature: 'Manage Shifts Tab', action: 'view' } },
+    { label: 'Manage Policies', link: '/settings/employee-fields/manage-policies', permission: { feature: 'Manage Policies Tab', action: 'view' } },
+    { label: 'Manage Holidays', link: '/settings/employee-fields/manage-holidays', permission: { feature: 'Manage Holidays Tab', action: 'view' } },
+    { label: 'Manage Weekends', link: '/settings/employee-fields/manage-weekends', permission: { feature: 'Manage Weekends Tab', action: 'view' } },
+    { label: 'Expense Configurations', link: '/settings/employee-fields/expenes', permission: { feature: 'Expense Tab', action: 'view' }  },
+    { label: 'Manage DST', link: '/settings/employee-fields/manage-dsts', permission: { feature: 'Manage DST Tab', action: 'view' } },
+    { label: 'No Due Clearance', link: '/settings/employee-fields/no-due-clearnce', permission: { feature: 'NoDue Clearance Tab', action: 'view' } }
   ];
-
-  constructor(private renderer: Renderer2) { }
-
-  ngAfterViewInit() {
-    // Apply styles directly to navigation elements
-    setTimeout(() => {
-      this.fixNavigationButtonStyles();
-    }, 100);
-  }
-
-  private fixNavigationButtonStyles() {
-    // Find all tab navigation buttons and apply styles directly
-    const navButtons = document.querySelectorAll('.p-tabview-nav-prev, .p-tabview-nav-next, .p-tablist-prev-button, .p-tablist-next-button');
-
-    navButtons.forEach(button => {
-      this.renderer.setStyle(button, 'background-color', '#ffffff');
-
-      // Apply styles to all child elements
-      const children = button.querySelectorAll('*');
-      children.forEach(child => {
-        this.renderer.setStyle(child, 'background-color', '#ffffff');
-      });
-    });
-  }
 }

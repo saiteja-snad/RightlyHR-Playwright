@@ -1,282 +1,233 @@
 <div class="custom-main-component-container">
-    <div class="component-header my-4">
-        <span>Offer Letter</span>
+    <div class="my-3">
+        <app-detailed-step-progressbar />
     </div>
-    <div class="card custom-main-sub-content p-5">
-        <div class="letter-data-content p-4">
-            <div class="d-flex justify-content-center">
-                <div>
-                    <div class="letter-page-content my-4" id="pdfContent1">
-                        <div class="letter-page-sub-content">
-                            <br />
-                            <div class="d-flex justify-content-end my-4">
-                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
-                            </div>
-                            <div class="w-100 mt-5 mb-4">
-                                <p class="letter-header text-center mb-0">OFFER LETTER</p>
-                            </div>
-                            <div class="letter-div">
-                                <div class="row">
-                                    <div class="col-md-8" style="margin-left: -34px;">
-                                        <ul>
-                                            <li class="letter-text"
-                                                *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
-                                                Name:</li>
-                                            <ng-template #fullname>
-                                                <li class="letter-text">{{traineeEmpData.firstName}}
-                                                    {{traineeEmpData.middleName}}
-                                                    {{traineeEmpData.lastName}},
-                                                </li>
-                                            </ng-template>
-                                            <li class="letter-text" *ngIf="!traineeEmpData.addressLine1;else address">
-                                                Address:</li>
-                                            <ng-template #address>
-                                                <li class="letter-text">{{traineeEmpData.addressLine1}},</li>
-                                                <li class="letter-text">{{traineeEmpData.addressLine2}},</li>
-                                                <li class="letter-text">{{traineeEmpData.city}},
-                                                    {{traineeEmpData.state}},</li>
-                                                <li class="letter-text">{{traineeEmpData.country}} -
-                                                    {{traineeEmpData.zipCode}}.</li>
-                                            </ng-template>
-                                        </ul>
+
+    <div class="component-data-content">
+        <div class="component-header mb-3">Offer Letter</div>
+        <div class="card custom-main-sub-content p-4">
+            <div class="letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+                    <div>
+                        <div class="letter-page-content" id="pdfContent1">
+                            <div class="letter-page-sub-content">
+                                <br />
+                                <div class="d-flex justify-content-end">
+                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                </div>
+                                <div class="w-100 mt-5 mb-4">
+                                    <p class="letter-header text-center mb-0">OFFER LETTER</p>
+                                </div>
+                                <div class="letter-div">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <ul class="list-style-none ps-0 fw-bolder">
+                                                <li *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">Name:</li>
+                                                <ng-template #fullname>
+                                                    <li>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}},</li>
+                                                </ng-template>
+                                                <li *ngIf="!traineeEmpData.addressLine1;else address">Address:</li>
+                                                <ng-template #address>
+                                                    <li>{{traineeEmpData.addressLine1}},</li>
+                                                    <li>{{traineeEmpData.addressLine2}},</li>
+                                                    <li>{{traineeEmpData.city}}, {{traineeEmpData.state}},</li>
+                                                    <li>{{traineeEmpData.country}} - {{traineeEmpData.zipCode}}.</li>
+                                                </ng-template>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-4 fw-bolder">
+                                            <p class=" text-end p-0">Date: {{traineeEmpData.offerSentDate | dateformat}}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4 fw-bolder">
-                                        <p class=" text-end p-0">Date: {{traineeEmpData.offerSentDate | dateformat}}</p>
+                                </div>
+
+                                <div class="letter-heading-div mb-3">
+                                    <p><b>Dear {{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</b>,</p>
+                                </div>
+
+                                <div class="watermark">
+                                    <p>
+                                        The details of your internship offer are as follows:
+                                    </p>
+                                    <ol class="liststylenumber">
+                                        <li class="mb-3">
+                                            <b>Start Date and Duration: </b>Your internship will commence on <u><b>{{traineeEmpData.dateOfJoining | dateformat}}</b></u> 
+                                            and is expected to complete on lasting for a period of <b><u>{{this.traineeEmpData.trainingEndDate | dateformat}}</u></b>.
+                                        </li>
+                                        <li class="mb-3"><b>Working Hours and Location:
+                                            </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at
+                                            RightlyHR, Floor#16, Vijay Krishna Towers, Madhava Reddy Colony, Gachibowli, HYD - 500032. Occasionally, you may be required to work
+                                            additional hours or remotely, depending on the nature of the projects and business requirements.
+                                        </li>
+                                        <li class="mb-3"><b>Reporting Manager: </b>You will be reporting to <u>{{traineeEmpData.reportingmanagerName }}</u></li>
+                                        <li class="mb-3">
+                                            <b>Stipend/Salary and Benefits: </b>During the internship period,
+                                            you’re eligible to receive Rs.10,000/- per month as a stipend/salary. After successful completion of
+                                            the internship period, you will be appointed as an employee of RightlyHR with a CTC of <b>{{traineeEmpData.salary}}</b> per annum.
+                                        </li>
+                                        <li class="mb-3">
+                                            <b>Responsibilities: </b>Your primary responsibilities will be
+                                            explained by your reporting manager during the onboarding process. We expect you to conduct yourself
+                                            professionally and adhere to company policies and procedures at all times.
+                                        </li>
+                                        <li class="mb-3">
+                                            <b>Confidentiality and Non-Disclosure: </b>As an intern, you will
+                                            have access to sensitive and proprietary information. You are required to sign and adhere to the
+                                            Confidentiality and Non-Disclosure Agreement, which will be provided separately.
+                                        </li>
+                                        <li class="mb-3">
+                                            <b>Evaluation and Feedback: </b>Your performance will be evaluated
+                                            periodically. Constructive feedback will be provided to help you grow and make the most out of this opportunity.
+                                        </li>
+                                        <li class="mb-3">
+                                            <b>Termination: </b>The company may terminate this internship by
+                                            providing 15 days written notice or the company is having a right to terminate this internship
+                                            immediately, in case of poor performance.
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
+                        </div>
+
+                        <div class="letter-page-content my-4" id="pdfContent2">
+                            <div class="letter-page-sub-content">
+                                <div class="d-flex justify-content-end mb-4">
+                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                </div>
+                                <div class="pt-2">
+                                    <div *ngIf="true">
+                                        <!-- <app-letterhead></app-letterhead> -->
+                                    </div>
+                                    <ng-template #doc>
+                                        <div style="margin-bottom: 7rem;"></div>
+                                    </ng-template>
+                                    <div class="p-3">
+                                        <p *ngIf="(traineeEmpData.note)"><b>Note:</b> {{traineeEmpData.note}} </p>
+                                        <p>Please confirm your acceptance of this offer by signing and returning a scanned copy of this letter within 1 day to 
+                                            <u><b>hr&#64;RightlyHR.com</b></u></p>
+                                        <p>We are excited about the possibility of you joining our team and look forward to a productive and successful internship.</p>
+                                        <p>Sincerely,</p>
+                                        <p><b>For RightlyHR</b></p>
+                                    </div>
+
+                                    <div class="p-3">
+                                        <p class="m-0 family2" style="font-family: Segoe script; font-size: large;">{{traineeEmpData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
+                                        <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
+                                        <p class="m-0 paragraph boldsize1">{{authorityDesignation}} </p>
+                                        <br>
+                                        <hr>
+                                        <br>
+                                        <p>
+                                            I, <u><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</b></u>, 
+                                            acknowledge that I have read and understood the terms of this Internship Offer, and I accept the offer as outlined above.
+                                        </p>
+                                    </div>
+                                    <div class="p-3">
+                                        <p class="Signature mb-3 mt-4">Signature: <span *ngIf="traineeEmpData.firstName; else signaturename1">
+                                            {{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</span>
+                                            <ng-template #signaturename1>_________________________</ng-template></p>
+                                        <p class="Signature mb-3 mt-4">Date: {{currentDate|dateformat}}</p>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="letter-heading-div" style="margin-bottom: 10px;">
-                                <p><strong>Dear {{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
-                                        {{traineeEmpData.lastName}}</strong>,</p>
-                            </div>
-
-                            <div class="watermark">
-                                <p class="paragraph mb-4">
-                                    The details of your internship offer are as follows:
-                                </p>
-                                <ol class="liststylenumber">
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Start Date and Duration: </strong>Your internship will commence on
-                                        <u><strong>{{traineeEmpData.dateOfJoining | dateformat}}</strong></u> and is
-                                        expected to complete on
-                                        lasting for a period of <strong><u>{{this.traineeEmpData.trainingEndDate |
-                                                dateformat}}</u></strong>.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3"> <strong>Working Hours and Location: </strong>The
-                                        standard working hours
-                                        are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at
-                                        RightlyHR, Floor#16, Vijay
-                                        Krishna Towers, Madhava Reddy Colony,
-                                        Gachibowli, HYD - 500032. Occasionally, you may be required to work additional
-                                        hours or remotely,
-                                        depending on the nature of the projects and
-                                        business requirements.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3"><strong>Reporting Manager: </strong>You will be
-                                        reporting to <u>
-                                            {{traineeEmpData.reportingmanagerName }}</u></li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Stipend/Salary and Benefits: </strong>During the internship period,
-                                        you’re eligible to receive
-                                        Rs.10,000/- per month as a stipend/salary. After successful completion of the
-                                        internship period, you
-                                        will be appointed as an employee of RightlyHR with a CTC of <b>
-                                            {{traineeEmpData.salary}}</b> per annum.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Responsibilities: </strong>Your primary responsibilities will be
-                                        explained by your reporting
-                                        manager during the onboarding process. We expect you to conduct yourself
-                                        professionally and adhere to
-                                        company policies and procedures at all times.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Confidentiality and Non-Disclosure: </strong>As an intern, you will have
-                                        access to sensitive and
-                                        proprietary information. You are required to sign and adhere to the
-                                        Confidentiality and Non-Disclosure
-                                        Agreement, which will be provided separately.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Evaluation and Feedback: </strong>Your performance will be evaluated
-                                        periodically. Constructive
-                                        feedback will be provided to help you grow and make the most out of this
-                                        opportunity.
-                                    </li>
-                                    <li class="paragraph mb-lg-4 p-3">
-                                        <strong>Termination: </strong>The company may terminate this internship by
-                                        providing 15 days written
-                                        notice or the company is having a right to terminate this internship
-                                        immediately, in case of poor
-                                        performance.
-                                    </li>
-                                </ol>
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
                             </div>
                         </div>
-                        <div class="letter-footer text-center">
-                            <p class="company-name">RightlyHR</p>
-                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
-                        </div>
+                        <p class="error-msg text-center">Note: This acknowledgment is system-generated</p>
                     </div>
-                    <div class="letter-page-content my-4" id="pdfContent1">
-                        <div class="letter-page-sub-content">
-                            <br />
-                            <div class="d-flex justify-content-end my-4">
-                                <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
-                            </div>
-                            <div class="pt-2">
-                                <div *ngIf="true">
-                                    <!-- <app-letterhead></app-letterhead> -->
-                                </div>
-                                <ng-template #doc>
-                                    <div style="margin-bottom: 7rem;"></div>
-                                </ng-template>
-                                <div class="p-3">
-                                    <p *ngIf="(traineeEmpData.note)" class="paragraph mb-lg-4"><b>Note:</b>
-                                        {{traineeEmpData.note}} </p>
-                                    <p class="paragraph mb-lg-4">Please confirm your acceptance of this offer by signing
-                                        and returning a
-                                        scanned copy of this letter within 1 day to <u
-                                            style="color: rgb(0, 110, 255);"><b>hr&#64;RightlyHR.com</b></u></p>
-                                    <p class="paragraph mb-lg-4">We are excited about the possibility of you joining our
-                                        team and look forward
-                                        to a productive and successful internship.</p>
-                                    <p class="paragraph mb-lg-4">Sincerely,</p>
-                                    <p class="paragraph mb-lg-4"><b>For RightlyHR</b></p>
-                                </div>
-                                
-                                <div class="p-3">
-                                    <p class="m-0 family2" style="font-family: Segoe script; font-size: large;">{{traineeEmpData.authorityName}}</p>
-                                    <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
-                                    <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
-                                    <p class="m-0 paragraph boldsize1">{{authorityDesignation}} </p>
-                                    <br>
-                                    <hr>
-                                    <br>
-                                    <p class="paragraph mb-lg-4 ">I, <u><strong>{{traineeEmpData.firstName}}
-                                                {{traineeEmpData.middleName}}
-                                                {{traineeEmpData.lastName}}
-                                            </strong></u>, acknowledge that I have read and understood the terms of this
-                                        Internship Offer, and I
-                                        accept the offer as outlined above.</p>
-                                </div>
-                                <div class="p-3">
-                                    <p class="Signature mb-3 mt-4">Signature: <span
-                                            *ngIf="traineeEmpData.firstName; else signaturename1"
-                                            class="family2">{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
-                                            {{traineeEmpData.lastName}}</span><ng-template #signaturename1>
-                                            _________________________</ng-template></p>
-                                    <p class="Signature mb-3 mt-4">Date: {{currentDate|dateformat}}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="letter-footer text-center">
-                            <p class="company-name">RightlyHR</p>
-                            <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
-                        </div>
-                    </div>   
-                    <p class="error-msg family text-center mt-3">
-                        Note: This acknowledgment is system-generated
-                    </p>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="footer-btn-content d-flex justify-content-end gap-3 pt-5">
-       
-    <!-- <div class="justify-content-start"> -->
-        <button class="custom-btn btn-secondary rounded-pill px-5 justify-content-start"  (click)="navigatePrevious()">Onboarding Documents</button>
-    <!-- </div> -->
-        @if(loadingcircle){
-            <div *ngIf="loadingcircle" class="spinner-border text-primary me-4 mt-2" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        }
-        @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
-            <button class="custom-btn btn-primary px-5" (click)="downloadoffer()">Download</button>
-        }
-        @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
-            <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
-        }
-        @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
-            <button class="custom-btn accepted-btn px-5">Accepted</button>
-        } 
-        @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
-            <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
-        }
-        @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
-            <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
-        }
-        @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
-            <button class="btn btn-primary rounded-pill px-5" (click)="navigatefirst()">Close</button>
-        }
-        
-        @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
-            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
-        }
-    </div>
 
+        <div class="footer-btn-content d-flex justify-content-between gap-3 pt-5">
+            <div>
+                <button class="custom-btn btn-secondary rounded-pill px-5 justify-content-start"
+                    (click)="navigatePrevious()">Onboarding Documents</button>
+            </div>
+
+            <div class="d-flex gap-3">
+                @if(loadingcircle){
+                <div *ngIf="loadingcircle" class="spinner-border text-primary me-4 mt-2" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                }
+                @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
+                <button class="custom-btn btn-primary px-5" (click)="downloadoffer()">Download</button>
+                }
+                @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
+                <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
+                }
+                @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+                <button class="custom-btn accepted-btn px-5">Accepted</button>
+                }
+                @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
+                <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                }
+                @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
+                <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
+                }
+                @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
+                <button class="custom-btn secondary-btn px-5" (click)="navigatefirst()">Close</button>
+                }
+                @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+                <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<!--Documents upload popup-->
+<!--Reject popup-->
 <ng-template #rejectpopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-container">
-            <form [formGroup]="rejectForm" (ngSubmit)="submitRejectReason(rejectForm)">
-                <div class="custom-main-popup-content p-4">
-                    <div class="py-4 text-center">
-                        <p class="confirmation-text">Are you sure you want to reject offer?</p>
-                    </div>
-                    <div class="mb-3">
-                        <label for="documentType" class="form-label custom-label mb-2">Enter reason<span class="error-msg">*</span></label>
-                        <textarea type="note" name="rejectReason" class="form-control custom-input" formControlName="rejectReason"
-                            placeholder="Please enter reject reason" maxlength="250" id="rejectReason"
-                            (keypress)="blockNonAlphabetic($event)" autocomplete="off" required></textarea>
-                        <div class="error-msg py-1" *ngIf="rejectForm.get('rejectReason')?.touched && rejectForm.get('rejectReason')?.invalid">
-                            <div *ngIf="rejectForm.get('rejectReason')?.hasError('required')">Reject reason is required</div>
-                        </div>
-                        <div class="count-text text-end w-100 py-1"><span>{{ rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
-                    </div>
-                    <div class="d-flex justify-content-end gap-3 pt-4">
-                        <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">Close</button>
-                        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">Submit</button>
-                    </div>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <form [formGroup]="rejectForm" (ngSubmit)="submitRejectReason(rejectForm)">
+            <div class="custom-main-popup-content">
+                <div class="text-center mb-4">
+                    <img src="images\reject.png" alt="reject Icon" class="confirmation-icon mb-3">
+                    <p class="confirmation-text">Are you sure you want to reject offer?</p>
                 </div>
-            </form>
-        </div>
+                <div class="mb-3">
+                    <label for="documentType" class="form-label custom-label mb-2">Enter reason<span class="error-msg">*</span></label>
+                    <textarea type="note" name="rejectReason" class="form-control custom-input"
+                        formControlName="rejectReason" placeholder="Please enter reject reason" maxlength="250"
+                        id="rejectReason" (keypress)="blockNonAlphabetic($event)" autocomplete="off"
+                        required></textarea>
+                    <div class="error-msg py-1"
+                        *ngIf="rejectForm.get('rejectReason')?.touched && rejectForm.get('rejectReason')?.invalid">
+                        <div *ngIf="rejectForm.get('rejectReason')?.hasError('required')">Reject reason is required
+                        </div>
+                    </div>
+                    <div class="count-text text-end w-100 py-1"><span>{{ rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
+                </div>
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">Submit</button>
+                </div>
+            </div>
+        </form>
     </div>
 </ng-template>
-<!-- Modal -->
-<!-- Modal -->
-<div class="modal" id="submittedreject" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body mt-4 text-center">
-                <img src="./assets/prerecruitment/Group 37269@2x.png" alt="icon" class="imggs" />
-                <h6 class="want mt-3 text-center">Submitted Successfully</h6>
-            </div>
-            <div class="mb-4 w-100 text-center">
-                <button type="button" class="btn save text-center py-2" data-bs-dismiss="modal" (click)="close()">
-                    Ok
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal end-->
 
+<!--Offer letter accept popup-->
 <ng-template #acceptpopup let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text">Are you sure you want to accept offer?</p>
-        </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">Close</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="acceptoffer()">Yes</button>
+    <div class="custom-main-popup-container p-5" ngbAutofocus>
+        <div class="custom-main-popup-content text-center">
+            <div class="mb-5">
+                <img src="images\conformation.png" alt="Confirmation icon" class="confirmation-icon mb-3">
+                <p class="confirmation-text">Are you sure you want to accept offer?</p>
+            </div>
+            <div class="d-flex gap-5 w-100">
+                <button class="custom-btn btn-secondary w-50" (click)="closeModal()">Close</button>
+                <button class="custom-btn btn-primary w-50" (click)="acceptoffer()">Yes</button>
+            </div>
         </div>
     </div>
 </ng-template>

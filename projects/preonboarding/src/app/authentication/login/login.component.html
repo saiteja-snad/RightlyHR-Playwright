@@ -2,41 +2,41 @@
     <div class="card login-card">
         <div class="text-center">
             <img src='/logos/rightlyhr-full-logo.png' alt="RightlyHr Logo" class="logo-image">
-            <p class="component-header my-5">Login to your account</p>
+            <p class="component-header my-4">Login to your account</p>
         </div>
         <div class="px-3">
             <form [formGroup]="loginform" (ngSubmit)="login(loginform)">
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="name" class="form-label custom-label mb-2">Username<span class="text-danger">*</span></label>
                     <div class="input-group custom-input-group" [ngClass]="{'error-border': loginform.get('username')?.touched && loginform.get('username')?.invalid}">
                         <span class="input-group-text custom-input-group-text" id="basic-addon1">
                             <img src="/icons/mail.png" alt="profile icon" class="form-icon">
                         </span>
-                        <input type="text" formControlName="username" class="form-control custom-input"
-                            placeholder="Please enter username" id="name" aria-describedby="Name" autocomplete="off">
+                        <input type="text" formControlName="username" class="form-control custom-input ps-0"
+                            placeholder="Please enter username" (keypress)="blockLeadingSpace($event)" id="name" aria-describedby="Name" autocomplete="off">
                     </div>
                     <div class="error-msg my-1" *ngIf="loginform.get('username')?.touched && loginform.get('username')?.invalid">
                         <div *ngIf="loginform.get('username')?.errors?.['required']">Username is required</div>
                     </div>
                 </div>
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="password" class="form-label custom-label mb-2">Password<span class="text-danger">*</span></label>
                     <div class="input-group custom-input-group"
                         [ngClass]="{'error-border': loginform.get('password')?.touched && loginform.get('password')?.invalid }">
                         <span class="input-group-text custom-input-group-text"><img src="/icons/lock.png" alt="profile icon" class="form-icon"></span>
-                        <input [type]="showPassword ? 'text':'password'" formControlName="password" class="form-control custom-input" 
-                           placeholder="Please enter password" id="password" aria-describedby="password" autocomplete="off">
+                        <input [type]="showPassword ? 'text':'password'" formControlName="password" class="form-control custom-input ps-0" 
+                           placeholder="Please enter password" id="password" aria-describedby="password" (keypress)="blockLeadingSpace($event)" autocomplete="off">
                         <span class="input-group-text custom-input-group-text" (click)="togglePassword()">
                             <i [ngClass]=" showPassword ?'bi bi-eye':'bi bi-eye-slash'" class="custom-eye-icon"></i>
                         </span>
                     </div>
                     <div class="error-msg my-1" *ngIf="loginform.get('password')?.touched && loginform.get('password')?.invalid">
                         <div *ngIf="loginform.get('password')?.errors?.['required']">Password is required</div>
-                    </div>
+                    </div>    
                 </div>
-                <div class="error-msg text-center my-1" *ngIf="wrongCredentials">{{ wrongCredentials }}</div>
-                <div class="pt-4">
-                    <button type="submit" class="custom-btn btn-primary w-100 py-4" [disabled]="loginform.invalid || spinnerLoader">
+                <div class="error-msg" *ngIf="wrongCredentials">{{ wrongCredentials }}</div>
+                <div class="pt-3">
+                    <button type="submit" class="custom-btn btn-primary w-100 py-3" [disabled]="loginform.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>Loading...</span>

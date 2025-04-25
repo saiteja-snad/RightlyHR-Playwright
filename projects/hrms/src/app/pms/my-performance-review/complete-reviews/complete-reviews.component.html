@@ -1,1 +1,117 @@
-<p>complete-reviews works!</p>
+
+<div class="custom-main-component-container">
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchQuery"
+            (ngModelChange)="fetchReviewCycles()" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
+    @if(!dataload){
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Review Cycle Name</th>
+                    <th>Employee Name</th>
+                    <th>Employee ID</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Due Date</th>
+                    <th>Review Template</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="dataload; else maincontent">
+                    <ng-template #loadingSpinner>
+                        <div class="spinner-container text-center">
+                            <div class="spinner-border text-primary d-inline-block ms-3"
+                                style="width: 3rem; height: 3rem" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                            <p class="mb-4">Loading...</p>
+                        </div>
+                    </ng-template>
+                    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+                </ng-container>
+
+                <ng-template #maincontent>
+                    @if(filteredReviews.length > 0){
+                    @for(item of filteredReviews; track item){
+                    <tr>
+                        <td>{{ item.reviewCycleName }}</td>
+                        <td>{{item.reviewEmployeeName}}</td>
+                        <td>{{item.reviewFusionEmployeeId}}</td>
+                        <td>{{ getDepartments(item.deptName) }}</td>
+                        <td>{{ getSubDepartments(item.subdeptName) }}</td>
+                        <td>{{ getLocations(item.locationName) }}</td>
+                        <td>{{ getSubLocations(item.sublocationName) }}</td>
+                        <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
+                        <td>{{ item.formName }}</td>
+                        <td>{{ item.rcItemStatus }}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false"
+                                    class="dropdown-custom-btn">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu text-center">
+                                    <li class="dropdown-item"
+                                        (click)="selfAssessment(item.reviewCycleItemId, 0, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                        <a class="dropdown-custom-btn">{{item.assessorType}}
+                                            Assessment View</a>
+                                    </li>
+                                    <li class="dropdown-item"
+                                    *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
+                                    (click)="downloadPromotionletter(item)">
+                                    <a class="dropdown-custom-btn">
+                                        Promotion Letter Download
+                                    </a>
+                                </li>
+                                <li class="dropdown-item"
+                                    *ngIf=" item.rcItemStatus === 'Appraisal Letter Sent' ||  item.rcItemStatus=== 'Appraisal Letter Generated'"
+                                    (click)="downloadletter(item)">
+                                    <a class="dropdown-custom-btn">
+                                        Appraisal Letter Download
+                                    </a>
+                                </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                    }@else {
+                    <tr>
+                        <td colspan="11">
+                            <app-no-data-found></app-no-data-found>
+                        </td>
+                    </tr>
+                    }
+                </ng-template>
+            </tbody>
+        </table>
+ 
+    </div>
+    @if(filteredReviews.length > 0){
+        <div class="pagination-content">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                <div class="d-flex align-items-center gap-3 p-2">
+                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onPageSizeChange($event)">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">
+                        Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
+                    </span>
+                </div>
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
+        </div>
+        }
+        }@else{<app-data-loader-content />}
+</div>

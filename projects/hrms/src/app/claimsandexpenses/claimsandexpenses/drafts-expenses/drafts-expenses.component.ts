@@ -38,7 +38,7 @@ export class DraftsExpensesComponent {
   minDate!: string;
   maxDate!: string;
   emails = [];
-  expensetype = [] as Iexpensetype[];
+
   expenseheaderiteams: INewExpense[] = [];
   updataid!: number;
   matchingExpense: any;
@@ -50,15 +50,16 @@ export class DraftsExpensesComponent {
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
     searchTerm: any = ''
   expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
- 
+  expense = new BehaviorSubject<IExpenses[]>([])
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
     this.initiateForm();
-    this.getExpensetype();
+   
     this.getdatabyentriy();
     this.getexpensesheaderbyemployeeid()
     this.setDate()
+    this.getExpensestypestopatch()
 
     this.newExpenseForm.valueChanges.subscribe(() => {
       this.calculateTotalExpensesAmount();
@@ -76,13 +77,13 @@ export class DraftsExpensesComponent {
 
   createExpenseItem(): FormGroup {
     return this.fb.group({
-      item_expense: [null,],
+      expenseId: [null,Validators.required],
       item_Name: [null, [Validators.required, Validators.maxLength(50)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [null, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [null,]
+      attachment_url: [null, Validators.required]
     });
   }
 
@@ -106,7 +107,14 @@ export class DraftsExpensesComponent {
     }, 0);
   }
 
-
+  getExpensestypestopatch() {
+    this.subscription = this.http.getData("Expense").subscribe({
+      next: (data: any) => {
+        this.expense.next(data);
+        console.log(this.expense.value)
+      }
+    })
+  }
   setDate() {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -166,13 +174,7 @@ export class DraftsExpensesComponent {
     };
   }
 
-  getExpensetype() {
-    this.subscription = this.http.getData('Expense').subscribe({
-      next: (data: any) => {
-        this.expensetype = data as Iexpensetype[];
-      },
-    });
-  }
+
 
   getdatabyentriy() {
     const params = 'Expense';
@@ -223,31 +225,22 @@ export class DraftsExpensesComponent {
     }
   }
 
-  onchangeexpnes(event: any, index: number) {
-    const selectedId = event.value; // <-- PrimeNG sends the selected value in `event.value`
+  onchangeexpnes() {
+    // this.selectedexpensesid = this.newExpenseForm.controls['expense'].value
+     this.expenseItems.controls.forEach((control) => {
+       const value =control.get('expenseId')?.value
+         this.selectedexpensesid=value
+       });
+     this.subscription = this.http.getData(`Expense/getbyid/${this.selectedexpensesid}`).subscribe({
+       next: (data: any) => {
+       
+       }
+     })
+   }
+ 
+ 
+  submitepxenses(form: FormGroup) {
 
-    console.log('Selected Expense ID:', selectedId);
-
-    this.onExpenseChanged(selectedId, index);
-  }
-
-  onExpenseChanged(selectedId: number, index: number) {
-    this.selectedexpensesid = selectedId;
-
-    this.http.getData(`Expense/getbyid/${this.selectedexpensesid}`).subscribe({
-      next: (data: any) => {
-        console.log('Fetched expense data:', data);
-        // You can patch this.expenseItems.at(index).patchValue({...})
-      },
-      error: (err) => {
-        console.error('Error fetching expense by ID:', err);
-      }
-    });
-  }
-
-
-  submitepxenses(form: FormGroup): void {
-    if (form.valid) {
       this.spinnerLoader=true
       const payload = {
         expenses_ID: this.updataid,
@@ -259,7 +252,7 @@ export class DraftsExpensesComponent {
         status: 'Waiting for Approval',
         employeeId: this.empinfo.employeeId,
         expenseitem: form.value.expenseItems.map((item: any) => ({
-          expenseId: item.item_expense,
+          expenseId: item.expenseId,
           item_Name: item.item_Name,
           item_Description: item.item_Description,
           expense_Date: item.expense_Date,
@@ -302,7 +295,12 @@ export class DraftsExpensesComponent {
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-          }
+            this.spinnerLoader=false
+          },
+
+          complete:()=> {
+            this.spinnerLoader=false
+          },
         });
       } else {
         // No file to upload, directly post the payload
@@ -317,18 +315,19 @@ export class DraftsExpensesComponent {
           error: (error: any) => {
             console.log("error" + error)
             this.conformationPopup.openErrorModal(error.error.message)
-
-          }
+            this.spinnerLoader=false
+          },
+          complete:()=> {
+            this.spinnerLoader=false
+          },
         });
       }
-    } else {
-      console.log('Form is invalid');
-    }
+    
   }
 
 
   saveasDraft(form: FormGroup): void {
-    if (form.valid) {
+   
       this.saveasDraftloder=true
       const payload = {
         expenses_ID: this.updataid,
@@ -339,8 +338,8 @@ export class DraftsExpensesComponent {
         additional_details: form.value.additional_details,
         status: 'Draft',
         employeeId: this.empinfo.employeeId,
-        expenseitem: form.value.expenseItems.map((item: any) => ({
-          expenseId: item.item_expense,
+        expenseitem: this.newExpenseForm.get('expenseItems')?.value.map((item: any) => ({
+          expenseId: item.expenseId,
           item_Name: item.item_Name,
           item_Description: item.item_Description,
           expense_Date: item.expense_Date,
@@ -390,7 +389,11 @@ export class DraftsExpensesComponent {
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-          }
+            this.saveasDraftloder=false
+          },
+          complete:()=> {
+            this.saveasDraftloder=false
+          },
         });
       } else {
         // No file to upload, directly post the payload
@@ -408,13 +411,15 @@ export class DraftsExpensesComponent {
           error: (error: any) => {
             console.log("error" + error)
             this.conformationPopup.openErrorModal(error.error.message)
+            this.saveasDraftloder=false
 
-          }
+          },
+          complete:()=> {
+            this.saveasDraftloder=false
+          },
         });
       }
-    } else {
-      console.log('Form is invalid');
-    }
+   
   }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
@@ -471,7 +476,6 @@ export class DraftsExpensesComponent {
         next: (data: any) => {
           this.expenseheaderiteams = data.expenseitem
           this.getdatabyentriy();
-          this.getExpensetype();
           this.populateForm(data)
         }, error(err) {
           console.log("expensesheadererror", err)
@@ -484,11 +488,12 @@ export class DraftsExpensesComponent {
   populateForm(data: any): void {
 
     // Ensure that the expenses array is populated
-    const expensesArray = this.expensetype
+    const expensesArray = this.expense.getValue()
 
     const expenseIdToFind = data.expenseitem[0].expenseId; 
 
     this.matchingExpense = expensesArray.find(exp => exp.expenseId === expenseIdToFind);
+    console.log(this.matchingExpense)
 
     console.log('Matching Expense:', this.matchingExpense);
     this.newExpenseForm.patchValue({
@@ -504,16 +509,13 @@ export class DraftsExpensesComponent {
       this.patchExpenseItem(item);
     });
 
-
-
   }
 
   patchExpenseItem(item: any): void {
 
-  
     this.expenseItems.push(this.fb.group({
       item_Name: [item.item_Name, [Validators.required, Validators.maxLength(50)]],
-      item_expense: [item.item_expense, Validators.required],
+      expenseId: [item.expenseId, Validators.required],
       item_Description: [item.item_Description],
       expense_Date: [this.datepipe.transform(item.expense_Date, 'yyyy-MM-dd'), Validators.required],
       expense_Amount: [item.expense_Amount, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
@@ -595,7 +597,7 @@ export class DraftsExpensesComponent {
 
   delteitem(i: number) {
     this.removeindex = i
-    this.modalService.dismissAll();
+    // this.modalService.dismissAll();
     this.opendeletModal(this.deleteconformation)
 
   }
@@ -603,16 +605,13 @@ export class DraftsExpensesComponent {
   removeExpense() {
     this.expenseItems.removeAt(this.removeindex);
     this.calculateTotalExpensesAmount();
-    this.modalService.dismissAll()
-    this.conformationPopup.openSuccessModal("Expene iteam deleted successfully")
-    setTimeout(() => {
-      this.openModal(this.updateModal)
-    }, 2000);
+    // this.modalService.dismissAll()
+    this.conformationPopup.openSuccessModal("Expense item deleted successfully")
+    // setTimeout(() => {
+    //   this.openModal(this.updateModal)
+    // }, 2000);
   }
-  notdeleted(){
-    this.modalService.dismissAll();
-    this.openModal(this.updateModal)
-  }
+ 
 
 
   ngOnDestroy(): void {

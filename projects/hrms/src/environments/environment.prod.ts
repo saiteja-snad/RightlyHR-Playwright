@@ -3,12 +3,10 @@ export const environment = {
   webSocketUrl: 'ws://api.fusion.snadhr.com',
   ApiUrl: 'https://fusionplusapi.rightlyhr.com/api/',
   viewUrl: 'https://fusionplus.blob.core.windows.net/fusiondocuments/',
-
   modules: [
-    { id: 18, moduleName: 'Probation ' },
-    { id: 23, moduleName: 'PMS' }  
+    { id: 20, moduleName: 'Probation' },
+    { id: 24, moduleName: 'PMS' }  
   ],
-
   clientId: 'cfadeab2-82eb-4bc5-ac8b-68f70bc419dc',
   authority: 'https://login.microsoftonline.com/ed42f5a7-c4f8-48ca-bc5e-a682d0e3ad89/',
   redirectUrl: '/uservalidation',
@@ -35,5 +33,6 @@ export const environment = {
   ProbationExtendPeriodTimes: 2,
   PMSrequestmoduleId:24,
   deskAllocationModuleId:23,
-  expensesModuleId:19
+  expensesModuleId:19,
+  globalPermissionsModuleID:21
 };

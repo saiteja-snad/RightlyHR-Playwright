@@ -1,17 +1,17 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="probitionForm" (ngSubmit)="addprobition()">
+    <form [formGroup]="probitionForm" (ngSubmit)="addprobition()" *ngIf="rbac.allowedToAccess('Probation Status.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter probition status"
-                    formControlName="probitiontype" aria-label="jobtype" aria-describedby="jobtype"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
-                <span class="input-group-text" id="jobtype">
+                <input type="text" class="form-control custom-input" placeholder="Please enter probation status"
+                    formControlName="probitiontype" aria-label="probitiontype" aria-describedby="probitiontype"
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
+                <span class="input-group-text" id="probitiontype">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="probitionForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="probitionForm.get('jobtype')?.touched && probitionForm.get('jobtype')?.invalid" class="error-msg mt-2">
-                <div *ngIf="probitionForm.get('jobtype')?.errors?.['required']">{{'Jobtype is required'|translate}}</div>
+            <div *ngIf="probitionForm.get('probitiontype')?.touched && probitionForm.get('probitiontype')?.invalid" class="error-msg mt-2">
+                <div *ngIf="probitionForm.get('probitiontype')?.errors?.['required']">{{'Probation Status is required'|translate}}</div>
             </div>
         </div>
     </form>
@@ -32,12 +32,12 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(job)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                <a (click)="openupdate(job)" *ngIf="rbac.allowedToAccess('Probation Status.update')"><img src="/settings-icon/edit.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(job)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                <a (click)="opendelete(job)" *ngIf="rbac.allowedToAccess('Probation Status.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
                                         class="settings-common-icon"></a>
                             </div>
                         </div>
@@ -53,27 +53,27 @@
   <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-3">
-                <div class="pt-2">
-                    <p class="popup-heading mb-0">{{'Edit Jobtype'|translate}}</p>
+            <div class="custom-poup-header-content popup-header-border">
+                <div >
+                    <p class="popup-heading mb-0">{{'Update Probation Status'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-4">
+            <div class="custom-main-popup-content ">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Jobtype'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Probation Status'|translate}}
                         <span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="probitiontype" placeholder="Please enter probition status"
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    <input type="text" class="form-control custom-input" formControlName="probitiontype" placeholder="Please enter probation status"
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                     <div *ngIf="updateForm.get('probitiontype')?.touched && updateForm.get('probitiontype')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('probitiontype')?.errors?.['required']">{{'Probition status is required'|translate}}</div>
+                        <div *ngIf="updateForm.get('probitiontype')?.errors?.['required']">{{'Probation Status is required'|translate}}</div>
                     </div>
                 </div>
-                <div class="d-flex gap-5 w-100 pt-3">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="updateprobition(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateprobition(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -82,16 +82,16 @@
   
   <!--Delete Confirmation popup-->
   <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-4">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+    <div class="result-popup-content" ngbAutofocus>
+        
+            <div >
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
             <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+                <button type="button" class="custom-btn btn-secondary"(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
-    </div>
+    
   </ng-template>

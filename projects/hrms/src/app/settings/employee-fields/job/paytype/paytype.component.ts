@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-paytype',
@@ -31,15 +32,16 @@ export class PaytypeComponent {
     private http: HttpService, 
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
+    public rbac: RbacService,
   ) {
 
   }
   ngOnInit(): void {
     this.PaytypeForm = this.fb.group({
-      Paytype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Paytype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      Paytype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Paytype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.gePayType();
@@ -60,11 +62,12 @@ export class PaytypeComponent {
     this.subscription = this.http.postdata('PayType', request).subscribe({
       next: () => {
         this.gePayType();
-        this.conformationPopup.openSuccessModal('Paytype added successfully');
+        this.conformationPopup.openSuccessModal('Pay Type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.message;
+        this.conformationPopup.openErrorModal(errorMessage);
         this.resetForm();
       }
     });
@@ -83,10 +86,11 @@ export class PaytypeComponent {
           this.gePayType();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Paytype updated successfully');
+          this.conformationPopup.openSuccessModal('Pay Type updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -118,10 +122,11 @@ export class PaytypeComponent {
       next: () => {
         this.gePayType();
         modal.close();
-        this.conformationPopup.openSuccessModal('Paytype deleted successfully');
+        this.conformationPopup.openSuccessModal('Pay Type deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

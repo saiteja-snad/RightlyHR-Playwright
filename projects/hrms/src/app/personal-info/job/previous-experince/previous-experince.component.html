@@ -1,14 +1,10 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center">
-        <div> <span class="education-sub-header">Previous Experience Details
-            </span></div>
-        <div class="plus-button">
-            <span type="button" class="anchor"><i class="bi bi-plus plus-icon px-2"></i><span type="button"
-                    (click)="openModal(addexperincemodal)" class="plus-text">Add
-                    New</span></span>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Previous Experience Details</span></div>
+        <div class="custom-add-btn" (click)="openModal(addexperincemodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
     </div>
-    <div class="custom-table-content mt-2">
+
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
@@ -20,7 +16,6 @@
                     <th>Currently Working</th>
                     <th>Document</th>
                     <th class="text-center">Actions</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -29,22 +24,18 @@
                         <td>{{ empexperimentdata.companyName }}</td>
                         <td>{{empexperimentdata.employmentType}}</td>
                         <td>{{empexperimentdata.fromDate | dateformat}}</td>
-
-
                         <td>
-                            <span *ngIf="empexperimentdata.toDate != null; else NoExpiration"></span><ng-template
-                                #NoExpiration>-</ng-template>{{ empexperimentdata.toDate | dateformat
-                            }}
+                            <span *ngIf="empexperimentdata.toDate != null; else NoExpiration"></span>
+                            <ng-template #NoExpiration>-</ng-template>{{ empexperimentdata.toDate | dateformat }}
                         </td>
-
                         <td>{{empexperimentdata.jobTitle}}</td>
                         <td>{{empexperimentdata.isPresent ? 'Yes' :'No'}}</td>
-                        <td><span *ngIf="empexperimentdata.attachment;else noData" class="dowload-text"
-                                (click)="onSelectBankProofDownload(empexperimentdata)" style="cursor: pointer;"><i
-                                    class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
-                                #noData>-</ng-template></td>
-
-
+                        <td>
+                            <span *ngIf="empexperimentdata.attachment;else noData" class="dowload-text cursor"
+                                (click)="onSelectBankProofDownload(empexperimentdata)">
+                                <i class="bi bi-download clip-icon px-2"></i>Download</span>
+                            <ng-template #noData>-</ng-template>
+                        </td>
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
@@ -66,7 +57,6 @@
                         </td>
                     </tr>
                 </ng-container>
-
                 <ng-template #noDataTemplate>
                     <tr>
                         <td>
@@ -79,23 +69,23 @@
     </div>
 </div>
 
+<!--Add-->
 <ng-template #addexperincemodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add Previous Experience Details
                 </p>
             </div>
             <div>
-                <a (click)="modal.dismiss();resetFrom()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss();resetFrom()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="employeeExperienceForm" (ngSubmit)="postExperienceDetails()">
                 <div class="card-body pt-0">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" formControlName="isPresent"
                                     id="flexCheckChecked" />
@@ -104,9 +94,7 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row">
                         <div class="col-md-6">
                             <label for="CompanyName" class="form-label custom-label mb-2">
                                 Company Name <span class="text-danger">*</span>
@@ -136,14 +124,12 @@
                                 Employment Type is required
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"
-                                formControlName="fromDate" [min]="'1940-01-01'" [max]="currentDate | date: 'yyyy-MM-dd'"
+                                formControlName="fromDate" [min]="'1940-01-01'"  onkeypress="return false" [max]="currentDate | date: 'yyyy-MM-dd'"
                                 (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
                                 class="error-msg">
@@ -158,7 +144,7 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
-                                (change)="toDateValidation()" [max]="currentDate | date: 'yyyy-MM-dd'"
+                                (change)="toDateValidation()"  onkeypress="return false" [max]="currentDate | date: 'yyyy-MM-dd'"
                                 [min]="employeeExperienceForm.get('fromDate')?.value" />
                             <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
                                 class="error-msg">
@@ -167,9 +153,7 @@
                             <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From Date</div>
                             <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>
                         </div>
-                    </div>
 
-                    <div class="row mb-3">
                         <div class="col-md-6 mb-3">
                             <label for="jobRole" class="form-label custom-label mb-2">Job Role <span
                                     class="text-danger">*</span></label>
@@ -212,9 +196,7 @@
                                     Contact Number must be 10 digits</div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email <span
                                     class="text-danger">*</span></label>
@@ -251,33 +233,30 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();resetFrom()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="employeeExperienceForm.invalid">Add</button>
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss();resetFrom()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="employeeExperienceForm.invalid">Add</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
 
-
+<!--Update-->
 <ng-template #updateexperincemodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Previous Experience Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();resetFrom()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss();resetFrom()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="employeeExperienceupdateForm" (ngSubmit)="saveUpdatedExperienceDetails()">
                 <div class="card-body pt-0">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" formControlName="isPresentupdate"
                                     id="flexCheckChecked" />
@@ -286,9 +265,7 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row">
                         <div class="col-md-6">
                             <label for="CompanyName" class="form-label custom-label mb-2">
                                 Company Name <span class="text-danger">*</span>
@@ -321,14 +298,12 @@
                                 Employment Type is required
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"
-                                formControlName="fromDateupdate" [min]="'1940-01-01'"
+                                formControlName="fromDateupdate" [min]="'1940-01-01'"  onkeypress="return false"
                                 (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
                                 class="error-msg">
@@ -342,7 +317,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="ToDate"
+                            <input type="date" class="form-control custom-input" id="ToDate"  onkeypress="return false"
                                 formControlName="toDateupdate" (change)="toDateValidation()"
                                 [max]="currentDate | date: 'yyyy-MM-dd'"
                                  />
@@ -354,9 +329,7 @@
                             <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From Date</div>
                             <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>
                         </div>
-                    </div>
 
-                    <div class="row mb-3">
                         <div class="col-md-6 mb-3">
                             <label for="jobRole" class="form-label custom-label mb-2">Job Role <span
                                     class="text-danger">*</span></label>
@@ -404,9 +377,7 @@
                                     Contact Number must be 10 digits</div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row">
+     
                         <div class="col-md-6 mb-3">
                             <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email <span
                                     class="text-danger">*</span></label>
@@ -414,17 +385,14 @@
                                 formControlName="previousContactEmailupdate" placeholder="Contact Email" />
                             <div *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.invalid && employeeExperienceupdateForm.get('previousContactEmailupdate')?.touched"
                                 class="error-msg">
-                                <div
-                                    *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.errors?.['pattern']">
+                                <div *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.errors?.['pattern']">
                                     Invalid Email Format</div>
                             </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="attachment" class="form-label custom-label mb-2">
-                                {{ employeeExperienceupdateForm.get('isPresent')?.value ? 'Appointment/Offer Letter' :
-                                'Experience/Relieving Letter' }}
-                                <span class="text-danger">*</span>
+                            <label for="attachment" class="form-label custom-label mb-2">{{ employeeExperienceupdateForm.get('isPresent')?.value ? 
+                            'Appointment/Offer Letter' : 'Experience/Relieving Letter' }}<span class="text-danger">*</span>
                             </label>
                             <input class="form-control custom-input mb-3" type="file" id="attachment"
                                 formControlName="attachmentupdate" (change)="onChangeExperience($event)"
@@ -433,7 +401,6 @@
                                 class="error-msg">
                                 Please Upload a file
                             </div>
-
                             <div *ngIf="displaypreviousexperincedocument" class="mb-2 mt-2">
                                 <b>{{ displaypreviousexperincedocument?.name || displaypreviousexperincedocument }}</b>
                             </div>
@@ -446,19 +413,16 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();resetFrom()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="employeeExperienceupdateForm.invalid">Update</button>
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss();resetFrom()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="employeeExperienceupdateForm.invalid">Update</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
 
-
+<!--Delete-->
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
@@ -470,5 +434,4 @@
             <button type="submit" class="custom-btn btn-primary" (click)="experienceDelete()">Yes</button>
         </div>
     </div>
-
 </ng-template>

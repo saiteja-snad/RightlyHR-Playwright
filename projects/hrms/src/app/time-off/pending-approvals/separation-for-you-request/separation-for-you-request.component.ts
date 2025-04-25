@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +15,8 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-separation-for-you-request',
@@ -69,18 +70,41 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   jsonData = {} as any;
   myApproverComments = {} as any;
+  @ViewChild('acceptForm') acceptForm!: NgForm;
   constructor(
     private authService: AuthService,
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public rbac: RbacService
   ) {}
   ngOnInit(): void {
     this.getseparationforyourequests();
   }
   resetForm() {
-    this.selectedSpRequestData = {};
+    this.acceptForm.resetForm(); // resets form state AND ngModel bindings
+
+    // Clear the selected data structure completely and set defaults
+    this.selectedSpRequestData = {
+      spIsAcceptEarlyrelievingcheck: false,
+      spMangerEarlyreliveingDate: null,
+      spearlyReliveingDate: null,
+      comments: '',
+      extenddate: null,
+      spRequestAppliedDate: null,
+      spRequestLastWorkingDate: null,
+      spIsEarlyRelieveing: false,
+      // Add any other keys your form uses here
+    };
+  
+    // Reset condition flags
+    this.regular = true;
+    this.early = false;
+    this.extend = false;
+  
+    // Close the modal
+    this.modalService.dismissAll();
   }
   //function to get the separation request based on the for you
   getseparationforyourequests() {
@@ -152,6 +176,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     console.log(request);
     this.regular = true;
     this.requesthandler = request;
+
     this.selectedSpRequestData = request.entity;
     this.selectedSpRequestData.noticperiodType = null;
     this.selectedSpRequestDataforheader = request.approvalHeader;
@@ -270,6 +295,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
             );
           }
           this.getseparationforyourequests();
+          this.acceptForm.resetForm();
         },
         error: (reason: any) => {
           this.isLoading = false;

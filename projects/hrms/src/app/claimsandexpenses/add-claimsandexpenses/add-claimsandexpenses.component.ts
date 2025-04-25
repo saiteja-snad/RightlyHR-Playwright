@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, NgModel, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
-import { IExpense, IExpenseHeader, IExpenseItem, Iexpensetype, Inewexpense, INewExpense } from '../../Interfaces/claimsandexpenses.model';
+import { IExpense,  IExpenseItem, Iexpensetype, } from '../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -69,13 +69,13 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
 
   createExpenseItem(): FormGroup {
     return this.fb.group({
-      item_expense: [null,],
+      item_expense: [null,Validators.required],
       item_Name: [null, [Validators.required, Validators.maxLength(50)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [null, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [null, ]
+      attachment_url: [null, Validators.required],
     });
   }
 
@@ -109,7 +109,16 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     this.opendeletModal(this.deleteconformation)
 
   }
-  
+
+  //   vldateofjoin1(): void {
+  //   if (this..expensedate < this.empinfo.dateOfJoining) {
+  //     this.istimeoffValid = false;
+  //     this.timeoffValid = false;
+  //   } else {
+  //     this.istimeoffValid = true;
+  //     this.timeoffValid = true;
+  //   }
+  // }
   removeExpense() {
     this.expenseItems.removeAt(this.removeindex);
     this.calculateTotalExpensesAmount();
@@ -224,7 +233,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
 
           // Assuming data.path contains the uploaded file path
           const uploadedFilePath = data.path;
-          this.expenseItems.at(index).get('attachment_url')?.setValue(uploadedFilePath);
+          this.expenseItems.at(index)?.get('attachment_url')?.setValue(uploadedFilePath);
         },
         error: (error: any) => {
           console.error('Error uploading file:', error);
@@ -256,7 +265,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   fromdata(form: FormGroup): void {
     if (form.valid) {
       this.spinnerLoader=true
-      const payload: INewExpense = {
+      const payload = {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
@@ -290,7 +299,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path
-            payload.expenseItem.forEach((item) => {
+            payload.expenseItem.forEach((item: { attachment_url: any; }) => {
 
               if (item.attachment_url === this.Myexpense.name) {
                 item.attachment_url = data.path;
@@ -313,6 +322,9 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
+            this.spinnerLoader=false
+          },  complete:()=> {
+            this.spinnerLoader=false
           }
         });
       } else {
@@ -324,13 +336,18 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
+              this.spinnerLoader=false
             }
           },
           error: (error: any) => {
             console.log("error" + error)
+            this.spinnerLoader=false
             this.conformationPopup.openErrorModal(error.error.message)
 
-          }
+          },
+          complete:()=> {
+            this.spinnerLoader=false
+          },
         });
       }
     } else {
@@ -343,7 +360,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   saveasDraft(form: FormGroup): void {
     if (form.valid) {
       this.saveasDraftloder=true
-      const payload: INewExpense = {
+      const payload = {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
@@ -376,7 +393,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path
-            payload.expenseItem.forEach((item) => {
+            payload.expenseItem.forEach((item: { attachment_url: any; }) => {
 
               if (item.attachment_url === this.Myexpense.name) {
                 item.attachment_url = data.path;
@@ -401,7 +418,11 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-          }
+            this.saveasDraftloder=false
+          },
+          complete:()=> {
+            this.saveasDraftloder=false
+          },
         });
       } else {
         // No file to upload, directly post the payload
@@ -418,8 +439,12 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           error: (error: any) => {
             console.log("error" + error)
             this.conformationPopup.openErrorModal(error.error.message)
+            this.saveasDraftloder=false
 
-          }
+          },
+          complete:()=> {
+            this.saveasDraftloder=false
+          },
         });
       }
     } else {

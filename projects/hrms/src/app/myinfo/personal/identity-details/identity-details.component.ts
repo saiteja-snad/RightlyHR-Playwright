@@ -9,6 +9,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-identity-details',
@@ -30,7 +31,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   IdentityMaxNumber = 12;
   IdentityMinNumber = 12;
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -89,7 +90,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
 
   // Fetch identity dropdown options
   getIdentityDropDown(): void {
-    this.subscription = this.http.getData(`OnboardingDocumentsList?identity=true`).subscribe({
+    this.subscription = this.http.getData(`IdentityType`).subscribe({
       next: (data: any) => {
         this.getidentitydropdetails = data;
         console.log('Identity dropdown:', this.getidentitydropdetails);
@@ -179,7 +180,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     return {
 
       empId: parseInt(this.empinfo.employeeId),
-      identityType: this.identityForm.get('identityType')?.value?.documentName,
+      identityType: this.identityForm.get('identityType')?.value?.identityType1,
       identityNumber: this.identityForm.get('identityNumber')?.value,
       attachment: attachmentPath || '',
 
@@ -234,7 +235,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     //payload
       const payload = {
         identityId: this.selectedIdentityId,
-        identityType: formData.identityupdateType?.documentName,
+        identityType: formData.identityupdateType?.identityType1,
         attachment: this.IdentityAttachment || '',
         empId: this.empinfo.employeeId,
         isDeleted: false

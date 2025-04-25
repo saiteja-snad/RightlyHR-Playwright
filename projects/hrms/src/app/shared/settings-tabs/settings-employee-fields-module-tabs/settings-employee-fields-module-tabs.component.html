@@ -1,4 +1,4 @@
-<div class="component-nav-tabs-container card px-2" style="background-color: #ffffff !important;">
+<div class="component-nav-tabs-container card px-2">
     <p-tabs value="0" scrollable>
         <p-tablist>
             <ng-container *ngFor="let tab of navTabs;">
@@ -11,42 +11,3 @@
         </p-tablist>
     </p-tabs>
 </div>
-
-<style>
-    /* Direct style override for navigation buttons */
-    ::ng-deep .p-tablist-prev-button,
-    ::ng-deep .p-tablist-next-button,
-    ::ng-deep .p-tabview-nav-prev,
-    ::ng-deep .p-tabview-nav-next,
-    ::ng-deep button.p-element.p-ripple.p-tabview-nav-prev,
-    ::ng-deep button.p-element.p-ripple.p-tabview-nav-next {
-        background-color: #ffffff !important;
-        color: #06274F !important;
-        border: none !important;
-    }
-
-    /* Target the SVG containers specifically */
-    ::ng-deep button.p-tabview-nav-prev *,
-    ::ng-deep button.p-tabview-nav-next *,
-    ::ng-deep button.p-tablist-prev-button *,
-    ::ng-deep button.p-tablist-next-button *,
-    ::ng-deep .p-element.p-ripple.p-tabview-nav-prev *,
-    ::ng-deep .p-element.p-ripple.p-tabview-nav-next * {
-        background-color: #ffffff !important;
-    }
-
-    /* Target span and div containers that might be causing the black background */
-    ::ng-deep .p-tabview-nav-container span,
-    ::ng-deep .p-tabview-nav-container div,
-    ::ng-deep .p-tablist-container span,
-    ::ng-deep .p-tablist-container div {
-        background-color: #ffffff !important;
-    }
-
-    /* Target the arrows directly */
-    ::ng-deep .p-element svg,
-    ::ng-deep .p-element svg g,
-    ::ng-deep .p-element svg path {
-        background-color: #ffffff !important;
-    }
-</style>

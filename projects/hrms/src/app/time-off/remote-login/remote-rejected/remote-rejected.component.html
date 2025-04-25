@@ -1,0 +1,39 @@
+<div class="custom-main-component-container">
+  <div class="custom-table-content ">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Worked Date</th>
+          <th>Availed</th>
+          <!-- <th>Reason</th> -->
+          <th>Applied Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngIf="approvedRemotes!.length > 0; else noDataTemplate">
+          <tr *ngFor="let RemoteRequest of approvedRemotes; let i = index">
+            <td>{{ RemoteRequest.startTime ? (RemoteRequest.startTime | dateformat) : ' -' }}</td>
+            <td [ngSwitch]="RemoteRequest.durationType">
+              <span *ngSwitchCase="1">First Half</span>
+              <span *ngSwitchCase="3">Second Half</span>
+              <span *ngSwitchCase="2">Full Day</span>
+              <span *ngSwitchDefault>-</span>
+            </td>
+            <td>{{ RemoteRequest.requestedDate | dateformat }}</td>
+            <td>{{ RemoteRequest.status }}</td>
+          </tr>
+        </ng-container>
+
+        <ng-template #noDataTemplate>
+          <tr>
+            <td colspan="4">
+              <app-no-data-found></app-no-data-found>
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+</div>

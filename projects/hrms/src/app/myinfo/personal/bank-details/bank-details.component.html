@@ -23,9 +23,9 @@
                         <td>{{bankiteams.accountName}}</td>
                         <td>{{bankiteams.accountNo}}</td>
                         <td>{{bankiteams.ifscCode}}</td>
-                        <td>
-                            <span *ngIf="bankiteams.docUrl;else noData" class="dowload-text" (click)="onSelectBankProofDownload(bankiteams)">
-                                <i class="bi bi-download clip-icon me-1"></i>Download</span><ng-template #noData>-</ng-template>
+                        <td class="text-nowrap">
+                            <div *ngIf="bankiteams.docUrl;else noData" class="dowload-text" (click)="onSelectBankProofDownload(bankiteams)">
+                                <i class="bi bi-download clip-icon me-1"></i>Download</div><ng-template #noData>-</ng-template>
                         </td>
                         <td>{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                         <td class="text-center">
@@ -69,9 +69,10 @@
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content p-4">
             <form [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
                 <div class="row">
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="bankName" class="form-label custom-label mb-2">Bank Name<span
                                 class="text-danger">*</span></label>
@@ -86,7 +87,7 @@
                             Bank Name is required
                         </div>
                     </div>
-
+                } @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="accountName" class="form-label custom-label mb-2">Account Holder's Name<span
                                 class="text-danger">*</span></label>
@@ -100,8 +101,8 @@
                             <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['pattern']">Name must contain only
                                 letters</div>
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="accountNo" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
@@ -114,8 +115,8 @@
                             <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['pattern']">Account Number must be
                                 between 12 and 20 digits</div>
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
                                 class="text-danger">*</span></label>
@@ -128,8 +129,8 @@
                             <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['pattern']">Enter a valid IFSC Code
                             </div>
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-12 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span class="text-danger">*</span></label>
                         <input type="file" class="form-control custom-input" formControlName="attachment"
@@ -143,8 +144,8 @@
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                                 The file size should be less than 25MB.</p>
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">
@@ -152,7 +153,7 @@
                             </div>
                             <label for="isPrimary" class="form-label custom-label mb-0">Primary Bank</label>
                         </div>
-                    </div>
+                    </div>}
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
@@ -174,9 +175,10 @@
                 <a (click)="modal.dismiss();bankDetailsUpdateForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content p-4">
             <form [formGroup]="bankDetailsUpdateForm" (ngSubmit)="updateBankDetails()">
                 <div class="row">
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="bankNameupdate" class="form-label custom-label mb-2">Bank Name<span
                                 class="text-danger">*</span></label>
@@ -189,8 +191,8 @@
                             *ngIf="bankDetailsUpdateForm.get('bankNameupdate')?.invalid && bankDetailsUpdateForm.get('bankNameupdate')?.touched">
                             Bank Name is required
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="accountNameupdate" class="form-label custom-label mb-2">Account Holder's Name<span
                                 class="text-danger">*</span></label>
@@ -203,8 +205,8 @@
                             <div *ngIf="bankDetailsUpdateForm.get('accountNameupdate')?.errors?.['pattern']">Name must
                                 contain only letters</div>
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="accountNoupdate" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
@@ -219,8 +221,8 @@
                             <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['maxlength']">Account
                                 Number must not exceed 20 digits</div>
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
                                 class="text-danger">*</span></label>
@@ -234,8 +236,8 @@
                                 IFSC
                                 Code</div>
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-12 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
                             only)<span class="text-danger">*</span></label>
@@ -251,8 +253,8 @@
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                                 The file size should be less than 25MB.</p>
                         </div>
-                    </div>
-
+                    </div>}
+                    @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">
@@ -260,7 +262,7 @@
                             </div>
                             <label for="isPrimary" class="form-label custom-label mb-0">Primary Bank</label>
                         </div>
-                    </div>
+                    </div>}
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">

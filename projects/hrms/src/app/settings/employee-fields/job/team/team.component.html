@@ -1,4 +1,4 @@
-<button type="button" (click)="openDialog()"  class="custom-btn btn-primary me-2">{{'Add' | translate}}</button>
+<button type="button" (click)="openDialog()"  class="custom-btn btn-primary me-2" *ngIf="rbac.allowedToAccess('Team.create')">{{'Add' | translate}}</button>
  
 <!-- Add Popup Modal  -->
 <ng-template #addpopup let-modal>
@@ -39,7 +39,7 @@
           </label>
           <input type="text" class="form-control custom-input" formControlName="teamName"
             placeholder="Please Enter Team name"
-            (keydown)="formValidations.restrictInitialSpace($event)" />
+            (keydown)="formValidations.restrictInput($event)" />
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg">
             {{ 'Team name is required' | translate }}
           </div>
@@ -53,7 +53,7 @@
           <div class="custom-p-select-content">
             <select title="text" class="form-control custom-input" formControlName="teamManager" id="teamManager">
               <option value="" disabled>Please select team manager</option>
-              <option *ngFor="let manager of teamdetails" [value]="manager.reportingmanagerId">
+              <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
                 {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
               </option>
             </select>
@@ -89,7 +89,7 @@
           <th>Department Name</th>
           <th>Team Name</th>
           <th>Team Manager</th>
-          <th class="text-center">Actions</th>
+          <th class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -98,18 +98,18 @@
             <td>{{teams.departmentName}}</td>
             <td>{{teams.subdepartmentName}}</td>
             <td>{{teams.firstName}} {{teams.middleName}} {{teams.lastName}}</td>
-            <td class="text-center">
+            <td class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </span>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <li (click)="openupdateDialog(teams)">
+                  <li (click)="openupdateDialog(teams)" *ngIf="rbac.allowedToAccess('Team.update')">
                     <a class="dropdown-item">
                       <i class="bi bi-pencil me-2"></i>Update
                     </a>
                   </li>
-                  <li (click)="opendelete(teams)">
+                  <li (click)="opendelete(teams)" *ngIf="rbac.allowedToAccess('Team.delete')">
                     <a class="dropdown-item">
                       <i class="bi bi-trash3 me-2"></i>Delete
                     </a>
@@ -168,7 +168,7 @@
           </label>
           <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
             placeholder="Please Enter Team name"
-            (keydown)="formValidations.restrictInitialSpace($event)" />
+            (keydown)="formValidations.restrictInput($event)" />
           <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid" class="error-msg">
             {{ 'Team name is required' | translate }}
           </div>

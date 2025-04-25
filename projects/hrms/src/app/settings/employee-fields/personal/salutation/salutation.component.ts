@@ -8,6 +8,7 @@ import { Iroles } from '../../../roles-permissions/roles/roles.model';
 import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-salutation',
@@ -25,7 +26,14 @@ export class SalutationComponent implements OnInit {
   
 
 // salDeletedata: any;
-constructor(private modalService: NgbModal,private conformationPopup: OpenModalService,private http: HttpService, private fb:FormBuilder, public formValidations:FormValidationsService) { }
+constructor(
+  private modalService: NgbModal,
+  private conformationPopup: OpenModalService,
+  private http: HttpService, 
+  private fb:FormBuilder, 
+  public formValidations:FormValidationsService,
+  public rbac:RbacService,
+) { }
   
   saluationForm!: FormGroup;
   updateForm!: FormGroup;
@@ -33,7 +41,7 @@ constructor(private modalService: NgbModal,private conformationPopup: OpenModalS
   ngOnInit(): void {
     this.saluationForm = this.fb.group({
      
-      saluation: ['', [Validators.required]]
+      saluation: ['', [Validators.required,Validators.pattern(/^(?! )[A-Za-z. ]+$/)]]
       });
       this.updateForm = this.fb.group({
         titlename: ['', [Validators.required]] 
@@ -45,9 +53,7 @@ constructor(private modalService: NgbModal,private conformationPopup: OpenModalS
   getsaluation() {
     this.subscription = this.http.getData("Title").subscribe({
        next: (data: any) => {
-         console.log(data);
          this.saluationdetails = data as Iroles[]
-         console.log(this.saluationdetails)
        },
        error: (reason: any) => {
          console.log(reason);
@@ -59,13 +65,10 @@ onSubmit() {
     const request = {
       titlename: this.saluationForm?.get('saluation')?.value,
       isdeleted: "Active"
-    };
-  
-    console.log('Sending request:', request); 
+    }; 
   
     this.subscription = this.http.postdata("Title", request).subscribe({
       next: (data: any) => {
-        console.log('Response:', data);
         this.modalService.dismissAll();
         this.saluationForm.reset();
         this.getsaluation(); 

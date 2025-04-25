@@ -10,6 +10,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-comp-off-process',
@@ -41,7 +42,8 @@ export class CompOffProcessComponent implements OnInit,OnDestroy {
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService,
   ) {}
 
 
@@ -64,12 +66,10 @@ export class CompOffProcessComponent implements OnInit,OnDestroy {
 
   getCompOffRequest() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
     this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (response: any) => {
-        console.log(response);
         this.compOff = response;
         this.processedCompOffRequests = this.compOff.filter((element: { status: string }) => element.status === 'Processed');
         this.processedCompOffRequestsCount = this.processedCompOffRequests.length;

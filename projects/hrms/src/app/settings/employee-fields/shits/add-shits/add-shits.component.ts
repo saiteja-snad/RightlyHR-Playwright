@@ -31,10 +31,10 @@ export class AddShitsComponent {
   subscription!: Subscription;
   Employeeinfo = {} as any;
   currentYear: number = new Date().getFullYear();
-  navTabs: any[] = [
-    { label: 'Create Shifts', link: '/claimsandexpenses/addexpens' },
+  // navTabs: any[] = [
+  //   { label: 'Create Shifts', link: '/claimsandexpenses/addexpens' },
 
-  ];
+  // ];
   isDuplicateCodeName: boolean[] = [];
   isDuplicateCodeName1: boolean[] = [];
   constructor(
@@ -59,6 +59,20 @@ export class AddShitsComponent {
     }
   }
 
+   //BLOCK -VE VALUE
+   blockInvalidKeys(event: KeyboardEvent) {
+    const invalidKeys = ['-', '+', 'e', 'E'];
+    if (invalidKeys.includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+  blockNegativePaste(event: ClipboardEvent) {
+    const clipboardData = event.clipboardData?.getData('text');
+    if (clipboardData && parseFloat(clipboardData) < 0) {
+      event.preventDefault();
+    }
+  }
+  
   initializeForm() {
     this.shiftForm = this.fb.group({
       year: [new Date().getFullYear(), Validators.required],
@@ -72,9 +86,9 @@ export class AddShitsComponent {
     return this.fb.group({
       shiftCode: ['', Validators.required],
       shiftName: ['', Validators.required],
-      color: ['#00ff00'],
-      startTime: ['00', Validators.required],
-      endTime: ['00', Validators.required],
+      color: ['#FFFFFF'],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
       gracePeriod: [15, Validators.required],
       latesAllowed: [3, Validators.required],
       breakTime: [1, Validators.required],
@@ -91,9 +105,17 @@ export class AddShitsComponent {
     this.shifts.push(this.createShift());
   }
 
-  deleteShift(index: number) {
+ isDeleteDisabled: boolean = false;
+
+deleteShift(index: number) {
+  if (this.shifts.length > 1) {
     this.shifts.removeAt(index);
+    this.isDeleteDisabled = false; // allow delete if more than 1
+  } else {
+    this.isDeleteDisabled = true; // disable delete button
   }
+}
+
   Cancel(){
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
      
@@ -133,8 +155,12 @@ export class AddShitsComponent {
           this.nagvition()
         },
         error: (error: any) => {
-          console.log("error" + error)
-        }
+          // Handle error if needed
+          console.error(error);
+          if (error.error) {
+            this.conformationPopup.openErrorModal(error.error.Message);
+          }
+        },
       });
     }
   }

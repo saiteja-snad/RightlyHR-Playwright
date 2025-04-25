@@ -2,24 +2,10 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <p class="component-header cursor mb-0" (click)="nagvition()"><i class="bi bi-arrow-90deg-left me-2"></i>
-                {{' View Shits'|translate}}</p>
+                {{' View Shifts'|translate}}</p>
         </div>
     </div>
-    <div class="component-nav-tabs-container card px-2 mb-3">
-        <p-tabs value="0" scrollable>
-            <p-tablist>
-                <ng-container *ngFor="let tab of navTabs;">
-                    <p-tab [value]="tab.link">
-                        <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-                            {{ tab.label }}
-                        </a>
-                    </p-tab>
-                </ng-container>
-            </p-tablist>
-        </p-tabs>
-    </div>
-
-
+   
     <div class="card custom-card">
         <div class="p-3">
             <div>
@@ -154,7 +140,7 @@
 
                                 <!-- Grace Period -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Grace Period'|translate}}</label>
+                                    <label class="form-label custom-label">{{'Allowed Grace Period (mins)'|translate}}</label>
                                     <input type="number" class="form-control custom-input readonly-style"
                                         [readonly]="isDisabled" formControlName="gracePeriod"
                                         placeholder="Grace period" />
@@ -162,7 +148,7 @@
 
                                 <!-- Lates Allowed -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Lates Allowed'|translate}}</label>
+                                    <label class="form-label custom-label">{{'Lates Allowed(Days)'|translate}}</label>
                                     <input type="number" class="form-control custom-input readonly-style"
                                         [readonly]="isDisabled" formControlName="latesAllowed"
                                         placeholder="Lates allowed" />
@@ -170,7 +156,7 @@
 
                                 <!-- Break Time -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Break Time'|translate}}</label>
+                                    <label class="form-label custom-label">{{'Allowed Break Time(Hrs)'|translate}}</label>
                                     <input type="number" class="form-control custom-input readonly-style"
                                         [readonly]="isDisabled" formControlName="breakTime" placeholder="Break time" />
                                 </div>
@@ -191,12 +177,12 @@
                                         placeholder="Full day min hrs" />
                                 </div>
 
-                                <!-- Delete Icon -->
+                                <!-- Delete Icon 
                                 <div class="col-md-2 mt-4 d-flex align-items-center justify-content-end">
-                                    <button type="button" class="custom-icon btn" (click)="shifts.removeAt(i)">
+                                    <button type="button" class="custom-icon btn" (click)="deleteShift(i)">
                                         <i class="bi bi-trash text-danger"></i>
                                     </button>
-                                </div>
+                                </div>-->
                             </div>
 
                         </div>

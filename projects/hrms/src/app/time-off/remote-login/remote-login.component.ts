@@ -16,6 +16,7 @@ import { RbacService } from '../../services/rbac.service';
   templateUrl: './remote-login.component.html',
   styleUrl: './remote-login.component.scss'
 })
+
 export class RemoteLoginComponent {
   empinfo = {} as IJob;
   halfDayValue = {} as any;
@@ -32,16 +33,12 @@ export class RemoteLoginComponent {
   hours!: any;
   duration!: any;
   spinnerLoader = false;
-  availablebalance!:number
+  availablebalance!: number
   totalbalance: any;
 
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private sharedModalService: OpenModalService,
-    public rbac: RbacService,
-  ) {}
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
+    private sharedModalService: OpenModalService, public rbac: RbacService,) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.intializewfhForm();
@@ -54,15 +51,14 @@ export class RemoteLoginComponent {
     this.handleAvailingChange()
   }
 
-
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   intializewfhForm() {
     this.addremoteForm = this.fb.group({
-      workedDate: ['', 
-        [Validators.required, ]
+      workedDate: ['',
+        [Validators.required,]
       ],
       availing: ['', Validators.required],
       halfType: [''],
@@ -70,7 +66,7 @@ export class RemoteLoginComponent {
     });
   }
 
-  handleAvailingChange(){
+  handleAvailingChange() {
     this.addremoteForm.get('availing')?.valueChanges.subscribe(value => {
       const halfTypeControl = this.addremoteForm.get('halfType');
       if (value === 'Half Day') {
@@ -86,18 +82,9 @@ export class RemoteLoginComponent {
   }
 
   updateDuration() {
-    console.log(this.remotedata.startTimeProp);
-    console.log(this.remotedata.endTimeProp);
-    if (
-      this.remotedata.startTimeProp &&
-      this.remotedata.endTimeProp
-    ) {
-      const formattedStartTime = moment(
-        this.remotedata.startTimeProp
-      ).format('HH:mm');
-      const formattedEndTime = moment(this.remotedata.endTimeProp).format(
-        'HH:mm'
-      );
+    if (this.remotedata.startTimeProp && this.remotedata.endTimeProp) {
+      const formattedStartTime = moment(this.remotedata.startTimeProp).format('HH:mm');
+      const formattedEndTime = moment(this.remotedata.endTimeProp).format('HH:mm');
       const startTime = moment(formattedStartTime, 'hh:mm A');
       const endTime = moment(formattedEndTime, 'hh:mm A');
       // Calculate the duration in minutes
@@ -116,11 +103,6 @@ export class RemoteLoginComponent {
       // if(this.remotedata.duration >= 9){
       //   this.timeValudationError=false;
       // }
-      console.log(this.remotedata.startTimeProp);
-      console.log(this.remotedata.endTimeProp);
-      console.log(this.hours, this.minutes);
-      console.log(durationAsFloat);
-      console.log(this.remotedata.duration);
       const orgHalfDayWFHCritera = parseFloat(this.halfDayValue.value);
       if (this.remotedata.duration < orgHalfDayWFHCritera) {
         this.remotedata.duration = null;
@@ -136,9 +118,6 @@ export class RemoteLoginComponent {
       }
     }
   }
- 
-
-
 
   //max value of the time in compoff
   getMaxDateTime(startTime: string): string {
@@ -151,27 +130,16 @@ export class RemoteLoginComponent {
   }
 
   dateTimeValidations() {
-    const formattedStartTime = moment(
-      this.remotedata.startTimeProp
-    ).format('HH:mm');
-    const formattedEndTime = moment(this.remotedata.endTimeProp).format(
-      'HH:mm'
-    );
+    const formattedStartTime = moment(this.remotedata.startTimeProp).format('HH:mm');
+    const formattedEndTime = moment(this.remotedata.endTimeProp).format('HH:mm');
     // Split start and end time strings into hours and minutes
-    const [startHours, startMinutes] = formattedStartTime
-      .split(':')
-      .map(Number);
+    const [startHours, startMinutes] = formattedStartTime.split(':').map(Number);
     const [endHours, endMinutes] = formattedEndTime.split(':').map(Number);
-    let startDate = moment(this.remotedata.startTimeProp).format(
-      'YYYY-MM-DD'
-    );
-    let endDate = moment(this.remotedata.endTimeProp).format(
-      'YYYY-MM-DD'
-    );
+    let startDate = moment(this.remotedata.startTimeProp).format('YYYY-MM-DD');
+    let endDate = moment(this.remotedata.endTimeProp).format('YYYY-MM-DD');
     // Convert start and end times to total minutes
     const startTimeMinutes = startHours * 60 + startMinutes;
     const endTimeMinutes = endHours * 60 + endMinutes;
-
     // Check if start time is greater than end time
     if (
       startDate > endDate ||
@@ -187,13 +155,9 @@ export class RemoteLoginComponent {
   }
 
   applyremote(addForm: FormGroup) {
-    console.log(addForm);
-
     if (addForm.valid) {
       const formData = addForm.value;
-
       const isFullDay = +formData.availing === 2;
-  
       const payload = {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
@@ -207,22 +171,16 @@ export class RemoteLoginComponent {
         requestedBy: this.empinfo.employeeId,
         requestedDate: new Date(),
       };
-      console.log(payload);
-      
       this.spinnerLoader = true;
       this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // this.getCompOffRequest();
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal(
-            'Request submitted successfully'
-          );
-         
-
+          this.sharedModalService.openSuccessModal('Request submitted successfully');
           setTimeout(() => {
             this.addremoteForm.reset();
           }
-        , 2000);
+            , 2000);
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             remote: true,
@@ -239,8 +197,6 @@ export class RemoteLoginComponent {
         },
       });
     }
-
-  
   }
 
   formatDate(date: string | Date): string {

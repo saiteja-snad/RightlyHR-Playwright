@@ -142,7 +142,7 @@
             {{ 'Grade Name' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select title="text" class="form-control custom-input" formControlName="gradeId">
+            <select title="text" class="form-select custom-input" formControlName="gradeId">
               <option value="" disabled selected>Please select gradename</option>
               <option *ngFor="let grade of gradedetails" [value]="grade.gradeId">
                 {{ grade.gradeName }}
@@ -155,7 +155,7 @@
         </div>
 
         <!-- Buttons -->
-        <div class="result-popup-content">
+        <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
             {{ 'Close' | translate }}
           </button>

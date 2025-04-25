@@ -31,7 +31,7 @@
   <ng-template #maincontent>
     <div class="custom-events-main-content">
       <!--Todays Events-->
-      <div class="card events-section-card mb-4">
+      <div class="card events-section-card mb-4"  *ngIf="todaysEvents.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Today's Events</p>
         </div>
@@ -47,7 +47,7 @@
                   </div>
                   <div>
                     <p class="event-name mb-0">{{ item.eventTitle }}</p>
-                    <p class="date mb-0">{{ item.eventDate | date: 'dd-MMM-yyyy' }}</p>
+                    <p class="date mb-0">{{ item.eventDate | date: 'shortDate' }}  {{ item.eventDate  | date: 'shortTime' }}</p>
                   </div>
                 </div>
                 <div class="dropdown">
@@ -57,13 +57,13 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item">
                         <i class="bi bi-pencil me-2"></i>Update</a></li>
-                    <li (click)="openmodal(deleteconformation)"><a class="dropdown-item">
+                    <li (click)="setdata=item;openmodal(deleteconformation)"><a class="dropdown-item">
                         <i class="bi bi-trash3 me-2"></i>Delete</a></li>
                   </ul>
                 </div>
               </div>
               <div class="mt-3">
-                <p class="event-content-text mb-3">{{ item.eventDescription }}</p>
+                <p class="event-content-text mb-3">{{ item.eventMessage }}</p>
               </div>
               <hr class="vr-line m-0">
               <div class="pt-3" *ngIf="item.attachmentUrl">
@@ -75,7 +75,7 @@
       </div>
 
       <!--Upcoming Events-->
-      <div class="card events-section-card mb-4">
+      <div class="card events-section-card mb-4" *ngIf="(getEventsData$ | async)?.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Custom Events</p>
         </div>
@@ -90,7 +90,7 @@
                 </div>
                 <div>
                   <p class="event-name mb-0">{{ event.eventTitle }}</p>
-                  <p class="date mb-0">{{ event.eventDate | date: 'dd-MMM-yyyy' }}</p>
+                  <p class="date mb-0">{{ event.eventDate | date: 'shortDate' }}  {{ event.eventDate  | date: 'shortTime' }}</p>
                 </div>
               </div>
               <div class="dropdown">
@@ -115,9 +115,15 @@
           </div>
         </div>
       </div>
+
+      <div class="no-data-wrapper"  *ngIf="(getEventsData$ | async)?.length === 0">
+        <app-no-data-found></app-no-data-found>
+      </div>
     </div>
   </ng-template>
 </div>
+
+
 
 <!--update Popup-->
 <ng-template #updateevets let-modal>
@@ -136,7 +142,7 @@
           <div class="col-md-6 mb-3">
             <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
                 class="text-danger">*</span></label>
-            <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
+            <input type="datetime-local" class="form-control custom-input" id="eventDate"  onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
             <div *ngIf="customEventupdateForm.get('required')?.touched" class="error-msg">Event date is required.</div>
             <div *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
                 class="error-msg">Event date cannot be in the past.

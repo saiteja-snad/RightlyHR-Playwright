@@ -95,7 +95,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.empinfo = data;
+        this.employedata = data;
         this.patchForm(data);
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),
@@ -160,44 +160,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   
     // Prepare payload for employee details update
     const updatePayload = {
-      employeeId: this.empinfo.employeeId,
-      title: this.empinfo.title || null,
-      firstName: this.empinfo.firstName,
-      middleName: this.empinfo.middleName,
-      lastName: this.empinfo.lastName,
-      gender: this.empinfo.gender || null,
-      dob: this.empinfo.dob,
-      bloodGroup: this.empinfo.bloodGroup || null,
-      maritalStatus: this.empinfo.maritalStatus || null,
-      empStatus: this.empinfo.empstatus,
-      emailaddress: this.empinfo.emailaddress || null,
-      workEmail: this.empinfo.workEmail || null,
-      contactnumber: this.empinfo.contactnumber || null,
-      workPhone: this.empinfo.workPhone || null,
-      emergencyName: this.empinfo.emergencyName,
-      emailId: this.empinfo.emailId,
-      relationShip: this.empinfo.relationShip,
-      mobileNumber: this.empinfo.mobileNumber,
-      emergencyName1: this.empinfo.emergencyName1,
-      emergencyEmail1: this.empinfo.emergencyEmail1,
-      emergencyNumber1: this.empinfo.emergencyNumber1,
-      relationship1: this.empinfo.relationship1,
-      profileUrl: this.empinfo.profileUrl,
-      fusionEmpId: this.empinfo.fusionEmpId,
-      dateOfJoining: this.empinfo.dateOfJoining,
-      branchCode: this.empinfo.branchCode,
-      probationEndDate: this.empinfo.probationEndDate,
-      probationStatus: this.empinfo.probationStatus,
-      noticePeriod: this.empinfo.noticePeriod,
-      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-      issalaryhold: this.empinfo.issalaryhold,
-      pf: this.empinfo.pf,
-      esic: this.empinfo.esic,
-      pt: this.empinfo.pt,
-      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
-      allowWFH: this.empinfo.allowWFH,
-      workLocation: this.empinfo.workLocation,
-      wfhManagerId: this.empinfo.wfhManagerId,
+      ...this.employedata,
       currentAddress: this.currentAddress, // Include current address in the payload
       permanentAddress: this.permanentAddress, // Include permanent address in the payload
     };

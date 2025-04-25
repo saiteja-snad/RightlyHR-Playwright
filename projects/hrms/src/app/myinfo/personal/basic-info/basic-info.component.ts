@@ -82,11 +82,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; // Return null if validation passes
   }
+  
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.empinfo = data;
+        this.emsployedata = data;
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
@@ -118,6 +119,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     console.log(formValue);
 
     const updatePayload = {
+      ...this.emsployedata,
       employeeId: this.empinfo.employeeId,
       title: formValue.salutation?.titlename,
       firstName: formValue.firstName,
@@ -127,36 +129,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      empStatus: 'Active',
-      emailaddress: this.empinfo.emailaddress,
-      workEmail: this.empinfo.workEmail,
-      contactnumber: this.empinfo.contactnumber,
-      workPhone: this.empinfo.workPhone,
-      emergencyName: this.empinfo.emergencyName,
-      emailId: this.empinfo.emailId,
-      relationShip: this.empinfo.relationShip,
-      mobileNumber: this.empinfo.mobileNumber,
-      emergencyName1: this.empinfo.emergencyName1,
-      emergencyEmail1: this.empinfo.emergencyEmail1,
-      emergencyNumber1: this.empinfo.emergencyNumber1,
-      relationship1: this.empinfo.relationship1,
-      profileUrl: this.empinfo.profileUrl,
-      fusionEmpId: this.empinfo.fusionEmpId,
-      dateOfJoining: this.empinfo.dateOfJoining,
-      branchCode: this.empinfo.branchCode,
-      probationEndDate: this.empinfo.probationEndDate,
-      probationStatus: this.empinfo.probationStatus,
-      noticePeriod: this.empinfo.noticePeriod,
-      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-      issalaryhold: this.empinfo.issalaryhold,
-      pf: this.empinfo.pf,
-      esic: this.empinfo.esic,
-      pt: this.empinfo.pt,
-      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
-      allowWFH: this.empinfo.allowWFH,
-      workLocation: this.empinfo.workLocation,
-      wfhManagerId: this.empinfo.wfhManagerId
-
+      empStatus: 'Active', 
     };
     console.log(updatePayload);
 

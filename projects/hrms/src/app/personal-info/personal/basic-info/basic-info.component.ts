@@ -16,7 +16,7 @@ import { IJob } from '../../../Interfaces/letters-model';
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
-export class BasicInfoComponent  implements OnInit,OnDestroy{
+export class BasicInfoComponent implements OnInit, OnDestroy {
   basicInfoForm!: FormGroup;
   subscription!: Subscription
   empinfo = {} as IJob;
@@ -33,9 +33,9 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
   Gender: IGender[] = [];
   titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
-  empyployeedata={} as any;
+  empyployeedata = {} as any;
   buttons = false
-  
+
   constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
@@ -94,22 +94,22 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
   }
 
   patchForm(data: any): void {
-    console.log('data',data)
+    console.log('data', data)
     this.basicInfoForm.patchValue({
       employeeId: data.fusionEmpId,
       fusionEmpId: data.fusionEmpId,
-       salutation: this.titledetails.find((item: any) => item.titlename === data.title),
+      salutation: this.titledetails.find((item: any) => item.titlename === data.title),
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
       gender: data.gender,
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalStatus:this.Maritaldetails.find(((item: any)=>item.maritalstatus1 === data.maritalStatus)) || data.maritalStatus,
+      maritalStatus: this.Maritaldetails.find(((item: any) => item.maritalstatus1 === data.maritalStatus)) || data.maritalStatus,
     });
-    console.log('datapatch',this.basicInfoForm.value);
+    console.log('datapatch', this.basicInfoForm.value);
 
-  
+
 
   }
 
@@ -117,47 +117,21 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
     const formValue = this.basicInfoForm.value;
     console.log(formValue);
 
+    
     const updatePayload = {
-      employeeId:  this.empyployeedata.employeeId,
-      title: formValue.salutation?.titlename || null,
+      ...this.empyployeedata,
+      employeeId: this.empinfo.employeeId,
+      title: formValue.salutation?.titlename,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
-      gender: formValue.gender || null,
+      gender: formValue.gender,
       dob: formValue.dob,
-      bloodGroup: formValue.bloodGroup?.name || null,
+      bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      empStatus: 'Active',
-      emailaddress: this.empyployeedata.emailaddress || null,
-      workEmail: this.empyployeedata.workEmail || null,
-      contactnumber: this.empyployeedata.contactnumber || null,
-      workPhone: this.empyployeedata.workPhone || null,
-      emergencyName: this.empyployeedata.emergencyName,
-      emailId: this.empyployeedata.emailId,
-      relationShip: this.empyployeedata.relationShip,
-      mobileNumber: this.empyployeedata.mobileNumber,
-      emergencyName1: this.empyployeedata.emergencyName1,
-      emergencyEmail1: this.empyployeedata.emergencyEmail1,
-      emergencyNumber1: this.empyployeedata.emergencyNumber1,
-      relationship1: this.empyployeedata.relationship1,
-      profileUrl: this.empyployeedata.profileUrl,
-      fusionEmpId: formValue.employeeId ||  this.empyployeedata.fusionEmpId  ,
-      dateOfJoining: this.empyployeedata.dateOfJoining,
-      branchCode: this.empyployeedata.branchCode,
-      probationEndDate: this.empyployeedata.probationEndDate,
-      probationStatus: this.empyployeedata.probationStatus,
-      noticePeriod: this.empyployeedata.noticePeriod,
-      backgroundCheckStatus: this.empyployeedata.backgroundCheckStatus,
-      issalaryhold:this.empyployeedata.issalaryhold,
-      pf: this.empyployeedata.pf,
-      esic:this.empyployeedata.esic,
-      pt: this.empyployeedata.pt,
-      totalYearsOfExperience: this.empyployeedata.totalYearsOfExperience,
-      allowWFH: this.empyployeedata.allowWFH,
-      workLocation:this.empyployeedata.workLocation,
-      wfhManagerId: this.empyployeedata.wfhManagerId
-
+      empStatus: 'Active', 
     };
+
     console.log(updatePayload);
 
     this.subscription = this.http
@@ -208,7 +182,7 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
     this.buttons = !this.buttons;
     if (this.buttons) {
       this.basicInfoForm.enable();
-     
+
 
     } else {
       this.basicInfoForm.disable();

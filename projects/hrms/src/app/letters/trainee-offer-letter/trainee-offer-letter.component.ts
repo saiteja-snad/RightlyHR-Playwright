@@ -501,6 +501,7 @@ export class TraineeOfferLetterComponent {
                 this.traineeEmpData.dateOfJoining =
                   this.formatDateForOfferIssedandExpiry(this.traineeEmpData.dateOfJoining);
               }
+              this.selectedCountryCode=this.traineeEmpData?.contactnumbercountryflag;
               if (!this.traineeEmpData.mobilePhoneCountryCode) {
                 this.traineeEmpData.mobilePhoneCountryCode = 'India (+91)';
               }

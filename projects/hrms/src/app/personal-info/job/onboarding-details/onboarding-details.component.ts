@@ -197,7 +197,7 @@ export class OnboardingDetailsComponent {
       next: (data: any) => {
         this.Statusdetails = data as IStatus[];
         console.log(this.Statusdetails);
-        if (this.empinfo?.empstatus == 'Prospective') {
+        if (this.empdata?.empstatus == 'Prospective') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
@@ -208,7 +208,7 @@ export class OnboardingDetailsComponent {
           });
           console.log(filteredData);
           this.Statusdetails = filteredData;
-        } else if (this.empinfo?.empstatus == 'Active') {
+        } else if (this.empdata?.empstatus == 'Active') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
@@ -218,7 +218,7 @@ export class OnboardingDetailsComponent {
           });
           console.log(filteredData);
           this.Statusdetails = filteredData;
-        } else if (this.empinfo?.empstatus?.toLowerCase() == 'inactive') {
+        } else if (this.empdata?.empstatus?.toLowerCase() == 'inactive') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
@@ -229,7 +229,7 @@ export class OnboardingDetailsComponent {
           console.log(filteredData);
           this.Statusdetails = filteredData;
         }
-        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee') {
+        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active' 
@@ -238,7 +238,7 @@ export class OnboardingDetailsComponent {
           });
           this.Statusdetails = filteredData
         }
-        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee prospective') {
+        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee prospective') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active' || lowerCaseStatusName === 'trainee prospective';
@@ -246,7 +246,7 @@ export class OnboardingDetailsComponent {
 
           this.Statusdetails = filteredData
         }
-        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee active') {
+        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee active') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active';
@@ -254,7 +254,7 @@ export class OnboardingDetailsComponent {
           this.Statusdetails = filteredData
 
         }
-        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee inactive') {
+        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee inactive') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee inactive';

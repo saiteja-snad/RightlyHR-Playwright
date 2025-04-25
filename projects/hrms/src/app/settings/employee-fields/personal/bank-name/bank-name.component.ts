@@ -41,10 +41,10 @@ export class BankNameComponent implements OnInit {
 
   ngOnInit(): void {
     this.bankForm = this.fb.group({
-      bank: [null, [Validators.required]],
+      bank: [null, [Validators.required, Validators.maxLength(100)]],
     });
     this.updateForm = this.fb.group({
-      bankName2: ['', Validators.required],
+      bankName2: ['',[Validators.required, Validators.maxLength(100)]],
     });
     this.getBank();
   }
@@ -73,7 +73,7 @@ export class BankNameComponent implements OnInit {
         this.modalService.dismissAll();
         this.bankForm.reset();
         this.getBank();
-        this.conformationPopup.openSuccessModal('Bank added successfully');
+        this.conformationPopup.openSuccessModal('Bank Name added successfully');
       },
       error: (reason: any) => {
         console.error('Error:', reason);
@@ -119,7 +119,7 @@ export class BankNameComponent implements OnInit {
             modal.close();
             this.updateForm.reset();
             this.conformationPopup.openSuccessModal(
-              'Bank updated successfully'
+              'Bank Name updated successfully'
             );
           },
           error: (err: any) => {
@@ -144,7 +144,7 @@ export class BankNameComponent implements OnInit {
       next: () => {
         this.getBank();
         modal.close();
-        this.conformationPopup.openSuccessModal('Bank deleted successfully');
+        this.conformationPopup.openSuccessModal('Bank Name deleted successfully');
       },
       error: (err: any) => {
         console.error('Delete bank failed:', err);

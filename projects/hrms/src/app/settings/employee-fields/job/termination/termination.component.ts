@@ -38,10 +38,10 @@ export class TerminationComponent {
   ngOnInit(): void {
     this.ExistForm = this.fb.group({
 
-      TERMINATION: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      TERMINATION: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      TERMINATION: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      TERMINATION: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.getTermination();
@@ -63,11 +63,12 @@ export class TerminationComponent {
     this.subscription = this.http.postdata('TerminationReason', request).subscribe({
       next: () => {
         this.getTermination();
-        this.conformationPopup.openSuccessModal('Exit reason added successfully');
+        this.conformationPopup.openSuccessModal('Exit Reason added successfully');
          this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+          const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
          this.resetForm();
       }
     });
@@ -86,10 +87,11 @@ export class TerminationComponent {
           this.getTermination();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Exit reason updated successfully');
+          this.conformationPopup.openSuccessModal('Exit Reason updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -122,10 +124,11 @@ export class TerminationComponent {
       next: () => {
         this.getTermination();
         modal.close();
-        this.conformationPopup.openSuccessModal('Exit reason deleted successfully');
+        this.conformationPopup.openSuccessModal('Exit Reason deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the data');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

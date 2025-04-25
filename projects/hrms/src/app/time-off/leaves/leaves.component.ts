@@ -193,6 +193,16 @@ export class LeavesComponent {
       this.leaveForm.get('halfDay')?.enable();
       this.leaveForm.get('availing')?.enable();
       this.leaveForm.get('fulldayavailing')?.enable();
+      if(this.enableHalfDayOptions === false){
+        this.leaveForm = this.fb.group({
+          availing: [{value : '',disabled: true}], 
+        });
+      }
+      else{
+        this.leaveForm = this.fb.group({
+          availing: [{value : ''}], 
+        });
+      }
 
     } else {
       this.leaveForm.get('halfDay')?.disable();
@@ -338,7 +348,8 @@ export class LeavesComponent {
 
     this.isSubmitted = false;
     this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails
-    // this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
+    this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
+    
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeHolidays) {
       this.getholidaybyempid();
     }
@@ -1203,9 +1214,9 @@ export class LeavesComponent {
         this.leaveForm.get('availing')?.disable();
         this.leaveForm.patchValue({ fulldayavailing: '2' });
       }
-      else{
-        this.leaveForm.get('availing')?.enable();
-      }
+      // else{
+      //   this.leaveForm.get('availing')?.enable();
+      // }
       this.selectedValue = '2'
     }
   }

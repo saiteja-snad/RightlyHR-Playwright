@@ -108,7 +108,7 @@
             </div>
             <span class="error-msg">Note: All Fields are Mandatory Fields</span>
             <div class="d-flex justify-content-end gap-3">
-                <button class="custom-btn btn-secondary px-4" type="button" (click)="openConfirmation()">{{'Cancel' | translate}}</button>
+                <button class="custom-btn btn-secondary px-4" type="button" (click)="openConfirmation()">{{'Close' | translate}}</button>
                 <button class="custom-btn btn-primary px-4" type="submit" [disabled]="dstForm.invalid">{{'Save' | translate}}</button>
             </div>
         </form>
@@ -120,7 +120,7 @@
     <div class="result-popup-content text-center" ngbAutofocus>
         <div class="mt-2">
             <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
-            <p class="confirmation-text">{{'Are you sure want to close?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to close?' | translate}}</p>
         </div>
         <div class="d-flex gap-5 pt-2 w-100">
             <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{'No' | translate}}</button>

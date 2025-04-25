@@ -41,13 +41,23 @@ export class ProbationDetailsComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      Type: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      Duration: ['', Validators.required],
+      Type: ['', [Validators.required]],
+     // Duration: ['', [Validators.required, Validators.pattern(/^\d+$/)]]
+
+  Duration: ['', [
+    Validators.required,
+    Validators.pattern(/^\d+$/)  // only digits allowed
+  ]]
+
+
     });
 
     this.updateForm = this.fb.group({
-      Type: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      Duration: ['', Validators.required],
+      Type: ['', [Validators.required,Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      Duration: ['', [
+        Validators.required,
+        Validators.pattern(/^\d+$/)  // only digits allowed
+      ]]
     });
     this.getProbationDetailstoselectthevalue();
     this.getProbationDetails();
@@ -69,6 +79,12 @@ export class ProbationDetailsComponent {
       },
       });
   }
+  // allowOnlyNumbers(event: KeyboardEvent): void {
+  //   const charCode = event.which ? event.which : event.keyCode;
+  //   if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+  //     event.preventDefault();
+  //   }
+  // }
   // Method to open the add modal dialog
   openDialog() {
     this.modalService.open(this.addpopup, {
@@ -105,7 +121,7 @@ export class ProbationDetailsComponent {
 
         this.getProbationDetails();
         modal.close();
-        this.conformationPopup.openSuccessModal('Jobrole Name added successfully');
+        this.conformationPopup.openSuccessModal('Probtion details added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -133,19 +149,19 @@ export class ProbationDetailsComponent {
   //  UPDATE
   updateJobroletype(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
-      const request: IProbation = {
+      const request  = {
         value: this.updateForm.value.Type.trim(),
         noOfDays: this.updateForm.value.Duration,
         configValueId: this.selectedId,
         isDeleted : false
       };
-
+console.log("request",request);
       this.subscription = this.http.postdata('ProbationFlow/settingsprobationconfigupdate', request).subscribe({
         next: () => {
           modal.close();
           this.conformationPopup.openSuccessModal('Probation details updated successfully');
           this.getProbationDetails();
-          this.resetForm();
+          // this.resetForm();
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal('Insertion of data failed');

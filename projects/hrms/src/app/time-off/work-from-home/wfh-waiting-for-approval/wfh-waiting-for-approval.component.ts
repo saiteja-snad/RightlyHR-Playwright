@@ -45,7 +45,7 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
     effect(() => {
       if (this.http.wfhTriggerSignal()) {
         this.getWFHRequests();
-      this.http.wfhTriggerSignal.set;
+      this.http.wfhTriggerSignal.set(false);
       }
     });
   }

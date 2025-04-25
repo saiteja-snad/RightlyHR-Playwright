@@ -56,6 +56,8 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     { name: 2, value: 2 },
   ];
   spinnerLoader = false;
+  pastDatesAllowed!:number;
+  futureDatesAllowed!:number;
 
   constructor(
     private modalService: NgbModal,
@@ -109,6 +111,37 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  
+  getPastDate(): string {
+    const days = Number(this.pastDatesAllowed ?? 0);
+  
+    if (isNaN(days)) {
+      console.error('Invalid pastDatesAllowed:', this.pastDatesAllowed);
+      return new Date().toISOString().split('T')[0]; // Fallback to current date
+    }
+  
+    const currentDate = new Date();
+    const pastDate = new Date(currentDate);
+    pastDate.setDate(currentDate.getDate() - days); // subtract days for past
+    return pastDate.toISOString().split('T')[0];
+  }
+  
+  
+ 
+  getFutureDate(): string {
+    const days = Number(this.futureDatesAllowed ?? 0);
+  
+    if (isNaN(days)) {
+      console.error('Invalid futureDatesAllowed:', this.futureDatesAllowed);
+      return new Date().toISOString().split('T')[0]; // Fallback to current date
+    }
+  
+    const currentDate = new Date();
+    const futureDate = new Date(currentDate);
+    futureDate.setDate(currentDate.getDate() + days);
+    return futureDate.toISOString().split('T')[0];
+  }
+
   getEmployeeeHolidays() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.http
@@ -117,6 +150,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.holidaysData = data;
+          console.log("Holidays Data",this.holidaysData);
         },
       });
   }
@@ -140,6 +174,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.weekendsData = data;
+          console.log("Weekends Data",this.weekendsData);
         },
       });
   }
@@ -152,6 +187,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.leaveTypes = response as LeaveType[];
+       
         },
         error(err: any) {
           console.log('errors', err);
@@ -166,13 +202,23 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       'maxHoursPerMonth',
       'pastDatesAllowed',
       'allowedPerDay',
+      'futureDatesAllowed'
     ];
     this.http
-      .getDatabyentriyvalue(`entityAttributeValues`, params, param)
+      .getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.permissionsValue = data as IEAV[];
+          this.futureDatesAllowed = parseInt(
+            this.permissionsValue.find((item: any) => item.attribute === 'futureDatesAllowed')?.value ?? '0',
+            10
+          );
+          
+          this.pastDatesAllowed = parseInt(
+            this.permissionsValue.find((item: any) => item.attribute === 'pastDatesAllowed')?.value ?? '0',
+            10
+          );
         },
         error(err) {
           console.log('errors', err);
@@ -213,10 +259,8 @@ export class PremissionsComponent implements OnInit, OnDestroy {
               ...status,
               permission: true,
             }));
+            this.http.permissionTriggerSignal.set(true);
             this.permissionForm.reset();
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
           },
           error: (err: any) => {
             this.spinnerLoader = false;

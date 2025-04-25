@@ -309,11 +309,11 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
-        requestedComments: this.workFromHomedata.requestedComments,
+        requestedComments: formData.reason,
         durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
         duration: isFullDay ? 1 : 0.5,
         status: 'Waiting for Approval',
-        reason: formData.reason,
+        // reason: formData.reason,
         requestedCategory: environment.wfhModuleId,
         requestedBy: this.empinfo.employeeId,
         requestedDate: new Date(),
@@ -329,11 +329,11 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
               'Request submitted successfully'
             );
             this.getWFHBal();
-            this.http.wfhTriggerSignal.set(true);
             this.http.tirggerCountSignal.update((status) => ({
               ...status,
               wfh: true,
             }));
+            this.http.wfhTriggerSignal.set(true);
           },
           error: (err: any) => {
             this.spinnerLoader = false;

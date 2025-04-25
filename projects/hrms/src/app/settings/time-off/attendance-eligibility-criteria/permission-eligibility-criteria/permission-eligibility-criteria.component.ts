@@ -35,7 +35,7 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
   getdatabyentriy() {
     this.disableEdit();
     const params = 'Permissions'
-    const param = ["maxHoursPerDay", 'maxHoursPerMonth','globalPermissionsDuration']
+    const param = ["maxHoursPerDay", 'maxHoursPerMonth','globalPermissionsDuration','futureDatesAllowed','pastDatesAllowed','allowedPerDay','allowedPerMonth']
     this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.permissionsvalue = data as IPermissionsvalue[];

@@ -6,6 +6,8 @@
           <th>Worked Date</th>
           <th>Availed</th>
           <th>Applied Date</th>
+          <th>Reason</th>
+          <th>Approver Reason</th>
           <th>Status</th>
         </tr>
       </thead>
@@ -22,6 +24,48 @@
               <span *ngSwitchDefault>-</span>
             </td>
             <td>{{ compOffRequest.requestedDate | dateformat }}</td>
+            <td>
+              <div>
+                <span>
+                  <a *ngIf="compOffRequest.requestedComments; else noRequestedComments"
+                     type="button"
+                     placement="top"
+                     [ngbPopover]="requestedComments">
+                    <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                  </a>
+                  <ng-template #requestedComments>
+                    <div>
+                      <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
+                    </div>
+                  </ng-template>
+                  <ng-template #noRequestedComments>
+                    <span>-</span>
+                  </ng-template>
+                </span>
+              </div>
+            </td>
+            
+            <td>
+              <div>
+                <span>
+                  <a *ngIf="compOffRequest.reason; else noReason"
+                     type="button"
+                     placement="top"
+                     [ngbPopover]="reason">
+                    <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                  </a>
+                  <ng-template #reason>
+                    <div>
+                      <p class="mb-0">{{ compOffRequest.reason }}</p>
+                    </div>
+                  </ng-template>
+                  <ng-template #noReason>
+                    <span>-</span>
+                  </ng-template>
+                </span>
+              </div>
+            </td>
+            
             <td>{{ compOffRequest.status }}</td>
           </tr>
         </ng-container>

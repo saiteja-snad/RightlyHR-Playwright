@@ -22,12 +22,17 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
 
   constructor(public readonly router: Router, private http: HttpService) {
     effect(() => {
-      if (this.http.tirggerCountSignal().compOff) {
+      // if (this.http.tirggerCountSignal().compOff) {
+      //   this.getCompOffRequest();
+      //   this.http.tirggerCountSignal.update((status) => ({
+      //     ...status,
+      //     compOff: false,
+      //   }));
+      // }
+
+      if(this.http.permissionTriggerSignal()){
         this.getCompOffRequest();
-        this.http.tirggerCountSignal.update((status) => ({
-          ...status,
-          compOff: false,
-        }));
+        // this.http.permissionTriggerSignal.set(false);
       }
     })
   }

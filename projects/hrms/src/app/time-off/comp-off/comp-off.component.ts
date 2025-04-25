@@ -41,7 +41,9 @@ export class CompOffComponent implements OnInit, OnDestroy {
   wfhValidations = {} as IValidations;
   spinnerLoader = false;
   alloweddates: string = '';
-
+  isWeekOffSelected = true;
+  isHolidaySelected = true;
+  selectedDay = '';
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -95,6 +97,84 @@ export class CompOffComponent implements OnInit, OnDestroy {
     });
   }
 
+  weekendAndHolidaysCheck(selectedDate:string){
+    this.dateCheckWithHoliday(selectedDate);
+    this.checkWeekends(selectedDate);
+  }
+
+  dateCheckWithHoliday(selectedDate: string) {
+    if (this.holidaysData?.orgHolidaysItems) {
+      this.holidaysData?.orgHolidaysItems?.forEach((element: any) => {
+        const currentDate = new Date(element.holidayDate);
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        element.holidayDate = `${year}-${month}-${day}`;
+      });
+    }
+    
+    const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) => holiday.holidayDate === selectedDate);
+    this.isHolidaySelected = isDatePresent;
+  }
+
+  checkWeekends(selectedDate: string) {
+    let selectedDate1 = moment(selectedDate);
+    let dayOfMonth = selectedDate1.date();
+    let weekNumber = Math.ceil(dayOfMonth / 7);
+    const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    this.selectedDay = weekdayNames[selectedDate1.day()];
+    let captureHoliday: any;
+    const dayPresent = this.weekendsData?.orgWeekendItems?.some((holiday: any) => {
+      if (holiday.weekday === this.selectedDay) {
+        captureHoliday = holiday;
+        return true;
+      }
+      this.isWeekOffSelected = false;
+      return false;
+    });
+  
+    console.log(captureHoliday);
+    if (captureHoliday && dayPresent) {
+      if (weekNumber === 1 && dayPresent) {
+        if (captureHoliday.firstweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("First week of the month");
+      } else if (weekNumber === 2 && dayPresent) {
+        if (captureHoliday.secondweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("Second week of the month");
+      } else if (weekNumber === 3) {
+        if (captureHoliday.thirdweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("Third week of the month");
+      } else if (weekNumber === 4) {
+        if (captureHoliday.fourthweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("Fourth week of the month");
+      } else if (weekNumber === 5) {
+        if (captureHoliday.fifthweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("Fifth week of the month");
+      }
+    }
+    console.log(this.isWeekOffSelected);
+  }
+
   applyCompOff(addForm: FormGroup) {
     if (addForm.valid) {
       const formData = addForm.value;
@@ -103,7 +183,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
-        requestedComments: this.compoffdata.requestedComments,
+        requestedComments: formData.reason,
         durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
         duration: isFullDay ? 1 : 0.5,
         status: 'Waiting for Approval',
@@ -127,9 +207,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
               ...status,
               compOff: true,
             }));
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
+            this.http.compOffTriggerSignal.set(true);
+            this.addCompOffForm.reset();
             //write a signal to trigger the get all count in the side bar
           },
           error: (err: any) => {
@@ -146,7 +225,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
             }
           },
           complete: () => {
-            this.addCompOffForm.reset();
+            
             this.spinnerLoader = false;
           },
         });

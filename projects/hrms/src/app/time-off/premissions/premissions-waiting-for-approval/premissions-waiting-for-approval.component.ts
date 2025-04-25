@@ -41,11 +41,9 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
     public rbac: RbacService,
   ) {
     effect(() => {
-      if (this.http.tirggerCountSignal().permission) {
+      if (this.http.permissionTriggerSignal()) {
         this.getDataPermissions();
-      this.http
-        .tirggerCountSignal
-        .update((status) => ({ ...status, permission: false }));
+        this.http.permissionTriggerSignal.set(false);
       }
     });
   }

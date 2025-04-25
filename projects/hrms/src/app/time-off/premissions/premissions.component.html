@@ -38,7 +38,7 @@
                         <label for="Date" class="form-label custom-label mb-2">Date<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="permissionDate" id="Date"
-                            onkeydown="return false" placeholder="Select Date" />
+                            onkeydown="return false" placeholder="Select Date" autocomplete="off"  [min]="getPastDate()" [max]="getFutureDate()" />
                         <div *ngIf="permissionForm.get('permissionDate')?.touched && permissionForm.get('permissionDate')?.invalid"
                             class="error-msg">
                             Permission Date is required.

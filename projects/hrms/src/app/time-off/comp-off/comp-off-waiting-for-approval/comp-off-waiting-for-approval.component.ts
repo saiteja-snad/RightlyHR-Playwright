@@ -45,12 +45,9 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
     public rbac: RbacService,
   ) {
     effect(() =>{
-      if (this.http.tirggerCountSignal().compOff) {
+      if (this.http.compOffTriggerSignal()) {
         this.getCompOffRequest();
-        this.http.tirggerCountSignal.update((status) => ({
-          ...status,
-          compOff: false,
-        }));
+        this.http.compOffTriggerSignal.set(false);
       }
 
   })

@@ -349,8 +349,8 @@
           </div>
       
           <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
-            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">{{buttonValue}}</button>
-            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid"
+            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading">{{buttonValue}}</button>
+            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading"
               (click)="emailSendingforApprover()">Request
               For Approval</button>
             @if(loading){

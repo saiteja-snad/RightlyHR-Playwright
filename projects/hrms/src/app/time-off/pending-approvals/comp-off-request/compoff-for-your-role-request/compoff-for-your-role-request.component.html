@@ -27,7 +27,7 @@
                     @if ((((leaves | async) ?? []) | wfhsearchfilter: searchValue).length > 0) {
                     @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track
                     leave.approvalHeader.id){
-                    <tr >
+                    <tr>
                         <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
                         <td>{{leave.entity.attendanceRequesterName}}</td>
                         <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
@@ -107,13 +107,31 @@
                 </tbody>
             </table>
         </div>
+        
+        <div class="pagination-content pt-2 w-100">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                <!-- Dropdown for Rows per Page -->
+                <div class="d-flex align-items-center gap-3 p-2">
+                    <!-- Bootstrap Select -->
+                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onRowsChange()">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+                </div>
+
+                <!-- Pagination -->
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
+        </div>
     </div>
 </div>
 
-
 <ng-template #approval let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-
         <div class="custom-main-popup-content p-5">
             <div class="d-flex justify-content-center align-items-center">
                 <img src="icons\succes.png" alt="succues" class="succes-icon">
@@ -147,25 +165,22 @@
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
                         translate}}</button>
 
-                        <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
-                            @if(spinnerLoader){
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..'}}...</span>
-                            }@else {
-                            <span>{{'Reject'}}</span>
-                            }
-                        </button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
+                        @if(spinnerLoader){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Approve'| translate}}</span>
+                        }
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
 
-
-
 <ng-template #rejectmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-
         <div class="custom-main-popup-content p-5">
             <div class="d-flex justify-content-center align-items-center">
                 <img src="icons\reject.png" alt="succues" class="error-icon">
@@ -202,15 +217,20 @@
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
                         translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
-                        translate}}</button>
+                    <!-- <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' | translate}}</button> -->
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">
+                        @if(spinnerLoader){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Reject' | translate}}</span>
+                        }
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
-
-
 
 <!-- commentspopup -->
 <ng-template #commentspopup let-modal>
@@ -224,7 +244,6 @@
                     (click)="modal.dismiss('Cross click')"></button>
             </div>
         </div>
-
         <div class="custom-main-component-container">
             <div class="custom-table-content mt-2">
                 <table class="table">

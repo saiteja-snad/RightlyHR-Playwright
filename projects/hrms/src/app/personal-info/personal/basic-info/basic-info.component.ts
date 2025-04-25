@@ -31,7 +31,7 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
     { name: 'O-' }
   ];
   Gender: IGender[] = [];
-  Titledetails: ITitle[] = [];
+  titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
   empyployeedata={} as any;
   buttons = false
@@ -50,13 +50,13 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
 
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
-      employeeId: ['', Validators.required],
+      employeeId: [null, Validators.required],
       salutation: [null, Validators.required],
-      firstName: ['', Validators.required],
-      middleName: [''],
-      lastName: ['', Validators.required],
+      firstName: [null, Validators.required],
+      middleName: [null],
+      lastName: [null, Validators.required],
       gender: [null, Validators.required],
-      dob: ['', Validators.required],
+      dob: [null, Validators.required],
       bloodGroup: [null, Validators.required],
       maritalStatus: [null, Validators.required],
     });
@@ -75,22 +75,22 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
   }
 
   patchForm(data: any): void {
-    const maritalStatus = this.Maritaldetails.find(
-      (item: any) => item.maritalstatus1 === data.maritalStatus
-    ) || null;
-
+    console.log('data',data)
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
-      salutation: data.title,
+      fusionEmpId: data.fusionEmpId,
+       salutation: this.titledetails.find((item: any) => item.titlename === data.title)|| data.title,
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
-      gender: this.Gender.find((item: any) => item.genderName === data.gender || this.empinfo.gender),
+      gender: data.gender,
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalStatus: maritalStatus,
+      maritalStatus: data.maritalStatus
     });
-    console.log(this.basicInfoForm.value);
+    console.log('datapatch',this.basicInfoForm.value);
+
+  
 
   }
 
@@ -100,14 +100,14 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
 
     const updatePayload = {
       employeeId: formValue.employeeId,
-      title: formValue.salutation || null,
+      title: formValue.salutation.titlename || null,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
-      gender: formValue.gender.genderName || null,
+      gender: formValue.gender || null,
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup.name || null,
-      maritalStatus: formValue.maritalStatus?.maritalstatus1,
+      maritalStatus: formValue.maritalStatus,
       empStatus: 'Active',
       emailaddress: this.empinfo.emailaddress || null,
       workEmail: this.empinfo.workEmail || null,
@@ -148,6 +148,7 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
           this.conformationPopup.openSuccessModal('Basic Information Updated Successfully',);
           this.getEmployeeId();
           this.basicInfoForm.disable();
+          this.getEmployeeId()
           console.log('Data updated successfully:', data);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Basic Info updated successfully')
@@ -170,7 +171,7 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
-        this.Titledetails = data as ITitle[];
+        this.titledetails = data as ITitle[];
       },
     });
   }

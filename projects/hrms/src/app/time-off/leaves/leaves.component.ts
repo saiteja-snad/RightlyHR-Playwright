@@ -379,7 +379,8 @@ export class LeavesComponent {
     this.vldateofjoin1();
     this.onEndDateChange();
     this.checkWeekends(action);
-    this.dateCheckWithHolidayOrWeekend(action)
+    this.dateCheckWithHolidayOrWeekend(action);
+    this.issEndDategreater = true;
   //   if (!this.startDate) {
   //     // Clear the end date when the start date is cleared
   //     this.endDate = null;
@@ -387,7 +388,7 @@ export class LeavesComponent {
   //     // Optionally reset any errors or validations tied to the end date
   //     this.isWeekOffSelectedEndate = false; // Example: Resetting the weekend error
   //     this.isHolidaySelectedEndate = false; // Example: Resetting the holiday error
-  //     this.issEndDategreater = true; // Example: Resetting "End Date should be greater than Start Date" error
+  //      // Example: Resetting "End Date should be greater than Start Date" error
   // }
   }
   

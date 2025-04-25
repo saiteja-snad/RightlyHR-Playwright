@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container">
     <div class="custom-poup-header-content popup-header-border">
         <div class="pt-2">
-            <p class="popup-heading mb-0">{{'Add Prospective Intern'| translate}}</p>
+            <p class="popup-heading mb-0">{{'Add Prospective Trainee'| translate}}</p>
         </div>
         <div>
             <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -98,7 +98,7 @@
                     </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('location')?.invalid && employeeForm.get('location')?.touched" class="error-msg">
-                        Location is required
+                        {{ 'Location is required' | translate }}
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -108,9 +108,7 @@
                     <div class="custom-p-select-content">  
                             <select type="text" class="form-select custom-select" placeholder="Select Sub Location"
                             id="sublocation" name="sublocation"  (change)="onClickValue()"
-                            formControlName="subLocation" required>
-                            <option [ngValue]="undefined">Select Sub Location
-                            </option>
+                            formControlName="subLocation" required> 
                             <option *ngFor="let item of subLocationsDropdown" [value]="item.id">
                                 {{item.jobSubLocationName}}</option>
                         </select>
@@ -122,9 +120,15 @@
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Close'|translate}}</button>
-                <button type="submit" class="custom-btn btn-primary"><span *ngIf="!isLoading">{{'Add'|translate}}</span>
-                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                </button>
+                <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="spinnerLoader">
+                        @if(spinnerLoader){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Add'|translate}}</span>
+                        }
+                    </button>
             </div>
         </form>
     </div>

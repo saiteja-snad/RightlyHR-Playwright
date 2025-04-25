@@ -9,6 +9,7 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Iprospective } from '../../prospective-employees/Prospective-model';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 @Component({
   selector: 'app-add-prospective-intern',
   imports: [CommonModule, Select, TranslateModule, ReactiveFormsModule],
@@ -38,19 +39,20 @@ export class AddProspectiveInternComponent {
   Prospective = [] as any;
   initialLocationId: any;
   isLoading: boolean = false;
+  spinnerLoader = false;
   @ViewChild('successhide') private readonly successhide!: NgbModal;
   @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   @ViewChild('success') success: any;
-  @ViewChild('pospectivecreate') private readonly pospectivecreate!:NgbModal;
+  @ViewChild('pospectivecreate') private readonly pospectivecreate!: NgbModal;
   sublocation: any[] | undefined;
   employeementType: { id: number; name: string }[] = [
     { id: 1, name: 'Trainee' },
   ];
 
   constructor(private router: Router,
-     private conformationPopup: OpenModalService,
-     private authService: AuthService, 
-     private http: HttpService, private fb: FormBuilder, private modalService: NgbModal) {
+    private conformationPopup: OpenModalService,
+    private authService: AuthService,
+    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
@@ -60,19 +62,20 @@ export class AddProspectiveInternComponent {
     this.getJobrole();
     this.jobLocationList();
   }
+  
   initializeProspectiveEmpDetails() {
     this.employeeForm = this.fb.group({
-      firstName: [ '',[ Validators.required,  Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$')]],
-      middleName: [ '', [   Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]],
-      lastName: [ '',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$') ]  ],
-      personalEmail: [ '', [Validators.required,Validators.email]],
+      firstName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$'), noWhitespaceValidator]],
+      middleName: ['', [Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$'), noWhitespaceValidator]],
+      lastName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,50}$'), noWhitespaceValidator]],
+      personalEmail: ['', [Validators.required, Validators.email, noWhitespaceValidator]],
       designation: ['', Validators.required],
       employmentType: ['', Validators.required],
       location: ['', Validators.required],
       subLocation: ['', Validators.required]
     });
   }
-  
+
   empdata() {
     this.subscription = this.http
       .getData(`Employeedata/TrainingEmployees`)
@@ -85,13 +88,15 @@ export class AddProspectiveInternComponent {
         error: (reason: any) => console.log(reason),
       });
   }
-  selectgradId(event:any){
+
+  selectgradId(event: any) {
     console.log(event);
-    if(event){
+    if (event) {
       this.gradeIdValue = event.value;
       console.log(this.gradeIdValue);
     }
-}
+  }
+
   //function to check the email pattren
   changepaternemail() {
     this.patern = '[A-Za-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$';
@@ -106,7 +111,7 @@ export class AddProspectiveInternComponent {
       next: (data: any) => {
         console.log('API Response:', data);
 
-        this.JobroleDetails =data
+        this.JobroleDetails = data
 
         console.log('Dropdown Options:', this.JobroleDetails);
       },
@@ -131,19 +136,18 @@ export class AddProspectiveInternComponent {
     });
   }
 
-
   OnClickLocation(event: any) {
     const selectedLocationId = event?.value;
     if (selectedLocationId) {
-      console.log("Selected Location ID:", selectedLocationId); 
+      console.log("Selected Location ID:", selectedLocationId);
       this.postProspectiveEmpDetails.locationid = selectedLocationId;
-      
+
       let selectedLocation = this.jobLocationDropDownData.find(
         (location: any) => location.id === event.value
       );
-  
+
       console.log("Selected Job Location Details:", selectedLocation);
-  
+
       if (selectedLocation) {
         this.getSubLocationByid(selectedLocation);
       } else {
@@ -154,8 +158,6 @@ export class AddProspectiveInternComponent {
       console.warn("No location ID selected.");
     }
   }
-  
-
 
   onClickValue() {
     this.disablebutton = false;
@@ -195,11 +197,11 @@ export class AddProspectiveInternComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true,backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   postTraineeData() {
-    this.isLoading = true;
+    this.spinnerLoader = true;
     let loggedInUser = this.authService.getToken();
     let postdata = {
       firstName: this.employeeForm.get('firstName')?.value,
@@ -210,7 +212,6 @@ export class AddProspectiveInternComponent {
       emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
       empType: 'Trainee'
-
     }
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
@@ -221,26 +222,26 @@ export class AddProspectiveInternComponent {
           this.result = res.employeeData;
           console.log(this.result);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Prospective Intern created successfully');
+          this.conformationPopup.openSuccessModal('Prospective Trainee added successfully');
           this.http.activeTabSubject.next(this.result.employeeId);
           // this.isLoading = false;
           if (this.result.employeeId != null) {
-          const jobdata = {
-            employeeId: this.result.employeeId,
-            gradeId: this.gradeIdValue.gradeId,
-            locationid: this.postProspectiveEmpDetails.locationid,
-            sublocationid: parseInt(this.employeeForm.get('subLocation')?.value),
-            jobRole: this.gradeIdValue.designationName,
-          };
-          this.subscription = this.http
-            .postdata('JobDetails', jobdata)
-            .subscribe({
-              next: (data: any) => {
-                console.log(data);
-                this.select(this.result);
-              },
-              error: (Reason) => console.log(Reason),
-            });
+            const jobdata = {
+              employeeId: this.result.employeeId,
+              gradeId: this.gradeIdValue.gradeId,
+              locationid: this.postProspectiveEmpDetails.locationid,
+              sublocationid: parseInt(this.employeeForm.get('subLocation')?.value),
+              jobRole: this.gradeIdValue.designationName,
+            };
+            this.subscription = this.http
+              .postdata('JobDetails', jobdata)
+              .subscribe({
+                next: (data: any) => {
+                  console.log(data);
+                  this.select(this.result);
+                },
+                error: (Reason) => console.log(Reason),
+              });
           }
         }
         else if (res.statusCode == 409) {
@@ -255,6 +256,10 @@ export class AddProspectiveInternComponent {
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal(err.message);
+        this.spinnerLoader = false;
+      },
+      complete: () => {
+        this.spinnerLoader = false;
       },
     });
   }

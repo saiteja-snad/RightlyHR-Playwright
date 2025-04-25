@@ -242,6 +242,9 @@
                             <div *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.hasError('maxlength')">
                                 Zip Code cannot exceed 6 digits
                             </div>
+                            <div *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.hasError('pattern') && personalDetailsForm.get('permanentAddress.zipCode')?.touched" class="error-msg">
+                                Zip Code should contain only numbers
+                            </div>
                         </div>
                     </div>
                 </ng-container>
@@ -321,6 +324,9 @@
                             </div>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.hasError('maxlength')">
                                 Zip Code cannot exceed 6 digits
+                            </div>
+                            <div *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.hasError('pattern') && personalDetailsForm.get('permanentAddress.zipCode')?.touched" class="error-msg">
+                                Zip Code should contain only numbers
                             </div>
                         </div>
                     </div>

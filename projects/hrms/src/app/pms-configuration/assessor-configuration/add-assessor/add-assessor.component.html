@@ -112,17 +112,20 @@
                     name="comments-{{i}}">
                 </td>
                 <td class="text-center">
-                  <button type="button" class="custom-delete-btn" *ngIf="i <=0" (click)="clearindexdata(i)">
-                    <i class="bi bi-trash text-danger"></i>
+                  <button type="button" class="custom-action-btn" *ngIf="i <=0"
+                      (click)="clearindexdata(i)">
+                      <i class="bi bi-trash text-danger custom-action-btn-icon"></i>
                   </button>
-                  <button class="custom-delete-btn" *ngIf="i >= 1" type="button"
-                    (click)="openModal(deleterowassessor);removeRowdata=i">
-                    <i class="bi bi-trash text-danger"></i>
+                  <button type="button" class="custom-action-btn" *ngIf="i >= 1"
+                      (click)="openModal(deleterowassessor);removeRowdata=i">
+                      <i class="bi bi-trash text-danger custom-action-btn-icon"></i>
                   </button>
-                </td>
-                <td><button type="button" class="custom-add-btn" (click)="addRow()"
-                    [disabled]="PostAssesorpercentage.invalid"><i class="bi bi-plus-circle-fill"></i></button>
-                </td>
+              </td>
+              <td class="text-center">
+                  <button type="button" class="custom-action-btn" (click)="addRow()"
+                      [disabled]="PostAssesorpercentage.invalid"><i class="bi bi-plus-circle-fill custom-action-btn-icon"></i>
+                  </button>
+              </td>
               </tr>
             </tbody>
           </table>

@@ -19,14 +19,21 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   roleWfh: AttendanceRequest[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
-  navTabs = computed(() => {
+  // navTabs = computed(() => {
+  //   const data = this.pendingApprovalCount().find(item => item.moduleId === 2);
+  //   return [
+  //     { label: 'For You ', link: 'for-you', count: data?.forYou ?? 0 },
+  //     { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 }
+  //   ];
+  // });
+  readonly navTabs = computed(() => {
     const data = this.pendingApprovalCount().find(item => item.moduleId === 2);
     return [
-      { label: 'For You ', link: 'for-you', count: data?.forYou ?? 0 },
+      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0 },
       { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 }
     ];
   });
-
+  
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllWFHPendingApprovalsCount();
@@ -38,7 +45,7 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
         this.getAllWFHPendingApprovalsCount();
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, wfh: false }));
       }
-    });
+    });    
   }
 
   isActive(route: string): boolean {

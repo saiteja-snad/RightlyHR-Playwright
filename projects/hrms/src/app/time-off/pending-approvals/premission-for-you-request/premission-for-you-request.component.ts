@@ -216,7 +216,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
           next: (response: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
-              'Request Rejcted Successfully'
+              'Request Rejected Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData  = {} as PermissionRequestResponse;

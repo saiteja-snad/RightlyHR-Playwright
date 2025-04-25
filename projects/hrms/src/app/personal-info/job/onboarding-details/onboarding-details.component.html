@@ -6,7 +6,7 @@
             </div>
 
             <!-- Show edit icon if employee status is 'Active' and buttons are not visible -->
-            <div *ngIf="!buttons && empinfo?.empstatus?.toLowerCase() === 'active'">
+            <div *ngIf="!buttons && (empdata?.empstatus?.toLowerCase() === 'active'||empdata.substatus === 'Offer Letter Accepted')">
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
             </div>
 

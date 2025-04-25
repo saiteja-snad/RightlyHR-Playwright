@@ -1,5 +1,7 @@
+
 <div class="custom-main-component-container">
     <div class="custom-table-content">
+        @if(!dataload){
         <table class="w-100">
             <thead>
                 <tr>
@@ -7,7 +9,7 @@
                     <th>Permission Date</th>
                     <th>Duration(In Hours)</th>
                     <th>Reason</th>
-                    <th>Approval Reason</th>
+                    <th>Approver Reason</th>
                     <th>Permission Type</th>
                     <th>Status</th>
                 </tr>
@@ -19,9 +21,10 @@
                         <td>{{permissionRequest.createdDate | dateformat}}</td>
                         <td>{{permissionRequest.requestedDate | dateformat}}</td>
                         <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+                        
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -29,9 +32,10 @@
                                 </ng-template>
                             </div>
                         </td>
+                        @if(permissionRequest.status !== 'Processed'){
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -39,6 +43,9 @@
                                 </ng-template>
                             </div>
                         </td>
+                        }@else {
+                           <td>-</td>
+                        }
                         <td>{{permissionRequest.type}}</td>
                         <td>{{permissionRequest.status}}</td>
                     </tr>
@@ -54,5 +61,6 @@
                 }
             </tbody>
         </table>
+        }@else{<app-data-loader-content />}
     </div>
 </div>

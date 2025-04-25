@@ -20,11 +20,8 @@
                     <td>{{lev.date | dateformat}}</td>
                     <td>{{lev.categoryName}}</td>
                     <td>{{lev.duration}}</td>
-                    <td>
-                        {{ lev.durationType == 1 ? 'First Half' :
-                        lev.durationType == 2 ? 'Full Day' :
-                        lev.durationType == 3 ? 'Second Half' : 'Unknown'
-                        }}
+                    <td>{{ lev.durationType == 1 ? 'First Half' : lev.durationType == 2 ? 'Full Day' :
+                        lev.durationType == 3 ? 'Second Half' : 'Unknown' }}
                     </td>
                     <td>{{lev.startdate | dateformat}}</td>
                     <td>{{lev.enddate | dateformat}}</td>

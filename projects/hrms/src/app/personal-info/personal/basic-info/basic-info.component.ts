@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -52,16 +52,35 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
     this.basicInfoForm = this.fb.group({
       employeeId: [null, Validators.required],
       salutation: [null, Validators.required],
-      firstName: [null, Validators.required],
-      middleName: [null],
-      lastName: [null, Validators.required],
+      firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      lastName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       gender: [null, Validators.required],
-      dob: [null, Validators.required],
-      bloodGroup: [null, Validators.required],
+      dob: [null, [Validators.required, this.validateAge.bind(this)]],
+      bloodGroup: [null],
       maritalStatus: [null, Validators.required],
     });
   }
 
+  validateAge(control: AbstractControl): { [key: string]: boolean } | null {
+    const dob = control.value;
+    if (dob) {
+      const currentDate = new Date();
+      const birthDate = new Date(dob);
+      let age = currentDate.getFullYear() - birthDate.getFullYear();
+      const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+      if (age < 18 || age > 75) {
+        return { invalidAge: true }; // Return an error object if age is invalid
+      }
+    }
+    return null; // Return null if validation passes
+  }
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -77,16 +96,16 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
   patchForm(data: any): void {
     console.log('data',data)
     this.basicInfoForm.patchValue({
-      employeeId: data.employeeId,
+      employeeId: data.fusionEmpId,
       fusionEmpId: data.fusionEmpId,
-       salutation: this.titledetails.find((item: any) => item.titlename === data.title)|| data.title,
+       salutation: this.titledetails.find((item: any) => item.titlename === data.title),
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
       gender: data.gender,
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalStatus: data.maritalStatus
+      maritalStatus:this.Maritaldetails.find(((item: any)=>item.maritalstatus1 === data.maritalStatus)) || data.maritalStatus,
     });
     console.log('datapatch',this.basicInfoForm.value);
 
@@ -99,44 +118,44 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
     console.log(formValue);
 
     const updatePayload = {
-      employeeId: formValue.employeeId,
-      title: formValue.salutation.titlename || null,
+      employeeId:  this.empyployeedata.employeeId,
+      title: formValue.salutation?.titlename || null,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
       gender: formValue.gender || null,
       dob: formValue.dob,
-      bloodGroup: formValue.bloodGroup.name || null,
-      maritalStatus: formValue.maritalStatus,
+      bloodGroup: formValue.bloodGroup?.name || null,
+      maritalStatus: formValue.maritalStatus?.maritalstatus1,
       empStatus: 'Active',
-      emailaddress: this.empinfo.emailaddress || null,
-      workEmail: this.empinfo.workEmail || null,
-      contactnumber: this.empinfo.contactnumber || null,
-      workPhone: this.empinfo.workPhone || null,
-      emergencyName: this.empinfo.emergencyName,
-      emailId: this.empinfo.emailId,
-      relationShip: this.empinfo.relationShip,
-      mobileNumber: this.empinfo.mobileNumber,
-      emergencyName1: this.empinfo.emergencyName1,
-      emergencyEmail1: this.empinfo.emergencyEmail1,
-      emergencyNumber1: this.empinfo.emergencyNumber1,
-      relationship1: this.empinfo.relationship1,
-      profileUrl: this.empinfo.profileUrl,
-      fusionEmpId: this.empinfo.fusionEmpId,
-      dateOfJoining: this.empinfo.dateOfJoining,
-      branchCode: this.empinfo.branchCode,
-      probationEndDate: this.empinfo.probationEndDate,
-      probationStatus: this.empinfo.probationStatus,
-      noticePeriod: this.empinfo.noticePeriod,
-      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-      issalaryhold:this.empinfo.issalaryhold,
-      pf: this.empinfo.pf,
-      esic:this.empinfo.esic,
-      pt: this.empinfo.pt,
-      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
-      allowWFH: this.empinfo.allowWFH,
-      workLocation:this.empinfo.workLocation,
-      wfhManagerId: this.empinfo.wfhManagerId
+      emailaddress: this.empyployeedata.emailaddress || null,
+      workEmail: this.empyployeedata.workEmail || null,
+      contactnumber: this.empyployeedata.contactnumber || null,
+      workPhone: this.empyployeedata.workPhone || null,
+      emergencyName: this.empyployeedata.emergencyName,
+      emailId: this.empyployeedata.emailId,
+      relationShip: this.empyployeedata.relationShip,
+      mobileNumber: this.empyployeedata.mobileNumber,
+      emergencyName1: this.empyployeedata.emergencyName1,
+      emergencyEmail1: this.empyployeedata.emergencyEmail1,
+      emergencyNumber1: this.empyployeedata.emergencyNumber1,
+      relationship1: this.empyployeedata.relationship1,
+      profileUrl: this.empyployeedata.profileUrl,
+      fusionEmpId: formValue.employeeId ||  this.empyployeedata.fusionEmpId  ,
+      dateOfJoining: this.empyployeedata.dateOfJoining,
+      branchCode: this.empyployeedata.branchCode,
+      probationEndDate: this.empyployeedata.probationEndDate,
+      probationStatus: this.empyployeedata.probationStatus,
+      noticePeriod: this.empyployeedata.noticePeriod,
+      backgroundCheckStatus: this.empyployeedata.backgroundCheckStatus,
+      issalaryhold:this.empyployeedata.issalaryhold,
+      pf: this.empyployeedata.pf,
+      esic:this.empyployeedata.esic,
+      pt: this.empyployeedata.pt,
+      totalYearsOfExperience: this.empyployeedata.totalYearsOfExperience,
+      allowWFH: this.empyployeedata.allowWFH,
+      workLocation:this.empyployeedata.workLocation,
+      wfhManagerId: this.empyployeedata.wfhManagerId
 
     };
     console.log(updatePayload);
@@ -150,6 +169,7 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
           this.basicInfoForm.disable();
           this.getEmployeeId()
           console.log('Data updated successfully:', data);
+          this.buttons = !this.buttons;
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Basic Info updated successfully')
         },
@@ -188,8 +208,12 @@ export class BasicInfoComponent  implements OnInit,OnDestroy{
     this.buttons = !this.buttons;
     if (this.buttons) {
       this.basicInfoForm.enable();
+     
+
     } else {
       this.basicInfoForm.disable();
+      this.basicInfoForm.reset();
+      this.getEmployeeId();
     }
   }
 

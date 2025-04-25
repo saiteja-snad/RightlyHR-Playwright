@@ -38,14 +38,21 @@ export class LoginComponent {
 
   initiallogin() {
     this.loginform = this.fb.group({
-      username: [null, Validators.required],
+      username: [null, [Validators.required,Validators.email]],
       password: [null, Validators.required]
     })
     this.loginform.valueChanges.subscribe(() => {
       this.wrongCredentials = '';
     })
   }
-
+  blockLeadingSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+  
+    // If space is pressed and cursor is at the start (position 0), block it
+    if (event.key === ' ' && input.selectionStart === 0) {
+      event.preventDefault();
+    }
+  }
   togglePassword() {
     this.showPassword = !this.showPassword;
   }

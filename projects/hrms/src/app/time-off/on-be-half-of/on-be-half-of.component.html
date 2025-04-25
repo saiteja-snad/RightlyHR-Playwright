@@ -17,6 +17,7 @@
                 <i class="bi bi-plus me-2"></i>Apply Leave On Behalf Of</button>
         </div>
     </div>
+
     @if(categoryDetails && categoryDetails.length > 0){
         <div class="leave-cards-grid-container">
             <div class="card leaves-card" *ngFor="let box of categoryDetails;">
@@ -156,7 +157,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12 mb-4">
+                    <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Reason <span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" placeholder="Please enter reason"
                             formControlName="reason"></textarea>
@@ -167,8 +168,8 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">{{'Close'| translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="leaveForm.invalid || !issEndDategreater  || !isstimeoffValid
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'| translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="leaveForm.invalid || !issEndDategreater  || !isstimeoffValid
                     || !startdatevalid || isHolidaySelected ||!isDayTypeselected|| isWeekOffSelected || isWeekOffSelectedEndate|| isoptionalnotallowedatWorkingdate ||
                     (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) && isLoading">
                         <span *ngIf="!isLoading">Apply</span>

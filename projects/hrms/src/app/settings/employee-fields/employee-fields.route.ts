@@ -43,6 +43,7 @@ export default [
             { path: 'consultancy', loadComponent: () => import('./job/consultancy/consultancy.component').then((m) => m.ConsultancyComponent) }
         ]
     },
+    { path: 'documents', loadComponent: () => import('./documents-creation/documents-creation.component').then((m) => m.DocumentsCreationComponent) },
     {
         path: 'expenes',
         children: [

@@ -6,9 +6,10 @@ import { IWeekends } from '../pending-weekends/weekends.model';
 import { CommonModule } from '@angular/common';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
    selector: 'app-published-weekends',
-   imports: [CommonModule, NgbPopoverModule, TranslateModule],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent],
    templateUrl: './published-weekends.component.html',
    styleUrl: './published-weekends.component.scss'
 })

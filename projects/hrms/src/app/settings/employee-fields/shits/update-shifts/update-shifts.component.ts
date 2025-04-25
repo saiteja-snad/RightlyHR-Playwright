@@ -40,9 +40,9 @@ export class UpdateShiftsComponent {
   isDuplicateCodeName1: boolean[] = [];
   Status: any;
   hoildaylist: any;
-  navTabs: any[] = [
-    { label: 'Update Shifts', link: '/claimsandexpenses/addexpens' },
-  ];
+  // navTabs: any[] = [
+  //   { label: 'Update Shifts', link: '/claimsandexpenses/addexpens' },
+  // ];
 
   constructor(
   private route: ActivatedRoute,private fb: FormBuilder,private router: Router,private http: HttpService,
@@ -65,6 +65,31 @@ export class UpdateShiftsComponent {
     }
   }
 
+  //BLOCK -VE VALUE
+  blockInvalidKeys(event: KeyboardEvent) {
+    const invalidKeys = ['-', '+', 'e', 'E'];
+    if (invalidKeys.includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+  
+  
+  blockNegativePaste(event: ClipboardEvent) {
+    const clipboardData = event.clipboardData?.getData('text');
+    if (clipboardData && parseFloat(clipboardData) < 0) {
+      event.preventDefault();
+    }
+  }
+  isDeleteDisabled: boolean = false;
+
+  deleteShift(index: number) {
+    if (this.shifts.length > 1) {
+      this.shifts.removeAt(index);
+      this.isDeleteDisabled = false; // allow delete if more than 1
+    } else {
+      this.isDeleteDisabled = true; // disable delete button
+    }
+  }
   initializeForm() {
     this.shiftForm = this.fb.group({
       year: ['', Validators.required],
@@ -98,14 +123,14 @@ export class UpdateShiftsComponent {
       id: this.route.snapshot.paramMap.get('id'),
       shiftCode: [shiftData?.code || '', Validators.required],
       shiftName: [shiftData?.shiftName || '', Validators.required],
-      color: [shiftData?.color || '#00ff00'],
+      color: [shiftData?.color || '#FFFFFF'],
       startTime: [shiftData?.shiftStartTime?.split(':')[0] || '', Validators.required],
       endTime: [shiftData?.shiftStartTime?.split(':')[1] || '', Validators.required],
-      gracePeriod: [shiftData?.allowedGracePeriod ||'', Validators.required],
-      latesAllowed: [shiftData?.latesAllowed || '', Validators.required],
-      breakTime: [shiftData?.allowedBreakTime || '', Validators.required],
-      halfDayMinHrs: [shiftData?.halfDayMinHrs || '', Validators.required],
-      fullDayMinHrs: [shiftData?.fullDayMinHrs || '', Validators.required],
+      gracePeriod: [shiftData?.allowedGracePeriod ||15, Validators.required],
+      latesAllowed: [shiftData?.latesAllowed || 3, Validators.required],
+      breakTime: [shiftData?.allowedBreakTime || 1, Validators.required],
+      halfDayMinHrs: [shiftData?.halfDayMinHrs || 3, Validators.required],
+      fullDayMinHrs: [shiftData?.fullDayMinHrs || 6, Validators.required],
     });
   }
 
@@ -128,18 +153,18 @@ export class UpdateShiftsComponent {
         shiftArray.clear(); // remove any existing default shift
         data.orgShiftsItems.forEach((item: any) => {
           shiftArray.push(this.fb.group({
-            shiftCode: [item.code],
-            shiftName: [item.shiftName],
+            shiftCode: [item.code,Validators.required],
+            shiftName: [item.shiftName,Validators.required],
             color: [item.color],
             id:[item.id],
             headerID: [data.id],
-            startTime: [item.shiftStartTime],
-            endTime: [item.shiftEndTime],
-            gracePeriod: [item.allowedGracePeriod],
-            latesAllowed: [item.latesAllowed],
-            breakTime: [item.allowedBreakTime],
-            halfDayMinHrs: [item.halfDayMinHrs],
-            fullDayMinHrs: [item.fullDayMinHrs],
+            startTime: [item.shiftStartTime,Validators.required],
+            endTime: [item.shiftEndTime,Validators.required],
+            gracePeriod: [item.allowedGracePeriod,Validators.required],
+            latesAllowed: [item.latesAllowed,Validators.required],
+            breakTime: [item.allowedBreakTime,Validators.required],
+            halfDayMinHrs: [item.halfDayMinHrs,Validators.required],
+            fullDayMinHrs: [item.fullDayMinHrs,Validators.required],
             
           }));
         });
@@ -201,8 +226,12 @@ export class UpdateShiftsComponent {
           }
         },
         error: (error: any) => {
-          console.log("error" + error)
-        }
+          // Handle error if needed
+          console.error(error);
+          if (error.error) {
+            this.conformationPopup.openErrorModal(error.error.Message);
+          }
+        },
       });
     }
   
@@ -266,7 +295,14 @@ publish() {
       setTimeout( () => {
         this.nagvition();
       }, 2000);
-    }
+    },
+    error: (error: any) => {
+      // Handle error if needed
+      console.error(error);
+      if (error.error) {
+        this.conformationPopup.openErrorModal(error.error.Message);
+      }
+    },
   })
 }
 // location change
@@ -325,7 +361,6 @@ this.nagvition();
     modal.dismiss();
   }
   nagvition() {
-    // this.router.navigate(['/settings/employee-fields/shits/published-shits']);
     this.router.navigate(['/settings/employee-fields/manage-shifts/pending-for-submit']);
   }
 }

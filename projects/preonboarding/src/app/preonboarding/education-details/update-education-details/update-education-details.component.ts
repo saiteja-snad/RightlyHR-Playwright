@@ -38,6 +38,7 @@ export class UpdateEducationDetailsComponent {
   
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
+    this.selectedfields=this.educationData;
     this.getDegree();
     this.initializeEducationForm();
   }
@@ -45,10 +46,10 @@ export class UpdateEducationDetailsComponent {
   initializeEducationForm() {
     this.educationForm = this.fb.group({
       education: [this.educationData?.degree || '', Validators.required],
-      university: [this.educationData?.university || '', Validators.required],
+      university: [this.educationData?.university || '', [Validators.required,Validators.maxLength(100)]],
       // specialization: [this.educationData?.specialization || '', Validators.required],
       // gpa: [this.educationData?.gpa || '', Validators.required],
-      specialization: [this.educationData?.specialization || '', [Validators.required,Validators.pattern(/^[A-Za-z ,._-]+$/)]],
+      specialization: [this.educationData?.specialization || '', [Validators.required,Validators.pattern(/^[A-Za-z ,._-]+$/),Validators.maxLength(100)]],
       // gpa: [this.educationData?.gpa || '', [Validators.required,Validators.pattern(/^([0-3](\.\d{1,2})?|4(\.00?)?)$/)]],
       gpa: [this.educationData?.gpa || '', [
         Validators.required,
@@ -131,19 +132,16 @@ export class UpdateEducationDetailsComponent {
 
   //function to update the education data
   updateEducation() {
-    this.selectedfields = {
-      ...this.selectedfields,
-      ...this.educationForm.value,
-        id:this.educationData.id,
-        status:this.educationData.status,
-        degree: this.educationForm.value.education,
-        university: this.educationForm.value.university,
-        specialization: this.educationForm.value.specialization,
-        gpa: this.educationForm.value.gpa,
-        degreeStartDate: this.educationForm.value.startDate,
-        degreeEndDate: this.educationForm.value.endDate,
-        employeeId: parseInt(this.empinfo.employeeId),
-    };
+    this.educationForm.value,
+    this.selectedfields.id=this.educationData.id,
+    this.selectedfields.status=this.educationData.status,
+    this.selectedfields.degree= this.educationForm.value.education,
+    this.selectedfields.university= this.educationForm.value.university,
+    this.selectedfields.specialization= this.educationForm.value.specialization,
+    this.selectedfields.gpa= this.educationForm.value.gpa,
+    this.selectedfields.degreeStartDate= this.educationForm.value.startDate,
+    this.selectedfields.degreeEndDate=this.educationForm.value.endDate,
+    this.selectedfields.employeeId=parseInt(this.empinfo.employeeId)
     if (this.file) {
       let filepath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
       this.subscription = this.http

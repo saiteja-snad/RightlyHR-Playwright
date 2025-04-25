@@ -12,6 +12,7 @@ import { environment } from '../../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DateFormatPipe } from "../../Pipes/date-format.pipe";
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+import { Ipersonal } from '../../models/personal-details.model';
 @Component({
   selector: 'app-review',
   imports: [CommonModule, FormsModule, RouterModule, NgxDocViewerModule, DateFormatPipe, DetailedStepProgressbarComponent],
@@ -30,7 +31,6 @@ export class ReviewComponent implements OnInit, OnDestroy {
   candidatesatus: any;
   candidateDocUrl: any;
   loadingcircle: boolean = false;
-
   constructor(private http: HttpService,private router: Router, private modalService: NgbModal, private location: Location) { }
 
   ngOnInit(): void {
@@ -45,7 +45,6 @@ export class ReviewComponent implements OnInit, OnDestroy {
     this.getJobApplicationDetails();
     this.getTraineeofferdetails();
   }
-
   //function to go previous page
   navigatePrevious() {
     this.router.navigate(['/experience-details']);

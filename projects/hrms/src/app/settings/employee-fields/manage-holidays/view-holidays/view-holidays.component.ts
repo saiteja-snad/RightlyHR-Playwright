@@ -38,10 +38,10 @@ export class ViewHolidaysComponent {
     this.updateHolidaysData = JSON.parse(localStorage.getItem('viewholidays') ?? '{}');
     this.getjobLocationList();
     this.holidayForm = this.fb.group({
-      year: [null, Validators.required],
-      location: [null, Validators.required],
-      subLocation: [null, Validators.required],
-      shift: [null, Validators.required],
+      year: [{value : '', disabled : true}, Validators.required],
+      location: [{value : '', disabled : true},, Validators.required],
+      subLocation: [{value : '', disabled : true},, Validators.required],
+      shift: [{value : '', disabled : true},, Validators.required],
       holidays: this.fb.array([])
     });
     this.holidayForm.patchValue({

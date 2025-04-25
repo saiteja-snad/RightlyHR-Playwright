@@ -149,7 +149,7 @@ export class PersonalDetailsComponent implements OnInit {
       lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$'),,Validators.maxLength(50)]],
       gender: [null, Validators.required],
       salutation: [null, Validators.required],
-      country:[null, [Validators.required]],
+      countyCode:[null, [Validators.required]],
       phonenumber: [null, [Validators.required,]],
       dob: [null, Validators.required],
       bloodGroup: [null],
@@ -180,14 +180,24 @@ export class PersonalDetailsComponent implements OnInit {
       }),
     });
   }
+  onCurrentAddressChange() {
+    this.personalDetailsForm.get('sameAsPermanent')?.setValue(false);
+  }
   enforceMaxLength(event: KeyboardEvent, maxLength: number): void {
     const input = event.target as HTMLInputElement;
-    const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
+    const allowedKeys = ['Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
   
     if (
       input.value.length >= maxLength &&
       !allowedKeys.includes(event.key)
     ) {
+      event.preventDefault();
+    }
+  }
+  allowOnlyNumbers(event: KeyboardEvent): void {
+    const charCode = event.key.charCodeAt(0);
+    // Allow only digits (0–9)
+    if (charCode < 48 || charCode > 57) {
       event.preventDefault();
     }
   }
@@ -329,6 +339,8 @@ export class PersonalDetailsComponent implements OnInit {
   onCountryChange(country: any) {
     this.selectedDialCode = country.dialling_code;
     this.selectedCountryCodegflag = country.code;
+    this.personalDetailsForm.get('countyCode')?.setValue(country.dialling_code);
+    this.personalDetailsForm.get('countyCode')?.markAsTouched();
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
     this.employeeData.mobilePhoneCountryCode = country.dialling_code;

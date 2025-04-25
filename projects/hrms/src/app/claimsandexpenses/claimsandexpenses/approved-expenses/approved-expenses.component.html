@@ -9,12 +9,12 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>{{'Expense Title'  | translate}}</th>
-          <th>{{'Expense Date'  | translate}}</th>
-          <th>{{'Total Amount'  | translate}}</th>
-          <th>{{'Status'  | translate}}</th>
+          <th>{{'Expense Title' | translate}}</th>
+          <th>{{'Expense Date' | translate}}</th>
+          <th>{{'Total Amount' | translate}}</th>
+          <th>{{'Status' | translate}}</th>
           <th class="text-center">{{'Approver Comments' | translate}}</th>
-          <th class="text-center">{{'Actions'  | translate}}</th>
+          <th class="text-center">{{'Actions' | translate}}</th>
         </tr>
       </thead>
       <tbody>
@@ -27,7 +27,7 @@
             </td>
             <td class="text-center">
               <i *ngIf="exp.expenseApproverComments.length>0; else na" class="bi bi-info-circle-fill cursor"
-                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" ></i>
+                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)"></i>
               <ng-template #na>
                 N/A
               </ng-template>
@@ -38,7 +38,7 @@
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
+                  <li><a class="dropdown-item" (click)="openupdateModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
                         class="bi bi-paperclip me-2"></i>View</a></li>
                 </ul>
               </div>
@@ -78,7 +78,7 @@
         <thead>
           <tr>
             <th>Expense Type</th>
-            <th>Expense  Name</th>
+            <th>Expense Name</th>
             <th>Expense Date</th>
             <th>Total Amount</th>
             <th>Status</th>
@@ -119,13 +119,13 @@
         <p class="popup-heading mb-0">{{'Expenses Details' | translate}}</p>
       </div>
       <div>
-        <a (click)="modal.dismiss();openModal(viewDetailsModal); ExpenseViewURL = null; ExpenseImageUrl = null"><img
+        <a (click)="modal.dismiss();openupdateModal(viewDetailsModal); ExpenseViewURL = null; ExpenseImageUrl = null"><img
             src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
     <div class="modal-body text-center">
       <p *ngIf="!ExpenseImageUrl; else imageView">
-        <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" ></ngx-doc-viewer>
+        <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google"></ngx-doc-viewer>
       </p>
       <ng-template #imageView>
         <img [src]="ExpenseImageUrl" alt="My Image" class="modal-image" />
@@ -145,37 +145,17 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
-      <div  *ngFor="let comment of commentsrecivced">
-        <div class="card p-3">
-          <div class="card-body">
-            <div class="row mb-3">
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Comments</p>
-                {{ comment.comments }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Commented by</p>
-                {{ comment.addedName }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Date</p>
-                {{ comment.addedDate | date: 'short' }}
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Commented by ID</p>
-                {{ comment.addedByFusionEmpId }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Status</p>
-                {{ comment.action }}
-              </div>
-            </div>
+    <div class="custom-main-popup-content p-3">
+      <div class="card p-3">
+        <div *ngFor="let comment of commentsrecivced" >
+          <div class="mb-0">
+            <p> <b>Commented by:</b> {{ comment.addedName }} </p>
+            <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+            <p> <b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+            <p><b>Status:</b> {{ comment.action }}</p>
+            <p> <b>Comments:</b> {{ comment.comments }} </p>
           </div>
         </div>
-        
       </div>
     </div>
   </div>

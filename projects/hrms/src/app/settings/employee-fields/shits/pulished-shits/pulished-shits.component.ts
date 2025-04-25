@@ -8,7 +8,7 @@ import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-pulished-shits',
-  imports: [NoDataFoundComponent,CommonModule,TranslateModule,RouterModule,NgFor,NgIf],
+  imports: [NoDataFoundComponent,CommonModule,TranslateModule,RouterModule,NgIf],
   templateUrl: './pulished-shits.component.html',
   styleUrl: './pulished-shits.component.scss'
 })

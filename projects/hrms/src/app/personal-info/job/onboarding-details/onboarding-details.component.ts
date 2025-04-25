@@ -93,30 +93,30 @@ export class OnboardingDetailsComponent {
 
   initializeForm(): void {
     this.onboardingForm = this.fb.group({
-      status: [{ value: "", disabled: true }],
-      dateOfJoining: [{ value: "", disabled: true }],
-      branchLocation: [{ value: "", disabled: true }],
-      probationEndDate: [{ value: "", disabled: true }],
-      probationStatus: [{ value: "", disabled: true }],
+      status: [{ value: null, disabled: true }],
+      dateOfJoining: [{ value: null, disabled: true }],
+      branchLocation: [{ value: null, disabled: true }],
+      probationEndDate: [{ value: null, disabled: true }],
+      probationStatus: [{ value: null, disabled: true }],
       noticePeriodStatus: [{ value: '', disable: true },],
-      backgroundCheckStatus: [{ value: "", disabled: true }],
-      salaryHold: [{ value: "", disabled: true }],
-      pf: [{ value: "", disabled: true }],
-      esic: [{ value: "", disabled: true }],
-      pt: [{ value: "", disabled: true }],
-      totalExperience: [{ value: "", disabled: true }],
-      remoteLogin: [{ value: "", disabled: true }],
-      workLocation: [{ value: "", disabled: true }],
-      wfhmanger: [{ value: "", disabled: true }],
+      backgroundCheckStatus: [{ value: null, disabled: true }],
+      salaryHold: [{ value: null, disabled: true }],
+      pf: [{ value: null, disabled: true }],
+      esic: [{ value: null, disabled: true }],
+      pt: [{ value: null, disabled: true }],
+      totalExperience: [{ value: null, disabled: true }],
+      remoteLogin: [{ value: null, disabled: true }],
+      workLocation: [{ value: null, disabled: true }],
+      wfhmanger: [{ value: null, disabled: true }],
     });
   }
   
   initializeTrainee(){
     this.traineeForm = this.fb.group({
-      empType: [ { value: "", disabled: true }],
-      dateOfJoining: [{ value: "", disabled: true }],
-      durationOfTrainee: [{ value: "", disabled: true }],
-      trainingEndDate: [{ value: "", disabled: true }]
+      empType: [ { value: null, disabled: true }],
+      dateOfJoining: [{ value: null, disabled: true }],
+      durationOfTrainee: [{ value: null, disabled: true }],
+      trainingEndDate: [{ value: null, disabled: true }]
     });
   }
   
@@ -400,6 +400,7 @@ export class OnboardingDetailsComponent {
         next: (data: any) => {
           this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
           this.getEmployeeId();
+          this.buttons = !this.buttons;
           this.onboardingForm.disable();
           console.log('Data updated successfully:', data);
         },

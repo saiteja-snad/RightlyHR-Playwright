@@ -69,12 +69,9 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
       this.employeeId.toString(),
       'Employee','Submitted').pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
-          console.log(data)
           this.reviewCycles = data.items;
           this.totalItems = data.totalCount || 0;
-
           this.pendingReviews = data.items;
-          console.log(this.pendingReviews)
           this.filteredReviews = this.pendingReviews;
           if (this.pendingReviews.length > 0) {
             this.collectionSize = data.totalCount;
@@ -82,7 +79,6 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.dataload=false;
-          console.error('Error fetching review cycles:', err);
         },
         complete: () => {
           this.dataload = false;
@@ -123,7 +119,6 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
   }
 
   selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
-    console.log(currentStage)
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,
@@ -142,12 +137,10 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
   }
 
   downloadPromotionletter(iteamid: any) {
-    console.log(iteamid);
 
      this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
 
       next: (data: Blob) => {
-        console.log('Received byte data:', data);
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -161,24 +154,20 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
         this.sharedModalService.openSuccessModal(this.Status);
       },
       error: (err) => {
-        console.error('Error downloading letter:', err);
         this.Status = 'Failed to download letter';
       },
     });
   }
 
   downloadletter(iteamid: any) {
-    console.log(iteamid);
 
      this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
-
       next: (data: Blob) => {
-        console.log('Received byte data:', data);
-        const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
+        const blob = new Blob([data], { type: 'application/pdf' }); 
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `PerformanceAppraisal_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; // Set file name
+        a.download = `PerformanceAppraisal_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; 
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -187,7 +176,6 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
         this.sharedModalService.openSuccessModal(this.Status);
       },
       error: (err) => {
-        console.error('Error downloading letter:', err);
         this.Status = 'Failed to download letter';
       },
     });

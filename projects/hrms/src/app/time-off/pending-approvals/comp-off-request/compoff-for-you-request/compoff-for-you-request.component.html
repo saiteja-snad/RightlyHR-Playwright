@@ -2,10 +2,9 @@
     <div>
         <!--Input search-->
         <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1">
-                <i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
+                aria-label="Username" autocomplete="off">
         </div>
 
         <div class="custom-table-content">
@@ -24,71 +23,67 @@
                 </thead>
                 <tbody>
                     @if (rbac.allowedToAccess('Compoff Tab.view')) {
-                    <ng-container *ngIf="leaves!.length > 0; else noDataTemplate">
-                        <tr *ngFor="let leave of leaves; let i = index">
-                            <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
-                            <td>{{leave.entity.attendanceRequesterName}}</td>
-                            <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
-                            <td>{{leave.entity.attendanceRequestDurationType}}</td>
-                            <td>
-                                @if(leave.entity.attendanceRequestDescription != null &&
-                                leave.entity.attendanceRequestDescription != '') {
-                                <div>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
-                                    </ng-template>
+                    @if ((((leaves | async) ?? []) | wfhsearchfilter: searchValue).length > 0) {
+                    @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track leave.approvalHeader.id){
+                    <tr>
+                        <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
+                        <td>{{leave.entity.attendanceRequesterName}}</td>
+                        <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
+                        <td>{{leave.entity.attendanceRequestDurationType}}</td>
+                        <td>
+                            @if(leave.entity.attendanceRequestDescription != null &&
+                            leave.entity.attendanceRequestDescription != '') {
+                            <div>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                                </ng-template>
+                            </div>
+                            }@else {
+                            <div>-</div>
+                            }
+                        </td>
+                        <td>
+                            <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
+                                <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
+                                    <i class="bi bi-info-circle-fill"></i>
                                 </div>
-                                }@else {
-                                <div>
-                                    <span>-</span>
-                                </div>
-                                }
-                            </td>
-                            <td>
-                                <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
-                                    <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
-                                        <i class="bi bi-info-circle-fill"></i>
-                                    </div>
-                                </div>
-                                <ng-template #compoffcomments>-</ng-template>
-                            </td>
-                            <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <a type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu py-0">
-                                        @if( leave.approvalHeader.currentapprovalStage !=
-                                        leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')">
-                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
-                                        </li>
-                                        }
-                                        @if( leave.approvalHeader.currentapprovalStage ==
-                                        leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')">
-                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
-                                        </li>
-                                        }
-                                        <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.delete')">
-                                            <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </ng-container>
-
-                    <ng-template #noDataTemplate>
-                        <tr>
-                            <td colspan="8">
-                                <app-no-data-found></app-no-data-found>
-                            </td>
-                        </tr>
-                    </ng-template>
+                            </div>
+                            <ng-template #compoffcomments>-</ng-template>
+                        </td>
+                        <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
+                                <ul class="dropdown-menu py-0">
+                                    @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
+                                    <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
+                                    </li>
+                                    }
+                                    @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
+                                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
+                                    </li>
+                                    }
+                                    <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.delete')">
+                                        <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                    }
+                    @else{
+                    <tr>
+                        <td colospan="8">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                    }
                     }
                 </tbody>
             </table>
@@ -116,7 +111,14 @@
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'| translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'| translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
+                    @if(spinnerLoader){
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading..'}}...</span>
+                    }@else {
+                    <span>{{'Approve' | translate}}</span>
+                    }
+                </button>
             </div>
         </form>
     </div>
@@ -143,7 +145,14 @@
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">
+                    @if(spinnerLoader){
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading..'}}...</span>
+                    }@else {
+                    <span>{{'Reject' | translate}}</span>
+                    }
+                </button>
             </div>
         </form>
     </div>

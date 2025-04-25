@@ -37,10 +37,8 @@
                   </a>
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li>
-                      <a class="dropdown-item" (click)="
-                          openModal(viewDetailsModal);
-                          viewItem(leave.entity.expenses_ID)
-                        " *ngIf="rbac.allowedToAccess('Expenses Tab.view')"><i class="bi bi-paperclip me-2"></i>View</a>
+                      <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)" 
+                      *ngIf="rbac.allowedToAccess('Expenses Tab.view')"><i class="bi bi-paperclip me-2"></i>View</a>
                     </li>
                   </ul>
                 </div>
@@ -48,13 +46,8 @@
               <td class="text-center">
                 <div>
                   <span *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
-                    <a type="button" placement="top">
-                      <img src="images\info-fill.png" alt="info icon" (click)="
-                          comments(
-                            leave.entity.expenseApproverComments,
-                            commentspopup
-                          )
-                        " class="info-icon" />
+                    <a type="button" (click)="comments(leave.entity.expenseApproverComments, commentspopup)">
+                      <img src="images\info-fill.png" alt="info icon" class="info-icon" />
                     </a>
                   </span>
                   <ng-template #NA>
@@ -166,26 +159,13 @@
       </div>
     </div>
 
-    <div class="custom-main-popup-content">
-      <div class="custom-table">
-        <table class="w-100">
-          <thead>
-            <tr>
-              <th>Comments</th>
-              <th>Commented By</th>
-              <th>Date</th>
-              <th>Commented By ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let comment of approverComments">
-              <td>{{ comment?.comments }}</td>
-              <td>{{ comment?.addedName }}</td>
-              <td>{{ comment?.addedDate | dateformat }}</td>
-              <td>{{ comment?.addedByFusionEmpId }}</td>
-            </tr>
-          </tbody>
-        </table>
+    <div *ngFor="let comment of approverComments" >
+      <div class="mb-0">
+        <p> <b>Commented by:</b> {{ comment.addedName }} </p>
+        <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+        <p> <b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+        <p><b>Status:</b> {{ comment.action }}</p>
+        <p> <b>Comments:</b> {{ comment.comments }} </p>
       </div>
     </div>
   </div>
@@ -227,11 +207,9 @@
               <td>{{ item?.item_Name }}</td>
               <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
               <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
-
               <td>{{ item?.status }}</td>
               <td>{{ item?.receipt_Number }}</td>
               <td>
-
                 <div class="d-flex gap-2">
                   <a type="button" class="me-2 dowload-text text-nowrap"
                     (click)="onSelectDownload(item?.attachment_url)">
@@ -241,7 +219,6 @@
                     <i class="bi bi-paperclip"></i>View
                   </a>
                 </div>
-
               </td>
             </tr>
           </tbody>

@@ -3,6 +3,12 @@
         <li class="nav-item" *ngFor="let link of navLinks">
             <a class="nav-link" [routerLink]="[link.route]" routerLinkActive="active-nav-link">
                 {{ link.label }}
+                @if(link.label == 'Pending for Submission') {
+                    <span>( {{ pendingCount }})</span>
+                  }
+                  @if(link.label == 'Published') {
+                    <span>( {{ publishedCount }})</span>
+                  }
             </a>
         </li>
     </ul>

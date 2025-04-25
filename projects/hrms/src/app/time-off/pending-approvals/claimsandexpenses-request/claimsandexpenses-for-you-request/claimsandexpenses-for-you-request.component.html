@@ -46,8 +46,8 @@
               
               <td>
                 <div *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
-                  <a type="button" placement="top">
-                    <img src="images\info-fill.png" alt="info icon" (click)="comments(leave.entity.expenseApproverComments,commentspopup)" class="info-icon" />
+                  <a type="button" (click)="comments(leave.entity.expenseApproverComments,commentspopup)" >
+                    <img src="images\info-fill.png" alt="info icon" class="info-icon" />
                   </a>
                 </div>
                 <ng-template #NA>N/A</ng-template>
@@ -157,26 +157,18 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-table">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Comments</th>
-            <th>Commented By</th>
-            <th>Date</th>
-            <th>Commented By ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let comment of approverComments">
-            <td>{{ comment.comments }}</td>
-            <td>{{ comment.addedName }}</td>
-            <td>{{ comment.addedDate | dateformat }}</td>
-            <td>{{ comment.addedByFusionEmpId }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="card p-3">
+      <div *ngFor="let comment of approverComments" >
+        <div class="mb-0">
+          <p> <b>Commented by:</b> {{ comment.addedName }} </p>
+          <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+          <p> <b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+          <p><b>Status:</b> {{ comment.action }}</p>
+          <p> <b>Comments:</b> {{ comment.comments }} </p>
+        </div>
+      </div>
     </div>
+   
   </div>
 </ng-template>
 
@@ -226,7 +218,6 @@
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>
-
             </td>
           </tr>
         </tbody>

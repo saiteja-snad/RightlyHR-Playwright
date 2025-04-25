@@ -30,7 +30,6 @@ export class ViewWeekendsComponent {
   daysList: string[] = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ];
-  @ViewChild('confirmation') confirmation!: TemplateRef<any>
 
   constructor(
     private router: Router,
@@ -174,8 +173,8 @@ export class ViewWeekendsComponent {
       });
   }
 
-  openConfirmation() {
-    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static' })
+  openModal(content: any,) {
+    this.modalService.open(content, { centered: true })
   }
 
   closeWeekend() {

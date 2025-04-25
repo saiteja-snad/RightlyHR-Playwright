@@ -45,7 +45,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   IdentityMaxNumber: number = 15;   // used to max fields for comparision
   IdentityMinNumber: number = 12;
   isMandatory: boolean = false;
-  pattern= '[0-9]';
+  pattern!:any;
   @ViewChild('uploadPopup') uploadPopup: any;
   @ViewChild('viewpopup') viewpopup: any;
   @ViewChild('confirmationPopup') confirmationPopup: any;
@@ -175,13 +175,42 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       this.IdentityMinNumber = 10;
       this.pattern = "[a-zA-Z0-9]*";
       this.errorMsg = 'Special characters are not allowed';
+         // Set value false or clear the value if needed
+         this.documentForm.get('documentNumber')?.setValue('');
+       // Apply validators dynamically
+       this.documentForm
+       .get('documentNumber')
+       ?.setValidators([
+         Validators.required,
+         Validators.pattern(this.pattern),
+         Validators.minLength(this.IdentityMinNumber),
+         Validators.maxLength(this.IdentityMaxNumber),
+       ]);
+
+     this.documentForm.get('documentNumber')?.updateValueAndValidity();
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "aadhaar") {
-      this.isMandatory = this.documentSelectFields.isMandatory
+      this.isMandatory = this.documentSelectFields.isMandatory;
+
+      // Set value false or clear the value if needed
+      this.documentForm.get('documentNumber')?.setValue('');
+
       this.IdentityMaxNumber = 12;
       this.IdentityMinNumber = 12;
-      this.pattern = "[0-9]*";
+      this.pattern = '[0-9]*';
       this.errorMsg = 'Alphabets and special characters are not allowed';
+
+      // Apply validators dynamically
+      this.documentForm
+        .get('documentNumber')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern(this.pattern),
+          Validators.minLength(this.IdentityMinNumber),
+          Validators.maxLength(this.IdentityMaxNumber),
+        ]);
+
+      this.documentForm.get('documentNumber')?.updateValueAndValidity();
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "uan") {
       this.isMandatory = this.documentSelectFields.isMandatory;
@@ -189,6 +218,19 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       this.IdentityMinNumber = 12;
       this.pattern = "[0-9]*";
       this.errorMsg = 'Alphabets and special characters are not allowed';
+      // Set value false or clear the value if needed
+      this.documentForm.get('documentNumber')?.setValue('');
+      // Apply validators dynamically
+      this.documentForm
+      .get('documentNumber')
+      ?.setValidators([
+        Validators.required,
+        Validators.pattern(this.pattern),
+        Validators.minLength(this.IdentityMinNumber),
+        Validators.maxLength(this.IdentityMaxNumber),
+      ]);
+
+    this.documentForm.get('documentNumber')?.updateValueAndValidity();
     }
   }
 
@@ -210,11 +252,13 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   //to select the attached file
   onDocAttachmentSelected(event: any) {
-
-    let file = event.target.files[0];
-    let d: Date = new Date()
-    let documentType = this.documentSelectFields.documentType.replace(/\//g, ' ')
-    this.documentAttachment = this.renameFileAttchment(file, `${this.prosempdata.employeeId}_${documentType}_${d.getTime()}_${file.name}`)
+      if(event){
+        let file = event.target.files[0];
+        let d: Date = new Date()
+        let documentType = this.documentSelectFields.documentType.replace(/\//g, ' ')
+        this.documentAttachment = this.renameFileAttchment(file, `${this.prosempdata.employeeId}_${documentType}_${d.getTime()}_${file.name}`)
+      }
+    
   }
 
   private renameFileAttchment(originalFile: File, newName: string) {
@@ -258,6 +302,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
               this.openPopup.openSuccess("Document uploaded successfully");
               setTimeout(() => {
                 this.modalService.dismissAll();
+                this.documentForm.reset();
                 this.getDocuments();
               }, 2000);
             }

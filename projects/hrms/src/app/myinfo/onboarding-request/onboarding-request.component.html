@@ -1,6 +1,6 @@
-<div class="custom-main-component-container mt-4">
+<div class="custom-main-component-container">
     <!--Input search-->
-    <div class="input-group custom-search mb-4">
+    <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
             aria-describedby="basic-addon1">
@@ -19,7 +19,6 @@
                     <th>Status</th>
                     <th>Reason</th>
                     <th>Feedback</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -62,63 +61,13 @@
                         <!-- Dropdown menu with "Update" option -->
                         <div class="dropdown-menu" aria-labelledby="dropdownMenu2"
                             style="cursor: pointer;">
-                            <a  
-                                class="dropdown-item"
-                                data-bs-toggle="modal"
+                            <a   class="dropdown-item" data-bs-toggle="modal"
                                 (click)="requestForOnboard(item)">Request for Onboard
                             </a>
                         </div>
-                    </td>
-
-                    <!-- <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">Feaver </p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div>
-                    </td> -->
-                    <!-- <td>
-                        <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">Feaver </p>
-                                    </div>
-                                </ng-template>
-                            </span>
-                        </div>
-                    </td> -->
-
+                    </td> 
                 </tr>
             </tbody>
         </table>
-    </div>
-    <div class="pagination-content pt-2 w-100">
-        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-            <!-- Dropdown for Rows per Page -->
-            <div class="d-flex align-items-center gap-3 p-2">
-                <!-- Bootstrap Select -->
-                <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
-                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                    </option>
-                </select>
-                <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                    totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-            </div>
-    
-            <!-- Pagination -->
-            <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                (onPageChange)="onPageChange($event)"></p-paginator>
-        </div>
     </div>
 </div>

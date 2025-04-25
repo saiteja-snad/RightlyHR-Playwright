@@ -2,12 +2,12 @@
     <!--search input-->
     <div class="p-3">
         <div class="input-group custom-search">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                 placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
         </div>
     </div>
+
     <table class="w-100">
         <thead>
             <tr>
@@ -33,25 +33,18 @@
                 <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
                 <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
                 <td class="text-center">
-                    <div>
+                    <div class="d-flex gap-2">
                         <button class="custom-btn btn-primary" (click)="onSelectDownload(offerLetter)">Download</button>
                         @if(offerLetter.status=='Approved'){
-                        <button class="custom-btn btn-primary" (click)="releaseOfferletter(offerLetter)">Release
-                            Offer</button>
+                        <button class="custom-btn btn-primary" (click)="releaseOfferletter(offerLetter)">Release Offer</button>
                         }
-
-                        @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' &&
-                        offerLetter?.status !== 'Released') {
-                        <button class="custom-btn btn-primary-approve"
-                            (click)="updateOfferDetails(offerLetter)">Approve</button>
+                        @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' && offerLetter?.status !== 'Released') {
+                        <button class="custom-btn btn-primary-approve" (click)="updateOfferDetails(offerLetter)">Approve</button>
                         }
                         <!-- *ngIf="((loginuserdata.employeeId==offerLetter.approver|| _userAcessService.checkAccess('Offer Letter Approval.view')) && 
                            (offerLetter.status!='Approved'&& offerLetter.status!='Rejected' &&offerLetter.status!='Released' ) )" -->
-                        @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' &&
-                        offerLetter.status!='Released')){
-                        <button class="custom-btn btn-primary-reject"
-                            (click)="SelectData(offerLetter);openModal(rejectpopup)"
-                            data-bs-target="#rejectmodel">Reject</button>
+                        @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' && offerLetter.status!='Released')){
+                        <button class="custom-btn btn-primary-reject" (click)="SelectData(offerLetter);openModal(rejectpopup)">Reject</button>
                         }
                         <!-- *ngIf="((loginuserdata.employeeId==offerLetter.approver || _userAcessService.checkAccess('Offer Letter Approval.view'))
                           && (offerLetter.status!='Approved'&& offerLetter.status!='Rejected'&&offerLetter.status!='Released' ) )" -->
@@ -70,37 +63,31 @@
 </div>
 
 <ng-template #rejectpopup let-modal>
-    <div class="modal-header">
-        <h5 class="modal-title" id="rejectModalLabel">Reject Reason </h5>
-        <button type="button" class="btn-close" (click)="rejectDocument.reset();modal.dismiss()"
-            aria-label="Close"></button>
-    </div>
-    <form [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateOfferDetails()">
-        <div class="modal-body">
-            <div class="mb-3">
-                <label for="rejectReason">Reject Reason
-                    <span class="error-msg">*</span></label>
-                <textarea type="text" name="rejectReason" class="form-control"
-                    placeholder="Please provide reason for rejection" rows="3" maxlength="250"
-                    formControlName="comments"></textarea>
-                <div class="mt-2">
-                    <span class="color">
-                        {{ rejectDocument.get('comments')?.value?.length || 0 }} / 250
-                    </span>
-                </div>
-                <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
-                    class="text-danger">
-                    {{'Reason'| translate}}.
-                </div>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Reject Reason</p>
             </div>
-        </div>
-        <div class="modal-footer">
             <div>
-                <button type="button" class="custom-btn btn-secondary"
-                    (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
-            <button type="submit" class="custom-btn btn-primary"
-                [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
         </div>
-    </form>
+        <div class="custom-main-popup-content">
+            <form [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateOfferDetails()">
+                <div class="mb-3">
+                    <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
+                    <textarea type="text" name="rejectReason" class="form-control" placeholder="Please provide reason for rejection" 
+                      rows="3" maxlength="250" formControlName="comments"></textarea>
+                    <div class="mt-2"><span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span></div>
+                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" class="error-msg">
+                        {{'Reason'| translate}}.
+                    </div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </ng-template>

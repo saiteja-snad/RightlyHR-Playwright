@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { LettersTabComponent } from "../../shared/letters-tab/letters-tab.component";
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
@@ -12,13 +11,13 @@ import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { IAddress, ICountry, IGender, IJobtype, IRole, ITitle } from '../../Interfaces/letters-model';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
-import { LetterFooterComponent } from "../../shared/letter-footer/letter-footer.component";
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, LettersTabComponent,TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, LettersheaderComponent, DateformatPipe, LetterFooterComponent],
@@ -942,7 +941,7 @@ console.log(formValues);
     this.prospectiveEmpData.empstatus= 'Prospective',
     this.prospectiveEmpData.emailaddress= data.personalEmail,
     this.prospectiveEmpData.contactnumber=parseInt(data.phoneNumber),
-    this.prospectiveEmpData. emailId= this.employeeaddress.emailId,
+    this.prospectiveEmpData.emailId= this.employeeaddress.emailId,
     this.prospectiveEmpData.fusionEmpId= data.fusionPlusEmpId,
     this.prospectiveEmpData.insurance=this.employeeaddress.insurance,
     this.prospectiveEmpData.generateOffer= true,
@@ -954,6 +953,7 @@ console.log(formValues);
     this.prospectiveEmpData.dateOfJoining= this.employeeForm.get('dateOfJoining')?.value,
     this.prospectiveEmpData.substatus= 'Offer Letter Generated',
     this.prospectiveEmpData.password= this.employeeaddress.password
+    this.prospectiveEmpData.reportsTo=this.prospectiveEmpData.reportsTo?.toString();
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
@@ -1094,7 +1094,7 @@ console.log(formValues);
       subdeptId: data.subdepartmentId,
       createddate: data.jobCreatedate,
       gradeId: data.gradeId,
-      reportsTo: data.reportsTo,
+      reportsTo: parseInt(data.reportsTo),
       shiftId: data.shiftId,
       jobTypeId: this.jobtypeId,
     };

@@ -1,0 +1,84 @@
+@if(!loader){
+<div class="card-top-content py-3">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="mb-3">
+                <input type="search" name="searchForms" #search="ngModel" [(ngModel)]="searchValue" class="form-control search-input" id="exampleInputEmail1" placeholder="Search here">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-table-content ">
+    <table class="w-100">
+        <thead>
+            <tr>
+                <th>{{'Module Name' | translate}}</th>
+                <th>{{'Form Name' | translate}}</th>
+                <th>{{'Created By' | translate}}</th>
+                <th>{{'Updated By' | translate}}</th>
+                <th>{{'Status' | translate}}</th>
+                <th *ngIf="rbac.allowedToAccess('Inactive Forms.update') || rbac.allowedToAccess('Inactive Forms.view') ">{{'Actions' | translate}}</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="allFormsDetails.length > 0; else noDataTemplate">
+                <ng-container *ngFor="let form of allFormsDetails | searchForm  : searchValue" class="hover">
+                    <tr>
+                        <td class="text-start">{{ form.moduleName }}</td>
+                        <td class="text-start">{{ form.formName }}</td>
+                        <td class="text-start">{{ form.createdBy }}</td>
+                        <td class="text-start">{{ form.updatedBy ? form.updatedBy : '-' }}</td>
+                        <td class="text-start">{{ form.status | titlecase }}</td>
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('Inactive Forms.update') || rbac.allowedToAccess('Inactive Forms.view') ">
+                            <div class="dropdown">
+                              <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                              </span>
+                              <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Inactive Forms.update')">
+                                  <a class="dropdown-item"   (click)="openmodal(activeForm);seletedid=form.formId">
+                                    <i class="bi bi-pencil me-2"></i>Make as Active
+                                  </a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Inactive Forms.view')">
+                                    <a class="dropdown-item"  (click)="navigateToViewComponent(form.formId);">
+                                        <i class="bi bi-eye me-2"></i>Preview
+                                    </a>
+                                  </li>
+                              </ul>
+                            </div>
+                          </td>
+                      
+                    </tr>
+                </ng-container>
+            </ng-container>
+          
+            <ng-template #noDataTemplate>
+              <tr>
+                <td colspan="6">
+                  <app-no-data-found></app-no-data-found>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+          
+    </table>
+</div>
+}@else {
+  <app-data-loader-content />
+}
+
+
+<ng-template #activeForm let-modal>
+    <div class="modal-body text-center p-5" ngbAutofocus>
+        <!-- <img src="./assets/images/Vector@2x.png" alt="" class="imgg mb-3" /> -->
+        <h5 class="want my-4">Are you sure you want to Active this form?</h5>
+        <div class="d-flex justify-content-around pt-3">
+            <button type="button"  class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="updateFormDetails(seletedid);modal.dismiss()">Yes</button>
+        </div>
+    </div>
+</ng-template>

@@ -8,10 +8,12 @@ import { ManageDST } from '../dsts.modal';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-published-dsts',
-  imports: [NoDataFoundComponent, CommonModule],
+  imports: [NoDataFoundComponent, CommonModule,TranslateModule],
   templateUrl: './published-dsts.component.html',
   styleUrl: './published-dsts.component.scss',
 })
@@ -24,7 +26,8 @@ export class PublishedDstsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     private modalService: NgbModal,
-    private router: Router
+    private router: Router,
+    public rbac: RbacService
   ) {}
 
   ngOnInit(): void {

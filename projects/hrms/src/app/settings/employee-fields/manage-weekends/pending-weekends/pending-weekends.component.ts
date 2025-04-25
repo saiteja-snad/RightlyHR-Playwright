@@ -5,9 +5,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { IWeekends } from './weekends.model';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
    selector: 'app-pending-weekends',
-   imports: [CommonModule, NgbPopoverModule],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent],
    templateUrl: './pending-weekends.component.html',
    styleUrl: './pending-weekends.component.scss'
 })
@@ -19,6 +22,7 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
    constructor(
       private router: Router,
       private http: HttpService,
+      public rbac: RbacService
    ) { }
 
    ngOnInit(): void {

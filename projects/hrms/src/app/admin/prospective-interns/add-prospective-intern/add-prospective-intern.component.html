@@ -1,5 +1,5 @@
 <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="custom-poup-header-content popup-header-border">
         <div class="pt-2">
             <p class="popup-heading mb-0">{{'Add Prospective Intern'| translate}}</p>
         </div>
@@ -7,7 +7,7 @@
             <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content">
         <form [formGroup]="employeeForm" (ngSubmit)="postTraineeData()">
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -120,15 +120,10 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-end gap-3 mt-4">
+            <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Close'|translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" >
-                    <span *ngIf="!isLoading">
-                        {{'Add'|translate}}
-                    </span>
-                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-                        
-                    </div>
+                <button type="submit" class="custom-btn btn-primary"><span *ngIf="!isLoading">{{'Add'|translate}}</span>
+                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
                 </button>
             </div>
         </form>

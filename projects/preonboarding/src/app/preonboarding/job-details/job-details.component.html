@@ -3,17 +3,17 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <img src="/icons/bag-icon.png" alt="bag icon" class="bag-icon me-2">
-                <span class="job-name pt-1">{{jobApplicationData.jobRole}}</span>
+                <span class="job-name pt-1">{{jobApplicationData?.jobRole}}</span>
             </div>
             <div>
-                <span class="date">Requested Date : {{jobApplicationData.createddate | dateFormat}}</span>
+                <span class="date">Requested Date : {{jobApplicationData?.createddate | dateFormat}}</span>
             </div>
         </div>
-        <div class="work-location mb-4">
-            <i class="bi bi-geo-alt-fill me-2"></i><span>Work Location : {{jobApplicationData.lopcation}}, {{jobApplicationData.subLocation}}</span>
+        <div class="work-location mb-3">
+            <i class="bi bi-geo-alt-fill me-2"></i><span>Work Location : {{jobApplicationData?.locationName }}, {{jobApplicationData?.subLocation}}</span>
         </div>
     </div>
-    <div class="d-flex justify-content-between py-5 gap-5">
+    <div class="d-flex justify-content-between py-4 gap-5">
         <div class="w-100 pt-2">
             <div class="progress-bar-container">
                 <div class="progress-content w-100">
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="text-nowrap">
-            <button class="custom-btn btn-primary w-100 py-3 px-5" routerLink="/personal-details">Go To Application</button>
+            <button class="custom-btn btn-primary w-100 px-5" routerLink="/personal-details">Go To Application</button>
         </div>
     </div>
 </div>

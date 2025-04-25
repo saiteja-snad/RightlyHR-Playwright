@@ -1,10 +1,11 @@
-<div class="custom-main-component-container mt-4">
+<div class="custom-main-component-container">
     <!--Input search-->
-    <div class="input-group custom-search mb-4">
+    <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
             [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
+
     <ng-container *ngIf="(expenesEmplyeedata | async) === null; else maincontent">
         <ng-template #loadingSpinner>
             <div class="loader-placeholder-content text-center">
@@ -17,17 +18,15 @@
     </ng-container>
 
     <ng-template #maincontent>
-
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Expense Title</th>
-                        <th>Expense Date</th>
-                        <th>Total Amount</th>
-                        <th>Status</th>
-                        <th class="text-center">Actions</th>
-
+                        <th>{{'Expense Title'  | translate}}</th>
+                        <th>{{'Expense Date'  | translate}}</th>
+                        <th>{{'Total Amount'  | translate}}</th>
+                        <th>{{'Status'  | translate}}</th>
+                        <th class="text-center">{{'Actions'  | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,8 +44,9 @@
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li><a class="dropdown-item"
-                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)"><i
-                                                    class="bi bi-pencil me-2"></i>Update</a></li>
+                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
+                                                <i class="bi bi-pencil me-2"></i>{{'Update'  | translate}}</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>
@@ -66,14 +66,11 @@
     </ng-template>
 </div>
 
-
-
-
 <ng-template #updateModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Update Expenses </p>
+                <p class="popup-heading mb-0">{{'Update Expense'  | translate}} </p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -86,9 +83,8 @@
                         <div class="row g-2 mb-3">
                             <!-- Expense Type  -->
                             <div class="col-md-4 mb-3">
-                                <label class="form-label custom-label mb-2">Expense Title<span
+                                <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}<span
                                         class="text-danger">*</span></label>
-
                                 <input type="text" class="form-control custom-input" formControlName="expensesTitle"
                                     placeholder="Please enter expense title" />
                                 <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && 
@@ -103,18 +99,15 @@
                                         Expense title must be less than 50 characters
                                     </div>
                                 </div>
-
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label custom-label mb-2">Approval Email<span
+                                <label class="form-label custom-label mb-2">{{'Approval Emai'  | translate}}l<span
                                         class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="emails" optionLabel="label"
                                         placeholder="Please select approval email" formControlName="approvalemail"
                                         class="form-select custom-select"></p-select>
-
                                 </div>
-
                                 <div class="error-msg"
                                     *ngIf="newExpenseForm.controls['approvalemail'].invalid && (newExpenseForm.controls['approvalemail'].touched || newExpenseForm.controls['approvalemail'].dirty)">
                                     <div class="error-msg"
@@ -125,7 +118,7 @@
                             <!-- Add New Expense Button -->
                             <div class="col-md-4 mb-3 ">
                                 <button type="button" class="custom-btn btn-primary mt-4" (click)="addExpenseItem()">
-                                    <i class="bi bi-plus me-2"></i> Add New Expense
+                                    <i class="bi bi-plus me-2"></i> {{'Add Expense Item' | translate}}
                                 </button>
                             </div>
                         </div>
@@ -134,68 +127,58 @@
                         <div formArrayName="expenseItems">
                             <div *ngFor="let item of expenseItems.controls; let i = index" [formGroupName]="i"
                                 class="card p-3 mb-4 custom-expense-item-card">
-
                                 <div class="row mb-3">
                                     <!-- Expense Type -->
                                     <div class="col-md-3">
-                                        <label class="form-label custom-label">Expense Type<span
+                                        <label class="form-label custom-label">{{'Expense Type'  | translate}}<span
                                                 class="text-danger">*</span></label>
-                                        <div class="custom-p-select-content">
-                                            <p-select [options]="expensetype" optionValue="expenseId"
-                                                optionLabel="expenseType" (onChange)="onchangeexpnes($event, i)"
-                                                placeholder="Please select expense item" formControlName="item_expense"
-                                                class="form-select custom-select"></p-select>
-
-                                        </div>
-                                        <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
+                                                <select  class="form-select custom-input" formControlName="expenseId" (change)="onchangeexpnes()">
+                                                    <option [ngValue]="null" disabled>Select Expense Type</option>
+                                                    <option *ngFor="let item of expense | async" [value]="item.expenseId">
+                                                      {{ item.expenseType }}
+                                                    </option>
+                                                  </select>
+                                        <div *ngIf="item.get('expenseId')?.invalid && item.get('expenseId')?.touched"
                                             class="error-msg">
                                             <div class="error-msg"
-                                                *ngIf="item.get('item_expense')?.errors?.['required']"> Expense
-                                                Type is required</div>
-
+                                                *ngIf="item.get('expenseId')?.errors?.['required']">
+                                                Expense Type is required</div>
                                         </div>
                                     </div>
 
                                     <!-- Expense Item -->
                                     <div class="col-md-2">
-                                        <label class="form-label custom-label">Expense Item<span
+                                        <label class="form-label custom-label">{{'Expense Item'  | translate}}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control custom-input" formControlName="item_Name"
                                             placeholder="Please enter expense item" />
                                         <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
                                             class="error-msg">
                                             <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
-                                                Expense
-                                                item
-                                                is required</div>
+                                                Expense item is required</div>
                                             <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                                 Expense item must be less than 50 characters
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <!-- Expense Date -->
                                     <div class="col-md-2">
-                                        <label class="form-label custom-label">Expense Date<span
+                                        <label class="form-label custom-label">{{'Expense Date'  | translate}}<span
                                                 class="text-danger">*</span></label>
                                         <input type="date" class="form-control custom-input"
                                             formControlName="expense_Date" onkeypress="return false;" />
-
-
                                     </div>
 
                                     <!-- Amount -->
                                     <div class="col-md-2">
-                                        <label class="form-label custom-label">Amount<span
+                                        <label class="form-label custom-label">{{'Amount'  | translate}}<span
                                                 class="text-danger">*</span></label>
                                         <input class="form-control custom-input" formControlName="expense_Amount"
                                             placeholder="Please enter amount" type="text"
                                             (input)="onAmountInput($event)" maxlength="7" />
-
                                         <div *ngIf="item.get('expense_Amount')?.invalid && item.get('expense_Amount')?.touched"
                                             class="error-msg">
-
                                             <div class="error-msg"
                                                 *ngIf="item.get('expense_Amount')?.errors?.['required']">
                                                 Expense amount is required
@@ -217,7 +200,7 @@
 
                                     <!-- Receipt Number -->
                                     <div class="col-md-2">
-                                        <label class="form-label custom-label">Receipt Number<span
+                                        <label class="form-label custom-label">{{'Receipt Number'  | translate}}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control custom-input"
                                             formControlName="receipt_Number"
@@ -253,10 +236,10 @@
                                 <div class="row mb-3">
                                     <!-- Description -->
                                     <div class="col-md-4">
-                                        <label class="form-label custom-label">Description</label>
+                                        <label class="form-label custom-label">{{'Description' | translate}}</label>
                                         <div class="">
                                             <textarea class="form-control custom-input"
-                                                formControlName="item_Description"
+                                            type="text"  maxlength="250"   formControlName="item_Description"
                                                 placeholder="Write description here..." rows="1"></textarea>
                                             <div class="character-count mt-2">
                                                 {{ item.get("item_Description")?.value?.length || 0 }}/250
@@ -266,7 +249,7 @@
 
                                     <!-- File Upload -->
                                     <div class="col-md-4">
-                                        <label class="form-label custom-label">Proof (Image and PDF only)<span
+                                        <label class="form-label custom-label">{{'Proof (Image and PDF only)' | translate}}<span
                                                 class="text-danger">*</span></label>
                                         <input type="file" class="form-control custom-input" accept=".pdf, image/*"
                                             (change)="fileupload($event, i)" />
@@ -317,25 +300,18 @@
                         </div>
                     </form>
                 </div>
-
-
             </div>
-
         </div>
-
     </div>
 </ng-template>
-
-
 
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
     <div ngbAutofocus>
         <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">
-                My Expense
+                {{'My Expense Attachment' | translate}}
             </h5>
-
             <button type="button" class="btn-close"
                 (click)="modal.dismiss(); openModal(updateModal); ExpenseViewURL = null; ExpenseImageUrl = null"
                 aria-label="Close"></button>
@@ -356,12 +332,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Expense iteam?</p>
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Expense iteam? ' | translate}}</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary" (click)="notdeleted()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="removeExpense()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="notdeleted()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="removeExpense()">{{'Yes' | translate}}</button>
         </div>
     </div>
-
 </ng-template>

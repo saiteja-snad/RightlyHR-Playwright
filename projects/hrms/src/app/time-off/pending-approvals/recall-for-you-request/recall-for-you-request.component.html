@@ -1,14 +1,15 @@
-<div class="custom-main-component-container mt-3">
+
+<div class="custom-main-component-container" *ngIf="this.rbac.allowedToAccess('Recall Tab.view')">
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search here"
                 aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
-        <div class="custom-table-content">
+        <div class="custom-table-content" >
             <table class="w-100">
                 <thead>
                     <tr>
@@ -28,7 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                  @if (rbac.allowedToAccess('Recall Tab.view')) {
+                  
                     @if(((recall_For_You_Details | async) ?? []).length > 0) {
 
                     <tr *ngFor="let item of recall_For_You_Details|async">
@@ -136,7 +137,7 @@
                         </td>
                     </tr>
                     }
-                  }
+                  
                 </tbody>
             </table>
         </div>

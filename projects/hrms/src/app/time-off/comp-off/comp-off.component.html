@@ -1,16 +1,18 @@
-<div class="custom-main-component-container mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header cursor mb-0">Comp-Off</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary" *ngIf="!rbac.allowedToAccess('Compoff Tab.Create')"><i
-                    class="bi bi-plus me-2"></i>Request Comp-Off</button>
+            <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary"
+                *ngIf="rbac.allowedToAccess('Compoff Tab.create')"><i class="bi bi-plus me-2"></i>Request
+                Comp-Off</button>
         </div>
     </div>
-    <div  class="employee-fields-main-container d-flex gap-3 w-100">
+
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
         <div class="custom-component-left-content">
-            <app-comp-off-approval-tabs></app-comp-off-approval-tabs>
+            <app-comp-off-approval-tabs />
         </div>
         <div class="custom-setting-right-content p-3">
             <router-outlet></router-outlet>
@@ -18,20 +20,22 @@
     </div>
 </div>
 
-
+<!--Add-->
 <ng-template #addcompoff let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request Comp-Off</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();this.addCompOffForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();this.addCompOffForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
 
-        <div class="custom-main-popup-content p-4">
-            <form [formGroup]="addCompOffForm" (ngSubmit)="applyCompOff(addCompOffForm)" class="custom-form" *ngIf="rbac.allowedToAccess('Compoff Tab.create')">
+        <div class="custom-main-popup-content">
+            <form [formGroup]="addCompOffForm" (ngSubmit)="applyCompOff(addCompOffForm)" class="custom-form"
+                *ngIf="rbac.allowedToAccess('Compoff Tab.create')">
                 <!-- Worked Date -->
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -39,11 +43,15 @@
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
                             formControlName="workedDate" required>
-                            <div *ngIf="addCompOffForm.get('workedDate')?.touched && addCompOffForm.get('workedDate')?.invalid" class="error-msg">
-                                <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required.</div>
-                              </div>
-                              <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
-                              <div  class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['notWeekend']">Selected date is not eligible for compoff</div>
+                        <div *ngIf="addCompOffForm.get('workedDate')?.touched && addCompOffForm.get('workedDate')?.invalid"
+                            class="error-msg">
+                            <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required.
+                            </div>
+                        </div>
+                        <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date
+                            must be after your date of joining.</div>
+                        <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['notWeekend']">Selected
+                            date is not eligible for compoff</div>
                     </div>
                 </div>
 
@@ -60,8 +68,8 @@
                                 <!-- Half Day Selection -->
                                 <div class="row" *ngIf="addCompOffForm.get('availing')?.value === 'Half Day'">
                                     <div class="col-md-12 mb-3">
-                                        <label class="form-label custom-label mb-2">Select Half<span
-                                                class="text-danger">*</span></label>
+                                        <!-- <label class="form-label custom-label mb-2">Select Half<span
+                                                class="text-danger">*</span></label> -->
                                         <div class="d-flex gap-3">
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" id="firstHalf" value="1"
@@ -85,6 +93,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Reason -->
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -92,32 +101,33 @@
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
                             placeholder="Type here" maxlength="250"></textarea>
-                            <div class="text-end small text-muted">
-                                {{ addCompOffForm.get('reason')?.value?.length || 0 }}/250
+                        <div class="text-end small text-muted">
+                            {{ addCompOffForm.get('reason')?.value?.length || 0 }}/250
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid">
+                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">
+                                Reason is required.
                             </div>
-                            <div class="error-msg" *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid">
-                                <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">
-                                    Reason is required.
-                                </div>
-                                <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">
-                                    Reason cannot exceed 250 characters.
-                                </div>
-                              </div>
+                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">
+                                Reason cannot exceed 250 characters.
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();this.addCompOffForm.reset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="addCompOffForm.invalid || spinnerLoader">
-                    
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="modal.dismiss();this.addCompOffForm.reset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addCompOffForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span >{{'Loading..'}}...</span>
-                            }@else {
-                            <span>{{'Request'}}</span>
-                            }</button>
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Request'}}</span>
+                        }
+                    </button>
                 </div>
             </form>
         </div>

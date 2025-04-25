@@ -1,0 +1,107 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="component-header">Increment Percentage</div>
+        <div>
+            <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
+        </div>
+    </div>
+
+    <div class="w-100">
+        <!--Input search-->
+        <div class="mb-4">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search"
+                    [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username"
+                    aria-describedby="basic-addon1">
+            </div>
+        </div>
+
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Review Cycle Name</th>
+                        <th>Department</th>
+                        <th>Team</th>
+                        <th>Location</th>
+                        <th>Sub Location</th>
+                        <th>Rating Scale</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(!dataload){
+                    @if(IncementalDetailsget.length>0){
+                    @for (item of IncementalDetailsget; track $index) {
+                    <tr>
+                        <td>{{item?.reviewCycleName?item?.reviewCycleName:'-' }}</td>
+                        <td>{{item?.deptName?( getNamesAsString(item?.deptName, 'departments')):'-' }}</td>
+                        <td>{{item?.subdeptName? (getNamesAsString(item?.subdeptName, 'subDepartmentName')):'-' }}</td>
+                        <td>{{item?.locationName?( getNamesAsString(item?.locationName, 'locationName')):'-' }}</td>
+                        <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}
+                        </td>
+                        <td>{{item?.rating?item?.rating:'-'}}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                  </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li><a class="dropdown-item" (click)="editDetails(item)">Update</a></li>
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"
+                                            (click)="openDelete(confirmation, item.id)">Delete</a></li>
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Initiated'"
+                                            (click)="viewDetails(item)">View</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                    }
+                    @else {
+                    <tr>
+                        <app-no-data-found></app-no-data-found>
+                    </tr>
+                    }
+                    }
+                    @else {
+                    <app-data-loader-content />
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if(IncementalDetailsget.length > 0){
+            <div class="pagination-content">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                            </option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
+                        </span>
+                    </div>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
+                </div>
+            </div>
+            }
+    </div>
+</div>
+
+<ng-template #confirmation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to delete?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">Yes</button>
+        </div>
+    </div>
+</ng-template>

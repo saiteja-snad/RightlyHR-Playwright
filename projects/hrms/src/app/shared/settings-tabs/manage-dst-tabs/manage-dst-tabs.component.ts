@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { ManageDST } from '../../../settings/employee-fields/manage-dsts/dsts.modal';
 import { Subject } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-manage-dst-tabs',
@@ -14,20 +15,14 @@ import { HttpService } from '../../../services/http.service';
 export class ManageDstTabsComponent implements OnInit, OnDestroy {
   allDSTs = [] as ManageDST[];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  navLinks = [
-    {
-      label: 'Pending for submission',
-      route: '/settings/employee-fields/manage-dsts/pending-for-submission',
-      count: 0
-    },
-    {
-      label: 'Published',
-      route: '/settings/employee-fields/manage-dsts/published-dsts',
-      count: 0
-    },
+  public navLinks: any[] = [];
+
+  allNavLinks = [
+    { label: 'Pending for submission',route: '/settings/employee-fields/manage-dsts/pending-for-submission',count: 0},
+    { label: 'Published',route: '/settings/employee-fields/manage-dsts/published-dsts',count: 0 }
   ];
 
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.getAllDayLight();
@@ -40,18 +35,15 @@ export class ManageDstTabsComponent implements OnInit, OnDestroy {
         this.allDSTs = data;
         const pendingCount = this.allDSTs.filter(dst => dst.status === 'Pending for submission').length;
         const publishedCount = this.allDSTs.filter(dst => dst.status === 'Published').length;
-        this.navLinks = [
-          {
-            label: 'Pending for submission',
-            route: '/settings/employee-fields/manage-dsts/pending-for-submission',
-            count: pendingCount
-          },
-          {
-            label: 'Published',
-            route: '/settings/employee-fields/manage-dsts/published-dsts',
-            count: publishedCount
-          }
-        ];
+        this.navLinks = this.allNavLinks
+          .map(link => {
+            if (link.label === 'Pending for submission') {
+              return { ...link, count: pendingCount };
+            } else if (link.label === 'Published') {
+              return { ...link, count: publishedCount };
+            }
+            return link;
+          });
       },
     });
   }

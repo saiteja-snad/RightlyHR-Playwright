@@ -58,33 +58,55 @@ import { RegularizationProcessedComponent } from './regularization/regularizatio
 import { RegularizationRequestComponent } from './pending-approvals/regularization-request/regularization-request.component';
 import { RegularizationForYouRequestComponent } from './pending-approvals/regularization-for-you-request/regularization-for-you-request.component';
 import { RegularizationForYourRoleRequestComponent } from './pending-approvals/regularization-for-your-role-request/regularization-for-your-role-request.component';
+import { OnbehalfOfApprovalsComponent } from './onbehalf-of-approvals/onbehalf-of-approvals.component';
+import { TimeOffComponent } from './onbehalf-of-approvals/time-off/time-off.component';
+import { CompOffEntitlementComponent } from './onbehalf-of-approvals/comp-off-entitlement/comp-off-entitlement.component';
+import { WfhComponent } from './onbehalf-of-approvals/wfh/wfh.component';
+import { PermissionsComponent } from './onbehalf-of-approvals/permissions/permissions.component';
+
+import { DeskApprovalRequestComponent } from './pending-approvals/desk-approval-request/desk-approval-request.component';
+import { DeskForYouRequestComponent } from './pending-approvals/desk-for-you-request/desk-for-you-request.component';
+import { DeskForYourRoleRequestComponent } from './pending-approvals/desk-for-your-role-request/desk-for-your-role-request.component';
+
+import { RemoteLoginComponent } from './remote-login/remote-login.component';
+import { RemoteWaitingForApprovalComponent } from './remote-login/remote-waiting-for-approval/remote-waiting-for-approval.component';
+import { RemoteApprovedComponent } from './remote-login/remote-approved/remote-approved.component';
+import { RemoteProcessedComponent } from './remote-login/remote-processed/remote-processed.component';
+import { RemoteRejectedComponent } from './remote-login/remote-rejected/remote-rejected.component';
+import { GlobalPermissionsComponent } from './global-permissions/global-permissions.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
-  {
-    path: 'leaves', component: LeavesComponent,
+  { path: 'leaves', component: LeavesComponent,
     children: [
-      { path: 'waiting-for-approval', component: LeavesWaitingForApprovalComponent, },
+      { path: 'waiting-for-approval', component: LeavesWaitingForApprovalComponent },
       { path: 'approved', component: LeavesApprovalComponent },
       { path: 'processed', component: LeavesProcessedComponent },
       { path: 'rejected', component: LeavesRejectedComponent },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
-  {
-    path: 'wfh', component: WorkFromHomeComponent,
+  { path: 'wfh', component: WorkFromHomeComponent,
     children: [
-      { path: 'waiting-for-approval', component: WfhWaitingForApprovalComponent, },
+      { path: 'waiting-for-approval', component: WfhWaitingForApprovalComponent },
       { path: 'approved', component: WfhApprovedComponent },
       { path: 'processed', component: WfhProcessedComponent },
       { path: 'rejected', component: WfhRejectedComponent },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
-  {
-    path: 'comp-off', component: CompOffComponent,
+  { path: 'remote', component: RemoteLoginComponent,
     children: [
-      { path: 'waiting-for-approval', component: CompOffWaitingForApprovalComponent, },
+      { path: 'waiting-for-approval', component: RemoteWaitingForApprovalComponent },
+      { path: 'approved', component: RemoteApprovedComponent },
+      { path: 'processed', component: RemoteProcessedComponent },
+      { path: 'rejected', component: RemoteRejectedComponent },
+      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    ],
+  },
+  { path: 'comp-off', component: CompOffComponent,
+    children: [
+      { path: 'waiting-for-approval', component: CompOffWaitingForApprovalComponent },
       { path: 'approved', component: CompOffApprovalComponent },
       { path: 'processed', component: CompOffProcessComponent },
       { path: 'rejected', component: CompOffRejectComponent },
@@ -96,7 +118,10 @@ export default [
     path: 'premissions',
     component: PremissionsComponent,
     children: [
-      { path: 'waiting-for-approval', component: PremissionsWaitingForApprovalComponent, },
+      {
+        path: 'waiting-for-approval',
+        component: PremissionsWaitingForApprovalComponent,
+      },
       { path: 'approved', component: PremissionsApprovedComponent },
       { path: 'rejected', component: PremissionsRejectedComponent },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
@@ -106,7 +131,10 @@ export default [
     path: 'regularization',
     component: RegularizationComponent,
     children: [
-      { path: 'waiting-for-approval', component: RegularizationWaitingForApprovalComponent, },
+      {
+        path: 'waiting-for-approval',
+        component: RegularizationWaitingForApprovalComponent,
+      },
       { path: 'approved', component: RegularizationApprovedComponent },
       { path: 'rejected', component: RegularizationRejectedComponent },
       { path: 'process', component: RegularizationProcessedComponent },
@@ -116,22 +144,31 @@ export default [
   {
     path: 'on-behalf-of',
     component: OnBeHalfOfComponent,
-    children: [{ path: 'waiting-for-approval', component: OnBeHalfOfWaitingForApprovalComponent, },
-    { path: 'approved', component: OnBeHalfOfApprovalComponent },
-    { path: 'processed', component: OnBeHalfOfProcessComponent },
-    { path: 'rejected', component: OnBeHalfOfRejectComponent },
-    { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    children: [
+      {
+        path: 'waiting-for-approval',
+        component: OnBeHalfOfWaitingForApprovalComponent,
+      },
+      { path: 'approved', component: OnBeHalfOfApprovalComponent },
+      { path: 'processed', component: OnBeHalfOfProcessComponent },
+      { path: 'rejected', component: OnBeHalfOfRejectComponent },
+      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   { path: 'attendance', component: AttendanceComponent },
   {
-    path: 'pending-approvals', component: PendingApprovalsComponent,
+    path: 'pending-approvals',
+    component: PendingApprovalsComponent,
     children: [
       {
-        path: 'time-off-request', component: TimeOffRequestComponent,
+        path: 'time-off-request',
+        component: TimeOffRequestComponent,
         children: [
           { path: 'for-you', component: TimeOffForYouRequestComponent },
-          { path: 'for-your-role', component: TimeOffForYourRoleRequestComponent, },
+          {
+            path: 'for-your-role',
+            component: TimeOffForYourRoleRequestComponent,
+          },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
@@ -145,11 +182,24 @@ export default [
         ],
       },
       {
+        path: 'desk-approval',
+        component:DeskApprovalRequestComponent,
+        children: [
+          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+          { path: 'for-you', component: DeskForYouRequestComponent },
+          { path: 'for-your-role', component: DeskForYourRoleRequestComponent },
+         
+        ],
+      },
+      {
         path: 'comp-off',
         component: CompOffRequestComponent,
         children: [
           { path: 'for-you', component: CompoffForYouRequestComponent },
-          { path: 'for-your-role', component: CompoffForYourRoleRequestComponent, },
+          {
+            path: 'for-your-role',
+            component: CompoffForYourRoleRequestComponent,
+          },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
@@ -158,7 +208,10 @@ export default [
         component: PremissionRequestComponent,
         children: [
           { path: 'for-you', component: PremissionForYouRequestComponent },
-          { path: 'for-your-role', component: PremissionForYourRoleRequestComponent, },
+          {
+            path: 'for-your-role',
+            component: PremissionForYourRoleRequestComponent,
+          },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
@@ -167,32 +220,49 @@ export default [
         component: RegularizationRequestComponent,
         children: [
           { path: 'for-you', component: RegularizationForYouRequestComponent },
-          { path: 'for-your-role', component: RegularizationForYourRoleRequestComponent, },
+          {
+            path: 'for-your-role',
+            component: RegularizationForYourRoleRequestComponent,
+          },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
       {
-        path: 'claimsandexpenses-request', component: ClaimsandexpensesRequestComponent,
+        path: 'claimsandexpenses-request',
+        component: ClaimsandexpensesRequestComponent,
         children: [
-          { path: 'for-you', component: ClaimsandexpensesForYouRequestComponent, },
-          { path: 'for-your-role', component: ClaimsandexpensesForYourRoleRequestComponent },
+          {
+            path: 'for-you',
+            component: ClaimsandexpensesForYouRequestComponent,
+          },
+          {
+            path: 'for-your-role',
+            component: ClaimsandexpensesForYourRoleRequestComponent,
+          },
 
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
       {
         path: 'probation-request',
-        component: ProbationPendingApprovalsComponent
+        component: ProbationPendingApprovalsComponent,
       },
       {
-        path: 'assessmentform', component: AssessmentformComponent,
+        path: 'assessmentform',
+        component: AssessmentformComponent,
       },
       {
         path: 'separation-request',
         component: SeparationRequestComponent,
         children: [
-          { path: 'separation-for-you', component: SeparationForYouRequestComponent, },
-          { path: 'separation-for-role', component: SeparationForYourRoleRequestComponent, },
+          {
+            path: 'separation-for-you',
+            component: SeparationForYouRequestComponent,
+          },
+          {
+            path: 'separation-for-role',
+            component: SeparationForYourRoleRequestComponent,
+          },
           { path: '', redirectTo: 'separation-for-you', pathMatch: 'full' },
         ],
       },
@@ -200,21 +270,35 @@ export default [
         path: 'recall-request',
         component: RecallRequestsComponent,
         children: [
-          { path: 'recall-for-you', component: RecallForYouRequestComponent, },
-          { path: 'recall-for-role', component: RecallForYourRoleRequestComponent, },
+          { path: 'recall-for-you', component: RecallForYouRequestComponent },
+          {
+            path: 'recall-for-role',
+            component: RecallForYourRoleRequestComponent,
+          },
           { path: '', redirectTo: 'recall-for-you', pathMatch: 'full' },
         ],
       },
-      {
-        path: 'nodue-request',
-        component: NodueApprovalDetailsComponent,
+
+      { path: 'nodue-request', component: NodueApprovalDetailsComponent,
         children: [
           { path: '', redirectTo: 'nodue-request', pathMatch: 'full' },
         ],
       },
-      { path: '', redirectTo: 'time-off-request', pathMatch: 'full' }, // Default section
-
-      { path: 'trainee-approvals', component: TraineeApprovalsComponent,  }
+      { path: '', redirectTo: 'time-off-request', pathMatch: 'full' },
+      { path: 'trainee-approvals', component: TraineeApprovalsComponent },
     ],
+  },
+  // on be half of approvals
+  { path: 'on-behalf-of-approvals', component: OnbehalfOfApprovalsComponent,
+    children: [
+      { path: '', redirectTo: 'time-off', pathMatch: 'full' },
+      { path: 'time-off', component: TimeOffComponent, },
+      { path: 'entitlement', component: CompOffEntitlementComponent },
+      { path: 'wfh', component: WfhComponent },
+      { path: 'permissions', component: PermissionsComponent },
+    ],
+  },
+  { path: 'global-permissions', component: GlobalPermissionsComponent,
+   
   },
 ] as Route[];

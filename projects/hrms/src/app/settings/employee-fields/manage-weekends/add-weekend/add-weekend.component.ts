@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
@@ -26,11 +26,10 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
   currentYear: number = new Date().getFullYear();
   employeedetails = {} as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  daysList: string[] = [
+  daysList = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ];
-
-  @ViewChild('confirmation') confirmation!: TemplateRef<any>
+  
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -69,7 +68,7 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
       week3: [false],
       week4: [false],
       week5: [false]
-    });
+    }, { validators: this.atLeastOneWeekSelected()});
   }
 
   get weekends(): FormArray {
@@ -77,7 +76,7 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
   }
 
   addWeekend(): void {
-    if (this.weekends.length < 7) {
+    if (this.weekends.length < 3) {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');
@@ -88,12 +87,38 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     this.weekends.removeAt(index);
   }
 
+  atLeastOneWeekSelected(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const week1 = control.get('week1')?.value;
+      const week2 = control.get('week2')?.value;
+      const week3 = control.get('week3')?.value;
+      const week4 = control.get('week4')?.value;
+      const week5 = control.get('week5')?.value;
+  
+      const atLeastOneChecked = week1 || week2 || week3 || week4 || week5;
+  
+      return atLeastOneChecked ? null : { atLeastOneWeekRequired: true };
+    };
+  }
+
   getAllYears() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
       this.yearsList.push(i);
     }
   }
 
+  getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
+    const selectedDays = this.weekends.controls
+      .map((group, i) => i !== index ? group.get('day')?.value : null)
+      .filter(Boolean);
+  
+    return this.daysList.map(day => ({
+      label: day,
+      value: day,
+      disabled: selectedDays.includes(day)
+    }));
+  }
+  
   private getAllLocations(): void {
     this.http.getData('JobLocation')
       .pipe(takeUntil(this.destroy$))
@@ -216,8 +241,8 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     });
   }
 
-  openConfirmation(){
-    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
+  openModal(content: any,) {
+    this.modalService.open(content, { centered: true })
   }
 
   closeWeekend(){

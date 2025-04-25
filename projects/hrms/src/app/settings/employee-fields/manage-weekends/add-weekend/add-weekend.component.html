@@ -1,8 +1,8 @@
 <div class="custom-main-component-container w-100">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <p class="component-header mb-0" (click)="navigate()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>Add Weekends
+            <p class="component-header mb-0" (click)="openModal(Cancelback)">
+                <i class="bi bi-arrow-90deg-left me-2"></i>{{"Add Weekends" | translate}}
             </p>
         </div>
     </div>
@@ -18,19 +18,20 @@
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-                                class="form-select custom-select" formControlName="year" placeholder="Please select year"
-                                (onChange)="enableLocation()">
+                                class="form-select custom-select" formControlName="year"
+                                placeholder="Please select year" (onChange)="enableLocation()">
                                 <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
                                 <ng-template let-year #item>{{ year }}</ng-template>
                             </p-select>
                         </div>
-                        <div *ngIf="weekendForm.get('year')?.touched && weekendForm.get('year')?.invalid" class="error-msg">
+                        <div *ngIf="weekendForm.get('year')?.touched && weekendForm.get('year')?.invalid"
+                            class="error-msg">
                             <div *ngIf="weekendForm.get('year')?.errors?.['required']">
-                                Please select year
+                                {{"Please select year" | translate}}
                             </div>
                         </div>
                     </div>
-            
+
                     <!-- Location -->
                     <div class="mb-3">
                         <label for="location" class="form-label custom-label mb-2">
@@ -46,13 +47,14 @@
                                 <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                             </p-select>
                         </div>
-                        <div *ngIf="weekendForm.get('location')?.touched && weekendForm.get('location')?.invalid" class="error-msg">
+                        <div *ngIf="weekendForm.get('location')?.touched && weekendForm.get('location')?.invalid"
+                            class="error-msg">
                             <div *ngIf="weekendForm.get('location')?.errors?.['required']">
-                                Please select location
+                                {{"Please select location" | translate}}
                             </div>
                         </div>
                     </div>
-            
+
                     <!-- Sub Location -->
                     <div class="mb-3">
                         <label for="subLocation" class="form-label custom-label mb-2">
@@ -67,36 +69,40 @@
                                     }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                             </p-select>
-            
+
                         </div>
                         <div *ngIf="weekendForm.get('subLocation')?.touched && weekendForm.get('subLocation')?.invalid"
                             class="error-msg">
                             <div *ngIf="weekendForm.get('subLocation')?.errors?.['required']">
-                                Please select sub location
+                                {{"Please select sub location" | translate}}
                             </div>
                         </div>
                     </div>
-            
+
                     <!-- Shifts -->
                     <div class="mb-3">
-                        <label for="shift" class="form-label custom-label mb-2">{{ "Shift" | translate }}<span class="text-danger">*</span></label>
+                        <label for="shift" class="form-label custom-label mb-2">{{ "Shift" | translate }}<span
+                                class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
-                                [showClear]="false" formControlName="shift" placeholder="Please select shift"
-                                class="form-select custom-select">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
+                            <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true"
+                                filterBy="shiftName" [showClear]="false" formControlName="shift"
+                                placeholder="Please select shift" class="form-select custom-select">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName
+                                    }}</ng-template>
                                 <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                             </p-select>
                         </div>
-                        <div *ngIf="weekendForm.get('shift')?.touched && weekendForm.get('shift')?.invalid" class="error-msg">
+                        <div *ngIf="weekendForm.get('shift')?.touched && weekendForm.get('shift')?.invalid"
+                            class="error-msg">
                             <div *ngIf="weekendForm.get('shift')?.errors?.['required']">
-                                Please select shift
+                                {{"Please select shift" | translate}}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="custom-btn btn-primary" (click)="addWeekend()">+ Add Row</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="addWeekend()"
+                        [disabled]="weekends.length >= 3">{{"+ Add Row" | translate}}</button>
                 </div>
             </div>
 
@@ -105,12 +111,12 @@
                 <table class="w-100">
                     <thead>
                         <tr>
-                            <th>Days</th>
-                            <th>1st</th>
-                            <th>2nd</th>
-                            <th>3rd</th>
-                            <th>4th</th>
-                            <th>5th</th>
+                            <th>{{"Days"| translate}}</th>
+                            <th>{{"1st" | translate}}</th>
+                            <th>{{"2nd" | translate}}</th>
+                            <th>{{"3rd" | translate}}</th>
+                            <th>{{"4th" | translate}}</th>
+                            <th>{{"5th" | translate}}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -123,18 +129,21 @@
                                             {{ "Day" | translate }}<span class="text-danger">*</span>
                                         </label>
                                         <div class="custom-p-select-content">
-                                            <p-select [options]="daysList" [filter]="true" [showClear]="false"
+                                            <p-select [options]="getAvailableDays(i)" optionLabel="label"
+                                                optionValue="value" [filter]="true" [showClear]="false"
                                                 formControlName="day" placeholder="Please select day"
                                                 class="form-select custom-select">
-                                                <ng-template #selectedItem let-selectedOption>{{ selectedOption
+                                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.label
                                                     }}</ng-template>
-                                                <ng-template let-option #item>{{ option }}</ng-template>
+                                                <ng-template let-option #item>{{ option.label }}</ng-template>
                                             </p-select>
+
+
                                         </div>
                                         <div *ngIf="weekend.get('day')?.touched && weekend.get('day')?.invalid"
                                             class="error-msg">
                                             <div *ngIf="weekend.get('day')?.errors?.['required']">
-                                                Please select day
+                                                {{"Please select day" | translate}}
                                             </div>
                                         </div>
                                     </div>
@@ -151,15 +160,17 @@
                                     <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
                                 </a>
                             </td>
-                            }
-                        </tr>                        
+                            }  
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="d-flex justify-content-end gap-3 pt-4">
-                <button type="button" class="custom-btn btn-secondary px-4" (click)="openConfirmation()">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="weekendForm.invalid">Save</button>
+                <button type="button" class="custom-btn btn-secondary px-4" (click)="openModal(confirmation)">{{"Cancel" |
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="weekendForm.invalid">{{"Save" |
+                    translate}}</button>
             </div>
         </form>
     </div>
@@ -172,8 +183,22 @@
             <p class="confirmation-text">{{'Are you sure want to close?'|translate}}</p>
         </div>
         <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">No</button>
-            <button class="custom-btn btn-primary w-50  py-2" (click)="closeWeekend()">Yes</button>
+            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
+            <button class="custom-btn btn-primary w-50  py-2" (click)="closeWeekend()">{{"Yes" | translate}}</button>
         </div>
+    </div>
+</ng-template>
+
+<ng-template #Cancelback let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text">Are you sure you want to go back?</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary" (click)="closeWeekend();model.dismiss()">{{"Yes" |
+          translate}}</button>
+      </div>
     </div>
 </ng-template>

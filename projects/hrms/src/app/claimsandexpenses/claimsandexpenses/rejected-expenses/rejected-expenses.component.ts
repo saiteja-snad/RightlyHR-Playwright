@@ -10,10 +10,11 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent,TranslateModule],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
@@ -22,7 +23,7 @@ export class RejectedExpensesComponent {
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
-
+  commentsrecivced = [] as any
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
@@ -40,6 +41,10 @@ export class RejectedExpensesComponent {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
+  comments_Function(comments: any) {
+    this.commentsrecivced = comments
+  }
+
 
   getexpensesheaderbyemployeeid(): void {
     const cleanSearchQuery = this.searchTerm || ''

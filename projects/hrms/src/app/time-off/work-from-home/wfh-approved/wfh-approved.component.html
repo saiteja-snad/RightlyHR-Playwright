@@ -1,5 +1,5 @@
-<div>
-  <div class="custom-table-content ">
+<div class="custom-main-component-container">
+  <div class="custom-table-content">
     <table class="w-100">
       <thead>
         <tr>
@@ -26,7 +26,6 @@
             <td>{{ wfhRequest.status }}</td>
           </tr>
         </ng-container>
-
         <ng-template #noDataTemplate>
           <tr>
             <td colspan="4">
@@ -34,27 +33,8 @@
             </td>
           </tr>
         </ng-template>
-      }
+        }
       </tbody>
-
     </table>
-  </div>
-  <div class="pagination-content pt-2 w-100">
-    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-      <!-- Dropdown for Rows per Page -->
-      <div class="d-flex align-items-center gap-3 p-2">
-        <!-- Bootstrap Select -->
-        <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onRowsChange()">
-          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-          </option>
-        </select>
-        <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-          totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-      </div>
-
-      <!-- Pagination -->
-      <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-        (onPageChange)="onPageChange($event)"></p-paginator>
-    </div>
   </div>
 </div>

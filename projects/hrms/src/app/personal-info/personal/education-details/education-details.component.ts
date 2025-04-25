@@ -8,8 +8,9 @@ import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-education-details',
@@ -36,6 +37,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
   buttondisable = true;
   empinfo: any = {}
   employedata={} as any;
+  showErrorr=false;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -192,6 +194,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
     console.log('Identity attachment:', this.educationAttachment);
   }
 
+  
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
       type: originalFile.type,

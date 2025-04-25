@@ -1,19 +1,10 @@
 <div class="main-layout-container w-100">
-    <div class="">
+    <div>
         <app-header />
     </div>
     <div class="display-area">
-        <div class="card custom-main-display-card" *ngIf="router.url === '/job-details'">
-            <router-outlet/>
-        </div>
-
-        <div class="card custom-main-display-card all-main-details-content" *ngIf="router.url !== '/job-details'">
-            <div class="d-flex justify-content-center w-100 py-4" *ngIf="router.url !== '/application-submited'">
-               <app-detailed-step-progressbar/>
-            </div>
-            <div>
-                <router-outlet/>
-            </div>
+        <div class="card custom-main-display-card">
+            <router-outlet />
         </div>
     </div>
 </div>

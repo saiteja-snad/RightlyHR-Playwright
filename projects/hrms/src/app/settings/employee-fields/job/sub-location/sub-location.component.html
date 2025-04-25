@@ -5,8 +5,8 @@
 <ng-template #addpopup let-modal>
     <form [formGroup]="AddForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
+            <div class="custom-poup-header-content popup-header-border">
+                <div >
                     <p class="popup-heading mb-0">{{ 'Sub Location' | translate }}</p>
                 </div>
                 <div>
@@ -16,7 +16,7 @@
                 </div>
             </div>
  
-            <div class="custom-main-popup-content p-5">
+            <div class="custom-main-popup-content">
                 <!-- Location  Name Field -->
                 <div class="mb-4">
                     <label for="jobgrade" class="form-label custom-label mb-2">
@@ -25,9 +25,10 @@
                     <div class="custom-p-select-content">
                         <select title="text" class="form-control custom-input" formControlName="AddSubLocation">
                             <option value="" disabled selected>Please select Location</option>
-                            <option *ngFor="let subloc of SubLocationdetails" [value]="subloc.jobLocationId">
-                                {{ subloc.jobLocationName }}
-                            </option>
+                            <!-- <option *ngFor="let subloc of SubLocationdetails" [value]="subloc.jobLocationId">
+                                {{ locationDetail }}
+                            </option> -->
+                            <option *ngFor="let subloc of locationDetail"[value]="subloc.id">{{subloc.jobLocationName}}</option>
                         </select>
                     </div>
                     <div *ngIf="AddForm.get('AddSubLocation')?.touched && AddForm.get('AddSubLocation')?.invalid" class="error-msg mt-2">
@@ -41,18 +42,18 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="AddLocation"
                         placeholder="Please enter sublocation"
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"  />
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"  />
                     <div *ngIf="AddForm.get('AddLocation')?.touched && AddForm.get('AddLocation')?.invalid"
                         class="error-msg">
                         {{ 'Sub location is required' | translate }}.
                     </div>
                 </div>
                 <!-- Buttons -->
-                <div class="d-flex gap-5 pt-4 w-100">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
                         {{ 'Close' | translate }}
                     </button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addSublocation(modal)"
+                    <button type="button" class="custom-btn btn-primary" (click)="addSublocation(modal)"
                         [disabled]="AddForm.invalid">
                         {{ 'Add' | translate }}
                     </button>
@@ -69,16 +70,15 @@
                 <tr>
                     <th>Location</th>
                     <th>Sub Location</th>
-                    <th class="text-center">Actions</th>
+                    <th class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || rbac.allowedToAccess('Sub Location.delete')">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Sub Location.view')) {
                 <ng-container>
                     <tr *ngFor="let subloc of SubLocationdetails">
                         <td>{{subloc.jobLocationName}}</td>
                         <td>{{subloc.jobSubLocationName}}</td>
-                        <td class="text-center">
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || rbac.allowedToAccess('Sub Location.delete')">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -99,7 +99,6 @@
                         </td>
                     </tr>
                 </ng-container>
-            }
             </tbody>
         </table>
     </div>
@@ -109,8 +108,8 @@
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
+            <div class="custom-poup-header-content popup-header-border">
+                <div >
                     <p class="popup-heading mb-0">{{'Edit Sub Location' | translate}}</p>
                 </div>
                 <div>
@@ -119,7 +118,7 @@
                     </a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-5">
+            <div class="custom-main-popup-content ">
                      <!-- Location  Name Field -->
                      <div class="mb-4">
                         <label for="UpdateSubLocation" class="form-label custom-label mb-2">
@@ -145,7 +144,7 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateSubLocation"
                         placeholder="Please enter sub location" 
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('UpdateSubLocation')?.invalid && updateForm.get('UpdateSubLocation')?.touched"
                         class="error-msg">
                         {{ 'Sub location is required' | translate }}.
@@ -153,10 +152,10 @@
                 </div>
              
                
-                <div class="d-flex gap-5 pt-4 w-100">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close' |
                         translate}}</button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateSublocation(modal)"
+                    <button type="button" class="custom-btn btn-primary " (click)="updateSublocation(modal)"
                         [disabled]="updateForm.invalid">
                         {{'Update' | translate}}
                     </button>
@@ -167,16 +166,16 @@
 </ng-template>
   <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-5">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+    <div class="result-popup-content" ngbAutofocus>
+       
+            <div >
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary "(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
-    </div>
+    
 </ng-template>

@@ -1,33 +1,163 @@
-<div class="custom-main-component-container w-100">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="component-header">{{'Review Cycle List' | translate}}</div>
+
         <div>
-            <p class="dashboard-text">Review Cycle</p>
-        <div>
-    </div>
-    <div class="w-100">
-        <!--Input search-->
-        <div class="input-group custom-search mb-4">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
+            <button class="custom-btn btn-primary" (click)="openAdd()">{{'Create Review cycle'|translate}}</button>
         </div>
-      
+    </div>
+
+    <div class="w-100">
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search"
+                [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username"
+                aria-describedby="basic-addon1">
+        </div>
+    </div>
+
+        @if(!dataload){
         <div class="custom-table-content w-100">
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Review Cycle Name</th>
-                        <th>Department</th>
-                        <th>Team</th>
-                        <th>Location</th>
-                        <th>Sub Location</th>
-                        <th>Status</th>
+                        <th>{{'Review Cycle Name'|translate}}</th>
+                        <th>{{'Department'|translate}}</th>
+                        <th>{{'Team' |translate}}</th>
+                        <th>{{'Location'|translate}}</th>
+                        <th>{{'Sub Location'|translate}}</th>
+                        <th>{{'Status'|translate}}</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                
-                  </tbody>
+                    @if(filteredDetails.length > 0){
+                        <tr *ngFor="let cycle of filteredDetails">
+                            <td>{{ cycle.reviewCycleName }}</td>
+                            <td>{{ getNamesAsString(cycle.departments, 'departments') }}</td>
+                            <td>{{ getNamesAsString(cycle.subdepartments, 'subDepartmentNames') }}</td>
+                            <td>{{ getNamesAsString(cycle.locations, 'locations') }}</td>
+                            <td>{{ getNamesAsString(cycle.sublocations, 'subLocations') }}</td>
+                            <td>{{ cycle.status }}</td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        @if(cycle.status==='Initiated'){
+                                        <li class="dropdown-item border-bottom"
+                                            (click)="openModal(holdconformation);seletedid=cycle">
+                                            <a class="dropdown-custom-btn">Hold</a>
+                                        </li>
+                                        }
+                                        @if(cycle.status==='Review on Hold'){
+                                        <li class="dropdown-item" (click)="openModal(Resumeconformation);seletedid=cycle"><a
+                                                class="dropdown-custom-btn">Resume</a></li>
+                                        }
+                                        @if(cycle.status !=='Initiated' && cycle.status !=='Review on Hold'){
+                                        <li class="dropdown-item" (click)="onUpdate(cycle)">
+                                            <a class="dropdown-custom-btn">Update</a>
+                                        </li>
+                                        }
+                                        @if(cycle.status ==='Initiated'){
+                                        <li class="dropdown-item" (click)="onClickView(cycle)"><a
+                                                class="dropdown-custom-btn">View</a>
+                                        </li>
+                                        }
+                                        @if(cycle.status==='Created'){
+                                        <li class="dropdown-item" (click)="openModal(intialconformation);seletedid=cycle"><a
+                                                class="dropdown-custom-btn"></a>Initiate</li>
+                                        }
+            
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }@else {
+                        <app-no-data-found />
+                    }
+                    
+                </tbody>
             </table>
         </div>
-    </div>
+        @if(filteredDetails.length > 0){
+            <div class="pagination-content">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                            </option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
+                        </span>
+                    </div>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
+                </div>
+            </div>
+            }
+        }@else{<app-data-loader-content />}
 </div>
+
+<ng-template #cancelationConfirmation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="onClickYes()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #holdconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Hold the Review Cycle?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="HoldReviewCycle(seletedid);modal.dismiss()">
+                {{'Yes'|translate}}
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #Resumeconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Resume the Review cycle?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="ResumeReviewCycle(seletedid);modal.dismiss()">
+                {{'Yes'|translate}}
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #intialconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Initiate the Review Cycle?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="initiateReviewCycle(seletedid);modal.dismiss()">
+                {{'Yes'|translate}}
+            </button>
+        </div>
+    </div>
+</ng-template>

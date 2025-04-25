@@ -4,8 +4,8 @@
 <ng-template #addpopup let-modal>
     <form [formGroup]="AddForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
+            <div class="custom-poup-header-content popup-header-border">
+                <div >
                     <p class="popup-heading mb-0">{{'Pre Onboard Documents' | translate}}</p>
                 </div>
                 <div>
@@ -14,7 +14,7 @@
                     </a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-4">
+            <div class="custom-main-popup-content ">
                 <!-- document name Field -->
                 <div class="mb-4">
                     <label for="Document Type" class="form-label custom-label mb-2">
@@ -23,7 +23,7 @@
                     <div class="position-relative">
                         <input type="text" class="form-control custom-input" formControlName="PreOnboardDocuments"
                             placeholder=" Enter document name " maxlength="100"
-                            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)" />
+                            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
                         <small class="text-muted position-absolute end-0 bottom-0 pe-2">
                             {{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100
                         </small>
@@ -78,11 +78,11 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="d-flex gap-5 pt-4 w-100">
-                    <button type="reset" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal); resetForm()">
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">
                         {{ 'Close' | translate }}
                     </button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addPreonboarding(modal)"
+                    <button type="button" class="custom-btn btn-primary" (click)="addPreonboarding(modal)"
                         [disabled]="AddForm.invalid">
                         {{ 'Add' | translate }}
                     </button>
@@ -107,7 +107,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Pre Onboard Documents.view')) {
                 <ng-container *ngFor="let preonboarding of preonboardingDetails">
                     <tr>
                         <td>{{ preonboarding.documentName }}</td>
@@ -127,15 +126,15 @@
                         </td>
 
                         <!-- isManadatory logic -->
-                        <td>{{ preonboarding.isManadatory === 1 ? 'Yes' : '-' }}</td>
+                        <td>{{ preonboarding.isManadatory ? 'Yes' : 'No' }}</td>
 
                         <!-- isIdentityDocument logic -->
-                        <td>{{ preonboarding.isIdentityDocument === 1 ? 'Yes' : '-' }}</td>
+                        <td>{{ preonboarding.isIdentityDocument ? 'Yes' : 'No' }}</td>
 
                         <!-- Actions dropdown -->
                         <td class="text-center">
                             <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
+                                <span type="button" data-bs-toggle="dropdown" *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
@@ -154,7 +153,6 @@
                         </td>
                     </tr>
                 </ng-container>
-            }
             </tbody>
         </table>
     </div>
@@ -165,8 +163,8 @@
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
+            <div class="custom-poup-header-content popup-header-border">
+                <div>
                     <p class="popup-heading mb-0">{{'Update Document' | translate}}</p>
                 </div>
                 <div>
@@ -175,7 +173,7 @@
                     </a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-4">
+            <div class="custom-main-popup-content ">
                 <div class="mb-4">
                     <label for="Update Document" class="form-label custom-label mb-2">
                         {{'Update Document' | translate}} <span class="error-msg">*</span>
@@ -183,7 +181,7 @@
                     <div class="position-relative">
                         <input type="text" class="form-control custom-input" formControlName="UpdatePreOnboardDocuments"
                             placeholder="Enter Document Name " maxlength="100"
-                            (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                         <small class="text-muted position-absolute end-0 bottom-0 pe-2">
                             {{updateForm.get('UpdatePreOnboardDocuments')?.value?.length || 0}}/100
                         </small>
@@ -194,10 +192,10 @@
                     </div>
                 </div>
 
-                <div class="d-flex gap-5 pt-4 w-100">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close' |
                         translate}}</button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updatePreOnboarding(modal)"
+                    <button type="button" class="custom-btn btn-primary " (click)="updatePreOnboarding(modal)"
                         [disabled]="updateForm.invalid">
                         {{'update' | translate}}
                     </button>
@@ -209,17 +207,17 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-5">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+    <div class="result-popup-content" ngbAutofocus>
+       
+            <div>
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button class="custom-btn btn-secondary w-50 py-3"
+            <div class="custom-modal-footer">
+                <button class="custom-btn btn-secondary "
                     (click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+                <button class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
-    </div>
+   
 </ng-template>

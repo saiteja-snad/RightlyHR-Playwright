@@ -1,30 +1,30 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
     <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-4">
+          <!--Input search-->
+          <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-                    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
-                    aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
+            aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
 
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Employee ID </th>
-                        <th>Employee Name</th>
-                        <th>Worked Date</th>
-                        <th>Availed</th>
-                        <th>Reason</th>
-                        <th>Approver Comments</th>
-                        <th>Applied Date</th>
-                        <th>Action(s)</th>
+                        <th>{{'Employee ID' | translate}} </th>
+                        <th>{{'Employee Name' | translate}}</th>
+                        <th>{{'Worked Date' | translate}}</th>
+                        <th>{{'Availed' | translate}}</th>
+                        <th>{{'Reason' | translate}}</th>
+                        <th>{{'Approver Comments' | translate}}</th>
+                        <th>{{'Applied Date' | translate}}</th>
+                        <th>{{'Action(s)' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
-                    @if (((leaves | async) ?? []).length > 0) {
+                    @if (((leaves | async) ?? []).length > 0 ) {
                         @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ;  track leave.approvalHeader.id){
                         <tr>
                             <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
@@ -40,7 +40,8 @@
                                             </a>
                                             <ng-template #reason>
                                                 <div>
-                                                    <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                                                    <p class="mb-0">{{leave.entity.attendanceRequestDescription
+                                                    }} </p>
                                                 </div>
                                             </ng-template>
                                         </span>
@@ -224,7 +225,7 @@
     <div class="modal-body" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">{{"Approver Comments" | translate}}</p>
             </div>
             <div>
                 <button type="button" class="btn-close" aria-label="Close"
@@ -237,10 +238,10 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Comments</th>
-                            <th>Commented By</th>
-                            <th>Date</th>
-                            <th>Commented By ID</th>
+                            <th>{{'Comments' | translate}}</th>
+                            <th>{{'Commented By'|translate}}</th>
+                            <th>{{"Approved Date" | translate}}</th>
+                            <th>{{'Commented By ID' | translate}}</th>
                         </tr>
                     </thead>
                     <tbody>

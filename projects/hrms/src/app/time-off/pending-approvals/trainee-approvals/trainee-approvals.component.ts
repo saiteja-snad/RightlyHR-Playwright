@@ -6,25 +6,26 @@ import { Itraineeapproval } from '../../../Interfaces/traineedetails.model';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators,NgForm, FormControl, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, NgForm, FormControl, FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../../services/auth.service';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { TraineesearchfilterPipe } from "../../../Pipes/traineesearchfilter.pipe";
-import { ITrainee } from '../../../admin/prospective-interns/Prospective-interns-modules';
-import { TraineeApprovalsTabsComponent } from "../../../shared/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { RbacService } from '../../../services/rbac.service';
+import { TraineeApprovalsTabsComponent } from "../../../shared/time-off-module-tabs/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-trainee-approvals',
-  imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule,FormsModule, TranslateModule, NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent],
+  imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule, NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent],
   templateUrl: './trainee-approvals.component.html',
   styleUrl: './trainee-approvals.component.scss'
 })
 export class TraineeApprovalsComponent {
+  isLoading= false;
   private customsetup: any;
   private datePipe: DatePipe;
   selectedLeaveData: any = {
@@ -44,11 +45,11 @@ export class TraineeApprovalsComponent {
   extend: any;
   isempeffectivevaild: boolean = true;
   rejectForm!: FormGroup
-  rejectSeparationForm!:FormGroup
-  Status!:any;
-  comments=[] as any;
-  noRecalllength=[] as any;
-  Traineeaprovalsearch:any;
+  rejectSeparationForm!: FormGroup
+  Status!: any;
+  comments = [] as any;
+  noRecalllength = [] as any;
+  Traineeaprovalsearch: any;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -59,8 +60,8 @@ export class TraineeApprovalsComponent {
     { label: 25, value: 25 },
   ];
   constructor(
-    private conformationPopup: OpenModalService, 
-    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
     private fb: FormBuilder,
     private modalService: NgbModal,
     private authService: AuthService,
@@ -71,18 +72,18 @@ export class TraineeApprovalsComponent {
   }
   ngOnInit(): void {
     this.getAllPendingApprovals();
-   }
+  }
 
   iniializationForm() {
     this.acceptForm = this.fb.group({
-      trcomments: [this.selectedLeaveData.trcomments || '', Validators.required]
+      trcomments: [this.selectedLeaveData.trcomments || '', Validators.required,noWhitespaceValidator]
     });
   }
   initaializeextendForm() {
     this.rejectForm = this.fb.group({
       extenddate: ['', Validators.required],
-      trcomments: ['', Validators.required],
-      rejectedReason: ['', Validators.required]
+      trcomments: ['', Validators.required,noWhitespaceValidator],
+      rejectedReason: ['', Validators.required,noWhitespaceValidator]
     });
 
     this.rejectForm.valueChanges.subscribe(val => {
@@ -107,7 +108,7 @@ export class TraineeApprovalsComponent {
   commentsFunction(Value: any) {
     this.comment = Value;
   }
-onRowsChange() {
+  onRowsChange() {
     this.first = 0;
   }
   onPageChange(event: PaginatorState) {
@@ -152,6 +153,7 @@ onRowsChange() {
   }
 
   handleAccept(f:NgForm) {
+    this.isLoading=true;
     let requestBody = {
       status: 'Approved',
       comments: this.selectedLeaveData.trcomments,
@@ -168,18 +170,20 @@ onRowsChange() {
           this.conformationPopup.openSuccessModal('Request Accepted Successfully')
         },
         error: (reason: any) => {
+          this.isLoading=false
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+           this.isLoading=false;
+           this.getAllPendingApprovals();
+           this.selectedLeaveData.trcomments='';
         },
       });
   }
 
   //function to send the rejected status and comments
   handleReject(f:NgForm) {
+    this.isLoading=true
     let requestBody = {
       status: 'Rejected',
       comments: this.selectedLeaveData.rejectedReason,
@@ -191,12 +195,17 @@ onRowsChange() {
       )
       .subscribe({
         next: (respone: any) => {
+          this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Request Rejected Successfully')
         },
         error: (reason: any) => {
+          this.isLoading=false
           this.conformationPopup.openErrorModal(reason.error.message)
         },
         complete: () => {
+          this.isLoading=false;
+          this.getAllPendingApprovals();
+          this.selectedLeaveData={};
         },
       });
   }
@@ -240,7 +249,7 @@ onRowsChange() {
         },
       });
   }
-  
+
   openModal(content: any) {
     this.modalService.open(content, {
       centered: true,
@@ -251,7 +260,6 @@ onRowsChange() {
 
   issubmitdiable: boolean = false;
   ifreasonnull(Value: any) {
-    console.log(Value)
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
     } else {
@@ -260,7 +268,7 @@ onRowsChange() {
   }
 
   //function for extend
-  handleExtend(f:NgForm) {
+  handleExtend(f: NgForm) {
     let requestBody = {
       status: 'Processed',
       comments: this.selectedLeaveData.trcomments,
@@ -273,7 +281,7 @@ onRowsChange() {
       )
       .subscribe({
         next: (respone: any) => {
-            this.conformationPopup.openSuccessModal('Request Extend Successfully')
+          this.conformationPopup.openSuccessModal('Request Extend Successfully')
         },
         error: (reason: any) => {
           this.conformationPopup.openErrorModal(reason.error.message)
@@ -282,36 +290,35 @@ onRowsChange() {
         },
       });
   }
+
   initializeForm(): void {
     this.rejectSeparationForm = this.fb.group({
       // extenddate: [this.selectedLeaveData.extenddate, [Validators.required, this.extendDateValidator.bind(this)]],
       trcomments: [this.selectedLeaveData.trcomments, [Validators.required, Validators.pattern(/^[a-zA-Z0-9 ]+$/)]]
     });
   }
+
   getAllPendingApprovals() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId
-    console.log(EmployeeId);
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=15&approvedType=EMP`).subscribe({
       next: (data: any) => {
-        console.log(data);
-         this.Trainees.next(data.data as Itraineeapproval[])
-         this.noRecalllength=this.Trainees;
-         console.log(this.Trainees)
+        this.Trainees.next(data.data as Itraineeapproval[])
+        this.noRecalllength = this.Trainees;
       },
       error: (reason) => console.log(reason),
     });
   }
-  initializationrejectForm(){
+
+  initializationrejectForm() {
     this.rejectForm = new FormGroup({
       flexRadioDefault: new FormControl('', Validators.required), // for the radio button selection
       extenddate: new FormControl({ value: '', disabled: !this.extend }, [
-        Validators.required, 
+        Validators.required,
         // this.dateValidator.bind(this),
       ]),
       Extendreason: new FormControl('', Validators.required),
       Descriptiondetails: new FormControl('', Validators.required),
     });
   }
-  
 }

@@ -251,12 +251,12 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       });
     } else {
       this.addressForm.patchValue({
-        permanentAddressLine1: '',
-        permanentAddressLine2: '',
-        permanentCity: '',
-        permanentState: '',
-        permanentCountry: '',
-        permanentZipCode: '',
+        permanentAddressLine1:this.permanentAddress?.addressLine1 || '',
+        permanentAddressLine2: this.permanentAddress?.addressLine2 || '',
+        permanentCity: this.permanentAddress?.city || '',
+        permanentState: this.permanentAddress?.state || '',
+        permanentCountry:  this.permanentAddress?.country || '',
+        permanentZipCode:  this.permanentAddress?.zipCode || '',
       });
     }
   }

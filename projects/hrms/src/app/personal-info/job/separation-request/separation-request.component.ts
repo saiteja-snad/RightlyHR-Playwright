@@ -16,7 +16,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ISeparation } from './separation-request';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-separation-request',

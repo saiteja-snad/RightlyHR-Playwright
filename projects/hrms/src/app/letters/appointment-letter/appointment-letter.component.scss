@@ -5,3 +5,31 @@ input:focus{
     background-color: #F8FBFF !important;
 }
 
+p{
+    margin-bottom: 0.5rem !important;
+}
+
+.border-box {
+    border: 1px solid #000;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.letter-fields-content {
+    width: 27rem;
+}
+
+.letter-data-content {
+    flex: 1;
+}
+
+.stamp {
+    height: 5rem;
+}
+
+.spinner-border {
+    --bs-spinner-border-width: 0.35rem !important;
+}

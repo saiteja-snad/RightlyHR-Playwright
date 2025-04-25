@@ -1,12 +1,10 @@
 .custom-card {
     width: 100%;
-    height: 70dvh;
-    max-height: 60vh;
+    height: calc(100dvh - 10rem);
     overflow: auto;
-    background-color: #FFFFFF;  
+    background-color: #FFFFFF;
     border-radius: 1.2rem;
     border: 1px solid rgba(204, 218, 236, 1);
-
 
     input:focus {
         outline: none !important;
@@ -27,6 +25,4 @@
         font-size: var(--fontsize14);
         border: none;
     }
-  
-
 }

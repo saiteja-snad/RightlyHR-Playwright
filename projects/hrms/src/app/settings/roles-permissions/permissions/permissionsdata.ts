@@ -26,7 +26,8 @@ export const permissionsData = [
     {  fields: 'Onboard Request', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Change RM button', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'No Due Clearance', View: false, Update: false, Create: false, Delete: false },
-
+    // {  fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false},
+    
     //Employee Info Fields
     { fields: 'Employee Basic Information', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Current Address', View: false, Update: false, Create: false, Delete: false },
@@ -56,7 +57,7 @@ export const permissionsData = [
     { fields: 'Last Working Day', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Change RM button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee No Due Request', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Probation Details', View: false, Update: false, Create: false, Delete: false },
 
     //Dashboard menubar
     { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
@@ -118,6 +119,7 @@ export const permissionsData = [
     // {fields: 'Trainee Appointment Letter', View: false, Update: false, Create: false, Delete:false},
     { fields: 'Document History', View: false, Update: false, Create: false, Delete: false },
     { fields: 'On Behalf Of Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'On Behalf Of Approvals Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Separation Requests Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Documents Upload Button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Standard Reports', View: false, Update: false, Create: false, Delete: false },
@@ -136,7 +138,8 @@ export const permissionsData = [
     { fields: 'Welcome Letter', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Monthly Attandance Report', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Attendance Regularization Button', View: false, Update: false, Create: false, Delete: false },
-
+    { fields: 'Remote Login Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
     // Settings sidebar    
     { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Fields', View: false, Update: false, Create: false, Delete: false },
@@ -196,6 +199,31 @@ export const permissionsData = [
     { fields: 'Manage Weekends Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Manage DST Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Expense Types Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
+
+     // Settings Roles Section    
+     { fields: 'Role Tab', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Role Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Assignee Tab', View: false, Update: false, Create: false, Delete: false },
+
+    // Settings Assest Configuration Section    
+    { fields: 'Vendor Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Catagory', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Sub Catagory', View: false, Update: false, Create: false, Delete: false },
+
+    // TimeOff Attendece Eligibility Criteria  
+    { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'WFH Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attndance Eligibility Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Permission Elgibility Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+
+     // Settings Dynamic Forms Section    
+     { fields: 'Active Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Inactive Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Draft Forms', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Form Settings', View: false, Update: false, Create: false, Delete: false },
 
     //Time Off Tabs Sections
     { fields: 'Leave Category Tab', View: false, Update: false, Create: false, Delete: false },

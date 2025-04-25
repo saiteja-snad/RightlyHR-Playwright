@@ -1,5 +1,5 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule, AbstractControl, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class UpdateWeekendsComponent {
   weekendForm!: FormGroup;
   weekendDataLM!: IWeekends;
-  showbtn= false;
+  showbtn = false;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
@@ -30,7 +30,6 @@ export class UpdateWeekendsComponent {
   daysList: string[] = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ];
-  @ViewChild('confirmation') confirmation!: TemplateRef<any>
 
   constructor(
     private router: Router,
@@ -53,7 +52,7 @@ export class UpdateWeekendsComponent {
     this.router.navigate(['/settings/employee-fields/manage-weekends']);
   }
 
-  navigateToClone(){
+  navigateToClone() {
     this.router.navigate(['/settings/employee-fields/clone-weekends']);
   }
 
@@ -75,7 +74,7 @@ export class UpdateWeekendsComponent {
       week3: [false],
       week4: [false],
       week5: [false]
-    });
+    }, { validators: this.atLeastOneWeekSelected()});
   }
 
   get weekends(): FormArray {
@@ -83,7 +82,7 @@ export class UpdateWeekendsComponent {
   }
 
   addWeekend() {
-    if (this.weekends.length < 7) {
+    if (this.weekends.length < 3) {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');
@@ -93,6 +92,33 @@ export class UpdateWeekendsComponent {
   removeWeekend(index: number): void {
     this.weekends.removeAt(index);
   }
+
+  atLeastOneWeekSelected(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const week1 = control.get('week1')?.value;
+      const week2 = control.get('week2')?.value;
+      const week3 = control.get('week3')?.value;
+      const week4 = control.get('week4')?.value;
+      const week5 = control.get('week5')?.value;
+  
+      const atLeastOneChecked = week1 || week2 || week3 || week4 || week5;
+  
+      return atLeastOneChecked ? null : { atLeastOneWeekRequired: true };
+    };
+  }
+
+  getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
+    const selectedDays = this.weekends.controls
+      .map((group, i) => i !== index ? group.get('day')?.value : null)
+      .filter(Boolean);
+
+    return this.daysList.map(day => ({
+      label: day,
+      value: day,
+      disabled: selectedDays.includes(day)
+    }));
+  }
+
 
   get isInitialRowOnly(): boolean {
     return this.weekends.length === this.weekendDataLM.orgWeekendItems.length;
@@ -247,7 +273,7 @@ export class UpdateWeekendsComponent {
       subLocationId: this.weekendDataLM.subLocationId,
       shiftID: this.weekendDataLM.shiftID,
       applicableyear: this.weekendDataLM.applicableyear,
-      status:  this.weekendDataLM.status,
+      status: this.weekendDataLM.status,
       addedby: this.employeedetails.employeeId,
       addedDate: new Date(),
       authorizedby: this.employeedetails.employeeId,
@@ -295,11 +321,11 @@ export class UpdateWeekendsComponent {
         error: (err: any) => {
           this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to publish weekends!')
         }
-    })
+      })
   }
 
-  openConfirmation() {
-    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static' })
+  openModal(content: any,) {
+    this.modalService.open(content, { centered: true })
   }
 
   closeWeekend() {

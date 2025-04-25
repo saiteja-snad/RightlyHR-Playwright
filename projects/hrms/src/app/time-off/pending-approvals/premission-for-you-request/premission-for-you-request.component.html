@@ -1,7 +1,7 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search here"
@@ -12,15 +12,14 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th >Employee ID</th>
-                        <th >Employee Name</th>
-                        <th >Requested Date</th>
-                        <th >Permission Date</th>
-                        <th >Duration(InHours)</th>
-                        <th >Permission Type</th>
-                        <th >Reason</th>
-                        <!-- <th >Approver Comments</th> -->
-                        <th >Action(s)</th>
+                        <th>{{'Employee ID' | translate}} </th>
+                        <th>{{'Employee Name' | translate}}</th>
+                        <th>{{'Requested Date' | translate}}</th>
+                        <th>{{'Permission Date' | translate}}</th>
+                        <th>{{'Duration(InHours)' | translate}}</th>
+                        <th>{{'Permission Type' | translate}}</th>
+                        <th>{{'Reason' | translate}}</th>
+                        <th>{{'Action(s)' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,7 +71,7 @@
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
-                      <td colspan="4">
+                      <td colspan="8">
                         <app-no-data-found></app-no-data-found>
                       </td>
                     </tr>
@@ -120,7 +119,7 @@
                         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
                             <span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-                            formControlName="comments" maxlength="250"></textarea>
+                            formControlName="comments" maxlength="250" ></textarea>
                             <!-- Character counter -->
                         <div class="text-end small text-muted">
                             {{ approveForm.get('comments')?.value?.length || 0 }}/250
@@ -200,7 +199,7 @@
     <div class="modal-body" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">{{'Comments' | translate}}</p>
             </div>
             <div>
                 <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
@@ -212,10 +211,10 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Comments</th>
-                            <th>Commented By</th>
-                            <th>Date</th>
-                            <th>Commented By ID</th>
+                            <th>{{'Comments' | translate}}</th>
+                            <th>{{'Commented By'|translate}}</th>
+                            <th>{{"Date" | translate}}</th>
+                            <th>{{'Commented By ID' | translate}}</th>
                         </tr>
                     </thead>
                     <tbody>

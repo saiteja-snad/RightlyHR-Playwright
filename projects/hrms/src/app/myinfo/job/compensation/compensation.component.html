@@ -1,1 +1,44 @@
-<p>compensation works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">Compensation Details</span></div>
+     
+    </div>
+
+    <div class="custom-table-content mt-2">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>EFFECTIVE DATE</th>
+                    <th>OVERTIME ELIGIBILITY</th>
+                    <th>REASON</th>
+                    <th>FREQUENCY</th>
+                    <th>PAY TYPE</th>
+                    <th>AMOUNT (Yearly CTC) </th>
+                
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="((compensationdetails | async) ?? []).length > 0; else noDataTemplate">
+                    <tr *ngFor="let item of compensationdetails | async">
+                        <td>{{item.compeffectivedate | dateformat}}</td>
+                        <td>{{item.overtimeeligibility}}</td>
+                        <td>{{item.reason}}</td>
+                        <td>{{item.frequency}}</td>
+                        <td>{{item.paytype}}</td>
+                        <td>{{item.compensationamount}}</td>
+                      
+                    </tr>
+
+                </ng-container>
+
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

@@ -1,7 +1,7 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
     <div>
         <!--Input search-->
-        <div class="input-group custom-search mb-4">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search here"
@@ -24,7 +24,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (rbac.allowedToAccess('Regularizations.view')) {
+
                     <ng-container *ngIf="regularization!.length > 0; else noDataTemplate">
                     <tr *ngFor="let leave of regularization; let i = index">
                         <td>{{leave.entity.fusionempId}}</td>
@@ -77,7 +77,7 @@
                       </td>
                     </tr>
                   </ng-template>
-                }
+                
                 </tbody>
             </table>
         </div>

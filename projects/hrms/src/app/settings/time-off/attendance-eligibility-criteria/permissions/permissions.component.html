@@ -1,11 +1,11 @@
 <div class="custom-main-component-container">
-    <div>
+    <div *ngIf="rbac.allowedToAccess('Attndance Eligibility Permissions Tab.create')">
         <form [formGroup]="permissionsForm" (ngSubmit)="addPermission(permissionsForm)">
             <!-- Add Input-->
             <div class="mb-4">
                 <div class="custom-settings-add-input input-group">
                     <input type="text" class="form-control custom-input" placeholder="Please enter permission" formControlName="name" 
-                    (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <span class="input-group-text" id="saluation">
                         <button type="submit" class="custom-btn btn-primary" [disabled]="permissionsForm.invalid">{{'Add'}}</button>
                     </span>
@@ -23,22 +23,22 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th class="text-center">Actions</th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Attndance Eligibility Permissions Tab.update') || rbac.allowedToAccess('Attndance Eligibility Permissions Tab.delete')">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let permission of permissionsType">
                         <td>{{permission.name}}</td>
-                        <td class="text-center">
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('Attndance Eligibility Permissions Tab.update') || rbac.allowedToAccess('Attndance Eligibility Permissions Tab.delete')">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li>
+                                    <li *ngIf="rbac.allowedToAccess('Attndance Eligibility Permissions Tab.update')">
                                         <a class="dropdown-item" (click)="openModal(updatePermissionModal,permission)">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
-                                    <li>
+                                    <li *ngIf="rbac.allowedToAccess('Attndance Eligibility Permissions Tab.delete')">
                                         <a class="dropdown-item" (click)="openDeleteModal(deletePermissionModal,permission)">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
@@ -64,28 +64,28 @@
 <!--Add Work Form Home-->
 <ng-template #updatePermissionModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Edit Permission</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="modal-body p-4">
+        <div class="custom-main-popup-content">
             <form [formGroup]="permissionUpdateForm"  (ngSubmit)="updatePermission(permissionUpdateForm)">
                 <div class="mb-4">
-                    <label for="name" class="form-label"
+                    <label for="name" class="form-label custom-label mb-2"
                         style="font-weight: bolder;">Permission</label>
                     <input type="text" name="name" formControlName="name" class="form-control" autocomplete="off"
-                        id="backgroundcheckstatus1" (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        id="backgroundcheckstatus1" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                         <div *ngIf="permissionUpdateForm.get('name')?.touched && permissionUpdateForm.get('name')?.invalid" class="error-msg mt-2">
                             <div *ngIf="permissionUpdateForm.get('name')?.errors?.['required']">{{'Permission is required'}}</div>
                         </div>
                 </div>
-                <div class="d-flex gap-5 w-100 pt-3">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary w-50 py-2" [disabled]="permissionUpdateForm.invalid">Update</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary " [disabled]="permissionUpdateForm.invalid">Update</button>
                 </div>
             </form>
         </div>
@@ -95,10 +95,10 @@
 <ng-template #deletePermissionModal let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
             <p class="confirmation-text mb-4">Are you sure you want to delete?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="deletePermission();">Yes</button>
         </div>

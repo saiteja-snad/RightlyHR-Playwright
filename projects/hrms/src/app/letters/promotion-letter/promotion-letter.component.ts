@@ -12,20 +12,19 @@ import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
-import { CountryCodePhoneNumberComponent } from '../../shared/country-code-phone-number/country-code-phone-number.component';
-import { LettersheaderComponent } from "../../shared/lettersheader/lettersheader.component";
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
-
+import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
+import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-promotion-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent,TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './promotion-letter.component.html',
   styleUrl: './promotion-letter.component.scss'
 })
 export class PromotionLetterComponent {
   subscription!: Subscription;
-  appraisalData = {} as any; 
+  appraisalData = {} as any;
   PromotionTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template
   promotiondata = {} as any; //appraisal letter form object
   result = {} as any;
@@ -39,21 +38,21 @@ export class PromotionLetterComponent {
   Employeeinfo = {} as any;
   jobRole: any;
   isDropdownOpen: boolean = false;
-  isDropdownOpenauthority:boolean=false;
-  employeeFusionId={}as any;
+  isDropdownOpenauthority: boolean = false;
+  employeeFusionId = {} as any;
   showDropdown: boolean = false;
   isDisabled!: boolean;
-  filteredOptions=[] as any;
-  authorityName:any;
-  signatureAuthorityName!:string |null
-  authorityDesignation!:string|null;
-  authorityDetails=[] as any;
-  authoritydetails=[] as any;
+  filteredOptions = [] as any;
+  authorityName: any;
+  signatureAuthorityName!: string | null
+  authorityDesignation!: string | null;
+  authorityDetails = [] as any;
+  authoritydetails = [] as any;
   disablebuttonforemployeeid: boolean = true; //variable to disable the fields
   disablebuttonforauthority: boolean = true; //variable to disable the fields
-  @ViewChild('successhide') private readonly successhide!:NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!:NgbModal;
-  Status:any
+  @ViewChild('successhide') private readonly successhide!: NgbModal;
+  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
+  Status: any
   employeeForm!: FormGroup;
   employees = [{ name: 'John Doe', id: 1 }, { name: 'Jane Smith', id: 2 }];
   // employeementType = [{ name: 'Permanent' }, { name: 'Contract' }];
@@ -70,8 +69,8 @@ export class PromotionLetterComponent {
     private router: Router,
     private authService: AuthService,
     private elementRef: ElementRef,
-     private conformationPopup: OpenModalService,
-    config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,
+    private conformationPopup: OpenModalService,
+    config: NgbModalConfig, private modalService: NgbModal, private fb: FormBuilder,
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -83,7 +82,7 @@ export class PromotionLetterComponent {
   DateValidation() {
     const dateofpromotion = new Date(this.promotiondata.dateofpromotion);
     const probationEndDate = new Date(this.promotiondata.probationEndDate);
-  
+
     if (dateofpromotion <= probationEndDate) {
       this.isdateofpromotion = false;
     } else {
@@ -104,32 +103,32 @@ export class PromotionLetterComponent {
   }
 
   initializeForm() {
-    this.employeeForm = this.fb.group({   
+    this.employeeForm = this.fb.group({
       fusionEmpId: [null, Validators.required],
       dateofpromotion: ['', Validators.required],
       Documenttype: ['', Validators.required],
       note: ['',],
       authorityid: ['', Validators.required],
-     })
-    }
+    })
+  }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
 
-  dataSuccessMsg(msg:string){
+  dataSuccessMsg(msg: string) {
     this.Status = msg;
-          this.openmodel(this.successhide);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 2000);
+    this.openmodel(this.successhide);
+    setTimeout(() => {
+      this.modalService.dismissAll();
+    }, 2000);
   }
 
-  dataFailureMsg(msg:string){
+  dataFailureMsg(msg: string) {
     this.Status = msg;
-          this.openmodel(this.errorhide);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 2000);
+    this.openmodel(this.errorhide);
+    setTimeout(() => {
+      this.modalService.dismissAll();
+    }, 2000);
   }
 
   //function for issed by
@@ -139,14 +138,14 @@ export class PromotionLetterComponent {
   }
 
   //function for disabling the incorrect employeeid
-Onclickemployeeid(Value:any){
-  if(Value==""){
-    this.disablebuttonforemployeeid=true
+  Onclickemployeeid(Value: any) {
+    if (Value == "") {
+      this.disablebuttonforemployeeid = true
+    }
+    else {
+      this.disablebuttonforemployeeid = false
+    }
   }
-  else{
-    this.disablebuttonforemployeeid=false
-  }
-}
 
   Onclick(fusionemployeeId: any) {
     this.fusionEmpId = fusionemployeeId;
@@ -155,7 +154,7 @@ Onclickemployeeid(Value:any){
     this.promotiondata = this.employeeiddetails.find(
       (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
     );
-   this.disablebuttonforemployeeid=true
+    this.disablebuttonforemployeeid = true
     this.getCompensationById(this.promotiondata);
     this.getJobDetails(this.promotiondata)
 
@@ -163,7 +162,7 @@ Onclickemployeeid(Value:any){
     console.log(this.promotiondata);
   }
   //get jobdetails
-  getJobDetails(Employee:any){
+  getJobDetails(Employee: any) {
     let EmployeeId = parseInt(this.promotiondata.employeeId)
     console.log(EmployeeId);
 
@@ -177,59 +176,60 @@ Onclickemployeeid(Value:any){
     })
   }
   //toggledropdown to open and close the dropdown list
-toggleDropdown(dropcategory:any) {
-  if (dropcategory == 'empid') {
-    this.isDropdownOpen = !this.isDropdownOpen;
-    if (this.isDropdownOpen) {
+  toggleDropdown(dropcategory: any) {
+    if (dropcategory == 'empid') {
+      this.isDropdownOpen = !this.isDropdownOpen;
+      if (this.isDropdownOpen) {
 
-    } else {
-      this.filteredOptions = [];
+      } else {
+        this.filteredOptions = [];
+      }
     }
-  }
-  else if (dropcategory == 'authority') {
-    this.isDropdownOpenauthority = !this.isDropdownOpenauthority;
-    if (this.isDropdownOpenauthority) {
+    else if (dropcategory == 'authority') {
+      this.isDropdownOpenauthority = !this.isDropdownOpenauthority;
+      if (this.isDropdownOpenauthority) {
 
-    } else {
-      this.filteredOptions = [];
+      } else {
+        this.filteredOptions = [];
+      }
     }
   }
-}
-onclickauthority(ValueName:any){
-  this.authorityName=ValueName
-  if(this.authorityName==""){
-    this.disablebuttonforauthority=true
-  }
-  else{
-    this.disablebuttonforauthority=false
-  }
-  let authorityDesignationdata = this.authorityDetails.find(
-    (c: any) => 
-    c.firstName+' '+c.middleName+' '+c.lastName === ValueName
-  ); 
-  console.log(authorityDesignationdata);
-  this.authorityDesignation = authorityDesignationdata?.designation;
-  this.signatureAuthorityName = JSON.parse(JSON.stringify(authorityDesignationdata?.firstName + ' '+authorityDesignationdata?.middleName+' ' + authorityDesignationdata?.lastName))
-  console.log(this.authorityDesignation);
-  if (this.authorityName) {
-   
-    if( this.authorityName===this.signatureAuthorityName){
-      this.disablebuttonforauthority=true
+  onclickauthority(ValueName: any) {
+    this.authorityName = ValueName
+    if (this.authorityName == "") {
+      this.disablebuttonforauthority = true
     }
-    else{
-      this.disablebuttonforauthority=false
+    else {
+      this.disablebuttonforauthority = false
     }
-   } 
-  if(authorityDesignationdata==undefined){
-    this.authorityDesignation =null
-    this.signatureAuthorityName= null
+    let authorityDesignationdata = this.authorityDetails.find(
+      (c: any) =>
+        c.firstName + ' ' + c.middleName + ' ' + c.lastName === ValueName
+    );
+    console.log(authorityDesignationdata);
+    this.authorityDesignation = authorityDesignationdata?.designation;
+    this.signatureAuthorityName = JSON.parse(JSON.stringify(authorityDesignationdata?.firstName + ' ' + authorityDesignationdata?.middleName + ' ' + authorityDesignationdata?.lastName))
     console.log(this.authorityDesignation);
+    if (this.authorityName) {
+
+      if (this.authorityName === this.signatureAuthorityName) {
+        this.disablebuttonforauthority = true
+      }
+      else {
+        this.disablebuttonforauthority = false
+      }
+    }
+    if (authorityDesignationdata == undefined) {
+      this.authorityDesignation = null
+      this.signatureAuthorityName = null
+      console.log(this.authorityDesignation);
+    }
   }
-  }
-  onclickDesignation(){
+  
+  onclickDesignation() {
     //console.log(this.authorityDetails);
     //console.log(this.prospectiveEmpData.authorityid);
-  
+
     let signatureAuthorityDetails = this.authoritydetails.find(
       (c: any) => (c.employeeId == this.promotiondata.authorityid)
     );
@@ -241,41 +241,42 @@ onclickauthority(ValueName:any){
       } else
         this.promotiondata.authorityName = `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
     }
-    else if(signatureAuthorityDetails==undefined||signatureAuthorityDetails==null){
-      this.promotiondata.authorityName =''
-      this.authorityDesignation=''
+    else if (signatureAuthorityDetails == undefined || signatureAuthorityDetails == null) {
+      this.promotiondata.authorityName = ''
+      this.authorityDesignation = ''
     }
   }
+
   //get offer letter Authority list 
-
-getAuthorityDetails() {
-  let offertype = 'Promotion Letter';
-  this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
-    next: (data: any) => {
-      console.log(data);
-      this.authoritydetails = data;
-      this.authorityDetails = data.map((authority: any) => ({
-        ...authority,
-        fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
-      }));
-      console.log(this.authorityDetails); 
-    },
-    error: (error: any) => {
-      console.error(error);
-    }
-  });
-}
-//hostlister to close the dropdown when we Click out side the box
-@HostListener('document:click', ['$event.target'])
-onClickOutside(target: any) {
-  const dropdownToggle = this.elementRef.nativeElement.querySelector('.dropdown-toggles');
-  const dropdownMenu = this.elementRef.nativeElement.querySelector('.dropdown-menu');
-
-  if (dropdownToggle && !dropdownToggle.contains(target) && dropdownMenu && !dropdownMenu.contains(target)) {
-    this.isDropdownOpen = false;
-    this.filteredOptions = [];
+  getAuthorityDetails() {
+    let offertype = 'Promotion Letter';
+    this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.authoritydetails = data;
+        this.authorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+        }));
+        console.log(this.authorityDetails);
+      },
+      error: (error: any) => {
+        console.error(error);
+      }
+    });
   }
-}
+
+  //hostlister to close the dropdown when we Click out side the box
+  @HostListener('document:click', ['$event.target'])
+  onClickOutside(target: any) {
+    const dropdownToggle = this.elementRef.nativeElement.querySelector('.dropdown-toggles');
+    const dropdownMenu = this.elementRef.nativeElement.querySelector('.dropdown-menu');
+
+    if (dropdownToggle && !dropdownToggle.contains(target) && dropdownMenu && !dropdownMenu.contains(target)) {
+      this.isDropdownOpen = false;
+      this.filteredOptions = [];
+    }
+  }
 
   //formatedate with date
   private formatDatewithDate(date: Date): string | void {
@@ -298,7 +299,7 @@ onClickOutside(target: any) {
         this.employeeCompensationDetails = res;
         Employee.salary = res.compensationamount
         console.log(Employee.salary);
-        
+
         Employee.compeffectivedate = res.compeffectivedate
         console.log(Employee.compeffectivedate);
 
@@ -314,24 +315,24 @@ onClickOutside(target: any) {
         if (this.promotiondata.pf == true || this.promotiondata.pf == false) {
           switch (this.promotiondata.pf) {
             case true:
-              if(this.promotiondata.esic==false){
-                Employee.pfContribution = Math.round((Employee.grossSalary * (6.719/ 100)));
+              if (this.promotiondata.esic == false) {
+                Employee.pfContribution = Math.round((Employee.grossSalary * (6.719 / 100)));
 
                 if (Employee.pfContribution >= 1800) {
                   Employee.pfContribution = 1800;
                 }
                 console.log(Employee.pfContribution);
               }
-             else  if (Employee.grossSalary >= 23195) {
+              else if (Employee.grossSalary >= 23195) {
 
-            Employee.pfContribution = Math.round((Employee.grossSalary * (6.717 / 100)));
+                Employee.pfContribution = Math.round((Employee.grossSalary * (6.717 / 100)));
 
-            if (Employee.pfContribution >= 1800) {
-              Employee.pfContribution = 1800;
-            }
-            console.log(Employee.pfContribution);
+                if (Employee.pfContribution >= 1800) {
+                  Employee.pfContribution = 1800;
+                }
+                console.log(Employee.pfContribution);
 
-          }
+              }
               else {
                 Employee.pfContribution = Math.round((Employee.grossSalary * (6.719 / 100)));
                 console.log(Employee.pfContribution);
@@ -386,7 +387,7 @@ onClickOutside(target: any) {
           Employee.esicContribution = 0
           console.log(Employee.esicContribution);
         }
-         //calcution for the totalgrosssalary
+        //calcution for the totalgrosssalary
         Employee.totalGrossSalary = Math.round(Employee.grossSalary - Employee.pfContribution - Employee.esicContribution)
         console.log(Employee.totalGrossSalary);
         //claculation for ESIC for employee
@@ -413,7 +414,7 @@ onClickOutside(target: any) {
                 // console.log(Employee.employeeEsi);
                 Employee.employeeEsi = 0
                 this.promotiondata.esic == false
-                  console.log(Employee.employeeEsi);
+                console.log(Employee.employeeEsi);
               }
               else {
                 Employee.employeeEsi = Math.round(Employee.totalGrossSalary * 2.94) / 100;
@@ -427,7 +428,7 @@ onClickOutside(target: any) {
           Employee.employeeEsi = 0
           console.log(Employee.employeeEsi);
         }
- //condtitions for professionaltax calulation.
+        //condtitions for professionaltax calulation.
         if (Employee.totalGrossSalary <= 15000) {
           Employee.professionalTax = 0
           console.log(Employee.professionalTax);
@@ -539,11 +540,9 @@ onClickOutside(target: any) {
           this.employeeiddetails = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${
-                employee.employeeId ? employee.employeeId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
             };
           });
         },
@@ -623,51 +622,50 @@ onClickOutside(target: any) {
           if (data) {
             this.result.documentUrl = data.path;
             this.conformationPopup.openSuccessModal("Promotion Letter Generated Successfully")
-            
+
             console.log(data);
           }
           let loggedInUser = this.authService.getToken();
           console.log(loggedInUser);
 
-          let emaildetails={
-            personEmail:this.promotiondata.workEmail,
-            senderName:`${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-            senderEmail:loggedInUser.workEmail,
-            firstName:this.promotiondata.firstName,
-            lastName:this.promotiondata.lastName,
-            middleName:this.promotiondata.middleName,
-            jobRole:this.promotiondata.jobRole,
-            documentUrl:this.result.documentUrl,
+          let emaildetails = {
+            personEmail: this.promotiondata.workEmail,
+            senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+            senderEmail: loggedInUser.workEmail,
+            firstName: this.promotiondata.firstName,
+            lastName: this.promotiondata.lastName,
+            middleName: this.promotiondata.middleName,
+            jobRole: this.promotiondata.jobRole,
+            documentUrl: this.result.documentUrl,
             // compeffectivedate:this.formatDatebyDatestring(this.promotiondata.compeffectivedate),
-            compeffectivedate: `${
-              this.promotiondata.compeffectivedate ?? 'N/A'
-            }`,
-            employeeId:this.promotiondata.employeeId,
-            compensationamount:this.promotiondata.salary
+            compeffectivedate: `${this.promotiondata.compeffectivedate ?? 'N/A'
+              }`,
+            employeeId: this.promotiondata.employeeId,
+            compensationamount: this.promotiondata.salary
           }
 
-          if(loggedInUser.middleName){
+          if (loggedInUser.middleName) {
 
-            emaildetails.senderName =`${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
-            
-          }else{
-            emaildetails.senderName =`${loggedInUser.firstName} ${loggedInUser.lastName}`
-           
+            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
+
+          } else {
+            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
+
           }
           console.log(emaildetails);
 
-          this.subscription=this.http.postdata(`CustomEmail/Promotionletter`,emaildetails).subscribe({
-            next:(data:any)=>{
+          this.subscription = this.http.postdata(`CustomEmail/Promotionletter`, emaildetails).subscribe({
+            next: (data: any) => {
               console.log(data);
               this.conformationPopup.openSuccessModal("Email Sent Successfully")
               this.router.navigate(['/admin/active']);
             },
-            error:(err:any)=>{
+            error: (err: any) => {
               console.log(err);
 
 
             },
-            complete:()=>{
+            complete: () => {
 
             }
           })
@@ -682,19 +680,17 @@ onClickOutside(target: any) {
   //to post Appraisal Letter Details
   postPromotionDetails(docurl: string) {
     let loggedInUser = this.authService.getToken();
-
     let postPromotionDetails = {
       empid: this.result.employeeId,
       promotionSentDate: this.formatDatebyDatestring(
         this.promotiondata.dateofPromotion
       ),
-
       promotionSentStatus: 'Promotion Generated',
       appraisalSentBy: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
       documentUrl: docurl,
     };
-
   }
+
   //to fromat Date
   private formatDate(dateString: Date): string {
     const date = new Date(dateString);
@@ -715,18 +711,14 @@ onClickOutside(target: any) {
       )
     );
     return new Date(
-      `${parseInt(stringarray[2])}-${parseInt(stringarray[1])}-${parseInt(stringarray[0]) 
+      `${parseInt(stringarray[2])}-${parseInt(stringarray[1])}-${parseInt(stringarray[0])
       }`
     );
   }
 
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
-    if (
-      (charCode < 65 || charCode > 90) &&
-      (charCode < 97 || charCode > 122) &&
-      charCode !== 32
-    ) {
+    if ((charCode < 65 || charCode > 90) &&(charCode < 97 || charCode > 122) && charCode !== 32) {
       return false;
     }
     return true;
@@ -739,13 +731,14 @@ onClickOutside(target: any) {
     }
     return true;
   }
+
   closeDropdown() {
     this.isDropdownOpen = false;
-}
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
-
 }

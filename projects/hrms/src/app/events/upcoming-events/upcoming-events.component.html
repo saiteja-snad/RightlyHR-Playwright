@@ -3,10 +3,12 @@
     <div>
       <p class="component-header mb-0">Events</p>
     </div>
-    <div>
-      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
-          class="bi bi-plus me-2"></i>Add Event</button>
-    </div>
+    @if(this.rbac.allowedToAccess('Events.view')){
+      <div>
+        <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
+            class="bi bi-plus me-2"></i>Add Event</button>
+      </div>
+    }
   </div>
 
   <!--tabs content-->
@@ -29,55 +31,53 @@
   <ng-template #maincontent>
     <div class="custom-events-main-content">
       <!--Todays Events-->
-      <div class="card events-section-card mb-4">
-        <div class="mb-3">
+      <div class="card events-section-card mb-4"  *ngIf="todaysEvents.length > 0">
+        <div class="mb-4">
           <p class="component-sub-header mb-0">Today's Events</p>
         </div>
 
-        <div class="row gap-4">
+        <div class="d-flex flex-wrap gap-4">
           <ng-container *ngFor="let item of getEventsData$ | async">
             <!-- Show only events that match today's date -->
-            <div class="col" *ngIf="(item.eventDate | dateformat) === (CurrentDate | dateformat)">
-              <div class="card event-card">
-                <div class="d-flex justify-content-between">
-                  <div class="d-flex gap-3 align-items-center">
-                    <div class="card event-icon-card">
-                      <img src="icons\event-icon.png" alt="Event Icon" class="event-icon">
-                    </div>
-                    <div>
-                      <p class="event-name mb-0">{{ item.eventTitle }}</p>
-                      <p class="date mb-0">{{ item.eventDate | date: 'dd-MMM-yyyy' }}</p>
-                    </div>
+            <div class="card event-card mb-3" *ngIf="(item.eventDate | dateformat) === (CurrentDate | dateformat)">
+              <div class="d-flex justify-content-between">
+                <div class="d-flex gap-3 align-items-center">
+                  <div class="card event-icon-card">
+                    <img src="icons\event-icon.png" alt="Event Icon" class="event-icon">
                   </div>
-                  <div class="dropdown">
-                    <a data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="bi bi-three-dots-vertical"></i>
-                    </a>
-                    <ul class="dropdown-menu custom-dropdown-menu">
-                      <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item"><i
-                            class="bi bi-pencil me-2"></i>Update</a></li>
-                      <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item"><i
-                            class="bi bi-trash3 me-2"></i>Delete</a></li>
-                    </ul>
+                  <div>
+                    <p class="event-name mb-0">{{ item.eventTitle }}</p>
+                    <p class="date mb-0">{{ item.eventDate | date: 'shortDate' }}  {{ item.eventDate  | date: 'shortTime' }}</p>
                   </div>
                 </div>
-                <div class="mt-3">
-                  <p class="event-content-text mb-3">{{ item.eventDescription }}</p>
-                </div>
-                <hr class="vr-line m-0">
-                <div class="pt-3" *ngIf="item.attachmentUrl">
-                  <img [src]="item.attachmentUrl" alt="Event Image" class="event-image w-100">
+                <div class="dropdown">
+                  <a data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </a>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>Update</a></li>
+                    <li (click)="setdata=item;openmodal(deleteconformation)"><a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>Delete</a></li>
+                  </ul>
                 </div>
               </div>
+              <div class="mt-3">
+                <p class="event-content-text mb-3">{{ item.eventMessage }}</p>
+              </div>
+              <hr class="vr-line m-0">
+              <div class="pt-3" *ngIf="item.attachmentUrl">
+                <img [src]="item.attachmentUrl" alt="Event Image" class="event-image w-100">
+              </div>
             </div>
-          </ng-container>
+            </ng-container>
         </div>
       </div>
 
       <!--Upcoming Events-->
-      <div class="card events-section-card">
+      <div class="card events-section-card mb-4" *ngIf="(getEventsData$ | async)?.length > 0">
         <div class="mb-4">
-          <p class="component-sub-header mb-0">Upcoming Events</p>
+          <p class="component-sub-header mb-0">Custom Events</p>
         </div>
 
         <div class="d-flex flex-wrap gap-4">
@@ -90,7 +90,7 @@
                 </div>
                 <div>
                   <p class="event-name mb-0">{{ event.eventTitle }}</p>
-                  <p class="date mb-0">{{ event.eventDate | date: 'dd-MMM-yyyy' }}</p>
+                  <p class="date mb-0">{{ event.eventDate | date: 'shortDate' }}  {{ event.eventDate  | date: 'shortTime' }}</p>
                 </div>
               </div>
               <div class="dropdown">
@@ -98,10 +98,10 @@
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <li (click)="openModalupdate(updateevets,event)"><a class="dropdown-item"><i
-                        class="bi bi-pencil me-2"></i>Update</a></li>
-                  <li (click)="setdata=event;openmodal(deleteconformation)"><a class="dropdown-item"><i
-                        class="bi bi-trash3 me-2"></i>Delete</a></li>
+                  <li (click)="openModalupdate(updateevets,event)"><a class="dropdown-item">
+                    <i class="bi bi-pencil me-2"></i>Update</a></li>
+                  <li (click)="setdata=event;openmodal(deleteconformation)"><a class="dropdown-item">
+                    <i class="bi bi-trash3 me-2"></i>Delete</a></li>
                 </ul>
               </div>
             </div>
@@ -115,28 +115,20 @@
           </div>
         </div>
       </div>
+
+      <div class="no-data-wrapper"  *ngIf="(getEventsData$ | async)?.length === 0">
+        <app-no-data-found></app-no-data-found>
+      </div>
     </div>
   </ng-template>
 </div>
 
-<!--Delete Popup-->
-<ng-template #deleteconformation let-modal>
-  <div class="result-popup-content p-5" ngbAutofocus>
-    <div>
-      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-      <p class="confirmation-text mb-4">Are you sure you want to delete the Event ?</p>
-    </div>
-    <div class="d-flex justify-content-center gap-5">
-      <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="modal.dismiss()">No</button>
-      <button type="submit" class="custom-btn btn-primary w-50 py-2" (click)="DeleteEvent(setdata.eventId)">Yes</button>
-    </div>
-  </div>
-</ng-template>
+
 
 <!--update Popup-->
 <ng-template #updateevets let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-3" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border" ngbAutofocus>
       <div class="pt-2">
         <p class="popup-heading mb-0">Update Event</p>
       </div>
@@ -144,20 +136,16 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content">
       <form [formGroup]="customEventupdateForm" (ngSubmit)="updateEvents(customEventupdateForm)">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
                 class="text-danger">*</span></label>
-            <input type="datetime-local" class="form-control custom-input" id="eventDate" formControlName="eventDate">
-            <div *ngIf="customEventupdateForm.get('eventDate')?.touched" class="error-msg">
-              Event date is required.
-            </div>
-            <div
-              *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
-              class="error-msg">
-              Event date cannot be in the past.
+            <input type="datetime-local" class="form-control custom-input" id="eventDate"  onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
+            <div *ngIf="customEventupdateForm.get('required')?.touched" class="error-msg">Event date is required.</div>
+            <div *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
+                class="error-msg">Event date cannot be in the past.
             </div>
           </div>
           <div class="col-md-6 mb-3">
@@ -170,26 +158,30 @@
               <div *ngIf="customEventupdateForm.get('title')?.errors?.['required']">Title is required.</div>
             </div>
           </div>
-          <div class="col-md-12 mb-3">
-            <label for="description" class="form-label custom-label mb-2">Event Description<span
-                class="text-danger">*</span></label>
+          <div class="col-md-12">
+            <label for="description" class="form-label custom-label mb-2">Event Description<span class="text-danger">*</span></label>
             <textarea class="form-control custom-input" formControlName="eventMessage"
               placeholder="Please enter description" id="description"></textarea>
             <div *ngIf="customEventupdateForm.get('eventMessage')?.errors?.['required']" class="error-msg">
               Event Description is requied
             </div>
+            <div class="form-label custom-label my-1 text-end">{{ customEventupdateForm.get("eventMessage")?.value?.length || 0 }}/250</div>
           </div>
           <div class="col-md-12 mb-3">
             <label for="file" class="form-label custom-label mb-2">Attachment</label>
-            <input type="file" class="form-control custom-input" id="file" formControlName="imageUrl">
+            <input type="file" class="form-control custom-input" id="file" (change)="onFileSelected($event)" >
             <div *ngIf="selectedImagePreview" class="my-2 text-wrap w-100 text-truncate">
               <b>{{ selectedImagePreview }}</b>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
+                  The file size should be less than 25MB.</p>
+              </div>
             </div>
           </div>
         </div>
-        <div class="d-flex justify-content-end gap-3 mt-4">
+        <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="customEventupdateForm || spinnerLoader">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="customEventupdateForm.invalid || spinnerLoader">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading' | translate}}...</span>
@@ -199,6 +191,20 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</ng-template>
+
+<!--Delete Popup-->
+<ng-template #deleteconformation let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to delete the Event?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="DeleteEvent(setdata.eventId)">Yes</button>
     </div>
   </div>
 </ng-template>

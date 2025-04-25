@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectModule } from 'primeng/select';
@@ -56,9 +56,9 @@ export class CloneWeekendsComponent {
   initializeForm() {
     this.weekendForm = this.fb.group({
       year: ['', Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
-      shift: ['', Validators.required],
+      location: [{ value: '', disabled: true }, Validators.required],
+      subLocation: [{ value: '', disabled: true }, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
       weekends: this.fb.array([this.createWeekend()])
     })
   }      
@@ -71,7 +71,7 @@ export class CloneWeekendsComponent {
       week3: [false],
       week4: [false],
       week5: [false]
-    });
+    },{ validators: this.atLeastOneWeekSelected()});
   }
 
   get weekends(): FormArray {
@@ -79,7 +79,7 @@ export class CloneWeekendsComponent {
   }
 
   addWeekend() {
-    if (this.weekends.length < 7) {
+    if (this.weekends.length < 3) {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');
@@ -88,6 +88,32 @@ export class CloneWeekendsComponent {
 
   removeWeekend(index: number): void {
     this.weekends.removeAt(index);
+  }
+
+  atLeastOneWeekSelected(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const week1 = control.get('week1')?.value;
+      const week2 = control.get('week2')?.value;
+      const week3 = control.get('week3')?.value;
+      const week4 = control.get('week4')?.value;
+      const week5 = control.get('week5')?.value;
+  
+      const atLeastOneChecked = week1 || week2 || week3 || week4 || week5;
+  
+      return atLeastOneChecked ? null : { atLeastOneWeekRequired: true };
+    };
+  }
+  
+  getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
+    const selectedDays = this.weekends.controls
+      .map((group, i) => i !== index ? group.get('day')?.value : null)
+      .filter(Boolean);
+  
+    return this.daysList.map(day => ({
+      label: day,
+      value: day,
+      disabled: selectedDays.includes(day)
+    }));
   }
 
   patchWeekendForm(data: any) {
@@ -99,28 +125,30 @@ export class CloneWeekendsComponent {
 
    
     this.weekendForm.get('location')?.enable();
-    this.weekendForm.patchValue({ year: data.applicableyear, location });
+    this.weekendForm.patchValue({ year: data.applicableyear });
   
-    this.onLocationChange(location);
+    // this.onLocationChange(location);
   
-    setTimeout(() => {
-      const subLocation = this.subLocationDetails.find(sub => sub.id === data.subLocationId);
+    // setTimeout(() => {
+    //   const subLocation = this.subLocationDetails.find(sub => sub.id === data.subLocationId);
   
-      if (!subLocation) return;
+    //   if (!subLocation) return;
   
-      this.weekendForm.get('subLocation')?.enable();
-      this.weekendForm.patchValue({ subLocation });
+    //   this.weekendForm.get('subLocation')?.enable();
+    //   this.weekendForm.patchValue({ subLocation });
   
-      this.getAllShifts(subLocation);
+    //   this.getAllShifts(subLocation);
   
-      setTimeout(() => {
-        const shift = this.shiftDetails.find(sh => sh.id === data.shiftID);
-        if (!shift) return;
+    //     const shift = this.shiftDetails.find(sh => sh.id === data.shiftID);
+    //     if (!shift) return;
   
-        this.weekendForm.get('shift')?.enable();
-        this.weekendForm.patchValue({ shift });
+    //     this.weekendForm.get('shift')?.enable();
+    //     this.weekendForm.patchValue({ shift });
   
-        this.weekends.clear();
+        
+    // }, 400);
+
+    this.weekends.clear();
         if (Array.isArray(data.orgWeekendItems)) {
           data.orgWeekendItems.forEach((item: any) => {
             this.weekends.push(this.fb.group({
@@ -133,8 +161,6 @@ export class CloneWeekendsComponent {
             }));
           });
         }
-      }, 400); 
-    }, 400);
   }
 
   getAllYears() {
@@ -272,10 +298,9 @@ export class CloneWeekendsComponent {
     });
   }
 
-  openConfirmation() {
-    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static' })
+  openModal(content: any,) {
+    this.modalService.open(content, { centered: true })
   }
-
   closeWeekend() {
     this.modalService.dismissAll();
     this.navigate();

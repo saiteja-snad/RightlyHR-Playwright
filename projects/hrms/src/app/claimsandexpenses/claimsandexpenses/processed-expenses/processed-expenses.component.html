@@ -1,9 +1,10 @@
-<div class="custom-main-component-container mt-4">
-  <div class="input-group custom-search mb-4">
+<div class="custom-main-component-container">
+  <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
       [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
   </div>
+
   <div class="custom-table-content">
     <table class="w-100">
       <thead>
@@ -12,8 +13,9 @@
           <th>Expense Date</th>
           <th>Total Amount</th>
           <th>Status</th>
+          <th class="text-center">Approver Comments</th>
+          <th class="text-center">View Details</th>
           <th class="text-center">Actions</th>
-
         </tr>
       </thead>
       <tbody>
@@ -22,17 +24,24 @@
             <td>{{ exp.expenses_Title }}</td>
             <td>{{ exp.applied_date | dateformat }}</td>
             <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-            <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
+            <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
+            <td class="text-center">
+              <i *ngIf="exp.expenseApproverComments.length>0; else na" class="bi bi-info-circle-fill cursor"
+                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" ></i>
+              <ng-template #na>
+                N/A
+              </ng-template>
             </td>
-
             <td class="text-center">
               <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
-                        class="bi bi-paperclip me-2"></i>View</a></li>
+                  <li>
+                    <a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
+                      <i class="bi bi-paperclip me-2"></i>View</a>
+                  </li>
                 </ul>
               </div>
             </td>
@@ -53,7 +62,7 @@
 
 <ng-template #viewDetailsModal let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
         <p class="popup-heading mb-0">Expenses Details</p>
       </div>
@@ -62,16 +71,16 @@
       </div>
     </div>
 
-    <div class="d-flex gap-5 p-3">
-      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams?.expenses_Title }}</b>
-      <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams?.approverEmail }}</b>
+    <div class="d-flex gap-5 pt-3 ps-4">
+      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
+      <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
     </div>
-    <div class="custom-table">
+    <div class="custom-table p-3">
       <table class="w-100">
         <thead>
           <tr>
             <th>Expense Type</th>
-            <th>Expense  Name</th>
+            <th>Expense Name</th>
             <th>Expense Date</th>
             <th>Total Amount</th>
             <th>Status</th>
@@ -85,7 +94,7 @@
             <td>{{ item?.item_Name }}</td>
             <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
             <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
-          
+
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
             <td>
@@ -107,8 +116,6 @@
   </div>
 </ng-template>
 
-
-
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
   <div class="custom-main-popup-container">
@@ -128,6 +135,51 @@
       <ng-template #imageView>
         <img [src]="ExpenseImageUrl" alt="My Image" class="modal-image" />
       </ng-template>
+    </div>
+  </div>
+</ng-template>
+<ng-template #viewcomments let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="d-flex justify-content-between popup-header-border p-3">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Approver Comments</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content p-4">
+      <div  *ngFor="let comment of commentsrecivced">
+        <div class="card p-3">
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-4">
+                <p class="component-sub-header mb-1">Comments</p>
+                {{ comment.comments }}
+              </div>
+              <div class="col-4">
+                <p class="component-sub-header mb-1">Commented by</p>
+                {{ comment.addedName }}
+              </div>
+              <div class="col-4">
+                <p class="component-sub-header mb-1">Date</p>
+                {{ comment.addedDate | date: 'short' }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-4">
+                <p class="component-sub-header mb-1">Commented by ID</p>
+                {{ comment.addedByFusionEmpId }}
+              </div>
+              <div class="col-4">
+                <p class="component-sub-header mb-1">Status</p>
+                {{ comment.action }}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
     </div>
   </div>
 </ng-template>

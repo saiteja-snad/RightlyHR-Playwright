@@ -62,10 +62,10 @@ export class UpdateExperienceDetailsComponent {
       fromDate: [this.formatDate(this.experienceData?.fromDate) || '', Validators.required],
       toDate: [this.formatDate(this.experienceData?.toDate) || ''],
       jobTitle: [this.experienceData?.jobTitle || '', Validators.required],
-      description: [this.experienceData?.description || '', Validators.required],
-      previousContactName: [this.experienceData?.previousContactName || '', Validators.required],
-      previousContactNumber: [this.experienceData?.previousContactNumber || '', [Validators.required, this.phoneNumberValidator()]],
-      previousContactEmail: [this.experienceData?.previousContactEmail || '', [Validators.required, Validators.email]],
+      description: [this.experienceData?.description || ''],
+      previousContactName: [this.experienceData?.previousContactName || ''],
+      previousContactNumber: [this.experienceData?.previousContactNumber || '', [this.phoneNumberValidator()]],
+      previousContactEmail: [this.experienceData?.previousContactEmail || '', [Validators.email]],
       attachment: [this.experienceData?.attachment || null, Validators.required]
     });
     // Disable toDate if isPresent is true
@@ -157,7 +157,7 @@ export class UpdateExperienceDetailsComponent {
   updateExpDetails() {
     const formData = this.experienceForm.value;
     const payload = {
-      id : this.experienceData?.id,
+      id: this.experienceData?.id,
       empId: this.experienceData.empId,
       companyName: formData.companyName ?? this.experienceData?.companyName,
       employmentType: formData.employmentType ?? this.experienceData?.employmentType,
@@ -169,31 +169,28 @@ export class UpdateExperienceDetailsComponent {
       previousContactNumber: formData.previousContactNumber ?? this.experienceData?.previousContactNumber,
       previousContactEmail: formData.previousContactEmail ?? this.experienceData?.previousContactEmail,
       isPresent: formData.isPresent ?? this.experienceData?.isPresent,
-      isDeleted:  this.experienceData?.isDeleted,
+      isDeleted: this.experienceData?.isDeleted,
       attachment: formData.attachment ?? this.experienceData?.attachment,
     };
-      this.subscription = this.http.postData("PreonboardingExperience/Update", payload).subscribe({
-        next: (data: any) => {
-          this.modalService.dismissAll();
-          this.openPopup.openSuccess("Data Added Successfully!");
-          this.getData.getExperience.set(true);
-          this.experienceForm.reset();
-        },
-        error: (error: any) => {
-          console.log('Save failed:', error);
-          if (error.status == 409) {
-            this.openPopup.openError(error.error);
-          } else if (error.status == 400) {
-            this.openPopup.openError(error.error.message);
-          } else {
-            this.openPopup.openError("Insertion of data is failed");
-          }
-        },
-        complete: () => {
-
+    this.subscription = this.http.postData("PreonboardingExperience/Update", payload).subscribe({
+      next: (data: any) => {
+        this.modalService.dismissAll();
+        this.openPopup.openSuccess("Data Added Successfully!");
+        this.getData.getExperience.set(true);
+        this.experienceForm.reset();
+      },
+      error: (error: any) => {
+        console.log('Save failed:', error);
+        if (error.status == 409) {
+          this.openPopup.openError(error.error);
+        } else if (error.status == 400) {
+          this.openPopup.openError(error.error.message);
+        } else {
+          this.openPopup.openError("Insertion of data is failed");
         }
-      });
-    
+      },
+      complete: () => { }
+    });
     if (this.file) {
       const filepath = `/FusionDocuments/Employee Documents/Previous Experience Documents/${this.prosempdata.employeeId}`;
       this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filepath, this.file)

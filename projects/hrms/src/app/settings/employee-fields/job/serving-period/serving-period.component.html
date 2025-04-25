@@ -5,8 +5,8 @@
 <ng-template #addpopup let-modal>
     <form [formGroup]="AddForm">
       <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
-          <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+          <div >
             <p class="popup-heading mb-0">{{ 'Serving Period' | translate }}</p>
           </div>
           <div>
@@ -16,7 +16,7 @@
           </div>
         </div>
   
-        <div class="custom-main-popup-content p-5">
+        <div class="custom-main-popup-content">
           <!-- Serving Period Type Field -->
           <div class="mb-4">
             <label for="addServingPeriod" class="form-label custom-label mb-2">
@@ -27,7 +27,7 @@
               class="form-control custom-input"
               formControlName="addServingPeriod"
               placeholder="Please enter serving period type" 
-              (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)"
+              (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
             />
             <div *ngIf="AddForm.get('addServingPeriod')?.touched && AddForm.get('addServingPeriod')?.invalid" class="error-msg">
               {{ 'Serving period is required' | translate }}.
@@ -42,7 +42,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter duration"
                     formControlName="Duration" aria-label="duration" aria-describedby="duration"
-                    (keydown)="formValidations.restrictInitialSpace($event)">
+                    (keydown)="formValidations.restrictInput($event)">
             </div>
             <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg mt-2">
                 <div *ngIf="AddForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
@@ -50,11 +50,11 @@
         </div>
   
           <!-- Buttons -->
-          <div class="d-flex gap-5 pt-4 w-100">
-            <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+          <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
               {{ 'Close' | translate }}
             </button>
-            <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addServingPeriod(modal)" [disabled]="AddForm.invalid">
+            <button type="button" class="custom-btn btn-primary" (click)="addServingPeriod(modal)" [disabled]="AddForm.invalid">
               {{ 'Add' | translate }}
             </button>
           </div>
@@ -70,16 +70,15 @@
           <tr>
             <th>Serving Period Type</th>
             <th>Duration</th>
-            <th class="text-center">Actions</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Serving Period.update') || rbac.allowedToAccess('Serving Period.delete')">Actions</th>
           </tr>
         </thead>
         <tbody>
-          @if (rbac.allowedToAccess('Serving Period.view')) {}
           <ng-container>
             <tr *ngFor="let sp of servingPeriodDetails"> 
               <td>{{sp.servingPeriodType}}</td>
               <td>{{sp.duration}}</td>
-              <td class="text-center">
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Serving Period.update') || rbac.allowedToAccess('Serving Period.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -110,8 +109,8 @@
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-4">
-                <div class="pt-2">
+            <div class="custom-poup-header-content popup-header-border">
+                <div >
                     <p class="popup-heading mb-0">{{'EDIT SERVING PERIOD' | translate}}</p>
                 </div>
                 <div>
@@ -120,14 +119,14 @@
                     </a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-5">
+            <div class="custom-main-popup-content">
                 <div class="mb-4">
                     <label for="UpdateServingPeriod" class="form-label custom-label mb-2">
                         {{'Serving Period Type' | translate}} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateServingPeriod"
                         placeholder="Please Enter Serving Period" 
-                        (keydown)="formValidations.restrictInitialSpace($event); formValidations.blockNonAlphabets($event)">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('UpdateServingPeriod')?.invalid && updateForm.get('UpdateServingPeriod')?.touched"
                         class="error-msg">
                         {{'Serving period is required'|translate}}.
@@ -137,16 +136,16 @@
                   <div class="custom-settings-add-input input-group">
                       <input type="text" class="form-control custom-input" placeholder="Please enter duration"
                           formControlName="UpdateDuration" aria-label="duration" aria-describedby="duration"
-                          (keydown)="formValidations.restrictInitialSpace($event)">
+                          (keydown)="formValidations.restrictInput($event)">
                   </div>
                   <div *ngIf="updateForm.get('UpdateDuration')?.touched && updateForm.get('UpdateDuration')?.invalid" class="error-msg mt-2">
                       <div *ngIf="updateForm.get('UpdateDuration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
                   </div>
               </div>
-                <div class="d-flex gap-5 pt-4 w-100">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">{{'Close' |
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close' |
                         translate}}</button>
-                    <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateJobroletype(modal)"
+                    <button type="button" class="custom-btn btn-primary " (click)="updateJobroletype(modal)"
                         [disabled]="updateForm.invalid">
                         {{'Update' | translate}}
                     </button>
@@ -159,16 +158,16 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-5">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+    <div class="result-popup-content" ngbAutofocus>
+        
+            <div >
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary "(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
             </div>
         </div>
-    </div>
+    
 </ng-template>

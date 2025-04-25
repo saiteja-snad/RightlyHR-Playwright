@@ -38,10 +38,10 @@ export class NoticeComponent {
 
   ngOnInit(): void {
     this.noticeperiodForm = this.fb.group({
-      noticeperiod: ['', [Validators.required]]
+      noticeperiod: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9 ]+$/)]]
     });
     this.updateForm = this.fb.group({
-      noticeperiod:  ['', Validators.required]
+      updatenoticeperiod:  ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9 ]+$/)]]
 
     });
     this.getNoticeperiod();
@@ -67,20 +67,21 @@ export class NoticeComponent {
         this.conformationPopup.openSuccessModal('Notice Period added successfully');
         this.resetForm();
       },
-      error: () => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+      error: (err : any) => {
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
         this.resetForm();
       }
     });
   }
   openupdate(noticePeriodList: any) {
     this.selectedId = noticePeriodList.id;
-    this.updateForm.patchValue({ noticeperiod: noticePeriodList.period });
+    this.updateForm.patchValue({ updatenoticeperiod: noticePeriodList.period });
   
     // Mark control as touched and update validity
-    this.updateForm.get('noticeperiod')?.markAsTouched();
-    this.updateForm.get('noticeperiod')?.markAsDirty();
-    this.updateForm.get('noticeperiod')?.updateValueAndValidity();
+    this.updateForm.get('updatenoticeperiod')?.markAsTouched();
+    this.updateForm.get('updatenoticeperiod')?.markAsDirty();
+    this.updateForm.get('updatenoticeperiod')?.updateValueAndValidity();
   
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
@@ -88,7 +89,7 @@ export class NoticeComponent {
   updateNoticeperiod(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: NoticeData = {
-        period: this.updateForm.value.noticeperiod,
+        period: this.updateForm.value.updatenoticeperiod,
         isdeleted: 'Active',
         id: this.selectedId
       };
@@ -98,10 +99,11 @@ export class NoticeComponent {
           this.getNoticeperiod();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Notice Period Updated Successfully');
+          this.conformationPopup.openSuccessModal('Notice Period updated successfully');
         },
-        error: () => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+        error: (err: any) => {
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -126,10 +128,11 @@ export class NoticeComponent {
       next: () => {
         this.getNoticeperiod();
         modal.close();
-        this.conformationPopup.openSuccessModal('Notice Period Deleted Successfully');
+        this.conformationPopup.openSuccessModal('Notice Period deleted successfully');
       },
-      error: () => {
-        this.conformationPopup.openErrorModal('Failed to delete the notice period');
+      error: (err:any) => {
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

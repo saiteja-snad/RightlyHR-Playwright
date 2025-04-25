@@ -39,11 +39,11 @@ export class BackgroundcheckComponent {
 
   ngOnInit(): void {
     this.BackgroundCheckForm = this.fb.group({
-      BackgroundCheck: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      BackgroundCheck: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.updateForm = this.fb.group({
-      BackgroundCheck: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      BackgroundCheck: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.BackgroundChecktype();
@@ -69,7 +69,7 @@ export class BackgroundcheckComponent {
     this.subscription = this.http.postdata('Background', request).subscribe({
       next: () => {
         this.BackgroundChecktype();
-        this.conformationPopup.openSuccessModal('Backgroundcheck name added successfully');
+        this.conformationPopup.openSuccessModal('Background Check Status added successfully');
         this.resetForm();
       },
       error: () => {
@@ -93,7 +93,7 @@ export class BackgroundcheckComponent {
           this.BackgroundChecktype();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Backgroundcheck name updated successfully');
+          this.conformationPopup.openSuccessModal('Background Check Status updated successfully');
         },
         error: () => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -135,7 +135,7 @@ export class BackgroundcheckComponent {
       next: () => {
         this.BackgroundChecktype();
         modal.close();
-        this.conformationPopup.openSuccessModal('Backgroundcheck name deleted successfully');
+        this.conformationPopup.openSuccessModal('Background Check Status deleted successfully');
       },
       error: () => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

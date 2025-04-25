@@ -51,7 +51,6 @@ export class BankNameComponent implements OnInit {
   getBank() {
     this.subscription = this.http.getData('Bank').subscribe({
       next: (data: any) => {
-        console.log(data);
         this.bankdetails = data as any[];
       },
       error: (reason: any) => {
@@ -65,19 +64,16 @@ export class BankNameComponent implements OnInit {
       IsDeleted: 'Active',
     };
 
-    console.log('Sending request:', request);
-
     this.subscription = this.http.postdata('Bank', request).subscribe({
       next: (data: any) => {
-        console.log('Response:', data);
         this.modalService.dismissAll();
         this.bankForm.reset();
         this.getBank();
         this.conformationPopup.openSuccessModal('Bank Name added successfully');
       },
       error: (reason: any) => {
-        console.error('Error:', reason);
-        this.conformationPopup.openErrorModal('Failed to add bank data');
+        const errorMessage = reason.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       },
     });
   }
@@ -88,7 +84,6 @@ export class BankNameComponent implements OnInit {
   }
 
   opendelete(bank: any) {
-    console.log(bank);
     this.selectedDeleteBank = bank;
     this.modalService.open(this.deletepopup, {
       centered: true,
@@ -123,9 +118,8 @@ export class BankNameComponent implements OnInit {
             );
           },
           error: (err: any) => {
-            this.conformationPopup.openErrorModal(
-              'Update failed. Please try again.'
-            );
+            const errorMessage = err.error?.Message;
+            this.conformationPopup.openErrorModal(errorMessage);
           },
         });
     }
@@ -147,8 +141,8 @@ export class BankNameComponent implements OnInit {
         this.conformationPopup.openSuccessModal('Bank Name deleted successfully');
       },
       error: (err: any) => {
-        console.error('Delete bank failed:', err);
-        this.conformationPopup.openErrorModal('Failed to delete bank data');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       },
     });
   }

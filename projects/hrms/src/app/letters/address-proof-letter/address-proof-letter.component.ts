@@ -124,7 +124,6 @@ export class AddressProofLetterComponent {
   
   }
   addressOptions = [
-    { label: 'Select Address', value: undefined },
     { label: 'Current Address', value: 'C' },
     { label: 'Permanent Address', value: 'P' }
   ];

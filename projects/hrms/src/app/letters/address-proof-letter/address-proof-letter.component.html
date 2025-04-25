@@ -11,10 +11,11 @@
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
             <form [formGroup]="employeeForm" (ngSubmit)="postAddressLetterFormSubmit(employeeForm)">
+                <!-- Employee Name -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="name"
+                        <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
                             class="custom-select w-100" (onChange)="Onclick($event.value)">
                         </p-select>
@@ -23,6 +24,8 @@
                         <div class="error-msg">Employee is required</div>
                     </div>
                 </div>
+
+                <!-- Address -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
@@ -53,7 +56,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                         Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                        <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
                             class="form-select custom-select" formControlName="authorityid"
                             (onChange)="onclickDesignation($event.value)" />
                     </div>
@@ -66,7 +69,7 @@
                         Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
                 </div>
                 <div class="d-flex flex-wrap gap-3 pt-3">
-                    <button type="submit" class="custom-btn btn-primary">Generate Document</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">Generate Document</button>
                 </div>
             </form>
         </div>
@@ -92,7 +95,7 @@
                                         Fetching...
                                     </span>
                                     <ng-template #role>
-                                        <b>{{ employeeForm.get('jobRole')?.value || 'Not Available' }}</b>
+                                        <b>{{ employeeForm.get('jobRole')?.value || '' }}</b>
                                     </ng-template> since
                                     <span
                                         *ngIf="!employeeForm.value.dateOfJoining; else joining">_______________________</span>

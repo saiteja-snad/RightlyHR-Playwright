@@ -189,7 +189,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response: any) => {
             this.sharedModalService.openSuccessModal(
-              'Request Rejcted Successfully'
+              'Request Rejected Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;

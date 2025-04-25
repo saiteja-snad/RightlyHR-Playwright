@@ -5,7 +5,7 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
+                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
 
         <div class="custom-table-content">
@@ -21,7 +21,7 @@
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Reason</th>
-                        <th>Comments</th>
+                        <th>Approver Comments</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -107,7 +107,7 @@
 <ng-template #commentspopup let-modal>
     <div class="d-flex justify-content-between popup-header-border p-4">
         <div class="pt-2">
-            <p class="popup-heading mb-0">Comments</p>
+            <p class="popup-heading mb-0">{{'Approver Comments' | translate}}</p>
         </div>
         <div>
             <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
@@ -119,10 +119,10 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Comments</th>
-                        <th>Commented By</th>
-                        <th>Date</th>
-                        <th>Commented By ID</th>
+                        <th>{{'Comments' | translate}}</th>
+                            <th>{{'Commented By'|translate}}</th>
+                            <th>{{"Approved Date" | translate}}</th>
+                            <th>{{'Commented By ID' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>

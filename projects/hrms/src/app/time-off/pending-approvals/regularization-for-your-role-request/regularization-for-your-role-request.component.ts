@@ -205,7 +205,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
           next: (response: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
-              'Request Rejcted Successfully'
+              'Request Rejected Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData  = {} as PermissionRequestResponse;

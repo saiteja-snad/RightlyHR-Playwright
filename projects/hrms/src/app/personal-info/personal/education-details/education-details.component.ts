@@ -37,6 +37,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
   buttondisable = true;
   empinfo: any = {}
   employedata={} as any;
+  showErrorr=false;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -193,6 +194,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
     console.log('Identity attachment:', this.educationAttachment);
   }
 
+  
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
       type: originalFile.type,

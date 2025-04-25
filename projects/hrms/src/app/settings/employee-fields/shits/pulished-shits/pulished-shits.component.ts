@@ -27,7 +27,9 @@ export class PulishedShitsComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
   }
-
+  getShiftNames(shift: any) {
+    return shift.orgShiftsItems.map((item: any) => item.shiftName).join(', ');
+  }
   getShifts(): void {
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {

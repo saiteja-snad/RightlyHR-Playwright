@@ -78,12 +78,14 @@ export class CloneShiftComponent {
       this.years.push({ label: i.toString(), value: i });
     }
   }
-  preventMinus(event: KeyboardEvent) {
-    if (event.key === '-' || event.key === 'e') {
+ 
+   //BLOCK -VE VALUE
+   blockInvalidKeys(event: KeyboardEvent) {
+    const invalidKeys = ['-', '+', 'e', 'E'];
+    if (invalidKeys.includes(event.key)) {
       event.preventDefault();
     }
   }
-  
   blockNegativePaste(event: ClipboardEvent) {
     const clipboardData = event.clipboardData?.getData('text');
     if (clipboardData && parseFloat(clipboardData) < 0) {
@@ -114,7 +116,7 @@ export class CloneShiftComponent {
     return this.fb.group({
       shiftCode: [shiftData?.code || '', Validators.required],
       shiftName: [shiftData?.shiftName || '', Validators.required],
-      color: [shiftData?.color || '#00ff00'],
+      color: [shiftData?.color || '#FFFFFF'],
       startTime: [shiftData?.shiftStartTime?.split(':')[0] || '', Validators.required],
       endTime: [shiftData?.shiftStartTime?.split(':')[1] || '', Validators.required],
       gracePeriod: [shiftData?.allowedGracePeriod || 15, Validators.required],
@@ -232,8 +234,12 @@ export class CloneShiftComponent {
           this.nagvition()
         },
         error: (error: any) => {
-          console.log("error" + error)
-        }
+          // Handle error if needed
+          console.error(error);
+          if (error.error) {
+            this.conformationPopup.openErrorModal(error.error.Message);
+          }
+        },
       });
     }
   }

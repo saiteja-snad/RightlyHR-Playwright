@@ -58,12 +58,14 @@ export class AddShitsComponent {
       this.years.push(i);
     }
   }
-  preventMinus(event: KeyboardEvent) {
-    if (event.key === '-' || event.key === 'e') {
+
+   //BLOCK -VE VALUE
+   blockInvalidKeys(event: KeyboardEvent) {
+    const invalidKeys = ['-', '+', 'e', 'E'];
+    if (invalidKeys.includes(event.key)) {
       event.preventDefault();
     }
   }
-  
   blockNegativePaste(event: ClipboardEvent) {
     const clipboardData = event.clipboardData?.getData('text');
     if (clipboardData && parseFloat(clipboardData) < 0) {
@@ -153,8 +155,12 @@ deleteShift(index: number) {
           this.nagvition()
         },
         error: (error: any) => {
-          console.log("error" + error)
-        }
+          // Handle error if needed
+          console.error(error);
+          if (error.error) {
+            this.conformationPopup.openErrorModal(error.error.Message);
+          }
+        },
       });
     }
   }

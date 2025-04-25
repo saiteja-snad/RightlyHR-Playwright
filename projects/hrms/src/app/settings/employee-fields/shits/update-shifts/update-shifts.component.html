@@ -5,20 +5,6 @@
                 {{'Update Shifts'|translate}}</p>
         </div>
     </div>
-    <!-- <div class="component-nav-tabs-container card px-2 mb-3">
-        <p-tabs value="0" scrollable>
-            <p-tablist>
-                <ng-container *ngFor="let tab of navTabs;">
-                    <p-tab [value]="tab.link">
-                        <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-                            {{ tab.label }}
-                        </a>
-                    </p-tab>
-                </ng-container>
-            </p-tablist>
-        </p-tabs>
-    </div> -->
-
 
     <div class="card custom-card">
         <div class="p-3">
@@ -97,8 +83,7 @@
                                     <!-- <input type="text" class="form-control custom-input" formControlName="shiftCode"
                                         placeholder="Please enter shift code" /> -->
                                         <input type="text" class="form-control custom-input" formControlName="shiftCode"
-                                 placeholder="Please enter shift code"(input)="checkDuplicate(i)"(keydown)="preventMinus($event)"
-                                 (paste)="blockNegativePaste($event)" />
+                                 placeholder="Please enter shift code"(input)="checkDuplicate(i)" />
                                     <div *ngIf="shift.get('shiftCode')?.invalid && (shift.get('shiftCode')?.dirty || shift.get('shiftCode')?.touched)"
                                         class="error-msg">
                                         <span *ngIf="shift.get('shiftCode')?.errors?.['required']">{{'Shift code is required '|translate}}</span>
@@ -114,8 +99,7 @@
                                     <!-- <input type="text" class="form-control custom-input" formControlName="shiftName"
                                         placeholder="Please enter shift name" /> -->
                                         <input type="text" class="form-control custom-input" formControlName="shiftName"  placeholder="Please enter shift name"
-                                        (input)="checkDuplicate1(i)"(keydown)="preventMinus($event)"
-                                        (paste)="blockNegativePaste($event)" />
+                                        (input)="checkDuplicate1(i)" />
                                     <div *ngIf="shift.get('shiftName')?.invalid && (shift.get('shiftName')?.dirty || shift.get('shiftName')?.touched)"
                                         class="error-msg">
                                         <span *ngIf="shift.get('shiftName')?.errors?.['required']">{{'Shift name is required'|translate}}</span>
@@ -156,10 +140,10 @@
 
                                 <!-- Grace Period -->
                                 <div class="col-md-2">
-                                    <label class="form-label custom-label">{{'Allowed Grace Period (min)'|translate}}<span
+                                    <label class="form-label custom-label">{{'Allowed Grace Period (mins)'|translate}}<span
                                         class="text-danger">*</span></label>
-                                    <input type="number" class="form-control custom-input" formControlName="gracePeriod"
-                                        placeholder="Grace period"(keydown)="preventMinus($event)"
+                                    <input type="number"min="0" class="form-control custom-input" formControlName="gracePeriod"
+                                        placeholder="Grace period"(keydown)="blockInvalidKeys($event)"
                                         (paste)="blockNegativePaste($event)" />
                                         <div *ngIf="shift.get('gracePeriod')?.invalid && (shift.get('gracePeriod')?.dirty || shift.get('gracePeriod')?.touched)"
                                         class="error-msg">
@@ -172,8 +156,8 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Lates Allowed(Days)'|translate}}<span
                                         class="text-danger">*</span></label>
-                                    <input type="number" class="form-control custom-input"
-                                        formControlName="latesAllowed" placeholder="Lates allowed"(keydown)="preventMinus($event)"
+                                    <input type="number"  class="form-control custom-input"
+                                        formControlName="latesAllowed" placeholder="Lates allowed" min="0" (keydown)="blockInvalidKeys($event)"
                                         (paste)="blockNegativePaste($event)" />
                                         <div *ngIf="shift.get('latesAllowed')?.invalid && (shift.get('latesAllowed')?.dirty || shift.get('latesAllowed')?.touched)"
                                         class="error-msg">
@@ -185,8 +169,8 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Allowed Break Time(Hrs)'|translate}}<span
                                         class="text-danger">*</span></label>
-                                    <input type="number" class="form-control custom-input" formControlName="breakTime"
-                                        placeholder="Break time" (keydown)="preventMinus($event)"
+                                    <input type="number" min="0" class="form-control custom-input" formControlName="breakTime"
+                                        placeholder="Break time" (keydown)="blockInvalidKeys($event)"
                                         (paste)="blockNegativePaste($event)"/>
                                         <div *ngIf="shift.get('breakTime')?.invalid && (shift.get('breakTime')?.dirty || shift.get('breakTime')?.touched)"
                                         class="error-msg">
@@ -198,8 +182,8 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Half Day Min Hrs'|translate}}<span
                                         class="text-danger">*</span></label>
-                                    <input type="number" class="form-control custom-input"
-                                        formControlName="halfDayMinHrs" placeholder="Half day min hrs" (keydown)="preventMinus($event)"
+                                    <input type="number" min="0" class="form-control custom-input"
+                                        formControlName="halfDayMinHrs" placeholder="Half day min hrs" (keydown)="blockInvalidKeys($event)"
                                         (paste)="blockNegativePaste($event)"/>
                                         <div *ngIf="shift.get('halfDayMinHrs')?.invalid && (shift.get('halfDayMinHrs')?.dirty || shift.get('halfDayMinHrs')?.touched)"
                                         class="error-msg">
@@ -211,8 +195,8 @@
                                 <div class="col-md-2">
                                     <label class="form-label custom-label">{{'Full Day Min Hrs'|translate}}<span
                                         class="text-danger">*</span></label>
-                                    <input type="number" class="form-control custom-input"
-                                        formControlName="fullDayMinHrs" placeholder="Full day min hrs"(keydown)="preventMinus($event)"
+                                    <input type="number" min="0" class="form-control custom-input"
+                                        formControlName="fullDayMinHrs" placeholder="Full day min hrs"(keydown)="blockInvalidKeys($event)"
                                         (paste)="blockNegativePaste($event)" />
                                         <div *ngIf="shift.get('fullDayMinHrs')?.invalid && (shift.get('fullDayMinHrs')?.dirty || shift.get('fullDayMinHrs')?.touched)"
                                         class="error-msg">

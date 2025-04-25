@@ -22,35 +22,6 @@
                 <th>{{'Actions'|translate}}</th>
             </tr>
         </thead>
-        <!-- <tbody>
-            <ng-container *ngIf="shiftsData!.length > 0; else noDataTemplate">
-                <tr *ngFor="let shift of pendingsubmittedshifts; let i = index">
-                    <td>{{ shift.applicableyear }}</td>
-                    <td>{{ shift.locationName }}</td>
-                    <td>{{ shift.subLocationName }}</td>
-                    <td>{{ shift.addedbyName }}</td>
-                    <td>{{ shift.status }}</td>
-                    <td class="text-center">
-                        <div class="dropdown">
-                            <a data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                <li><a class="dropdown-item" (click)="updateShift(shift.id)"><i class="bi bi-pencil me-2"></i>Update</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            </ng-container>
-
-            <ng-template #noDataTemplate>
-                <tr>
-                    <td colspan="4">
-                        <app-no-data-found></app-no-data-found>
-                    </td>
-                </tr>
-            </ng-template>
-        </tbody> -->
         <tbody>
             @if (shiftsData!.length > 0) {
               @for (shift of pendingsubmittedshifts; track shift.id) {
@@ -58,8 +29,7 @@
                   <td>{{ shift.applicableyear }}</td>
                   <td>{{ shift.locationName }}</td>
                   <td>{{ shift.subLocationName }}</td>
-                  <td>
-                   
+                  <td> 
                     <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"
                         title="{{getShiftNames(shift)}}"></i>
                 </td>

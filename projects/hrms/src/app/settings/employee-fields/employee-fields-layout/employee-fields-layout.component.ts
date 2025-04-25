@@ -33,6 +33,8 @@ export class EmployeeFieldsLayoutComponent {
       '/settings/employee-fields/addholidays',
       '/settings/employee-fields/addshifts',
       '/settings/employee-fields/updateshifts/:id',
+      '/settings/employee-fields/cloneshifts/:id',
+      '/settings/employee-fields/viewshifts/:id',
       '/settings/employee-fields/addpolices',
       '/settings/employee-fields/add-weekends',
       '/settings/employee-fields/update-weekends',

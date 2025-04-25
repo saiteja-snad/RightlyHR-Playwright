@@ -20,8 +20,8 @@ export class SettingsManageShitsTabsComponent {
   pendingsubmittedshifts=[] as any;
   pendingCount:any;
   allLinks = [
-    { label: 'Pending For Submit',route: '/settings/employee-fields/manage-shifts/pending-for-submit',permission: { feature: 'Pending For Submit', action: 'view' }},
-    { label: 'Published Shifts',route: '/settings/employee-fields/manage-shifts/published-shifts',permission: { feature: 'Published Shifts', action: 'view' }}
+    { label: 'Pending for Submission',route: '/settings/employee-fields/manage-shifts/pending-for-submit',permission: { feature: 'Manage Shifts Tab', action: 'view' }},
+    { label: 'Published',route: '/settings/employee-fields/manage-shifts/published-shifts',permission: { feature: 'Manage Shifts Tab', action: 'view' }}
   ];
   constructor(public router: Router, private http: HttpService, public rbac: RbacService) {
     this.navLinks = this.allLinks.filter(link =>

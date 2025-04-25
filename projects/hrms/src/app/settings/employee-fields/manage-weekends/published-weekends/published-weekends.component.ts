@@ -27,7 +27,6 @@ export class PublishedWeekendsComponent {
    getAllWeekend() {
       this.http.getData(`OrgWeekendHeader/getAll`).pipe(takeUntil(this.destroy$)).subscribe({
          next: (data: any) => {
-            console.log(data);
             this.weekendsList = data.filter((item: any) => item.status === 'Published');
          }
       })

@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
+        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
             [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
 
@@ -80,9 +80,9 @@
             <div class="p-3">
                 <div>
                     <form [formGroup]="newExpenseForm" (ngSubmit)="submitepxenses(newExpenseForm)">
-                        <div class="row g-2 mb-3">
+                        <div class="d-flex gap-3 mb-3">
                             <!-- Expense Type  -->
-                            <div class="col-md-4 mb-3">
+                            <div class="w-25">
                                 <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="expensesTitle"
@@ -100,8 +100,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label custom-label mb-2">{{'Approval Emai'  | translate}}l<span
+                            <div class="w-25">
+                                <label class="form-label custom-label mb-2">{{'Approver Emai'  | translate}}l<span
                                         class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="emails" optionLabel="label"
@@ -116,7 +116,7 @@
                                 </div>
                             </div>
                             <!-- Add New Expense Button -->
-                            <div class="col-md-4 mb-3 ">
+                            <div >
                                 <button type="button" class="custom-btn btn-primary mt-4" (click)="addExpenseItem()">
                                     <i class="bi bi-plus me-2"></i> {{'Add Expense Item' | translate}}
                                 </button>
@@ -227,10 +227,10 @@
                                     </div>
 
                                     <!-- Delete Icon -->
-                                    <div class="col-md-1 mt-4 d-flex align-items-center  justify-content-end">
-                                        <button type="button" class="custom-icon btn" (click)="delteitem(i)">
+                                    <div class="col-md-1 mt-4 d-flex align-items-center  justify-content-end" *ngIf="i>=1">
+                                        <div type="button" class="custom-icon btn" (click)="delteitem(i)">
                                             <i class="bi bi-trash text-danger"></i>
-                                        </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -257,7 +257,7 @@
                                             *ngIf="item.get('attachment_url')?.invalid && item.get('attachment_url')?.touched">
                                             Please choose a file
                                         </div>
-                                        <div class="d-flex gap-3 mt-3">
+                                        <div class="d-flex gap-3 mt-3"  *ngIf="item.get('attachment_url')?.value">
                                             <a type="button" class="dowload-text"
                                                 (click)="onSelectDownload(item.get('attachment_url'))">
                                                 <i class="bi bi-download me-2"></i>Download
@@ -332,11 +332,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Expense iteam? ' | translate}}</p>
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Expense item? ' | translate}}</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary" (click)="notdeleted()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="removeExpense()">{{'Yes' | translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="removeExpense();modal.dismiss()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

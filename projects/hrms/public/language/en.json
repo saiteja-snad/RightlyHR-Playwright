@@ -313,5 +313,7 @@
     "Consultancy name requiredw":"Consultancy name required",
     "Edit Consultancy":"Edit Consultancy",
     "Consultancy Name":"Consultancy Name",
-    "Consultancy name is  required":"Consultancy name is  required"
+    "Consultancy name is  required":"Consultancy name is  required",
+    "Please select designation": "Please select designation",
+    "Please select gradename": "Please select gradename"
 }

@@ -53,7 +53,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                         Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please signature authority name"
+                        <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
                             class="form-select custom-select" formControlName="authorityid"
                             (onChange)="onclickDesignation($event)" />
                     </div>
@@ -108,10 +108,10 @@
                             <div class="py-3 text-end">
                                 Date: {{this.employeeForm.get('dateofbankloan')?.value|dateformat}}
                             </div>
-                            <div class="py-4">
-                                <div class="letter-header">TO WHOMSOEVER IT MAY CONCERN</div>
+                            <div class="py-4 text-center">
+                                <div class="letter-header"><u>TO WHOMSOEVER IT MAY CONCERN</u></div>
                             </div>
-                            <p>
+                            <p class="pt-5">
                                 <span>This letter is to confirm that
                                     <span *ngIf="!employeeFullname; else name">_______________________</span>
                                     <ng-template #name><b>{{employeeFullname}}</b></ng-template> has been working in our Establishment
@@ -126,8 +126,8 @@
                                 This letter is being issued on {{ hisOrHerdata}} request to
                                 enable {{herOrHimdata}} to apply for a bank Loan.
                             </p>
-                            <p>If you have any further questions, you can call us at 8886651309.</p>
-                            <p>Sincerely,<br><span class="letter-sub-header">for RightlyHR</span></p>
+                            <p class="mb-5">If you have any further questions, you can call us at 8886651309.</p>
+                            <p class="pt-5">Sincerely,<br><span class="letter-sub-header">for RightlyHR</span></p>
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!authorityFullName" class="mb-3">Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->

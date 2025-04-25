@@ -121,7 +121,6 @@ export class BankLoanLetterComponent {
   }
 
   onClickEmployee(event: any){
-    console.log(event.value);
     this.selectedEmployee= event.value;
 
     this.employeeFullname = this.selectedEmployee.firstName + ' ' + this.selectedEmployee.middleName + ' ' + this.selectedEmployee.lastName;
@@ -147,11 +146,9 @@ export class BankLoanLetterComponent {
       next: (data: any) => {
         if (!data || data.length === 0) {
           this.jobErrorMessage = 'No job details found for this employee.';
-          console.warn(this.jobErrorMessage); 
         } else {
           let res = data.reverse()[0];  
           this.selectedEmployeeJobDetails = res;
-          console.log(this.selectedEmployeeJobDetails);
           this.jobErrorMessage = '';
         }
       },
@@ -175,9 +172,7 @@ export class BankLoanLetterComponent {
   }
 
   onclickDesignation(event: any) {
-    console.log(event.value)
     this.selectedAuthority= event.value;
-    console.log(this.selectedAuthority)
     if (this.selectedAuthority) {
       this.authorityFullName = this.selectedAuthority.middleName
         ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`

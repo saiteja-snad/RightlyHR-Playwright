@@ -6,16 +6,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { RbacService } from '../../../../services/rbac.service';
-import { FormValidationsService } from '../../../../services/form-validations.service';
 
+import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-status',
-  imports: [CommonModule,TranslateModule,CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
   templateUrl: './status.component.html',
   styleUrl: './status.component.scss'
 })
 export class StatusComponent implements OnInit{
+
 
   model: any;
    
@@ -29,6 +30,7 @@ export class StatusComponent implements OnInit{
     @ViewChild('deletepopup') deletepopup: any;
     @ViewChild('updatepopup') updatepopup: any;
 
+
   
     constructor(
       private fb: FormBuilder,
@@ -37,6 +39,8 @@ export class StatusComponent implements OnInit{
       private conformationPopup: OpenModalService, 
       public formValidations: FormValidationsService,
       public rbac: RbacService,
+
+    
     ) {}
     
     ngOnInit(): void {
@@ -47,6 +51,13 @@ export class StatusComponent implements OnInit{
           statusname: ['', Validators.required] 
     });
       this.getstatus();
+    }
+    allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+      const char = event.key;
+      const pattern = /^[A-Za-z ]$/;
+      if (!pattern.test(char)) {
+        event.preventDefault(); // Block invalid input
+      }
     }
     getstatus() {
     this.subscription = this.http.getData ("Status").subscribe({
@@ -81,7 +92,7 @@ export class StatusComponent implements OnInit{
     });
   }
   
-  openupdate(status: any): void {
+  updateStatus(status: any): void {
     console.log(status);
     this.statusDeletedata = status;
     this.updateForm?.patchValue({

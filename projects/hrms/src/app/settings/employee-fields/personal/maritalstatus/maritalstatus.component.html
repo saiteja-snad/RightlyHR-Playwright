@@ -5,14 +5,27 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter marital status"
                     formControlName="MaritalStatus" aria-label="status" aria-describedby="status"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    (keypress)="allowOnlyLettersAndSpace($event)">
                 <span class="input-group-text" id="status">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="MaritalStatusForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.touched && MaritalStatusForm.get('MaritalStatus')?.invalid" class="error-msg mt-2">
-                <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.errors?.['required']">{{'Marital status is required'|translate}}</div>
-            </div>
+            <div *ngIf="MaritalStatusForm.controls['MaritalStatus'].touched">
+            
+                <div *ngIf="MaritalStatusForm.controls['MaritalStatus'].touched || MaritalStatusForm.controls['MaritalStatus'].dirty">
+                    <span class="error-msg" *ngIf="MaritalStatusForm.controls['MaritalStatus'].errors?.['required']">
+                        Marital Status   is required
+                    </span>
+                  
+                    <span class="error-msg" *ngIf="MaritalStatusForm.controls['MaritalStatus'].errors?.['maxlength']">
+                      Maximum 50 characters are allowed.
+                    </span>
+                  
+                    <span class="error-msg" *ngIf="MaritalStatusForm.controls['MaritalStatus'].errors?.['pattern']">
+                      Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                    </span>
+                  </div>
+                  </div>
         </div>
     </form>
 
@@ -55,7 +68,7 @@
         <div class="custom-main-popup-container"ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div >
-                    <p class="popup-heading mb-0">{{'Edit Marital Status'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update  Marital Status'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -66,11 +79,24 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Marital Status'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="MaritalStatus"
-                        placeholder="Please enter marital status" 
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-                    <div *ngIf="updateForm.get('MaritalStatus')?.touched && updateForm.get('MaritalStatus')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['required']">{{'Marital status is required'|translate}}</div>
-                    </div>
+                        placeholder="Please enter marital status"  (keypress)="allowOnlyLettersAndSpace($event)"
+                        >
+                        <div *ngIf="updateForm.controls['MaritalStatus'].touched">
+            
+                            <div *ngIf="updateForm.controls['MaritalStatus'].touched || updateForm.controls['MaritalStatus'].dirty">
+                                <span class="error-msg" *ngIf="updateForm.controls['MaritalStatus'].errors?.['required']">
+                                    Marital Status   is required
+                                </span>
+                              
+                                <span class="error-msg" *ngIf="updateForm.controls['MaritalStatus'].errors?.['maxlength']">
+                                  Maximum 50 characters are allowed.
+                                </span>
+                              
+                                <span class="error-msg" *ngIf="updateForm.controls['MaritalStatus'].errors?.['pattern']">
+                                  Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                                </span>
+                              </div>
+                              </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close'|translate}}</button>

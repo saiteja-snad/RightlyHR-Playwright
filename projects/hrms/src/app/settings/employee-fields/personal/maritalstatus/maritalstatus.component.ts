@@ -39,15 +39,29 @@ export class MaritalstatusComponent {
   }
   ngOnInit(): void {
     this.MaritalStatusForm = this.fb.group({
-      MaritalStatus: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      MaritalStatus: ['', [
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+      ]]
     });
     this.updateForm = this.fb.group({
-      MaritalStatus: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      MaritalStatus: ['',[
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+      ]]
     });
 
     this.getMaritialStatus();
   }
- 
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
+    if (!pattern.test(char)) {
+      event.preventDefault(); // Block invalid input
+    }
+  }
   getMaritialStatus() {
     this.http.getData('Maritalstatus').subscribe((data: any) => {
       this.MaritalStatusDetail = data;

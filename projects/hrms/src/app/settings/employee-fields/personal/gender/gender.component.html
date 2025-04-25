@@ -4,16 +4,31 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter gender"
-                    formControlName="Gender" aria-label="gender" aria-describedby="gender"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-                <span class="input-group-text" id="gender">
+                    formControlName="Gender" aria-label="Gender" aria-describedby="Gender"  (keypress)="allowOnlyLettersAndSpace($event)">
+                <span class="input-group-text" id="Gender">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="GenderForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="GenderForm.get('Gender')?.touched && GenderForm.get('Gender')?.invalid" class="error-msg mt-2">
-                <div *ngIf="GenderForm.get('Gender')?.errors?.['required']">{{'Gender is required'|translate}}</div>
+            <div *ngIf="GenderForm.controls['Gender'].touched">
+            
+                    <div *ngIf="GenderForm.controls['Gender'].touched || GenderForm.controls['Gender'].dirty">
+                        <span class="error-msg" *ngIf="GenderForm.controls['Gender'].errors?.['required']">
+                          Gender is required
+                        </span>
+                      
+                        <span class="error-msg" *ngIf="GenderForm.controls['Gender'].errors?.['maxlength']">
+                          Maximum 50 characters are allowed
+                        </span>
+                      
+                        <span class="error-msg" *ngIf="GenderForm.controls['Gender'].errors?.['pattern']">
+                          Only letters, spaces, and periods are allowed. Field cannot start with a space or period
+                        </span>
+                      </div>
+                      
             </div>
         </div>
+
+
     </form>
 
     <!--Data Content-->
@@ -47,7 +62,7 @@
             </tbody>
         </table>
     </div>
-</div>
+
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
@@ -55,7 +70,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <p class="popup-heading mb-0">{{'Edit Gender'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Gender'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -65,10 +80,25 @@
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Gender'|translate}}
                         <span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="Gender" placeholder="Please enter gender"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-                    <div *ngIf="updateForm.get('Gender')?.touched && updateForm.get('Gender')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('Gender')?.errors?.['required']">{{'Gender is required'|translate}}</div>
+                    <input type="text" class="form-control custom-input" formControlName="Gender"  (keypress)="allowOnlyLettersAndSpace($event)" placeholder="Please enter gender" 
+                    >
+                    <div *ngIf="updateForm.controls['Gender'].touched">
+            
+                        <div *ngIf="GenderForm.controls['Gender'].touched || updateForm.controls['Gender'].dirty">
+                            <span class="error-msg" *ngIf="updateForm.controls['Gender'].errors?.['required']">
+                                Gender is required
+                            </span>
+                          
+                            <span class="error-msg" *ngIf="updateForm.controls['Gender'].errors?.['maxlength']">
+                              Maximum 50 characters are allowed
+                            </span>
+                          
+                            <span class="error-msg" *ngIf="updateForm.controls['Gender'].errors?.['pattern']">
+                              Only letters, spaces, and periods are allowed. Field cannot start with a space or period
+                            </span>
+                          </div>
+                          
+            
                     </div>
                 </div>
                 <div class="custom-modal-footer">

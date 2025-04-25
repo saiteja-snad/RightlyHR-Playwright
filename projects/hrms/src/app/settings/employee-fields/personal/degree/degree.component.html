@@ -10,9 +10,23 @@
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="degreeFrom.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="degreeFrom.get('degree')?.touched && degreeFrom.get('degree')?.invalid" class="error-msg mt-2">
-                <div *ngIf="degreeFrom.get('degree')?.errors?.['required']">{{'Degree is required'|translate}}</div>
-            </div>
+            <div *ngIf="degreeFrom.controls['degree'].touched">
+            
+                <div *ngIf="degreeFrom.controls['degree'].touched || degreeFrom.controls['degree'].dirty">
+                    <span class="error-msg" *ngIf="degreeFrom.controls['degree'].errors?.['required']">
+                        Degree is required
+                    </span>
+                  
+                    <span class="error-msg" *ngIf="degreeFrom.controls['degree'].errors?.['maxlength']">
+                      Maximum 50 characters are allowed.
+                    </span>
+                  
+                    <span class="error-msg" *ngIf="degreeFrom.controls['degree'].errors?.['pattern']">
+                      Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                    </span>
+                  </div>
+                  
+        </div>
         </div>
     </form>
 
@@ -55,7 +69,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div >
-                    <p class="popup-heading mb-0">{{'Edit Degree'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Degree'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -63,13 +77,27 @@
             </div>
             <div class="custom-main-popup-content ">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'DegreeName'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Degree Name'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="degreeName"
                         placeholder="Please enter degree name"
                         (keydown)="formValidations.restrictInput($event)">
-                    <div *ngIf="updateForm.get('degreeName')?.touched && updateForm.get('degreeName')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('degreeName')?.errors?.['required']">{{'Degree name is required'|translate}}</div>
+                        <div *ngIf="updateForm.controls['degreeName'].touched">
+            
+                            <div *ngIf="updateForm.controls['degreeName'].touched || updateForm.controls['degreeName'].dirty">
+                                <span class="error-msg" *ngIf="updateForm.controls['degreeName'].errors?.['required']">
+                                    Degree is required
+                                </span>
+                              
+                                <span class="error-msg" *ngIf="updateForm.controls['degreeName'].errors?.['maxlength']">
+                                  Maximum 50 characters are allowed.
+                                </span>
+                              
+                                <span class="error-msg" *ngIf="updateForm.controls['degreeName'].errors?.['pattern']">
+                                  Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                                </span>
+                              </div>
+                              
                     </div>
                 </div>
                 <div class="custom-modal-footer">

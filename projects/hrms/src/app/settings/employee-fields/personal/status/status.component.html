@@ -1,18 +1,32 @@
 <div class="custom-main-component-container">
     <form [formGroup]="statusForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Status.create')">
+       
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter status"
-                    formControlName="status" aria-label="stat" aria-describedby="stat"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    formControlName="status" aria-label="stat" aria-describedby="stat"  (keypress)="allowOnlyLettersAndSpace($event)"
+                  >
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="statusForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="statusForm.get('status')?.touched && statusForm.get('status')?.invalid" class="error-msg mt-2">
-                <div *ngIf="statusForm.get('status')?.errors?.['required']">{{'Status is required'|translate}}</div>
-            </div>
+            <div *ngIf="statusForm.controls['status'].touched">
+            
+                <div *ngIf="statusForm.controls['status'].touched || statusForm.controls['status'].dirty">
+                    <span class="error-msg" *ngIf="statusForm.controls['status'].errors?.['required']">
+                        Marital Status   is required
+                    </span>
+                  
+                    <span class="error-msg" *ngIf="statusForm.controls['status'].errors?.['maxlength']">
+                      Maximum 50 characters are allowed.
+                    </span>
+                  
+                    <span class="error-msg" *ngIf="statusForm.controls['status'].errors?.['pattern']">
+                      Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                    </span>
+                  </div>
+                  </div>
         </div>
     </form>
 
@@ -51,7 +65,8 @@
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm" (ngSubmit)="updateStatus()">
+    <form [formGroup]="updateForm">
+        <!-- <form [formGroup]="updateForm" (ngSubmit)="updateStatus()"></form> -->
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="d-flex justify-content-between popup-header-border p-3">
                 <div class="pt-2">
@@ -67,14 +82,28 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="statusname"
                         placeholder="Please enter status"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-                    <div *ngIf="updateForm.get('statusname')?.touched && updateForm.get('statusname')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('statusname')?.errors?.['required']">{{'Status name is required'|translate}}</div>
-                    </div>
+                    >
+                    <div *ngIf="updateForm.controls['statusname'].touched">
+            
+                        <div *ngIf="updateForm.controls['statusname'].touched || updateForm.controls['statusname'].dirty">
+                            <span class="error-msg" *ngIf="updateForm.controls['statusname'].errors?.['required']">
+                                Marital Status   is required
+                            </span>
+                          
+                            <span class="error-msg" *ngIf="updateForm.controls['statusname'].errors?.['maxlength']">
+                              Maximum 50 characters are allowed.
+                            </span>
+                          
+                            <span class="error-msg" *ngIf="updateForm.controls['statusname'].errors?.['pattern']">
+                              Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                            </span>
+                          </div>
+                          </div>
                 </div>
                 <div class="d-flex gap-5 w-100 pt-3">
                     <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary w-50 py-2" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary w-50 py-2" [disabled]="updateForm.invalid">{{'Update'|translate}}</button> 
+                    <!-- <button type="button" class="custom-btn btn-primary " (click)="updateStatus(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button> -->
                 </div>
             </div>
         </div>

@@ -38,14 +38,32 @@ export class GenderComponent {
 
   ngOnInit(): void {
     this.GenderForm = this.fb.group({
-      Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Gender: ['',  [
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Za-z][A-Za-z ]*$/)
+        // letters, periods, spaces (not at start)
+      ]]
     });
     this.updateForm = this.fb.group({
-      Gender: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Gender: ['',  [
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Za-z][A-Za-z ]*$/)
+        // letters, periods, spaces (not at start)
+      ]]
     });
     this.getGender();
   }
-
+ 
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
+    if (!pattern.test(char)) {
+      event.preventDefault(); // Block invalid input
+    }
+  }
+  
   getGender() {
     this.http.getData('Gender').subscribe((data: any) => {
       this.GenderDetail = data;

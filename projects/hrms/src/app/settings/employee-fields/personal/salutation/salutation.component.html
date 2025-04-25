@@ -3,22 +3,32 @@
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter saluation"
-                    formControlName="saluation" aria-label="saluation" aria-describedby="saluation"
-                    >
+                <input type="text" class="form-control custom-input" placeholder="Please enter salutation"
+                    formControlName="saluation" aria-label="saluation" aria-describedby="saluation">
                 <span class="input-group-text" id="saluation">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="saluationForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="saluationForm.get('saluation')?.touched && saluationForm.get('saluation')?.invalid"
-                class="error-msg mt-2">
-                <div *ngIf="saluationForm.get('saluation')?.errors?.['required']">{{'Saluation is required'|translate}}
-                </div>
-                <div *ngIf="saluationForm.get('saluation')?.errors?.['pattern']">
-                    Only letters, spaces (not at start) are allowed.
-                  </div>
+            <div *ngIf="saluationForm.controls['saluation'].touched">
+            
+                    <div *ngIf="saluationForm.controls['saluation'].touched || saluationForm.controls['saluation'].dirty">
+                        <span class="error-msg" *ngIf="saluationForm.controls['saluation'].errors?.['required']">
+                          Saluation is required
+                        </span>
+                      
+                        <span class="error-msg" *ngIf="saluationForm.controls['saluation'].errors?.['maxlength']">
+                          Maximum 50 characters are allowed.
+                        </span>
+                      
+                        <span class="error-msg" *ngIf="saluationForm.controls['saluation'].errors?.['pattern']">
+                          Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                        </span>
+                      </div>
+                      
             </div>
         </div>
+
+
     </form>
 
     <!--Data Content-->
@@ -61,7 +71,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <p class="popup-heading mb-0">{{'Edit Salutation'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Salutation'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -73,23 +83,40 @@
                         class="form-label custom-label mb-2">{{'Salutation'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="titlename"
-                        placeholder="Please enter titlename"
+                        placeholder="Please enter salutation"
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('titlename')?.touched && updateForm.get('titlename')?.invalid"
                         class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('titlename')?.errors?.['required']">{{'Titlename is
-                            required'|translate}}</div>
-                    </div>
+                       
+                    <div *ngIf="updateForm.controls['titlename'].touched || updateForm.controls['titlename'].dirty">
+                        <span class="error-msg" *ngIf="updateForm.controls['titlename'].errors?.['required']">
+                          Salutation is required
+                        </span>
+                      
+                        <span class="error-msg" *ngIf="updateForm.controls['titlename'].errors?.['maxlength']">
+                          Maximum 50 characters are allowed
+                        </span>
+                      
+                        <span class="error-msg" *ngIf="updateForm.controls['titlename'].errors?.['pattern']">
+                            Only letters, spaces, and periods are allowed. Field cannot start with a space or period
+                          </span>
+                        
+
+                      </div>
+                      
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary "
                         (click)="close(modal)">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
-                </div>
+            
+    </div>
+    </div>
             </div>
-        </div>
-    </form>
+            </div>
+            </form>
+
 </ng-template>
 
 <!--Delete Confirmation popup-->
@@ -101,8 +128,7 @@
             <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary"
-                (click)="modal.close()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary"
                 (click)="deletesal(updatesalutation)">{{'Yes'|translate}}</button>
         </div>

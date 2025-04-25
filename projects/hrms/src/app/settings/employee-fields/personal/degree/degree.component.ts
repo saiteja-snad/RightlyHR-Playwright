@@ -38,10 +38,18 @@ degreeFrom!: FormGroup;
   
 ngOnInit(): void {
 this.degreeFrom = this.fb.group({
-     degree: [null, [Validators.required]]
+     degree: [null,  [
+      Validators.required,
+      Validators.maxLength(50),
+      Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+    ]]
       });
       this.updateForm = this.fb.group({
-        degreeName: ["", Validators.required] 
+        degreeName: ["",  [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+        ]] 
       });
       this.getdegree();
     }

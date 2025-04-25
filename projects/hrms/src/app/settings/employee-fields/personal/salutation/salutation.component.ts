@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { FormGroup,ReactiveFormsModule,FormsModule, Validators, FormBuilder, } from '@angular/forms';
+import { FormGroup,ReactiveFormsModule,FormsModule, Validators, FormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Iroles } from '../../../roles-permissions/roles/roles.model';
 import { HttpService } from '../../../../services/http.service';
@@ -12,7 +12,7 @@ import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-salutation',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule,],
   templateUrl: './salutation.component.html',
   styleUrl: './salutation.component.scss'
 })
@@ -41,15 +41,32 @@ constructor(
   ngOnInit(): void {
     this.saluationForm = this.fb.group({
      
-      saluation: ['', [Validators.required,Validators.pattern(/^(?! )[A-Za-z. ]+$/)]]
+      saluation:  [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+        ]
+      ]
+    
       });
       this.updateForm = this.fb.group({
-        titlename: ['', [Validators.required]] 
+        titlename: [
+          '', 
+          [
+            Validators.required,
+            Validators.maxLength(50),
+            Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/)
+          ]
+        ]
       });
     this.getsaluation();
   
       
     }
+   
+    
   getsaluation() {
     this.subscription = this.http.getData("Title").subscribe({
        next: (data: any) => {

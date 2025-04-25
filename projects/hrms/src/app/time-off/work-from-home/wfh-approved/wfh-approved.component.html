@@ -1,11 +1,14 @@
+
 <div class="custom-main-component-container">
   <div class="custom-table-content">
+    @if(!dataload){
     <table class="w-100">
       <thead>
         <tr>
           <th>Worked Date</th>
           <th>Availed</th>
-          <!-- <th>Reason</th> -->
+          <th>Reason</th>
+          <th>Approver Reason</th>
           <th>Applied Date</th>
           <th>Status</th>
         </tr>
@@ -22,6 +25,34 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
+            <td>
+              <div>
+                  <span>
+                      <a type="button"  [ngbPopover]="requestedComments">
+                          <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                      </a>
+                      <ng-template #requestedComments>
+                          <div>
+                              <p class="mb-0">{{wfhRequest.requestedComments}}</p>
+                          </div>
+                      </ng-template>
+                  </span>
+              </div>
+          </td>
+          <td>
+            <div>
+                <span>
+                    <a type="button"  [ngbPopover]="reason">
+                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                    </a>
+                    <ng-template #reason>
+                        <div>
+                            <p class="mb-0">{{wfhRequest.reason}}</p>
+                        </div>
+                    </ng-template>
+                </span>
+            </div>
+        </td>
             <td>{{ wfhRequest.requestedDate | dateformat }}</td>
             <td>{{ wfhRequest.status }}</td>
           </tr>
@@ -36,5 +67,7 @@
         }
       </tbody>
     </table>
+  }@else{<app-data-loader-content />}
   </div>
 </div>
+

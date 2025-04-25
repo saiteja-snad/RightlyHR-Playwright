@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -11,6 +11,7 @@ import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-wfh-rejected',
@@ -21,7 +22,8 @@ import { RbacService } from '../../../services/rbac.service';
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
-    NoDataFoundComponent
+    NoDataFoundComponent,
+    DataLoaderContentComponent
 ],
   templateUrl: './wfh-rejected.component.html',
   styleUrl: './wfh-rejected.component.scss',
@@ -35,7 +37,7 @@ export class WfhRejectedComponent implements OnInit, OnDestroy {
   rejectedWFHsCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  dataload = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -48,7 +50,9 @@ export class WfhRejectedComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private http: HttpService,
     public rbac: RbacService,
-  ) {}
+  ) {
+    
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -67,6 +71,7 @@ export class WfhRejectedComponent implements OnInit, OnDestroy {
   getWFHRequests() {
     let empId = this.empinfo.employeeId;
     console.log(empId);
+    this.dataload = true; 
     this.http
       .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
       .pipe(takeUntil(this.destroy$))
@@ -83,6 +88,8 @@ export class WfhRejectedComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error fetching data:', error);
           this.rejectedWFHs = []; // Set to empty array on error
+        },complete: () =>{
+          this.dataload = false;
         },
       });
   }

@@ -115,7 +115,7 @@
                             Issued Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="issuedDate"
-                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" />
+                            formControlName="issuedDate"  onkeypress="return false" [max]="currentDate | date: 'yyyy-MM-dd'" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('issuedDate')?.invalid && certificationForm.get('issuedDate')?.touched">
                             Issued Date is required
@@ -217,7 +217,7 @@
                             Issued Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="issuedDate"
-                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" />
+                            formControlName="issuedDate"  onkeypress="return false" [max]="currentDate | date: 'yyyy-MM-dd'" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('issuedDate')?.invalid && updateCertificationForm.get('issuedDate')?.touched">
                             Issued Date is required

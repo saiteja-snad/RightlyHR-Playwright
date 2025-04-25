@@ -104,6 +104,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       };
       this.http.putData(`reviewCycleHeader/update/${this.reviewCycleForm.value.id}`, reviewCycleData).subscribe({
         next: (response) => {
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Review Cycle Updated Successfully')
         },
         error: (error) => {

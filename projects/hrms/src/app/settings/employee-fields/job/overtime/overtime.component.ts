@@ -39,10 +39,10 @@ export class OvertimeComponent implements OnInit,OnDestroy {
   }
   ngOnInit(): void {
     this.OvertimeForm = this.fb.group({
-      overtime: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      overtime: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      overtime: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      overtime: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.getovertime();
@@ -63,11 +63,12 @@ export class OvertimeComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata('Overtime', request).subscribe({
       next: () => {
         this.getovertime();
-        this.conformationPopup.openSuccessModal('Overtime eligiblity added successfully');
+        this.conformationPopup.openSuccessModal('Overtime Eligibility added successfully');
          this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.message;
+        this.conformationPopup.openErrorModal(errorMessage);
          this.resetForm();
       }
     });
@@ -86,10 +87,11 @@ export class OvertimeComponent implements OnInit,OnDestroy {
             this.getovertime();
             modal.close();
             this.updateForm.reset();
-            this.conformationPopup.openSuccessModal('Overtime eligiblity updated successfully');
+            this.conformationPopup.openSuccessModal('Overtime Eligibility updated successfully');
           },
           error: (err: any) => {
-            this.conformationPopup.openErrorModal('Update failed. Please try again.');
+            const errorMessage = err.error?.message;
+            this.conformationPopup.openErrorModal(errorMessage);
           }
         });
       }
@@ -121,10 +123,11 @@ export class OvertimeComponent implements OnInit,OnDestroy {
           next: () => {
             this.getovertime();
             modal.close();
-            this.conformationPopup.openSuccessModal('Overtime eligiblity deleted successfully');
+            this.conformationPopup.openSuccessModal('Overtime Eligibility deleted successfully');
           },
           error: (err: any) => {
-            this.conformationPopup.openErrorModal('Failed to delete the location');
+            const errorMessage = err.error?.message;
+            this.conformationPopup.openErrorModal(errorMessage);
           }
         });
       }

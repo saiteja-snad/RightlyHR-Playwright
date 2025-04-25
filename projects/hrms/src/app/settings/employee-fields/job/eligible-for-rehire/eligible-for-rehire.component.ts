@@ -38,10 +38,10 @@ export class EligibleForRehireComponent {
   }
   ngOnInit(): void {
     this.EligibilityForm = this.fb.group({
-      Rehire: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Rehire: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      Rehire: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Rehire: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.getEligibility();
@@ -62,11 +62,12 @@ export class EligibleForRehireComponent {
     this.subscription = this.http.postdata('Eligibleforrehire', request).subscribe({
       next: () => {
         this.getEligibility();
-        this.conformationPopup.openSuccessModal('Eligibility for rehire added successfully');
+        this.conformationPopup.openSuccessModal('Eligibility For Rehire added successfully');
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
         this.resetForm();
       }
     });
@@ -85,10 +86,11 @@ export class EligibleForRehireComponent {
           this.getEligibility();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Eligibile for rehire updated successfully');
+          this.conformationPopup.openSuccessModal('Eligibile For Rehire updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -120,10 +122,11 @@ export class EligibleForRehireComponent {
       next: () => {
         this.getEligibility();
         modal.close();
-        this.conformationPopup.openSuccessModal('Eligible for rehire deleted successfully');
+        this.conformationPopup.openSuccessModal('Eligible For Rehire deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

@@ -39,10 +39,10 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
   }
   ngOnInit(): void {
     this.BussinesForm = this.fb.group({
-      BUSINESS: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      BUSINESS: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      BUSINESS: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      BUSINESS: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.getBusiness();
@@ -63,11 +63,12 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
     this.subscription = this.http.postdata('Bussinesarea', request).subscribe({
       next: () => {
         this.getBusiness();
-        this.conformationPopup.openSuccessModal('Bussiness area added successfully');
+        this.conformationPopup.openSuccessModal('Bussiness Area added successfully');
          this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
          this.resetForm();
       }
     });
@@ -86,10 +87,11 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
           this.getBusiness();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Bussiness area updated successfully');
+          this.conformationPopup.openSuccessModal('Bussiness Area updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -121,10 +123,11 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
       next: () => {
         this.getBusiness();
         modal.close();
-        this.conformationPopup.openSuccessModal('Business area deleted successfully');
+        this.conformationPopup.openSuccessModal('Business Area deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

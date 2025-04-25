@@ -42,6 +42,10 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   Status: any;
   documentForm!: FormGroup;
   selectedItem: any;
+  IdentityMaxNumber: number = 15;   // used to max fields for comparision
+  IdentityMinNumber: number = 12;
+  isMandatory: boolean = false;
+  pattern= '[0-9]';
   @ViewChild('uploadPopup') uploadPopup: any;
   @ViewChild('viewpopup') viewpopup: any;
   @ViewChild('confirmationPopup') confirmationPopup: any;
@@ -159,12 +163,10 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   }
 
   //onclik for document
-  IdentityMaxNumber: number = 15;   // used to max fields for comparision
-  IdentityMinNumber: number = 12;
-  isMandatory: boolean = false;
-  pattern: any;
+
   errorMsg = 'Special characters are not allowed';
   onClickEditDocument(data: any) {
+
     this.documentSelectFields = JSON.parse(JSON.stringify(data));
     this.isMandatory = false;
     if (this.documentSelectFields.documentType?.toLowerCase() === "pan") {
@@ -191,8 +193,9 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   }
 
   openModal(item: any) {
+
     this.selectedItem = item;
-    this.documentForm.patchValue({ documentType: item.documentType || '', documentNumber: item.documentNumber || '' });
+    this.documentForm?.patchValue({ documentType: item.documentType || '', documentNumber: item.documentNumber || '' });
     this.modalService.open(this.uploadPopup, { centered: true, backdrop: 'static' });
   }
 
@@ -207,6 +210,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   //to select the attached file
   onDocAttachmentSelected(event: any) {
+
     let file = event.target.files[0];
     let d: Date = new Date()
     let documentType = this.documentSelectFields.documentType.replace(/\//g, ' ')
@@ -277,28 +281,37 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   //function validate the file
   onChanges(event: Event) {
-    if (event) {
-      const input = event.target as HTMLInputElement;
-      if (input.files && input.files.length > 0) {
-        const file = input.files[0];
-        const allowedTypes = ['image/jpeg', 'image/*', 'application/pdf', 'image/png'];
-        const maxSizeInBytes = 25 * 1024 * 1024;
-        if (!allowedTypes.includes(file.type)) {
-          this.showErrorforpdf = true;
-          this.showErrorrforsize = false;
-          input.value = '';
-        }
-        else if (file.size > maxSizeInBytes) {
-          this.showErrorrforsize = true;
-          this.showErrorforpdf = false;
-          input.value = '';
-        }
-        else {
-          this.showErrorforpdf = false;
-          this.showErrorrforsize = false;
-        }
+    if(event){
+
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+  
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+      const maxSizeInBytes = 25 * 1024 * 1024;
+  
+      if (!allowedTypes.includes(file.type)) {
+        this.showErrorforpdf = true;
+        this.showErrorrforsize = false;
+        this.documentForm.get('docFile')?.setValue(null);
+        return;
+      } else if (file.size > maxSizeInBytes) {
+        this.showErrorrforsize = true;
+        this.showErrorforpdf = false;
+        this.documentForm.get('docFile')?.setValue(null);
+        return;
       }
+  
+      // ✅ Everything is valid, update form control
+      this.showErrorforpdf = false;
+      this.showErrorrforsize = false;
+      this.documentForm.get('docFile')?.setValue(file);
+    } else {
+      this.documentForm.get('docFile')?.setValue(null);
     }
+          
+  }
   }
 
   //function to get the document

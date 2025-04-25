@@ -127,7 +127,7 @@
                     <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="bloodGroups" optionLabel="name" optionValue="value" id="bloodGroup"
-                            formControlName="bloodGroup" (onChange)="checkvalidation()" placeholder="Please select blood group"
+                            formControlName="bloodGroup" placeholder="Please select blood group"
                             class="form-select custom-select">
                         </p-select>
                     </div>
@@ -249,7 +249,7 @@
                 <div class="component-header my-3">Permanent Address</div>
     
                 <div class="form-check custom-label mb-3 mx-3">
-                    <input class="form-check-input" type="checkbox" id="sameAddress"
+                    <input class="form-check-input custom-check" type="checkbox" id="sameAddress" formControlName="sameAsPermanent"
                         (change)="copyCurrentAddress($event)" />
                     <label class="form-check-label" for="sameAddress">Same as Current Address</label>
                 </div>
@@ -258,7 +258,7 @@
                 <ng-container formGroupName="permanentAddress">
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
-                                class="text-danger">*</span></label>
+                                class="text-danger"></span></label>
                         <input type="text" class="form-control custom-input" id="permanentAddressLine1"
                             formControlName="addressLine1" placeholder="Please enter address line 1" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine1')?.invalid && personalDetailsForm.get('permanentAddress.addressLine1')?.touched"
@@ -267,7 +267,7 @@
                     </div>
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2
-                            <span class="text-danger">*</span></label>
+                            <span class="text-danger"></span></label>
                         <input type="text" class="form-control custom-input" id="permanentAddressLine2"
                             formControlName="addressLine2" placeholder="Please enter address line 2" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine2')?.invalid && personalDetailsForm.get('permanentAddress.addressLine2')?.touched"
@@ -277,7 +277,7 @@
                     </div>
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentCity" class="form-label custom-label mb-2">City<span
-                                class="text-danger">*</span></label>
+                                class="text-danger"></span></label>
                         <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
                             placeholder="Please enter city" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.city')?.invalid && personalDetailsForm.get('permanentAddress.city')?.touched"
@@ -287,7 +287,7 @@
                     </div>
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentstate" class="form-label custom-label mb-2">State<span
-                                class="text-danger">*</span></label>
+                                class="text-danger"></span></label>
                         <input type="text" class="form-control custom-input" id="permanentState"
                             placeholder="Please enter state" formControlName="state" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.state')?.invalid && personalDetailsForm.get('permanentAddress.state')?.touched"
@@ -296,7 +296,7 @@
                     </div>
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentCountry" class="form-label custom-label mb-2">Country
-                            <span class="text-danger">*</span></label>
+                            <span class="text-danger"></span></label>
                         <input type="text" class="form-control custom-input" id="permanentCountry"
                             placeholder="Please enter country" formControlName="country" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.country')?.invalid && personalDetailsForm.get('permanentAddress.country')?.touched"
@@ -306,7 +306,7 @@
                     </div>
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentzipCode" class="form-label custom-label mb-2">Zip Code<span
-                                class="text-danger">*</span></label>
+                                class="text-danger"></span></label>
                         <input type="text" class="form-control custom-input no-arrows" id="permanentzipCode"
                             placeholder="Please enter zip code" formControlName="zipCode" autocomplete="off" minlength="2"
                             maxlength="6">

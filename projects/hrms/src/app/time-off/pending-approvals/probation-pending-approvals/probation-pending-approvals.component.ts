@@ -60,7 +60,7 @@ export class ProbationPendingApprovalsComponent {
     }
 
     ngOnInit(): void {
-      this.LOGIN = JSON.parse(localStorage.getItem('fusionuser') || '{}');
+      this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       //console.log(this.isformsubmit);
       this.getProbationExtendDays();
       this.getAllPendingApprovals();

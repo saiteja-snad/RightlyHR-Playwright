@@ -11,10 +11,11 @@ import { RegularizationRequest } from '../../../Interfaces/timoff-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-premissions-waiting-for-approval',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './premissions-waiting-for-approval.component.html',
   styleUrl: './premissions-waiting-for-approval.component.scss'
 })
@@ -28,7 +29,7 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
   destroy$: Subject<boolean> = new Subject<boolean>();
   permissions = [] as any;
   waitingForApprovalPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
-
+  dataload =  false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -41,11 +42,9 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
     public rbac: RbacService,
   ) {
     effect(() => {
-      if (this.http.tirggerCountSignal().permission) {
+      if (this.http.permissionTriggerSignal()) {
         this.getDataPermissions();
-      this.http
-        .tirggerCountSignal
-        .update((status) => ({ ...status, permission: false }));
+        this.http.permissionTriggerSignal.set(false);
       }
     });
   }
@@ -67,16 +66,19 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
 
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
+    this.dataload =  true;
     this.http.getData(`RegularizationRequests/${empId}`)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (response: any) => {
         this.permissions = response as RegularizationRequest[];
         this.waitingForApprovalPerimisions = this.permissions.filter((element: { status: string }) => element.status === 'Waiting for Approval');
+        this.dataload =  false;
       },
       error: (error) => {
         console.error('Error fetching data:', error);
-        this.permissions = []; // Set to empty array on error
+        this.permissions = [];
+        this.dataload =  false; // Set to empty array on error
       },
     });
   }

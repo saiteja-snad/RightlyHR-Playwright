@@ -11,7 +11,7 @@
                 <div class="col-lg-4 col-md-6 mb-3">
                     <label for="firstName" class="form-label custom-label mb-2">First Name<span
                             class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input text-capitalize" id="firstName"
+                    <input type="text" class="form-control custom-input" id="firstName"
                         formControlName="firstName" placeholder="Please enter first name" autocomplete="off" />
                     <div class="error-msg my-1"
                         *ngIf="personalDetailsForm.get('firstName')?.touched && personalDetailsForm.get('firstName')?.invalid">
@@ -24,15 +24,16 @@
                 <!-- Middle Name -->
                 <div class="col-lg-4 col-md-6 mb-3">
                     <label for="middleName" class="form-label custom-label mb-2">Middle Name</label>
-                    <input type="text" class="form-control custom-input text-capitalize" id="middleName"
+                    <input type="text" class="form-control custom-input" id="middleName" (keydown)="enforceMaxLength($event, 50)"
                         formControlName="middleName" placeholder="Please enter middle name" autocomplete="off" />
+                    
                 </div>
     
                 <!-- Last Name -->
                 <div class="col-lg-4 col-md-6 mb-3">
                     <label for="lastName" class="form-label custom-label mb-2">Last Name<span
                             class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input text-capitalize" id="lastName"
+                    <input type="text" class="form-control custom-input" id="lastName"
                         formControlName="lastName" placeholder="Please enter last name" autocomplete="off" />
                     <div class="error-msg my-1"
                         *ngIf="personalDetailsForm.get('lastName')?.touched && personalDetailsForm.get('lastName')?.invalid">
@@ -177,7 +178,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="currentAddressLine1"
+                        <input type="text" class="form-control custom-input" id="currentAddressLine1" (keydown)="enforceMaxLength($event, 150)"
                             formControlName="addressLine1" placeholder="Please enter address line 1" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('currentAddress.addressLine1')?.invalid && personalDetailsForm.get('currentAddress.addressLine1')?.touched"
                             class="error-msg">
@@ -187,7 +188,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line2<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="currentAddressLine2"
+                        <input type="text" class="form-control custom-input" id="currentAddressLine2" (keydown)="enforceMaxLength($event, 150)"
                             formControlName="addressLine2" placeholder="Please enter address line 2" autocomplete="off">
                         <div *ngIf="personalDetailsForm.get('currentAddress.addressLine2')?.invalid && personalDetailsForm.get('currentAddress.addressLine2')?.touched"
                             class="error-msg">
@@ -197,7 +198,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentCity" class="form-label custom-label mb-2">City<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="currentCity" formControlName="city"
+                        <input type="text" class="form-control custom-input" id="currentCity" formControlName="city" (keydown)="enforceMaxLength($event, 50)"
                             placeholder="Please enter city" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('currentAddress.city')?.invalid && personalDetailsForm.get('currentAddress.city')?.touched"
                             class="error-msg">
@@ -207,7 +208,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentstate" class="form-label custom-label mb-2">State<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="currentState"
+                        <input type="text" class="form-control custom-input" id="currentState" (keydown)="enforceMaxLength($event, 50)"
                             placeholder="Please enter state" formControlName="state" autocomplete="off">
                         <div *ngIf="personalDetailsForm.get('currentAddress.state')?.invalid && personalDetailsForm.get('currentAddress.state')?.touched"
                             class="error-msg">
@@ -217,7 +218,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentCountry" class="form-label custom-label mb-2">Country<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="currentCountry"
+                        <input type="text" class="form-control custom-input" id="currentCountry" (keydown)="enforceMaxLength($event, 50)"
                             placeholder="Please enter country" formControlName="country" autocomplete="off">
                         <div *ngIf="personalDetailsForm.get('currentAddress.country')?.invalid && personalDetailsForm.get('currentAddress.country')?.touched"
                             class="error-msg">
@@ -227,7 +228,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentzipCode" class="form-label custom-label mb-2">Zip Code<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input no-arrows" id="currentzipCode"
+                        <input type="text" class="form-control custom-input no-arrows" id="currentzipCode" (keydown)="enforceMaxLength($event, 6)"
                             placeholder="Please enter zip code" formControlName="zipCode" autocomplete="off" minlength="2"
                             maxlength="6">
                         <div *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.touched && personalDetailsForm.get('currentAddress.zipCode')?.errors"
@@ -259,7 +260,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                                 class="text-danger"></span></label>
-                        <input type="text" class="form-control custom-input" id="permanentAddressLine1"
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine1" (keydown)="enforceMaxLength($event, 150)"
                             formControlName="addressLine1" placeholder="Please enter address line 1" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine1')?.invalid && personalDetailsForm.get('permanentAddress.addressLine1')?.touched"
                             class="error-msg">Address Line 1 is required
@@ -268,7 +269,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2
                             <span class="text-danger"></span></label>
-                        <input type="text" class="form-control custom-input" id="permanentAddressLine2"
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine2" (keydown)="enforceMaxLength($event, 150)"
                             formControlName="addressLine2" placeholder="Please enter address line 2" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine2')?.invalid && personalDetailsForm.get('permanentAddress.addressLine2')?.touched"
                             class="error-msg">
@@ -278,7 +279,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentCity" class="form-label custom-label mb-2">City<span
                                 class="text-danger"></span></label>
-                        <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
+                        <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"(keydown)="enforceMaxLength($event, 50)"
                             placeholder="Please enter city" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.city')?.invalid && personalDetailsForm.get('permanentAddress.city')?.touched"
                             class="error-msg">
@@ -288,7 +289,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentstate" class="form-label custom-label mb-2">State<span
                                 class="text-danger"></span></label>
-                        <input type="text" class="form-control custom-input" id="permanentState"
+                        <input type="text" class="form-control custom-input" id="permanentState" (keydown)="enforceMaxLength($event, 50)"
                             placeholder="Please enter state" formControlName="state" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.state')?.invalid && personalDetailsForm.get('permanentAddress.state')?.touched"
                             class="error-msg">State is required
@@ -297,7 +298,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentCountry" class="form-label custom-label mb-2">Country
                             <span class="text-danger"></span></label>
-                        <input type="text" class="form-control custom-input" id="permanentCountry"
+                        <input type="text" class="form-control custom-input" id="permanentCountry" (keydown)="enforceMaxLength($event, 50)"
                             placeholder="Please enter country" formControlName="country" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.country')?.invalid && personalDetailsForm.get('permanentAddress.country')?.touched"
                             class="error-msg">
@@ -307,7 +308,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentzipCode" class="form-label custom-label mb-2">Zip Code<span
                                 class="text-danger"></span></label>
-                        <input type="text" class="form-control custom-input no-arrows" id="permanentzipCode"
+                        <input type="text" class="form-control custom-input no-arrows" id="permanentzipCode" (keydown)="enforceMaxLength($event, 6)"
                             placeholder="Please enter zip code" formControlName="zipCode" autocomplete="off" minlength="2"
                             maxlength="6">
                         <div *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.touched && personalDetailsForm.get('permanentAddress.zipCode')?.errors"

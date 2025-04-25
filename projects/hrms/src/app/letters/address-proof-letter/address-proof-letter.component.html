@@ -13,7 +13,7 @@
             <form [formGroup]="employeeForm" (ngSubmit)="postAddressLetterFormSubmit(employeeForm)">
                 <!-- Employee Name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
@@ -37,21 +37,25 @@
                     <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
                         <div class="error-msg">Address is required</div>
                     </div>
+                    <div *ngIf="addressErrorMessage" class="error-msg">
+                        {{ addressErrorMessage }}
+                    </div>
                 </div>
+
+                <!-- Document Type -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
                             formControlName="Documenttype" class="form-select custom-select">
-                            <option disabled [ngValue]="undefined">Select</option>
-                            <option Value="true">Yes</option>
-                            <option Value="false">No</option>
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
                         <div class="error-msg">Document Type is required</div>
                     </div>
                 </div>
+
+                <!-- Signgature Authority -->
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                         Authority Name<span class="error-msg">*</span></label>
@@ -64,12 +68,14 @@
                         <div class="error-msg">Signature Authority Name is required</div>
                     </div>
                 </div>
+
                 <div>
                     <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
                         Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
                 </div>
+
                 <div class="d-flex flex-wrap gap-3 pt-3">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">Generate Document</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || addressErrorMessage">Generate Document</button>
                 </div>
             </form>
         </div>
@@ -78,6 +84,13 @@
             <div class="d-flex justify-content-center">
                 <div class="letter-page-content" id="pdfContent">
                     <div class="letter-page-sub-content">
+                        <div *ngIf="employeeForm.get('Documenttype')?.value.value === true" class="soft-copy-letter">
+                            <app-lettersheader></app-lettersheader>
+                        </div>
+                        <ng-template #doc>
+                            <div class="hard-copy-letter"></div>
+                        </ng-template>
+                        
                         <div class="py-5">
                             <div class="letter-header text-center"><u>TO WHOMSOEVER IT MAY CONCERN</u></div>
                         </div>
@@ -102,9 +115,10 @@
                                     <ng-template #joining><b>{{ employeeForm.value.dateOfJoining | dateformat }}</b></ng-template>.
                                     Currently, residential address is
                                     <span *ngIf="!addressFlag; else address">_______________________</span>
+
                                     <ng-template #address>
                                         <b *ngIf="employeeForm">
-                                            {{ employeeForm.get('addressLine1')?.value || 'No Data' }},
+                                            {{ employeeForm.get('addressLine1')?.value || '' }},
                                             {{ employeeForm.get('addressLine2')?.value }},
                                             {{ employeeForm.get('city')?.value }},
                                             {{ employeeForm.get('state')?.value }},
@@ -112,6 +126,7 @@
                                             {{ employeeForm.get('zipCode')?.value }}.
                                         </b>
                                     </ng-template>
+
                                 </span>
                             </p>
                         </div>

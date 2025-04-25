@@ -11,12 +11,13 @@
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
             <form [formGroup]="employeeForm" (ngSubmit)="postBankLoanLetterFormSubmit(employeeForm)">
+                <!-- Employee -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
-                            class="custom-select w-100" (onChange)="Onclick($event)">
+                        <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            [showClear]="false" placeholder="Please select employee" formControlName="fusionEmpId"
+                            class="custom-select w-100" (onChange)="onClickEmployee($event)">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
@@ -24,6 +25,7 @@
                     </div>
                 </div>
         
+                <!-- Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Date <span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="dateofbankloan"
@@ -33,12 +35,12 @@
                     </div>
                 </div>
         
+                <!-- Document Type -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
                             formControlName="Documenttype" class="form-select custom-select">
-                            <option disabled [ngValue]="undefined">Select</option>
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
@@ -46,13 +48,14 @@
                     </div>
                 </div>
         
+                <!-- Signature Authority -->
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                         Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                        <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please signature authority name"
                             class="form-select custom-select" formControlName="authorityid"
-                            (onChange)="onclickDesignation($event.value)" />
+                            (onChange)="onclickDesignation($event)" />
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature Authority Name is required</div>
@@ -65,9 +68,26 @@
                         Document.
                     </p>
                 </div>
+
+                <div *ngIf="jobErrorMessage" class="error-msg">
+                    {{ jobErrorMessage }}
+                </div>
+
+                <div *ngIf="dateValidationErrorMessage" class="error-msg">
+                    {{ dateValidationErrorMessage }}
+                </div>
+
                 <div class="d-flex flex-wrap gap-3 pt-3">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">Generate
-                        Document</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || spinnerLoader">
+                       
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+                    </button>
                 </div>
             </form>
         </div>
@@ -77,27 +97,29 @@
                 <div>
                     <div class="letter-page-content" id="pdfContent">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="employeeForm.get('Documenttype')?.value === true; else doc" class="soft-copy-letter">
+
+                            <div *ngIf="employeeForm.get('Documenttype')?.value?.value === true; else doc" class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
                             </div>
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
                             </ng-template>
+
                             <div class="py-3 text-end">
-                                Date: {{bankloanLetterData.dateofbankloan |dateformat}}
+                                Date: {{this.employeeForm.get('dateofbankloan')?.value|dateformat}}
                             </div>
                             <div class="py-4">
                                 <div class="letter-header">TO WHOMSOEVER IT MAY CONCERN</div>
                             </div>
                             <p>
                                 <span>This letter is to confirm that
-                                    <span *ngIf="!bankloanLetterData.firstName;else name">_______________________</span>
+                                    <span *ngIf="!employeeFullname; else name">_______________________</span>
                                     <ng-template #name><b>{{employeeFullname}}</b></ng-template> has been working in our Establishment
                                     "RightlyHR" currently designated as
-                                    <span *ngIf="!bankloanLetterData.jobRole;else role">_______________________</span>
-                                    <ng-template #role><b> {{employeedatabank.jobRole}} </b></ng-template> since <span
-                                        *ngIf="!bankloanLetterData.dateOfJoining;else joining">_______________________.</span>
-                                    <ng-template #joining><b>{{employeedatabank.dateOfJoining|dateformat}}.</b></ng-template>
+                                    <span *ngIf="!selectedEmployeeJobDetails?.jobRole;else role">_______________________</span>
+                                    <ng-template #role><b> {{selectedEmployeeJobDetails.jobRole}} </b></ng-template> since <span
+                                        *ngIf="!selectedEmployee?.dateOfJoining;else joining">_______________________.</span>
+                                    <ng-template #joining><b>{{selectedEmployee.dateOfJoining|dateformat}}.</b></ng-template>
                                 </span>
                             </p>
                             <p>
@@ -107,20 +129,20 @@
                             <p>If you have any further questions, you can call us at 8886651309.</p>
                             <p>Sincerely,<br><span class="letter-sub-header">for RightlyHR</span></p>
                             <!-- Show "Authority Signature" only when no authority is selected -->
-                            <div *ngIf="!bankloanLetterData.authorityName?.trim()" class="mb-3">Authority Signature</div>
+                            <div *ngIf="!authorityFullName" class="mb-3">Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->
-                            <div *ngIf="bankloanLetterData.authorityName?.trim()">
+                            <div *ngIf="authorityFullName">
                                 <p class="letter-sub-header">Authority Name</p>
                                 <p class="letter-sub-header">Designation</p>
                             </div>
                             <!-- Signature in custom font (Only show when valid name exists) -->
-                            <div *ngIf="bankloanLetterData.authorityName?.trim()" style="font-family: Segoe script; font-size: large;">
-                                {{ bankloanLetterData.authorityName }}
+                            <div *ngIf="authorityFullName" style="font-family: Segoe script; font-size: large;">
+                                {{authorityFullName }}
                             </div>
                             <!-- Stamp & Designation (Only show when valid name exists) -->
-                            <div *ngIf="bankloanLetterData.authorityName?.trim()">
-                                <p>{{ bankloanLetterData.authorityName }}</p>
-                                <p>{{ authorityDesignation }}</p>
+                            <div *ngIf="authorityFullName">
+                                <p>{{authorityFullName }}</p>
+                                <p>{{selectedAuthority.designation}}</p>
                             </div>
                         </div>
                         <div class="letter-footer">

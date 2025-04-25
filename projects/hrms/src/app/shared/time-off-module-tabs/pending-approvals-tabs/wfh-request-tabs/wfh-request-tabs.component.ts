@@ -6,6 +6,7 @@ import { TabsModule } from 'primeng/tabs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { AttendanceRequest, ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
+import { SignalsService } from '../../../../services/signals.service';
 
 @Component({
   selector: 'app-wfh-request-tabs',
@@ -39,12 +40,22 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
     this.getAllWFHPendingApprovalsCount();
   }
   
-  constructor(public readonly router: Router, private http: HttpService,) {
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) {
     effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().wfh) {
+      if (this.signalService.wfhForYouTriggerSignal() || this.signalService.wfhForRoleTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
         this.getAllWFHPendingApprovalsCount();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, wfh: false }));
+      
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.wfhForYouTriggerSignal()) {
+          this.signalService.wfhForYouTriggerSignal.set(false);
+        }
+        
+        if (this.signalService.wfhForRoleTriggerSignal()) {
+          this.signalService.wfhForRoleTriggerSignal.set(false);
+        }
       }
+      
     });    
   }
 
@@ -55,14 +66,23 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   getAllWFHPendingApprovalsCount() {
     const employeeId = parseInt(this.empinfo.employeeId);
     const moduleId = 2;
+    
     this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
-        const filtered = data.filter(item => item.moduleId === moduleId);
-        this.pendingApprovalCount.set(filtered);
+        if (data && data.length > 0) {
+          // Filter the data based on the moduleId
+          const filtered = data.filter(item => item.moduleId === moduleId);
+          this.pendingApprovalCount.set(filtered);
+        } else {
+          this.pendingApprovalCount.set([
+            { moduleId: 2, moduleName: 'WFH', forYou: 0, forYourRole: 0, totalCount: 0 },
+          ]);
+        }
       },
       error: (err) => console.error('Error fetching approvals:', err),
     });
   }
+  
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

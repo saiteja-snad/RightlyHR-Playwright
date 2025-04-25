@@ -1,11 +1,14 @@
+
 <div class="custom-main-component-container">
     <div class="custom-table-content ">
+      @if(!dataload){
         <table class="w-100">
             <thead>
                 <tr>
                     <th>Worked Date</th>
                     <th>Availed</th>
                     <th>Reason</th>
+                    <th>Rejected Reason</th>
                     <th>Applied Date</th>
                     <th>Status</th>
                 </tr>
@@ -23,18 +26,46 @@
                         </td>
                         <td>
                             <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{wfhRequest.reason}}</p>
-                                        </div>
-                                    </ng-template>
-                                </span>
+                              <span>
+                                <a *ngIf="wfhRequest.requestedComments; else noRequestedComments"
+                                   type="button"
+                                  
+                                   [ngbPopover]="requestedComments">
+                                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #requestedComments>
+                                  <div>
+                                    <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
+                                  </div>
+                                </ng-template>
+                                <ng-template #noRequestedComments>
+                                  <span>-</span>
+                                </ng-template>
+                              </span>
                             </div>
-                        </td>
+                          </td>
+                          
+                          <td>
+                            <div>
+                              <span>
+                                <a *ngIf="wfhRequest.reason; else noReason"
+                                   type="button"
+                                   [ngbPopover]="reason">
+                                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                  <div>
+                                    <p class="mb-0">{{ wfhRequest.reason }}</p>
+                                  </div>
+                                </ng-template>
+                                <ng-template #noReason>
+                                  <span>-</span>
+                                </ng-template>
+                              </span>
+                            </div>
+                          </td>
+                          
+                        
                         <td>{{ wfhRequest.requestedDate | dateformat }}</td>
                         <td>{{ wfhRequest.status }}</td>
                     </tr>
@@ -50,5 +81,6 @@
                 }
             </tbody>
         </table>
+      }@else{<app-data-loader-content />}
     </div>
 </div>

@@ -23,9 +23,9 @@
                         <td>{{bankiteams.accountName}}</td>
                         <td>{{bankiteams.accountNo}}</td>
                         <td>{{bankiteams.ifscCode}}</td>
-                        <td>
-                            <span *ngIf="bankiteams.docUrl;else noData" class="dowload-text" (click)="onSelectBankProofDownload(bankiteams)">
-                                <i class="bi bi-download clip-icon me-1"></i>Download</span><ng-template #noData>-</ng-template>
+                        <td class="text-nowrap">
+                            <div *ngIf="bankiteams.docUrl;else noData" class="dowload-text" (click)="onSelectBankProofDownload(bankiteams)">
+                                <i class="bi bi-download clip-icon me-1"></i>Download</div><ng-template #noData>-</ng-template>
                         </td>
                         <td>{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                         <td class="text-center">

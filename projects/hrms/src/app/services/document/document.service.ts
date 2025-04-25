@@ -13,7 +13,7 @@ export class DocumentService {
   }
 
   createSubDirectorySubmit(data: ICreateSubDir) {
-    data.mainDir = '/FusionDocuments';
+   
     return this.http.postdata('FileSystem/subdirectories', data);
   }
   deleteDirectory(directoryName:string) {

@@ -108,9 +108,6 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
     this.modalService.open(this.addSubModal, { centered: true });
   }
   createSubDirectory(f:NgForm){
-    debugger
-    console.log(this.subDir);
-    
     this.subscription = this.documentService.createSubDirectorySubmit(this.subDir)
     .subscribe({
       next: (data: any) => {

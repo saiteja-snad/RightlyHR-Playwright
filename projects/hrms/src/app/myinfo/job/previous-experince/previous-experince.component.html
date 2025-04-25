@@ -122,7 +122,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="FromDate" formControlName="fromDate"
+                            <input type="date" class="form-control custom-input" id="FromDate" formControlName="fromDate"  onkeypress="return false"
                                 [min]="'1940-01-01'" [max]="currentDate | date: 'yyyy-MM-dd'"
                                 (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
@@ -137,7 +137,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
+                            <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"  onkeypress="return false"
                                 (change)="toDateValidation()" [max]="currentDate | date: 'yyyy-MM-dd'"
                                 [min]="employeeExperienceForm.get('fromDate')?.value" />
                             <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
@@ -304,7 +304,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="FromDate"
+                            <input type="date" class="form-control custom-input" id="FromDate"  onkeypress="return false"
                                 formControlName="fromDateupdate" [min]="'1940-01-01'"
                                 (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
@@ -320,7 +320,7 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate"
-                                formControlName="toDateupdate" (change)="toDateValidation()"
+                                formControlName="toDateupdate" (change)="toDateValidation()"  onkeypress="return false"
                                 [max]="currentDate | date: 'yyyy-MM-dd'" />
 
                             <div *ngIf=" employeeExperienceupdateForm.get('toDateupdate')?.invalid &&

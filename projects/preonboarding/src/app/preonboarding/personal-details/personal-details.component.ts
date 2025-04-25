@@ -3,7 +3,7 @@ import { Component, effect, OnInit, signal, ViewChild, ViewEncapsulation } from 
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { AbstractControl, FormBuilder, FormGroup, MaxLengthValidator, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, MaxLengthValidator, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IAddress, IGender, IJobdetails, Ipersonal, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
@@ -15,7 +15,7 @@ import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-personal-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
+  imports: [CommonModule, Select,ReactiveFormsModule, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
   templateUrl: './personal-details.component.html',
   styleUrl: './personal-details.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -43,6 +43,7 @@ export class PersonalDetailsComponent implements OnInit {
   selectedCountryCode = signal<string>('');
   selectedCountryCodegflag: any;
   loading = true;
+  sameAsPermanent=false;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -155,6 +156,7 @@ export class PersonalDetailsComponent implements OnInit {
       subLocation: [{ value: null, disabled: true }, ],
       designation: [{ value: null, disabled: true },],
       personalEmail: [{ value: null, disabled: true }, Validators.required],
+      sameAsPermanent:[{value:false}],
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
@@ -163,17 +165,17 @@ export class PersonalDetailsComponent implements OnInit {
         city: [null, [Validators.required,Validators.maxLength(30)]],
         state: [null, [Validators.required,Validators.maxLength(30)]],
         country: [null, [Validators.required ,Validators.maxLength(30)]],
-        zipCode: [null, [Validators.required,Validators.pattern('^[0-6]{6}$')]],
+        zipCode: [null, [Validators.required,Validators.maxLength(6)]],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: [null, [Validators.required,Validators.maxLength(100)]],
-        addressLine2: [null, [Validators.required,Validators.maxLength(100)]],
-        city: [null, [Validators.required,Validators.maxLength(30)]],
-        state: [null, [Validators.required,Validators.maxLength(30)]],
-        country: [null, [Validators.required,Validators.maxLength(30)]],
-        zipCode: [null, [Validators.required,Validators.pattern('^[0-6]{6}$')]],
+        addressLine1: [null, [Validators.maxLength(100)]],
+        addressLine2: [null, [Validators.maxLength(100)]],
+        city: [null, [Validators.maxLength(30)]],
+        state: [null, [Validators.maxLength(30)]],
+        country: [null, [Validators.maxLength(30)]],
+        zipCode: [null, [Validators.maxLength(6)]],
       }),
     });
   }
@@ -196,7 +198,21 @@ export class PersonalDetailsComponent implements OnInit {
       currentAddress: this.employeeData?.employeeAddresses?.find((address: IAddress) => address?.type?.toLowerCase() == 'c'),
       permanentAddress: this.employeeData?.employeeAddresses?.find((address: IAddress) => address?.type?.toLowerCase() == 'p')
     });
-
+    const currentAddress = this.employeeData?.employeeAddresses?.find(
+      (address: IAddress) => address?.type?.toLowerCase() === 'c'
+    );
+    const permanentAddress = this.employeeData?.employeeAddresses?.find(
+      (address: IAddress) => address?.type?.toLowerCase() === 'p'
+    );
+    if (currentAddress && permanentAddress) {
+      const fieldsToCompare = ['addressLine1', 'addressLine2', 'city', 'state', 'country', 'zipCode'];
+      const areSame = fieldsToCompare.every(field => 
+        currentAddress[field] === permanentAddress[field]
+      );
+      this.personalDetailsForm.get('sameAsPermanent')?.setValue(areSame);
+    } else {
+      this.personalDetailsForm.get('sameAsPermanent')?.setValue(false);
+    }
   }
   // Copy Current Address to Permanent Address
   copyCurrentAddress(event: any) {
@@ -213,6 +229,18 @@ export class PersonalDetailsComponent implements OnInit {
         }
       });
     }
+    if(this.personalDetailsForm?.get('sameAsPermanent')?.value === false){
+      this.personalDetailsForm?.patchValue({
+        permanentAddress: {
+          addressLine1:  "",
+          addressLine2:  "",
+          city:  "",
+          state:  "",
+          country:  "",
+          zipCode:  "",
+        }
+      });
+    }
   }
 
   letters(event: KeyboardEvent): boolean {
@@ -221,10 +249,6 @@ export class PersonalDetailsComponent implements OnInit {
       return false;
     }
     return true;
-  }
-  checkvalidation(){
-    
-    console.log(this.personalDetailsForm)
   }
   //function formate the data 
   formatDate(date: Date): string {
@@ -269,11 +293,11 @@ export class PersonalDetailsComponent implements OnInit {
     let payload = {
       employeeAddresses: [{
         ...this.personalDetailsForm.get('currentAddress')?.value,
-        zipCode: String(this.personalDetailsForm.get('currentAddress')?.value?.zipCode)
+        zipCode: this.formatZipCode(this.personalDetailsForm.get('currentAddress')?.value?.zipCode)
       },
       {
         ...this.personalDetailsForm.get('permanentAddress')?.value,
-        zipCode: String(this.personalDetailsForm.get('permanentAddress')?.value?.zipCode)
+        zipCode: this.formatZipCode(this.personalDetailsForm.get('permanentAddress')?.value?.zipCode)
       }]
     }
     this.subscription = this.http.postData("PreonboardingEmployeeAddress", payload).subscribe({
@@ -286,7 +310,9 @@ export class PersonalDetailsComponent implements OnInit {
       }
     })
   }
-
+  formatZipCode(zip: any): string | null {
+    return zip !== undefined && zip !== null && zip !== '' ? String(zip) : "";
+  }
   // mobile number functions
 
   onCountryChange(country: any) {

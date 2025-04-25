@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header cursor mb-0">
-                <i class="bi bi-arrow-90deg-left me-2" (click)="navigateMyexpenses()"></i>Create Expenses
+                <i class="bi bi-arrow-90deg-left me-2" (click)="navigateMyexpenses()"></i>{{'Create Expenses' | translate}}
             </p>
         </div>
     </div>
@@ -13,7 +13,7 @@
                 <div class="d-flex gap-3 mb-4">
                     <!-- Expense Type  -->
                     <div>
-                        <label class="form-label custom-label mb-2">Expense Title<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}<span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="expensesTitle"
                             placeholder="Please enter expense title" />
                         <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && (newExpenseForm.controls['expensesTitle'].touched || 
@@ -27,7 +27,7 @@
                     </div>
     
                     <div>
-                        <label class="form-label custom-label mb-2">Approver Email<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Approver Email' | translate}}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="emails" optionLabel="label" placeholder="Please select approval email"
                                 formControlName="approvalemail" class="form-select custom-select"></p-select>
@@ -42,7 +42,7 @@
                     <!-- Add New Expense Button -->
                     <div class="pt-4 mt-1">
                         <button type="button" class="custom-btn btn-primary" (click)="addExpenseItem()">
-                            <i class="bi bi-plus me-2"></i> Add New Item
+                            <i class="bi bi-plus me-2"></i> {{'Add Expense Item' | translate}}
                         </button>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                         <div class="row mb-3">
                             <!-- Expense Type -->
                             <div class="col-md-3">
-                                <label class="form-label custom-label">Expense Type<span class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Expense Type' | translate}}<span class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="expensetype" optionValue="expenseId" optionLabel="expenseType"
                                         (onChange)="onchangeexpnes($event, i)" placeholder="Please select expense item"
@@ -68,7 +68,7 @@
     
                             <!-- Expense Item -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">Expense Item<span
+                                <label class="form-label custom-label">{{'Expense Item'  | translate }}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
                                     placeholder="Please enter expense item" />
@@ -85,7 +85,7 @@
     
                             <!-- Expense Date -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">Expense Date<span
+                                <label class="form-label custom-label">{{'Expense Date'  | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="date" class="form-control custom-input" formControlName="expense_Date"
                                     onkeypress="return false;" />
@@ -95,7 +95,7 @@
     
                             <!-- Amount -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">Amount<span class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Amount' | translate}}<span class="text-danger">*</span></label>
                                 <input class="form-control custom-input" formControlName="expense_Amount"
                                     placeholder="Please enter amount" type="text" (input)="onAmountInput($event)"
                                     maxlength="7" />
@@ -120,7 +120,7 @@
     
                             <!-- Receipt Number -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">Receipt Number<span
+                                <label class="form-label custom-label">{{'Receipt Number'  | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="receipt_Number"
                                     placeholder="Please enter receipt number" />
@@ -156,7 +156,7 @@
                         <div class="row mb-3">
                             <!-- Description -->
                             <div class="col-md-4">
-                                <label class="form-label custom-label">Description</label>
+                                <label class="form-label custom-label">{{'Description'  | translate}}</label>
                                 <div>
                                     <textarea class="form-control custom-input" formControlName="item_Description"
                                         placeholder="Write description here..." rows="1"></textarea>
@@ -168,7 +168,7 @@
     
                             <!-- File Upload -->
                             <div class="col-md-4">
-                                <label class="form-label custom-label">Proof (Image and PDF only)<span
+                                <label class="form-label custom-label">{{'Proof (Image and PDF only)'  | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="file" class="form-control custom-input" accept=".pdf, image/*"
                                     (change)="fileupload($event, i)" />
@@ -214,7 +214,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Expense iteam?</p>
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Expense iteam?'  | translate}}</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

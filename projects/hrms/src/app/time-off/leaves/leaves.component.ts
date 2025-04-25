@@ -1110,6 +1110,7 @@ export class LeavesComponent {
           this.isHolidaySelected = true;// Set the flag if end date is a non-optional holiday
         } else {
           this.isHolidaySelectedEndate = false;
+          this.isHolidaySelected = false;
           
         }
         if (this.selectedleave.category.isOptionalHoliday) {

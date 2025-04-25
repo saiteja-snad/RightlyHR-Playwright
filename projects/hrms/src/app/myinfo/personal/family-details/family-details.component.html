@@ -88,7 +88,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="dateOfBirth" class="form-label custom-label mb-2">Date of Birth<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="dateOfBirth"
+                        <input type="date" class="form-control custom-input"  onkeypress="return false" id="dateOfBirth"
                             formControlName="dateOfBirth">
                         <div class="error-msg"
                             *ngIf="familyDetailsForm.get('dateOfBirth')?.invalid && familyDetailsForm.get('dateOfBirth')?.touched">

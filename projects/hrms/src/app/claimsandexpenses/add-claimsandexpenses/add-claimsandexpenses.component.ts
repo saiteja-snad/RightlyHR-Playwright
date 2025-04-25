@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, NgModel, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
-import { IExpense, IExpenseHeader, IExpenseItem, Iexpensetype, Inewexpense, INewExpense } from '../../Interfaces/claimsandexpenses.model';
+import { IExpense,  IExpenseItem, Iexpensetype, } from '../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -256,7 +256,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   fromdata(form: FormGroup): void {
     if (form.valid) {
       this.spinnerLoader=true
-      const payload: INewExpense = {
+      const payload = {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
@@ -290,7 +290,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path
-            payload.expenseItem.forEach((item) => {
+            payload.expenseItem.forEach((item: { attachment_url: any; }) => {
 
               if (item.attachment_url === this.Myexpense.name) {
                 item.attachment_url = data.path;
@@ -351,7 +351,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   saveasDraft(form: FormGroup): void {
     if (form.valid) {
       this.saveasDraftloder=true
-      const payload: INewExpense = {
+      const payload = {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
@@ -384,7 +384,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path
-            payload.expenseItem.forEach((item) => {
+            payload.expenseItem.forEach((item: { attachment_url: any; }) => {
 
               if (item.attachment_url === this.Myexpense.name) {
                 item.attachment_url = data.path;

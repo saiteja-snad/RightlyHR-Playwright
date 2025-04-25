@@ -177,7 +177,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       accountName: this.bankDetailsForm.get('accountName')?.value,
       accountNo: this.bankDetailsForm.get('accountNo')?.value,
       ifscCode: this.bankDetailsForm.get('ifscCode')?.value,
-      isPrimary: this.bankDetailsForm.get('isPrimary')?.value,
+      isPrimary: this.bankDetailsForm.get('isPrimary')?.value || false,
     };
   }
 
@@ -245,7 +245,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         accountName: formData.accountNameupdate, // Account holder's name
         accountNo: formData.accountNoupdate, // Account number
         ifscCode: formData.ifscCodeupdate,
-        isPrimary: formData.isPrimaryupdate,
+        isPrimary: formData.isPrimaryupdate || false,
         isDeleted: false,
       };
       // Check if a new attachment is selected

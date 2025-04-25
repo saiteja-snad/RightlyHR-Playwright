@@ -45,7 +45,7 @@ export interface ICategoryDetails {
   utilizedDays: number;
   booked: number;
   categoryColor: any;
-  profileColor: '#06274F';
+  categoryCode: any;
   duration: number;
 
   probationLeaves: number;

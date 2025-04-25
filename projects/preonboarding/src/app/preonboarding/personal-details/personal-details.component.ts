@@ -144,11 +144,12 @@ export class PersonalDetailsComponent implements OnInit {
   initializePersonalForm() {
     let loggedInUser = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     this.personalDetailsForm = this.fb.group({
-      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
-      middleName: [null],
-      lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$'),Validators.maxLength(50)]],
+      middleName: [null,[Validators.maxLength(50)]],
+      lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$'),,Validators.maxLength(50)]],
       gender: [null, Validators.required],
       salutation: [null, Validators.required],
+      country:[null, [Validators.required]],
       phonenumber: [null, [Validators.required,]],
       dob: [null, Validators.required],
       bloodGroup: [null],
@@ -160,26 +161,36 @@ export class PersonalDetailsComponent implements OnInit {
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
-        addressLine1: [null, [Validators.required,Validators.maxLength(100)]],
-        addressLine2: [null, [Validators.required,Validators.maxLength(100)]],
-        city: [null, [Validators.required,Validators.maxLength(30)]],
-        state: [null, [Validators.required,Validators.maxLength(30)]],
-        country: [null, [Validators.required ,Validators.maxLength(30)]],
+        addressLine1: [null, [Validators.required,Validators.maxLength(150)]],
+        addressLine2: [null, [Validators.required,Validators.maxLength(150)]],
+        city: [null, [Validators.required,Validators.maxLength(50)]],
+        state: [null, [Validators.required,Validators.maxLength(50)]],
+        country: [null, [Validators.required ,Validators.maxLength(50)]],
         zipCode: [null, [Validators.required,Validators.maxLength(6)]],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: [null, [Validators.maxLength(100)]],
-        addressLine2: [null, [Validators.maxLength(100)]],
-        city: [null, [Validators.maxLength(30)]],
-        state: [null, [Validators.maxLength(30)]],
-        country: [null, [Validators.maxLength(30)]],
+        addressLine1: [null, [Validators.maxLength(150)]],
+        addressLine2: [null, [Validators.maxLength(150)]],
+        city: [null, [Validators.maxLength(50)]],
+        state: [null, [Validators.maxLength(50)]],
+        country: [null, [Validators.maxLength(50)]],
         zipCode: [null, [Validators.maxLength(6)]],
       }),
     });
   }
-
+  enforceMaxLength(event: KeyboardEvent, maxLength: number): void {
+    const input = event.target as HTMLInputElement;
+    const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
+  
+    if (
+      input.value.length >= maxLength &&
+      !allowedKeys.includes(event.key)
+    ) {
+      event.preventDefault();
+    }
+  }
   patchForm() {
     const dateOfBirth = this.employeeData.dob ? this.formatDate(this.employeeData.dob) : null;
     this.personalDetailsForm.patchValue({

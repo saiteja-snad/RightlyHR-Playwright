@@ -34,13 +34,13 @@ import { SignalsService } from '../../../services/signals.service';
   templateUrl: './premission-for-you-request.component.html',
   styleUrl: './premission-for-you-request.component.scss',
 })
+
 export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   empinfo = {} as IJob;
-  options = [
-    { label: 10, value: 10 },
+  options = [ { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 },
@@ -52,7 +52,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
-  rejectForm!: FormGroup;
+  rejectForm!:FormGroup;
   searchValue: any;
   spinnerLoader = false;
   dataload = false;
@@ -65,6 +65,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     private signalService:SignalsService
   ) { }
 
+  
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
@@ -80,7 +81,6 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
-
   }
 
   getAllPendingApprovals() {
@@ -239,13 +239,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
     this.approverComments = value;
-    console.log(this.approverComments);
   }
 
   ngOnDestroy(): void {

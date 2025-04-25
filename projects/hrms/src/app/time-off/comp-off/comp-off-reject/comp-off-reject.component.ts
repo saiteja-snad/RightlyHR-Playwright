@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { IJob } from '../../../Interfaces/letters-model';
 import { Subject, takeUntil } from 'rxjs';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
@@ -19,8 +19,8 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
   templateUrl: './comp-off-reject.component.html',
   styleUrl: './comp-off-reject.component.scss'
 })
-export class CompOffRejectComponent  implements OnInit,OnDestroy {
 
+export class CompOffRejectComponent  implements OnInit,OnDestroy {
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -37,32 +37,20 @@ export class CompOffRejectComponent  implements OnInit,OnDestroy {
     { label: 25, value: 25 }
   ];
 
-
-
-
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    public rbac: RbacService,
-  ) {}
-
+  constructor(private http: HttpService, public rbac: RbacService) {}
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getCompOffRequest();
- 
   }
-
 
   onRowsChange() {
     this.first = 0;
-
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
-
   }
 
   getCompOffRequest() {
@@ -85,11 +73,8 @@ export class CompOffRejectComponent  implements OnInit,OnDestroy {
     });
   }
 
-
-  
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

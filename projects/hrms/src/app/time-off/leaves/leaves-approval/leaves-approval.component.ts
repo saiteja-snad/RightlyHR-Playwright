@@ -32,19 +32,15 @@ export class LeavesApprovalComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-
   onRowsChange() {
     this.first = 0;
   }
-
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService,private authService: AuthService,public rbac: RbacService) {
-
-  }
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -56,11 +52,8 @@ export class LeavesApprovalComponent {
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
-        console.log(response);
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Approved');
-          let pendingCount = this.lpdata.length;
-          console.log("Pending Records Count:", pendingCount);
         } else {
           console.error("Invalid response format");
         }

@@ -27,13 +27,9 @@ export class DeskForYouRequestComponent {
   selectedexpenesid: any
   subscription!: Subscription
   rejectForm!: FormGroup;
-  constructor(
-    private http: HttpService,
-    private readonly modalService: NgbModal,
-    public conformationPopup: OpenModalService,
-    private fb: FormBuilder,
-  ) { }
 
+  constructor(private http: HttpService, private readonly modalService: NgbModal, 
+    public conformationPopup: OpenModalService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.employdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -43,41 +39,33 @@ export class DeskForYouRequestComponent {
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
-
   }
+
   getexpensespendingforyou(): void {
-    this.http
-      .getData(`PendingApproval/employee/${this.employdata.employeeId}?moduleId=23&approvedType=EMP`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.deskheaderpending = (data.data as Entity[]).filter(item => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
-          console.log(this.deskheaderpending)
-
-          // this.filterPendingExpenses()
-        }, error: (err) => {
-          console.log("expensesheadererror")
-
-        },
-      });
+    this.http.getData(`PendingApproval/employee/${this.employdata.employeeId}?moduleId=23&approvedType=EMP`).subscribe({
+      next: (data: any) => {
+        this.deskheaderpending = (data.data as Entity[]).filter(item => 
+          item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+        // this.filterPendingExpenses()
+      }, error: (err) => {
+        console.log("expensesheadererror");
+      },
+    });
   }
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
   process(expid: any, exp: any): void {
-    console.log(exp)
     this.assiginemploye = exp.deskAllocatedTo
     this.deskid = expid
-
     const userStatus: any = {
       id: this.deskid,
       status: 'Processed',
-
       approvedBy: this.employdata.employeeId.toString()
-
     };
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
@@ -87,13 +75,10 @@ export class DeskForYouRequestComponent {
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message || 'An error occurred')
-
         console.error('Error response from API:', error);
-
       }
     });
   }
-
 
   updatedeskitem() {
     const payload = {
@@ -103,39 +88,31 @@ export class DeskForYouRequestComponent {
       reallocatedTo: this.assiginemploye,
       status: 'Released',
       releavedDate: new Date(),
-
     }
-
     this.http.putData(`DeskAllocationItem/${this.deskiteam.deskAllocationItemId}`, payload).subscribe({
       next: (res) => {
-
       },
       error: (error) => {
-        console.log('Error:', error);
         this.modalService.dismissAll();
         this.conformationPopup.openErrorModal(error.error?.Message || 'Error occurred during assignment.');
       }
     });
-
   }
+
   openmodal(content: any) {
     this.modalService.open(content, { size: 'xl' });
   }
+
   viewdeskitem(deskid: any) {
     this.updataid = deskid;
-    console.log(this.updataid)
-    this.subscription = this.http
-      .getData(`DeskAllocationItem/getRecordpending?deskAllocationItemId=${this.updataid}`)
-      .subscribe({
-        next: (data: any) => {
-
-          this.deskiteam = data;
-        },
-        error: (err: any) => {
-          console.error("Error fetching desk allocation item:", err);
-          this.deskiteam = null;
-        },
-      });
+    this.subscription = this.http.getData(`DeskAllocationItem/getRecordpending?deskAllocationItemId=${this.updataid}`).subscribe({
+      next: (data: any) => {
+        this.deskiteam = data;
+      },
+      error: (err: any) => {
+        this.deskiteam = null;
+      },
+    });
   }
 
   Rejected(formdata: FormGroup) {
@@ -144,18 +121,16 @@ export class DeskForYouRequestComponent {
       status: 'Rejected',
       comments: this.rejectForm.get('comments')?.value,
       approvedBy: this.employdata.employeeId.toString()
-
     };
     this.http.putData(`PendingApproval/${this.selectedexpenesid}`, userStatus).subscribe({
       next: (res: any) => {
-        this.modalService.dismissAll()
-        this.getexpensespendingforyou()
-        this.conformationPopup.openSuccessModal("Request Rejected Successfully")
-        this.rejectForm.reset()
+        this.modalService.dismissAll();
+        this.getexpensespendingforyou();
+        this.conformationPopup.openSuccessModal("Request Rejected Successfully");
+        this.rejectForm.reset();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal(error.error.message || 'An error occurred')
-
+        this.conformationPopup.openErrorModal(error.error.message || 'An error occurred');
         console.error('Error response from API:', error);
       }
     });

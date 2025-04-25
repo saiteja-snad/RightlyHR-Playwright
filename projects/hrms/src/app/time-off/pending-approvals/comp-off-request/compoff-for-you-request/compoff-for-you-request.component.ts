@@ -1,22 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
-import {
-  AttendanceRequest,
-  ICategoryDetails,
-} from '../../../../Interfaces/timoff-model';
+import { AttendanceRequest, ICategoryDetails} from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -43,6 +34,7 @@ import { SignalsService } from '../../../../services/signals.service';
   templateUrl: './compoff-for-you-request.component.html',
   styleUrl: './compoff-for-you-request.component.scss',
 })
+
 export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -59,7 +51,6 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   leaves = new BehaviorSubject<AttendanceRequest[]>([]);
   approverComments = [] as any[];
   selectedLeaveData = {} as AttendanceRequest;
-  // approverComments = [] as AttendanceRequestC[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   approveForm!: FormGroup;
@@ -113,6 +104,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
         }
       });
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -238,13 +230,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
     this.approverComments = value;
-    console.log(this.approverComments);
   }
 
   ngOnDestroy(): void {

@@ -43,6 +43,7 @@ export class EmployeeFieldsLayoutComponent {
       '/settings/employee-fields/view-dst',
       '/settings/employee-fields/updateholidays',
       '/settings/employee-fields/viewholidays',
+      '/settings/employee-fields/documents',
     ];
     return !excludedRoutes.includes(this.router.url);
   }

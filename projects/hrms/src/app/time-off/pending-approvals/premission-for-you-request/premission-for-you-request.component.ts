@@ -14,11 +14,11 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
 @Component({
   selector: 'app-premission-for-you-request',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,
-     DateformatPipe, ReactiveFormsModule, TranslateModule
-  ],
+    DateformatPipe, ReactiveFormsModule, TranslateModule, PermissionsearchPipe],
   templateUrl: './premission-for-you-request.component.html',
   styleUrl: './premission-for-you-request.component.scss',
 })

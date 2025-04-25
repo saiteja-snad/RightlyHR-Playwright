@@ -437,7 +437,7 @@ export class LeavesComponent {
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
     let captureHoliday: any;
-    const dayPresent = this.orgweekend.orgWeekendItems?.some((holiday: any) => {
+    const dayPresent = this.orgweekend?.orgWeekendItems?.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
         captureHoliday = holiday;
         return true;

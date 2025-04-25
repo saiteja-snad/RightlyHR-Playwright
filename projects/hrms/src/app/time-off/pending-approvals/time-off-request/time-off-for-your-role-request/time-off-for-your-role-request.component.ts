@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { IPendingApprovals, LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
@@ -13,10 +13,11 @@ import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingappr
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { TimeoffsearchPipe } from "../../../../Pipes/timeoffsearch.pipe";
 
 @Component({
   selector: 'app-time-off-for-your-role-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule,TranslateModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, TranslateModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe, NoDataFoundComponent, TimeoffsearchPipe],
   templateUrl: './time-off-for-your-role-request.component.html',
   styleUrl: './time-off-for-your-role-request.component.scss'
 })
@@ -26,11 +27,12 @@ export class TimeOffForYourRoleRequestComponent {
   rows: any = 10;
   LOGIN: any;
   subscription!: Subscription;
-  leaves = [] as LeaveApproval[];
+  leaves = new BehaviorSubject<LeaveApproval[]>([]);
   approverComments = [] as LeaveApproverComment[];
   selectedLeaveData = {} as any;
   issubmitdiable: boolean = false;
   searchValue :any;
+  spinnerLoader = false;
   @ViewChild('commentspopup') modalContent: any;
   options = [
     { label: 10, value: 10 },
@@ -69,7 +71,8 @@ export class TimeOffForYourRoleRequestComponent {
       this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=ROLE`).subscribe({
         next: (response: any) => {
           console.log(response);
-          this.leaves = response.data as LeaveApproval[];
+          // this.leaves = response.data as LeaveApproval[];
+          this.leaves.next(response.data);
           console.log(this.leaves);
         },
         error: (reason) => console.log(reason),

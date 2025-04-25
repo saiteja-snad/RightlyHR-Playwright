@@ -54,6 +54,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   selectedLeaveData = {} as AttendanceRequest;
   searchValue: any;
+  spinnerLoader = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -65,8 +66,6 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
-
-
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { IPendingApprovals, LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
@@ -15,10 +15,12 @@ import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingappr
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { WfhsearchfilterPipe } from "../../../../Pipes/wfhsearchfilter.pipe";
+import { TimeoffsearchPipe } from "../../../../Pipes/timeoffsearch.pipe";
 
 @Component({
   selector: 'app-time-off-for-you-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule,TranslateModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe,NoDataFoundComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, TranslateModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe, NoDataFoundComponent, WfhsearchfilterPipe, TimeoffsearchPipe],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss'
 })
@@ -29,11 +31,13 @@ export class TimeOffForYouRequestComponent {
   LOGIN: any;
   subscription!: Subscription;
   searchValue :any;
-  leaves = [] as LeaveApproval[];
+  // leaves = [] as LeaveApproval[];
+  leaves = new BehaviorSubject<LeaveApproval[]>([]);
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList ={} as ICategoryDetails;
   selectedLeaveData = {} as any;
   @ViewChild('commentspopup') modalContent: any;
+  spinnerLoader = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -68,7 +72,8 @@ export class TimeOffForYouRequestComponent {
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=EMP`).subscribe({
       next: (response: any) => {
         console.log(response);
-        this.leaves = response.data as LeaveApproval[];
+        // this.leaves = response.data as LeaveApproval[];
+        this.leaves.next(response.data);
         console.log(this.leaves);
       },
       error: (reason) => console.log(reason),

@@ -27,8 +27,10 @@
                 </thead>
                 <tbody>
                     @if (rbac.allowedToAccess('Timeoff Tab.view')) {
-                    @if(leaves.length > 0){
-                    <tr *ngFor="let item of leaves | leavesPendingapprovals : searchValue">
+                    @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
+                    @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
+                    item.approvalHeader.id){
+                    <tr>
                         <td>{{item.entity.leavefusionempId}}</td>
                         <td>{{item.entity.employeeName}}</td>
                         <td>{{item.entity.leaveCategoryName}}</td>
@@ -53,19 +55,20 @@
                         </td>
                         <td>
                             <div>
-                              <ng-container *ngIf="item.entity.leaveApproverComments?.comments?.trim(); else noComments">
-                                <a type="button" placement="top">
-                                  <img src="images/info-fill.png" alt="info icon"
-                                       (click)="comments(item.entity.leaveApproverComments, commentspopup)"
-                                       class="info-icon">
-                                </a>
-                              </ng-container>
-                              <ng-template #noComments>
-                                <span>-</span>
-                              </ng-template>
+                                <ng-container
+                                    *ngIf="item.entity.leaveApproverComments?.comments?.trim(); else noComments">
+                                    <a type="button" placement="top">
+                                        <img src="images/info-fill.png" alt="info icon"
+                                            (click)="comments(item.entity.leaveApproverComments, commentspopup)"
+                                            class="info-icon">
+                                    </a>
+                                </ng-container>
+                                <ng-template #noComments>
+                                    <span>-</span>
+                                </ng-template>
                             </div>
-                        </td>                          
-                          
+                        </td>
+
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
@@ -90,10 +93,12 @@
                         </td>
                     </tr>
                     }
-                    @else {
+                    }
+                    @else{
                     <tr>
-                        <app-no-data-found></app-no-data-found>
-
+                        <td colospan="8">
+                            <app-no-data-found />
+                        </td>
                     </tr>
                     }
                     }
@@ -120,9 +125,9 @@
                 <thead>
                     <tr>
                         <th>{{'Comments' | translate}}</th>
-                            <th>{{'Commented By'|translate}}</th>
-                            <th>{{"Approved Date" | translate}}</th>
-                            <th>{{'Commented By ID' | translate}}</th>
+                        <th>{{'Commented By'|translate}}</th>
+                        <th>{{"Approved Date" | translate}}</th>
+                        <th>{{'Commented By ID' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -243,9 +248,15 @@
             <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100 ml">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" aria-label="Close"
                     type="reset">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
-                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable"
-                    aria-label="Close">Approve</button>
+                    <button ype="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
+                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments">
+                        @if(spinnerLoader){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Approve'}}</span>
+                        }
+                    </button>
             </div>
         </form>
     </div>
@@ -286,9 +297,15 @@
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100 ml">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" aria-label="Close"
                         type="reset">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
-                        [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable"
-                        aria-label="Close">Reject</button>
+                        <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
+                        [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments">
+                            @if(spinnerLoader){
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..'}}...</span>
+                            }@else {
+                            <span>{{'Reject'}}</span>
+                            }
+                        </button>
                 </div>
             </form>
         </div>

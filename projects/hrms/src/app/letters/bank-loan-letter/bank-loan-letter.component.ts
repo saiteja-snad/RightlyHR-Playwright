@@ -85,8 +85,9 @@ export class BankLoanLetterComponent {
   }
 
   DateValidation() {
-    const dateofbankloan = new Date(this.bankloanLetterData.dateofbankloan);
-    const joiningDate = new Date(this.bankloanLetterData.dateOfJoining);
+    const dateofbankloan = new Date(this.employeeForm.get('dateofbankloan')?.value);
+    const joiningDate = new Date(this.employeeForm.get('dateOfJoining')?.value);
+  
     if (dateofbankloan <= joiningDate) {
       this.isdateofbankloan = false;
     } else {

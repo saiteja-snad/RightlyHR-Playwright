@@ -11,10 +11,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, DateformatPipe, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NoDataFoundComponent],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })
@@ -34,6 +35,7 @@ export class UpcomingEventsComponent {
   Employeeinfo: any;
   selectedImagePreview: any;
   selectedCustomEventField: any;
+  todaysEvents: any[] = [];
   constructor(private router: Router, private modalService: NgbModal, private http: HttpService, 
     private conformationPopup: OpenModalService, private fb: FormBuilder,public rbac: RbacService,) { }
   ngOnInit(): void {
@@ -64,7 +66,18 @@ export class UpcomingEventsComponent {
       return selectedDate < today ? { pastDate: true } : null;
     };
   }
-
+  getToday(): string {
+    const now = new Date();
+    const pad = (n: number) => n < 10 ? '0' + n : n;
+  
+    const year = now.getFullYear();
+    const month = pad(now.getMonth() + 1);
+    const day = pad(now.getDate());
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
   getCustomEvents() {
 
     this.http.getData(`CustomEvents/Getbyorder?month=${this.currentMonth}&year=${this.currentYear}`)
@@ -75,7 +88,12 @@ export class UpcomingEventsComponent {
       .subscribe({
         next: (data) => {
           this.getEventsData$ = of(data);
-          this.CustomEventsCount$ = of((data as any[]).length);
+          this.CustomEventsCount$ = of((data as any[]).length)
+          const todayStr = new Date().toDateString();
+          this.todaysEvents = (data as any[]).filter((event: { eventDate: string | number | Date; }) =>
+            new Date(event.eventDate).toDateString() === todayStr
+          );
+
         },
         error: (err) => console.error('Error fetching events:', err)
       });
@@ -108,7 +126,10 @@ export class UpcomingEventsComponent {
 
   openModalupdate(content: any, eventsdata: any): void {
     this.selectedevetid=eventsdata.eventId
-    const formattedDate = new Date(eventsdata.eventDate).toISOString().slice(0, 16);
+    const localDate = new Date(eventsdata.eventDate);
+    const pad = (n: number) => n < 10 ? '0' + n : n;
+    const formattedDate = `${localDate.getFullYear()}-${pad(localDate.getMonth() + 1)}-${pad(localDate.getDate())}T${pad(localDate.getHours())}:${pad(localDate.getMinutes())}`;
+  
     this.customEventupdateForm.patchValue({
       eventDate: formattedDate,
       eventTitle: eventsdata.eventTitle || '',
@@ -146,9 +167,9 @@ export class UpcomingEventsComponent {
     if (customEventupdateForm.valid) {
       this.spinnerLoader=true
       const formdata = customEventupdateForm.value;
-  
+ 
       const data = {
-      eventId: this.selectedevetid.eventId,
+      eventId: this.selectedevetid,
         eventDate: formdata.eventDate,
         eventMessage: formdata.eventMessage,
         empId: this.Employeeinfo.employeeId,

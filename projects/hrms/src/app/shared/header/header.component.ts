@@ -85,7 +85,6 @@ export class HeaderComponent {
       '/pms/review-cycle/update',
       '/pms/review-cycle/view',
       '/pms/apprisal',
-      '/pms/assessment-form',
       '/pms/myPerformance/pending-review',
       '/pms/myPerformance/completed-review',
       '/pms/team-performance/pending-review',

@@ -24,9 +24,6 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
 
 export class IncrementPercentageComponent implements OnInit, OnDestroy {
   dataload = false;
-  totalRecords = 100;
-  first: any = 1;
-  rows: any = 10;
   empinfo = {} as any;
   subscription!: Subscription;
   searchValue: any;
@@ -38,20 +35,22 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-  onRowsChange() {
-    this.first = 1;
-  }
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-  }
+
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  searchQuery = '';
+  first = 0;
+  totalRecords = 0;
+  searchText = '';
+  
   IncementalDetailsget: any[] = [];
 
   constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService) {
-    // Signal reaction for employee switch
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
-        this.getAllIncrementalPercentagedata();
+        this.getAllIncrementalPercentagedata(this.page, this.pageSize);
         this.http.tirggerCountSignal.update((status) => ({
           ...status,
           global: false,
@@ -62,7 +61,7 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getAllIncrementalPercentagedata();
+    this.getAllIncrementalPercentagedata(this.page, this.pageSize);
   }
 
   openAdd() {
@@ -84,15 +83,46 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.updateData = data;
   }
 
+  onSearchTextChange(): void {
+    this.page = 1;        
+    this.first = 0; 
+    this.getAllIncrementalPercentagedata(this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getAllIncrementalPercentagedata(this.page, this.pageSize);
+  }
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.getAllIncrementalPercentagedata(this.page, this.pageSize);
+  }
+
   //function to get the globalpermissions details
-  getAllIncrementalPercentagedata(): void {
+  getAllIncrementalPercentagedata(pagenum: number, pagesize: number): void {
+    const params: { pageNumber: number; pageSize: number; searchparam?: string } = {
+      pageNumber: pagenum,
+      pageSize: pagesize,
+    };
+    
+    if (this.searchText) {
+      params.searchparam = this.searchText;
+    }
+
     this.dataload = true;
-    this.subscription = this.http.getReviewCyclesteam(`IncrementalPercentage`, this.first, this.rows, this.searchValue).subscribe({
+    this.subscription = this.http.getpagentiontData(`IncrementalPercentage`, params).subscribe({
       next: (response: any) => {
         this.IncementalDetailsget = response?.items;
-        this.totalRecords = response?.totalCount;
+        this.collectionSize = response.totalCount;
       },
       error: (err: any) => {
+        this.dataload = false;
         console.log('errors', err);
       },
       complete: () => {
@@ -125,7 +155,7 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     this.http.postdata(`IncrementalPercentage/delete?id=${this.deleteId}`, payLoad).subscribe({
       next: (response: any) => {
         this.conformationPopup.openSuccessModal('Incremental Percentage Deleted Sucessfully');
-        this.getAllIncrementalPercentagedata();
+        this.getAllIncrementalPercentagedata(this.page, this.pageSize);
       },
       error: (err: any) => {
         if (err.status === 404) {
@@ -140,7 +170,7 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       complete: () => {
-        this.getAllIncrementalPercentagedata();
+        this.getAllIncrementalPercentagedata(this.page, this.pageSize);
       },
     });
   }

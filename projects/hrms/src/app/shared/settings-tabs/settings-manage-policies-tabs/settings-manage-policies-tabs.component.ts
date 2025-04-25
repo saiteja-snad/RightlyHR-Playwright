@@ -12,27 +12,8 @@ import { RbacService } from '../../../services/rbac.service';
 
 export class SettingsManagePoliciesTabsComponent {
 
-  public navLinks: any[] = [];
-
-  constructor(public rbac: RbacService) {
-    this.navLinks = this.allNavLinks.filter(link =>
-      link.permission &&
-      link.permission.feature &&
-      link.permission.action &&
-      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-    );
-  }
-
-  allNavLinks = [
-    {
-      label: 'Pending For Submit',
-      route: '/settings/employee-fields/manage-policies/pending-for-submit',
-      permission: { feature: 'Pending For Policies Submit', action: 'view' }
-    },
-    {
-      label: 'Published Policies',
-      route: '/settings/employee-fields/manage-policies/published-policies',
-      permission: { feature: 'Published Policies', action: 'view' }
-    }
+  navLinks = [
+    { label: 'Pending For Submit',route: '/settings/employee-fields/manage-policies/pending-for-submit'},
+    { label: 'Published Policies',route: '/settings/employee-fields/manage-policies/published-policies'}
   ];
 }

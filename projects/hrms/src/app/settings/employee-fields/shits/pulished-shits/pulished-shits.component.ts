@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../../../services/http.service';
 import { CommonModule, NgFor, NgIf} from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-pulished-shits',
@@ -19,7 +20,7 @@ export class PulishedShitsComponent {
   publishedshifts: any = [];
   publishedCount :any;
   viewClicked: boolean | undefined;
-  constructor( public router:Router, private http: HttpService) {
+  constructor( public router:Router, private http: HttpService, public rbac: RbacService) {
 
   }
   

@@ -8,7 +8,6 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
-import { OpenModalService } from '../../../services/open-modal.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
@@ -24,17 +23,28 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
   reviewCycles: any[] = [];
   searchQuery = '';
   searchTerm = '';
-  page = 1;
-  pageSize = 10;
-  collectionSize = 100;
-  totalItems = 0;
   activeTab = 'completed';
   subscription!: Subscription;
   dataload = false
   completedReviews: any[] = [];
   pendingReviews: any[] = [];
   filteredReviews: any[] = [];
-  filteredCompletedReviews: any[] = []
+  filteredCompletedReviews: any[] = [];
+
+  page = 1;
+  pageSize = 10;
+  collectionSize = 100;
+  totalItems = 0;
+  rows = 10;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
+
+  first = 0;
+
 
   @ViewChild('createReviewCycle') createReviewCycle: any;
   @ViewChild('confirmation') confirmation: any;
@@ -58,15 +68,12 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
       .subscribe({
         next: (data: any) => {
           this.reviewCycles = data.items;
+          this.totalItems = data.totalCount || 0;
           this.completedReviews = data.items;
-          this.filteredCompletedReviews = this.completedReviews;
+          this.filteredReviews = this.completedReviews;
           if (this.completedReviews.length > 0) {
             this.collectionSize = data.totalCount;
           }
-          if (this.searchTerm) {
-            this.filterReviews();
-          }
-          this.dataload = false
         },
         error: (err) => {
           this.dataload = false;
@@ -130,7 +137,6 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
   }
 
   selfAssessment(reviewCycleItemId: number, currentStage: number, assessorType: string, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
-    console.log(currentStage)
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,
@@ -172,12 +178,8 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
   }
 
   downloadPromotionletter(iteamid: any) {
-    console.log(iteamid);
-
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
-
       next: (data: Blob) => {
-        console.log('Received byte data:', data);
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -198,12 +200,9 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
   }
 
   downloadletter(iteamid: any) {
-    console.log(iteamid);
-
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
 
       next: (data: Blob) => {
-        console.log('Received byte data:', data);
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -221,6 +220,23 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
         this.Status = 'Failed to download letter';
       },
     });
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first
+
+    this.fetchReviewCycles();
+  }
+
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.fetchReviewCycles();
   }
 
   closeModal() {

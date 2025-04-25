@@ -569,6 +569,10 @@ a {
         border: 1px solid #DEE8F3 !important;
     }
 
+    .p-select.p-disabled {
+        background: #e9ecef !important;
+    }
+
     .p-select-label.p-placeholder {
         color: #A1A1A1 !important;
     }
@@ -624,6 +628,10 @@ a {
 // custom -select dropdown
 .dropdown {
     .dropdown-click {
+        color: #000 !important;
+    }
+
+    a{
         color: #000 !important;
     }
 }
@@ -1083,7 +1091,6 @@ input[type="file"] {
     }
 
 }
-
 //pagenation stylings
 
 // login components stylings
@@ -1527,3 +1534,21 @@ input[type="checkbox"] {
     }
 }
 // leaves cards stylings Ends
+
+// Action buttons stylings
+.custom-action-btn {
+    background-color: transparent;
+    border: none !important;
+    box-shadow: none !important;
+
+    .custom-action-btn-icon {
+        font-size: var(--fontsize18);
+    }
+
+    &:disabled {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+// Action buttons stylings Ends

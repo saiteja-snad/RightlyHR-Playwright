@@ -1,5 +1,5 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule, AbstractControl, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
@@ -30,7 +30,6 @@ export class UpdateWeekendsComponent {
   daysList: string[] = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ];
-  @ViewChild('confirmation') confirmation!: TemplateRef<any>
 
   constructor(
     private router: Router,
@@ -75,7 +74,7 @@ export class UpdateWeekendsComponent {
       week3: [false],
       week4: [false],
       week5: [false]
-    });
+    }, { validators: this.atLeastOneWeekSelected()});
   }
 
   get weekends(): FormArray {
@@ -92,6 +91,20 @@ export class UpdateWeekendsComponent {
 
   removeWeekend(index: number): void {
     this.weekends.removeAt(index);
+  }
+
+  atLeastOneWeekSelected(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const week1 = control.get('week1')?.value;
+      const week2 = control.get('week2')?.value;
+      const week3 = control.get('week3')?.value;
+      const week4 = control.get('week4')?.value;
+      const week5 = control.get('week5')?.value;
+  
+      const atLeastOneChecked = week1 || week2 || week3 || week4 || week5;
+  
+      return atLeastOneChecked ? null : { atLeastOneWeekRequired: true };
+    };
   }
 
   getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
@@ -311,8 +324,8 @@ export class UpdateWeekendsComponent {
       })
   }
 
-  openConfirmation() {
-    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static' })
+  openModal(content: any,) {
+    this.modalService.open(content, { centered: true })
   }
 
   closeWeekend() {

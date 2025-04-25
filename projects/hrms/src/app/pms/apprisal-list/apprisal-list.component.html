@@ -1,37 +1,40 @@
-<div class="d-flex justify-content-between gap-3 pt-3">
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header mb-0">{{'Review Cycle Employee List' | translate}}</p>
+        </div>
 
-    <div class="d-flex gap-3">
-        <div class="pd-class">
-            <a><span>{{'PMS' | translate}}</span></a>
+        <!--Buttons Content-->
+        <div class="d-flex gap-3 flex-wrap">
+            <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0"
+                (click)="openModal(reviewtemplate)">{{'Assign Review Template' | translate}}</button>
+            <button class="custom-btn btn-primary" (click)="openCreate()"
+                *ngIf="createdStatuses.length > 0 && filteredEmployees.length>0">{{'Add Employee' | translate}}</button>
+            <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0 "
+                (click)="openModal(downloadConfirmation)">{{'Download Appraisal Report' | translate}}</button>
+            <button class="custom-btn btn-primary" *ngIf="showGenerateAppirtialButton()"
+                (click)="openModal(appraisaletters) ;onclickStatusupdate('Completed')">{{'Generate Appraisal Letters' |
+                translate}}</button>
+            <button class="custom-btn btn-primary" *ngIf="showsentAppirtialButton()"
+                (click)="onclickstatusforappraisal('Appraisal Letter Sent')">{{'Send Appraisal Letters' |
+                translate}}</button>
+            <button *ngIf="showGeneratePromotionButton()" class="custom-btn btn-primary"
+                (click)="openModal(promationletter);onclickStatusupdate('Completed')">{{'Generate Promotion Letters' |
+                translate}}</button>
+            <button class="custom-btn btn-primary" *ngIf="showsentpromotionButton()"
+                (click)="onclickstatusforPromotion('Promotion Letter Sent')">
+                {{'Send Promotion Letters' | translate}}</button>
         </div>
-        <div class="pd-class">
-            <span>{{'Review Cycle Employee List' | translate}}</span>
-        </div>
+        <!--Buttons Content ends-->
     </div>
 
-    <!--Buttons Content-->
-    <div class="d-flex gap-3 flex-wrap">
-        <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0" (click)="openModal(reviewtemplate)">{{'Assign Review Template' | translate}}</button>
-        <button class="custom-btn btn-primary" (click)="openCreate()" *ngIf="createdStatuses.length > 0 && filteredEmployees.length>0">{{'Add Employee' | translate}}</button>
-        <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0 " (click)="openModal(downloadConfirmation)">{{'Download Appraisal Report' | translate}}</button>
-        <button class="custom-btn btn-primary" *ngIf="showGenerateAppirtialButton()" (click)="openModal(appraisaletters) ;onclickStatusupdate('Completed')">{{'Generate Appraisal Letters' | translate}}</button>
-        <button class="custom-btn btn-primary" *ngIf="showsentAppirtialButton()" (click)="onclickstatusforappraisal('Appraisal Letter Sent')">{{'Send Appraisal Letters' | translate}}</button>
-        <button *ngIf="showGeneratePromotionButton()" class="custom-btn btn-primary" (click)="openModal(promationletter);onclickStatusupdate('Completed')">{{'Generate Promotion Letters' | translate}}</button>
-        <button class="custom-btn btn-primary" *ngIf="showsentpromotionButton()" (click)="onclickstatusforPromotion('Promotion Letter Sent')">{{'Send Promotion Letters' | translate}}</button>
-    </div>
-    <!--Buttons Content ends-->
-
-</div>
-
-<!-- Drop downs -->
-<div>
+    <!-- Drop downs -->
     <form [formGroup]="dependentdropdowns">
-        <div class="d-flex w-50 gap-3">
+        <div class="d-flex flex-wrap gap-3 w-100 mb-3">
             <!-- Review Cycle Name -->
-            <div class="custom-p-select-content">
-                <label for="reviewCycle" class="form-label custom-label mb-2">
-                    {{ "Review Cycle" | translate }}<span class="text-danger">*</span>
-                </label>
+            <div>
+                <label for="reviewCycle" class="form-label custom-label custom-label mb-2">{{ "Review Cycle" | translate }}
+                    <span class="text-danger">*</span></label>
                 <div class="custom-p-select-content">
                     <p-select [options]="reviewCyclesList" optionLabel="reviewCycleName" [filter]="true"
                         filterBy="reviewCycleName" [showClear]="false" formControlName="selectedReviewCycle"
@@ -41,494 +44,442 @@
                     </p-select>
                 </div>
             </div>
-
+    
             <!-- Department -->
             <div>
-                <label for="department" class="form-label custom-label mb-2">
-                    {{ "Department" | translate }}<span class="text-danger">*</span>
-                </label>
-                <div>
-                    <p-multiSelect formControlName="departmentId" [options]="departmentDetails"
-                        optionLabel="departmentName" placeholder="Search department" class="w-100">
-                        <ng-template let-dept pTemplate="item">
-                            <div>{{ dept.departmentName }}</div>
-                        </ng-template>
+                <label for="department" class="form-label custom-label custom-label mb-2">{{ "Department" | translate }}
+                    <span class="text-danger">*</span></label>
+                <div class="custom-p-multiSelect-content">
+                    <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName"
+                        placeholder="Search department" class="w-100">
+                        <ng-template let-dept pTemplate="item">{{ dept.departmentName }}</ng-template>
                     </p-multiSelect>
                 </div>
             </div>
-
+    
             <!-- Sub Department -->
             <div>
-                <label for="subDepartment" class="form-label custom-label mb-2">
+                <label for="subDepartment" class="form-label custom-label custom-label mb-2">
                     {{ "Sub Department" | translate }}<span class="text-danger">*</span>
                 </label>
-                <p-multiSelect formControlName="subDepartmentId" [options]="subDepartmentsDropdownValues"
-                    optionLabel="subDepartmentName" placeholder="Search sub department" class="w-100">
-                    <ng-template let-dept pTemplate="item">
-                        <div>{{ dept.subDepartmentName }}</div>
-                    </ng-template>
-                </p-multiSelect>
+                <div class="custom-p-multiSelect-content">
+                    <p-multiSelect formControlName="subDepartmentId" [options]="subDepartmentsDropdownValues"
+                        optionLabel="subDepartmentName" placeholder="Search sub department" class="w-100">
+                        <ng-template let-dept pTemplate="item">{{ dept.subDepartmentName }}</ng-template>
+                    </p-multiSelect>
+                </div>
             </div>
-
+    
             <!-- Location -->
             <div>
-                <label for="location" class="form-label custom-label mb-2">
-                    {{ "Location" | translate }}<span class="text-danger">*</span>
-                </label>
-                <p-multiSelect formControlName="locationId" [options]="jobLocationDropDownData"
-                    optionLabel="locationName" placeholder="Search location" class="w-100">
-                    <ng-template let-dept pTemplate="item">
-                        <div>{{ dept.locationName }}</div>
-                    </ng-template>
-                </p-multiSelect>
+                <label for="location" class="form-label custom-label custom-label mb-2">{{ "Location" | translate }}
+                    <span class="text-danger">*</span></label>
+                <div class="custom-p-multiSelect-content">
+                    <p-multiSelect formControlName="locationId" [options]="jobLocationDropDownData"
+                        optionLabel="locationName" placeholder="Search location" class="w-100">
+                        <ng-template let-dept pTemplate="item">{{ dept.locationName }}</ng-template>
+                    </p-multiSelect>
+                </div>
             </div>
-
+    
             <!-- Sub Location -->
             <div>
-                <label for="subLocation" class="form-label custom-label mb-2">
-                    {{ "Sub Location" | translate }}<span class="text-danger">*</span>
-                </label>
-                <p-multiSelect formControlName="subLocationId" [options]="subLocationsDropdown"
-                    optionLabel="subLocationName" placeholder="Search sub location" class="w-100">
-                    <ng-template let-dept pTemplate="item">
-                        <div>{{ dept.subLocationName }}</div>
-                    </ng-template>
-                </p-multiSelect>
+                <label for="subLocation" class="form-label custom-label custom-label mb-2">{{ "Sub Location" | translate }}
+                    <span class="text-danger">*</span></label>
+                <div class="custom-p-multiSelect-content">
+                    <p-multiSelect formControlName="subLocationId" [options]="subLocationsDropdown"
+                        optionLabel="subLocationName" placeholder="Search sub location" class="w-100">
+                        <ng-template let-dept pTemplate="item">{{ dept.subLocationName }}</ng-template>
+                    </p-multiSelect>
+                </div>
             </div>
-
+    
             <!-- Promoted -->
-            <div class="mb-3">
-                <label for="promted" class="form-label custom-label mb-2">
-                    {{ "Promoted" | translate }}<span class="text-danger">*</span>
-                </label>
+            <div>
+                <label for="promted" class="form-label custom-label custom-label mb-2">{{ "Promoted" | translate }}
+                    <span class="text-danger">*</span></label>
                 <div class="custom-p-select-content">
-                    <p-select formControlName="promoted" (onChange)="onPromotedChange($event)"
-                        [options]="promotedOptions" optionLabel="label" placeholder="Select Promoted" class="w-100">
-                        <ng-template let-option pTemplate="item">
-                            <div>{{ option.label }}</div>
-                        </ng-template>
+                    <p-select formControlName="promoted" (onChange)="onPromotedChange($event)" [options]="promotedOptions"
+                        optionLabel="label" placeholder="Select Promoted" class="w-100">
+                        <ng-template let-option pTemplate="item">{{ option.label }}</ng-template>
                     </p-select>
                 </div>
             </div>
-
         </div>
     </form>
-</div>
-
-<!-- Search Bar -->
-<div class="mb-4">
-    <div class="input-group">
-        <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search here..."
-            [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username"
-            aria-describedby="basic-addon1">
+  
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username">
     </div>
-</div>
+   
+    <!-- Data Loader -->
+    <ng-container *ngIf="dataload; else maincontent">
+        <ng-template #loadingSpinner>
+            <app-data-loader-content />
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
 
-<!-- Data Loader -->
-<ng-container *ngIf="dataload; else maincontent">
-    <ng-template #loadingSpinner>
-        <!-- <div class="spinner-container text-center">
-            <div class="spinner-border text-primary d-inline-block ms-3" style="width: 3rem; height: 3rem"
-                role="status">
-                <span class="sr-only"></span>
-            </div>
-            <p class="mb-4">Loading...</p>
-        </div> -->
-        <app-data-loader-content />
-    </ng-template>
-    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-</ng-container>
-
-<!-- Content -->
-<ng-template #maincontent>
-    <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th *ngIf="filteredEmployees.length > 0"><input class="form-check-input" type="checkbox"
-                            (change)="onHeaderCheckboxChange($event)" id="flexCheckDefaultHeader"></th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Review Cycle Name' | translate}}</th>
-                    <th>{{'Department' | translate}}</th>
-                    <th>{{'Team' | translate}}</th>
-                    <th>{{'Location' | translate}}</th>
-                    <th>{{'Sub Location' | translate}}</th>
-                    <th>{{'Promoted' | translate}}</th>
-                    <th>{{'Review Template Name' | translate}}</th>
-                    <th>{{'Status' | translate}}</th>
-                    <th>{{'Final Rating' | translate}}</th>
-                    <th class="text-center">{{'Action' | translate}}</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <ng-container *ngIf="filteredEmployees.length > 0; else noDataTemplate">
-                    <tr *ngFor="let employee of filteredEmployees">
-                        <td>
-                            <input class="form-check-input" type="checkbox" [(ngModel)]="employee.selected"
-                                (change)="onCheckboxChange($event, employee.id)"
-                                [disabled]="employee.status === 'Review on Hold'" id="flexCheckDefault">
-                        </td>
-                        <td>{{employee.reviewEmployeeIdName }}</td>
-                        <td>{{employee.reviewCycleHeaderIdName }}</td>
-                        <td>{{employee.departmentName}}</td>
-                        <td>{{employee.subDepartmentName}}</td>
-                        <td>{{employee.locationName}}</td>
-                        <td>{{employee.subLocationName}}</td>
-                        <td>{{employee.applicableForPromotion === null || employee.applicableForPromotion
-                            === undefined ? '__' : (employee.applicableForPromotion ? 'Yes' : 'No')}}</td>
-                        <td>{{employee.reviewTemplateName}}</td>
-                        <td>{{employee.status}}</td>
-                        <td class="text-center"><span
-                                *ngIf="employee.overallRating;else rating">{{employee.overallRating}}
-                            </span>
-                            <ng-template #rating>--</ng-template>
-                        </td>
-                        <td class="text-center">
-                            <div class="dropdown" *ngIf="employee.status === 'Created'||employee.status === 'Review Template Assigned'|| employee.status ==='Completed' 
-                            || employee.status === 'Review on Hold'||employee.status === 'Promotion Letter Sent' 
-                            || employee.status === 'Promotion Letter Generated' || employee.status === 'Appraisal Letter Sent' 
-                            || employee.status === 'Appraisal Letter Generated'">
-                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu">
-
-                                    <ng-container *ngIf="employee.status !== 'Review on Hold'">
-                                        <li *ngIf="employee.status !== 'Promotion Letter Sent' && employee.status !=='Completed' && employee.status !== 'Appraisal Letter Sent'&&employee.rchstatus === 'Created'"
-                                            class="dropdown-item border-bottom"
-                                            (click)="openModal(holdconformation);seletedid=employee.id"><a
-                                                class="dropdown-custom-btn">{{'Hold' | translate }}</a>
-                                        </li>
-
-                                        <li class="dropdown-item"
-                                            *ngIf="employee.rchstatus === 'Created' && employee.status === 'Created'">
-                                            <a class="dropdown-custom-btn"
-                                                (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">
-                                                {{'Assign Review Template' | translate}}
-                                            </a>
-                                        </li>
-
-                                        <li class="dropdown-item"
-                                            *ngIf="employee.status === 'Review Template Assigned'">
-                                            <a class="dropdown-custom-btn"
-                                                (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">
-                                                {{'Update Review Template' | translate}}
-                                            </a>
-                                        </li>
-
-                                    </ng-container>
-                                    <li class="dropdown-item" *ngIf="employee.status === 'Review on Hold'"
-                                        (click)="openModal(Resumeconformation);seletedid=employee.id"><a
-                                            class="dropdown-custom-btn">{{'Resume' | translate}}</a></li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.status === 'Promotion Letter Sent' || employee.status === 'Promotion Letter Generated'"
-                                        (click)="downloadPromotionletter(employee)">
-                                        <a class="dropdown-custom-btn">
-                                            {{'Promotion Letter Download' | translate}}
-                                        </a>
-                                    </li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.status === 'Appraisal Letter Sent' || employee.status === 'Appraisal Letter Generated'"
-                                        (click)="downloadletter(employee)">
-                                        <a class="dropdown-custom-btn">
-                                            {{'Appraisal Letter Download' | translate}}
-                                        </a>
-                                    </li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.applicableForPromotion===false && employee.status ==='Completed'"
-                                        (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Completed')">
-                                        <a class="dropdown-custom-btn">{{'Generate Appraisal Letter' | translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Generated'||employee.status ==='Appraisal Letter Sent')"
-                                        (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
-                                        <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' |
-                                            translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Sent')"
-                                        (click)="openModal(resend);Click(employee.id,'Re-Send Appraisal Letter')"><a
-                                            class="dropdown-custom-btn">{{'Re-Send Appraisal Letter' | translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Generated'||employee.status ==='Promotion Letter Sent')"
-                                        (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
-                                        <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' |
-                                            translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Sent')"
-                                        (click)="openModal(resend);Click(employee.id,'Re-Send Appraisal Letter')"><a
-                                            class="dropdown-custom-btn">{{'Re-Send Appraisal Letter' | translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item "
-                                        *ngIf="employee.applicableForPromotion===true && employee.status ==='Completed'"
-                                        (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Completed')">
-                                        <a class="dropdown-custom-btn">{{'Generate Promotion Letter' | translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item "
-                                        *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Generated'||employee.status ==='Promotion Letter Sent')"
-                                        (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
-                                        <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' |
-                                            translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Sent')"
-                                        (click)="openModal(resendpromotion);Click(employee.id,'Re-Send Promotion Letter')">
-                                        <a class="dropdown-custom-btn">{{'Re-Send Promotion Letter' | translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item "
-                                        *ngIf="employee.applicableForPromotion===true && (employee.status ==='Appraisal Letter Generated'||employee.status ==='Appraisal Letter Sent')"
-                                        (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
-                                        <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' |
-                                            translate}}</a>
-                                    </li>
-
-                                    <li class="dropdown-item"
-                                        *ngIf="employee.applicableForPromotion===true && (employee.status ==='Appraisal Letter Sent')"
-                                        (click)="openModal(resendpromotion);Click(employee.id,'Re-Send Promotion Letter')">
-                                        <a class="dropdown-custom-btn">{{'Re-Send Promotion Letter' | translate}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
+    <!-- Content -->
+    <ng-template #maincontent>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
                     <tr>
-                        <td colspan="11">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
+                        <th *ngIf="filteredEmployees.length > 0">
+                            <input class="form-check-input" type="checkbox" (change)="onHeaderCheckboxChange($event)" id="flexCheckDefaultHeader">
+                        </th>
+                        <th>{{'Employee Name' | translate}}</th>
+                        <th>{{'Review Cycle Name' | translate}}</th>
+                        <th>{{'Department' | translate}}</th>
+                        <th>{{'Team' | translate}}</th>
+                        <th>{{'Location' | translate}}</th>
+                        <th>{{'Sub Location' | translate}}</th>
+                        <th>{{'Promoted' | translate}}</th>
+                        <th>{{'Review Template Name' | translate}}</th>
+                        <th>{{'Status' | translate}}</th>
+                        <th>{{'Final Rating' | translate}}</th>
+                        <th class="text-center">{{'Action' | translate}}</th>
                     </tr>
-                </ng-template>
-            </tbody>
-            
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="filteredEmployees.length > 0; else noDataTemplate">
+                        <tr *ngFor="let employee of filteredEmployees">
+                            <td>
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="employee.selected"
+                                    (change)="onCheckboxChange($event, employee.id)"
+                                    [disabled]="employee.status === 'Review on Hold'" id="flexCheckDefault">
+                            </td>
+                            <td>{{employee.reviewEmployeeIdName }}</td>
+                            <td>{{employee.reviewCycleHeaderIdName }}</td>
+                            <td>{{employee.departmentName}}</td>
+                            <td>{{employee.subDepartmentName}}</td>
+                            <td>{{employee.locationName}}</td>
+                            <td>{{employee.subLocationName}}</td>
+                            <td>{{employee.applicableForPromotion === null || employee.applicableForPromotion === undefined ? '__' : 
+                            (employee.applicableForPromotion ? 'Yes' : 'No')}}</td>
+                            <td>{{employee.reviewTemplateName}}</td>
+                            <td>{{employee.status}}</td>
+                            <td class="text-center">
+                                <span *ngIf="employee.overallRating;else rating">{{employee.overallRating}}</span>
+                                <ng-template #rating>--</ng-template>
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown" *ngIf="employee.status === 'Created'||employee.status === 'Review Template Assigned'|| employee.status ==='Completed' 
+                                || employee.status === 'Review on Hold'||employee.status === 'Promotion Letter Sent' || employee.status === 'Promotion Letter Generated' 
+                                || employee.status === 'Appraisal Letter Sent' || employee.status === 'Appraisal Letter Generated'">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <ng-container *ngIf="employee.status !== 'Review on Hold'">
+                                            <li *ngIf="employee.status !== 'Promotion Letter Sent' && employee.status !=='Completed' && employee.status !== 'Appraisal Letter Sent'&&employee.rchstatus === 'Created'"
+                                                class="dropdown-item border-bottom" (click)="openModal(holdconformation);seletedid=employee.id">
+                                                <a class="dropdown-custom-btn">{{'Hold' | translate }}</a>
+                                            </li>
 
-    @if(filteredEmployees.length > 0){
+                                            <li class="dropdown-item" *ngIf="employee.rchstatus === 'Created' && employee.status === 'Created'">
+                                                <a class="dropdown-custom-btn" (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">
+                                                    {{'Assign Review Template' | translate}}
+                                                </a>
+                                            </li>
+
+                                            <li class="dropdown-item" *ngIf="employee.status === 'Review Template Assigned'">
+                                                <a class="dropdown-custom-btn" (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">
+                                                    {{'Update Review Template' | translate}}
+                                                </a>
+                                            </li>
+
+                                        </ng-container>
+                                        <li class="dropdown-item" *ngIf="employee.status === 'Review on Hold'" (click)="openModal(Resumeconformation);seletedid=employee.id">
+                                            <a class="dropdown-custom-btn">{{'Resume' | translate}}</a></li>
+
+                                        <li class="dropdown-item" *ngIf="employee.status === 'Promotion Letter Sent' || employee.status === 'Promotion Letter Generated'"
+                                            (click)="downloadPromotionletter(employee)">
+                                            <a class="dropdown-custom-btn">{{'Promotion Letter Download' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item" *ngIf="employee.status === 'Appraisal Letter Sent' || employee.status === 'Appraisal Letter Generated'"
+                                            (click)="downloadletter(employee)">
+                                            <a class="dropdown-custom-btn">{{'Appraisal Letter Download' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && employee.status ==='Completed'"
+                                            (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Completed')">
+                                            <a class="dropdown-custom-btn">{{'Generate Appraisal Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Generated' 
+                                        || employee.status ==='Appraisal Letter Sent')" (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
+                                            <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item"
+                                            *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Sent')"
+                                            (click)="openModal(resend);Click(employee.id,'Re-Send Appraisal Letter')">
+                                            <a class="dropdown-custom-btn">{{'Re-Send Appraisal Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item"
+                                            *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Generated'||employee.status ==='Promotion Letter Sent')"
+                                            (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
+                                            <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item"
+                                            *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Sent')"
+                                            (click)="openModal(resend);Click(employee.id,'Re-Send Appraisal Letter')">
+                                            <a class="dropdown-custom-btn">{{'Re-Send Appraisal Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item "
+                                            *ngIf="employee.applicableForPromotion===true && employee.status ==='Completed'"
+                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Completed')">
+                                            <a class="dropdown-custom-btn">{{'Generate Promotion Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item "
+                                            *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Generated'||employee.status ==='Promotion Letter Sent')"
+                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
+                                            <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item"
+                                            *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Sent')"
+                                            (click)="openModal(resendpromotion);Click(employee.id,'Re-Send Promotion Letter')">
+                                            <a class="dropdown-custom-btn">{{'Re-Send Promotion Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item "
+                                            *ngIf="employee.applicableForPromotion===true && (employee.status ==='Appraisal Letter Generated'||employee.status ==='Appraisal Letter Sent')"
+                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
+                                            <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' | translate}}</a>
+                                        </li>
+
+                                        <li class="dropdown-item" *ngIf="employee.applicableForPromotion===true && (employee.status ==='Appraisal Letter Sent')"
+                                            (click)="openModal(resendpromotion);Click(employee.id,'Re-Send Promotion Letter')">
+                                            <a class="dropdown-custom-btn">{{'Re-Send Promotion Letter' | translate}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td colspan="11">
+                                <app-no-data-found></app-no-data-found>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+
+        @if(filteredEmployees.length > 0){
         <div class="pagination-content">
             <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
                 <div class="d-flex align-items-center gap-3 p-2">
-                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onPageSizeChange($event)">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
+                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onPageSizeChange($event)">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                     </select>
                     <span class="pagination-label text-nowrap">
-                        Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
+                        Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of
+                        {{ collectionSize }}
                     </span>
                 </div>
                 <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
                     (onPageChange)="onPageChange($event)"></p-paginator>
             </div>
         </div>
-    }
-</ng-template>
+        }
+    </ng-template>
+</div>
 
 <!-- Hold Confirmation Modal -->
 <ng-template #holdconformation let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Hold the Employee?'|translate}}</p>
         </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
-            <button class="custom-btn btn-primary w-50  py-2" (click)="holdemployee(seletedid)">{{"Yes" | translate}}</button>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{"No" | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="holdemployee(seletedid)">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
 
 <!-- Assign Review template Modal -->
 <ng-template #reviewtemplate let-modal>
-    <div class="px-5 py-4" ngbAutofocus>
-        <form [formGroup]="reviewtemplatedropdowns" (ngSubmit)="assignReviewTemplate(reviewtemplatedropdowns)">
-            <div class="d-flex justify-content-between mb-4">
-                <div>
-                    <h5>{{'Assign Review Template' | translate}}</h5>
-                </div>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Assign Review Template' | translate}}</p>
             </div>
             <div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Review Template' | translate}}<span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="listofReviewTemplates" optionLabel="formName" [filter]="true"
-                                filterBy="formName" [showClear]="false" formControlName="reviewTemplateId"
-                                placeholder="Please select review template">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.formName
-                                    }}</ng-template>
-                                <ng-template let-form #item>{{ form.formName }}</ng-template>
-                            </p-select>
-                        </div>
-                        <div
-                            *ngIf="reviewtemplatedropdowns.get('reviewTemplateId')?.touched && reviewtemplatedropdowns.get('reviewTemplateId')?.hasError('required')">
-                            <small class="text-danger">Please select review template</small>
-                        </div>
+                <a><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <form [formGroup]="reviewtemplatedropdowns" (ngSubmit)="assignReviewTemplate(reviewtemplatedropdowns)">
+                <div>
+                    <label for="" class="form-label custom-label custom-label">{{'Review Template' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="listofReviewTemplates" optionLabel="formName" [filter]="true"
+                            filterBy="formName" [showClear]="false" formControlName="reviewTemplateId"
+                            placeholder="Please select review template" class="custom-select w-100">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.formName }}</ng-template>
+                            <ng-template let-form #item>{{ form.formName }}</ng-template>
+                        </p-select>
+                    </div>
+                    <div *ngIf="reviewtemplatedropdowns.get('reviewTemplateId')?.touched && reviewtemplatedropdowns.get('reviewTemplateId')?.hasError('required')">
+                        Please select review template
                     </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-3 mt-2">
-                <button type="reset" class="custom-btn btn-secondary w-50  py-2" (click)="openConfirmation()">{{'Cancel' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary w-50  py-2" [disabled]="reviewtemplatedropdowns.invalid">{{'Assign' | translate}}</button>
-            </div>
-        </form>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openConfirmation()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="reviewtemplatedropdowns.invalid">{{'Assign' | translate}}</button>
+                </div>
+            </form>
+        </div>
     </div>
 </ng-template>
 
 <!-- Resume Employee Confirmation Modal -->
 <ng-template #Resumeconformation let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Resume the Employee?'|translate}}</p>
         </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50 py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
-            <button class="custom-btn btn-primary w-50 py-2" (click)="resumeanemployee(seletedid)">{{"Yes" | translate}}</button>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="resumeanemployee(seletedid)">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
 
 <!-- Generate Apprasail letter Modal -->
 <ng-template #sigleletter let-modal>
-    <div ngbAutofocus>
-        <form [formGroup]="Effectivedatefrom" (ngSubmit)="genarateAppraisalletter(seletedid, Effectivedatefrom)">
-            <div class="d-flex justify-content-between mb-4">
-                <div>
-                    <h5>{{'Generate Appraisal Letter' | translate}}</h5>
-                </div>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Generate Appraisal Letter' | translate}}</p>
             </div>
             <div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Effective From Date' | translate}} <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" formControlName="effectiveFromDATE" id="effectiveFrom"
-                            placeholder="Effective From" onkeypress="return false">
-                    </div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
 
-                    <div
-                        *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')">
-                        <small class="text-danger">Effective From Date is required</small>
+        <div class="custom-main-popup-content">
+            <form [formGroup]="Effectivedatefrom" (ngSubmit)="genarateAppraisalletter(seletedid, Effectivedatefrom)">
+                <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}<span class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE" id="effectiveFrom"
+                        placeholder="Effective From" onkeypress="return false">
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
+                        class="error-msg">
+                        Effective From Date is required
                     </div>
                 </div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Signature Authority Name' | translate}} <span class="text-danger">*</span></label>
-                    
-                        <div class="custom-p-select-content">
-                            <p-select [options]="authorityDetailsForAppraisal" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                                [showClear]="false" formControlName="signaturename" placeholder="Please select signature authority name">
-                                <ng-template #selectedItem let-selectedOption> {{ selectedOption.firstName }} {{ selectedOption.middleName
-                                    }} {{ selectedOption.lastName }}</ng-template>
-                                <ng-template let-item #item>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</ng-template>
-                            </p-select>
-                        </div>
-                        <div
-                            *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')">
-                            <small class="text-danger">Signature Authority Name is required</small>
-                        </div>
+
+                <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="authorityDetailsForAppraisal" optionLabel="fullName" [filter]="true"
+                            class="form-select custom-select" filterBy="fullName" [showClear]="false" formControlName="signaturename"
+                            placeholder="Please select signature authority name">
+                            <ng-template #selectedItem let-selectedOption> {{ selectedOption.firstName }} {{ selectedOption.middleName }}
+                                {{ selectedOption.lastName }}</ng-template>
+                            <ng-template let-item #item>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</ng-template>
+                        </p-select>
+                    </div>
+                    <div *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')"
+                        class="error-msg">
+                        Signature Authority Name is required
                     </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-3 mt-3">
-                <button type="reset" class="custom-btn btn-secondary w-50 py-2" (click)="modal.dismiss()">{{'Cancel' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary w-50 py-2" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
-            </div>
-        </form>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+                </div>
+            </form>
+        </div>
     </div>
 </ng-template>
 
 <!-- Re-send Appraisal letter Modal -->
 <ng-template #resend let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Re-Send Appraisal Letter?'|translate}}</p>
         </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
-            <button class="custom-btn btn-primary w-50  py-2" (click)="SentLetters()">{{"Yes" | translate}}</button>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="SentLetters()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
 
 <!-- Generate Promotion Letter Modal -->
 <ng-template #singlepromationletter let-modal>
-    <div ngbAutofocus>
+    <div class="custom-main-popup-container" ngbAutofocus>
         <form [formGroup]="Effectivedatefrom" (ngSubmit)="genaratePromotionletter(seletedid, Effectivedatefrom)">
-            <div class="d-flex justify-content-between mb-4">
+            <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <h5>{{'Generate Promotion Letter' | translate}}</h5>
+                    <p class="popup-heading mb-0">{{'Generate Promotion Letter' | translate}}</p>
                 </div>
                 <div>
-                    <button class="close-btn" type="button" (click)="closeModal()">
-                        <img src="./assets/images/close.png" alt="close Icon" class="close-icon">
-                    </button>
+                    <a (click)="closeModal()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Effective From Date' | translate}}<span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" formControlName="effectiveFromDATE" id="effectiveFrom"
-                            placeholder="Effective From" onkeypress="return false">
-                    </div>
 
-                    <div
-                        *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')">
-                        <small class="text-danger">Effective From Date is required</small>
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}
+                        <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE" id="effectiveFrom"
+                        placeholder="Effective From" onkeypress="return false">
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
+                        class="error-msg">
+                        Effective From Date is required
                     </div>
                 </div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Signature Authority Name' | translate}} <span
-                                class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="authorityDetailsForAppraisal" optionLabel="fullName" [filter]="true"
-                                filterBy="fullName" [showClear]="false" formControlName="signaturename"
-                                placeholder="Please select signature authority name">
-                                <ng-template #selectedItem let-selectedOption> {{ selectedOption.firstName }} {{
-                                    selectedOption.middleName
-                                    }} {{ selectedOption.lastName }}</ng-template>
-                                <ng-template let-item #item>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</ng-template>
-                            </p-select>
-                        </div>
-                        <!-- <select type="date" class="form-control" formControlName="signaturename" id="signaturename"
-                                                            name="signaturename" placeholder="Select Signature Authority Name"
-                                                            onkeypress="return false">
-                                                            <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
-                                                            <option *ngFor="let item of authorityDetailsForPromotion" [value]="item.employeeId">
-                                                                {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}
-                                                            </option>
-                                                        </select> -->
-                        <div
-                            *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')">
-                            <small class="text-danger">Signature Authority Name is required</small>
-                        </div>
-                    </div>
 
-                   
+                <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}
+                        <span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="authorityDetailsForAppraisal" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            [showClear]="false" formControlName="signaturename" placeholder="Please select signature authority name"
+                            class="form-select custom-select">
+                            <ng-template #selectedItem let-selectedOption> {{ selectedOption.firstName }} {{ selectedOption.middleName }}
+                                {{ selectedOption.lastName }}</ng-template>
+                            <ng-template let-item #item>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</ng-template>
+                        </p-select>
+                    </div>
+                    <div *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')"
+                        class="error-msg">
+                        Signature Authority Name is required
+                    </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-3 mt-3">
-                <button type="reset" class="custom-btn btn-secondary w-50 py-2" (click)="modal.dismiss()">{{'Cancel' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary w-50 py-2" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmation()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+                </div>
             </div>
         </form>
     </div>
@@ -536,87 +487,87 @@
 
 <!-- Re-send Promotion Letter Modal -->
 <ng-template #resendpromotion let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Re-Send Promotion Letter?'|translate}}</p>
         </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
-            <button class="custom-btn btn-primary w-50  py-2" (click)="SentpromationLetters()">{{"Yes" | translate}}</button>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="SentpromationLetters()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
 
 <!-- Add Employee Modal -->
 <ng-template #addEmployee let-modal>
-    <div class="px-5 py-4" ngbAutofocus>
+    <div class="custom-main-popup-container" ngbAutofocus>
         <form [formGroup]="addEmployeeForm" (ngSubmit)="addEmployeetoreviewcylce()">
-            <div class="d-flex justify-content-between mb-4">
+            <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <h5>{{'Add Employee' | translate}}</h5>
+                    <p class="popup-heading mb-0">{{'Add Employee' | translate}}</p>
+                </div>
+                <div>
+                    <a (click)="openConfirmation()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="reviewCycleName" class="form-label">{{'Review Cycle Name' | translate}}<span
-                            class="text-danger">*</span></label>
-                    <input class="form-control" id="reviewCycleName" formControlName="reviewCycleName" type="text"
-                        readonly placeholder="Please enter review cycle name">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="employeeName" class="form-label">{{'Employee Name' | translate}}<span
-                            class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="employeesList" optionLabel="employeeName" [filter]="true"
-                            filterBy="employeeName" [showClear]="false" formControlName="employeeName"
-                            placeholder="Please select employee" (onChange)="onEmployeeChange($event)">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.employeeName
-                                }}</ng-template>
-                            <ng-template let-employee #item>{{ employee.employeeName }}</ng-template>
-                        </p-select>
+
+            <div class="custom-main-popup-content">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="reviewCycleName" class="form-label custom-label">{{'Review Cycle Name' | translate}}<span class="text-danger">*</span></label>
+                        <input class="form-control custom-input" id="reviewCycleName" formControlName="reviewCycleName" type="text"
+                            readonly placeholder="Please enter review cycle name">
                     </div>
 
-                    <div
-                        *ngIf="addEmployeeForm.get('employeeName')?.touched && addEmployeeForm.get('employeeName')?.hasError('required')">
-                        <small class="text-danger">Employee Name is required.</small>
+                    <div class="col-md-6 mb-3">
+                        <label for="employeeName" class="form-label custom-label">{{'Employee Name' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeesList" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+                                [showClear]="false" formControlName="employeeName" placeholder="Please select employee"
+                                (onChange)="onEmployeeChange($event)" class="form-select custom-select">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.employeeName }}</ng-template>
+                                <ng-template let-employee #item>{{ employee.employeeName }}</ng-template>
+                            </p-select>
+                        </div>
+                        <div *ngIf="addEmployeeForm.get('employeeName')?.touched && addEmployeeForm.get('employeeName')?.hasError('required')" class="error-msg">
+                            Employee Name is required.
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="department" class="form-label custom-label">{{'Department' | translate}}<span class="text-danger">*</span></label>
+                        <input class="form-control custom-input" id="department" formControlName="department" type="text" readonly
+                            placeholder="Please enter department">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="team" class="form-label custom-label">{{'Team' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <input class="form-control custom-input" id="team" formControlName="team" type="text" readonly
+                            placeholder="Please enter team">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="location" class="form-label custom-label">{{'Location' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <input class="form-control custom-input" id="location" formControlName="location" type="text" readonly
+                            placeholder="Please enter location">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="subLocation" class="form-label custom-label">{{'Sub Location' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <input class="form-control custom-input" id="subLocation" formControlName="subLocation" type="text" readonly
+                            placeholder="Please enter sub location">
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="department" class="form-label">{{'Department' | translate}}<span
-                            class="text-danger">*</span></label>
-                    <input class="form-control" id="department" formControlName="department" type="text" readonly
-                        placeholder="Please enter department">
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmation()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addEmployeeForm.invalid">{{'Submit' | translate}}</button>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="team" class="form-label">{{'Team' | translate}}<span
-                            class="text-danger">*</span></label>
-                    <input class="form-control" id="team" formControlName="team" type="text" readonly
-                        placeholder="Please enter team">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="location" class="form-label">{{'Location' | translate}}<span
-                            class="text-danger">*</span></label>
-                    <input class="form-control" id="location" formControlName="location" type="text" readonly
-                        placeholder="Please enter location">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="subLocation" class="form-label">{{'Sub Location' | translate}}<span
-                            class="text-danger">*</span></label>
-                    <input class="form-control" id="subLocation" formControlName="subLocation" type="text" readonly
-                        placeholder="Please enter sub location">
-                </div>
-                <!-- <div class="col-md-6 mb-3">
-                    <label for="status" class="form-label">Status<span class="text-danger">*</span></label>
-                    <input class="form-control" id="status" formControlName="status" type="text"
-                        placeholder="Please enter status">
-                </div> -->
-            </div>
-            <div class="d-flex justify-content-end gap-3 mt-4 pb-3">
-                <button type="reset" class="custom-btn btn-secondary w-50 py-2"
-                    (click)="openConfirmation()">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary w-50 py-2"
-                    [disabled]="addEmployeeForm.invalid">Save</button>
             </div>
         </form>
     </div>
@@ -624,70 +575,62 @@
 
 <!-- Appraisal Letter download confirmation -->
 <ng-template #downloadConfirmation let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to download Appraisal Report?'|translate}}</p>
         </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50 py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
-            <button class="custom-btn btn-primary w-50 py-2" (click)="reportdata()">{{"Yes" | translate}}</button>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="reportdata()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>
 
 <!-- Generate Multiple Appraisal Letters Modal -->
 <ng-template #appraisaletters let-modal>
-    <div ngbAutofocus>
+    <div class="custom-main-popup-container" ngbAutofocus>
         <form [formGroup]="Effectivedatefrom" (ngSubmit)="generateLetters()">
-            <div class="d-flex justify-content-between mb-4">
+            <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <h5>{{'Generate Appraisal Letter' | translate}}</h5>
+                    <p class="popup-heading mb-0">{{'Generate Appraisal Letter' | translate}}</p>
                 </div>
                 <div>
-                    <button class="close-btn" type="button" (click)="closeModal()">
-                        <img src="./assets/images/close.png" alt="close Icon" class="close-icon">
-                    </button>
+                    <a (click)="closeModal()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Effective From Date' | translate}}<span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" formControlName="effectiveFromDATE" id="effectiveFrom"
-                            placeholder="Effective From" onkeypress="return false">
-                    </div>
 
-                    <div
-                        *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')">
-                        <small class="text-danger">Effective From Date is required</small>
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}
+                        <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
+                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
+                        class="error-msg">Effective From Date is required
                     </div>
                 </div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Signature Authority Name' | translate}} <span
-                                class="text-danger">*</span></label>
-                        <select type="date" class="form-control" formControlName="signaturename" id="signaturename"
-                            name="signaturename" placeholder="Select Signature Authority Name"
-                            onkeypress="return false">
-                            <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
-                            <option *ngFor="let item of authorityDetailsForAppraisal" [value]="item.employeeId">
-                                {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}
-                            </option>
-                        </select>
-                    </div>
 
-                    <div
-                        *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')">
-                        <small class="text-danger">Signature Authority Name is required</small>
+                <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}
+                        <span class="text-danger">*</span></label>
+                    <select type="date" class="form-control custom-input" formControlName="signaturename"
+                        id="signaturename" name="signaturename" placeholder="Select Signature Authority Name"
+                        onkeypress="return false">
+                        <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
+                        <option *ngFor="let item of authorityDetailsForAppraisal" [value]="item.employeeId">
+                            {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}
+                        </option>
+                    </select>
+                    <div *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')"
+                        class="error-msg">Signature Authority Name is required
                     </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-3 mt-3">
-                <button type="reset" class="custom-btn btn-secondary w-50 py-2"
-                    (click)="modal.dismiss()">{{'Cancel' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary w-50 py-2"
-                    [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+                </div>
             </div>
         </form>
     </div>
@@ -695,57 +638,46 @@
 
 <!-- Promotion letter Generation -->
 <ng-template #promationletter let-modal>
-    <div ngbAutofocus>
+    <div class="custom-main-popup-container" ngbAutofocus>
         <form [formGroup]="Effectivedatefrom" (ngSubmit)="generatepromationLetters()">
-            <div class="d-flex justify-content-between mb-4">
+            <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <h5 class="modal-title">{{'Generate Promotion Letter' | translate}}</h5>
+                    <p class="popup-heading mb-0">{{'Generate Promotion Letter' | translate}}</p>
                 </div>
                 <div>
-                    <button class="close-btn" type="button" (click)="closeModal()">
-                        <img src="./assets/images/close.png" alt="close Icon" class="close-icon">
-                    </button>
+                    <a (click)="closeModal()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Effective From Date' | translate}}<span
-                                class="text-danger">*</span></label>
-                        <input type="date" class="form-control" formControlName="effectiveFromDATE" id="effectiveFrom"
-                            placeholder="Effective From" onkeypress="return false">
-                    </div>
 
-                    <div
-                        *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')">
-                        <small class="text-danger">{{'Effective From Date is required' | translate}}</small>
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}
+                        <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
+                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
+                        class="error-msg">{{'Effective From Date is required' | translate}}
                     </div>
                 </div>
-                <div class="col-md-12 mb-3">
-                    <div>
-                        <label for="" class="form-label">{{'Signature Authority Name' | translate}} <span
-                                class="text-danger">*</span></label>
-                        <select type="date" class="form-control" formControlName="signaturename" id="signaturename"
-                            name="signaturename" placeholder="Select Signature Authority Name"
-                            onkeypress="return false">
-                            <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
-                            <option *ngFor="let item of authorityDetailsForPromotion" [value]="item.employeeId">
-                                {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}
-                            </option>
-                        </select>
-                    </div>
 
-                    <div
-                        *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')">
-                        <small class="text-danger">Signature Authority Name is required</small>
+                <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}
+                        <span class="text-danger">*</span></label>
+                    <select type="date" class="form-control custom-input" formControlName="signaturename" id="signaturename"
+                        name="signaturename" placeholder="Select Signature Authority Name" onkeypress="return false">
+                        <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
+                        <option *ngFor="let item of authorityDetailsForPromotion" [value]="item.employeeId">
+                            {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</option>
+                    </select>
+                    <div *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')"
+                        class="error-msg">
+                        Signature Authority Name is required
                     </div>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-3 mt-3">
-                <button type="reset" class="modal-btn no-btn" (click)="modal.dismiss()">{{'Cancel' |
-                    translate}}</button>
-                <button type="submit" class="btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' |
-                    translate}}</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmation()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
+                </div>
             </div>
         </form>
     </div>
@@ -753,22 +685,24 @@
 
 <!-- Loader -->
 <ng-template #loading let-modal>
-    <div class="modal-body text-center p-5" ngbAutofocus>
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="heading4 pt-4">Update in progress...</p>
+    <div class="result-popup-content" ngbAutofocus>
+        <div class="text-center p-5" ngbAutofocus>
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="confirmation-text">Update in progress...</p>
+        </div>
     </div>
 </ng-template>
 
 <!-- Confirmation Modal -->
 <ng-template #confirmation let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure want to close?'|translate}}</p>
         </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
-            <button class="custom-btn btn-primary w-50  py-2" (click)="close()">{{"Yes" | translate}}</button>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="close()">{{"Yes" | translate}}</button>
         </div>
     </div>
 </ng-template>

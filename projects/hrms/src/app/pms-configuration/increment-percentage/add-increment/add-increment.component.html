@@ -108,10 +108,10 @@
                   (input)="validateNumber($event)" min="0" id="percentage-{{i}}-{{j}}" name="percentage-{{i}}-{{j}}"
                   placeholder="Percentage" required />
               </td>
-              <td class="text-center"><a *ngIf="i>=1" (click)="openModal(deleterowincrement);removerow=i">
-                <i class="bi bi-trash3 text-danger"></i></a></td>
-              <td><button type="button" class="custom-add-btn" (click)="addRow()"
-                  [disabled]="Postincrementalpercentage.invalid"><i class="bi bi-plus-circle-fill"></i></button>
+              <td class="text-center"><a class="custom-action-btn" *ngIf="i>=1" (click)="openModal(deleterowincrement);removerow=i">
+                <i class="bi bi-trash3 text-danger custom-action-btn-icon"></i></a></td>
+              <td><button type="button" class="custom-action-btn" (click)="addRow()"
+                  [disabled]="Postincrementalpercentage.invalid"><i class="bi bi-plus-circle-fill custom-action-btn-icon"></i></button>
               </td>
             </tr>
           </tbody>

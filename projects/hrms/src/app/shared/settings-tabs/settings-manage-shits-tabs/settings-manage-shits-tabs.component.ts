@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-settings-manage-shits-tabs',
@@ -12,14 +13,24 @@ import { RbacService } from '../../../services/rbac.service';
 })
 
 export class SettingsManageShitsTabsComponent {
-  publishedshifts: any = [];
-  publishedCount = 0;
-  pendingsubmittedshifts: any = [];
-  pendingCount = 0;
-  subscription: any;
-  navLinks: { label: string; route: string }[] | undefined;
-
-  constructor(public router: Router, private http: HttpService, public rbac: RbacService) {}
+  subscription!:Subscription
+  publishedshifts=[] as any;
+  public navLinks: any[] = [];
+  publishedCount:any;
+  pendingsubmittedshifts=[] as any;
+  pendingCount:any;
+  allLinks = [
+    { label: 'Pending For Submit',route: '/settings/employee-fields/manage-shifts/pending-for-submit',permission: { feature: 'Pending For Submit', action: 'view' }},
+    { label: 'Published Shifts',route: '/settings/employee-fields/manage-shifts/published-shifts',permission: { feature: 'Published Shifts', action: 'view' }}
+  ];
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService) {
+    this.navLinks = this.allLinks.filter(link =>
+      link.permission &&
+      link.permission.feature &&
+      link.permission.action &&
+      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
+    );
+  }
 
   ngOnInit(): void {
     this.getShifts();
@@ -36,23 +47,6 @@ export class SettingsManageShitsTabsComponent {
           (item: any) => item.status === 'Pending for Submission'
         );
         this.pendingCount = this.pendingsubmittedshifts.length;
-        const allLinks = [
-          {
-            label: `Pending For Submission [${this.pendingCount}]`,
-            route: '/settings/employee-fields/manage-shifts/pending-for-submit',
-            permission: { feature: 'Pending For Submit', action: 'view' }
-          },
-          {
-            label: `Published [${this.publishedCount}]`,
-            route: '/settings/employee-fields/manage-shifts/published-shifts',
-            permission: { feature: 'Published Shifts', action: 'view' }
-          }
-        ];
-
-        this.navLinks = allLinks.filter(link =>
-          link.permission &&
-          this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-        );
       },
       error(err) {
         console.log('expensesheadererror', err);

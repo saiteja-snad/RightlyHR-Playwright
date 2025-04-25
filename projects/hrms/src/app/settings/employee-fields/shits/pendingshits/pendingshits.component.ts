@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-pendingshits',
@@ -19,7 +20,8 @@ export class PendingshitsComponent {
   pendingsubmittedshifts:any;
   constructor(
     public router: Router,
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

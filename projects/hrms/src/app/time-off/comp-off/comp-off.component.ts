@@ -44,6 +44,9 @@ export class CompOffComponent implements OnInit, OnDestroy {
   isWeekOffSelected = true;
   isHolidaySelected = true;
   selectedDay = '';
+  pastDatesAllowed!:number;
+  futureDatesAllowed!:number;
+  compOffCriterias = [] as any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -174,6 +177,38 @@ export class CompOffComponent implements OnInit, OnDestroy {
     }
     console.log(this.isWeekOffSelected);
   }
+
+  getPastDate(): string {
+    const days = Number(this.pastDatesAllowed ?? 0);
+  
+    if (isNaN(days)) {
+      console.error('Invalid pastDatesAllowed:', this.pastDatesAllowed);
+      return new Date().toISOString().split('T')[0]; // Fallback to current date
+    }
+  
+    const currentDate = new Date();
+    const pastDate = new Date(currentDate);
+    pastDate.setDate(currentDate.getDate() - days); // subtract days for past
+    return pastDate.toISOString().split('T')[0];
+  }
+  
+  
+ 
+  getFutureDate(): string {
+    const days = Number(this.futureDatesAllowed ?? 0);
+  
+    if (isNaN(days)) {
+      console.error('Invalid futureDatesAllowed:', this.futureDatesAllowed);
+      return new Date().toISOString().split('T')[0]; // Fallback to current date
+    }
+  
+    const currentDate = new Date();
+    const futureDate = new Date(currentDate);
+    futureDate.setDate(currentDate.getDate() + days);
+    return futureDate.toISOString().split('T')[0];
+  }
+
+
 
   applyCompOff(addForm: FormGroup) {
     if (addForm.valid) {
@@ -308,6 +343,16 @@ export class CompOffComponent implements OnInit, OnDestroy {
           localStorage.setItem(
             'filterFullDayData',
             JSON.stringify(filterFullDayData)
+          );
+
+          this.futureDatesAllowed = parseInt(
+            this.compOffEligibilityCriteria.find((item: any) => item.name === 'futureDays')?.value ?? '0',
+            10
+          );
+          
+          this.pastDatesAllowed = parseInt(
+            this.compOffEligibilityCriteria.find((item: any) => item.name === 'pastDays')?.value ?? '0',
+            10
           );
         },
         error: (error) => {

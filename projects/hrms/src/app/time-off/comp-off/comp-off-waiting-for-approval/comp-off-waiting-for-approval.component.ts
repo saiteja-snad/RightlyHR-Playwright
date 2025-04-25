@@ -11,10 +11,11 @@ import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './comp-off-waiting-for-approval.component.html',
   styleUrl: './comp-off-waiting-for-approval.component.scss'
 })
@@ -27,6 +28,7 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
   waitingForApprovalCompOffCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  dataload = false;
 
   options = [
     { label: 10, value: 10 },
@@ -73,6 +75,7 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
 
   getCompOffRequest() {
     let empId = this.empinfo.employeeId;
+    this.dataload = true;
     this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
     .pipe(takeUntil(this.destroy$))
     .subscribe({
@@ -84,6 +87,8 @@ export class CompOffWaitingForApprovalComponent  implements OnInit,OnDestroy {
       error: (error) => {
         console.error('Error fetching data:', error);
         this.waitingForApprovalCompOff = []; // Set to empty array on error
+      },complete: () =>{
+        this.dataload = false;
       },
     });
   }

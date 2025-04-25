@@ -11,6 +11,7 @@ import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-wfh-processed',
@@ -21,7 +22,8 @@ import { RbacService } from '../../../services/rbac.service';
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
-    NoDataFoundComponent
+    NoDataFoundComponent,
+    DataLoaderContentComponent
 ],
   templateUrl: './wfh-processed.component.html',
   styleUrl: './wfh-processed.component.scss',
@@ -35,6 +37,7 @@ export class WfhProcessedComponent implements OnInit, OnDestroy {
   processedWFHsCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  dataload = false; 
 
   options = [
     { label: 10, value: 10 },
@@ -67,6 +70,7 @@ export class WfhProcessedComponent implements OnInit, OnDestroy {
   getWFHRequests() {
     let empId = this.empinfo.employeeId;
     console.log(empId);
+    this.dataload = true; 
     this.http
       .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
       .pipe(takeUntil(this.destroy$))
@@ -82,6 +86,8 @@ export class WfhProcessedComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error fetching data:', error);
           this.processedWFHs = []; // Set to empty array on error
+        },complete:() =>{
+          this.dataload = false;
         },
       });
   }

@@ -1,12 +1,14 @@
+
 <div class="custom-main-component-container">
     <div class="custom-table-content ">
+      @if(!dataload){
         <table class="w-100">
             <thead>
                 <tr>
                     <th>Worked Date</th>
                     <th>Availed</th>
                     <th>Reason</th>
-                    <th>Reject Reason</th>
+                    <th>Rejected Reason</th>
                     <th>Applied Date</th>
                     <th>Status</th>
                 </tr>
@@ -27,7 +29,7 @@
                               <span>
                                 <a *ngIf="wfhRequest.requestedComments; else noRequestedComments"
                                    type="button"
-                                   placement="top"
+                                  
                                    [ngbPopover]="requestedComments">
                                   <img src="images/info-fill.png" alt="info icon" class="info-icon">
                                 </a>
@@ -48,7 +50,6 @@
                               <span>
                                 <a *ngIf="wfhRequest.reason; else noReason"
                                    type="button"
-                                   placement="top"
                                    [ngbPopover]="reason">
                                   <img src="images/info-fill.png" alt="info icon" class="info-icon">
                                 </a>
@@ -80,5 +81,6 @@
                 }
             </tbody>
         </table>
+      }@else{<app-data-loader-content />}
     </div>
 </div>

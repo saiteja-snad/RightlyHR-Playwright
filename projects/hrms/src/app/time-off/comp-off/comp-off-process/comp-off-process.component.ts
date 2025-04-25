@@ -11,10 +11,11 @@ import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-comp-off-process',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './comp-off-process.component.html',
   styleUrl: './comp-off-process.component.scss'
 })
@@ -28,7 +29,7 @@ export class CompOffProcessComponent implements OnInit,OnDestroy {
   processedCompOffRequestsCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  dataload = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -66,6 +67,7 @@ export class CompOffProcessComponent implements OnInit,OnDestroy {
 
   getCompOffRequest() {
     let empId = this.empinfo.employeeId;
+    this.dataload = true;
     this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
     .pipe(takeUntil(this.destroy$))
     .subscribe({
@@ -77,6 +79,8 @@ export class CompOffProcessComponent implements OnInit,OnDestroy {
       error: (error) => {
         console.error('Error fetching data:', error);
         this.processedCompOffRequests = []; // Set to empty array on error
+      },complete:() =>{
+        this.dataload = false;
       },
     });
   }

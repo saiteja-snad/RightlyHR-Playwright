@@ -1,5 +1,7 @@
+
 <div class="custom-main-component-container">
     <div class="custom-table-content">
+        @if(!dataload){
         <table class="w-100">
             <thead>
                 <tr>
@@ -22,7 +24,7 @@
                         
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -33,7 +35,7 @@
                         @if(permissionRequest.status !== 'Processed'){
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -59,5 +61,6 @@
                 }
             </tbody>
         </table>
+        }@else{<app-data-loader-content />}
     </div>
 </div>

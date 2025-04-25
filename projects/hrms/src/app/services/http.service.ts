@@ -48,6 +48,9 @@ export class HttpService {
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
+
+  
+  
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
@@ -84,7 +87,9 @@ resetTriggerSignal() {
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
   }
+
   
+
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
     //function to update the desk Updatelocation

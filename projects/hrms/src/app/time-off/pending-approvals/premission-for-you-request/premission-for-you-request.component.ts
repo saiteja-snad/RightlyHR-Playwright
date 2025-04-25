@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { ICategoryDetails, PermissionRequestResponse, } from '../../../Interfaces/timoff-model';
@@ -15,6 +14,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-premission-for-you-request',
@@ -22,14 +23,14 @@ import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
     CommonModule,
     NgbPopoverModule,
     FormsModule,
-    PaginatorModule,
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
     ReactiveFormsModule,
     TranslateModule,
-    PermissionsearchPipe
-  ],
+    PermissionsearchPipe,
+    DataLoaderContentComponent
+],
   templateUrl: './premission-for-you-request.component.html',
   styleUrl: './premission-for-you-request.component.scss',
 })
@@ -54,12 +55,14 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   searchValue: any;
   spinnerLoader = false;
+  dataload = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
+    private signalService:SignalsService
   ) { }
 
   ngOnInit(): void {
@@ -82,7 +85,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    console.log(EmployeeId);
+    this.dataload = true;
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=18&approvedType=EMP`
@@ -93,7 +96,12 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
           this.leaves.next(response.data);
           console.log(this.leaves);
         },
-        error: (reason) => console.log(reason),
+        error: (reason) => {console.log(reason);
+          this.dataload = false;
+        },
+        complete: () => {
+          this.dataload = false;
+        }
       });
   }
 
@@ -101,14 +109,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  onRowsChange() {
-    this.first = 0;
-  }
-
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-  }
+ 
 
   openApproveModal(content: any, request: PermissionRequestResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -130,6 +131,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
+      this.sharedModalService.openLoaderModal(
+        'Approving Request, Please wait...');
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
@@ -144,12 +147,12 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
             );
             this.approveForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              permission: true,
-            }));
+            this.signalService.permissionForYouTriggerSignal.set(true);
+            this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+          this.modalService.dismissAll();
+
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
@@ -178,10 +181,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
           this.sharedModalService.openSuccessModal(
             'Request Processed Successfully'
           );
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            permission: true,
-          }));
+          this.signalService.permissionForYouTriggerSignal.set(true);
+          this.signalService.permissionSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -202,7 +203,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         status: 'Rejected',
         comments: formData.comments,
       };
-
+      this.sharedModalService.openLoaderModal(
+        'Rejecting Request, Please wait...');
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
@@ -216,12 +218,12 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              permission: true,
-            }));
+            this.signalService.permissionForYouTriggerSignal.set(true);
+            this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+          this.modalService.dismissAll();
+
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {

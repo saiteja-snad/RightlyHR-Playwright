@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
@@ -20,11 +19,12 @@ import {
 } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { IPendingApprovals } from '../../../../Interfaces/pendingapprovalsmodel';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { WfhsearchfilterPipe } from "../../../../Pipes/wfhsearchfilter.pipe";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { SignalsService } from '../../../../services/signals.service';
 
 @Component({
   selector: 'app-compoff-for-you-request',
@@ -32,13 +32,13 @@ import { WfhsearchfilterPipe } from "../../../../Pipes/wfhsearchfilter.pipe";
     CommonModule,
     NgbPopoverModule,
     FormsModule,
-    PaginatorModule,
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
     ReactiveFormsModule,
     TranslateModule,
-    WfhsearchfilterPipe
+    WfhsearchfilterPipe,
+    DataLoaderContentComponent
 ],
   templateUrl: './compoff-for-you-request.component.html',
   styleUrl: './compoff-for-you-request.component.scss',
@@ -66,12 +66,14 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   searchValue: any;
   spinnerLoader = false;
+  dataload = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
+    private signalService:SignalsService
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -93,7 +95,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    console.log(EmployeeId);
+    this.dataload = true;
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=3&approvedType=EMP`
@@ -106,6 +108,9 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           console.log(this.leaves);
         },
         error: (reason) => console.log(reason),
+        complete: () => {
+          this.dataload = false;
+        }
       });
   }
   openModal(content: any) {
@@ -122,19 +127,15 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.intializeRejectForm();
     this.selectedLeaveData = request;
   }
-  onRowsChange() {
-    this.first = 0;
-  }
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-  }
+  
 
   handleProcess(request: AttendanceRequest): void {
     const requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
+    this.sharedModalService.openLoaderModal(
+      'Processing Request, Please wait...');
     this.http
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
@@ -142,11 +143,15 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
       ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
+          this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal(
             'Request Processed Successfully'
           );
+          this.signalService.compOffForYouTriggerSignal.set(true);
+          this.signalService.compOffSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
@@ -163,7 +168,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
-
+      this.sharedModalService.openLoaderModal(
+        'Approving Request, Please wait...');
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
@@ -175,12 +181,11 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
             this.sharedModalService.openSuccessModal(
               'Request Approved Successfully'
             );
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              compOff: true,
-            }));
+            this.signalService.compOffForYouTriggerSignal.set(true);
+            this.signalService.compOffSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
@@ -197,7 +202,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
         status: 'Rejected',
         comments: formData.comments,
       };
-
+      this.sharedModalService.openLoaderModal(
+        'Rejecting Request, Please wait...');
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
@@ -211,12 +217,11 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              compOff: true,
-            }));
+            this.signalService.compOffForYouTriggerSignal.set(true);
+            this.signalService.compOffSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {

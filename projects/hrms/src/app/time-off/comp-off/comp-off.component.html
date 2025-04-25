@@ -41,7 +41,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
+                        <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate" autocomplete="off" [min]="getPastDate()" [max]="getFutureDate()"
                             formControlName="workedDate" required (change)="weekendAndHolidaysCheck(addCompOffForm.get('workedDate')?.value)">
                         <div *ngIf="addCompOffForm.get('workedDate')?.touched && addCompOffForm.get('workedDate')?.invalid"
                             class="error-msg">

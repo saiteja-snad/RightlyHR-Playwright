@@ -1,5 +1,7 @@
+
 <div class="custom-main-component-container">
     <div class="custom-table-content">
+        @if(!dataload){
         <table class="w-100">
             <thead>
                 <tr>
@@ -21,17 +23,17 @@
                         <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="notes">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
-                                <ng-template #reason>
+                                <ng-template #notes>
                                     <p class="mb-0">{{permissionRequest.notes}} </p>
                                 </ng-template>
                             </div>
                         </td>
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -54,5 +56,6 @@
                 }
             </tbody>
         </table>
+    }@else{<app-data-loader-content />}
     </div>
 </div>

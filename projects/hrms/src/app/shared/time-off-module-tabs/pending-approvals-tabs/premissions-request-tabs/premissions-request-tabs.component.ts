@@ -6,6 +6,7 @@ import { TabsModule } from 'primeng/tabs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
+import { SignalsService } from '../../../../services/signals.service';
 
 @Component({
   selector: 'app-premissions-request-tabs',
@@ -14,9 +15,9 @@ import { HttpService } from '../../../../services/http.service';
   styleUrl: './premissions-request-tabs.component.scss'
 })
 
-export class PremissionsRequestTabsComponent implements OnInit,OnDestroy{
+export class PremissionsRequestTabsComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
-  pendingApprovalCount = {} as ApprovalStatusCount[];
+  pendingApprovalCount: ApprovalStatusCount[] = [];
   roleWfh: AttendanceRequest[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [];
@@ -25,12 +26,25 @@ export class PremissionsRequestTabsComponent implements OnInit,OnDestroy{
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPermissionPendingApprovalsCount();
   }
-  
-  constructor(public readonly router: Router, private http: HttpService,) {
+
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    private signalService: SignalsService
+  ) {
     effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().permission) {
+      if (this.signalService.permissionForYouTriggerSignal() || this.signalService.permissionForRoleTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
         this.getAllPermissionPendingApprovalsCount();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, permission: false }));
+
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.permissionForYouTriggerSignal()) {
+          this.signalService.permissionForYouTriggerSignal.set(false);
+        }
+
+        if (this.signalService.permissionForRoleTriggerSignal()) {
+          this.signalService.permissionForRoleTriggerSignal.set(false);
+        }
       }
     });
   }
@@ -44,18 +58,38 @@ export class PremissionsRequestTabsComponent implements OnInit,OnDestroy{
     const moduleId = 18;
     this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
-        this.pendingApprovalCount = data.find(item => item.moduleId === moduleId) ? [data.find(item => item.moduleId === moduleId)!] : [];
-        this.navTabs = [
-          { label: 'For You ', link: 'for-you', count: this.pendingApprovalCount.at(0)?.forYou ?? 0 },
-          { label: 'For Your Role', link: 'for-your-role', count: this.pendingApprovalCount.at(0)?.forYourRole ?? 0 },
-        ];
+        const filteredData = data.find(item => item.moduleId === moduleId);
+        if (filteredData) {
+          this.pendingApprovalCount = [filteredData];
+       
+        } else {
+          this.pendingApprovalCount = [];
+        }
+
+           // Update the navTabs after fetching the data
+           this.updateNavTabs();
       },
       error: (err) => {
-        this.pendingApprovalCount = [] as ApprovalStatusCount[];
-        console.error('Error fetching approvals:', err)},
+        this.pendingApprovalCount = [];
+        console.error('Error fetching approvals:', err);
+        this.updateNavTabs();  // Update the navTabs with empty counts if there was an error
+      },
     });
   }
+
+  // Update navTabs based on the fetched approval counts
+  updateNavTabs() {
+    // Check if pendingApprovalCount is not empty before accessing the first element
+    const data = this.pendingApprovalCount.length > 0 ? this.pendingApprovalCount[0] : null;
   
+    // Update navTabs with safe access to data
+    this.navTabs = [
+      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0 },
+      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 },
+    ];
+  }
+  
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -21,7 +21,7 @@
                         <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -31,10 +31,10 @@
                         </td>
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="comments">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
-                                <ng-template #reason>
+                                <ng-template #comments>
                                     <p class="mb-0">
                                         {{permissionRequest.regularizationApproverComments[0].comments}} </p>
                                 </ng-template>

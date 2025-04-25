@@ -4,15 +4,17 @@
       <div class="mb-4">
           <div class="custom-settings-add-input input-group">
               <input type="text" class="form-control custom-input" placeholder="Please enter notice period"
-                  formControlName="noticeperiod" aria-label="noticeperiod" aria-describedby="noticeperiod"
-                  (keydown)="formValidations.restrictInput($event)">
+                  formControlName="noticeperiod" aria-label="noticeperiod" aria-describedby="noticeperiod" maxlength="50">
               <span class="input-group-text" id="noticeperiod">
                   <button type="submit" class="custom-btn btn-primary"
                       [disabled]="noticeperiodForm.invalid">{{'Add'|translate}}</button></span>
           </div>
           <div *ngIf="noticeperiodForm.get('noticeperiod')?.touched && noticeperiodForm.get('noticeperiod')?.invalid" class="error-msg mt-2">
-              <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['required']">{{'Noticeperiod is required'|translate}}</div>
+              <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['required']">{{'Notice Period is required'|translate}}</div>
           </div>
+          <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['pattern']" class="error-msg mt-2">
+            {{ 'Spaces at start and special character are not allowed' | translate }}
+        </div>
       </div>
   </form>
 
@@ -25,7 +27,6 @@
               </tr>
           </thead>
           <tbody>
-            @if (rbac.allowedToAccess('Notice Period.view')) {
               @for (notice of noticeperiodDetail; track $index) {
               <tr>
                   <td class="w-75">{{ notice.period}}</td>
@@ -45,7 +46,6 @@
                   </td>
               </tr>
               }
-            }
           </tbody>
       </table>
   </div>
@@ -57,7 +57,7 @@
       <div class="custom-main-popup-container" ngbAutofocus>
           <div class="custom-poup-header-content popup-header-border">
               <div >
-                  <p class="popup-heading mb-0">{{'Edit Noticeperiod'|translate}}</p>
+                  <p class="popup-heading mb-0">{{'Update Notice Period'|translate}}</p>
               </div>
               <div>
                   <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -65,13 +65,15 @@
           </div>
           <div class="custom-main-popup-content">
               <div class="mb-4">
-                  <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Noticeperiod'|translate}}
+                  <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Notice Period'|translate}}
                       <span class="error-msg">*</span></label>
-                  <input type="text" class="form-control custom-input" formControlName="noticeperiod" placeholder="Please enter notice period"
-                  (keydown)="formValidations.restrictInput($event)">
-                  <div *ngIf="updateForm.get('noticeperiod')?.touched && updateForm.get('noticeperiod')?.invalid" class="error-msg mt-2">
-                      <div *ngIf="updateForm.get('noticeperiod')?.errors?.['required']">{{'Noticeperiod is required'|translate}}</div>
+                  <input type="text" class="form-control custom-input" formControlName="updatenoticeperiod" placeholder="Please enter notice period" maxlength="50">
+                  <div *ngIf="updateForm.get('updatenoticeperiod')?.touched && updateForm.get('updatenoticeperiod')?.invalid" class="error-msg mt-2">
+                      <div *ngIf="updateForm.get('updatenoticeperiod')?.errors?.['required']">{{'Notice Period is required'|translate}}</div>
                   </div>
+                  <div *ngIf="updateForm.get('updatenoticeperiod')?.errors?.['pattern']" class="error-msg mt-2">
+                    {{ 'Spaces at start and special character are not allowed' | translate }}
+                </div>
               </div>
               <div class="custom-modal-footer">
                   <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close'|translate}}</button>

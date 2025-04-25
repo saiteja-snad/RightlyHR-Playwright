@@ -4,10 +4,11 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../../../services/http.service';
 import { CommonModule, NgFor, NgIf} from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-pulished-shits',
-  imports: [NoDataFoundComponent,CommonModule,TranslateModule,RouterModule,NgFor,NgIf],
+  imports: [NoDataFoundComponent,CommonModule,TranslateModule,RouterModule,NgIf],
   templateUrl: './pulished-shits.component.html',
   styleUrl: './pulished-shits.component.scss'
 })
@@ -19,7 +20,7 @@ export class PulishedShitsComponent {
   publishedshifts: any = [];
   publishedCount :any;
   viewClicked: boolean | undefined;
-  constructor( public router:Router, private http: HttpService) {
+  constructor( public router:Router, private http: HttpService, public rbac: RbacService) {
 
   }
   
@@ -27,7 +28,9 @@ export class PulishedShitsComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
   }
-
+  getShiftNames(shift: any) {
+    return shift.orgShiftsItems.map((item: any) => item.shiftName).join(', ');
+  }
   getShifts(): void {
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {

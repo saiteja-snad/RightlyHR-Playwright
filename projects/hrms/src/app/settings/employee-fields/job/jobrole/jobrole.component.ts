@@ -10,13 +10,14 @@ import { Subscription } from 'rxjs';
 import { jobRoleDATA } from './jobrole-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SelectModule } from 'primeng/select';
 
 
 
 @Component({
   selector: 'app-jobrole',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule],
   templateUrl: './jobrole.component.html',
   styleUrls: ['./jobrole.component.scss']
 })
@@ -44,12 +45,12 @@ export class JobroleComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      Addjobrole: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      Addjobrole: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(100)]],
       gradeId: ['', Validators.required],
     });
 
     this.updateForm = this.fb.group({
-      Updatejobrole: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      Updatejobrole: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(100)]],
       updategradeId: ['', Validators.required],
     });
     this.getgradeid();
@@ -76,7 +77,7 @@ export class JobroleComponent {
   getgradeid() {
     this.subscription = this.http.getData('GradeTable').subscribe({
       next: (data: any) => {
-        console.log(data);
+        // console.log(data);
         this.gradedetails = data;
       },
     });
@@ -102,11 +103,12 @@ export class JobroleComponent {
 
         this.getJobrole();
         modal.close();
-        this.conformationPopup.openSuccessModal('Job role added successfully');
+        this.conformationPopup.openSuccessModal('Job Role added successfully');
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
         this.resetForm();
       }
     });
@@ -140,11 +142,12 @@ export class JobroleComponent {
 
           this.getJobrole();
           modal.close();
-          this.conformationPopup.openSuccessModal('Job role updated successfully');
+          this.conformationPopup.openSuccessModal('Job Role updated successfully');
           this.resetForm();
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
           this.resetForm();
         }
       });
@@ -165,11 +168,12 @@ export class JobroleComponent {
         next: () => {
           modal.close();
           this.getJobrole();
-          this.conformationPopup.openSuccessModal('Job role deleted successfully');
+          this.conformationPopup.openSuccessModal('Job Role deleted successfully');
 
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
 
         }
       });

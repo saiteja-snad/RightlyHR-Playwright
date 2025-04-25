@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-pendingshits',
@@ -19,19 +20,32 @@ export class PendingshitsComponent {
   pendingsubmittedshifts:any;
   constructor(
     public router: Router,
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
   }
-
+  getShiftNames(shift: any) {
+    return shift.orgShiftsItems.map((item: any) => item.shiftName).join(', ');
+  }
   getShifts(): void {
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {
         this.shiftsData = data;
-        this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
+       // this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
+       this.pendingsubmittedshifts = data
+  .filter((item: any) => item.status === "Pending for Submission")
+  .map((item: any) => {
+    return {
+      ...item,
+      shiftName: item.orgShiftsItems?.[0]?.shiftName || 'N/A' // fallback if missing
+    };
+  });
+
+        console.log("pending",this.pendingsubmittedshifts);
       }, error(err) {
         console.log("expensesheadererror", err)
       },

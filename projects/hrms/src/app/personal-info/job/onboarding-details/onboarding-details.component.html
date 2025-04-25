@@ -4,17 +4,17 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-            @if(!buttons && (empinfo.substatus.toLowerCase() === 'offer letter accepted'  )){
-            <div >
+
+            <!-- Show edit icon if employee status is 'Active' and buttons are not visible -->
+            <div *ngIf="!buttons && empinfo?.empstatus?.toLowerCase() === 'active'">
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-            </div>}
-            @if(buttons){
-            <div class="d-flex justify-content-end gap-2">
+            </div>
+
+            <!-- Show buttons if 'buttons' is true -->
+            <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="showButtons()"
-                    (click)="onSubmit()">Save</button>
-            </div>                
-        }
+                <button type="submit" class="custom-btn btn-primary" (click)="onSubmit()">Save</button>
+            </div>
         </div>
 
         <!--input content-->
@@ -69,7 +69,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="probationStatus" class="form-label custom-label mb-2">Probation Status</label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="probation" optionLabel="probationstatus" formControlName="probationStatus"
+                        <p-select [options]="probation" optionLabel="probationstatus1" formControlName="probationStatus"
                             placeholder="Select Probation Status" class="form-select custom-select">
                         </p-select>
                     </div>

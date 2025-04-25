@@ -22,7 +22,7 @@ export class ProcessedExpensesComponent {
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
-
+  commentsrecivced = [] as any
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
@@ -51,6 +51,9 @@ export class ProcessedExpensesComponent {
       });
   }
 
+  comments_Function(comments: any) {
+    this.commentsrecivced = comments
+  }
 
   viewItem(expid: number,) {
     console.log(expid);

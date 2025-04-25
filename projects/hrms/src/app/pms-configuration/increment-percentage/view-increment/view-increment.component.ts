@@ -8,19 +8,13 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { IReviewCycle } from '../add-increment/increment.modal';
-
 @Component({
   selector: 'app-view-increment',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    Select,
-    TranslateModule,
-  ],
+  imports: [ CommonModule, ReactiveFormsModule, FormsModule, Select, TranslateModule],
   templateUrl: './view-increment.component.html',
   styleUrl: './view-increment.component.scss',
 })
+
 export class ViewIncrementComponent implements OnInit, OnDestroy {
   empinfo = {} as any;
   subscription!: Subscription;
@@ -36,36 +30,26 @@ export class ViewIncrementComponent implements OnInit, OnDestroy {
   reviewCycledetailyById = {};
   reviewCycleDropDownData = [] as IReviewCycle[];
   @Input() updateData: any;
-  constructor(
-    private http: HttpService,
-    private modalService: NgbModal,
-    public rbac: RbacService
-  ) {}
+
+  constructor(private http: HttpService, private modalService: NgbModal, public rbac: RbacService) { }
+
   ngOnInit(): void {
     this.editDetails(this.updateData);
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getReviewCycledata();
   }
+
   editDetails(Values: any) {
     // Populate the form with the selected values
     this.UpdateIncrementalpercentage = {
       id: Values.id,
       reviewCycleId: Values.reviewCycleId,
-      department: Values.deptName
-        .map((dept: any) => dept.departmentName)
-        .join(', '),
-      location: Values.locationName
-        .map((loc: any) => loc.locationName)
-        .join(', '),
-      team: Values.subdeptName
-        .map((loc: any) => loc.subDepartmentName)
-        .join(', '),
-      sublocation: Values.sublocationName
-        .map((loc: any) => loc.subLocationName)
-        .join(', '),
+      department: Values.deptName.map((dept: any) => dept.departmentName).join(', '),
+      location: Values.locationName.map((loc: any) => loc.locationName).join(', '),
+      team: Values.subdeptName.map((loc: any) => loc.subDepartmentName).join(', '),
+      sublocation: Values.sublocationName.map((loc: any) => loc.subLocationName).join(', '),
       ratingscale: Values.rating,
     };
-
     // Populate the rating range loop
     if (this.UpdateIncrementalpercentage.ratingscale) {
       const ratingscale = this.UpdateIncrementalpercentage.ratingscale;
@@ -75,7 +59,6 @@ export class ViewIncrementComponent implements OnInit, OnDestroy {
         (_, i) => start + i
       );
     }
-
     // Map itemsdata to ratingscaledetailsarray
     this.ratingscaledetailsarray = Values?.itemsdata.map((item: any) => {
       return {
@@ -90,6 +73,7 @@ export class ViewIncrementComponent implements OnInit, OnDestroy {
       };
     });
   }
+
   // Function to get all review cycle data
   getReviewCycledata() {
     this.subscription = this.http.getData(`reviewCycleHeader`).subscribe({
@@ -101,9 +85,11 @@ export class ViewIncrementComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true });
   }
+
   close() {
     this.modalService.dismissAll();
   }

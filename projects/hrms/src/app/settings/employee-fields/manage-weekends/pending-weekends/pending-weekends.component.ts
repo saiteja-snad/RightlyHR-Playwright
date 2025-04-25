@@ -6,9 +6,11 @@ import { HttpService } from '../../../../services/http.service';
 import { IWeekends } from './weekends.model';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../../services/rbac.service';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
    selector: 'app-pending-weekends',
-   imports: [CommonModule, NgbPopoverModule, TranslateModule],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent],
    templateUrl: './pending-weekends.component.html',
    styleUrl: './pending-weekends.component.scss'
 })
@@ -20,6 +22,7 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
    constructor(
       private router: Router,
       private http: HttpService,
+      public rbac: RbacService
    ) { }
 
    ngOnInit(): void {
@@ -38,7 +41,6 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
    getAllWeekend() {
       this.http.getData(`OrgWeekendHeader/getAll`).pipe(takeUntil(this.destroy$)).subscribe({
          next: (data: any) => {
-            console.log(data);
             this.weekendsList = data.filter((item: any) => item.status === 'Pending for submission');
          }
       })

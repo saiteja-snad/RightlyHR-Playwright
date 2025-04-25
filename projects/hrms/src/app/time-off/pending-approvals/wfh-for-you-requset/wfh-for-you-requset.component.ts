@@ -22,6 +22,7 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
 import { RbacService } from '../../../services/rbac.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-wfh-for-you-requset',
@@ -60,6 +61,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  spinnerLoader = false;
   searchValue: any;
   constructor(
     private modalService: NgbModal,
@@ -75,13 +77,13 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
@@ -94,6 +96,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
       ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
+          console.log(response);
           this.leaves.next(response.data);
         },
         error: (reason) => console.log(reason),
@@ -123,6 +126,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       const requestBody = {
@@ -153,15 +157,19 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
           error: (reason: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }
   }
 
   handleReject(rejectForm: FormGroup): void {
+    this.spinnerLoader = true;
+    this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
       const requestBody = {
@@ -179,7 +187,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
           next: (response: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
-              'Request Rejcted Successfully'
+              'Request Rejected Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
@@ -187,14 +195,16 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
               ...status,
               wfh: true,
             }));
-           
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
+
           },
         });
     }

@@ -4,8 +4,8 @@
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
 
         <div class="custom-table-content">
@@ -21,23 +21,26 @@
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Reason</th>
-                        <th>Comments</th>
+                        <th>Approver Comments</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (rbac.allowedToAccess('Timeoff Tab.view')) {
-                    @if (leaves.length > 0) {
-                        <tr *ngFor="let item of leaves| leavesPendingapprovals : searchValue">
-                            <td>{{item.entity.leavefusionempId}}</td>
-                            <td>{{item.entity.employeeName}}</td>
-                            <td>{{item.entity.leaveCategoryName}}</td>
-                            <td>{{item.entity.leaveDuration}}</td>
-                            <td>{{item.entity.leaveDurationType}}</td>
-                            <td>{{item.entity.appliedDate | dateformat}}</td>
-                            <td>{{item.entity.leaveStartDate | dateformat}}</td>
-                            <td>{{item.entity.leaveEndDate | dateformat}}</td>
-                            <td>  <div>
+                    @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
+                    @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
+                    item.approvalHeader.id){
+                    <tr>
+                        <td>{{item.entity.leavefusionempId}}</td>
+                        <td>{{item.entity.employeeName}}</td>
+                        <td>{{item.entity.leaveCategoryName}}</td>
+                        <td>{{item.entity.leaveDuration}}</td>
+                        <td>{{item.entity.leaveDurationType}}</td>
+                        <td>{{item.entity.appliedDate | dateformat}}</td>
+                        <td>{{item.entity.leaveStartDate | dateformat}}</td>
+                        <td>{{item.entity.leaveEndDate | dateformat}}</td>
+                        <td>
+                            <div>
                                 <span>
                                     <a type="button" placement="top" [ngbPopover]="reason">
                                         <img src="images\info-fill.png" alt="info icon" class="info-icon">
@@ -48,34 +51,45 @@
                                         </div>
                                     </ng-template>
                                 </span>
-                            </div></td>
-                            <td>  <div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
                                 <span>
-                                    <a type="button" placement="top" >
-                                        <img src="images\info-fill.png" alt="info icon" (click)="openModal(commentspopup)" (click)="comments(item.entity.leaveApproverComments)" class="info-icon">
+                                    <a type="button" placement="top">
+                                        <img src="images\info-fill.png" alt="info icon"
+                                            (click)="openModal(commentspopup)"
+                                            (click)="comments(item.entity.leaveApproverComments)" class="info-icon">
                                     </a>
                                 </span>
-                            </div></td>
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <a type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu py-0">
-                                        <li><a class="dropdown-item" (click)="processleave(item)"><i class="bi bi-check-circle me-2" *ngIf="rbac.allowedToAccess('Timeoff Tab.update')"></i>Process</a></li>
-                                        <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"><i class="bi bi-x-circle me-2" *ngIf="rbac.allowedToAccess('Timeoff Tab.delete')"></i>Reject</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu py-0">
+                                    <li><a class="dropdown-item" (click)="processleave(item)"><i
+                                                class="bi bi-check-circle me-2"
+                                                *ngIf="rbac.allowedToAccess('Timeoff Tab.update')"></i>Process</a></li>
+                                    <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"><i
+                                                class="bi bi-x-circle me-2"
+                                                *ngIf="rbac.allowedToAccess('Timeoff Tab.delete')"></i>Reject</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
                     }
-                    @else {
-                        <tr>
-                            <app-no-data-found></app-no-data-found>
-        
-                        </tr>
                     }
-                }
+                    @else{
+                    <tr>
+                        <td colospan="8">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                    }
+                    }
                 </tbody>
             </table>
         </div>
@@ -90,33 +104,33 @@
                     <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
                         totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
                 </div>
-
                 <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
                     (onPageChange)="onPageChange($event)"></p-paginator>
             </div>
         </div>
     </div>
 </div>
+
 <ng-template #commentspopup let-modal>
     <div class="modal-body">
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">{{'Approver Comments' | translate}}</p>
             </div>
             <div>
-                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+                <button type="button" class="btn-close" aria-label="Close"
+                    (click)="modal.dismiss('Cross click')"></button>
             </div>
         </div>
-        
         <div class="custom-main-component-container">
             <div class="custom-table-content mt-2">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Comments</th>
-                            <th>Commented By</th>
-                            <th>Date</th>
-                            <th>Commented By ID</th>
+                            <th>{{'Comments' | translate}}</th>
+                            <th>{{'Commented By'|translate}}</th>
+                            <th>{{"Approved Date" | translate}}</th>
+                            <th>{{'Commented By ID' | translate}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -132,43 +146,48 @@
         </div>
     </div>
 </ng-template>
+
 <!-- rejectpopup -->
 <ng-template #rejectPopup let-modal>
     <div class="modal-body">
         <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
             <div>
-                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+                <button type="button" class="btn-close" aria-label="Close"
+                    (click)="modal.dismiss('Cross click')"></button>
             </div>
             <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
             <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to reject?</h4>
-            
-            <form name="leaveapprovee" class="ps-5 w-100" #leaveapprovee="ngForm"
-                (ngSubmit)="leaveapprovee.valid">
+
+            <form name="leaveapprovee" class="ps-5 w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
                 <div class="col-11 ">
                     <div class="mb-3 mt-2">
                         <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span
                                 class="required">*</span></label>
-                        <textarea class="form-control" id="Reasons"
-                            placeholder="Please provide comments" name="Reasons" #Reasons="ngModel" maxlength="250"
-                            [(ngModel)]="selectedLeaveData.comments"  (ngModelChange)="ifreasonnull(selectedLeaveData.comments)"
-                            rows="3" required></textarea>
+                        <textarea class="form-control" id="Reasons" placeholder="Please provide comments" name="Reasons"
+                            #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                            (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                         <span>{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</span>
                         <div>
                             <small class="error-msg"
                                 *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
                                 Comments are required </small>
-                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100 ml">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" aria-label="Close"
                         type="reset">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary"  (click)="handleReject(selectedLeaveData)" [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable"
-                        aria-label="Close">Reject</button>
+                        <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
+                        [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
+                            @if(spinnerLoader){
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..'}}...</span>
+                            }@else {
+                            <span>{{'Reject'| translate}}</span>
+                            }
+                        </button>
                 </div>
             </form>
         </div>
     </div>
-        
-   
 </ng-template>

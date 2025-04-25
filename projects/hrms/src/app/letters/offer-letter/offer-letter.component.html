@@ -21,7 +21,7 @@
             <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                filterBy="name" [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
+                filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
                 formControlName="fusionEmpId" class="custom-select w-100">
               </p-select>
             </div>
@@ -349,8 +349,8 @@
           </div>
       
           <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
-            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">{{buttonValue}}</button>
-            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid"
+            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading">{{buttonValue}}</button>
+            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading"
               (click)="emailSendingforApprover()">Request
               For Approval</button>
             @if(loading){

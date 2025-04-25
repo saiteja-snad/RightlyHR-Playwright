@@ -3,15 +3,15 @@
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter overtime eligbility"
+                <input type="text" class="form-control custom-input" placeholder="Please enter overtime eligibility"
                     formControlName="overtime" aria-label="overtime" aria-describedby="overtime"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                 <span class="input-group-text" id="overtime">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="OvertimeForm.invalid">{{'Add'|translate}}</button></span>
             </div>
             <div *ngIf="OvertimeForm.get('overtime')?.touched && OvertimeForm.get('overtime')?.invalid" class="error-msg mt-2">
-                <div *ngIf="OvertimeForm.get('overtime')?.errors?.['required']">{{'Overtime eligiblity is required'|translate}}</div>
+                <div *ngIf="OvertimeForm.get('overtime')?.errors?.['required']">{{'Overtime Eligiblity is required'|translate}}</div>
             </div>
         </div>
     </form>
@@ -25,7 +25,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Overtime Eligibility.view')) {}
                 @for (ovr of overtimeDetail; track $index) {
                 <tr>
                     <td class="w-75">{{ ovr.overtimeeligibility1}}</td>
@@ -56,7 +55,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div >
-                    <p class="popup-heading mb-0">{{'Edit Overtime'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Overtime Eligibility'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -64,12 +63,12 @@
             </div>
             <div class="custom-main-popup-content">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Overtime'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Overtime Eligibility'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="overtime" placeholder="Please enter overtime eligibility"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                     <div *ngIf="updateForm.get('overtime')?.touched && updateForm.get('overtime')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('overtime')?.errors?.['required']">{{'Overtime eligibility is required'|translate}}</div>
+                        <div *ngIf="updateForm.get('overtime')?.errors?.['required']">{{'Overtime Eligibility is required'|translate}}</div>
                     </div>
                 </div>
                 <div class="custom-modal-footer">

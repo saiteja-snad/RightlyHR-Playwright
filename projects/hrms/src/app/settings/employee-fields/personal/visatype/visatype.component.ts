@@ -38,10 +38,10 @@ export class VisatypeComponent {
   }
   ngOnInit(): void {
     this.VisaForm = this.fb.group({
-      Visatype: ['', [Validators.required]]
+      Visatype: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9 ]+$/)]]
     });
     this.updateForm = this.fb.group({
-      Visatype: ['', [Validators.required]]
+      Visatype: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9 ]+$/)]]
     });
 
     this.getVisa();
@@ -62,7 +62,7 @@ export class VisatypeComponent {
     this.subscription = this.http.postdata('Visatype', request).subscribe({
       next: () => {
         this.getVisa();
-        this.conformationPopup.openSuccessModal('Visa type added successfully');
+        this.conformationPopup.openSuccessModal('Visa Type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -85,7 +85,7 @@ export class VisatypeComponent {
           this.getVisa();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Visa type updated successfully');
+          this.conformationPopup.openSuccessModal('Visa Type updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -120,7 +120,7 @@ export class VisatypeComponent {
       next: () => {
         this.getVisa();
         modal.close();
-        this.conformationPopup.openSuccessModal('Visa deleted successfully');
+        this.conformationPopup.openSuccessModal('Visa Type deleted successfully');
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

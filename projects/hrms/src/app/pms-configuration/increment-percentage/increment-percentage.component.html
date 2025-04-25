@@ -1,24 +1,23 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="component-header">
-            Increment Percentage
-        </div>
-
+        <div class="component-header">Increment Percentage</div>
         <div>
-            <button class="custom-btn btn-primary" (click)="openAdd()">Create</button>
+            <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
         </div>
     </div>
+
     <div class="w-100">
         <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
-            <input type="search" [(ngModel)]="searchValue" (ngModelChange)="getAllIncrementalPercentagedata()"
-                class="form-control custom-search-input" placeholder="Search" aria-label="Username"
-                aria-describedby="basic-addon1">
+        <div class="mb-4">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search"
+                    [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username"
+                    aria-describedby="basic-addon1">
+            </div>
         </div>
 
-        <div class="custom-table-content w-100">
+        <div class="custom-table-content">
             <table class="w-100">
                 <thead>
                     <tr>
@@ -36,80 +35,73 @@
                     @if(IncementalDetailsget.length>0){
                     @for (item of IncementalDetailsget; track $index) {
                     <tr>
-                        <td>{{item?.reviewCycleName?item?.reviewCycleName:'-' }}
-
-                        </td>
-
+                        <td>{{item?.reviewCycleName?item?.reviewCycleName:'-' }}</td>
                         <td>{{item?.deptName?( getNamesAsString(item?.deptName, 'departments')):'-' }}</td>
                         <td>{{item?.subdeptName? (getNamesAsString(item?.subdeptName, 'subDepartmentName')):'-' }}</td>
                         <td>{{item?.locationName?( getNamesAsString(item?.locationName, 'locationName')):'-' }}</td>
                         <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}
                         </td>
-                        <td>{{item?.rating?item?.rating:'-'}}
-                        </td>
+                        <td>{{item?.rating?item?.rating:'-'}}</td>
                         <td class="text-center">
                             <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu">
+                                  </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
                                     <li><a class="dropdown-item" (click)="editDetails(item)">Update</a></li>
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"
                                             (click)="openDelete(confirmation, item.id)">Delete</a></li>
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Initiated'"
                                             (click)="viewDetails(item)">View</a></li>
-
                                 </ul>
                             </div>
                         </td>
                     </tr>
                     }
-
                     }
                     @else {
                     <tr>
                         <app-no-data-found></app-no-data-found>
-
                     </tr>
                     }
                     }
                     @else {
                     <app-data-loader-content />
                     }
-
                 </tbody>
             </table>
         </div>
-        <div class="pagination-content pt-2 w-100">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
 
-                <div class="d-flex align-items-center gap-3 p-2">
-
-                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+        @if(IncementalDetailsget.length > 0){
+            <div class="pagination-content">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                            </option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
+                        </span>
+                    </div>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
                 </div>
-
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
             </div>
-        </div>
+            }
     </div>
 </div>
+
 <ng-template #confirmation let-modal>
-    <div class="modal-body p-4" ngbAutofocus>
-        <div class="mb-4 text-center">
-            <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="modal-icon"> -->
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to delete?</p>
         </div>
-        <p class="mb-4 confirm-text text-wrap text-center">Are you sure you want to delete?</p>
-        <div class="d-flex justify-content-around pt-3">
-            <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">Yes</button>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteData();modal.dismiss()">Yes</button>
         </div>
     </div>
 </ng-template>

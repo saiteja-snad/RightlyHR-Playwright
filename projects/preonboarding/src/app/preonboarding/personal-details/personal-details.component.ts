@@ -3,7 +3,7 @@ import { Component, effect, OnInit, signal, ViewChild, ViewEncapsulation } from 
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, MaxLengthValidator, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IAddress, IGender, IJobdetails, Ipersonal, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
@@ -15,7 +15,7 @@ import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-personal-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
+  imports: [CommonModule, Select,ReactiveFormsModule, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
   templateUrl: './personal-details.component.html',
   styleUrl: './personal-details.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -43,6 +43,7 @@ export class PersonalDetailsComponent implements OnInit {
   selectedCountryCode = signal<string>('');
   selectedCountryCodegflag: any;
   loading = true;
+  sameAsPermanent=false;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -143,41 +144,63 @@ export class PersonalDetailsComponent implements OnInit {
   initializePersonalForm() {
     let loggedInUser = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     this.personalDetailsForm = this.fb.group({
-      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
-      middleName: [null],
-      lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
+      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$'),Validators.maxLength(50)]],
+      middleName: [null,[Validators.maxLength(50)]],
+      lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$'),,Validators.maxLength(50)]],
       gender: [null, Validators.required],
       salutation: [null, Validators.required],
-      phonenumber: [null, [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      countyCode:[null, [Validators.required]],
+      phonenumber: [null, [Validators.required,]],
       dob: [null, Validators.required],
       bloodGroup: [null],
-      location: [{ value: null, disabled: true }, Validators.required],
-      subLocation: [{ value: null, disabled: true }, Validators.required],
-      designation: [{ value: null, disabled: true }, Validators.required],
+      location: [{ value: null, disabled: true },],
+      subLocation: [{ value: null, disabled: true }, ],
+      designation: [{ value: null, disabled: true },],
       personalEmail: [{ value: null, disabled: true }, Validators.required],
+      sameAsPermanent:[{value:false}],
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
-        addressLine1: [null, Validators.required],
-        addressLine2: [null, Validators.required],
-        city: [null, Validators.required],
-        state: [null, Validators.required],
-        country: [null, Validators.required],
-        zipCode: [null, Validators.required,],
+        addressLine1: [null, [Validators.required,Validators.maxLength(150)]],
+        addressLine2: [null, [Validators.required,Validators.maxLength(150)]],
+        city: [null, [Validators.required,Validators.maxLength(50)]],
+        state: [null, [Validators.required,Validators.maxLength(50)]],
+        country: [null, [Validators.required ,Validators.maxLength(50)]],
+        zipCode: [null, [Validators.required,Validators.maxLength(6)]],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: [null, Validators.required],
-        addressLine2: [null, Validators.required],
-        city: [null, Validators.required],
-        state: [null, Validators.required],
-        country: [null, Validators.required],
-        zipCode: [null, Validators.required,],
+        addressLine1: [null, [Validators.maxLength(150)]],
+        addressLine2: [null, [Validators.maxLength(150)]],
+        city: [null, [Validators.maxLength(50)]],
+        state: [null, [Validators.maxLength(50)]],
+        country: [null, [Validators.maxLength(50)]],
+        zipCode: [null, [Validators.maxLength(6)]],
       }),
     });
   }
-
+  onCurrentAddressChange() {
+    this.personalDetailsForm.get('sameAsPermanent')?.setValue(false);
+  }
+  enforceMaxLength(event: KeyboardEvent, maxLength: number): void {
+    const input = event.target as HTMLInputElement;
+    const allowedKeys = ['Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
+  
+    if (
+      input.value.length >= maxLength &&
+      !allowedKeys.includes(event.key)
+    ) {
+      event.preventDefault();
+    }
+  }
+  allowOnlyNumbers(event: KeyboardEvent): void {
+    const charCode = event.key.charCodeAt(0);
+    // Allow only digits (0–9)
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  }
   patchForm() {
     const dateOfBirth = this.employeeData.dob ? this.formatDate(this.employeeData.dob) : null;
     this.personalDetailsForm.patchValue({
@@ -196,13 +219,27 @@ export class PersonalDetailsComponent implements OnInit {
       currentAddress: this.employeeData?.employeeAddresses?.find((address: IAddress) => address?.type?.toLowerCase() == 'c'),
       permanentAddress: this.employeeData?.employeeAddresses?.find((address: IAddress) => address?.type?.toLowerCase() == 'p')
     });
-
+    const currentAddress = this.employeeData?.employeeAddresses?.find(
+      (address: IAddress) => address?.type?.toLowerCase() === 'c'
+    );
+    const permanentAddress = this.employeeData?.employeeAddresses?.find(
+      (address: IAddress) => address?.type?.toLowerCase() === 'p'
+    );
+    if (currentAddress && permanentAddress) {
+      const fieldsToCompare = ['addressLine1', 'addressLine2', 'city', 'state', 'country', 'zipCode'];
+      const areSame = fieldsToCompare.every(field => 
+        currentAddress[field] === permanentAddress[field]
+      );
+      this.personalDetailsForm.get('sameAsPermanent')?.setValue(areSame);
+    } else {
+      this.personalDetailsForm.get('sameAsPermanent')?.setValue(false);
+    }
   }
   // Copy Current Address to Permanent Address
   copyCurrentAddress(event: any) {
     if (event.target.checked) {
       const currentAddress = this.personalDetailsForm.get('currentAddress')?.value;
-      this.personalDetailsForm.patchValue({
+      this.personalDetailsForm?.patchValue({
         permanentAddress: {
           addressLine1: currentAddress?.addressLine1 || null,
           addressLine2: currentAddress?.addressLine2 || null,
@@ -210,6 +247,18 @@ export class PersonalDetailsComponent implements OnInit {
           state: currentAddress?.state || null,
           country: currentAddress?.country || null,
           zipCode: currentAddress?.zipCode || null,
+        }
+      });
+    }
+    if(this.personalDetailsForm?.get('sameAsPermanent')?.value === false){
+      this.personalDetailsForm?.patchValue({
+        permanentAddress: {
+          addressLine1:  "",
+          addressLine2:  "",
+          city:  "",
+          state:  "",
+          country:  "",
+          zipCode:  "",
         }
       });
     }
@@ -222,7 +271,6 @@ export class PersonalDetailsComponent implements OnInit {
     }
     return true;
   }
-
   //function formate the data 
   formatDate(date: Date): string {
     return formatDate(date, 'yyyy-MM-dd', 'en-US');
@@ -266,11 +314,11 @@ export class PersonalDetailsComponent implements OnInit {
     let payload = {
       employeeAddresses: [{
         ...this.personalDetailsForm.get('currentAddress')?.value,
-        zipCode: String(this.personalDetailsForm.get('currentAddress')?.value?.zipCode)
+        zipCode: this.formatZipCode(this.personalDetailsForm.get('currentAddress')?.value?.zipCode)
       },
       {
         ...this.personalDetailsForm.get('permanentAddress')?.value,
-        zipCode: String(this.personalDetailsForm.get('permanentAddress')?.value?.zipCode)
+        zipCode: this.formatZipCode(this.personalDetailsForm.get('permanentAddress')?.value?.zipCode)
       }]
     }
     this.subscription = this.http.postData("PreonboardingEmployeeAddress", payload).subscribe({
@@ -283,12 +331,16 @@ export class PersonalDetailsComponent implements OnInit {
       }
     })
   }
-
+  formatZipCode(zip: any): string | null {
+    return zip !== undefined && zip !== null && zip !== '' ? String(zip) : "";
+  }
   // mobile number functions
 
   onCountryChange(country: any) {
     this.selectedDialCode = country.dialling_code;
     this.selectedCountryCodegflag = country.code;
+    this.personalDetailsForm.get('countyCode')?.setValue(country.dialling_code);
+    this.personalDetailsForm.get('countyCode')?.markAsTouched();
     this.personalDetailsForm.get('phonenumber')?.setValidators([Validators.required, this.phoneNumberValidator()]);
     this.personalDetailsForm.get('phonenumber')?.updateValueAndValidity();
     this.employeeData.mobilePhoneCountryCode = country.dialling_code;

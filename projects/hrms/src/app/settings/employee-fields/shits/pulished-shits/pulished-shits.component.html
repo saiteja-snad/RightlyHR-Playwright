@@ -1,8 +1,8 @@
 
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <div><span class="component-sub-header">{{'Shits Details'|translate}}</span></div>
-      <div class="custom-add-btn" (click)="nagvition()">
+      <div><span class="component-sub-header">{{'Shifts Management'|translate}}</span></div>
+      <div class="custom-add-btn" (click)="nagvition()"*ngIf="rbac.allowedToAccess('Manage Shifts Tab.create')">
         <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
       </div>
     </div>
@@ -12,65 +12,15 @@
     <table class="w-100">
         <thead>
             <tr>
-                <!-- <th>Worked Date</th>
-                <th>Availed</th> -->
-                <!-- <th>Reason</th> -->
-                <!-- <th>Applied Date</th>
-                <th>Status</th> -->
                 <th>{{'Year'|translate}}</th>
                 <th>{{'Location'|translate}}</th>
                 <th>{{'Sub Location'|translate}}</th>
+                <th>{{'Shift Name'|translate}}</th>
                 <th>{{'Status'|translate}}</th>
                 <th>{{'Added By'|translate}}</th>
                 <th>{{'Actions'|translate}}</th>
             </tr>
         </thead>
-        <tbody>
-        <tbody>
-            <!-- <ng-container *ngIf="approvedWFHs!.length > 0; else noDataTemplate">
-          <tr *ngFor="let wfhRequest of approvedWFHs; let i = index">
-            <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="wfhRequest.durationType">
-              <span *ngSwitchCase="1">First Half</span>
-              <span *ngSwitchCase="3">Second Half</span>
-              <span *ngSwitchCase="2">Full Day</span>
-              <span *ngSwitchDefault>-</span>
-            </td>
-            <td>{{ wfhRequest.requestedDate | dateformat }}</td>
-            <td>{{ wfhRequest.status }}</td>
-          </tr>
-        </ng-container> -->
-
-        <!-- <tbody>
-          <ng-container *ngIf="shiftsData!.length > 0; else noDataTemplate">
-            <tr class="hover" *ngFor="let shift of publishedshifts ">
-                  <td>{{ shift.applicableyear }}</td>
-                  <td>{{ shift.locationName }}</td>
-                  <td>{{ shift.subLocationName }}</td>
-                  <td>{{ shift.status}}</td>
-                  <td>{{ shift.addedbyName}}</td>
-                  <td class="text-center">
-                      <div class="dropdown">
-                          <a data-bs-toggle="dropdown" aria-expanded="false">
-                              <i class="bi bi-three-dots-vertical"></i>
-                          </a>
-                          <ul class="dropdown-menu custom-dropdown-menu">
-                              <li><a class="dropdown-item"><i class="bi bi-copy me-2 ms-2" (click)="cloneshiftsPolicy1(shift.id)"></i>Clone</a></li>
-                              <li><a class="dropdown-item"><i class="bi bi-eye-fill me-2" (click)="view(shift.id)"></i>View</a></li>
-                          </ul>
-                      </div>
-                  </td>
-              </tr>
-          </ng-container>
-
-          <ng-template #noDataTemplate>
-              <tr>
-                  <td colspan="4">
-                      <app-no-data-found></app-no-data-found>
-                  </td>
-              </tr>
-          </ng-template>
-        </tbody> -->
         <tbody>
             @if (shiftsData!.length > 0) {
               @for (shift of publishedshifts; track shift.id) {
@@ -78,6 +28,10 @@
                   <td>{{ shift.applicableyear }}</td>
                   <td>{{ shift.locationName }}</td>
                   <td>{{ shift.subLocationName }}</td>
+                  <td>  
+                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"
+                        title="{{getShiftNames(shift)}}"></i>
+                </td>
                   <td>{{ shift.status }}</td>
                   <td>{{ shift.addedbyName }}</td>
                   <td class="text-center">
@@ -87,16 +41,16 @@
                       </a>
                       <ul class="dropdown-menu custom-dropdown-menu">
                         <li>
-                          <a class="dropdown-item">
-                            <i class="bi bi-copy me-2 ms-2" (click)="cloneshiftsPolicy1(shift.id)"></i>Clone
+                          <a class="dropdown-item"(click)="cloneshiftsPolicy1(shift.id)">
+                            <i class="bi bi-copy me-2 ms-2" ></i>Clone
                           </a>
                         </li>
-                        <li>
-                          <a class="dropdown-item">
-                            <i class="bi bi-eye-fill me-2" (click)="view(shift.id)"></i>View
-                          </a>
-                        </li>
-                      </ul>
+                          <li>
+                            <a class="dropdown-item" style="padding-left: 21px" (click)="view(shift.id)">
+                              <i class="bi bi-eye-fill me-2"></i>View
+                            </a>
+                          </li>
+                        </ul>                    
                     </div>
                   </td>
                 </tr>

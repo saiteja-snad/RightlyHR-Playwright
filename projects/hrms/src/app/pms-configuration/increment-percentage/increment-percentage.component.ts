@@ -14,27 +14,16 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 import { UpdateIncrementComponent } from './update-increment/update-increment.component';
 import { ViewIncrementComponent } from './view-increment/view-increment.component';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
-
 @Component({
   selector: 'app-increment-percentage',
-  imports: [
-    CommonModule,
-    RouterModule,
-    NgbPopoverModule,
-    FormsModule,
-    PaginatorModule,
-    DropdownModule,
-    NoDataFoundComponent,
-    DataLoaderContentComponent,
-  ],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
+     NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './increment-percentage.component.html',
   styleUrl: './increment-percentage.component.scss',
 })
+
 export class IncrementPercentageComponent implements OnInit, OnDestroy {
   dataload = false;
-  totalRecords = 100;
-  first: any = 1;
-  rows: any = 10;
   empinfo = {} as any;
   subscription!: Subscription;
   searchValue: any;
@@ -47,24 +36,21 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
 
-  onRowsChange() {
-    this.first = 1;
-  }
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-  }
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  searchQuery = '';
+  first = 0;
+  totalRecords = 0;
+  searchText = '';
+  
   IncementalDetailsget: any[] = [];
-  constructor(
-    private http: HttpService,
-    private modalService: NgbModal,
-    private conformationPopup: OpenModalService,
-    public rbac: RbacService
-  ) {
-    // Signal reaction for employee switch
+
+  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService) {
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
-        this.getAllIncrementalPercentagedata();
+        this.getAllIncrementalPercentagedata(this.page, this.pageSize);
         this.http.tirggerCountSignal.update((status) => ({
           ...status,
           global: false,
@@ -75,64 +61,80 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getAllIncrementalPercentagedata();
+    this.getAllIncrementalPercentagedata(this.page, this.pageSize);
   }
 
   openAdd() {
-    this.modalService.open(AddIncrementComponent, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    this.modalService.open(AddIncrementComponent, {centered: true, backdrop: 'static', size: 'xl'});
   }
+
   openDelete(content: any, id: any) {
     this.deleteId = id;
     this.modalService.open(content, { centered: true });
   }
+
   editDetails(data: any) {
-    const modalRef = this.modalService.open(UpdateIncrementComponent, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    const modalRef = this.modalService.open(UpdateIncrementComponent, {centered: true, backdrop: 'static', size: 'xl'});
     modalRef.componentInstance.updateData = data;
   }
+
   viewDetails(data: any) {
-    const modalRef = this.modalService.open(ViewIncrementComponent, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    const modalRef = this.modalService.open(ViewIncrementComponent, {centered: true, backdrop: 'static', size: 'xl'});
     modalRef.componentInstance.updateData = data;
   }
-  //function to get the globalpermissions details
-  getAllIncrementalPercentagedata(): void {
-    this.dataload = true;
-    this.subscription = this.http
-      .getReviewCyclesteam(
-        `IncrementalPercentage`,
-        this.first,
-        this.rows,
-        this.searchValue
-      )
-      .subscribe({
-        next: (response: any) => {
-          this.IncementalDetailsget = response?.items;
-          this.totalRecords = response?.totalCount;
-        },
-        error: (err: any) => {
-          console.log('errors', err);
-        },
-        complete: () => {
-          this.dataload = false;
-        },
-      });
+
+  onSearchTextChange(): void {
+    this.page = 1;        
+    this.first = 0; 
+    this.getAllIncrementalPercentagedata(this.page, this.pageSize);
   }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getAllIncrementalPercentagedata(this.page, this.pageSize);
+  }
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.getAllIncrementalPercentagedata(this.page, this.pageSize);
+  }
+
+  //function to get the globalpermissions details
+  getAllIncrementalPercentagedata(pagenum: number, pagesize: number): void {
+    const params: { pageNumber: number; pageSize: number; searchparam?: string } = {
+      pageNumber: pagenum,
+      pageSize: pagesize,
+    };
+    
+    if (this.searchText) {
+      params.searchparam = this.searchText;
+    }
+
+    this.dataload = true;
+    this.subscription = this.http.getpagentiontData(`IncrementalPercentage`, params).subscribe({
+      next: (response: any) => {
+        this.IncementalDetailsget = response?.items;
+        this.collectionSize = response.totalCount;
+      },
+      error: (err: any) => {
+        this.dataload = false;
+        console.log('errors', err);
+      },
+      complete: () => {
+        this.dataload = false;
+      },
+    });
+  }
+
   getNamesAsString(array: any, type: string): string {
     if (!Array.isArray(array)) {
       return '';
     }
-
     switch (type) {
       case 'locationName':
         return array.map((item: any) => item.locationName).join(', ');
@@ -146,37 +148,33 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
         return '';
     }
   }
+
   //function to inactivate the incremental persentage
   deleteData() {
     const payLoad = {};
-    this.http
-      .postdata(`IncrementalPercentage/delete?id=${this.deleteId}`, payLoad)
-      .subscribe({
-        next: (response: any) => {
-          this.conformationPopup.openSuccessModal(
-            'Incremental Percentage Deleted Sucessfully'
+    this.http.postdata(`IncrementalPercentage/delete?id=${this.deleteId}`, payLoad).subscribe({
+      next: (response: any) => {
+        this.conformationPopup.openSuccessModal('Incremental Percentage Deleted Sucessfully');
+        this.getAllIncrementalPercentagedata(this.page, this.pageSize);
+      },
+      error: (err: any) => {
+        if (err.status === 404) {
+          this.conformationPopup.openErrorModal(
+            'The requested resource was not found. Please check the URL or contact the administrator for assistance.'
           );
-          this.getAllIncrementalPercentagedata();
-        },
-        error: (err: any) => {
-          console.log(err);
-
-          if (err.status === 404) {
-            this.conformationPopup.openErrorModal(
-              'The requested resource was not found. Please check the URL or contact the administrator for assistance.'
-            );
-          } else if (err.status === 500) {
-            this.conformationPopup.openErrorModal(err.error.details);
-          } else {
-            this.conformationPopup.openErrorModal(err.error.message);
-          }
-        },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        complete: () => {
-          this.getAllIncrementalPercentagedata();
-        },
-      });
+        } else if (err.status === 500) {
+          this.conformationPopup.openErrorModal(err.error.details);
+        } else {
+          this.conformationPopup.openErrorModal(err.error.message);
+        }
+      },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      complete: () => {
+        this.getAllIncrementalPercentagedata(this.page, this.pageSize);
+      },
+    });
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

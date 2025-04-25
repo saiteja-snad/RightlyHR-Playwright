@@ -31,7 +31,7 @@
               placeholder="Select shift" class="form-select custom-select"></p-select>
           </div>
           <div>
-            <button type="button" class="custom-btn btn-primary" (click)="addPolicyRow()">
+            <button type="button" [disabled]="policiesForm?.get('year')?.invalid || policiesForm?.get('location')?.invalid || policiesForm?.get('subLocation')?.invalid || policiesForm?.get('shift')?.invalid" class="custom-btn btn-primary" (click)="addMomentRow()">
               <i class="bi bi-plus"></i>{{'Add New' | translate}} 
             </button>
           </div>
@@ -67,7 +67,10 @@
             
           </div>
         </div>
-        <button class="custom-btn btn-primary mt-3" type="submit">{{'Submit' | translate}}</button>
+       <div class="d-flex justify-content-end ">
+    
+        <button class="custom-btn btn-primary mt-3" [disabled]="policiesForm.invalid" type="submit">{{'Submit' | translate}}</button>
+       </div>
       </div>
       
     </form>

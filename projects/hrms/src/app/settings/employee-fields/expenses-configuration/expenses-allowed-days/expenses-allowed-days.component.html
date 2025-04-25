@@ -4,14 +4,14 @@
             <thead>
                 <th class="col-span-2">Name</th>
                 <th class="col-span-2">Expense Duration (Days)</th>
-                <th class="text-center">Action</th>
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Expense Tab.update')">Action</th>
             </thead>
             <tbody>
             
                 <tr >
                     <td class="w-50">{{attribute}}</td>
                     <td class="W-25">{{value}}</td>
-                    <td class="text-center">
+                    <td class="text-center" *ngIf="rbac.allowedToAccess('Expense Tab.update')">
                          <!--Update-->
                          <div>
                             <a type="button" (click)="openModal(expensesallowmodal)" ><img

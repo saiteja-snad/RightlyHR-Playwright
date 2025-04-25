@@ -16,6 +16,7 @@ import { TraineesearchfilterPipe } from "../../../Pipes/traineesearchfilter.pipe
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { RbacService } from '../../../services/rbac.service';
 import { TraineeApprovalsTabsComponent } from "../../../shared/time-off-module-tabs/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-trainee-approvals',
@@ -75,14 +76,14 @@ export class TraineeApprovalsComponent {
 
   iniializationForm() {
     this.acceptForm = this.fb.group({
-      trcomments: [this.selectedLeaveData.trcomments || '', Validators.required]
+      trcomments: [this.selectedLeaveData.trcomments || '', Validators.required,noWhitespaceValidator]
     });
   }
   initaializeextendForm() {
     this.rejectForm = this.fb.group({
       extenddate: ['', Validators.required],
-      trcomments: ['', Validators.required],
-      rejectedReason: ['', Validators.required]
+      trcomments: ['', Validators.required,noWhitespaceValidator],
+      rejectedReason: ['', Validators.required,noWhitespaceValidator]
     });
 
     this.rejectForm.valueChanges.subscribe(val => {
@@ -166,6 +167,7 @@ export class TraineeApprovalsComponent {
       )
       .subscribe({
         next: (respone: any) => {
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request Accepted Successfully')
         },
         error: (reason: any) => {
@@ -280,6 +282,7 @@ export class TraineeApprovalsComponent {
       )
       .subscribe({
         next: (respone: any) => {
+          this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Request Extend Successfully')
         },
         error: (reason: any) => {

@@ -27,6 +27,7 @@ export class PendingExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
+  commentsrecivced = [] as any
   searchTerm:any=''
   approverComments = [] as any[];
   
@@ -46,6 +47,9 @@ export class PendingExpensesComponent {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
+  comments_Function(comments: any) {
+    this.commentsrecivced = comments
+  }
 
   getexpensesheaderbyemployeeid(): void {
     const cleanSearchQuery = this.searchTerm || ''

@@ -5,7 +5,7 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
+                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
 
         <div class="custom-table-content">
@@ -21,14 +21,16 @@
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Reason</th>
-                        <th>Comments</th>
+                        <th>Approver Comments</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (rbac.allowedToAccess('Timeoff Tab.view')) {
-                    @if(leaves.length > 0){
-                    <tr *ngFor="let item of leaves | leavesPendingapprovals : searchValue">
+                    @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
+                    @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
+                    item.approvalHeader.id){
+                    <tr>
                         <td>{{item.entity.leavefusionempId}}</td>
                         <td>{{item.entity.employeeName}}</td>
                         <td>{{item.entity.leaveCategoryName}}</td>
@@ -53,16 +55,20 @@
                         </td>
                         <td>
                             <div>
-                                <span>
+                                <ng-container
+                                    *ngIf="item.entity.leaveApproverComments?.comments?.trim(); else noComments">
                                     <a type="button" placement="top">
-                                        <img src="images\info-fill.png" alt="info icon"
-                                            (click)="comments(item.entity.leaveApproverComments,commentspopup)"
+                                        <img src="images/info-fill.png" alt="info icon"
+                                            (click)="comments(item.entity.leaveApproverComments, commentspopup)"
                                             class="info-icon">
                                     </a>
-
-                                </span>
+                                </ng-container>
+                                <ng-template #noComments>
+                                    <span>-</span>
+                                </ng-template>
                             </div>
                         </td>
+
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
@@ -87,15 +93,36 @@
                         </td>
                     </tr>
                     }
-                    @else {
+                    }
+                    @else{
                     <tr>
-                        <app-no-data-found></app-no-data-found>
-
+                        <td colospan="8">
+                            <app-no-data-found />
+                        </td>
                     </tr>
                     }
                     }
                 </tbody>
             </table>
+        </div>
+        <div class="pagination-content pt-2 w-100">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                <!-- Dropdown for Rows per Page -->
+                <div class="d-flex align-items-center gap-3 p-2">
+                    <!-- Bootstrap Select -->
+                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onRowsChange()">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+                </div>
+
+                <!-- Pagination -->
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
         </div>
     </div>
 </div>
@@ -104,7 +131,7 @@
 <ng-template #commentspopup let-modal>
     <div class="d-flex justify-content-between popup-header-border p-4">
         <div class="pt-2">
-            <p class="popup-heading mb-0">Comments</p>
+            <p class="popup-heading mb-0">{{'Approver Comments' | translate}}</p>
         </div>
         <div>
             <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
@@ -116,10 +143,10 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Comments</th>
-                        <th>Commented By</th>
-                        <th>Date</th>
-                        <th>Commented By ID</th>
+                        <th>{{'Comments' | translate}}</th>
+                        <th>{{'Commented By'|translate}}</th>
+                        <th>{{"Approved Date" | translate}}</th>
+                        <th>{{'Commented By ID' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -222,7 +249,6 @@
                         </label>
                     </div>
                 </div>
-
                 <div class="mb-3 mt-2">
                     <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span
                             class="required">*</span></label>
@@ -240,14 +266,18 @@
             <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100 ml">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" aria-label="Close"
                     type="reset">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
-                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable"
-                    aria-label="Close">Approve</button>
+                    <button ype="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
+                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
+                        @if(spinnerLoader){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Approve'| translate}}</span>
+                        }
+                    </button>
             </div>
         </form>
     </div>
-
-
 </ng-template>
 
 <!-- rejectpopup -->
@@ -262,8 +292,6 @@
                 </div>
             </div>
             <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-
-
             <form name="leaveapprovee" class="ps-5 w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
                 <div class="col-11 ">
                     <div class="mb-3 mt-2">
@@ -283,9 +311,15 @@
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100 ml">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" aria-label="Close"
                         type="reset">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
-                        [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable"
-                        aria-label="Close">Reject</button>
+                        <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
+                        [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
+                            @if(spinnerLoader){
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..'}}...</span>
+                            }@else {
+                            <span>{{'Reject'| translate}}</span>
+                            }
+                        </button>
                 </div>
             </form>
         </div>

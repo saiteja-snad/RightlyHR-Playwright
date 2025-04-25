@@ -37,10 +37,10 @@ export class FrequencyComponent {
 
   ngOnInit(): void {
     this.FrequencyForm = this.fb.group({
-      frequency: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      frequency: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      frequency: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      frequency: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.getFrequencies();
@@ -66,8 +66,9 @@ export class FrequencyComponent {
         this.conformationPopup.openSuccessModal('Frequency added successfully');
         this.resetForm();
       },
-      error: () => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+      error: (err: any) => {
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
         this.resetForm();
       }
     });
@@ -88,8 +89,9 @@ export class FrequencyComponent {
           this.updateForm.reset();
           this.conformationPopup.openSuccessModal('Frequency updated successfully');
         },
-        error: () => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+        error: (err:any) => {
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -126,8 +128,9 @@ export class FrequencyComponent {
         modal.close();
         this.conformationPopup.openSuccessModal('Frequency deleted successfully');
       },
-      error: () => {
-        this.conformationPopup.openErrorModal('Failed to delete the frequency');
+      error: (err:any) => {
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

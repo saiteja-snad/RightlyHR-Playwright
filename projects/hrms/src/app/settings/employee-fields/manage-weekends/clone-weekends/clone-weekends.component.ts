@@ -118,14 +118,14 @@ export class CloneWeekendsComponent {
 
   patchWeekendForm(data: any) {
     if (!data) return;
-    // this.weekendForm.get('year')?.enable();
+    this.weekendForm.get('year')?.enable();
     
-    // const location = this.locationDetails.find(loc => loc.id === data.locationId);
-    // if (!location) return;
+    const location = this.locationDetails.find(loc => loc.id === data.locationId);
+    if (!location) return;
 
    
-    // this.weekendForm.get('location')?.enable();
-    // this.weekendForm.patchValue({ year: data.applicableyear, location });
+    this.weekendForm.get('location')?.enable();
+    this.weekendForm.patchValue({ year: data.applicableyear });
   
     // this.onLocationChange(location);
   

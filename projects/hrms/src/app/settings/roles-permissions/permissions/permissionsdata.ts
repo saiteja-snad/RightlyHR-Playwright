@@ -96,6 +96,7 @@ export const permissionsData = [
     { fields: 'Add Employee', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Request Document', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Documents Upload Button', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Desk Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Expenses Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Invoices Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Attendance Select Employee For Manager', View: false, Update: false, Create: false, Delete: false },

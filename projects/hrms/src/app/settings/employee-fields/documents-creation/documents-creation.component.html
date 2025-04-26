@@ -78,7 +78,10 @@
                 (ngSubmit)="AddSubDirectory.valid && createSubDirectory(AddSubDirectory)">
                 <div class="mb-3">
                     <input type="text" class="form-control custom-input" name="subDirName" [(ngModel)]="subDir.subDirName" 
-                    autocomplete="off" placeholder="Enter File Name" id="subDirName" />
+                    autocomplete="off" placeholder="Enter File Name" id="subDirName"  #subDirName="ngModel" required/>
+                    <div *ngIf="subDirName.touched && subDirName.invalid" class="error-msg">
+                        {{'File name is required' | translate}}
+                      </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary" (click)="onClose()">{{'Close'|translate}}</button>

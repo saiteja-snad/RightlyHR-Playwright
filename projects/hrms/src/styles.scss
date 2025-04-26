@@ -180,7 +180,6 @@ body {
         border-radius: 50%;
     }
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -384,6 +383,10 @@ body {
 }
 
 // Component stylings
+.custom-main-component-container {
+   position: relative;
+}
+
 .component-header {
     font-family: var(--font-family);
     font-weight: 700;
@@ -439,6 +442,15 @@ a {
     }
 }
 
+.textarea-count-text {
+    color: #303030;
+    font-weight: 400;
+    font-size: var(--fontsize14);
+    vertical-align: middle;
+    text-align: end;
+    margin: 0.5rem 0rem;
+}
+
 // button stylings
 .custom-btn {
     padding: 0.5rem 1rem;
@@ -481,6 +493,17 @@ a {
 .btn-secondary {
     background-color: var(--btn-secondary-color);
     color: var(--btn-color-ts);
+}
+
+.button-loader-content {
+    display: flex;
+    align-items: center;
+}
+
+.button-spinner {
+    margin-right: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 // disable-btn
@@ -1226,6 +1249,10 @@ input[type="file"] {
 .result-popup-content {
     padding: 3rem;
     text-align: center;
+
+    .custom-main-popup-content {
+        text-align: left !important;
+    }
 
     .confirmation-icon {
         width: 5.5rem;

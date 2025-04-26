@@ -2,10 +2,8 @@
     <div>
         <!--Input search-->
         <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search">
         </div>
 
         <div class="custom-table-content">
@@ -28,57 +26,42 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     @if(((separation_For_You_Details | async) ?? []).length > 0) {
-
                     <tr *ngFor="let item of separation_For_You_Details|async">
                         @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
                         ||item.approvalHeader?.status?.toLowerCase() =='approved'){
-
                         <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
-                        <td> {{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
+                        <td>{{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
                         <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
-                        <td> {{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
+                        <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
                         <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-                        <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}
-                        </td>
-                        <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}
-                        </td>
-                        <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}
-                        </td>
+                        <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}</td>
+                        <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}</td>
+                        <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
                         <td>
                             @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
                             <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
+                                </ng-template>
                             </div>
                             }
                             @else {
-                            -
+                            <div>-</div>
                             }
                         </td>
                         <td>
-
                             @if(item.entity?.spEarlyRelievingReason){
                             <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{item.entity?.spEarlyRelievingReason}} </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
+                                <a type="button" placement="top" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
+                                </ng-template>
                             </div>
                             }
                             @else {-}
@@ -86,13 +69,9 @@
                         <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
                         <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
                             <div>
-                                <span>
-                                    <a type="button"
-                                        (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-
-                                </span>
+                                <a type="button" (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
                             </div>
                             }
                             @else{-}
@@ -103,26 +82,22 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu py-0">
-                                    @if(item.approvalHeader?.currentapprovalStage !=
-                                    item.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModal(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')"><a class="dropdown-item"><i
-                                                class="bi bi-check-circle me-2"></i>{{"Approve" | translate}}</a></li>
-                                    }
-
-                                    @if((item.approvalHeader?.currentapprovalStage !=
-                                    item.approvalHeader?.finalapprovalStage)||(item.approvalHeader?.currentapprovalStage
-                                    == item.approvalHeader?.finalapprovalStage)){
-                                    <li (click)="openModal(rejectmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.delete')"><a class="dropdown-item"><i
-                                                class="bi bi-x-circle me-2"></i>{{"Reject" | translate}}</a></li>
-                                    }
-
-                                    @if(item?.approvalHeader?.currentapprovalStage ==
-                                    item?.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModal(processmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')"><a
-                                            class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Process" | translate}}</a>
+                                    @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
+                                    <li (click)="openModal(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Approve" | translate}}</a>
                                     </li>
                                     }
-
+                                    @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) || 
+                                    (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
+                                    <li (click)="openModal(rejectmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.delete')">
+                                        <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{"Reject" | translate}}</a>
+                                    </li>
+                                    }
+                                    @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
+                                    <li (click)="openModal(processmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Process" | translate}}</a>
+                                    </li>
+                                    }
                                 </ul>
                             </div>
                         </td>
@@ -136,28 +111,8 @@
                         </td>
                     </tr>
                     }
-                
                 </tbody>
             </table>
-        </div>
-        <div class="pagination-content pt-2 w-100">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <!-- Dropdown for Rows per Page -->
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <!-- Bootstrap Select -->
-                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-                </div>
-
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
         </div>
     </div>
 </div>

@@ -11,9 +11,11 @@ import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './comp-off-waiting-for-approval.component.html',
   styleUrl: './comp-off-waiting-for-approval.component.scss'
 })
@@ -27,21 +29,21 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   waitingForApprovalCompOffCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  dataload = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-
-  constructor(private http: HttpService, public rbac: RbacService,) {
-    effect(() => {
-      if (this.http.tirggerCountSignal().compOff) {
+  constructor(
+    private http: HttpService,
+    public rbac: RbacService,
+  ) {
+    effect(() =>{
+      if (this.http.compOffTriggerSignal()) {
         this.getCompOffRequest();
-        this.http.tirggerCountSignal.update((status) => ({
-          ...status,
-          compOff: false,
-        }));
+        this.http.compOffTriggerSignal.set(false);
       }
     })
   }
@@ -62,7 +64,10 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
   getCompOffRequest() {
     let empId = this.empinfo.employeeId;
-    this.http.getData(`Timeoff/getCompoffRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.dataload = true;
+    this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (response: any) => {
         this.compOff = response;
         this.waitingForApprovalCompOff = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval');
@@ -71,6 +76,8 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error fetching data:', error);
         this.waitingForApprovalCompOff = []; // Set to empty array on error
+      },complete: () =>{
+        this.dataload = false;
       },
     });
   }

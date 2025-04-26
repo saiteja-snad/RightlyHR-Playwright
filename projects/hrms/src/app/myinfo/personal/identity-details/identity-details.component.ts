@@ -47,6 +47,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       identityType: ['', Validators.required],
       identityNumber: ['', [
         Validators.required,
+        
         Validators.minLength(this.IdentityMinNumber),
         Validators.maxLength(this.IdentityMaxNumber)
       ]],

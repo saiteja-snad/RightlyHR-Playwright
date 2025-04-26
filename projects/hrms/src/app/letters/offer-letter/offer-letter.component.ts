@@ -80,6 +80,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   countryvalues = {} as any;
   loadingCode= true;
   selectedCountryCode: any;
+  countryCode='Country Code'
   selectedCountryConfig = {
     hideCode: true,
     hideName: true
@@ -527,7 +528,7 @@ console.log(formValues);
                   authorityid: this.prospectiveEmpData?.signatureAuthority,
                   phoneNumber:this.prospectiveEmpData?.phoneNumber
                 })
-                this.selectedCountryCode=this.prospectiveEmpData?.countactnumbercountrycodeflag;
+                this.selectedCountryCode=this.prospectiveEmpData?.contactnumbercountryflag;
                 this.loadingCode = false;
                 console.log(this.prospectiveEmpData.values);
                 this.getEmployeeAddress(data.checkofferletter.empId);

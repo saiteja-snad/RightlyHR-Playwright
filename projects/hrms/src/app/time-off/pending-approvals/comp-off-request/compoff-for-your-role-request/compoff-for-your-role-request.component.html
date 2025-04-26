@@ -7,7 +7,7 @@
             <input type="search" class="form-control custom-search-input" placeholder="Search here"
                 aria-label="Username" aria-describedby="basic-addon1" #search="ngModel" [(ngModel)]="searchValue" autocomplete="off">
         </div>
-
+        @if(!dataload){
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
@@ -91,6 +91,7 @@
                 </tbody>
             </table>
         </div>
+        }@else{<app-data-loader-content />}
     </div>
 </div>
 

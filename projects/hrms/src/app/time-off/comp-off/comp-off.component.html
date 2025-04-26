@@ -41,8 +41,8 @@
                     <div class="col-md-12 mb-3">
                         <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
-                            formControlName="workedDate" required>
+                        <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate" autocomplete="off" [min]="getPastDate()" [max]="getFutureDate()"
+                            formControlName="workedDate" required (change)="weekendAndHolidaysCheck(addCompOffForm.get('workedDate')?.value)">
                         <div *ngIf="addCompOffForm.get('workedDate')?.touched && addCompOffForm.get('workedDate')?.invalid"
                             class="error-msg">
                             <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required.
@@ -50,8 +50,9 @@
                         </div>
                         <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date
                             must be after your date of joining.</div>
-                        <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['notWeekend']">Selected
-                            date is not eligible for compoff</div>
+                        
+                        <small class="error-msg" *ngIf="!(isHolidaySelected  || isWeekOffSelected) "> Selected date is not eligible for compoff 
+                        </small>    
                     </div>
                 </div>
 
@@ -100,7 +101,7 @@
                         <label for="reason" class="form-label custom-label mb-2">Reason<span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
-                            placeholder="Type here" maxlength="250"></textarea>
+                            placeholder="Reason for comp off" maxlength="250" (input)="formsValidation.validateInput(addCompOffForm.get('reason'))"></textarea>
                         <div class="text-end small text-muted">
                             {{ addCompOffForm.get('reason')?.value?.length || 0 }}/250
                         </div>
@@ -120,7 +121,7 @@
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary"
                         (click)="modal.dismiss();this.addCompOffForm.reset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="addCompOffForm.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addCompOffForm.invalid || spinnerLoader || !(isHolidaySelected  || isWeekOffSelected)">
                         @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading..'}}...</span>

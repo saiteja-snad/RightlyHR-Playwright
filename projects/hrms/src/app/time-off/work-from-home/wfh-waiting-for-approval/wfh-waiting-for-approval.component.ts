@@ -11,10 +11,11 @@ import { ICompOff } from '../../../Interfaces/compoff.modal';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-wfh-waiting-for-approval',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './wfh-waiting-for-approval.component.html',
   styleUrl: './wfh-waiting-for-approval.component.scss'
 })
@@ -27,7 +28,7 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
   waitingForApprovalWFHCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  dataload = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -43,11 +44,9 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
     public rbac: RbacService,
   ) {
     effect(() => {
-      if (this.http.tirggerCountSignal().wfh) {
+      if (this.http.wfhTriggerSignal()) {
         this.getWFHRequests();
-      this.http
-        .tirggerCountSignal
-        .update((status) => ({ ...status, wfh: false }));
+      this.http.wfhTriggerSignal.set(false);
       }
     });
   }
@@ -73,6 +72,7 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
 
   getWFHRequests() {
     let empId = this.empinfo.employeeId;
+    this.dataload = true;
     console.log(empId);
     this.http
       .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
@@ -89,7 +89,10 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching data:', error);
-          this.waitingForApprovalWFHs = []; // Set to empty array on error
+          this.waitingForApprovalWFHs = [];
+        },complete: () => {
+          this.dataload = false;
+          
         },
       });
   }

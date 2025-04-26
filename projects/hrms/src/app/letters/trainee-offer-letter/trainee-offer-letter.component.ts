@@ -591,7 +591,7 @@ export class TraineeOfferLetterComponent {
       next: (res: any) => {
         if (res.statusCode == 201) {
           this.result = res.employeeData;
-          this.downLoadDocument(res);
+          this.downLoadDocument(this.result);
           if (this.result.employeeId != null) {
             const jobdata = {
               employeeId: this.result.employeeId,
@@ -690,12 +690,12 @@ export class TraineeOfferLetterComponent {
     let d: Date = new Date();
     const file = new File([blob], fileName, { type: 'application/pdf', });
     this.generatedfile = file;
-    this.generatingEmployeeId = EmpValue.employeeData.employeeId;
+    this.generatingEmployeeId = EmpValue.employeeId;
     this.loading = false;
     this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully'); 
   }
 
-  
+
  traineeofferletterUpload(empId: number, file: File) {
     let filePath = `/FusionDocuments/Employee Documents/Trainee Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({

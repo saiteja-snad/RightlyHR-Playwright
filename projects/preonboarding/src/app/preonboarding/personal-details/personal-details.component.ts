@@ -144,9 +144,9 @@ export class PersonalDetailsComponent implements OnInit {
   initializePersonalForm() {
     let loggedInUser = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     this.personalDetailsForm = this.fb.group({
-      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$'),Validators.maxLength(50)]],
+      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(50)]],
       middleName: [null,[Validators.maxLength(50)]],
-      lastName: [{ value: null, disabled: true }, [Validators.required, Validators.pattern('^[a-zA-Z]+$'),,Validators.maxLength(50)]],
+      lastName: [{ value: null, disabled: true }, [Validators.required,Validators.maxLength(50)]],
       gender: [null, Validators.required],
       salutation: [null, Validators.required],
       countyCode:[null, [Validators.required]],
@@ -166,7 +166,7 @@ export class PersonalDetailsComponent implements OnInit {
         city: [null, [Validators.required,Validators.maxLength(50)]],
         state: [null, [Validators.required,Validators.maxLength(50)]],
         country: [null, [Validators.required ,Validators.maxLength(50)]],
-        zipCode: [null, [Validators.required,Validators.maxLength(6)]],
+        zipCode: [null, [Validators.required,Validators.maxLength(6),Validators.pattern('^[0-9]+$')]],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
@@ -176,7 +176,7 @@ export class PersonalDetailsComponent implements OnInit {
         city: [null, [Validators.maxLength(50)]],
         state: [null, [Validators.maxLength(50)]],
         country: [null, [Validators.maxLength(50)]],
-        zipCode: [null, [Validators.maxLength(6)]],
+        zipCode: [null, [Validators.maxLength(6),Validators.pattern('^[0-9]+$')]],
       }),
     });
   }

@@ -42,11 +42,9 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.getEmployeeId();
   
     this.addressForm.disable();
-    // this.addressForm.get('permanentAddress')?.valueChanges.subscribe(() => {
-    //   if (this.addressForm.get('sameAsPermanent')?.value) {
-    //     this.addressForm.get('sameAsPermanent')?.setValue(false, { emitEvent: false });
-    //   }
-    // });
+    this.addressForm.get('permanentAddress')?.valueChanges.subscribe(() => {
+      this.checkIfAddressesAreSame();
+    });
    
   }
 
@@ -89,6 +87,9 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.buttons = false;
     this.buttons2 = false;
     this.addressForm.disable();
+    this.addressForm.reset(); 
+    this.getEmployeeId(); 
+
   }
 
   getEmployeeId(): void {
@@ -125,7 +126,19 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       country: this.permanentAddress?.country || '',
       zipCode: this.permanentAddress?.zipCode || '',
     });
+    this.checkIfAddressesAreSame();
   }
+
+  checkIfAddressesAreSame(): void {
+    const currentAddress = this.addressForm.get('currentAddress')?.value;
+    const permanentAddress = this.addressForm.get('permanentAddress')?.value;
+  
+    const areAddressesSame = JSON.stringify(currentAddress) === JSON.stringify(permanentAddress);
+  
+    // Update the checkbox value based on the comparison
+    this.addressForm.get('sameAsPermanent')?.setValue(areAddressesSame, { emitEvent: false });
+  }
+
   updateAddressInfo(): void {
     const formValue = this.addressForm.value; // Get updated form values
   
@@ -232,15 +245,10 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
         zipCode: this.permanentAddress?.zipCode || '',
       });
     }
+    this.checkIfAddressesAreSame();
   }
-  showButtons(): void {
-    this.buttons = !this.buttons;
-    if (this.buttons) {
-      this.enableForm();
-    } else {
-      this.disableForm();
-    }
-  }
+
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

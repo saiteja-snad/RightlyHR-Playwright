@@ -24,7 +24,7 @@ export class OpenModalService {
     errorModal.componentInstance.status = status;
     setTimeout(() => {
       errorModal.dismiss();
-    }, 2000);
+    }, 2500);
   }
 
   openLoaderModal(status: string){

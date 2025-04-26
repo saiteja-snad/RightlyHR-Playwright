@@ -21,7 +21,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" [showClear]="true" placeholder="Select employee"
-                            (onChange)="onclickcheckempidnull($event)" formControlName="fusionEmpId"
+                            (onChange)="onClickValidation($event)" formControlName="fusionEmpId"
                             class="custom-select w-100">
                         </p-select>
                     </div>
@@ -120,7 +120,7 @@
                     <label class="form-label custom-label mb-2">{{'Address Line 1'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="addressLine1"
-                        placeholder="Address Line 1" />
+                        placeholder="Address line 1" />
                     <div *ngIf="employeeForm.get('addressLine1')?.invalid && employeeForm.get('addressLine1')?.touched">
                         <div class="error-msg">Address Line 1 is required</div>
                     </div>
@@ -129,7 +129,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Address Line 2'|translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="addressLine2"
-                        placeholder="Address Line 2" />
+                        placeholder="Address line 2" />
                     <div *ngIf="employeeForm.get('addressLine2')?.invalid && employeeForm.get('addressLine2')?.touched">
                         <div class="error-msg">Address Line 2 is required</div>
                     </div>
@@ -294,7 +294,7 @@
                     <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="getAllEmployeeInfo" optionLabel="fullName" [filter]="true" filterBy="firstName"
+                        <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName" [filter]="true" filterBy="firstName"
                             [showClear]="true" placeholder="Please select reporting manager"
                             formControlName="reportingmanagerId" class="custom-select w-100"
                             (ngModelChange)="selectReportingname($event)">
@@ -486,3 +486,29 @@
         </div>
     </div>
 </div>
+<!-- offerletter generation popup -->
+<ng-template #approveModal let-modal>
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+      <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg??''}} </h4>
+      <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
+          (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
+      </div>
+    </div>
+  </ng-template>
+  
+  <!-- offerletter generation popup 2 -->
+  <ng-template #approveModal1 let-modal>
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+      <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg ?? ''}}</h4>
+      <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();this.loading=false">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary" (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
+      </div>
+    </div>
+  </ng-template>

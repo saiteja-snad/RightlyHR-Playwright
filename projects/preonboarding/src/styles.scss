@@ -89,7 +89,7 @@ body {
     background-color: var(--body-bg-color);
 }
 
-.component-data-content{
+.component-data-content {
     padding: 0rem 3rem;
 
     .custom-main-sub-content {
@@ -204,6 +204,17 @@ a {
     color: #222222;
 }
 
+.button-loader-content {
+    display: flex;
+    align-items: center;
+}
+
+.button-spinner {
+    margin-right: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
 // table stylings
 .custom-table-content {
     width: 100%;
@@ -219,7 +230,8 @@ a {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -287,7 +299,7 @@ a {
     }
 
     .p-select-label {
-        padding: 0.25rem 0.5rem !important;  
+        padding: 0.25rem 0.5rem !important;
     }
 
     .p-select-option.p-select-option-selected {
@@ -394,7 +406,7 @@ a {
 }
 
 .authority-signature {
-    font-size: 3.2rem;
+    font-size: 2rem;
     font-family: "autographsignatureFont";
 }
 
@@ -583,4 +595,10 @@ input[type="number"].no-arrows::-webkit-inner-spin-button {
 /* Hide arrows in Firefox */
 input[type="number"].no-arrows {
     -moz-appearance: textfield;
+}
+
+.view-btn {
+    cursor: pointer;
+    color: #06274F;
+    font-weight: 500;
 }

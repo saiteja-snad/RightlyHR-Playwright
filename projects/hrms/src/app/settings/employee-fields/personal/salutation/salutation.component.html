@@ -4,7 +4,7 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter salutation"
-                    formControlName="saluation" aria-label="saluation" aria-describedby="saluation">
+                    formControlName="saluation" aria-label="saluation" aria-describedby="saluation"  (keypress)="allowOnlyLettersAndSpace($event)">
                 <span class="input-group-text" id="saluation">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="saluationForm.invalid">{{'Add'|translate}}</button></span>
@@ -83,7 +83,7 @@
                         class="form-label custom-label mb-2">{{'Salutation'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="titlename"
-                        placeholder="Please enter salutation"
+                        placeholder="Please enter salutation"  (keypress)="allowOnlyLettersAndSpace($event)"
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <div *ngIf="updateForm.get('titlename')?.touched && updateForm.get('titlename')?.invalid"
                         class="error-msg mt-2">

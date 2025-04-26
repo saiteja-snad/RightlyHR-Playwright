@@ -40,18 +40,72 @@ export class ServingPeriodComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      addServingPeriod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      Duration: ['', Validators.required],
+      addServingPeriod: ['', [ Validators.required,
+        Validators.pattern('^[a-zA-Z ]+$'),  // Only letters and spaces
+        Validators.maxLength(100)  ]
+      ],
+        Duration: ['', [Validators.required, Validators.maxLength(100),
+      Validators.pattern('^[a-zA-Z0-9 ]+$')]]
+
+
+      
     });
 
     this.updateForm = this.fb.group({
-      UpdateServingPeriod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      UpdateDuration: ['', Validators.required],
-    });
+      UpdateServingPeriod:  [
+    '',
+    [
+      Validators.required,
+      Validators.pattern('^[a-zA-Z ]+$'),  // Only letters and spaces
+      Validators.maxLength(100)
+    ]
+  ],
+      UpdateDuration:[
+    '',
+    [
+      Validators.required, Validators.maxLength(100),
+      Validators.pattern('^[a-zA-Z0-9 ]+$')  // Letters, numbers, and spaces
+    ]
+  ]
+});
     this.getServingPeriod();
    
   }
- 
+  allowOnlyLettersAndSpace1(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+     const pattern = /^[A-Za-z0-9. ]*$/;
+
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+
+    // Block if length is already 50 characters
+    if (input.value.length >= 100) {
+      event.preventDefault();
+    }
+  }
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+  
+    // Allow only letters (a-z, A-Z) and space
+    const pattern = /^[A-Za-z ]$/;
+  
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Restrict max length to 100
+    if (input.value.length >= 100) {
+      event.preventDefault();
+    }
+  }
+  
+  
+  
   // // Method to open the add modal dialog
   openDialog() {
     this.modalService.open(this.addpopup, {

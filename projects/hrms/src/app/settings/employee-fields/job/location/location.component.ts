@@ -47,7 +47,22 @@ export class LocationComponent implements OnInit,OnDestroy {
     
     this.getLocation();
   }
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
   
+    // Block if the key is not a letter or space
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 50
+    if (input.value.length >= 100) {
+      event.preventDefault();
+    }
+  }
   getLocation() {
     this.http.getData('JobLocation/GetJobLocations').subscribe((data: any) => {
       this.locationDetail = data;

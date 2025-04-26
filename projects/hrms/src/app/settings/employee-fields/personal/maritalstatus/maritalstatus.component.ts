@@ -55,11 +55,22 @@ export class MaritalstatusComponent {
 
     this.getMaritialStatus();
   }
+  
+
   allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
     const char = event.key;
     const pattern = /^[A-Za-z ]$/;
+  
+    // Block if the key is not a letter or space
     if (!pattern.test(char)) {
-      event.preventDefault(); // Block invalid input
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 50
+    if (input.value.length >= 50) {
+      event.preventDefault();
     }
   }
   getMaritialStatus() {

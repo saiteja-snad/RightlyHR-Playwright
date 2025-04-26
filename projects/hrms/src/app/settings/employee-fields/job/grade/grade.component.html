@@ -7,7 +7,7 @@
       <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
           <div >
-            <p class="popup-heading mb-0">{{ 'GRADE DETAILS' | translate }}</p>
+            <p class="popup-heading mb-0">{{ 'Grade Details' | translate }}</p>
           </div>
           <div>
             <a (click)="close(modal)">
@@ -29,8 +29,9 @@
               placeholder="Please enter grade name" 
               (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" 
             />
+            
             <div *ngIf="AddForm.get('Addgrade')?.touched && AddForm.get('Addgrade')?.invalid" class="error-msg">
-              {{ 'Grade name is required' | translate }}.
+              {{ 'Grade Name is required' | translate }}.
             </div>
           </div>
   
@@ -44,8 +45,10 @@
             (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
             </div>
             <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid" class="error-msg mt-2">
-              <div *ngIf="AddForm.get('jobgrade')?.errors?.['required']">{{'Grade is required'|translate}}</div>
+              <div *ngIf="AddForm.get('jobgrade')?.errors?.['required']">{{' Job Grade is required'|translate}}</div>
+              
           </div>
+          
           </div>
   
           <!-- Buttons -->
@@ -116,7 +119,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div >
-                    <p class="popup-heading mb-0">{{'EDIT GRADE DETAILS' | translate}}</p>
+                    <p class="popup-heading mb-0">{{'Updated Grade Details' | translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)">
@@ -132,9 +135,10 @@
                     <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
                         placeholder="Please enter job role" 
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" >
+                        
                     <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched"
                         class="error-msg">
-                        {{'Grade name is required'|translate}}.
+                        {{'Job Role is required'|translate}}.
                     </div>
                 </div>
                 <div class="mb-4">
@@ -146,11 +150,12 @@
                     <div class="custom-p-select-content">
                         <input type="text"class="form-control custom-input" formControlName="updategraderole" placeholder="Please enter job grade" 
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"  />
+                        
                     </div>
-
+                 
                 </div>
-                <div *ngIf="AddForm.get('updategraderole')?.touched && AddForm.get('updategraderole')?.invalid" class="error-msg mt-2">
-                  <div *ngIf="AddForm.get('updategraderole')?.errors?.['required']">{{'Job grade is required'|translate}}</div>
+                <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid" class="error-msg mt-2">
+                  <div *ngIf="updateForm.get('updategraderole')?.errors?.['required']">{{'Job Grade is required'|translate}}</div>
               </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close' |
@@ -171,7 +176,7 @@
     <div class="result-popup-content" ngbAutofocus>
       
             <div >
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
+                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
                 <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
             </div>
             <div class="custom-modal-footer">

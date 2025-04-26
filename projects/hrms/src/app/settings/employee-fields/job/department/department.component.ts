@@ -38,15 +38,32 @@ export class DepartmentComponent {
   }
   ngOnInit(): void {
     this.DepartmentForm = this.fb.group({
-      Department: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Department: ['', [Validators.required, Validators.maxLength(100), Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
     this.updateForm = this.fb.group({
-      Department: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Department: ['', [Validators.required,Validators.maxLength(100), Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
     });
 
     this.getDepartment();
   }
 
+
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
+  
+    // Block if the key is not a letter or space
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 50
+    if (input.value.length >= 100) {
+      event.preventDefault();
+    }
+  }
   getDepartment() {
     this.http.getData('Department').subscribe((data: any) => {
       this.DepartmentDetail = data;

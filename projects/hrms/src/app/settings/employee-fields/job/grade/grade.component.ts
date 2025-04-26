@@ -40,7 +40,7 @@ export class GradeComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      Addgrade: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
+      Addgrade: ['', [Validators.required,  Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
       jobgrade: ['', Validators.required],
     });
 
@@ -119,7 +119,7 @@ export class GradeComponent {
 
           this.getgradeid();
           modal.close();
-          this.conformationPopup.openSuccessModal('Greade details updated successfully');
+          this.conformationPopup.openSuccessModal(' Grade Details delected Successfully');
            this.resetForm();
         },
         error: (error: any) => {

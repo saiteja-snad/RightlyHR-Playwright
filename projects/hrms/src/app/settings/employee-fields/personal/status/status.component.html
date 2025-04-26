@@ -1,12 +1,12 @@
 <div class="custom-main-component-container">
     <form [formGroup]="statusForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Status.create')">
-       
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter status"
-                    formControlName="status" aria-label="stat" aria-describedby="stat"  (keypress)="allowOnlyLettersAndSpace($event)"
-                  >
+                    formControlName="status" aria-label="stat"  (keypress)="allowOnlyLettersAndSpace($event)"
+                    
+                   >
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="statusForm.invalid">{{'Add'|translate}}</button></span>
@@ -15,12 +15,13 @@
             
                 <div *ngIf="statusForm.controls['status'].touched || statusForm.controls['status'].dirty">
                     <span class="error-msg" *ngIf="statusForm.controls['status'].errors?.['required']">
-                        Marital Status   is required
+                     Status   is required
                     </span>
                   
                     <span class="error-msg" *ngIf="statusForm.controls['status'].errors?.['maxlength']">
                       Maximum 50 characters are allowed.
                     </span>
+                   
                   
                     <span class="error-msg" *ngIf="statusForm.controls['status'].errors?.['pattern']">
                       Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
@@ -64,13 +65,14 @@
 </div>
 
 <!--Update popup-->
-<ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm">
-        <!-- <form [formGroup]="updateForm" (ngSubmit)="updateStatus()"></form> -->
+ <ng-template #updatepopup let-modal>
+    <form [formGroup]="updateForm" (ngSubmit)="updateStatus()">
+      
+
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="d-flex justify-content-between popup-header-border p-3">
                 <div class="pt-2">
-                    <p class="popup-heading mb-0">{{'Edit Status'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update  Status'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -81,13 +83,13 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Status'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="statusname"
-                        placeholder="Please enter status"
+                        placeholder="Please enter status"  (keypress)="allowOnlyLettersAndSpace($event)"
                     >
                     <div *ngIf="updateForm.controls['statusname'].touched">
             
                         <div *ngIf="updateForm.controls['statusname'].touched || updateForm.controls['statusname'].dirty">
                             <span class="error-msg" *ngIf="updateForm.controls['statusname'].errors?.['required']">
-                                Marital Status   is required
+                                Status   is required
                             </span>
                           
                             <span class="error-msg" *ngIf="updateForm.controls['statusname'].errors?.['maxlength']">
@@ -102,13 +104,12 @@
                 </div>
                 <div class="d-flex gap-5 w-100 pt-3">
                     <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary w-50 py-2" [disabled]="updateForm.invalid">{{'Update'|translate}}</button> 
-                    <!-- <button type="button" class="custom-btn btn-primary " (click)="updateStatus(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button> -->
+                    <button type="submit" class="custom-btn btn-primary w-50 py-2" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
     </form>
-</ng-template>
+</ng-template> 
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>

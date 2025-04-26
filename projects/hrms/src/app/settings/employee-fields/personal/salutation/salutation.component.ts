@@ -67,6 +67,23 @@ constructor(
     }
    
     
+
+    allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+      const input = event.target as HTMLInputElement;
+      const char = event.key;
+      const pattern = /^[A-Za-z ]$/;
+    
+      // Block if the key is not a letter or space
+      if (!pattern.test(char)) {
+        event.preventDefault();
+        return;
+      }
+    
+      // Block if length is already 50
+      if (input.value.length >= 50) {
+        event.preventDefault();
+      }
+    }
   getsaluation() {
     this.subscription = this.http.getData("Title").subscribe({
        next: (data: any) => {

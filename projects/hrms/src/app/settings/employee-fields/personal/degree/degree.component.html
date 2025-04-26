@@ -5,7 +5,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter degree"
                     formControlName="degree" aria-label="degree" aria-describedby="degree" 
-                    (keydown)="formValidations.restrictInput($event)">
+                    (keydown)="allowOnlyLettersAndSpace($event)" maxlength="50">
                 <span class="input-group-text" id="gender">   
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="degreeFrom.invalid">{{'Add'|translate}}</button></span>
@@ -81,7 +81,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="degreeName"
                         placeholder="Please enter degree name"
-                        (keydown)="formValidations.restrictInput($event)">
+                        (keydown)="allowOnlyLettersAndSpace($event)" maxlength="50">
                         <div *ngIf="updateForm.controls['degreeName'].touched">
             
                             <div *ngIf="updateForm.controls['degreeName'].touched || updateForm.controls['degreeName'].dirty">

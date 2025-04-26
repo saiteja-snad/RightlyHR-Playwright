@@ -39,17 +39,21 @@ degreeFrom!: FormGroup;
 ngOnInit(): void {
 this.degreeFrom = this.fb.group({
      degree: [null,  [
-      Validators.required,
-      Validators.maxLength(50),
-      Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
-    ]]
+      
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^(?![ .])[A-Za-z0-9. ]*(?<=\S)$/)
+
+      ]]
       });
       this.updateForm = this.fb.group({
-        degreeName: ["",  [
-          Validators.required,
-          Validators.maxLength(50),
-          Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
-        ]] 
+        degreeName: ["",  
+          [
+            Validators.required,
+            Validators.maxLength(50),
+            Validators.pattern(/^(?![ .])[A-Za-z0-9. ]*(?<=\S)$/)
+
+          ]]
       });
       this.getdegree();
     }
@@ -66,7 +70,27 @@ this.degreeFrom = this.fb.group({
        }
      })
    }
- 
+   
+   
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+
+    // Regex to allow letters (A-Z, a-z), spaces, periods (dots), and numbers (0-9)
+    const pattern = /^[A-Za-z0-9. ]*$/;
+
+    // Block if the key is not a letter, space, period, or number
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+
+    // Block if length is already 50 characters
+    if (input.value.length >= 50) {
+      event.preventDefault();
+    }
+  }
+  
   onSubmit() {
     const request = {
       degreeName: this.degreeFrom.get('degree')?.value,

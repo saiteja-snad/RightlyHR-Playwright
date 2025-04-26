@@ -47,6 +47,22 @@ export class CompensationReasonComponent {
     this.getReason();
   }
 
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
+  
+    // Block if the key is not a letter or space
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 50
+    if (input.value.length >= 100) {
+      event.preventDefault();
+    }
+  }
   getReason() {
     this.http.getData('CompensationReason').subscribe((data: any) => {
       this.CompensationReason = data;
@@ -85,7 +101,7 @@ export class CompensationReasonComponent {
           this.getReason();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Compensation reason updated successfully');
+          this.conformationPopup.openSuccessModal('Compansation Reason deleted successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');

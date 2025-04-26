@@ -19,7 +19,7 @@
         <!-- Department dropdown -->
         <div class="mb-4">
           <label for="departmentId" class="form-label custom-label mb-2">
-            {{ 'Department Names' | translate }} <span class="error-msg">*</span>
+            {{ 'Department Name' | translate }} <span class="error-msg">*</span>
           </label>
           <p-select formControlName="departmentId" optionValue="departmentId" [options]="deptdetails" id="departmentId"
             optionLabel="departmentName" placeholder="Search Department" class="w-100" [filter]="true"
@@ -27,7 +27,7 @@
           </p-select>
           <div *ngIf="AddForm.get('departmentId')?.touched && AddForm.get('departmentId')?.invalid">
             <small class="error-msg">
-              {{ 'Department name is required' | translate }}
+              {{ 'Department Name is required' | translate }}
             </small>
           </div>
         </div>
@@ -41,7 +41,7 @@
             placeholder="Please Enter Team name"
             (keydown)="formValidations.restrictInput($event)" />
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg">
-            {{ 'Team name is required' | translate }}
+            {{ 'Team Name is required' | translate }}
           </div>
         </div>
 
@@ -51,7 +51,8 @@
             {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select title="text" class="form-control custom-input" formControlName="teamManager" id="teamManager">
+            <select title="text" class="form-control custom-input" formControlName="teamManager" 
+            placeholder="Please select Team manager" id="teamManager">
               <option value="" disabled>Please select team manager</option>
               <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
                 {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
@@ -131,7 +132,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
       <div class="d-flex justify-content-between popup-header-border p-4">
         <div class="pt-2">
-          <p class="popup-heading mb-0">{{ 'Edit Team' | translate }}</p>
+          <p class="popup-heading mb-0">{{ 'Updated Team' | translate }}</p>
         </div>
         <div>
           <a (click)="close(modal)">
@@ -144,7 +145,7 @@
         <!-- Department dropdown -->
         <div class="mb-4">
           <label for="departmentId" class="form-label custom-label mb-2">
-            {{ 'Department Names' | translate }} <span class="error-msg">*</span>
+            {{ 'Department Name' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
             <select class="form-control custom-input" formControlName="updateddepartmentId" id="departmentId">
@@ -156,7 +157,7 @@
           </div>
           <div *ngIf="updateForm.get('updateddepartmentId')?.touched && updateForm.get('updateddepartmentId')?.invalid">
             <small class="error-msg">
-              {{ 'Department name is required' | translate }}
+              {{ 'Department Name is required' | translate }}
             </small>
           </div>
         </div>
@@ -170,7 +171,7 @@
             placeholder="Please Enter Team name"
             (keydown)="formValidations.restrictInput($event)" />
           <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid" class="error-msg">
-            {{ 'Team name is required' | translate }}
+            {{ 'Team Name is required' | translate }}
           </div>
         </div>
 
@@ -180,7 +181,7 @@
             {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select class="form-control custom-input" formControlName="updatedteamManager" id="updateTeamManager">
+            <select class="form-control custom-input" formControlName="updatedteamManager"  placeholder="Please select Team manager" id="updateTeamManager">
               <option value="" disabled>Please select team manager</option>
               <option *ngFor="let manager of teamdetails" [value]="manager.reportingmanagerId">
                 {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}

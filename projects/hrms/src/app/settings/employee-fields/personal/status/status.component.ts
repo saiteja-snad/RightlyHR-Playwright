@@ -6,19 +6,19 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
-
-import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { FormValidationsService } from '../../../../services/form-validations.service';
+
 @Component({
   selector: 'app-status',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule,TranslateModule,CommonModule, ReactiveFormsModule,FormsModule],
   templateUrl: './status.component.html',
   styleUrl: './status.component.scss'
 })
 export class StatusComponent implements OnInit{
 
 
-  model: any;
+  
    
   updateForm!: FormGroup;
   statusForm!: FormGroup;
@@ -39,26 +39,42 @@ export class StatusComponent implements OnInit{
       private conformationPopup: OpenModalService, 
       public formValidations: FormValidationsService,
       public rbac: RbacService,
-
     
     ) {}
     
     ngOnInit(): void {
       this.statusForm = this.fb.group({
-        status: [null, [Validators.required, Validators.minLength(3),Validators.maxLength(50)]]
+        status: [null, [Validators.required,Validators.maxLength(50)]]
       });
-        this.updateForm = this.fb.group({
-          statusname: ['', Validators.required] 
+    //     this.updateForm = this.fb.group({
+    //       statusname: ['', Validators.required] 
+    // });
+    this.updateForm = this.fb.group({
+      statusname: ['', [Validators.required,Validators.minLength(3),Validators.maxLength(50)]] // make sure 'statusname' matches exactly
     });
       this.getstatus();
     }
+
+
     allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+      const input = event.target as HTMLInputElement;
       const char = event.key;
       const pattern = /^[A-Za-z ]$/;
+    
+      // Block if the key is not a letter or space
       if (!pattern.test(char)) {
-        event.preventDefault(); // Block invalid input
+        event.preventDefault();
+        return;
+      }
+    
+      // Block if length is already 50
+      if (input.value.length >= 50) {
+        event.preventDefault();
       }
     }
+    
+    
+  
     getstatus() {
     this.subscription = this.http.getData ("Status").subscribe({
       next: (data: any) => {
@@ -92,7 +108,7 @@ export class StatusComponent implements OnInit{
     });
   }
   
-  updateStatus(status: any): void {
+  openupdate(status: any): void {
     console.log(status);
     this.statusDeletedata = status;
     this.updateForm?.patchValue({
@@ -113,7 +129,7 @@ export class StatusComponent implements OnInit{
     }
     
       
-    updateStatus():void {
+    updateStatus(): void {
     if (this.updateForm.valid) {
     
       this.statusDeletedata.statusname = this.updateForm.get('statusname')?.value;

@@ -63,8 +63,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="JobroleDetails"  optionLabel="designationName"
-                            [filter]="true" filterBy="designationName" [showClear]="true"
-                            (onChange)="selectgradId($event)" placeholder="Please select designation"
+                            [filter]="true" filterBy="designationName" (onChange)="selectgradId($event)" placeholder="Please select designation"
                             formControlName="designation" class="custom-select w-100">
                         </p-select>
                     </div>
@@ -90,7 +89,6 @@
                         {{'Location'|translate}}<span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-
                         <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
                         placeholder="Select Location" class="form-select custom-select"  formControlName="location"
                         (onChange)="OnClickLocation($event)"required>  
@@ -120,15 +118,16 @@
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Close'|translate}}</button>
-                <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="spinnerLoader">
-                        @if(spinnerLoader){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <div class="spinner-border button-spinner text-light" role="status"></div>
                         <span>{{'Loading..'}}...</span>
-                        }@else {
-                        <span>{{'Add'|translate}}</span>
-                        }
-                    </button>
+                    </div> 
+                    }@else {
+                    <span>{{'Add'|translate}}</span>
+                    }
+                </button>
             </div>
         </form>
     </div>

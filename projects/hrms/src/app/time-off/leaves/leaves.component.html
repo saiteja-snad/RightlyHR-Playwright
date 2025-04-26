@@ -156,7 +156,7 @@
                                 >
                                     <label class="form-check-label" for="halfday" style="font-size: 14px;">
                                         <input class="form-check-input" type="radio" id="flexRadioDefault0"
-                                            formControlName="availing" name="availing" [disabled]="enableHalfDayOptions"
+                                            formControlName="availing" name="availing" [disabled]="enableHalfDayOptions === false"
                                             (change)="toggleHalfDayOptions(true)" required>
                                         {{'Half Day'| translate}}
                                     </label>

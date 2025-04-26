@@ -1199,14 +1199,17 @@ export class LeavesComponent {
     else if (daytype === 'full') {
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
+      if(this.enableHalfDayOptions === false){
+        this.leaveForm.get('availing')?.disable();
+      }
       this.toggleFullDayOptions(false);
       if(this.dateDifference > 1){
         this.leaveForm.get('availing')?.disable();
         this.leaveForm.patchValue({ fulldayavailing: '2' });
       }
-      else{
-        this.leaveForm.get('availing')?.enable();
-      }
+      // else{
+      //   this.leaveForm.get('availing')?.enable();
+      // }
       this.selectedValue = '2'
     }
   }

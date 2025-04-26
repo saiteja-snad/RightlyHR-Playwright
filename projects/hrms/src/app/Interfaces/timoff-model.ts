@@ -341,3 +341,32 @@ export interface IRegularizationvalue {
   value: string;
   meta: string;
 }
+
+export interface OrgShiftItem {
+  id: number;
+  headerID: number;
+  shiftName: string;
+  shiftStartTime: string;
+  duration: number;
+  shiftEndTime: string;
+  shiftDescription: string;
+  status: string;
+  code: string;
+  allowedGracePeriod: number;
+  latesAllowed: number;
+  allowedBreakTime: number;
+  halfDayMinHrs: number;
+  fullDayMinHrs: number;
+}
+
+export interface ShiftData {
+  id: number;
+  locationId: number;
+  subLocationId: number;
+  applicableyear: number;
+  status: string;
+  addedby: number;
+  addedDate: string;
+  statusCode: number;
+  orgShiftsItems: OrgShiftItem[];
+}

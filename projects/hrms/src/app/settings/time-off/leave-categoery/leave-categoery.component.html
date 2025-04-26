@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-end mb-3" *ngIf="rbac.allowedToAccess('Leave Category Tab.create')">
-        <button type="button" class="custom-btn btn-primary" data-bs-toggle="modal"
-        data-bs-target="#requestdoc" ><i class="bi bi-plus"></i>Add Leave Category</button>
+        <button type="button" class="custom-btn btn-primary" (click)="navigateToAddLeaveCategory()"
+       ><i class="bi bi-plus"></i>Add Leave Category</button>
     </div>
 
 
@@ -205,7 +205,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Add Leave Category</h1>
-                    <button type="button" class="btn-close" (click)="confirmDiscard()"></button>
+                    <button type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body add-leave-body">
                     <!-- main row -->

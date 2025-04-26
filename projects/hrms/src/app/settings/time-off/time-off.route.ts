@@ -20,4 +20,16 @@ export default [
             { path: 'global-permissions', loadComponent: () => import('./attendance-eligibility-criteria/global-permissions/global-permissions.component').then((m) => m.GlobalPermissionsComponent)},
         ]
     },
+    { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },
+    { path: 'updateleavecategory', loadComponent: () => import('./leave-categoery/update-leavecategory/update-leavecategory.component').then((m) => m.UpdateLeavecategoryComponent) },
+    { path: 'cloneleavecategory', loadComponent: () => import('./leave-categoery/clone-leavecategory/clone-leavecategory.component').then((m) => m.CloneLeavecategoryComponent) },
+    { path: 'viewleavecategory', loadComponent: () => import('./leave-categoery/view-leavecategory/view-leavecategory.component').then((m) => m.ViewLeavecategoryComponent) },
+    {
+        path: 'leave-categoery',
+        children: [
+            { path: '', redirectTo: 'pendingleavecategory', pathMatch: 'full' },
+            { path: 'pendingleavecategory', loadComponent: () => import('./leave-categoery/pending-leavecategory/pending-leavecategory.component').then((m) => m.PendingLeavecategoryComponent) },
+            { path: 'publishedleavecategory', loadComponent: () => import('./leave-categoery/published-leavecategory/published-leavecategory.component').then((m) => m.PublishedLeavecategoryComponent) },
+        ]
+    },
 ] as Route[];

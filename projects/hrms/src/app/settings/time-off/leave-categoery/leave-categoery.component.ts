@@ -6,7 +6,7 @@ import { Iorgcategoryleaves } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../../services/rbac.service';
-
+import { Router } from '@angular/router';
 
 
 
@@ -71,6 +71,7 @@ export class LeaveCategoeryComponent implements OnInit {
   constructor(
     private http: HttpService,
     public rbac: RbacService,
+    private router: Router
   ) {
     // Get the current year
     const currentYear = new Date().getFullYear();
@@ -170,7 +171,9 @@ export class LeaveCategoeryComponent implements OnInit {
     });
 
   }
-
+  navigateToAddLeaveCategory(){
+    this.router.navigate(['/settings/timeoff-configurations/addleavecategory']);
+  }
 
   postOrgDataUpdata(f: NgForm) {
     // this.selectDetails.parentId = this.selectDetails.parentId

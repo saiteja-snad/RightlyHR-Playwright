@@ -76,8 +76,10 @@ export class LeavesComponent {
   startDate:any;
   endDate : any;
   isLoading: boolean = false;
-  isHolidaySelected = false
+  isHolidaySelected = false;
+  model: any;
   @ViewChild('leaveForm') work!: NgForm;
+
   
 
   ngOnInit(): void {

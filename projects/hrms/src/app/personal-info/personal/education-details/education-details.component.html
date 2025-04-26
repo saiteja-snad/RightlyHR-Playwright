@@ -80,7 +80,7 @@
         <p class="popup-heading mb-0">Add Education Details</p>
       </div>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="modal.dismiss();educationForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content p-4">
@@ -100,7 +100,7 @@
           <div class="col-md-6 mb-3">
             <label for="university" class="form-label custom-label mb-2">University<span class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="university" formControlName="university"
-              placeholder="Please enter university" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg" *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">
               University is required
             </div>
@@ -110,7 +110,7 @@
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization"
-              placeholder="Please enter specialization" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter specialization" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
               *ngIf="educationForm.get('specialization')?.invalid && educationForm.get('specialization')?.touched">
               Specialization is required
@@ -140,7 +140,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDate"  onkeypress="return false" class="form-control custom-input" id="degreeEndDate">
+            <input type="date" formControlName="degreeEndDate"  onkeypress="return false" [min]="educationForm.get('degreeStartDate')?.value" class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationForm.get('degreeEndDate')?.invalid && educationForm.get('degreeEndDate')?.touched">
               To Date is required
@@ -204,7 +204,7 @@
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="university" formControlName="universityupdate"
-              placeholder="Please enter university" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('universityupdate')?.invalid && educationupdateForm.get('universityupdate')?.touched">
               University is required
@@ -216,7 +216,7 @@
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization"
               formControlName="specializationupdate" placeholder="Please enter specialization"
-              (keypress)="formValidation.restrictInput($event)">
+              (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('specializationupdate')?.invalid && educationupdateForm.get('specializationupdate')?.touched">
               Specialization is required
@@ -247,7 +247,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDateupdate"  onkeypress="return false"  class="form-control custom-input"
+            <input type="date" formControlName="degreeEndDateupdate"  onkeypress="return false" [min]="educationupdateForm.get('degreeStartDateupdate')?.value"  class="form-control custom-input"
               id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeEndDateupdate')?.invalid && educationupdateForm.get('degreeEndDateupdate')?.touched">

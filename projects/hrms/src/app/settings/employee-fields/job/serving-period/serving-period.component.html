@@ -10,7 +10,7 @@
             <p class="popup-heading mb-0">{{ 'Serving Period' | translate }}</p>
           </div>
           <div>
-            <a (click)="close(modal)">
+            <a (click)="close(modal); resetForm()">
               <img src="icons/close.png" alt="Close Icon" class="close-icon" />
             </a>
           </div>
@@ -22,15 +22,10 @@
             <label for="addServingPeriod" class="form-label custom-label mb-2">
               {{ 'Serving Period Type' | translate }} <span class="error-msg">*</span>
             </label>
-            <input
-              type="text"
-              class="form-control custom-input"
-              formControlName="addServingPeriod"
-              placeholder="Please enter serving period type" 
-              (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-            />
+            <input type="text" class="form-control custom-input" formControlName="addServingPeriod" placeholder="Please enter serving period type" 
+              (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50"/>
             <div *ngIf="AddForm.get('addServingPeriod')?.touched && AddForm.get('addServingPeriod')?.invalid" class="error-msg">
-              {{ 'Serving period is required' | translate }}.
+              {{ 'Serving Period Type is required' | translate }}
             </div>
           </div>
   
@@ -41,17 +36,19 @@
             </label>
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter duration"
-                    formControlName="Duration" aria-label="duration" aria-describedby="duration"
-                    (keydown)="formValidations.restrictInput($event)">
+                    formControlName="Duration" aria-label="duration" aria-describedby="duration" maxlength="50" (keydown)="formValidations.restrictAlphabets($event)">
             </div>
             <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg mt-2">
                 <div *ngIf="AddForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
+            </div>
+            <div *ngIf="AddForm.get('Duration')?.errors?.['pattern']" class="error-msg mt-2">
+              {{ 'Only numbers are allowed' | translate }}
             </div>
         </div>
   
           <!-- Buttons -->
           <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
+            <button type="button" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">
               {{ 'Close' | translate }}
             </button>
             <button type="button" class="custom-btn btn-primary" (click)="addServingPeriod(modal)" [disabled]="AddForm.invalid">
@@ -111,7 +108,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div >
-                    <p class="popup-heading mb-0">{{'EDIT SERVING PERIOD' | translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Serving Period' | translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)">
@@ -125,21 +122,26 @@
                         {{'Serving Period Type' | translate}} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateServingPeriod"
-                        placeholder="Please Enter Serving Period" 
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                        placeholder="Please enter serving period type" 
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                     <div *ngIf="updateForm.get('UpdateServingPeriod')?.invalid && updateForm.get('UpdateServingPeriod')?.touched"
                         class="error-msg">
-                        {{'Serving period is required'|translate}}.
+                        {{'Serving Period Type is required'|translate}}
                     </div>
                 </div>
                 <div class="mb-4">
+                  <label for="duration" class="form-label custom-label mb-2">
+                    {{ 'Duration' | translate }} <span class="error-msg">*</span>
+                  </label>
                   <div class="custom-settings-add-input input-group">
                       <input type="text" class="form-control custom-input" placeholder="Please enter duration"
-                          formControlName="UpdateDuration" aria-label="duration" aria-describedby="duration"
-                          (keydown)="formValidations.restrictInput($event)">
+                          formControlName="UpdateDuration" aria-label="duration" aria-describedby="duration" maxlength="50" (keydown)="formValidations.restrictAlphabets($event)">
                   </div>
                   <div *ngIf="updateForm.get('UpdateDuration')?.touched && updateForm.get('UpdateDuration')?.invalid" class="error-msg mt-2">
                       <div *ngIf="updateForm.get('UpdateDuration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
+                  </div>
+                  <div *ngIf="updateForm.get('UpdateDuration')?.errors?.['pattern']" class="error-msg mt-2">
+                    {{ 'Only numbers are allowed' | translate }}
                   </div>
               </div>
                 <div class="custom-modal-footer">

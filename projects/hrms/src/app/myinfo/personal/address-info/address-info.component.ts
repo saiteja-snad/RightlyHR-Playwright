@@ -22,7 +22,8 @@ export class AddressInfoComponent {
   currentAddress: any;
   permanentAddress: any;
   subscription!: Subscription
-  empinfo: any
+  empinfo: any;
+  employeedata: any;
   bloodGroups = [
     { name: 'A+' },
     { name: 'A-' },
@@ -99,7 +100,7 @@ export class AddressInfoComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.empinfo = data;
+        this.employeedata = data;
         this.patchForm(data);
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),

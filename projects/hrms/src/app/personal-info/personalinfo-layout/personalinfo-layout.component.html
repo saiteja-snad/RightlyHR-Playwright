@@ -13,6 +13,10 @@
                 <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
             </button>
             }
+            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective')  && empdata.substatus=='Documents Rejected' ){
+                <button class="custom-btn btn-primary" (click)="openModal(request)">
+                    <i class="bi bi-plus "></i><span> {{'Re-request Documents'|translate}}</span></button>
+            }
             @if(getOfferDetails.status === 'Released' || getTraineeOfferDetails.status==='Released'){
             <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective' || emppersonalinfo.empstatus == 'Trainee Prospective') 
             && (emppersonalinfo?.substatus == 'Employee Created' || emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' || 

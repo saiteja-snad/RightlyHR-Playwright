@@ -31,24 +31,28 @@
               placeholder="Select shift" class="form-select custom-select"></p-select>
           </div>
           <div>
-            <button type="button" class="custom-btn btn-primary" (click)="addPolicyRow();hidePublishCloneButtons = true" >
+            <button type="button" class="custom-btn btn-primary" (click)="addPolicyRow(); hidePublishCloneButtons = true" >
               <i class="bi bi-plus me-2"></i> {{'Add Row' | translate}}
             </button>
           </div>
         </div>
         <div class="card custom-background-card p-3 mt-2">
           <div class="row">
-            <div class="card custom-background-card p-3 mt-2" formArrayName="policies">
-              <div class="row mb-2" *ngFor="let holiday of policies.controls; let i = index" [formGroupName]="i">
+            <div formArrayName="policies" class="card custom-background-card p-3 mt-2">
+              <div *ngFor="let policy of policies.controls; let i = index" [formGroupName]="i"  class="row mb-2">
   
                 <div class="col-md-3">
                     <label class="form-label custom-label">{{'Policy Name' | translate}}<span class="text-danger">*</span></label>
                     <input type="text" formControlName="policyName" class="form-control custom-input"
                       placeholder="Please enter policy name" />
+                      <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.hasError('required')"
+                        class="error-msg">
+                        {{'Policy Name is required'|translate}}.
+                    </div>
                   </div>
                   <div class="col-md-3">
                     <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span class="text-danger">*</span></label>
-                    <input type="file" formControlName="policyFile" class="form-control custom-input" />
+                    <input title="text" type="file" formControlName="policyFile" class="form-control custom-input" />
                   </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <div class="form-check">
@@ -56,7 +60,7 @@
                             <input type="text" formControlName="policyDescription" class="form-control custom-input"
                               placeholder="Please enter description" />
                       </div>
-                  <button type="button" class="btn btn-sm btn-danger ms-2" (click)="removePolicyRow(i)"
+                  <button title="text" type="button" class="btn btn-sm btn-danger ms-2" (click)="removePolicyRow(i)"
                     *ngIf="policies.length > 1">
                     <i class="bi bi-trash"></i>
                   </button>

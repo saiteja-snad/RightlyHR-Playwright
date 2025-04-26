@@ -49,6 +49,9 @@ export class PublishedPoliciesComponent {
     })
 
   }
+  clonePolicy1(id: any): void {
+    this.router.navigate(['/settings/employee-fields/clonepolices',id]);
+  }
 
   viewPublishedPolicy(holiday: any) {
     localStorage.setItem('viewpolicies', JSON.stringify(holiday));

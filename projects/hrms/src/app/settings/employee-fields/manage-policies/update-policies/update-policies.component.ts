@@ -77,9 +77,9 @@ export class UpdatePoliciesComponent {
   
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: [''],
-      policyFile: [''],
-      policyDescription: ['']
+      policyName: ['', Validators.required],
+      policyFile: ['', Validators.required],
+      policyDescription: ['', Validators.required]
     });
     this.policies.push(policyGroup);
   }

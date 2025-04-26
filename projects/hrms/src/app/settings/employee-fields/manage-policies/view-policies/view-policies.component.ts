@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
@@ -16,12 +16,14 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './view-policies.component.scss'
 })
 export class ViewPoliciesComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
   updatePoliciesData : any;
   subLocationsDropdown: any = [];
   empinfo : any;
+  hideBUTTON = false;
   policyFileName: string = '';
   yearDetails = [
     { name: '2024', value: 2024 },
@@ -32,7 +34,11 @@ export class ViewPoliciesComponent {
   ]
 
 
-  constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService,private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder,
+    public router:Router,private http: HttpService, private confirmation: OpenModalService,
+    private modalService: NgbModal,
+    private route: ActivatedRoute,
+  ) { }
 
 
   ngOnInit(): void {
@@ -44,10 +50,10 @@ export class ViewPoliciesComponent {
     
     
     this.policyForm = this.fb.group({
-      year: [null,Validators.required],
-      location: [null,Validators.required],
-      subLocation: [null,Validators.required],
-      shift : [null,Validators.required],
+      year: [{value: null, disabled: true},Validators.required],
+      location: [{value: null, disabled: true},Validators.required],
+      subLocation: [{value: null, disabled: true},Validators.required],
+      shift : [{value: null, disabled: true},Validators.required],
       policies: this.fb.array([])
     });
     
@@ -93,14 +99,27 @@ export class ViewPoliciesComponent {
   
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: [''],
+      policyName: [{value: '',disabled: true}],
       policyFile: [''],
-      policyDescription: ['']
+      policyDescription: [{value: '',disabled: true}],
     });
     this.policies.push(policyGroup);
   }
 
-  
+  cloneshiftsPolicy1(): void {
+    const policyData = localStorage.getItem('viewpolicies');
+    if (policyData) {
+      const parsedPolicy = JSON.parse(policyData);
+      const id = parsedPolicy?.id;
+      if (id) {
+        this.router.navigate(['/settings/employee-fields/clonepolices', id]);
+      } else {
+        console.error('ID not found in viewpolicies localStorage.');
+      }
+    } else {
+      console.error('No viewpolicies data found in localStorage.');
+    }
+  }
   removePolicyRow(index: number) {
     if (this.policies.length > 1) {
       this.policies.removeAt(index);
@@ -149,6 +168,19 @@ export class ViewPoliciesComponent {
     
   }
   
+  Cancel() {
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+
+  closeDelete(modal: any) {
+    modal.dismiss();
+  }
+
+  onDelete(modal: any) {
+    modal.dismiss();
+    this.nagvition();
+  }
+
   cancel(){
     this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
   }

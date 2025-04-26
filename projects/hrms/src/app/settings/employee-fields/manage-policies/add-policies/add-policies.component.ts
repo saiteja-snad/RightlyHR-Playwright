@@ -45,7 +45,7 @@ export class AddPoliciesComponent {
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
       this.getjobLocationList();
       this.policiesForm = this.fb.group({
-        year: [null,Validators.required],
+        year: [this.yearDetails.find(y => y.value === new Date().getFullYear()),Validators.required],
         location: [null,Validators.required],
         subLocation: [null,Validators.required],
         shift : [null,Validators.required],

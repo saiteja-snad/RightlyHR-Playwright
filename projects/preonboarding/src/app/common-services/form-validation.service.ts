@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-
 @Injectable({
   providedIn: 'root'
 })
 
-export class  FormValidationService {
+export class FormValidationService {
   constructor() { }
+  
+  blockLeadingSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    // If space is pressed and cursor is at the start (position 0), block it
+    if (event.key === ' ' && input.selectionStart === 0) {
+      event.preventDefault();
+    }
+  }
 
-
-//copyandpaste
+  //copyandpaste
   validatePaste(event: ClipboardEvent): void {
     const pastedData = event.clipboardData?.getData('text') ?? '';
     if (!/^\d+$/.test(pastedData)) {
@@ -17,29 +23,26 @@ export class  FormValidationService {
     }
   }
 
-
   ///onlynumnbers
   restrictAlphabets(event: KeyboardEvent) {
     const key = event.key;
     if (!/[0-9]/.test(key)) {
-      event.preventDefault();  
+      event.preventDefault();
     }
   }
+
   //aplicatives(abc)
   restrictInput(event: KeyboardEvent) {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;
-
     if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
       return;
     }
-
     // Prevent the first character from being a space
     if (key === ' ' && inputElement.selectionStart === 0) {
       event.preventDefault();
       return;
     }
-
     const isAlphabetic = /^[A-Za-z\s]$/.test(key);
     if (!isAlphabetic) {
       event.preventDefault();
@@ -49,17 +52,14 @@ export class  FormValidationService {
   restrictInputallowspicalcharters(event: KeyboardEvent) {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;
-  
     if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
       return;
     }
-  
     // Prevent the first character from being a space
     if (key === ' ' && inputElement.selectionStart === 0) {
       event.preventDefault();
       return;
     }
-  
     // Allow alphabetic characters, numbers, and special characters
     const isValidCharacter = /^[A-Za-z\s!@#$%^&*(),.?":{}|<>-]$/.test(key);
     if (!isValidCharacter) {
@@ -70,24 +70,21 @@ export class  FormValidationService {
   restrictInputallowspoint(event: KeyboardEvent): void {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;
-  
     if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
       return;
     }
-  
     // Prevent the first character from being a space
     if (key === ' ' && inputElement.selectionStart === 0) {
       event.preventDefault();
       return;
     }
-  
     // Allow only alphabetic characters and the period (.)
     const isValidCharacter = /^[A-Za-z\s.]$/.test(key);
     if (!isValidCharacter) {
       event.preventDefault();
     }
   }
-  
+
   rateGreaterThanZero(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
@@ -186,10 +183,6 @@ export class  FormValidationService {
       TH: 9, TG: 8, TO: 7, TT: 7, TN: 8, TR: 10, TM: 8, UG: 9, UA: 9, AE: 9,
       GB: 9, US: 10, UY: 9, UZ: 9, VU: 7, VE: 10, VN: 9, YE: 9, ZM: 9, ZW: 9
     };
-
     return minLengths[countryCode] || 10; // Default to 10 if not found
   }
-
-
-
 }

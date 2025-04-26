@@ -13,7 +13,7 @@ import { RbacService } from '../../../services/rbac.service';
 export class SettingsManagePoliciesTabsComponent {
 
   navLinks = [
-    { label: 'Pending For Submit',route: '/settings/employee-fields/manage-policies/pending-for-submit'},
-    { label: 'Published Policies',route: '/settings/employee-fields/manage-policies/published-policies'}
+    { label: 'Pending For Submission',route: '/settings/employee-fields/manage-policies/pending-for-submit'},
+    { label: 'Published',route: '/settings/employee-fields/manage-policies/published-policies'}
   ];
 }

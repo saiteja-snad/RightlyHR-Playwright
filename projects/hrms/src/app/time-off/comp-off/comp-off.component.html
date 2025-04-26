@@ -101,7 +101,7 @@
                         <label for="reason" class="form-label custom-label mb-2">Reason<span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
-                            placeholder="Type here" maxlength="250" (input)="formsValidation.validateInput(addCompOffForm.get('reason'))"></textarea>
+                            placeholder="Reason for comp off" maxlength="250" (input)="formsValidation.validateInput(addCompOffForm.get('reason'))"></textarea>
                         <div class="text-end small text-muted">
                             {{ addCompOffForm.get('reason')?.value?.length || 0 }}/250
                         </div>

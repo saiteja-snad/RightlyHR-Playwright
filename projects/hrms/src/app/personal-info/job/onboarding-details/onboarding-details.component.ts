@@ -85,7 +85,6 @@ export class OnboardingDetailsComponent {
     this.getBackground();
     this.getBranchLocations();
     this.getprobation();
-    this.remoteLoginChange();
     this.getWorkfromhomeManager();
     this.initializeTrainee();
     this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
@@ -157,6 +156,8 @@ export class OnboardingDetailsComponent {
   
   patchForm(data: any): void {
     // Patching values for onboardingForm
+    const workLocation = this.worklocation.find((item: any) => item.value === data?.workLocation);
+    console.log(workLocation);
     this.onboardingForm.patchValue({
       status: this.Statusdetails?.find((item: any) => item?.statusname === data?.empstatus),
       dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
@@ -170,14 +171,13 @@ export class OnboardingDetailsComponent {
       esic: this.esicdata.find((item: any) => item.value === data?.esic),
       pt: this.ptdata.find((item: any) => item.value === data?.pt),
       totalExperience: data.totalYearsOfExperience,
-      remoteLogin: this.remoteLogin.find((item: any) => item.value === data.allowWFH),
-      workLocation: this.worklocation.find((item: any) => item.value === data.workLocation),
-      wfhmanger: this.Manager.find((item: any) => item.value === data.wfhManagerId),
+      remoteLogin: data.allowWFH,
+      workLocation:data?.workLocation ,
+      wfhmanger: data.wfhManagerId,
       trainingEndDate: moment(data.trainingEndDate).format('yyyy-MM-DD'),
       empType: data.empType,
       durationOfTrainee: data.durationOfTrainee
     });
-    
     console.log(this.onboardingForm.value); // Check values in the onboardingForm
   
     // Patching values for traineeForm
@@ -360,7 +360,7 @@ export class OnboardingDetailsComponent {
       esic: this.onboardingForm.get('esic')?.value?.value ?? this.empdata.esic,
       pt: this.onboardingForm.get('pt')?.value?.value ?? this.empdata.pt,
       totalYearsOfExperience: this.onboardingForm.get('totalExperience')?.value ?? this.empdata.totalYearsOfExperience,
-      allowWFH: this.onboardingForm.get('remoteLogin')?.value?.value ?? this.empdata.allowWFH,
+      allowWFH: this.onboardingForm.get('remoteLogin')?.value ?? this.empdata.allowWFH,
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empdata.workLocation,
       wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empdata.wfhManagerId,
       

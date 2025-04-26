@@ -39,12 +39,14 @@
         <tbody>
           <tr *ngFor="let act of Trainee | activeEmployee : searchValue">
             <td>{{act.employeeId}}</td>
-            <td><span *ngIf="act.firstName ; else firstname"><a class="select-item cursor" (click)="select(act)">
-              {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
-              </span></td>
-            <ng-template #firstname>
-              -
-            </ng-template>
+            <td>
+              <span *ngIf="act.firstName ; else firstname">
+                <a class="select-item cursor" (click)="select(act)">{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
+              </span>
+              <ng-template #firstname>
+                <div>-</div>
+              </ng-template>
+            </td>
             <td>{{act.emailaddress}}</td>
             <td> <span *ngIf="act.contactnumber;else contact">+91 {{act.contactnumber}}</span>
               <ng-template #contact>

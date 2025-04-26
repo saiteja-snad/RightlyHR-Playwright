@@ -101,7 +101,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
-                            maxlength="250" placeholder="Type here" (input)="formsValidation.validateInput(addWFHForm.get('reason'))"></textarea>
+                            maxlength="250" placeholder="Reason for WFH" (input)="formsValidation.validateInput(addWFHForm.get('reason'))"></textarea>
                         <!-- Character counter -->
                         <div class="form-label custom-label text-end my-1">{{ addWFHForm.get('reason')?.value?.length || 0 }}/250</div>
                         <div class="error-msg" *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">

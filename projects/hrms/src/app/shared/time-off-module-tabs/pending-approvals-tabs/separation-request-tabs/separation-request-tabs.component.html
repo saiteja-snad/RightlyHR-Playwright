@@ -4,7 +4,7 @@
       <ng-container *ngFor="let tab of navTabs()">
         <p-tab [value]="tab.link">
           <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-            {{ tab.label }} ({{tab.count}})
+            {{tab.label}} ({{tab.count}})
           </a>
         </p-tab>
       </ng-container>

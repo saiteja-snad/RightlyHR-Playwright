@@ -209,6 +209,7 @@ export class PremissionForYourRoleRequestComponent
       const requestBody = {
         status: 'Rejected',
         comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
       };
       this.sharedModalService.openLoaderModal(
         'Rejecting Request, Please wait...');
@@ -229,6 +230,7 @@ export class PremissionForYourRoleRequestComponent
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {

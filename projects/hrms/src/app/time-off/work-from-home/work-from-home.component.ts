@@ -59,12 +59,12 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getWFHBal();
     this.intializewfhForm();
-    this.halfDayValue = JSON.parse(
-      localStorage.getItem('filterHalfDayData') || '{}'
-    );
-    this.fullDayValue = JSON.parse(
-      localStorage.getItem('filterFullDayData') || '{}'
-    );
+    // this.halfDayValue = JSON.parse(
+    //   localStorage.getItem('filterHalfDayData') || '{}'
+    // );
+    // this.fullDayValue = JSON.parse(
+    //   localStorage.getItem('filterFullDayData') || '{}'
+    // );
     this.getDataByLPID();
     this.getWorkfromhomeCriteria();
     this.handleAvailingChange();
@@ -159,7 +159,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       // if(this.workFromHomedata.duration >= 9){
       //   this.timeValudationError=false;
       // }
-      const orgHalfDayWFHCritera = parseFloat(this.halfDayValue.value);
+      const orgHalfDayWFHCritera = parseFloat(this.halfDayValue?.value);
       if (this.workFromHomedata.duration < orgHalfDayWFHCritera) {
         this.workFromHomedata.duration = null;
         this.wfhValidations.DurationErrorMessage =
@@ -223,31 +223,13 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.Workfromhome = response;
-          const filterminhoursData = this.Workfromhome.find(
-            (item: any) => item.name === 'maxDuration'
-          );
-          this.hoursLimit = filterminhoursData;
-          const filterHalfDayData = this.Workfromhome.find(
-            (item: any) => item.name === 'minHalfDayHours'
-          );
-          localStorage.setItem(
-            'filterHalfDayData',
-            JSON.stringify(filterHalfDayData)
-          );
-          const filterFullDayData = this.Workfromhome.find(
-            (item: any) => item.name === 'minFullDayHours'
-          );
-          localStorage.setItem(
-            'filterFullDayData',
-            JSON.stringify(filterFullDayData)
-          );
           this.futureDatesAllowed = parseInt(
-            this.Workfromhome.find((item: any) => item.name === 'futureDatesAllowed')?.value ?? '0',
+            this.Workfromhome?.find((item: any) => item.name === 'futureDatesAllowed')?.value ?? '0',
             10
           );
           
           this.pastDatesAllowed = parseInt(
-            this.Workfromhome.find((item: any) => item.name === 'pastDatesAllowed')?.value ?? '0',
+            this.Workfromhome?.find((item: any) => item.name === 'pastDatesAllowed')?.value ?? '0',
             10
           );
           

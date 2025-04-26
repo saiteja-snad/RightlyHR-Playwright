@@ -76,9 +76,9 @@
                                 class="form-select custom-select" formControlName="leaveType"
                                 (onChange)="onleaveSelect($event.value)"></p-select>
                         </div>
-                        <small class="error-message text-danger"
+                        <div class="error-msg"
                             *ngIf="leaveForm.get('leaveType')?.invalid && leaveForm.get('leaveType')?.touched">
-                            Leave Type is required</small>
+                            Leave Type is required</div>
 
                     </div>
                 </div>
@@ -89,27 +89,27 @@
                         <input type="date" class="form-control custom-input" formControlName="startdate"
                             (keypress)="false" (ngModelChange)="onstartdate('add')"
                             (ngModelChange)="onStartDateChange()">
-                        <small class="error-message text-danger"
+                        <div class="error-msg"
                             *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
                             Start Date is required
-                        </small>
-                        <small class="error-message text-danger" *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('startdate')?.value">
+                        </div>
+                        <div class="error-msg" *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('startdate')?.value">
                             Please select optional holiday
-                        </small>
-                        <small class="error-message text-danger" *ngIf="(isHolidaySelected)">
+                        </div>
+                        <div class="error-msg" *ngIf="(isHolidaySelected || isNonOptionalHolidaySelected)">
                             Selected date is a holiday
-                        </small>
-                        <small class="error-message text-danger" *ngIf="(isWeekOffSelected)">
+                        </div>
+                        <div class="error-msg" *ngIf="(isWeekOffSelected)">
                             Selected date is a weekend
-                        </small>
-                        <small class="error-message text-danger" 
+                        </div>
+                        <div class="error-msg" 
                             *ngIf="!startdatevalid && leaveForm.get('startdate')?.value">
                             Start Date should be less than End Date
-                        </small>
-                        <small class="error-message text-danger"
+                        </div>
+                        <div class="error-msg"
                             *ngIf="!isstimeoffValid && leaveForm.get('startdate')?.value">
                             The start date must be after the date of joining.
-                        </small>
+                        </div>
                         
 
                     </div>
@@ -118,32 +118,32 @@
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="enddate"
                             [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
-                        <small class="error-message text-danger"
+                        <div class="error-msg"
                             *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">
                             End Date is required
-                        </small>
+                        </div>
 
                         <!-- Weekend Error -->
-                        <small class="error-message text-danger" *ngIf="(isWeekOffSelectedEndate)">
+                        <div class="error-msg" *ngIf="(isWeekOffSelectedEndate)">
                             Selected date is a weekend
-                        </small>
+                        </div>
 
-                        <small class="error-message text-danger"
+                        <div class="error-msg"
                             *ngIf="((leaveForm.get('enddate')?.invalid || leaveForm.get('enddate')?.touched) && 
                                         (this.selectedleave && this.selectedleave.category && 
                                         this.selectedleave.category.excludeWeekends)) && isWeekOffSelectedEndate && isWeekOffSelected" role="alert">
                             Please select the working days
-                        </small>
+                        </div>
 
-                        <small class="error-message text-danger" *ngIf="leaveForm.get('enddate')?.value && !issEndDategreater">
+                        <div class="error-msg" *ngIf="leaveForm.get('enddate')?.value && !issEndDategreater">
                             End Date is less than Start Date
-                        </small>
-                        <small class="error-message text-danger" *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('enddate')?.value">
+                        </div>
+                        <div class="error-msg" *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('enddate')?.value">
                             Please select optional holiday
-                        </small>
-                        <small class="error-message text-danger" *ngIf="isHolidaySelectedEndate">
+                        </div>
+                        <div class="error-msg" *ngIf="isHolidaySelectedEndate">
                             Selected date is a holiday
-                        </small>
+                        </div>
 
                         
                     </div>
@@ -211,9 +211,9 @@
                         <textarea class="form-control custom-input" [maxlength]="250" formControlName="reason" placeholder="Please enter reason"></textarea>
                     </div>
                     
-                    <small class="error-message text-danger" *ngIf="(leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched)">
+                    <div class="error-msg" *ngIf="(leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched)">
                         Reason is required
-                    </small>
+                    </div>
                     <div *ngIf="dateDifference &&  isDayTypeselected">
 
                         <div *ngIf="dateDifference &&  isDayTypeselected">
@@ -239,8 +239,8 @@
                                 {{ selectedleave.category?.name }} is insufficient. </p>
     
                            
-                                <!-- <small  class="error-message text-danger" *ngIf="(isoptionalnotallowedatWorkingdate) "> Please select optional holiday  
-                                </small>  -->
+                                <!-- <div  class="error-msg" *ngIf="(isoptionalnotallowedatWorkingdate) "> Please select optional holiday  
+                                </div>  -->
                         </ng-template>
                         <p> Balance {{ selectedleave.category?.name }}  : {{ remainingLeaves }}</p>
     
@@ -255,7 +255,7 @@
                     <button type="button" class="custom-btn btn-secondary px-4" (click)="openModal(confirmationpopup);model.dismiss()">{{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
                         [disabled]="(leaveForm.invalid 
-                                    || isWeekOffSelected || isHolidaySelectedEndate || isoptionalnotallowedatWorkingdate
+                                    || isWeekOffSelected || isHolidaySelectedEndate || isoptionalnotallowedatWorkingdate || !issEndDategreater || !startdatevalid
                                      || isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) ) || isLoading">
                         <span *ngIf="!isLoading">
                             {{'Submit'| translate}}

@@ -91,6 +91,7 @@ export class TraineeOfferLetterComponent {
   addresFlag = false;
   address = {} as IAddress;
   countryvalues = {} as any;
+  countryCode='Country Code'
   selectedCountryCode: any;
   selectedCountryConfig = {
     hideCode: true,
@@ -207,24 +208,19 @@ export class TraineeOfferLetterComponent {
   }
 
   onDateOfJoiningChange() {
+    this.traineeEmpData.dateOfJoining=this.employeeForm.get('dateOfJoining')?.value;
     this.calculateEndDate(this.traineeEmpData.internshipperiod);
   }
 
   calculateEndDate(value:any) {
-    if (this.traineeEmpData.dateOfJoining && value) {
-      const startDate = new Date(this.traineeEmpData.dateOfJoining);
+    if (this.employeeForm.get('dateOfJoining')?.value && value) {
+      const doj = this.employeeForm.get('dateOfJoining')?.value;
+      const startDate = moment(doj); // already a moment object
       const months = parseInt(value, 10);
-      const endDate = new Date(startDate.setMonth(startDate.getMonth() + months));
-      this.traineeEmpData.endDate = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      const endDate = startDate.clone().add(months, 'months'); // purely using moment
+      this.traineeEmpData.endDate = endDate.format('YYYY-MM-DD'); // clean format
     }
   }
-
-  getDaysFromMonths(months: number): number {
-    const startDate = moment(this.traineeEmpData.dateOfJoining); // Current date
-    const endDate = moment(startDate).add(months, 'months'); // Future date after adding months
-    return endDate.diff(startDate, 'days'); // Difference in days
-  }
-
   getMonthsBetween(startDate: string, endDate: string): number {
     const start = moment(startDate);
     const end = moment(endDate);
@@ -361,11 +357,7 @@ export class TraineeOfferLetterComponent {
   //Function to generate offer letter
   onTraineeOfferLetterFormSubmitForGenerateDoc(f: FormGroup) {
     this.loading = true;
-    if (this.traineeEmpData.isEmployeevalid === true) {
-      this.updateTraineeOfferLetterFieldsDetails(f.value); //existing emp  offer lettr
-    } else {
       this.postTraineeOfferLetterFieldsDetails(f); //new offer lettr
-    }
   }
 
   onclickDesignation(selectedAuthority: any) {
@@ -458,7 +450,7 @@ export class TraineeOfferLetterComponent {
        lastName:data?.lastName,
        gender:this.genderDetails.find((x:any) => x.genderName === data.gender),
        SelectDropDown: null,
-       jobRoleDetails: this.JobroleDetails.find((x:any) => x.jobRole1 === data.jobRole),
+       jobRoleDetails:  data?.jobRole,
        esic: data?.esic,
        pf: data?.pf,
        amount:data?.amount,
@@ -488,6 +480,8 @@ export class TraineeOfferLetterComponent {
             if (Empidvalue) {
               this.disableFields = false; // User clicked "OK," enable fields
               this.traineeEmpData = data.checkofferletter;
+              this.selectedCountryCode=this.traineeEmpData?.contactnumbercountryflag;
+              this.loadingCode = false;
               this.patchForm(this.traineeEmpData);
               this.getTraineeEmployeeAddress(data.checkofferletter.empId);
               this.traineeEmpData.CreateOffer = this.traineeEmpData.CreateOffer;
@@ -501,7 +495,7 @@ export class TraineeOfferLetterComponent {
                 this.traineeEmpData.dateOfJoining =
                   this.formatDateForOfferIssedandExpiry(this.traineeEmpData.dateOfJoining);
               }
-              this.selectedCountryCode=this.traineeEmpData?.contactnumbercountryflag;
+             
               if (!this.traineeEmpData.mobilePhoneCountryCode) {
                 this.traineeEmpData.mobilePhoneCountryCode = 'India (+91)';
               }
@@ -586,35 +580,18 @@ export class TraineeOfferLetterComponent {
   //function to post the data of the offer letter to the respective feilds
   postTraineeOfferLetterFieldsDetails(f: FormGroup) {
     const data = this.traineeEmpData;
-    this.loading = true;
-    let sdata = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      middleName: data.middleName,
-      empstatus: 'Prospective',
-      emptype: 'Trainee',
-      emailaddress: data.personalEmail,
-      gender: data.gender,
-      contactnumber: parseInt(data.phoneNumber),
-      addressLine1: data.addressLine1,
-      addressLine2: data.addressLine2,
-      city: data.city,
-      state: data.state,
-      zipCode: parseInt(data.pinCode),
-      country: data.country,
-      mobilePhoneCountryCode: data.mobilePhoneCountryCode,
-      title: data.title,
-      pf: data.pf,
-      esic: data.esic,
-      dateOfJoining: data.dateOfJoining,
-      substatus: 'Offer Letter Generated',
-      trainingEndDate: this.traineeEmpData.endDate,
-    };
-    this.subscription = this.http.postdata('Employeedata', sdata).subscribe({
+    this.traineeEmpData.trainingEndDate=this.traineeEmpData.endDate,
+    this.traineeEmpData.substatus= 'Offer Letter Generated',
+    this.traineeEmpData.empstatus= 'Prospective',
+    this.traineeEmpData.emptype= 'Trainee',
+    this.traineeEmpData.zipCode= parseInt(this.traineeEmpData.pinCode),
+    this.traineeEmpData.contactnumber= parseInt(this.traineeEmpData.phoneNumber),
+    this.traineeEmpData.dateOfJoining=this.employeeForm.get('dateOfJoining')?.value,
+    this.subscription = this.http.postdata('Employeedata', this.traineeEmpData).subscribe({
       next: (res: any) => {
         if (res.statusCode == 201) {
           this.result = res.employeeData;
-          this.downLoadDocument(this.result);
+          this.downLoadDocument(res);
           if (this.result.employeeId != null) {
             const jobdata = {
               employeeId: this.result.employeeId,
@@ -660,7 +637,6 @@ export class TraineeOfferLetterComponent {
           }
         } else if (res.statusCode == 409) {
           this.conformationPopup.openErrorModal(res.message);
-          f.reset();
         } else {
           this.conformationPopup.openErrorModal(res.message);
         }
@@ -669,7 +645,6 @@ export class TraineeOfferLetterComponent {
         console.log(err);
       },
       complete: () => {
-        this.conformationPopup.openSuccessModal('Intern Offer Letter Generated Successfully');
       }
     });
   }
@@ -715,12 +690,13 @@ export class TraineeOfferLetterComponent {
     let d: Date = new Date();
     const file = new File([blob], fileName, { type: 'application/pdf', });
     this.generatedfile = file;
-    this.generatingEmployeeId = EmpValue.empId;
+    this.generatingEmployeeId = EmpValue.employeeData.employeeId;
     this.loading = false;
-    this.conformationPopup.openSuccessModal('Intern Offer Letter Generated Successfully'); 
+    this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully'); 
   }
 
-  private traineeofferletterUpload(empId: number, file: File) {
+  
+ traineeofferletterUpload(empId: number, file: File) {
     let filePath = `/FusionDocuments/Employee Documents/Trainee Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {

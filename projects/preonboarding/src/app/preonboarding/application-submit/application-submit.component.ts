@@ -34,6 +34,7 @@ export class ApplicationSubmitComponent implements OnInit, OnDestroy {
 
   navigatefirst() {
     localStorage.clear();
+    this.http.logOut();
     this.router.navigate(['']);
   }
 

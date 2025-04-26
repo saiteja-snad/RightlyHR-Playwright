@@ -24,8 +24,8 @@ export class AddProspectiveInternComponent {
   result: any;
   Status: any;
   islistedItem: boolean = true;
-  jobLocationDropDownData = {} as any;
-  subLocationsDropdown = {} as any;
+  jobLocationDropDownData = [] as any;
+  subLocationsDropdown = [] as any;
   buttondisable: boolean = false;
   disablebutton: boolean = false;
   gradeIdValue: any;

@@ -58,12 +58,12 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.halfDayValue = JSON.parse(
-      localStorage.getItem('filterHalfDayData') || '{}'
-    );
-    this.fullDayValue = JSON.parse(
-      localStorage.getItem('filterFullDayData') || '{}'
-    );
+    // this.halfDayValue = JSON.parse(
+    //   localStorage.getItem('filterHalfDayData') || '{}'
+    // );
+    // this.fullDayValue = JSON.parse(
+    //   localStorage.getItem('filterFullDayData') || '{}'
+    // );
     this.intializeCompOffForm();
     this.getWorkfromhomeCriteria();
     this.getEmployeeeHolidays();
@@ -290,7 +290,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
       // Calculate duration as a float
       const durationAsFloat = this.hours + this.minutes / 60;
       this.compoffdata.duration = durationAsFloat.toFixed(2);
-      const orgHalfDayWFHCritera = parseFloat(this.halfDayValue.value);
+      const orgHalfDayWFHCritera = parseFloat(this.halfDayValue?.value);
       if (this.compoffdata.duration < orgHalfDayWFHCritera) {
         this.compoffdata.duration = null;
         this.wfhValidations.DurationErrorMessage =
@@ -325,33 +325,13 @@ export class CompOffComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.compOffEligibilityCriteria = response;
-          const filterHalfDayData = this.compOffEligibilityCriteria.find(
-            (item: any) => item.name === 'minHalfDayHours'
-          );
-          const filterminhoursData = this.compOffEligibilityCriteria.find(
-            (item: any) => item.name === 'maxDuration'
-          );
-          this.filteredMinhoursData =
-            filterminhoursData ?? ({} as LeaveConfigurationSetting);
-          localStorage.setItem(
-            'filterHalfDayData',
-            JSON.stringify(filterHalfDayData)
-          );
-          const filterFullDayData = this.compOffEligibilityCriteria.find(
-            (item: any) => item.name === 'minFullDayHours'
-          );
-          localStorage.setItem(
-            'filterFullDayData',
-            JSON.stringify(filterFullDayData)
-          );
-
           this.futureDatesAllowed = parseInt(
-            this.compOffEligibilityCriteria.find((item: any) => item.name === 'futureDays')?.value ?? '0',
+            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'futureDays')?.value ?? '0',
             10
           );
           
           this.pastDatesAllowed = parseInt(
-            this.compOffEligibilityCriteria.find((item: any) => item.name === 'pastDays')?.value ?? '0',
+            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'pastDays')?.value ?? '0',
             10
           );
         },

@@ -49,6 +49,7 @@ export class EmployeeFieldsLayoutComponent {
       '/settings/employee-fields/updatepolices',
       '/settings/employee-fields/clonepolices/143',
       '/settings/employee-fields/viewpolices',
+      '/settings/employee-fields/documents',
     ];
     return !excludedRoutes.includes(this.router.url);
   }

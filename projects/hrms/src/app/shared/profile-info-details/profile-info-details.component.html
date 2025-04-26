@@ -1,6 +1,6 @@
 <div class="profile-info-card-main-container w-100">
     <div class="d-flex justify-content-between mb-3">
-        <div class="d-flex">
+        <div class="d-flex gap-2">
             <div class="image-content">
                 <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
                 <div class="edit-icon-content">
@@ -9,7 +9,7 @@
                     <input class="form-control d-none" type="file" id="formFile" (change)="chooseNewProfile($event)">
                 </div>
             </div>
-            <div class="text-nowrap pt-2">
+            <div class="pt-2">
                 <p class="name text-wrap mb-0">{{empinfo.firstName}} {{empinfo.middleName}} {{empinfo.lastName}}</p>
                 <p class="sub-text mb-0">{{jobRole}}</p>
                 <p class="sub-text mb-0">{{this.empinfo.fusionEmpId}}</p>

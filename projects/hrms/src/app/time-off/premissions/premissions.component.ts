@@ -211,12 +211,12 @@ export class PremissionsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.permissionsValue = data as IEAV[];
           this.futureDatesAllowed = parseInt(
-            this.permissionsValue.find((item: any) => item.attribute === 'futureDatesAllowed')?.value ?? '0',
+            this.permissionsValue?.find((item: any) => item.attribute === 'futureDatesAllowed')?.value ?? '0',
             10
           );
           
           this.pastDatesAllowed = parseInt(
-            this.permissionsValue.find((item: any) => item.attribute === 'pastDatesAllowed')?.value ?? '0',
+            this.permissionsValue?.find((item: any) => item.attribute === 'pastDatesAllowed')?.value ?? '0',
             10
           );
         },

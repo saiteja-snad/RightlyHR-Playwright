@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
@@ -76,8 +76,10 @@ export class LeavesComponent {
   startDate:any;
   endDate : any;
   isLoading: boolean = false;
-  isHolidaySelected = false
+  isHolidaySelected = false;
+  model: any;
   @ViewChild('leaveForm') work!: NgForm;
+
   
 
   ngOnInit(): void {
@@ -940,10 +942,9 @@ export class LeavesComponent {
     }
         this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
           next: (data: any) => {
-            console.log('Leave submission response:', data);
             if (data) {
               this.conformationPopup.openSuccessModal(
-                'Leave submitted successfully');
+                'Leave Requested successfully');
               setTimeout( () => {
                 this.modalService.dismissAll();
                 this.leaveForm.reset();

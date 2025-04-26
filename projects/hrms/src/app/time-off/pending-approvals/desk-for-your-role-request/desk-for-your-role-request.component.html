@@ -101,7 +101,6 @@
         <div class="custom-main-popup-content">
             <div class="custom-table-content">
                 <table class="w-100">
-
                     <thead>
                         <tr>
                             <th class="text-center">Employee Name</th>
@@ -109,14 +108,11 @@
                             <th class="text-center">Desk Status</th>
                         </tr>
                     </thead>
-
                     <tbody *ngIf="deskiteam; else noDataTemplate">
                         <tr>
-
                             <td class="text-center">{{ deskiteam.allocatedToName }}</td>
                             <td class="text-center">{{ deskiteam.allocatedDate | dateformat }}</td>
                             <td class="text-center">{{ deskiteam.status }}</td>
-
                         </tr>
                     </tbody>
                     <ng-template #noDataTemplate>
@@ -141,12 +137,12 @@
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
         <form [formGroup]="rejectForm" (ngSubmit)="Rejected(rejectForm)">
-            <div class="col-md-12 mb-3">
+            <div class="custom-main-popup-content">
                 <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection" 
                    formControlName="comments" maxlength="250"></textarea>
-                <div class="text-end form-label custom-label">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
+                <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                     <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected reason is required.</div>
                     <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>

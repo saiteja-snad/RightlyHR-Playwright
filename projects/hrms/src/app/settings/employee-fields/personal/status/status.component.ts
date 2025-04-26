@@ -1,82 +1,47 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
-import { FormValidationsService } from '../../../../services/form-validations.service';
-
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-status',
-  imports: [CommonModule,TranslateModule,CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [CommonModule,TranslateModule,ReactiveFormsModule],
   templateUrl: './status.component.html',
   styleUrl: './status.component.scss'
 })
-export class StatusComponent implements OnInit{
 
-
-  
-   
+export class StatusComponent {
   updateForm!: FormGroup;
   statusForm!: FormGroup;
-    submitted = false;
-    status= {} as any;
-    statusDeletedata={} as any;
-    subscription!: Subscription;
-    statusdetails = [] as any[];
-    @ViewChild('deletepopup') deletepopup: any;
-    @ViewChild('updatepopup') updatepopup: any;
+  submitted = false;
+  status = {} as any;
+  statusDeletedata = {} as any;
+  subscription!: Subscription;
+  statusdetails = [] as any[];
+  @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('updatepopup') updatepopup: any;
 
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, 
+    private conformationPopup: OpenModalService, public formValidations: FormValidationsService,
+    public rbac: RbacService) { }
 
-  
-    constructor(
-      private fb: FormBuilder,
-      private modalService: NgbModal,
-      private http: HttpService,
-      private conformationPopup: OpenModalService, 
-      public formValidations: FormValidationsService,
-      public rbac: RbacService,
-    
-    ) {}
-    
-    ngOnInit(): void {
-      this.statusForm = this.fb.group({
-        status: [null, [Validators.required,Validators.maxLength(50)]]
-      });
-    //     this.updateForm = this.fb.group({
-    //       statusname: ['', Validators.required] 
-    // });
-    this.updateForm = this.fb.group({
-      statusname: ['', [Validators.required,Validators.minLength(3),Validators.maxLength(50)]] // make sure 'statusname' matches exactly
+  ngOnInit(): void {
+    this.statusForm = this.fb.group({
+      status: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]]
     });
-      this.getstatus();
-    }
+    this.updateForm = this.fb.group({
+      statusname: ['', Validators.required]
+    });
+    this.getstatus();
+  }
 
-
-    allowOnlyLettersAndSpace(event: KeyboardEvent): void {
-      const input = event.target as HTMLInputElement;
-      const char = event.key;
-      const pattern = /^[A-Za-z ]$/;
-    
-      // Block if the key is not a letter or space
-      if (!pattern.test(char)) {
-        event.preventDefault();
-        return;
-      }
-    
-      // Block if length is already 50
-      if (input.value.length >= 50) {
-        event.preventDefault();
-      }
-    }
-    
-    
-  
-    getstatus() {
-    this.subscription = this.http.getData ("Status").subscribe({
+  getstatus() {
+    this.subscription = this.http.getData("Status").subscribe({
       next: (data: any) => {
         this.statusdetails = data as [];
       },
@@ -85,18 +50,19 @@ export class StatusComponent implements OnInit{
       }
     })
   }
-  
+
   onSubmit() {
     const request = {
       isdeleted: 'Active',
-      statusname: this.statusForm.get('status')?.value  
+      statusname: this.statusForm.get('status')?.value
     };
-  
+
     this.subscription = this.http.postdata('Status', request).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.getstatus();
         this.conformationPopup.openSuccessModal('Status added successfully');
+        this.statusForm.reset();
       },
       error: (reason: any) => {
         console.log(reason);
@@ -104,7 +70,7 @@ export class StatusComponent implements OnInit{
       }
     });
   }
-  
+
   openupdate(status: any): void {
     this.statusDeletedata = status;
     this.updateForm?.patchValue({
@@ -112,26 +78,24 @@ export class StatusComponent implements OnInit{
     });
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
   }
+
   close(modal: any): void {
     modal.dismiss();
     this.updateForm.reset();
   }
-  
- 
-    opendelete(status:any):void {
-      this.statusDeletedata=status;
-      this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
-    }
-    
-      
-    updateStatus(): void {
+
+  opendelete(status: any): void {
+    this.statusDeletedata = status;
+    this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
+  }
+
+  updateStatus(): void {
     if (this.updateForm.valid) {
-    
       this.statusDeletedata.statusname = this.updateForm.get('statusname')?.value;
-    this.subscription = this.http.postdata('Status/UPDATER',this.statusDeletedata).subscribe({
+      this.subscription = this.http.postdata('Status/UPDATER', this.statusDeletedata).subscribe({
         next: (data: any) => {
-          this.getstatus(); 
-          this.updateForm.reset(); 
+          this.getstatus();
+          this.updateForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Status updated successfully');
         },
@@ -144,20 +108,17 @@ export class StatusComponent implements OnInit{
       this.conformationPopup.openErrorModal('Form is invalid. Please check the inputs.');
     }
   }
-  
-    
-  
+
   // Confirm delete action
   deleteStatus(status: any): void {
     const deleteRequest = {
       sno: status.sno,
-      statusname: status.statusname ,// assuming this is the field you edit
-      isdeleted: 'void' 
+      statusname: status.statusname,// assuming this is the field you edit
+      isdeleted: 'void'
     };
-  
-   this.subscription= this.http.postdata('Status/UPDATER', deleteRequest).subscribe({
-      next: (data:any) => {
-       this.getstatus(); 
+    this.subscription = this.http.postdata('Status/UPDATER', deleteRequest).subscribe({
+      next: (data: any) => {
+        this.getstatus();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Status data deleted successfully');
       },

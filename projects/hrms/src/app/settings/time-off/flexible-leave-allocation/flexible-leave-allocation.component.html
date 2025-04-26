@@ -146,31 +146,34 @@
             </thead>
 
             <tbody>
-                <tr>
-                    <td> {{selectedEmployee}}</td>
-                    <td *ngIf="selectedEmployee">
-                        <input type="text" formControlName="days" class="form-control custom-input mt-2" placeholder="Please enter days"
-                            min="0" max="365" (keypress)="validateInput($event)" />
-                        <div *ngIf="leaveAllocationForm.get('days')?.touched && leaveAllocationForm.get('days')?.invalid"
-                            class="error-msg">
-                            <div *ngIf="leaveAllocationForm.get('days')?.errors?.['required']">
-                                Please enter days
-                            </div>
-                        </div></td>
-                   
-                </tr>
-                
-                
+                @if (selectedEmployee != null) {
+                    <tr>
+                        <td> {{selectedEmployee}}</td>
+                        <td *ngIf="selectedEmployee">
+                            <input type="text" formControlName="days" class="form-control custom-input mt-2" placeholder="Please enter days"
+                                min="0" max="365" (keypress)="validateInput($event)" />
+                            <div *ngIf="leaveAllocationForm.get('days')?.touched && leaveAllocationForm.get('days')?.invalid"
+                                class="error-msg">
+                                <div *ngIf="leaveAllocationForm.get('days')?.errors?.['required']">
+                                    Please enter days
+                                </div>
+                            </div></td>
+                       
+                    </tr>
+                }
+                @else {
+                    <tr>
+                        <app-no-data-found></app-no-data-found>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
-
     <div class="d-flex justify-content-end gap-3 p-3"  *ngIf="rbac.allowedToAccess('Flexible Leave Allocation Tab.create')">
         <button type="submit" class="custom-btn btn-primary"
         [disabled]="leaveAllocationForm.invalid">Add</button>
     </div>
 </form>
-
 <ng-template #stagingLoadingModal let-modal>
     <div class="modal-body text-center p-5" ngbAutofocus>
         <div class="spinner-border text-primary" role="status"></div>

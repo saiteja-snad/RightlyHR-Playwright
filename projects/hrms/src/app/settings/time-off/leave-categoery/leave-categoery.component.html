@@ -288,7 +288,7 @@
                                 <select class="form-select" aria-label="Default select example" name="leaveType"
                                     id="leavetype" #leaveType="ngModel" aria-label="Default select example"
                                     [(ngModel)]="postOrgPloicyDetails.type" required>
-                                    <option [ngValue]="undefined">Select</option>
+                                    <option [ngValue]="undefined" disabled>Select</option>
                                     <option [ngValue]="1">General</option>
                                     <option [ngValue]="0">Flexible</option>
                                 </select>

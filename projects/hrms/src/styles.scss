@@ -451,6 +451,13 @@ a {
     margin: 0.5rem 0rem;
 }
 
+.select-item {
+    color: #444444 !important;
+    text-decoration: none !important;
+    border-bottom: 2px solid var(--primary-color);
+    line-height: 1.5rem !important;
+}
+
 // button stylings
 .custom-btn {
     padding: 0.5rem 1rem;
@@ -538,6 +545,10 @@ a {
     color: #A1A1A1;
 }
 
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
 // custom search field
 .custom-search {
     border: 1px solid #CCDAEC;

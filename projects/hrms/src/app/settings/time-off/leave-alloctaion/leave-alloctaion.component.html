@@ -79,7 +79,7 @@
   </div>
 
   <div class="d-flex justify-content-end" *ngIf="rbac.allowedToAccess('Leave Allocation Tab.create')">
-    <button type="submit" (click)="policySubmit()" class="custom-btn btn-primary">Save</button>
+    <button type="submit" [disabled]="Leavescat.year || Leavescat.locationId || Leavescat.subLocationId ||Leavescat.shiftId ||Leavescat.categoryId" (click)="policySubmit()" class="custom-btn btn-primary">Save</button>
   </div>
 </div>
 

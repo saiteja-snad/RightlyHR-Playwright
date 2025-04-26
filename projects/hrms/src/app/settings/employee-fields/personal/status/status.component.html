@@ -4,12 +4,10 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter status"
-                    formControlName="status" aria-label="stat"  (keypress)="allowOnlyLettersAndSpace($event)"
-                    
-                   >
+                    formControlName="status" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
+                    formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="stat">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="statusForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="statusForm.invalid">{{'Add'|translate}}</button></span>
             </div>
             <div *ngIf="statusForm.controls['status'].touched">
             
@@ -65,10 +63,8 @@
 </div>
 
 <!--Update popup-->
- <ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm" (ngSubmit)="updateStatus()">
-      
-
+<ng-template #updatepopup let-modal>
+    <form [formGroup]="statusForm" (ngSubmit)="updateStatus()">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="d-flex justify-content-between popup-header-border p-3">
                 <div class="pt-2">
@@ -113,16 +109,15 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-4">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="modal.close()">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="deleteStatus(statusDeletedata)">{{'Yes'|translate}}</button>
-            </div>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="deleteStatus(statusDeletedata)">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

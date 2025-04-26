@@ -28,7 +28,34 @@
         <button class="custom-btn btn-primary" (click)="downloadChart('jpg')">Download as JPG</button>
         </div>
     </div>
-
+    <!-- <div class="d-flex justify-content-between align-items-center mb-3">
+        
+      <div>
+          <div >
+              <label for="education" class="form-label custom-label mb-2">Select Employee<span
+                  class="text-danger"></span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"  [(ngModel)]="selectedEmployeeId"
+                 placeholder="Please select employee"   (onChange)="getOrghierarchy($event.value)"
+                  class="form-select custom-select"></p-select>
+              </div>
+             
+            </div>
+      </div>
+      <div>
+          <label for="education" class="form-label custom-label mb-2">Select Compensation<span
+              class="text-danger"></span></label>
+          <div class="custom-p-select-content">
+              <p-select [options]="compensationOptions" optionLabel="label" optionValue="value" [(ngModel)]="compensationyesorno"  
+                placeholder="Please select compensation"
+                  class="form-select custom-select"></p-select>
+          </div>
+      </div>
+      <div>
+        <button class="custom-btn btn-primary me-3" (click)="downloadChart('pdf')">Download as PDF</button>
+      <button class="custom-btn btn-primary" (click)="downloadChart('jpg')">Download as JPG</button>
+      </div>
+  </div> -->
     <ng-container *ngIf="dataload; else maincontent">
         <ng-template #loadingSpinner>
             <div class="loader-placeholder-content text-center">

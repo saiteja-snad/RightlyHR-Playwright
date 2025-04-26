@@ -5,7 +5,7 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
+                aria-label="Username" aria-describedby="basic-addon1" #search="ngModel" [(ngModel)]="searchValue" autocomplete="off">
         </div>
 
         <div class="custom-table-content">
@@ -35,10 +35,10 @@
                         <td>{{leave.entity.type}}</td>
                         <td>
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button"  [ngbPopover]="notes">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
-                                <ng-template #reason>
+                                <ng-template #notes>
                                     <p class="mb-0">{{leave.entity.notes}} </p>
                                 </ng-template>
                             </div>

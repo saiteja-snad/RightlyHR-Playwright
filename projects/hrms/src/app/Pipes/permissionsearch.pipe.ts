@@ -10,8 +10,6 @@ export class PermissionsearchPipe implements PipeTransform {
       active: PermissionRequestResponse[],
       searchValue: string
     ): PermissionRequestResponse[] {
-      console.log(searchValue);
-      
       if (!active || !searchValue) {
         return active;
       }

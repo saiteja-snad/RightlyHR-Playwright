@@ -193,16 +193,6 @@ export class LeavesComponent {
       this.leaveForm.get('halfDay')?.enable();
       this.leaveForm.get('availing')?.enable();
       this.leaveForm.get('fulldayavailing')?.enable();
-      if(this.enableHalfDayOptions === false){
-        this.leaveForm = this.fb.group({
-          availing: [{value : '',disabled: true}], 
-        });
-      }
-      else{
-        this.leaveForm = this.fb.group({
-          availing: [{value : ''}], 
-        });
-      }
 
     } else {
       this.leaveForm.get('halfDay')?.disable();
@@ -530,7 +520,7 @@ export class LeavesComponent {
       let isWorkingDayBetweenDates = dateRange?.some(date => {
         return this.orgholidays.orgHolidaysItems?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
-      this.isHolidaySelected = isDatePresent;
+      //this.isHolidaySelected = isDatePresent;
       // this.isHolidaySelected=isDateenddatePresent;
       //this.isHolidaySelected=isWorkingDayBetweenDates;
     }
@@ -556,7 +546,7 @@ export class LeavesComponent {
         return filteredData?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
       // this.isHolidaySelected = isDatePresent;
-      this.isoptionalnotallowedatWorkingdate=isDatePresent;
+      //this.isoptionalnotallowedatWorkingdate=isDatePresent;
       //this.isHolidaySelected=isWorkingDayBetweenDates;
     }
   }
@@ -600,7 +590,7 @@ export class LeavesComponent {
         return this.orgholidays.orgHolidaysItems?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
       });
       // this.isHolidaySelected = isDatePresent;
-      this.isHolidaySelectedEndate=isDateenddatePresent;
+     // this.isHolidaySelectedEndate=isDateenddatePresent;
       //this.isHolidaySelected=isWorkingDayBetweenDates;
     }
     if (this.orgholidays?.orgHolidaysItems && this.selectedleave?.category?.isOptionalHoliday) {
@@ -626,7 +616,7 @@ export class LeavesComponent {
       });
 
       // this.isHolidaySelected = isDatePresent;
-      this.isoptionalnotallowedatWorkingdate=isDateenddatePresent;
+     // this.isHolidaySelectedEndate=isDateenddatePresent;
       //this.isHolidaySelected=isWorkingDayBetweenDates;
     }
   }
@@ -1209,8 +1199,11 @@ export class LeavesComponent {
     else if (daytype === 'full') {
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
+      if(this.enableHalfDayOptions === false){
+        this.leaveForm.get('availing')?.disable();
+      }
       this.toggleFullDayOptions(false);
-      if(this.dateDiff > 1){
+      if(this.dateDifference > 1){
         this.leaveForm.get('availing')?.disable();
         this.leaveForm.patchValue({ fulldayavailing: '2' });
       }

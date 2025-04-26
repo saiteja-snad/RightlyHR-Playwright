@@ -1,8 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-end mb-3">
-        <button *ngIf="isActive('personalinfo/personal/onboarding-verification') && (empdata?.empstatus?.toLocaleLowerCase() =='prospective' 
-            || empdata?.empstatus?.toLocaleLowerCase() =='trainee prospective')  && empdata?.substatus?.toLocaleLowerCase() =='documents rejected' 
-           && (empdata?.empstatus?.toLowerCase() == 'inactive' || empdata?.empstatus?.toLowerCase() == 'trainee inactive')" 
+        <button *ngIf="isActive('personalinfo/personal/onboarding-verification') && (empdata?.empstatus?.toLowerCase() =='prospective' 
+            || empdata?.empstatus?.toLowerCase() =='trainee prospective')  && empdata?.substatus?.toLowerCase() =='documents rejected'" 
             class="custom-btn btn-primary" (click)="openModal(request)">{{'Re-Request Documents'|translate}}</button>
     </div>
     <!--Input search-->
@@ -123,7 +122,7 @@
                     </div>
                     <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
                         class="error-msg">
-                        {{'Reason'| translate}}
+                        {{'Reject Reason is required'| translate}}
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
@@ -172,7 +171,7 @@
                         <span class="color">{{ reRequestForm.get('comments')?.value?.length || 0 }}/250</span>
                     </div>
                     <div *ngIf="reRequestForm.get('comments')?.invalid && reRequestForm.get('comments')?.touched">
-                        <div class="error-msg">Comments are required</div>
+                        <div class="error-msg">{{'Comments are required'|translate}}</div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">

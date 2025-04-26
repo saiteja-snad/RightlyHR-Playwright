@@ -16,7 +16,7 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="firstName" placeholder="Please enter first name">
                     <div *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched" class="error-msg">
-                        <div *ngIf="employeeForm.get('firstName')?.hasError('required')">First Name is required</div>
+                        <div *ngIf="employeeForm.get('firstName')?.hasError('required')">{{'First Name is required'|translate }}</div>
                         <div *ngIf="employeeForm.get('firstName')?.hasError('maxlength')">First Name cannot be more than 50 characters long</div>
                         <div *ngIf="employeeForm.get('firstName')?.hasError('pattern')">First Name can only contain letters and spaces</div>
                     </div>
@@ -37,7 +37,7 @@
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="lastName" placeholder="Please enter last name">
                     <div *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched" class="error-msg">
-                        <div *ngIf="employeeForm.get('lastName')?.hasError('required')">Last Name is required</div>
+                        <div *ngIf="employeeForm.get('lastName')?.hasError('required')">{{'Last Name is required'|translate}}</div>
                         <div *ngIf="employeeForm.get('lastName')?.hasError('maxlength')">Last Name cannot be more than 50 characters long</div>
                         <div *ngIf="employeeForm.get('lastName')?.hasError('pattern')">Last Name can only contain letters and spaces</div>
                     </div>
@@ -68,7 +68,7 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('designation')?.invalid && employeeForm.get('designation')?.touched" class="error-msg">
-                        Designation is required
+                       {{'Designation is required'|translate}}
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -81,7 +81,7 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('employmentType')?.invalid && employeeForm.get('employmentType')?.touched" class="error-msg">
-                        Employment Type is required
+                        {{'Employment Type is required'|translate}}
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -91,8 +91,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
                         placeholder="Select Location" class="form-select custom-select"  formControlName="location"
-                        (onChange)="OnClickLocation($event)"required>  
-                        <option [ngValue]="undefined" >Select Location</option>
+                        (onChange)="OnClickLocation($event)">  
                     </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('location')?.invalid && employeeForm.get('location')?.touched" class="error-msg">
@@ -104,21 +103,18 @@
                         {{'Sub Location'|translate}}<span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">  
-                            <select type="text" class="form-select custom-select" placeholder="Select Sub Location"
-                            id="sublocation" name="sublocation"  (change)="onClickValue()"
-                            formControlName="subLocation" required> 
-                            <option *ngFor="let item of subLocationsDropdown" [value]="item.id">
-                                {{item.jobSubLocationName}}</option>
-                        </select>
+                        <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
+                        placeholder="Select Sub Location" class="form-select custom-select"  formControlName="subLocation">  
+                    </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('subLocation')?.invalid && employeeForm.get('subLocation')?.touched" class="error-msg">
-                        Sub Location is required
+                        {{'Sub Location is required'|translate}}
                     </div>
                 </div>
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Close'|translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="spinnerLoader">
+                <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid|| spinnerLoader">
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <div class="spinner-border button-spinner text-light" role="status"></div>

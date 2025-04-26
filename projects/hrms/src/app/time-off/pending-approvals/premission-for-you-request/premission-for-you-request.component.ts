@@ -205,6 +205,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       const requestBody = {
         status: 'Rejected',
         comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
       };
       this.sharedModalService.openLoaderModal(
         'Rejecting Request, Please wait...');

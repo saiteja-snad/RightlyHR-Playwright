@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,7 +13,8 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
   selector: 'app-active-interns',
   imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent],
   templateUrl: './active-interns.component.html',
-  styleUrl: './active-interns.component.scss'
+  styleUrl: './active-interns.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class ActiveInternsComponent {

@@ -23,8 +23,8 @@ export class SeparationRequestTabsComponent {
     const moduleId=environment.SeparationrequestmoduleId
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
-      { label: 'For You ', link: 'separation-for-you', count: data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'separation-for-role', count: data?.forYourRole ?? 0}
+      { label: 'For You ', link: 'separation-for-you', count:data?.forYou ?? 0 },
+      { label: 'For Your Role', link: 'separation-for-role', count:data?.forYourRole ?? 0}
     ];
   });
 

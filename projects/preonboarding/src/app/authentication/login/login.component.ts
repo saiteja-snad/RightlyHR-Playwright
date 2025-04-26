@@ -7,6 +7,7 @@ import { AuthService } from '../../http-services/auth.service';
 import { BnNgIdleService } from 'bn-ng-idle';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { FormValidationService } from '../../common-services/form-validation.service';
 @Component({
   selector: 'app-login',
   imports: [CommonModule, ReactiveFormsModule, Toast],
@@ -23,7 +24,8 @@ export class LoginComponent {
   wrongCredentials: any;
   spinnerLoader = false;
 
-  constructor(private readonly fb: FormBuilder, public router: Router, private http: AuthService, private bnIdle: BnNgIdleService, private messageService: MessageService) { }
+  constructor(private readonly fb: FormBuilder, public router: Router, private http: AuthService, private bnIdle: BnNgIdleService,
+    public formvalidationService:FormValidationService) { }
 
   ngOnInit() {
     this.initiallogin();
@@ -38,21 +40,16 @@ export class LoginComponent {
 
   initiallogin() {
     this.loginform = this.fb.group({
-      username: [null, [Validators.required,Validators.email]],
+      username: [null, [Validators.required, Validators.email]],
       password: [null, Validators.required]
     })
     this.loginform.valueChanges.subscribe(() => {
       this.wrongCredentials = '';
     })
   }
-  blockLeadingSpace(event: KeyboardEvent): void {
-    const input = event.target as HTMLInputElement;
-  
-    // If space is pressed and cursor is at the start (position 0), block it
-    if (event.key === ' ' && input.selectionStart === 0) {
-      event.preventDefault();
-    }
-  }
+
+
+
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
@@ -77,7 +74,6 @@ export class LoginComponent {
     }
     this.subscription = this.http.login(`ProspectiveLogin/EmployeeLogin`, payload).subscribe({
       next: (res: any) => {
-        console.log(res);
         if (res != null) {
           this.http.prospectiveStoreToten(res.token.token)
           localStorage.setItem("prospectiveemppersonaldata", JSON.stringify(res.token.employeeData));

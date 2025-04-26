@@ -84,7 +84,7 @@ export class ServingPeriodComponent {
         this.resetForm();
       },
       error: (error: any) => {
-        const errorMessage = error.error?.message;
+        const errorMessage = error.error?.Message || 'An error occurred while adding the serving period.';
         this.conformationPopup.openErrorModal(errorMessage);
          this.resetForm();
       }
@@ -123,7 +123,7 @@ export class ServingPeriodComponent {
            this.resetForm();
         },
         error: (error: any) => {
-          const errorMessage = error.error?.message;
+          const errorMessage = error.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
           this.resetForm();
         }
@@ -152,7 +152,7 @@ export class ServingPeriodComponent {
           this.conformationPopup.openSuccessModal('Serving Period deleted successfully');
         },
         error: ( err : any) => {
-          const errorMessage = err.error?.message;
+          const errorMessage = err.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
         }
       });

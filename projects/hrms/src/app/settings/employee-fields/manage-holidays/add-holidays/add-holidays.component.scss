@@ -1,0 +1,17 @@
+.custom-input {
+  border: 1px solid #ced4da; /* Light grey border */
+  border-radius: 4px;
+  padding: 8px;
+  height: auto; /* Let date input be normal height */
+  font-size: 14px;
+}
+
+.custom-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #495057;
+}
+
+.is-invalid {
+  border-color: #dc3545; /* Red border on error */
+}

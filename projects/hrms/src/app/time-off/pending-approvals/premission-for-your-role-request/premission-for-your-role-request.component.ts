@@ -229,6 +229,7 @@ export class PremissionForYourRoleRequestComponent
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {

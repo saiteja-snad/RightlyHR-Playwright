@@ -72,7 +72,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
-                            placeholder="Type here" maxlength="250" placeholder="Type Here" (input)="formsValidation.validateInput(permissionForm.get('reason'))" ></textarea>
+                            placeholder="Reason for permission" maxlength="250" (input)="formsValidation.validateInput(permissionForm.get('reason'))" ></textarea>
                             <div class="form-label custom-label text-end my-1">
                             {{ permissionForm.get('reason')?.value?.length || 0 }}/250
                         </div>

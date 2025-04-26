@@ -596,3 +596,9 @@ input[type="number"].no-arrows::-webkit-inner-spin-button {
 input[type="number"].no-arrows {
     -moz-appearance: textfield;
 }
+
+.view-btn {
+    cursor: pointer;
+    color: #06274F;
+    font-weight: 500;
+}

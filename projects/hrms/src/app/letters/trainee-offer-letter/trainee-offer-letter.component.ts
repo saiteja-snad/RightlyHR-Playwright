@@ -695,6 +695,7 @@ export class TraineeOfferLetterComponent {
     this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully'); 
   }
 
+  
  traineeofferletterUpload(empId: number, file: File) {
     let filePath = `/FusionDocuments/Employee Documents/Trainee Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({

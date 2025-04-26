@@ -27,6 +27,9 @@
                     <div *ngIf="educationForm.get('university')?.hasError('required') && educationForm.get('university')?.touched" class="error-msg">
                         University is required
                     </div>
+                    <div *ngIf="educationForm.get('university')?.hasError('maxlength') && educationForm.get('university')?.touched" class="error-msg">
+                        University name must not exceed {{ educationForm.get('university')?.errors?.['maxlength']?.requiredLength }} characters
+                      </div>
                 </div>
                 
                 <div class="col-md-6 mb-3">
@@ -38,6 +41,9 @@
                     <div *ngIf="educationForm.get('specialization')?.hasError('pattern') && educationForm.get('specialization')?.touched" class="error-msg">
                         Specialization should contain only alphabets and special characters
                     </div>
+                    <div *ngIf="educationForm.get('specialization')?.hasError('maxlength') && educationForm.get('specialization')?.touched" class="error-msg">
+                        Specialization name must not exceed {{ educationForm.get('specialization')?.errors?.['maxlength']?.requiredLength }} characters
+                      </div>
                 </div>
                 
                 <div class="col-md-6 mb-3">

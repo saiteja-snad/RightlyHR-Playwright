@@ -249,6 +249,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata(`CustomEmail/RerequestDocuments`, pdata).subscribe({
       next: (data: any) => {
+        this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Email Sent Successfully')
       },
       error: (err: any) => {

@@ -19,7 +19,7 @@ import { RbacService } from '../../../services/rbac.service';
   styleUrl: './expenses-configuration.component.scss'
 })
 export class ExpensesConfigurationComponent {
-  expense = {} as IExpenses[];
+  expense = [] as IExpenses[];
   dataload = false;
   selectedExpensesId: any
   expenseForm!: FormGroup;
@@ -106,7 +106,7 @@ export class ExpensesConfigurationComponent {
 
     this.expenseupdateForm.patchValue({
       expenseTypeupdate: expenses.expenseType,
-      expensesCodeupade: expenses.expensesCode, // optional: trim if needed
+      expensesCodeupade: expenses.expensesCode
     });
 
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -116,15 +116,17 @@ export class ExpensesConfigurationComponent {
     if (this.expenseupdateForm.invalid) return;
 
     const payload = {
-      expenseId: this.selectedExpensesId,
+      
       expenseType: this.expenseupdateForm.value.expenseTypeupdate,
+      expenseId: this.selectedExpensesId,
       expensesCode: this.expenseupdateForm.value.expensesCodeupade,
       isdeleted: 'Active'
     };
 
-    this.http.putData('Expense/UPDATER', payload).subscribe({
+    this.http.postdata('Expense/UPDATER', payload).subscribe({
       next: (res) => {
         if (res) {
+          this.selectedExpensesId = null
           this.modalService.dismissAll()
           this.getExpenses()
           this.conformationPopup.openSuccessModal('Expense Type updated successfully')

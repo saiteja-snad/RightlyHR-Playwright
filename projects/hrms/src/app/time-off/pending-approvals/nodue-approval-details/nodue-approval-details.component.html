@@ -79,13 +79,13 @@
             <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
         </div>
         <form [formGroup]="AcceptForm" (ngSubmit)="handleAccept()">
-            <div>
+            <div class="custom-main-popup-content">
                 <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
                     <span class="text-danger">*</span></label>
                 <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="AcceptReason" maxlength="250"
                     placeholder="Please enter comments" rows="3"></textarea>
                 <!-- Character counter -->
-                <div class="form-label custom-label text-end my-1">{{ AcceptForm.get('AcceptReason')?.value?.length || 0 }} /250
+                <div class="textarea-count-text">{{ AcceptForm.get('AcceptReason')?.value?.length || 0 }} /250
                 </div>
                 <div class="error-msg" *ngIf="AcceptForm.get('AcceptReason')?.touched && AcceptForm.get('AcceptReason')?.invalid">
                     <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['required']">Comments is required</ng-container>
@@ -119,12 +119,12 @@
             <p class="confirmation-text">{{'Are you sure you want to reject this request?' |translate}}</p>
         </div>
         <form [formGroup]="rejectForm" (ngSubmit)="rejectNodue()">
-            <div class="mb-3">
+            <div class="custom-main-popup-content">
                 <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please enter reason"
                     formControlName="notes" rows="3" maxlength="250"></textarea>
-                <div class="text-end form-label custom-label my-1">{{ rejectForm.get('notes')?.value?.length || 0 }}/250
+                <div class="textarea-count-text">{{ rejectForm.get('notes')?.value?.length || 0 }}/250
                 </div>
                 <div class="error-msg" *ngIf="rejectForm.get('notes')?.touched && rejectForm.get('notes')?.invalid">
                     <ng-container *ngIf="rejectForm.get('notes')?.errors?.['required']">Reason is

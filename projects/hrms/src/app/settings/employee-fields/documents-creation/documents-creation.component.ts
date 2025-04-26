@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ICreateSubDir, IFolders } from '../../../Interfaces/document.model';
 import { DocumentService } from '../../../services/document/document.service';
 import { LastValuePipe } from '../../../Pipes/last-value/last-value.pipe';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -9,9 +8,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { OpenModalService } from '../../../services/open-modal.service';
+import { ICreateSubDir, IFolders } from '../../../Interfaces/document.model';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-documents-creation',
-  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent],
+  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule],
   templateUrl: './documents-creation.component.html',
   styleUrl: './documents-creation.component.scss'
 })
@@ -30,6 +31,7 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
   file: any
   imageDirPath!: string
   Status: any
+  selectedMainFolder ={} as IFolders
 
   constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService) { }
 
@@ -67,6 +69,7 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
       this.isMainfolderTouched = true;
     }
     this.subDir.mainDir = mainFolderName;
+    this.selectedMainFolder = folder;
   }
 
   getFolders(dirPath: string, folder: IFolders) {

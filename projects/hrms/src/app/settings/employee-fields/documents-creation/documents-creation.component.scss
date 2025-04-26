@@ -1,9 +1,16 @@
-.folder-content{
+.folder-content {
     display: flex;
     align-items: center;
+    font-size: var(--fontsize16);
 }
 
-.foldder-icon{
+.active {
+    background-color: var(--body-bg-color);
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+.foldder-icon {
     font-size: xx-large;
     color: #f9b755;
 }

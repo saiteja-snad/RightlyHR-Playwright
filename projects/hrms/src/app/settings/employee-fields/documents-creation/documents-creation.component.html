@@ -14,7 +14,7 @@
     <div class="employee-fields-main-container d-flex gap-3 w-100">
         <div class="custom-component-left-content p-3">
             @for(folder of folders; track $index){
-            <div (click)="onFolderSelectded(folder, folder.name)" class="folder-content cursor">
+            <div (click)="onFolderSelectded(folder, folder.name)" class="folder-content cursor px-2" [ngClass]="{'active': selectedMainFolder === folder}">
                 <i class="bi bi-folder-fill foldder-icon"></i>
                 <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
             </div>
@@ -50,7 +50,7 @@
                                 </div>
                             </td>
                             <td>{{ subFolder.createdOn | dateformat }}</td>
-                            <td><button class="custom-btn btn-primary" (click)="openmodel(deletefile);datafile=file">Delete</button>
+                            <td><button class="custom-btn btn-primary" (click)="openmodel(deletefile);datafile=subFolder">Delete</button>
                             </td>
                             }
                         </tr>

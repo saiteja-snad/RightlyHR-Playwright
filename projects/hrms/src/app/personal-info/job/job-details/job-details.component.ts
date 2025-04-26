@@ -422,13 +422,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
 
   openModalupdate(content: any, data: any): void {
-    const locationId = data.locationId; // Get the location ID from the selected job details
-    const subLocationId = data.subLocationId; // Get the sub-location ID from the selected job details
-    this.selectedjobdetailesid = data.id;
+    const locationId = data?.locationId; // Get the location ID from the selected job details
+    const subLocationId = data?.subLocationId; // Get the sub-location ID from the selected job details
+    this.selectedjobdetailesid = data?.id;
     this.selectedData = data; // Store the selected job details data for updating
     console.log('Selected Job Details ID:', data);
     this.teamManagerName = data?.firstName + ' ' + data?.middleName + ' ' + data?.lastName
-    const effectiveDate = data.effectiveDate ? new Date(data.effectiveDate).toISOString().split('T')[0] : null;
+    const effectiveDate = data?.effectiveDate ? new Date(data.effectiveDate).toISOString().split('T')[0] : null;
     this.selectedJobRoleObj = this.JobroleDesignation.find(role => role.designationName === data.jobRole);
     this.subscription = this.http.getData(`Subdepartments/Getnames/${data.departmentId}`).subscribe({
       next: (teamData: any) => {
@@ -443,7 +443,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
             if (data.length === 0) {
               this.subLocationsDropdown = []; // Reset if no sub-locations are found
             } else {
-              this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+              this.subLocationsDropdown = data?.jobSubLocations; // Update the sub-location dropdown values
             }
           },
           error: (err: any) => {
@@ -455,7 +455,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
             if (data.length === 0) {
               this.shiftDropdowns = []; // Reset if no shifts are found
             } else {
-              this.shiftDropdowns = [].concat(...data.map((element: any) => element.orgShiftsItems)); // Flatten the shift data
+              this.shiftDropdowns = [].concat(...data?.map((element: any) => element.orgShiftsItems)); // Flatten the shift data
             }
           },
           error: (err: any) => {
@@ -468,16 +468,18 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
           location: this.jobLocationDropDownData.find(
             (location: { jobLocationName: any; }) => location.jobLocationName === data.locationName
           ),
-          department: this.departmentDetails.find(
-            dept => dept.departmentName === data.departmentName
+          department: this.departmentDetails?.find(
+            dept => dept.departmentName === data?.departmentName
           ),
-          team: this.teamDropdownValues.find(
+          team: this.teamDropdownValues?.find(
             team => team.subdepartmentName === data?.subdepartmentName
           ),
-          subLocation: this.subLocationsDropdown.find(
-            (sub: { jobSubLocationName: any; }) => sub.jobSubLocationName === data.subLocation
+          subLocation: this.subLocationsDropdown?.find(
+            (sub: { jobSubLocationName: any; }) => sub.jobSubLocationName === data?.subLocation
           ),
-          shiftName: this.shiftDropdowns.find((shift: { shiftName: any; }) => shift.shiftName === data.shiftName) || data.shiftName,
+          shiftName: this.shiftDropdowns?.find(
+            (shift: { shiftName: any }) => shift.shiftName === data?.shiftName
+          ),
           teamManager: this.teamManagerName,
           jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
           reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
@@ -559,7 +561,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         let durationValue = res.find((ele: any) => {
           return ele.servingPeriodType?.toLocaleLowerCase() == 'notice period';
         });
-        this.noticeperiodDuration = durationValue.duration;
+        this.noticeperiodDuration = durationValue?.duration;
       },
     });
   }

@@ -83,10 +83,26 @@
                 </div>
         
                 <div class="d-flex flex-wrap gap-3">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationConfirmationForm.invalid">Generate
-                        Document</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationConfirmationForm.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+                    </button>
+
                     <button type="button" class="custom-btn btn-primary" (click)="probationConfirmationemail()"
-                        [disabled]="probationConfirmationForm.invalid">Release Letter</button>
+                        [disabled]="!enableBtn || releaseLoader">
+                        <ng-container *ngIf="releaseLoader; else releaseText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #releaseText>
+                            <span>{{'Release Letter' | translate}}</span>
+                        </ng-template>
+                    </button>
                 </div>
             </form>
         </div>

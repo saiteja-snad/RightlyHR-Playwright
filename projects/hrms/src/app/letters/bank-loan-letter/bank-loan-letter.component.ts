@@ -75,8 +75,7 @@ export class BankLoanLetterComponent {
       Documenttype: ['', Validators.required],
       dateofbankloan: ['', Validators.required],
       authorityid: ['', Validators.required],
-      // jobValid: [false, Validators.requiredTrue],
-      // dateValdiate: [false, Validators.requiredTrue]
+      jobValid: [false, Validators.requiredTrue],
     });
 
     this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
@@ -148,12 +147,12 @@ export class BankLoanLetterComponent {
       next: (data: any) => {
         if (!data || data.length === 0) {
           this.jobErrorMessage = 'No job details found for this employee.';
-          // this.employeeForm.get('jobValid')?.setValue(false);
+          this.employeeForm.get('jobValid')?.setValue(false);
         } else {
           let res = data.reverse()[0];  
           this.selectedEmployeeJobDetails = res;
           this.jobErrorMessage = '';
-          // this.employeeForm.get('jobValid')?.setValue(true);
+          this.employeeForm.get('jobValid')?.setValue(true);
         }
       },
       error: (reason: any) => {
@@ -167,13 +166,17 @@ export class BankLoanLetterComponent {
     const joiningDate = new Date(this.selectedEmployeeJobDetails.effectiveDate);
   
     if (dateofbankloan <= joiningDate) {
-      this.dateValidationErrorMessage = 'Bank loan date must be after the employee joining date.';
-      // this.employeeForm.get('dateValdiate')?.setValue(false);
+      this.jobErrorMessage = 'Bank loan date must be after the employee joining date.';
+      this.employeeForm.get('jobValid')?.setValue(false);
     } else {
-      this.dateValidationErrorMessage = '';  
-      // this.employeeForm.get('dateValdiate')?.setValue(true);
+      this.jobErrorMessage = '';  
+      this.employeeForm.get('jobValid')?.setValue(true);
     }
   }
+
+  preventTyping(event: KeyboardEvent) {
+    event.preventDefault();
+  } 
 
   onclickDesignation(event: any) {
     this.selectedAuthority= event.value;

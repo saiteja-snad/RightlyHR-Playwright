@@ -136,10 +136,22 @@
             Compensation
             Effective Date in Job Tab Before Generating the Document.</p>
         </div>
+
+        <div *ngIf="jobErrorMessage" class="error-msg">
+          {{ jobErrorMessage }}
+        </div>
+
         <div class="d-flex flex-wrap gap-3 pt-4">
           <button type="submit" class="custom-btn btn-primary"
-            [disabled]="!isdateofAppraisal||!disablebuttonforemployeeid||!disablebuttonforauthority">
-            {{'Generate Document'| translate }}</button>
+            [disabled]="employeeForm.invalid || spinnerLoader">
+            <ng-container *ngIf="spinnerLoader; else addText">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading..' | translate}}...</span>
+          </ng-container>
+          <ng-template #addText>
+              <span>{{'Generate Document' | translate}}</span>
+          </ng-template>
+          </button>
         </div>
       </form>
     </div>

@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-import { IAuthority, IemployeeDetails, IJob } from '../../Interfaces/letters-model';
+import { IJob } from '../../Interfaces/letters-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
@@ -94,54 +94,31 @@ export class ApprisalLetterComponent {
     { name: 'No', value: false }
   ];
   
+  jobErrorMessage!: string;
+  spinnerLoader= false;
+
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
     private conformationPopup: OpenModalService,
-    // private toaster: NgToastService,
     private router: Router,
     private authService: AuthService,
-    // private _userAcessService: UserAccessService,
-    private elementRef: ElementRef,
-    config: NgbModalConfig,
     private modalService: NgbModal,private fb: FormBuilder
-  ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
-  }
+  ) {  }
 
   openmodel(content: any) {
     this.modalService.open(content, { centered: true });
   }
 
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
-
-  dataFailureMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.errorhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
-
   DateValidation() {
     const dateofAppraisal = new Date(this.appraisalData.dateofAppraisal);
     const probationEndDate = new Date(this.appraisalData.probationEndDate);
-    console.log(dateofAppraisal, probationEndDate);
     if (dateofAppraisal <= probationEndDate) {
       this.isdateofAppraisal = false;
     } else {
       this.isdateofAppraisal = true;
     }
   }
-
-
 
   DateValidation2() {
     const reviewdate = new Date(this.appraisalData.reviewdate);
@@ -151,25 +128,12 @@ export class ApprisalLetterComponent {
     } else {
       this.isNextApprisal = true;
     }
-
   }
 
   ngOnInit(): void {
-    // this._userAcessService.checkRouteAccess('Dashboard.view');
-    this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
-    console.log(this.Employeeinfo);
-      this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
-          ...emp,
-          fullName: `${emp.firstName} ${emp.middleName} ${emp.lastName}`, // Concatenate firstName, middleName, lastName
-        }));
-        this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
-                  ...authority,
-                  fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim(), // Concatenate and remove excess spaces
-                }));
     this.initializeForm();
     this.getAppraisalTemplate();
     this.getEmployeeId();
-    // this.getCompensationById;
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
     this.getDesignationwithGradeid();
@@ -182,7 +146,6 @@ export class ApprisalLetterComponent {
   getIssuedEmployeebyId() {
     this.employeedata =
       this.Employeeinfo.firstName + ' ' + this.Employeeinfo.lastName;
-    console.log(this.employeedata);
   }
 
   //function for disabling the incorrect employeeid
@@ -194,14 +157,8 @@ export class ApprisalLetterComponent {
     }
   }
 
-  // onVariablePayChange(isVariablePay: boolean): void {
-  //   if (isVariablePay === false) {
-  //     this.appraisalData.variablePayAmount = '0';
-  //   }
-  // }
   onVariablePayChange() {
     const isVariable = this.employeeForm.get('isVariablePay')?.value;
-  
     if (isVariable === true) {
       this.employeeForm.get('variablePayAmount')?.enable();
       this.employeeForm.get('variablePayAmount')?.reset();
@@ -217,14 +174,12 @@ export class ApprisalLetterComponent {
   gender2: any;
   Onclick(fusionemployeeId: any) {
     this.fusionEmpId = fusionemployeeId;
-    console.log(fusionemployeeId);
     this.appraisalData = this.employeeiddetails.find(
       (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
     );
     this.disablebuttonforemployeeid = true;
     this.getCompensationById(this.appraisalData);
     this.getJobdetails(this.appraisalData);
-    console.log(this.appraisalData);
     if (this.appraisalData.gender == 'Male') {
       return (this.gender = 'Mr.');
     } else {
@@ -261,7 +216,6 @@ export class ApprisalLetterComponent {
       (c: any) =>
         c.firstName + ' ' + c.middleName + ' ' + c.lastName === ValueName
     );
-    console.log(authorityDesignationdata);
     this.authorityDesignation = authorityDesignationdata?.designation;
     this.signatureAuthorityName = JSON.parse(
       JSON.stringify(
@@ -272,7 +226,6 @@ export class ApprisalLetterComponent {
         authorityDesignationdata?.lastName
       )
     );
-    console.log(this.authorityDesignation);
     if (this.authorityName) {
       if (this.authorityName === this.signatureAuthorityName) {
         this.disablebuttonforauthority = true;
@@ -283,14 +236,12 @@ export class ApprisalLetterComponent {
     if (authorityDesignationdata == undefined) {
       this.authorityDesignation = null;
       this.signatureAuthorityName = null;
-      console.log(this.authorityDesignation);
     }
   }
   onclickDesignation() {
     let signatureAuthorityDetails = this.authoritydetails.find(
       (c: any) => c.employeeId == this.appraisalData.authorityid
     );
-    console.log(signatureAuthorityDetails);
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
       if (signatureAuthorityDetails.middleName) {
@@ -310,103 +261,73 @@ export class ApprisalLetterComponent {
     let offertype = 'Appraisal Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.authoritydetails = data;
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
         }));
-  
-        console.log(this.authorityDetails);
       },
       error: (error: any) => {
         console.error(error);
       }
     });
   }
-  //hostlister to close the dropdown when we Click out side the box
-  @HostListener('document:click', ['$event.target'])
-  onClickOutside(target: any) {
-    const dropdownToggle = this.elementRef.nativeElement.querySelector('.dropdown-toggles');
-    const dropdownMenu = this.elementRef.nativeElement.querySelector('.dropdown-menu');
-    if (dropdownToggle && !dropdownToggle.contains(target) && dropdownMenu && !dropdownMenu.contains(target)) {
-      this.isDropdownOpen = false;
-      this.filteredOptions = [];
-    }
-  }
+
   //get Job Details by empployeeid
   getJobdetails(Employee: any) {
     this.subscription = this.http.getData(`JobDetails/${Employee.employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
-        let res = data.reverse()[0];
-        this.employeeJobDetails = res;
-        Employee.jobRole = res.jobRole;
-        Employee.workLocation = res.lopcation;
-        console.log(Employee.jobRole);
+        if (!data || data.length === 0) {
+          this.jobErrorMessage = 'No job details found for this employee.';
+           this.employeeForm.get('jobValid')?.setValue(false);
+        } else {
+          let res = data.reverse()[0];
+          this.employeeJobDetails = res;
+          Employee.jobRole = res.jobRole;
+          Employee.workLocation = res.lopcation;
+          this.jobErrorMessage = '';
+          this.employeeForm.get('jobValid')?.setValue(true);
+        }
       },
       error: (reason: any) => {
         console.log(reason);
       },
     });
   }
-  //formatedate with date
-  private formatDatewithDate(date: Date): string | void {
-    if (date) {
-      return moment(date).format('YYYY-MM-DD');
-    }
-  }
-  //get time
-  // const date = new Date()
-  private getTime(date?: Date) {
-    return date != null ? new Date(date).getTime() : 0;
-  }
+
   sanitizeInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     input.value = input.value.replace(/[^0-9]/g, '');
     this.appraisalData.bonus = input.value ? parseInt(input.value, 10) : null;
   }
-  previusSalary: any;
 
+  previusSalary: any;
   incrementSalary: any;
 
   //get compensation details by empid
   getCompensationById(Employee: any) {
     let EmployeeId = this.appraisalData.employeeId;
-    console.log(EmployeeId);
     this.subscription = this.http
       .getData(`Compensationdata/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-          // console.log(data);
           let res = data.reverse()[0];
           this.employeeCompensationData = res;
-          console.log(res);
           this.appraisalData.employeeId = res.employeeId;
           this.appraisalData.bonus = res.bonusAmountData;
           this.previusSalary = data[0];
-          console.log(this.previusSalary);
 
           this.incrementSalary =
             res?.compensationamount - this.previusSalary.compensationamount;
-          console.log(this.incrementSalary);
           this.employeeCompensationDetails = res;
           this.appraisalData.salary = res?.compensationamount;
           this.appraisalData.compeffectivedate = res.compeffectivedate;
-          console.log(this.appraisalData);
           //CTC calculation stated
           Employee.grossby = 12;
           Employee.grossSalary = Math.round(
             res?.compensationamount / Employee.grossby
           );
           this.grossSalary = Employee.grossSalary;
-          console.log(this.grossSalary);
-
-          console.log(Employee.grossby);
-          console.log(Employee.grossSalary);
-          console.log(this.appraisalData);
-
-          console.log(this.appraisalData.pf);
           if (this.appraisalData.pf == true || this.appraisalData.pf == false) {
             switch (this.appraisalData.pf) {
               case true:
@@ -419,7 +340,6 @@ export class ApprisalLetterComponent {
                   if (Employee.pfContribution >= 1800) {
                     Employee.pfContribution = 1800;
                   }
-                  console.log(Employee.pfContribution);
                 } else if (Employee.grossSalary >= 23195) {
                   Employee.pfContribution = Math.round(
                     Employee.grossSalary * (6.717 / 100)
@@ -428,7 +348,6 @@ export class ApprisalLetterComponent {
                   if (Employee.pfContribution >= 1800) {
                     Employee.pfContribution = 1800;
                   }
-                  console.log(Employee.pfContribution);
                 }
 
                 else if (Employee.grossSalary <= 23195) {
@@ -438,12 +357,10 @@ export class ApprisalLetterComponent {
                   if (Employee.pfContribution >= 1800) {
                     Employee.pfContribution = 1800;
                   }
-                  console.log(Employee.pfContribution);
                 } else {
                   Employee.pfContribution = Math.round(
                     Employee.grossSalary * (6.719 / 100)
                   );
-                  console.log(Employee.pfContribution);
                 }
                 break;
               case false:
@@ -453,7 +370,6 @@ export class ApprisalLetterComponent {
             }
           } else {
             0;
-            console.log(this.appraisalData.pf);
           }
 
           if (this.appraisalData.esic == true) {
@@ -462,16 +378,13 @@ export class ApprisalLetterComponent {
               Employee.esicContribution = Math.round(
                 Employee.grossSalary * (2.94 / 100)
               );
-              console.log(Employee.esicContribution);
             } else {
               Employee.esicContribution = 0;
               this.appraisalData.esic == false;
-              console.log(Employee.esicContribution);
             }
           } else {
             Employee.esicContribution = 0;
             this.appraisalData.esic == false;
-            console.log(Employee.esicContribution);
           }
 
           //=============================================================================================================
@@ -481,14 +394,12 @@ export class ApprisalLetterComponent {
             Employee.pfContribution -
             Employee.esicContribution
           );
-          console.log(Employee.totalGrossSalary);
 
           if (this.appraisalData == true) {
             if (Employee.totalGrossSalary <= 21000) {
               Employee.employeeEsi = Math.round(
                 Employee.totalGrossSalary * (0.75 / 100)
               );
-              console.log(Employee.employeeEsi);
             } else {
               Employee.employeeEsi = 0;
               this.appraisalData.esic == false;
@@ -504,40 +415,31 @@ export class ApprisalLetterComponent {
           //condtitions for professionaltax calulation.
           if (Employee.grossSalary < 15000) {
             Employee.professionalTax = 0;
-            console.log(Employee.professionalTax);
           } else if (
             Employee.grossSalary > 15000 &&
             Employee.grossSalary < 21000
           ) {
             Employee.professionalTax = 150;
-            console.log(Employee.professionalTax);
           } else if (Employee.grossSalary >= 21000) {
             Employee.professionalTax = 200;
-            console.log(Employee.professionalTax);
           } else {
             Employee.professionalTax = 0;
-            console.log(Employee.professionalTax);
           }
 
           // calculation for the basicsalary
           Employee.basicSalary = Math.round(
             Employee.totalGrossSalary * (60 / 100)
           );
-          console.log(Employee.basicSalary);
 
           //calculation for the hraSalary
           Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100));
-          console.log(Employee.hraSalary);
 
           //calculation for the educationAllowances taking as medical insurenc per month
           // Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
-          // console.log(Employee.educationAllowances);
           Employee.educationAllowances = Math.round(558);
-          console.log(Employee.educationAllowances);
 
           //calculation for the conveyance
           // Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
-          // console.log(Employee.Conveyance);
 
           //total deductions per month
           Employee.totalDeduction = Math.round(
@@ -546,74 +448,61 @@ export class ApprisalLetterComponent {
             Employee.professionalTax +
             Employee.educationAllowances
           );
-          console.log(Employee.totalDeduction);
 
           //total net salary  per month
           Employee.netSalary = Math.round(
             Employee.totalGrossSalary - Employee.totalDeduction
           );
-          console.log(Employee.netSalary);
 
           //calculation for the otherallowances
           Employee.otherAllowances = Math.round(
             Employee.totalGrossSalary * (16 / 100)
           );
-          console.log(Employee.otherAllowances);
 
           //pfcontribution per annum
           Employee.pfPreAnuum = Math.round(
             Employee.pfContribution * Employee.grossby
           );
-          console.log(Employee.pfPreAnuum);
 
           //totalGrossPerAnnum calculation
           Employee.totalGrossPerAnnum = Math.round(
             Employee.totalGrossSalary * Employee.grossby
           );
-          console.log(Employee.totalGrossPerAnnum);
 
           //basicsalaryperannum
           Employee.basicPerannum = Math.round(
             Employee.basicSalary * Employee.grossby
           );
-          console.log(Employee.basicPerannum);
 
           //HRA per annum
           Employee.hraPerAnnum = Math.round(
             Employee.hraSalary * Employee.grossby
           );
-          console.log(Employee.hraPerAnnum);
 
           //esiper anuum
           Employee.esiPerAnnum = Math.round(
             Employee.esicContribution * Employee.grossby
           );
-          console.log(Employee.esiPerAnnum);
           //esiper anuum for employee
           Employee.esiPerAnnumemployee = Math.round(
             Employee.employeeEsi * Employee.grossby
           );
-          console.log(Employee.esiPerAnnumemployee);
 
           //educationper annum using for medical insurence
           Employee.educationallowancesPerAnnum = 12 * 558;
-          console.log(Employee.educationallowancesPerAnnum);
 
           //conveyance per annum
           // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
-          // console.log(Employee.conveyancePerAnnum);
 
           //otherAllowancesper annum
           Employee.otherAllowancesPerAnnum = Math.round(
             Employee.otherAllowances * Employee.grossby
           );
-          console.log(Employee.otherAllowancesPerAnnum);
 
           //professional per annum
           Employee.professionalPerAnnum = Math.round(
             Employee.professionalTax * Employee.grossby
           );
-          console.log(Employee.professionalPerAnnum);
 
           //salary deductions per annum
           Employee.totalDeductionsPerAnnum = Math.round(
@@ -622,22 +511,17 @@ export class ApprisalLetterComponent {
             Employee.educationallowancesPerAnnum +
             Employee.professionalPerAnnum
           );
-          console.log(Employee.totalDeductionsPerAnnum);
 
           //net salary per annum
           Employee.netSalaryPerAnnum = Math.round(
             Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum
           );
-          console.log(Employee.netSalaryPerAnnum);
           //Ctc per annum
           Employee.ctcperannum = Math.round(
             Employee.totalGrossPerAnnum +
             Employee.pfPreAnuum +
             Employee.esiPerAnnum
           );
-          console.log(Employee.ctcperannum);
-
-          // console.log(Employee.salary);
         },
       });
   }
@@ -646,9 +530,7 @@ export class ApprisalLetterComponent {
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.employeeiDetails = data;
-          //this.employeeiddetails = data as IemployeeDetails[];
           this.employeeiddetails = data.map((employee: any) => {
             return {
               ...employee,
@@ -668,6 +550,7 @@ export class ApprisalLetterComponent {
 
 
   async postAppraisalLetterFormSubmit(f: FormGroup) {
+    this.spinnerLoader= true;
     if (this.employeeForm.invalid) {
       // Mark all fields as touched so validation messages appear
       this.employeeForm.markAllAsTouched();
@@ -710,7 +593,6 @@ export class ApprisalLetterComponent {
       }_${new Date().getTime()}_AppraisalLetter.pdf`;
     pdf.save(fileName);
     const blob = pdf.output('blob');
-    console.log(blob);
     //creating form file to upload into AZure
     this.AppraisalFile = new File([blob], fileName, {
       type: 'application/pdf',
@@ -742,7 +624,6 @@ export class ApprisalLetterComponent {
     };
     this.subscription = this.http.postdata('JobDetails', jobdata).subscribe({
       next: (data: any) => {
-        console.log(data);
       },
       error: (reason: any) => {
         console.log(reason);
@@ -752,7 +633,6 @@ export class ApprisalLetterComponent {
 
   updateCompensationDetails() {
     let data = this.employeeCompensationData;
-    console.log(data);
     const Compensationdataupdate = {
       id: data.id,
       employeeId: data.employeeId,
@@ -771,7 +651,6 @@ export class ApprisalLetterComponent {
     };
     this.subscription = this.http.postdata('Compensationdata/UPDATER', Compensationdataupdate).subscribe({
       next: (data: any) => {
-        console.log(data);
       },
       error: (reason: any) => {
         console.log(reason);
@@ -785,7 +664,6 @@ export class ApprisalLetterComponent {
       .postdata('Employeedata/UPDATER', this.appraisalData)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
         },
         error: (reason: any) => {
           console.log(reason);
@@ -802,26 +680,6 @@ export class ApprisalLetterComponent {
       .toPromise();
   }
 
-  //to store file to the azure and return to the url
-  // private appraisalletterUpload(empId: number, file: File) {
-  //   let filePath = `/FusionDocuments/Employee Documents/appraisal Letter/${empId}`;
-  //   this.subscription = this.http
-  //     .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
-  //     .subscribe({
-  //       next: (data: any) => {
-  //         if (data) {
-  //           this.result.documentUrl = data.path;
-  //           this.postAppraisalDetails(data.path);
-  //           console.log(data);
-  //         }
-  //       },
-  //       error: (reason: any) => {
-  //         console.log(reason);
-  //         alert('file upload  is failed');
-  //       },
-  //     });
-  // }
-
   //to Upload Appraisal letter
   uploadAppraisalLetter() {
     let loggedInUser = this.authService.getToken();
@@ -837,8 +695,7 @@ export class ApprisalLetterComponent {
             // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
             this.conformationPopup.openSuccessModal('Appraisal Letter Generated Successfully');
 
-            this.router.navigate(['/admin/active']);
-            console.log(data);
+            // this.router.navigate(['/admin/active']);
           }
           let emaildetails = {
             personEmail: this.appraisalData.workEmail,
@@ -858,25 +715,25 @@ export class ApprisalLetterComponent {
           } else {
             emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
           }
-          console.log(emaildetails);
 
           this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
             next: (data: any) => {
-              console.log(data);
-              // this.dataSuccessMsg('Email Sent Successfully');
               this.conformationPopup.openSuccessModal('Email Sent Successfully');
-
-              location.reload();
+              setTimeout(()=>{
+                this.navigateDashboard();
+              }, 2000)
             },
             error: (err: any) => {
+              this.spinnerLoader= false;
               console.log(err);
             },
-            complete: () => { },
+            complete: () => { 
+              this.spinnerLoader= false;
+            },
           });
         },
         error: (reason: any) => {
-          console.log(reason);
-          this.dataFailureMsg('file upload  is failed');
+          this.spinnerLoader= false;
         },
       });
   }
@@ -888,12 +745,6 @@ export class ApprisalLetterComponent {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear().toString();
     return `${day}/${month}/${year}`;
-  }
-
-  //to format string date to actual date
-  private formatDatebyDatestring(data: string): moment.Moment {
-    let stringarray = data.split('/');
-    return moment(`${stringarray[2]}-${stringarray[1]}-${stringarray[0]}`, 'YYYY-MM-DD');
   }
 
   formatDates(date: Date): string {
@@ -935,23 +786,13 @@ export class ApprisalLetterComponent {
   updateOptionsFound(found: boolean) {
     this.optionsFound = found;
   }
-  // updateOptionsFound(event: Event) {
-  //   // If it's a checkbox or input, you might extract value like this
-  //   const target = event.target as HTMLInputElement;
-  //   this.optionsFound = target.checked; // or .value depending on context
-  // }
+ 
   AllDesignationwithGradeId: any;
   getDesignationWithGradeIdDetails = [] as any;
   getDesignationwithGradeid() {
     this.subscription = this.http.getData('DesignationGradeMapper').subscribe({
       next: (data: any) => {
-        console.log(data);
         this.getDesignationWithGradeIdDetails = data;
-      //   this.AllDesignationwithGradeId =
-      //     this.getDesignationWithGradeIdDetails.map(
-      //       (item: { designationName: any }) => item.designationName
-      //     );
-      // },
       
       this.AllDesignationwithGradeId = this.getDesignationWithGradeIdDetails.map(
         (item: { designationName: any }) => ({
@@ -959,9 +800,7 @@ export class ApprisalLetterComponent {
           value: item.designationName
         })
       );
-      
-      console.log(" AllDesignationwithGradeId is:",this.AllDesignationwithGradeId);
-    },
+     },
       error: (err: any) => { },
     });
   }
@@ -971,19 +810,6 @@ export class ApprisalLetterComponent {
   gradeIdValue: any;
   getGradename: any;
   islistedItem: boolean = true;
-  // isItemIntheList(isitem: boolean) {
-  //   console.log(isitem);
-  //   this.islistedItem = isitem;
-  //   if (isitem == false) {
-  //     this.gradeIdValue = {};
-  //     this.getGradename = '';
-  //     this.promotion = false;
-  //     this.nopromotion = true;
-  //   } else {
-  //     this.promotion = true;
-  //     this.nopromotion = false;
-  //   }
-  // }
   isItemIntheList(event: Event) {
     const target = event.target as HTMLInputElement;
     const isitem = target.checked ?? false; // or target.value === 'true'
@@ -1008,75 +834,16 @@ export class ApprisalLetterComponent {
     this.subscription = this.http.getData(`GradeTable/getbyid/${GradeId}`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.getGradename = data.gradeName;
-          console.log(this.getGradename);
         },
         error: (err: any) => { },
       });
   }
 
   buttondisable: boolean = false;
-
-  // onOptionSelected(option: string, dropdownCategory: string) {
-  //   this.appraisalData.designation = option;
-  //   if (!option) {
-  //     this.buttondisable = false;
-  //   } else {
-  //     this.buttondisable = true;
-  //   }
-  //   this.islistedItem = true;
-  //   this.optionsFound = true;
-  //   if (dropdownCategory === 'JobRole') {
-  //     this.selectedValueJobRoledrop = option;
-  //     this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
-  //       (ele: { designationName: string }) =>
-  //         ele.designationName == this.selectedValueJobRoledrop
-  //     );
-  //     console.log(this.gradeIdValue.gradeId);
-  //     this.getGradeNameById();
-  //   } else if (dropdownCategory === 'reportingtoUpdate') {
-  //     this.selectedValueReportstodropUpdate = option;
-  //     const selectedName = this.selectedValueReportstodropUpdate;
-  //     const selectedObject = this.allempdata.find(
-  //       ({ firstName, lastName }) => `${firstName} ${lastName}` === selectedName
-  //     );
-  //     if (selectedObject) {
-  //       this.selectedValueReportstoEmployeeIddropUpdate =
-  //         selectedObject.employeeId;
-  //       console.log(this.selectedValueReportstoEmployeeIddropUpdate); // 2
-  //     } else {
-  //       console.log('Selected name not found');
-  //     }
-  //   } else if (dropdownCategory === 'businessareaUpdate') {
-  //     this.selectedValuebusinessdropUpdate = option;
-  //   } else if (dropdownCategory === 'jobroleUpdate') {
-  //     this.selectedValueJobRoledropUpdate = option;
-
-  //     this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
-  //       (ele: { designationName: string }) =>
-  //         ele.designationName == this.selectedValueJobRoledropUpdate
-  //     );
-
-  //     this.getGradeNameById();
-  //   } else if (dropdownCategory === 'employmenttype') {
-  //     this.selectedValueemployeementtypedropUpdate = option;
-  //   } else if (dropdownCategory === 'employmenttypeupdate') {
-  //     this.selectedValueEmployementtypedropInitial = option;
-  //   } else if (dropdownCategory === 'countryCode') {
-  //     this.selectedValuecontactnumberCountrydropdown = option;
-  //   } else if (dropdownCategory === 'countryCodeUpdate') {
-  //     this.selectedValuecontactnumberCountryCodeInitial = option;
-  //   }
-  // }
-
-
   
   onOptionSelected(event: any, dropdownCategory: string) {
-    console.log('selectedOption event:', event);
-  
-    // If event is an object with `designationName`, extract the string:
-    let option = '';
+      let option = '';
     if (typeof event === 'string') {
       option = event;
     } else if (event?.designationName) {
@@ -1096,7 +863,6 @@ export class ApprisalLetterComponent {
         (ele: { designationName: string }) =>
           ele.designationName === this.selectedValueJobRoledrop
       );
-      console.log(this.gradeIdValue?.gradeId);
       this.getGradeNameById();
     } else if (dropdownCategory === 'reportingtoUpdate') {
       this.selectedValueReportstodropUpdate = option;
@@ -1107,17 +873,14 @@ export class ApprisalLetterComponent {
       if (selectedObject) {
         this.selectedValueReportstoEmployeeIddropUpdate =
           selectedObject.employeeId;
-        console.log(this.selectedValueReportstoEmployeeIddropUpdate);
-      } else {
-        console.log('Selected name not found');
-      }
+      } 
     }
-    // ...rest of the dropdownCategory logic (same as yours)
   }
   
   closeDropdown() {
     this.isDropdownOpen = false;
   }
+
   navigateDashboard() {
     this.router.navigate(['/admin/active-employees'])
   }
@@ -1132,8 +895,8 @@ export class ApprisalLetterComponent {
       bonus: [0],
       authorityid: [null, Validators.required],
       isVariablePay: [null, Validators.required],
-      variablePayAmount: ['', Validators.required]
-     
+      variablePayAmount: ['', Validators.required],
+      jobValid: [false, Validators.requiredTrue]
     })
   }
 }

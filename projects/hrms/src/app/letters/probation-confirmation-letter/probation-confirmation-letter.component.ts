@@ -11,9 +11,10 @@ import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-probation-confirmation-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
   templateUrl: './probation-confirmation-letter.component.html',
   styleUrl: './probation-confirmation-letter.component.scss'
 })
@@ -36,11 +37,17 @@ export class ProbationConfirmationLetterComponent {
   ];
   todayDate!: string;
   isdateofprobation: boolean = true;
+  enableBtn= false;
+  spinnerLoader= false;
+  releaseLoader= false;
 
-  constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private openModalService:OpenModalService) { }
+  constructor(
+    private http: HttpService, 
+    private router: Router, 
+    private fb: FormBuilder, 
+    private openModalService:OpenModalService) { }
 
   ngOnInit(): void {
-    this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     this.initializeForm();
     this.getProbationEmployees();
     this.getAuthorityDetails();
@@ -109,6 +116,7 @@ export class ProbationConfirmationLetterComponent {
   }
 
   async postProbationLetterFormSubmit() {
+    this.spinnerLoader= true;
     this.loading = true;
     const data = await this.probationLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
@@ -141,11 +149,12 @@ export class ProbationConfirmationLetterComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
         if (data) {
+          this.enableBtn= true;
           this.postProbationDetails(data.path);
         }
       },
       error: (reason: any) => {
-        console.log(reason);
+        this.spinnerLoader= false;
         this.openModalService.openErrorModal('file upload  is failed');
       },
     });
@@ -185,9 +194,6 @@ export class ProbationConfirmationLetterComponent {
       meta : this.getProbationDetails.meta,
       appliedDate : this.getProbationDetails.appliedDate,
       comments : this.getProbationDetails.comments
-
-
-
     }
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
       next: (data: any) => {
@@ -198,14 +204,18 @@ export class ProbationConfirmationLetterComponent {
         this.probationConfirmationemail();
       },
       error: (reason: any) => {
-        console.log(reason);
+        this.spinnerLoader= false;
       },
+      complete: () =>{
+        this.spinnerLoader= false;
+      }
     });
   }
 
   //function to patch the values in the form to the template
   pathValuesFuction() {
     const formValues = this.probationConfirmationForm.value;
+    console.log(formValues)
     this.probationLetterData.firstName = formValues.employeeId?.firstName,
     this.probationLetterData.middleName = formValues.employeeId?.middleName,
     this.probationLetterData.lastName = formValues.employeeId?.lastName,
@@ -219,12 +229,11 @@ export class ProbationConfirmationLetterComponent {
     this.probationLetterData.authorityName = formValues.authorityid?.fullName,
     this.probationLetterData.authorityDesignation = formValues.authorityid?.designation,
     this.probationLetterData.employeeId = formValues.employeeId?.employeeId
-
-    
   }
 
   //to post probation letter email Details to the offerletter table
   probationConfirmationemail() {
+    this.releaseLoader= true;
     let pdata = {
       "employeeId": this.probationLetterData.employeeId,
       "documentUrl": this.Documenturlresult
@@ -233,11 +242,19 @@ export class ProbationConfirmationLetterComponent {
       next: (data: any) => {
         console.log(data);
         this.openModalService.openSuccessModal("Probation Confirmation Letter Sent Successfully");
-        this.router.navigate(['/admin/probation-employees']);
-        this.probationConfirmationForm.reset();
+        setTimeout(() =>{
+          this.naviagte();
+        }, 2000)
+        // this.router.navigate(['/admin/probation-employees']);
       },
       error: (err: any) => {
+        this.releaseLoader= false;
         console.log(err);
+      },
+      complete: () =>{
+        this.enableBtn= false;
+        this.releaseLoader= false;
+        this.probationConfirmationForm.reset();
       }
     })
   }

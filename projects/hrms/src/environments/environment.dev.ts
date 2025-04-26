@@ -29,7 +29,7 @@ export const environment = {
   mandatoryLeaveCategoryId: 173,
   SeparationrequestmoduleId: 13,
   RecallrequestmoduleId: 14,
-  ProbationrequestmoduleId: 18,
+  ProbationrequestmoduleId: 20,
   ProbationExtensionId: 2,
   ProbationNoticePeriodId: 0,
   ProbationbuttonbeforeId: 3,
@@ -37,5 +37,5 @@ export const environment = {
   PMSrequestmoduleId:24,
   deskAllocationModuleId:23,
   expensesModuleId:19,
-  globalPermissionsModuleID:21
+  globalPermissionsModuleID:18
 };

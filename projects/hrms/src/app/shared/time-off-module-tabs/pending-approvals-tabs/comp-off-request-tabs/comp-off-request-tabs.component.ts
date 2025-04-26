@@ -6,6 +6,7 @@ import { TabsModule } from 'primeng/tabs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
+import { SignalsService } from '../../../../services/signals.service';
 
 @Component({
   selector: 'app-comp-off-request-tabs',
@@ -18,15 +19,27 @@ import { HttpService } from '../../../../services/http.service';
 export class CompOffRequestTabsComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   pendingApprovalCount: ApprovalStatusCount[] = [];
-  roleWfh: AttendanceRequest[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [];
 
-  constructor(public readonly router: Router, private http: HttpService) {
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    private signalService: SignalsService
+  ) {
     effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().compOff) {
+      if (this.signalService.compOffForRoleTriggerSignal() || this.signalService.compOffForYouTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
         this.getAllCompOffPendingApprovalsCount();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, compOff: false }));
+
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.compOffForRoleTriggerSignal()) {
+          this.signalService.compOffForRoleTriggerSignal.set(false);
+        }
+
+        if (this.signalService.compOffForYouTriggerSignal()) {
+          this.signalService.compOffForYouTriggerSignal.set(false);
+        }
       }
     });
   }
@@ -41,15 +54,36 @@ export class CompOffRequestTabsComponent implements OnInit, OnDestroy {
     const moduleId = 3;
     this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
-        this.pendingApprovalCount = data.filter(item => item.moduleId === moduleId);
-        this.navTabs = [
-          { label: 'For You ', link: 'for-you', count: this.pendingApprovalCount.at(0)?.forYou ?? 0 },
-          { label: 'For Your Role', link: 'for-your-role', count: this.pendingApprovalCount.at(0)?.forYourRole ?? 0 },
-        ];
+        const filteredData = data.find(item => item.moduleId === moduleId);
+        if (filteredData) {
+          this.pendingApprovalCount = [filteredData];
+        } else {
+          this.pendingApprovalCount = [];
+        }
+
+        // Update the navTabs after fetching the data
+        this.updateNavTabs();
       },
-      error: (err) => console.error('Error fetching approvals:', err),
+      error: (err) => {
+        this.pendingApprovalCount = [];
+        console.error('Error fetching approvals:', err);
+        this.updateNavTabs();  // Update the navTabs with empty counts if there was an error
+      },
     });
   }
+
+  // Update navTabs based on the fetched approval counts
+  updateNavTabs() {
+    // Check if pendingApprovalCount is not empty before accessing the first element
+    const data = this.pendingApprovalCount.length > 0 ? this.pendingApprovalCount[0] : null;
+  
+    // Update navTabs with safe access to data
+    this.navTabs = [
+      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0 },
+      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 },
+    ];
+  }
+  
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -93,30 +93,30 @@ export class OnboardingDetailsComponent {
 
   initializeForm(): void {
     this.onboardingForm = this.fb.group({
-      status: [{ value: "", disabled: true }],
-      dateOfJoining: [{ value: "", disabled: true }],
-      branchLocation: [{ value: "", disabled: true }],
-      probationEndDate: [{ value: "", disabled: true }],
-      probationStatus: [{ value: "", disabled: true }],
+      status: [{ value: null, disabled: true }],
+      dateOfJoining: [{ value: null, disabled: true }],
+      branchLocation: [{ value: null, disabled: true }],
+      probationEndDate: [{ value: null, disabled: true }],
+      probationStatus: [{ value: null, disabled: true }],
       noticePeriodStatus: [{ value: '', disable: true },],
-      backgroundCheckStatus: [{ value: "", disabled: true }],
-      salaryHold: [{ value: "", disabled: true }],
-      pf: [{ value: "", disabled: true }],
-      esic: [{ value: "", disabled: true }],
-      pt: [{ value: "", disabled: true }],
-      totalExperience: [{ value: "", disabled: true }],
-      remoteLogin: [{ value: "", disabled: true }],
-      workLocation: [{ value: "", disabled: true }],
-      wfhmanger: [{ value: "", disabled: true }],
+      backgroundCheckStatus: [{ value: null, disabled: true }],
+      salaryHold: [{ value: null, disabled: true }],
+      pf: [{ value: null, disabled: true }],
+      esic: [{ value: null, disabled: true }],
+      pt: [{ value: null, disabled: true }],
+      totalExperience: [{ value: null, disabled: true }],
+      remoteLogin: [{ value: null, disabled: true }],
+      workLocation: [{ value: null, disabled: true }],
+      wfhmanger: [{ value: null, disabled: true }],
     });
   }
   
   initializeTrainee(){
     this.traineeForm = this.fb.group({
-      empType: [ { value: "", disabled: true }],
-      dateOfJoining: [{ value: "", disabled: true }],
-      durationOfTrainee: [{ value: "", disabled: true }],
-      trainingEndDate: [{ value: "", disabled: true }]
+      empType: [ { value: null, disabled: true }],
+      dateOfJoining: [{ value: null, disabled: true }],
+      durationOfTrainee: [{ value: null, disabled: true }],
+      trainingEndDate: [{ value: null, disabled: true }]
     });
   }
   
@@ -197,7 +197,7 @@ export class OnboardingDetailsComponent {
       next: (data: any) => {
         this.Statusdetails = data as IStatus[];
         console.log(this.Statusdetails);
-        if (this.empinfo?.empstatus == 'Prospective') {
+        if (this.empdata?.empstatus == 'Prospective') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
@@ -208,7 +208,7 @@ export class OnboardingDetailsComponent {
           });
           console.log(filteredData);
           this.Statusdetails = filteredData;
-        } else if (this.empinfo?.empstatus == 'Active') {
+        } else if (this.empdata?.empstatus == 'Active') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
@@ -218,7 +218,7 @@ export class OnboardingDetailsComponent {
           });
           console.log(filteredData);
           this.Statusdetails = filteredData;
-        } else if (this.empinfo?.empstatus?.toLowerCase() == 'inactive') {
+        } else if (this.empdata?.empstatus?.toLowerCase() == 'inactive') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return (
@@ -229,7 +229,7 @@ export class OnboardingDetailsComponent {
           console.log(filteredData);
           this.Statusdetails = filteredData;
         }
-        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee') {
+        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active' 
@@ -238,7 +238,7 @@ export class OnboardingDetailsComponent {
           });
           this.Statusdetails = filteredData
         }
-        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee prospective') {
+        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee prospective') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active' || lowerCaseStatusName === 'trainee prospective';
@@ -246,7 +246,7 @@ export class OnboardingDetailsComponent {
 
           this.Statusdetails = filteredData
         }
-        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee active') {
+        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee active') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee active';
@@ -254,7 +254,7 @@ export class OnboardingDetailsComponent {
           this.Statusdetails = filteredData
 
         }
-        else if (this.empinfo?.empstatus?.toLowerCase() == 'trainee inactive') {
+        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee inactive') {
           const filteredData = data?.filter((status: IStatus) => {
             const lowerCaseStatusName = status?.statusname?.toLowerCase();
             return lowerCaseStatusName === 'trainee inactive';
@@ -347,47 +347,22 @@ export class OnboardingDetailsComponent {
     }
     
     const payload = {
-      employeeId: this.empinfo.employeeId,
-      title: this.empinfo.title,
-      firstName: this.empinfo.firstName,
-      middleName: this.empinfo.middleName,
-      lastName: this.empinfo.lastName,
-      gender: this.empinfo.gender,
-      dob: this.empinfo.dob,
-      bloodGroup: this.empinfo.bloodGroup,
-      maritalStatus: this.empinfo.maritalStatus,
-      emailaddress: this.empinfo.emailaddress,
-      workEmail: this.empinfo.workEmail,
-      contactnumber: this.empinfo.contactnumber,
-      workPhone: this.empinfo.workPhone,
-      emergencyName: this.empinfo.emergencyName,
-      emailId: this.empinfo.emailId,
-      relationShip: this.empinfo.relationShip,
-      mobileNumber: this.empinfo.mobileNumber,
-      emergencyName1: this.empinfo.emergencyName1,
-      emergencyEmail1: this.empinfo.emergencyEmail1,
-      emergencyNumber1: this.empinfo.emergencyNumber1,
-      relationship1: this.empinfo.relationship1,
-      profileUrl: this.empinfo.profileUrl,
-      fusionEmpId: this.empinfo.fusionEmpId,
-      empstatus: this.onboardingForm.get('status')?.value?.statusname ?? this.empinfo.empstatus,
-      dateOfJoining: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.dateOfJoining,
-      branchCode: this.onboardingForm.get('dateOfJoining')?.value ?? this.empinfo.branchCode,
-      probationEndDate: this.onboardingForm.get('probationEndDate')?.value ?? this.empinfo.probationEndDate,
-      probationStatus: this.empinfo.probationStatus ?? this.onboardingForm.get('probationStatus')?.value?.probationstatus1,
-      noticePeriod: this.onboardingForm.get('noticePeriodStatus')?.value?.name ?? this.empinfo.noticePeriod,
-      backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value?.backgroundcheckstatus1 ?? this.empinfo.backgroundCheckStatus,
-      issalaryhold: this.onboardingForm.get('salaryHold')?.value?.value ?? this.empinfo.issalaryhold,
-      pf: this.onboardingForm.get('pf')?.value?.value ?? this.empinfo.pf,
-      esic: this.onboardingForm.get('esic')?.value?.value ?? this.empinfo.esic,
-      pt: this.onboardingForm.get('pt')?.value?.value ?? this.empinfo.pt,
-      totalYearsOfExperience: this.onboardingForm.get('totalExperience')?.value ?? this.empinfo.totalYearsOfExperience,
-      allowWFH: this.onboardingForm.get('remoteLogin')?.value?.value ?? this.empinfo.allowWFH,
-      workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empinfo.workLocation,
-      wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empinfo.wfhManagerId,
-      empType : this.empinfo.empType,
-      substatus : this.empinfo.substatus,
-
+     ...this.empdata,
+      empstatus: this.onboardingForm.get('status')?.value?.statusname ?? this.empdata.empstatus,
+      dateOfJoining: this.onboardingForm.get('dateOfJoining')?.value ?? this.empdata.dateOfJoining,
+      branchCode: this.onboardingForm.get('dateOfJoining')?.value ?? this.empdata.branchCode,
+      probationEndDate: this.onboardingForm.get('probationEndDate')?.value ?? this.empdata.probationEndDate,
+      probationStatus: this.empdata.probationStatus ?? this.onboardingForm.get('probationStatus')?.value?.probationstatus1,
+      noticePeriod: this.onboardingForm.get('noticePeriodStatus')?.value?.name ?? this.empdata.noticePeriod,
+      backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value?.backgroundcheckstatus1 ?? this.empdata.backgroundCheckStatus,
+      issalaryhold: this.onboardingForm.get('salaryHold')?.value?.value ?? this.empdata.issalaryhold,
+      pf: this.onboardingForm.get('pf')?.value?.value ?? this.empdata.pf,
+      esic: this.onboardingForm.get('esic')?.value?.value ?? this.empdata.esic,
+      pt: this.onboardingForm.get('pt')?.value?.value ?? this.empdata.pt,
+      totalYearsOfExperience: this.onboardingForm.get('totalExperience')?.value ?? this.empdata.totalYearsOfExperience,
+      allowWFH: this.onboardingForm.get('remoteLogin')?.value?.value ?? this.empdata.allowWFH,
+      workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empdata.workLocation,
+      wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empdata.wfhManagerId,
       
     };
     if (payload.empstatus === 'Active' && payload.substatus === 'Offer Letter Accepted') {
@@ -400,6 +375,7 @@ export class OnboardingDetailsComponent {
         next: (data: any) => {
           this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
           this.getEmployeeId();
+          this.buttons = !this.buttons;
           this.onboardingForm.disable();
           console.log('Data updated successfully:', data);
         },

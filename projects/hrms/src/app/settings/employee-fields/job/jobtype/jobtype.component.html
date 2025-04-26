@@ -3,16 +3,16 @@
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter jobtype"
+                <input type="text" class="form-control custom-input" placeholder="Please enter job type"
                     formControlName="jobtype" aria-label="jobtype" aria-describedby="jobtype"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                 <span class="input-group-text" id="jobtype">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="JobtypeForm.invalid">{{'Add'|translate}}</button></span>
             </div>
             <div *ngIf="JobtypeForm.get('jobtype')?.touched && JobtypeForm.get('jobtype')?.invalid"
                 class="error-msg mt-2">
-                <div *ngIf="JobtypeForm.get('jobtype')?.errors?.['required']">{{'Jobtype is required'|translate}}</div>
+                <div *ngIf="JobtypeForm.get('jobtype')?.errors?.['required']">{{'Job Type is required'|translate}}</div>
             </div>
         </div>
     </form>
@@ -57,7 +57,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <p class="popup-heading mb-0">{{'Edit Jobtype'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Job Type'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -65,14 +65,14 @@
             </div>
             <div class="custom-main-popup-content ">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Jobtype'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Job Type'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="jobtype"
-                        placeholder="Please enter jobtype"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                        placeholder="Please enter job type"
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                     <div *ngIf="updateForm.get('jobtype')?.touched && updateForm.get('jobtype')?.invalid"
                         class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('jobtype')?.errors?.['required']">{{'Jobtype is required'|translate}}
+                        <div *ngIf="updateForm.get('jobtype')?.errors?.['required']">{{'Job Type is required'|translate}}
                         </div>
                     </div>
                 </div>

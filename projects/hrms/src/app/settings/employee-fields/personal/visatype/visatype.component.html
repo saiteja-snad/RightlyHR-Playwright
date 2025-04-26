@@ -4,14 +4,16 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter visa type"
-                    formControlName="Visatype" aria-label="visa" aria-describedby="visa"
-                    (keydown)="formValidations.restrictInput($event)">
+                    formControlName="Visatype" aria-label="visa" aria-describedby="visa" maxlength="50">
                 <span class="input-group-text" id="visa">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="VisaForm.invalid">{{'Add'|translate}}</button></span>
             </div>
             <div *ngIf="VisaForm.get('Visatype')?.touched && VisaForm.get('Visatype')?.invalid" class="error-msg mt-2">
-                <div *ngIf="VisaForm.get('Visatype')?.errors?.['required']">{{'Visa type is required'|translate}}</div>
+                <div *ngIf="VisaForm.get('Visatype')?.errors?.['required']">{{'Visa Type is required'|translate}}</div>
+            </div>
+            <div *ngIf="VisaForm.get('Visatype')?.errors?.['pattern']" class="error-msg mt-2">
+                {{ 'Spaces at start and special character are not allowed' | translate }}
             </div>
         </div>
     </form>
@@ -55,7 +57,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div >
-                    <p class="popup-heading mb-0">{{'Edit Visa Type'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Visa Type'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -63,16 +65,18 @@
             </div>
             <div class="custom-main-popup-content ">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Visatype'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Visa Type'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Visatype"
-                        placeholder="Please enter visa type"
-                        (keydown)="formValidations.restrictInput($event)">
+                        placeholder="Please enter visa type" maxlength="50">
                     <div *ngIf="updateForm.get('Visatype')?.touched && updateForm.get('Visatype')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('Visatype')?.errors?.['required']">{{'Visa type is required'|translate}}</div>
+                        <div *ngIf="updateForm.get('Visatype')?.errors?.['required']">{{'Visa Type is required'|translate}}</div>
+                    </div>
+                    <div *ngIf="updateForm.get('Visatype')?.errors?.['pattern']" class="error-msg mt-2">
+                        {{ 'Spaces at start and special character are not allowed' | translate }}
                     </div>
                 </div>
-                <div class="d-flex gap-5 w-100 pt-3">
+                <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close'|translate}}</button>
                     <button type="button" class="custom-btn btn-primary " (click)="updateVisa(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>

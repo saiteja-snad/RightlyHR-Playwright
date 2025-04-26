@@ -10,6 +10,7 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Reason</th>
+                    <th>Rejected Reason</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -26,19 +27,17 @@
                     <td>{{item.enddate| dateformat}}</td>
                     <td>
                         <div>
-                            <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">{{item.rejectedReason}}</p>
-                                    </div>
-                                </ng-template>
-                            </span>
+                            <a type="button" placement="top" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{item.rejectedReason}}</p>
+                            </ng-template>
                         </div>
                     </td>
                     <td>{{item.status}}</td>
+                    <td>{{item.status}}</td>
+
                 </tr>
                 }
                 @else {

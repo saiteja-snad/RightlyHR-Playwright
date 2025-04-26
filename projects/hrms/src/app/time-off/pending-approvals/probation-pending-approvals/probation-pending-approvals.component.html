@@ -55,10 +55,8 @@
                                     *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage && rbac.allowedToAccess('Permissions.view')"
                                     [routerLink]="['/time-off/pending-approvals/assessmentform']"
                                     (click)="setData(item)">Assessment form</button>
-
                             </div>
                         </td>
-
                     </tr>
                     }
 
@@ -72,28 +70,8 @@
                     }
 
                 }
-
                 </tbody>
             </table>
-        </div>
-        <div class="pagination-content pt-2 w-100">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <!-- Dropdown for Rows per Page -->
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <!-- Bootstrap Select -->
-                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-                </div>
-
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
         </div>
     </div>
 </div>

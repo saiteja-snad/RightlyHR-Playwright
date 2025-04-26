@@ -6,9 +6,7 @@
               <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
             </div>
           </div>
-    <!-- Add Input-->
-    <!-- <span id="salutation"><button type="submit" class="custom-btn btn-primary"
-            (click)="openModal(addExpensesmodal)" *ngIf="!rbac.allowedToAccess('Expense Types Tab.Create')">{{'Add'|translate}}</button></span> -->
+  
             <div class="custom-table-content mt-2">
                 <table class="w-100">
                     <thead>
@@ -18,7 +16,7 @@
                     <tbody>
                      
                         <tr *ngFor="let exp of expense">
-                            <td>{{exp.expenseType}}</td>
+                            <td>{{exp?.expenseType}}</td>
                             <td *ngIf="rbac.allowedToAccess('Expense Tab.update') || rbac.allowedToAccess('Expense Tab.delete')">
                                 <div class="d-flex gap-4">
                                     <!--Update-->

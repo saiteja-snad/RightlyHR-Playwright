@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -15,6 +14,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-wfh-for-your-role-requset',
@@ -22,13 +23,13 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
     CommonModule,
     NgbPopoverModule,
     FormsModule,
-    PaginatorModule,
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
     TranslateModule,
     ReactiveFormsModule,
     WfhsearchfilterPipe,
+    DataLoaderContentComponent
 ],
   templateUrl: './wfh-for-your-role-requset.component.html',
   styleUrl: './wfh-for-your-role-requset.component.scss',
@@ -54,19 +55,21 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   selectedLeaveData = {} as AttendanceRequest;
   searchValue: any;
+  spinnerLoader = false;
+  dataload = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
+    private signalService:SignalsService
+
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
-
-
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
@@ -82,31 +85,24 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    console.log(EmployeeId);
+    this.dataload = true;
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=ROLE`
       ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.leaves.next(response.data);
-          console.log(this.leaves);
         },
         error: (reason) => console.log(reason),
+        complete: () => {
+          this.dataload = false;
+        }
       });
   }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  onRowsChange() {
-    this.first = 0;
-  }
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-  }
-
   
   openApproveModal(content: any, request: AttendanceRequest) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -143,10 +139,8 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             );
             this.approveForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              wfh: true,
-            }));
+            this.signalService.wfhForRoleTriggerSignal.set(true);
+            this.signalService.wfhSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
@@ -160,6 +154,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   }
 
   handleReject(rejectForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
       const requestBody = {
@@ -181,18 +176,17 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              wfh: true,
-            }));
-           
+            this.signalService.wfhForRoleTriggerSignal.set(true);    
+            this.signalService.wfhSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }
@@ -217,10 +211,12 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             'Request Processed Successfully'
           );
           this.selectedLeaveData = {} as AttendanceRequest;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            wfh: true,
-          }));
+          // this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          //   ...status,
+          //   wfh: true,
+          // }));
+          this.signalService.wfhForRoleTriggerSignal.set(true);
+          this.signalService.wfhSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.modalService.dismissAll();

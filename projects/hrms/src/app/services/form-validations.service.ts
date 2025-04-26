@@ -10,6 +10,14 @@ export class FormValidationsService {
 
   restrictAlphabets(event: KeyboardEvent) {
     const key = event.key;
+    
+    if (
+      key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight' ||
+      key === 'Tab'
+    ) {
+      return;
+    }
+
     if (!/[0-9]/.test(key)) {
       event.preventDefault();  
     }
@@ -89,5 +97,22 @@ export class FormValidationsService {
       event.preventDefault();  
     }
   }
+
+
+  validateInput(control: AbstractControl | null) {
+    if (!control) return; // Ensure control exists
+    let value = control.value || ''; // Ensure value is a string
+
+    // Remove leading spaces
+    value = value.replace(/^\s+/, '');
+
+    // Prevent starting with special characters
+    if (/^[^a-zA-Z0-9]/.test(value)) {
+      value = value.replace(/^[^a-zA-Z0-9]+/, '');
+    }
+
+    control.setValue(value, { emitEvent: false });
+  }
+
 
 }

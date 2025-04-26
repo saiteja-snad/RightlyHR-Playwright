@@ -1,13 +1,12 @@
 <div class="custom-main-component-container">
     <div>
-          <!--Input search-->
-          <div class="input-group custom-search mb-3">
+        <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here"
-            aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
-
+        @if(!dataload){
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
@@ -24,110 +23,101 @@
                 </thead>
                 <tbody>
                     @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
-                    @if (((leaves | async) ?? []).length > 0 ) {
-                        @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ;  track leave.approvalHeader.id){
-                        <tr>
-                            <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
-                            <td>{{leave.entity.attendanceRequesterName}}</td>
-                            <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
-                            <td>{{leave.entity.attendanceRequestDurationType}}</td>
-                            <td>
-                                @if(leave.entity.attendanceRequestDescription != null && leave.entity.attendanceRequestDescription != '') {
-                                    <div>
-                                        <span>
-                                            <a type="button" placement="top" [ngbPopover]="reason">
-                                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                            </a>
-                                            <ng-template #reason>
-                                                <div>
-                                                    <p class="mb-0">{{leave.entity.attendanceRequestDescription
-                                                    }} </p>
-                                                </div>
-                                            </ng-template>
-                                        </span>
-                                    </div>
-                                }@else {
-                                    <div>
-                                        <span>-</span>
-                                    </div>
-                                }
-                            </td>
-                            <td>
-                                <div class="mt-2">
-                                    <span *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments
-                                                            ;else compoffcomments">
-                                        <span id="tooltip">
-                                            <div data-bs-toggle="modal" data-bs-target="#CommentsPopups"
-                                                (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
-                                                <i style="position:relative;z-index: -1;"
-                                                    class="bi bi-info-circle-fill "></i>
-                                            </div>
-                                        </span>
-                                    </span>
-                                    <ng-template #compoffcomments>-</ng-template>
-                                </div>
-                            </td>
-
-                            <td>{{leave.entity.attendanceRequestAppliedDate
-                                | dateformat}}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <a type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
+                    @if ((((leaves | async) ?? []) | wfhsearchfilter: searchValue).length > 0) {
+                    @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track
+                    leave.approvalHeader.id){
+                    <tr>
+                        <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
+                        <td>{{leave.entity.attendanceRequesterName}}</td>
+                        <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
+                        <td>{{leave.entity.attendanceRequestDurationType}}</td>
+                        <td>
+                            @if(leave.entity.attendanceRequestDescription != null &&
+                            leave.entity.attendanceRequestDescription != '') {
+                            <div>
+                                <span>
+                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                     </a>
-                                    <ul class="dropdown-menu py-0">
-                                        @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')"><a class="dropdown-item"><i
-                                                    class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
-                                        </li>
-                                        }
-                                        @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="handleProcess(leave)"><a class="dropdown-item" *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')"><i
-                                                    class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
-                                        </li>
-                                        }
-                                        <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.delete')"><a class="dropdown-item"><i
-                                                    class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
+                                    <ng-template #reason>
+                                        <div>
+                                            <p class="mb-0">{{leave.entity.attendanceRequestDescription
+                                                }} </p>
+                                        </div>
+                                    </ng-template>
+                                </span>
+                            </div>
+                            }@else {
+                            <div>
+                                <span>-</span>
+                            </div>
+                            }
+                        </td>
+                        <td>
+                            <div class="mt-2">
+                                <span *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments
+                                                            ;else compoffcomments">
+                                    <span id="tooltip">
+                                        <div data-bs-toggle="modal" data-bs-target="#CommentsPopups"
+                                            (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
+                                            <i style="position:relative;z-index: -1;"
+                                                class="bi bi-info-circle-fill "></i>
+                                        </div>
+                                    </span>
+                                </span>
+                                <ng-template #compoffcomments>-</ng-template>
+                            </div>
+                        </td>
+
+                        <td>{{leave.entity.attendanceRequestAppliedDate
+                            | dateformat}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu py-0">
+                                    @if( leave.approvalHeader.currentapprovalStage !=
+                                    leave.approvalHeader.finalapprovalStage){
+                                    <li (click)="openApproveModal(approval,leave)"
+                                        *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')"><a
+                                            class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                            translate}}</a>
+                                    </li>
+                                    }
+                                    @if( leave.approvalHeader.currentapprovalStage ==
+                                    leave.approvalHeader.finalapprovalStage){
+                                    <li (click)="handleProcess(leave)"><a class="dropdown-item"
+                                            *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')"><i
+                                                class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
+                                    </li>
+                                    }
+                                    <li (click)="openRejectModal(rejectmodal,leave)"
+                                        *ngIf="rbac.allowedToAccess('Workfromhome Tab.delete')"><a
+                                            class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                            translate}}</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
                     }
-                }
-                @else{
+                    }
+                    @else{
                     <tr>
                         <td colospan="8">
                             <app-no-data-found />
                         </td>
                     </tr>
                     }
-                }
+                    }
                 </tbody>
             </table>
         </div>
-        <div class="pagination-content pt-2 w-100">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <!-- Dropdown for Rows per Page -->
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <!-- Bootstrap Select -->
-                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-                </div>
+        }@else{<app-data-loader-content />}
 
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
-        </div>
+
     </div>
 </div>
-
-
 
 <ng-template #approval let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -146,25 +136,32 @@
                             <span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
                             formControlName="comments" maxlength="250"></textarea>
-                            <!-- Character counter -->
+                        <!-- Character counter -->
                         <div class="text-end small text-muted">
                             {{ approveForm.get('comments')?.value?.length || 0 }}/250
                         </div>
-                        <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+                        <div class="error-msg"
+                            *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
                             <div *ngIf="approveForm.get('comments')?.errors?.['required']">
-                              Comment is required.
+                                Comment is required.
                             </div>
                             <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">
-                              Comment cannot exceed 250 characters.
+                                Comment cannot exceed 250 characters.
                             </div>
-                          </div>
+                        </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
                         translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
-                        translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
+                        @if(spinnerLoader){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Approve' | translate}}</span>
+                        }
+                    </button>
                 </div>
             </form>
         </div>
@@ -188,8 +185,9 @@
                     <div class="col-md-12 mb-3">
                         <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
                             <span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection"
-                            formControlName="comments" maxlength="250"></textarea>
+                        <textarea class="form-control custom-input" id="comments"
+                            placeholder="Please provide reason for rejection" formControlName="comments"
+                            maxlength="250"></textarea>
                         <div class="text-end small text-muted">
                             {{ rejectForm.get('comments')?.value?.length || 0 }}/250
                         </div>
@@ -211,8 +209,14 @@
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
                         translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
-                        translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="rejectForm.invalid">
+                        @if(spinnerLoader){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                        }@else {
+                        <span>{{'Reject'| translate }}</span>
+                        }
+                    </button>
                 </div>
             </form>
         </div>

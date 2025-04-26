@@ -3,7 +3,7 @@
     <div>
       <p class="component-header cursor mb-0">On Behalf Of Approvals</p>
     </div>
-  
+
     <div class="d-flex gap-3 align-items-center">
       <label class="employee-label" for="teamManager">Select Employee</label>
       <div class="custom-p-select-content">
@@ -22,18 +22,16 @@
       <div class="component-side-nav-tabs-container py-3">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link" [class.active]="activeTab === 'timeOff'" (click)="setActiveTab('timeOff')">Time Off ({{
-              timeOffCount }})</a>
+            <a class="nav-link" [class.active]="activeTab === 'timeOff'" (click)="setActiveTab('timeOff')">Time Off ({{ timeOffCount }})</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [class.active]="activeTab === 'compOff'" (click)="setActiveTab('compOff')">Comp Off ({{
-              compOffCount }})</a>
+            <a class="nav-link" [class.active]="activeTab === 'compOff'" (click)="setActiveTab('compOff')">Comp Off ({{ compOffCount }})</a>
           </li>
-    
+
           <li class="nav-item">
             <a class="nav-link" [class.active]="activeTab === 'wfh'" (click)="setActiveTab('wfh')">WFH ({{ wfhCount }})</a>
           </li>
-    
+
           <li class="nav-item">
             <a class="nav-link" [class.active]="activeTab === 'permissions'"
               (click)="setActiveTab('permissions')">Permissions ({{ permissionsCount }})</a>
@@ -41,7 +39,7 @@
         </ul>
       </div>
     </div>
-  
+
     <div class="custom-setting-right-content p-3">
       <div class="tab-content">
         <div *ngIf="activeTab === 'timeOff'">

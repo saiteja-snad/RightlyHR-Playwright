@@ -54,7 +54,23 @@
                     </td>
                     <td>{{exp.jobTitle}}</td>
                     <td>{{ exp.isPresent ? 'Yes' : 'No' }}</td>
-                    <td></td>
+                    <td class="text-nowrap">
+                        <span *ngIf="exp.attachment == null || exp.attachment == ''; else attachment">
+                            <div class="centerhypen">-</div>
+                        </span>
+                        <ng-template #attachment>
+                            <div
+                                *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.endsWith('jpeg') || exp.attachment.endsWith('png') ;else downloadView">
+                                <a type="button" class="view-btn" (click)="onViewClick(exp.attachment)">
+                                    <i class="bi bi-paperclip me-1"></i>View
+                                </a>
+                            </div>
+                            <ng-template #downloadView>
+                                <a type="button" class="view-btn" (click)="onSelectDownload(exp.attachment)"><i
+                                        class="bi bi-download me-2"></i>Download</a>
+                            </ng-template>
+                        </ng-template>
+                    </td>
                     <td>
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -78,20 +94,22 @@
         <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigateemergency()">Emergency Details</button>
         <!-- <button class="btn  btn-outline-primary rounded-pill pt-2 pb-2 ps-5 pe-5"  (click)="navigatePrevious()">Emergency Details</button> -->
         <div>
-            <button *ngIf="this.prosempdata.experienceType == 'Trainee' && getempexpdata.length <= 0"
+            <button *ngIf="this.empDetails.experienceType == 'Trainee' && getempexpdata.length <= 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
                 
-            <button *ngIf="this.prosempdata.experienceType == 'Trainee' && getempexpdata.length > 0"
+            <button *ngIf="this.empDetails.experienceType == 'Trainee' && getempexpdata.length > 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
 
-            <button *ngIf="this.prosempdata.experienceType == 'Fresher' && getempexpdata.length <= 0"
+            <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length <= 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
 
-            <button *ngIf="this.prosempdata.experienceType == 'Fresher' && getempexpdata.length > 0"
+            <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length > 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
 
-            <button *ngIf="this.prosempdata.experienceType == 'Experienced' && getempexpdata.length > 0" 
+            <button *ngIf="this.empDetails.experienceType == 'Experienced' && (getempexpdata.length > 0)" 
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                <button *ngIf="this.empDetails.experienceType == 'Experienced' && (getempexpdata.length <= 0)" 
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
         </div>
     </div>
 </div>
@@ -109,6 +127,28 @@
                 <button class="custom-btn btn-secondary w-100" (click)="close()">No</button>
                 <button class="custom-btn btn-primary w-100" (click)="deleteExperienceDetails(selectExperience)">yes</button>
             </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Image view popup-->
+<ng-template #viewpopup let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">View</p>
+            </div>
+            <div>
+                <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="text-center w-100 p-4">
+            <div *ngIf="!DocImageUrl; else imageView">
+                <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+            </div>
+            <ng-template #imageView>
+                <img [src]="DocImageUrl" alt="Image" class="view-image w-50" />
+            </ng-template>
         </div>
     </div>
 </ng-template>

@@ -591,7 +591,7 @@ export class TraineeOfferLetterComponent {
       next: (res: any) => {
         if (res.statusCode == 201) {
           this.result = res.employeeData;
-          this.downLoadDocument(this.result);
+          this.downLoadDocument(res);
           if (this.result.employeeId != null) {
             const jobdata = {
               employeeId: this.result.employeeId,
@@ -690,7 +690,7 @@ export class TraineeOfferLetterComponent {
     let d: Date = new Date();
     const file = new File([blob], fileName, { type: 'application/pdf', });
     this.generatedfile = file;
-    this.generatingEmployeeId = EmpValue.empId;
+    this.generatingEmployeeId = EmpValue.employeeData.employeeId;
     this.loading = false;
     this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully'); 
   }

@@ -89,7 +89,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   initializeForm() {
     this.documentForm = this.fb.group({
       documentType: [{ value: '', disabled: true }, Validators.required],
-      documentNumber: ['', [Validators.required, Validators.minLength(this.IdentityMinNumber), Validators.maxLength(this.IdentityMaxNumber), Validators.pattern(this.pattern)]],
+      documentNumber: ['', [ Validators.minLength(this.IdentityMinNumber), Validators.maxLength(this.IdentityMaxNumber), Validators.pattern(this.pattern)]],
       docFile: [null, Validators.required],
     });
   }
@@ -168,7 +168,19 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   onClickEditDocument(data: any) {
 
     this.documentSelectFields = JSON.parse(JSON.stringify(data));
-    this.isMandatory = false;
+    this.isMandatory = this.documentSelectFields.isMandatory;
+    if(this.isMandatory){
+      this.documentForm
+      .get('documentNumber')
+      ?.setValidators([
+        Validators.required,
+        Validators.pattern(this.pattern),
+        Validators.minLength(this.IdentityMinNumber),
+        Validators.maxLength(this.IdentityMaxNumber),
+      ]);
+
+    this.documentForm.get('documentNumber')?.updateValueAndValidity();
+    }
     if (this.documentSelectFields.documentType?.toLowerCase() === "pan") {
       this.isMandatory = this.documentSelectFields.isMandatory
       this.IdentityMaxNumber = 10;
@@ -178,16 +190,18 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
          // Set value false or clear the value if needed
          this.documentForm.get('documentNumber')?.setValue('');
        // Apply validators dynamically
-       this.documentForm
-       .get('documentNumber')
-       ?.setValidators([
-         Validators.required,
-         Validators.pattern(this.pattern),
-         Validators.minLength(this.IdentityMinNumber),
-         Validators.maxLength(this.IdentityMaxNumber),
-       ]);
+       if(this.isMandatory){
+        this.documentForm
+        .get('documentNumber')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern(this.pattern),
+          Validators.minLength(this.IdentityMinNumber),
+          Validators.maxLength(this.IdentityMaxNumber),
+        ]);
 
-     this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      }
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "aadhaar") {
       this.isMandatory = this.documentSelectFields.isMandatory;
@@ -201,7 +215,8 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       this.errorMsg = 'Alphabets and special characters are not allowed';
 
       // Apply validators dynamically
-      this.documentForm
+      if(this.isMandatory){
+        this.documentForm
         .get('documentNumber')
         ?.setValidators([
           Validators.required,
@@ -211,6 +226,8 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
         ]);
 
       this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      }
+     
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "uan") {
       this.isMandatory = this.documentSelectFields.isMandatory;
@@ -221,16 +238,18 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       // Set value false or clear the value if needed
       this.documentForm.get('documentNumber')?.setValue('');
       // Apply validators dynamically
-      this.documentForm
-      .get('documentNumber')
-      ?.setValidators([
-        Validators.required,
-        Validators.pattern(this.pattern),
-        Validators.minLength(this.IdentityMinNumber),
-        Validators.maxLength(this.IdentityMaxNumber),
-      ]);
+      if(this.isMandatory){
+        this.documentForm
+        .get('documentNumber')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern(this.pattern),
+          Validators.minLength(this.IdentityMinNumber),
+          Validators.maxLength(this.IdentityMaxNumber),
+        ]);
 
-    this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      }
     }
   }
 
@@ -408,11 +427,12 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   //function to submit the documents 
   submit() {
+    this.loadingcircle = true;
     let empId = this.prosempdata.employeeId;
     let data = { empId: this.prosempdata.employeeId };
     this.subscription = this.http.putData(`PreonboardingDocuments/submit/${empId}`, data).subscribe({
       next: (data: any) => {
-        this.loadingcircle = true;
+       
         if (data == true) {
           this.submitEmail();
         }

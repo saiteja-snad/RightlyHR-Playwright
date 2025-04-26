@@ -162,7 +162,7 @@ export class PersonalDetailsComponent implements OnInit {
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
         addressLine1: [null, [Validators.required,Validators.maxLength(150)]],
-        addressLine2: [null, [Validators.required,Validators.maxLength(150)]],
+        addressLine2: [null, [Validators.maxLength(150)]],
         city: [null, [Validators.required,Validators.maxLength(50)]],
         state: [null, [Validators.required,Validators.maxLength(50)]],
         country: [null, [Validators.required ,Validators.maxLength(50)]],
@@ -171,12 +171,12 @@ export class PersonalDetailsComponent implements OnInit {
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: [null, [Validators.maxLength(150)]],
+        addressLine1: [null, [Validators.required,Validators.maxLength(150)]],
         addressLine2: [null, [Validators.maxLength(150)]],
-        city: [null, [Validators.maxLength(50)]],
-        state: [null, [Validators.maxLength(50)]],
-        country: [null, [Validators.maxLength(50)]],
-        zipCode: [null, [Validators.maxLength(6),Validators.pattern('^[0-9]+$')]],
+        city: [null, [Validators.required,Validators.maxLength(50)]],
+        state: [null, [Validators.required,Validators.maxLength(50)]],
+        country: [null, [Validators.required,Validators.maxLength(50)]],
+        zipCode: [null, [Validators.required,Validators.maxLength(6),Validators.pattern('^[0-9]+$')]],
       }),
     });
   }

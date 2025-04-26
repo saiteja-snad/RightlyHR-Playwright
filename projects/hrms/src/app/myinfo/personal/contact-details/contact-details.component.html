@@ -18,25 +18,33 @@
     <form [formGroup]="contactForm">
       <div class="row">
         @if(this.rbac.allowedToAccess('Contact Details.view')){
-        <div class="col-md-6 col-lg-4 mb-3">
-          <label for="workNumber" class="form-label custom-label mb-2">Work Number<span
+        <div class="col-lg-4 col-md-6 mb-3">
+          <label for="location" class="form-label custom-label mb-2">Mobile Number<span
               class="text-danger">*</span></label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-            <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-              [selectedCountryCode]="http.selectedworkcoutrycode()" [countryListConfig]="countryListConfig"
-              class="country-input" (onCountryChange)="onCountryChangeworknumber($event)"
-              [ngClass]="{ 'disabled': !buttons }">
-            </lib-country-list>
-            <input type="text" class="form-control custom-input" formControlName="workNumber" autocomplete="off"
-              placeholder="Please enter work number" id="phonenumbers" aria-describedby="phonenumbers"
-              [value]="contactForm.get('workNumber')?.value ? formatPhoneNumber(contactForm.get('workNumber')?.value) : ''"
-              required>
+            <div *ngIf="!loading; else loadingTemplate">
+              <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                [selectedCountryCode]="selectedworkcoutrycode()" [countryListConfig]="countryListConfig"
+                class="country-input" (onCountryChange)="onCountryChange($event)">
+              </lib-country-list>
+            </div>
+            <ng-template #loadingTemplate>
+              <p>Loading...</p>
+            </ng-template>
+            <input type="text" class="form-control custom-input" formControlName="workNumber"  (input)="onWorkNumberInput()"
+              placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+            
+              autocomplete="off" required>
           </div>
-          <div class="error-msg"
-            *ngIf="contactForm.get('workNumber')?.invalid && contactForm.get('workNumber')?.touched">
-            <div *ngIf="contactForm.get('workNumber')?.errors?.['required']">Work number is required</div>
-            <div *ngIf="contactForm.get('workNumber')?.hasError('invalidPhoneNumber')">The phone number is not valid
-              for the selected country.</div>
+          <div class="error-msg my-1"
+            *ngIf="contactForm.get('workNumber')?.invalid &&  (contactForm.get('workNumber')?.touched || contactForm.get('workNumber')?.dirty)">
+            <div *ngIf="contactForm.get('workNumber')?.hasError('required')">Mobile number is
+              required</div>
+            <div *ngIf="contactForm.get('workNumber')?.hasError('pattern')">Please enter a valid
+              mobile number</div>
+            <div *ngIf="contactForm.get('workNumber')?.hasError('invalidPhoneNumber')">
+              The phone number is not valid for the selected country
+            </div>
           </div>
         </div>}
         @if(this.rbac.allowedToAccess('Contact Details.view')){
@@ -44,23 +52,29 @@
           <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
               class="text-danger">*</span></label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-
-            <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-              [selectedCountryCode]="http.selectedpersonalnumbercode()" [countryListConfig]="countryListConfig"
-              class="country-input" (onCountryChange)="onCountryChangepersonalcode($event)"
-              [ngClass]="{ 'disabled': !buttons }">
-            </lib-country-list>
-            <input type="text" class="form-control custom-input" formControlName="phoneNumber" autocomplete="off"
+            <div *ngIf="!loading; else loadingTemplate">
+              <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                [selectedCountryCode]="selectedpersonalnumbercode()" [countryListConfig]="countryListConfig"
+                class="country-input" (onCountryChange)="onCountryphoneChange($event)">
+              </lib-country-list>
+            </div>
+            <ng-template #loadingTemplate>
+              <p>Loading...</p>
+            </ng-template>
+            <input type="text" class="form-control custom-input" formControlName="phoneNumber"   (input)="onPhoneNumberInput()"
               placeholder="Please enter your phone number" id="phonenumbers" aria-describedby="phonenumbers"
-              [value]="contactForm.get('phoneNumber')?.value ? formatPhoneNumber(contactForm.get('phoneNumber')?.value) : ''"
-              required>
+            
+              autocomplete="off" required>
           </div>
-
-          <div class="error-msg"
-            *ngIf="contactForm.get('phoneNumber')?.invalid && contactForm.get('phoneNumber')?.touched">
-            <div *ngIf="contactForm.get('phoneNumber')?.errors?.['required']">Phone number is required</div>
-            <div *ngIf="contactForm.get('phoneNumber')?.hasError('invalidPhoneNumber')">The phone number is not valid
-              for the selected country.</div>
+          <div class="error-msg my-1"
+            *ngIf="contactForm.get('phoneNumber')?.invalid &&  (contactForm.get('phoneNumber')?.touched || contactForm.get('phoneNumber')?.dirty)">
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('required')">Mobile number is
+              required</div>
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('pattern')">Please enter a valid
+              mobile number</div>
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('invalidPhoneNumber')">
+              The phone number is not valid for the selected country
+            </div>
           </div>
         </div>}
         @if(this.rbac.allowedToAccess('Contact Details.view')){

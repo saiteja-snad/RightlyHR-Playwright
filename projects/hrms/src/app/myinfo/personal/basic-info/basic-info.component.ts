@@ -31,6 +31,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     { name: 'O+' },
     { name: 'O-' }
   ];
+  
+  salutationValidationcheck: boolean = false
   Gender: IGender[] = [];
   titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
@@ -47,6 +49,14 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getMaritaldetails()
     this.getTitle()
     this.basicInfoForm.disable();
+    this.basicInfoForm.get('salutation')?.valueChanges.subscribe(() => {
+      this.onsalutationvalidation();
+    });
+  
+    this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
+      this.onsalutationvalidation();
+    });
+  
   }
 
   initializeForm(): void {
@@ -189,6 +199,25 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.basicInfoForm.disable();
       this.basicInfoForm.reset();
       this.getEmployeeId();
+    }
+  }
+
+  onsalutationvalidation(): void {
+    const gender = this.basicInfoForm.get('gender')?.value;
+    const title = this.basicInfoForm.get('salutation')?.value;
+  
+    const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
+    const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
+  
+    if (
+      (genderLower === 'male' && titleLower === 'mr.') ||
+      (genderLower === 'female' && ['ms.', 'miss.', 'mrs.'].includes(titleLower)) ||
+      ((genderLower === 'other' || genderLower === 'others') && (titleLower === 'other' || titleLower === 'others')) ||
+      ((genderLower === 'male' || genderLower === 'female') && (titleLower == null || titleLower === ''))
+    ) {
+      this.salutationValidationcheck = false; // Valid combination
+    } else {
+      this.salutationValidationcheck = true; // Invalid combination
     }
   }
 

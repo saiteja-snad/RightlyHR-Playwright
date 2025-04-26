@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, effect, signal } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -11,16 +11,14 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { IJob } from '../../../Interfaces/job-model';
-import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-emergency-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, Select,NgxCountriesDropdownModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss'
 })
-export class EmergencyContactDetailsComponent {
+export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 
   subscription!: Subscription
   buttons = false;
@@ -28,175 +26,138 @@ export class EmergencyContactDetailsComponent {
   familyRelations: IRelation[] = [];
   emergencyContactForm!: FormGroup;
   selectedDialCode: any;
+  selectedCountryCodegflag: any;
   selectedDialCode1: any;
-  selectedCountryCode1: any;
+  selectedCountryflag: any;
   formattedPhoneNumber: string = '';
   selectedCountryCode: any;
-    selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
-      hideCode: true,
-      hideName: true
-    };
-    countryListConfig = {
-      hideCode: true,
-    };
-    mobileNumberData: IphoneNumberData | null = null;
-    empinfo = {} as IJob; 
-
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private cd: ChangeDetectorRef, 
-     public formValidation: FormValidationService, private conformationPopup: OpenModalService, public http: HttpService,public rbac: RbacService) { 
+  loading = true;
+  selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
+    hideCode: true,
+    hideName: true
+  };
+  countryListConfig = {
+    hideCode: true,
+  };
+  selectedemergencycoutrycode = signal<any>('');
+  selectedemergency1coutrycode = signal<any>('');
+  mobileNumberData: IphoneNumberData | null = null;
+  empinfo: any
+  employedata = {} as any;
+  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { 
     effect(() => {
-
-      this.http.selectedCountryCodeSignal.set(this.selectedCountryCode)
-      this.http.selectedCountryCode2Signal.set(this.selectedCountryCode1)
-    });
+      this.selectedemergencycoutrycode.set(this.selectedDialCode);
+      this.selectedemergency1coutrycode.set(this.selectedDialCode1);
+    })
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+ 
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getEmployeeId();
     this.getFamilyRelations();
     this.initializeForm();
-    this.emergencyContactForm.disable(); // Disable the form initially
+  
+    this.emergencyContactForm.get('contact1Phone')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
+   
+   
+  }
+  showButtons() {
+    this.buttons = !this.buttons
   }
 
   initializeForm(): void {
     this.emergencyContactForm = this.fb.group({
       contact1Name: ['', Validators.required],
       contact1Email: ['', [Validators.required, Validators.email]],
-      contact1Phone: ['', ],
+      contact1Phone: ['', Validators.required],
       contact1Relationship: ['', Validators.required],
+      contact1CountryCode: ['', Validators.required],
+      contact2CountryCode: ['', Validators.required],
       contact2Name: ['', Validators.required],
       contact2Email: ['', [Validators.required, Validators.email]],
-      contact2Phone: ['', ],
+      contact2Phone: ['', Validators.required],
       contact2Relationship: ['', Validators.required],
     });
-    this.selectedCountryCode = this.empinfo.emergencycode;
-    this.selectedDialCode = this.empinfo.emergencycode;
-    this.selectedCountryCode1 = this.empinfo.emergencycode1;
-    this.selectedDialCode1 = this.empinfo.emergencycode1;
+    this.emergencyContactForm.disable();
   }
-  showButtons() {
-    this.buttons = !this.buttons
-  }
-  //employedata
+
   getEmployeeId(): void {
+    this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.empinfo = data;
-
-        this.http.selectedCountryCodeSignal.set(data.emergencycode || '');
-        this.http.selectedCountryCode2Signal.set(data.emergencycode1)
-        this.cd.detectChanges();
-      
+        this.employedata = data;
         this.patchForm(data);
+        this.loading = false;
+        this.selectedemergencycoutrycode.set(data.emergencynumbercountryflag);
+        this.selectedemergency1coutrycode.set(data.emergencyphonecountryflag);
        
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
   patchForm(data: any): void {
-  
     const contact1Relationship = this.familyRelations.find(
       (relation) => relation.relationship1 === data.relationShip
     ) || null;
-  
+
     const contact2Relationship = this.familyRelations.find(
       (relation) => relation.relationship1 === data.relationship1
     ) || null;
 
 
     this.emergencyContactForm.patchValue({
-      // Bind first emergency contact country code
+      
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
       contact1Phone: data.mobileNumber || '', // Bind first emergency contact phone
-      contact1Relationship:contact1Relationship || '', // Bind first emergency contact relationship
+      contact1Relationship: contact1Relationship || '', // Bind first emergency contact relationship
       contact2Name: data.emergencyName1 || '', // Bind second emergency contact name
       contact2Email: data.emergencyEmail1 || '', // Bind second emergency contact email
       contact2Phone: data.emergencyNumber1 || '', // Bind second emergency contact phone
-      contact2Relationship: contact2Relationship  || '', // Bind second emergency contact relationship
+      contact2Relationship: contact2Relationship || '', // Bind second emergency contact relationship
     });
-    console.log('Selected Dial Code 1:', this.selectedDialCode);
-    console.log('Selected Dial Code 2:', this.selectedDialCode1);
+
+  }
+
+  enableForm(): void {
+    this.buttons = true;
+    this.buttons2 = true;
+    this.emergencyContactForm.enable();
   }
 
   disableForm(): void {
     this.buttons = false;
     this.buttons2 = false;
     this.emergencyContactForm.disable();
-    this.getEmployeeId()
-
-  }
-  enableForm(): void {
-    this.buttons = true;
-    this.emergencyContactForm.get('contact1Name')?.enable();
-    this.emergencyContactForm.get('contact1Email')?.enable();
-    this.emergencyContactForm.get('contact1Phone')?.enable();
-    this.emergencyContactForm.get('contact1Relationship')?.enable();
-    this.buttons2 = true;
-    this.emergencyContactForm.get('contact2Name')?.enable();
-    this.emergencyContactForm.get('contact2Email')?.enable();
-    this.emergencyContactForm.get('contact2Phone')?.enable();
-    this.emergencyContactForm.get('contact2Relationship')?.enable();
   }
 
- 
 
- 
   saveForm(): void {
     const formValue = this.emergencyContactForm.value;
     // Clean and format phone numbers
     const cleanPhoneNumber = (phone: any): string => {
-      if (!phone) return ''; 
-      return String(phone).replace(/\s+/g, '').replace(/-/g, ''); 
+      if (!phone) return ''; // Return an empty string if phone is null or undefined
+      return String(phone).replace(/\s+/g, '').replace(/-/g, ''); // Convert to string and remove spaces and dashes
     };
 
-  const contact1Phone = cleanPhoneNumber(formValue.contact1Phone || this.empinfo.mobileNumber || '');
-  const contact2Phone = cleanPhoneNumber(formValue.contact2Phone || this.empinfo.emergencyNumber1 || '');
+    const contact1Phone = cleanPhoneNumber(formValue.contact1Phone || this.employedata.mobileNumber || '');
+    const contact2Phone = cleanPhoneNumber(formValue.contact2Phone || this.employedata.emergencyNumber1 || '');
     const updatePayload = {
-      employeeId: this.empinfo.employeeId,
-      title: this.empinfo.title || null,
-      firstName: this.empinfo.firstName,
-      middleName: this.empinfo.middleName,
-      lastName: this.empinfo.lastName,
-      gender: this.empinfo.gender || null,
-      dob: this.empinfo.dob,
-      bloodGroup: this.empinfo.bloodGroup || null,
-      maritalStatus: this.empinfo.maritalStatus || null,
-      empStatus: this.empinfo.empstatus,
-      emailaddress: this.empinfo.emailaddress || null,
-      workEmail: this.empinfo.workEmail || null,
-      contactnumber: this.empinfo.contactnumber || null,
-      workPhone: this.empinfo.workPhone || null,
-      emergencyName: formValue.contact1Name || this.empinfo.emergencyName,
-      emailId: formValue.contact1Email || this.empinfo.emailId,
+      ...this.employedata,
+      emailId: formValue.contact1Email || this.employedata.emailId,
       emergencycode: this.selectedDialCode,
       emergencycode1: this.selectedDialCode1,
-      relationShip: this.emergencyContactForm.get('contact1Relationship')?.value?.relationship1 || this.empinfo.relationShip,
-      mobileNumber: contact1Phone ,
-      emergencyName1: formValue.contact2Name || this.empinfo.emergencyName1,
-      emergencyEmail1: formValue.contact2Email || this.empinfo.emergencyEmail1,
-      emergencyNumber1:contact2Phone ,
-      relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.empinfo.relationship1,
-      profileUrl : this.empinfo.profileUrl,
-      fusionEmpId: this.empinfo.fusionEmpId,
-      dateOfJoining: this.empinfo.dateOfJoining,
-      branchCode: this.empinfo.branchCode,
-      probationEndDate: this.empinfo.probationEndDate,
-      probationStatus: this.empinfo.probationStatus,
-      noticePeriod: this.empinfo.noticePeriod,
-      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-      issalaryhold:this.empinfo.issalaryhold,
-      pf: this.empinfo.pf,
-      esic:this.empinfo.esic,
-      pt: this.empinfo.pt,
-      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
-      allowWFH: this.empinfo.allowWFH,
-      workLocation:this.empinfo.workLocation,
-      wfhManagerId: this.empinfo.wfhManagerId,
-      mobilePhoneCountryCode:this.empinfo.mobilePhoneCountryCode,
-      workPhoneCountryCode: this.empinfo.workPhoneCountryCode
+      emergencyName: formValue.contact1Name || this.employedata.emergencyName,
+      relationShip: this.emergencyContactForm.get('contact1Relationship')?.value?.relationship1 || this.employedata.relationShip,
+      mobileNumber: contact1Phone,
+      emergencyName1: formValue.contact2Name || this.employedata.emergencyName1,
+      emergencyEmail1: formValue.contact2Email || this.employedata.emergencyEmail1,
+      emergencyNumber1: contact2Phone,
+      relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.employedata.relationship1,
+      emergencyphonecountryflag: this.selectedCountryflag,
+      emergencynumbercountryflag: this.selectedCountryCodegflag,
     };
 
 
@@ -205,8 +166,10 @@ export class EmergencyContactDetailsComponent {
         next: (data: any) => {
           console.log('Data updated successfully:', data);
           this.modalService.dismissAll();
-          this.getEmployeeId()
-         this.emergencyContactForm.disable()
+          this.emergencyContactForm.disable();
+          this.buttons = false; // Disable the button after successful update
+          this.buttons2 = false; // Disable the button after successful update
+          this.getEmployeeId(); // Refresh the employee data
           this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
         },
         error: (reason: any) => {
@@ -228,51 +191,51 @@ export class EmergencyContactDetailsComponent {
       });
   }
 
-  onCountryChange(country: any): void {
-    // Check if the selected country is actually changing
-    if (this.selectedDialCode === country.code) {
-      return; // No change, do not apply validators again
-    }
-  
-    // Country has changed - update values
-    this.selectedCountryCode = country.dialling_code;
-    this.selectedDialCode = country.code;
-  
-    const contact1PhoneControl = this.emergencyContactForm.get('contact1Phone');
-  
-    if (country?.code) {
-      // Country selected: apply validator
-      contact1PhoneControl?.setValidators([this.phoneNumberValidator()]);
-    } else {
-      // No country selected: remove validators
-      contact1PhoneControl?.clearValidators();
-    }
-  
-    contact1PhoneControl?.updateValueAndValidity();
+ 
+  onCountryChange(country: any) {
+    this.selectedDialCode = country.dialling_code;
+    this.selectedCountryCodegflag = country.code;
+    console.log('Selected country code:', this.selectedCountryCodegflag);
+    console.log('Selected country dial code:', this.selectedDialCode);
+    this.emergencyContactForm.get('contact1CountryCode')?.setValue(country.dialling_code);
+    this.emergencyContactForm.get('contact1CountryCode')?.markAsTouched();
+    this.emergencyContactForm.get('contact1Phone')?.setValidators([Validators.required, this.phoneNumberValidator( this.selectedCountryCodegflag)]);
+    this.emergencyContactForm.get('contact1Phone')?.updateValueAndValidity();
+    this.employedata.emergencycode = country.dialling_code;
+    this.employedata.emergencynumbercountryflag = country.code;
   }
-  
-
+  onEmergencyContact1PhoneInput(){
+    const phoneNumberControl = this.emergencyContactForm.get('contact1Phone');
+    if (phoneNumberControl?.value) {
+      const formattedValue = this.formatPhoneNumber(phoneNumberControl.value, this.selectedCountryCodegflag);
+      phoneNumberControl.setValue(formattedValue, { emitEvent: false });
+    }
+  }
   onCountryChange1(country: any): void {
-    // Only apply validators if the user changes the country
-    if (this.selectedDialCode1 === country.code) {
-      return;
-    }
-  
-    // Country has changed - update values and apply validator
-    this.selectedCountryCode1 = country.dialling_code;
-    this.selectedDialCode1 = country.code;
-  
-    const control = this.emergencyContactForm.get('contact2Phone');
-  
-    control?.setValidators([this.phoneNumberValidator()]);
-    control?.updateValueAndValidity();
+    this.selectedDialCode = country.dialling_code;
+    this.selectedCountryflag = country.code;
+    console.log('Selected country code:', this.selectedDialCode);
+    console.log('Selected country dial code:', this.selectedDialCode);
+    this.emergencyContactForm.get('contact2CountryCode')?.setValue(country.dialling_code);
+    this.emergencyContactForm.get('contact2CountryCode')?.markAsTouched();
+    this.emergencyContactForm.get('contact2Phone')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryflag)]);
+    this.emergencyContactForm.get('contact2Phone')?.updateValueAndValidity();
+    this.employedata.emergencycode1 = country.dialling_code;
+    this.employedata.emergencyphonecountryflag = country.code;
   }
-  
 
-  formatPhoneNumber(value: any): string {
-    if (!this.selectedDialCode || !value) return ''; // Return an empty string if value is null/undefined
+  onEmergencyContact2PhoneInput(){
+    const phoneNumberControl = this.emergencyContactForm.get('contact2Phone');
+    if (phoneNumberControl?.value) {
+      const formattedValue = this.formatPhoneNumber(phoneNumberControl.value, this.selectedCountryflag);
+      phoneNumberControl.setValue(formattedValue, { emitEvent: false });
+    }
+  }
+
+  formatPhoneNumber(value: any,countryCode:any): string {
+    if (!countryCode || !value) return ''; // Return an empty string if value is null/undefined
     const stringValue = String(value); // Ensure the value is converted to a string
-    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedDialCode);
+    const phoneNumber = parsePhoneNumberFromString(stringValue, countryCode);
     if (phoneNumber && phoneNumber.isValid()) {
       this.formattedPhoneNumber = phoneNumber.formatInternational();
       return phoneNumber.formatNational();
@@ -280,15 +243,13 @@ export class EmergencyContactDetailsComponent {
     return stringValue; // Return the original value if parsing fails
   }
 
-  phoneNumberValidator() {
+ phoneNumberValidator(countryCode:any) {
     return (control: AbstractControl) => {
-      const value = control.value;
-      if (!this.selectedDialCode || !value) {
+      const value = String(control.value);
+      if (!countryCode || !value) {
         return null;
       }
-  
-      const phoneNumber = parsePhoneNumberFromString(String(value), this.selectedDialCode);
-  
+      const phoneNumber = parsePhoneNumberFromString(value,countryCode);
       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {
@@ -296,7 +257,7 @@ export class EmergencyContactDetailsComponent {
       }
     };
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

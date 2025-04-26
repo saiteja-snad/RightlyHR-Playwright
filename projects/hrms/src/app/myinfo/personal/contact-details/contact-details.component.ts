@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,36 +12,42 @@ import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule,ReactiveFormsModule,NgxCountriesDropdownModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss'
 })
-export class ContactDetailsComponent implements OnInit,OnDestroy {
+export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   contactForm!: FormGroup;
-subscription!:Subscription
-  empinfo:any
-  employedata:any
-  buttons= false;
- 
-      selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
-        hideCode: true,
-        hideName: true
-      };
-      countryListConfig = {
-        hideCode: true,
-      };
-      mobileNumberData: IphoneNumberData | null = null;
-      selectedworkcountrtycode:any
-      selectedworkdialcaode:any
-      selectedpersonalcountrycode:any
-      selectedpersoanldialcode:any
-      formattedPhoneNumber: string = '';
+  subscription!: Subscription
+  empinfo: any
+  employedata: any
+  buttons = false;
+  loading = true;
 
-  constructor(private modalService: NgbModal,private cd: ChangeDetectorRef, private fb: FormBuilder, private conformationPopup: OpenModalService, public http: HttpService,public rbac: RbacService) { 
-    this.http.selectedworkcoutrycode.set(this.selectedworkcountrtycode  ?? '')
-    this.http.selectedpersonalnumbercode.set(this.selectedpersonalcountrycode ?? '')
-    console.log(this.http.selectedworkcoutrycode)
+  selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
+    hideCode: true,
+    hideName: true
+  };
+  countryListConfig = {
+    hideCode: true,
+  };
+  selectedDialCode: any;
+  selectedCountryCodegflag: any;
+  selectedDialphoneCode: any;
+  selectedCountryCodephoneflag: any;
+  formattedPhoneNumber: string = '';
+  placeholderPhoneNumber: string = '';
+  mobileNumberData: IphoneNumberData | null = null;
+ 
+   selectedworkcoutrycode = signal<any>('');
+   selectedpersonalnumbercode = signal<any>('');
+
+  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder, private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
+    effect(() => {
+      this.selectedworkcoutrycode.set(this.selectedDialCode);
+      this.selectedpersonalnumbercode.set(this.selectedDialphoneCode);
+    })
 
   }
   ngOnInit(): void {
@@ -49,52 +55,55 @@ subscription!:Subscription
     this.getEmployeeId();
     this.initializeForm();
     this.contactForm.disable();
-  }       
+  
+  }
 
   initializeForm(): void {
     this.contactForm = this.fb.group({
-      personalEmail: ['', [Validators.required, Validators.email]], 
-      workMail: ['', [Validators.required, Validators.email]], // Required and valid email format
-      phoneNumber: ['', [Validators.required, ]], // Required and 10-digit phone number
-      workNumber: ['', [Validators.required, ]], // Required and 10-digit phone number
-  
+      personalEmail: ['', [Validators.required, Validators.email]],
+      workMail: ['', [Validators.required, Validators.email]], 
+      countyCode1: [null, [Validators.required]],
+       countyCode2: [null, [Validators.required]],
+      phoneNumber: [null, [Validators.required,]], // Required and 10-digit phone number
+      workNumber: [null, [Validators.required,]], // Required and 10-digit phone number
+
     });
-    this.selectedworkcountrtycode=this.empinfo.workPhoneCountryCode;
-    this.selectedworkdialcaode= this.empinfo.workPhoneCountryCode;
-    this.selectedpersonalcountrycode=this.empinfo.mobilePhoneCountryCode;
-    this.selectedpersoanldialcode=this.empinfo.mobilePhoneCountryCode;
-    console.log(this.selectedworkcountrtycode)
+   
 
   }
 
 
+  enableForm(): void {
+    this.buttons = true;
+    this.contactForm.enable();
+  }
 
-enableForm(): void {
-  this.buttons = true;
-  this.contactForm.enable();
-}
+  disableForm(): void {
+    this.buttons = false;
 
-disableForm(): void {
-  this.buttons = false;
-
-  this.contactForm.disable();
-}
+    this.contactForm.disable();
+  }
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-      this.employedata = data;
-      this.patchForm(data);
-      this.http.selectedworkcoutrycode.set(data.workPhoneCountryCode ?? '')
-        this.http.selectedpersonalnumbercode.set(data.mobilePhoneCountryCode ?? '')
-        this.cd.detectChanges();
-        console.log(this.http.selectedworkcoutrycode)
+        this.employedata = data;
+        this.patchForm(data);
+        this.loading = false;
+        this.selectedworkcoutrycode.set(data.workphonecountryflag);
+    
+        this.selectedpersonalnumbercode.set(data.mobilephonecountryflag);
+       
       },
-      error: (reason) => console.error('Error fetching employee data:', reason),
+      error: (reason) =>{
+        console.log(reason);
+        this.loading = false;
+        console.error('Error fetching employee data:', reason)
+      } 
     });
   }
 
-  patchForm(data: any): void {   
+  patchForm(data: any): void {
     this.contactForm.patchValue({
       personalEmail: data.emailaddress || '', // Bind personal email
       workMail: data.workEmail || '',         // Bind work email
@@ -103,139 +112,106 @@ disableForm(): void {
     });
   }
   updateAddressInfo(): void {
-    const formValue = this.contactForm.value; 
+    const formValue = this.contactForm.value;
 
     const cleanPhoneNumber = (phone: any): string => {
-      if (!phone) return ''; 
-      return String(phone).replace(/\s+/g, '').replace(/-/g, ''); 
+      if (!phone) return '';
+      return String(phone).replace(/\s+/g, '').replace(/-/g, '');
     };
 
-    const contactnumber = cleanPhoneNumber(formValue.phoneNumber || this.empinfo.phoneNumber || '');
-    const worknumber = cleanPhoneNumber(formValue.workNumber || this.empinfo.workNumber || '');
+    const contactnumber = cleanPhoneNumber(formValue.phoneNumber || this.employedata?.phoneNumber || '');
+    const worknumber = cleanPhoneNumber(formValue.workNumber || this.employedata?.workNumber || '');
 
-  const updatePayload = {
-    employeeId: this.empinfo.employeeId,
-    title: this.empinfo.title || null,
-    firstName: this.empinfo.firstName,
-    middleName: this.empinfo.middleName,
-    lastName: this.empinfo.lastName,
-    gender: this.empinfo.gender || null,
-    dob: this.empinfo.dob,
-    bloodGroup: this.empinfo.bloodGroup || null,
-    maritalStatus: this.empinfo.maritalStatus || null,
-    empStatus: this.empinfo.empstatus,
-    emailaddress: formValue.personalEmail || this.empinfo.personalEmail, 
-    workEmail: formValue.workMail || this.empinfo.workMail, 
-    contactnumber: contactnumber,
-    workPhone:worknumber,
-    emergencyName: this.empinfo.emergencyName,
-    emailId: this.empinfo.emailId,
-    relationShip: this.empinfo.relationShip,
-    mobileNumber: this.empinfo.mobileNumber,
-    emergencyName1: this.empinfo.emergencyName1,
-    emergencyEmail1: this.empinfo.emergencyEmail1,
-    emergencyNumber1: this.empinfo.emergencyNumber1,
-    relationship1: this.empinfo.relationship1,
-    profileUrl : this.empinfo.profileUrl,
-    fusionEmpId: this.empinfo.fusionEmpId,
-    dateOfJoining: this.empinfo.dateOfJoining,
-    branchCode: this.empinfo.branchCode,
-    probationEndDate: this.empinfo.probationEndDate,
-    probationStatus: this.empinfo.probationStatus,
-    noticePeriod: this.empinfo.noticePeriod,
-    backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-    issalaryhold:this.empinfo.issalaryhold,
-    pf: this.empinfo.pf,
-    esic:this.empinfo.esic,
-    pt: this.empinfo.pt,
-    totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
-    allowWFH: this.empinfo.allowWFH,
-    workLocation:this.empinfo.workLocation,
-    wfhManagerId: this.empinfo.wfhManagerId,
-    mobilePhoneCountryCode:  this.selectedpersoanldialcode || this.empinfo.mobilePhoneCountryCode ,
-  workPhoneCountryCode: this.selectedworkdialcaode ||  this.empinfo.workPhoneCountryCode 
-  };
+    const updatePayload = {
+      ...this.employedata,
+     
+      emailaddress: formValue.personalEmail,
+      workEmail: formValue.workMail,
+      contactnumber: contactnumber,
+      workPhone: worknumber,
+      mobilePhoneCountryCode: this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,
+      workPhoneCountryCode: this.selectedDialCode || this.employedata.workPhoneCountryCode,
+      mobilephonecountryflag:this.selectedCountryCodephoneflag  || this.employedata.mobilephonecountryflag,
+      workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag
+     };
 
+
+    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Data updated successfully:', data);
+          this.modalService.dismissAll();
+          this.contactForm.disable();
+          this.buttons = false; // Disable the button after successful update
+          this.getEmployeeId();
+          this.conformationPopup.openSuccessModal('Contact Details updated successfully');
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          this.conformationPopup.openErrorModal('Contact Details update failed');
+        },
+      });
+  }
+
+  onPhoneNumberInput(): void {
+    const phoneNumberControl = this.contactForm.get('phoneNumber');
+    if (phoneNumberControl?.value) {
+      const formattedValue = this.formatPhoneNumber(phoneNumberControl.value, this.selectedCountryCodephoneflag);
+      phoneNumberControl.setValue(formattedValue, { emitEvent: false });
+    }
+  }
+
+  onWorkNumberInput(): void {
+    const workNumberControl = this.contactForm.get('workNumber');
+    if (workNumberControl?.value) {
+      const formattedValue = this.formatPhoneNumber(workNumberControl.value, this.selectedCountryCodegflag);
+      workNumberControl.setValue(formattedValue, { emitEvent: false });
+    }
+  }
  
-  this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
-    .subscribe({
-      next: (data: any) => {
-        console.log('Data updated successfully:', data);
-        this.modalService.dismissAll();
-        this.contactForm.disable();
-        this.buttons = false; // Disable the button after successful update
-        this.getEmployeeId(); 
-        this.conformationPopup.openSuccessModal('Contact Details updated successfully');
-      },
-      error: (reason: any) => {
-        console.log(reason);
-        this.conformationPopup.openErrorModal('Contact Details update failed');
-      },
-    });
+  onCountryChange(country: any) {
+    this.selectedDialCode = country.dialling_code;
+    this.selectedCountryCodegflag = country.code;
+    console.log('Selected country code:', this.selectedCountryCodegflag);
+    console.log('Selected country dial code:', this.selectedDialCode);
+    this.contactForm.get('countyCode1')?.setValue(country.dialling_code);
+    this.contactForm.get('countyCode1')?.markAsTouched();
+    this.contactForm.get('workNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
+    this.contactForm.get('workNumber')?.updateValueAndValidity();
+    this.employedata.workPhoneCountryCode = country.dialling_code;
+    this.employedata.workphonecountryflag = country.code;
+  }
+  onCountryphoneChange(country: any) {
+    this.selectedDialphoneCode = country.dialling_code;
+    this.selectedCountryCodephoneflag = country.code;
+    console.log('Selected country code:', this.selectedDialphoneCode);
+    console.log('Selected country dial code:', this.selectedCountryCodephoneflag);
+    this.contactForm.get('countyCode2')?.setValue(country.dialling_code);
+    this.contactForm.get('countyCode2')?.markAsTouched();
+    this.contactForm.get('phoneNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodephoneflag)]);
+    this.contactForm.get('phoneNumber')?.updateValueAndValidity();
+    this.employedata.mobilePhoneCountryCode = country.dialling_code;
+    this.employedata.mobilephonecountryflag = country.code; 
   }
 
-  
-  onCountryChangeworknumber(country: any): void {
-    // Check if the selected country is actually changing
-    if (this.selectedworkdialcaode === country.code) {
-      return; // No change, do not apply validators again
-    }
-  
-    // Country has changed - update values
-    this.selectedworkcountrtycode = country.dialling_code;
-    this.selectedworkdialcaode = country.code;
-  
-    const contact1PhoneControl = this.contactForm.get('workNumber');
-  
-    if (country?.code) {
-      // Country selected: apply validator
-      contact1PhoneControl?.setValidators([this.phoneNumberValidator()]);
-    } else {
-      // No country selected: remove validators
-      contact1PhoneControl?.clearValidators();
-    }
-  
-    contact1PhoneControl?.updateValueAndValidity();
-  }
-  
-
-  onCountryChangepersonalcode(country: any): void {
-    // Only apply validators if the user changes the country
-    if (this.selectedpersoanldialcode === country.code) {
-      return;
-    }
-  
-    // Country has changed - update values and apply validator
-    this.selectedpersonalcountrycode = country.dialling_code;
-    this.selectedpersoanldialcode = country.code;
-  
-    const control = this.contactForm.get('phoneNumber');
-  
-    control?.setValidators([this.phoneNumberValidator()]);
-    control?.updateValueAndValidity();
-  }
-  
-
-  formatPhoneNumber(value: any): string {
-    if (!this.selectedworkdialcaode || !value) return ''; // Return an empty string if value is null/undefined
-    const stringValue = String(value); // Ensure the value is converted to a string
-    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedworkdialcaode);
+  formatPhoneNumber(value: any,countryCode:any) {
+    if (!countryCode || !value) return value;
+    const stringValue = String(value); // Make sure it's a string
+    const phoneNumber = parsePhoneNumberFromString(stringValue, countryCode);
     if (phoneNumber && phoneNumber.isValid()) {
       this.formattedPhoneNumber = phoneNumber.formatInternational();
       return phoneNumber.formatNational();
     }
-    return stringValue; // Return the original value if parsing fails
+    return stringValue;
   }
 
-  phoneNumberValidator() {
+ phoneNumberValidator(countryCode:any) {
     return (control: AbstractControl) => {
-      const value = control.value;
-      if (!this.selectedworkdialcaode || !value) {
+      const value = String(control.value);
+      if (!countryCode || !value) {
         return null;
       }
-  
-      const phoneNumber = parsePhoneNumberFromString(String(value), this.selectedworkdialcaode);
-  
+      const phoneNumber = parsePhoneNumberFromString(value,countryCode);
       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {
@@ -243,7 +219,6 @@ disableForm(): void {
       }
     };
   }
-
 
   showButtons() {
     this.buttons = !this.buttons

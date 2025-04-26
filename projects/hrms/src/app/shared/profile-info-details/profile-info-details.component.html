@@ -33,8 +33,14 @@
                 class="details-text">{{this.empinfo?.workEmail}}</span>
         </div>
         <div class="mb-3 text-truncate">
-            <i class="bi bi-suitcase-lg profile-data-icon me-2"></i><span
-                class="details-text"><b>{{jobdata?.jobTypeName}}</b> ({{jobdata?.shiftName }})</span>
+            <i class="bi bi-suitcase-lg profile-data-icon me-2"></i> <span class="details-text">
+                <b *ngIf="jobdata?.jobTypeName; else noData">{{jobdata?.jobTypeName}}</b>
+                <span *ngIf="jobdata?.jobTypeName && jobdata?.shiftName"> || </span>
+                <span *ngIf="jobdata?.shiftName">{{jobdata?.shiftName}}</span>
+                <span *ngIf="(jobdata?.shiftName || jobdata?.jobTypeName) && (jobdata?.shiftStartTime && jobdata?.shiftEndTime)"> || </span>
+                <span *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
+                <ng-template #noData>N/A</ng-template>
+              </span>
         </div>
         <div class="mb-3 text-truncate">
             <i class="bi bi-person-circle profile-data-icon me-2"></i><span class="details-text"><b>Team Manager</b> :

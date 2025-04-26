@@ -134,12 +134,12 @@ export class ServingPeriodComponent {
 
         this.getServingPeriod();
         modal.close();
-        this.conformationPopup.openSuccessModal('Serving period added successfully');
-        
-         this.resetForm();
+        this.conformationPopup.openSuccessModal('Serving Period added successfully');
+        this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.message;
+        this.conformationPopup.openErrorModal(errorMessage);
          this.resetForm();
       }
     });
@@ -173,11 +173,12 @@ export class ServingPeriodComponent {
 
           this.getServingPeriod();
           modal.close();
-          this.conformationPopup.openSuccessModal('Serving period updated successfully');
+          this.conformationPopup.openSuccessModal('Serving Period updated successfully');
            this.resetForm();
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
+          const errorMessage = error.error?.message;
+          this.conformationPopup.openErrorModal(errorMessage);
           this.resetForm();
         }
       });
@@ -202,10 +203,11 @@ export class ServingPeriodComponent {
         next: () => {
          this.getServingPeriod();
           modal.close();
-          this.conformationPopup.openSuccessModal('Serving period deleted successfully');
+          this.conformationPopup.openSuccessModal('Serving Period deleted successfully');
         },
-        error: () => {
-          this.conformationPopup.openErrorModal('Failed to delete the frequency');
+        error: ( err : any) => {
+          const errorMessage = err.error?.message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }

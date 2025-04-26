@@ -1,4 +1,5 @@
 export interface Ipersonal {
+  wfhManagerId: any;
   separationType: string;
     bgc: any;
     status?: any;

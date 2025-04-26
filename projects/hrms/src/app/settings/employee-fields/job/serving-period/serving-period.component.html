@@ -10,7 +10,7 @@
             <p class="popup-heading mb-0">{{ 'Serving Period' | translate }}</p>
           </div>
           <div>
-            <a (click)="close(modal)">
+            <a (click)="close(modal); resetForm()">
               <img src="icons/close.png" alt="Close Icon" class="close-icon" />
             </a>
           </div>
@@ -95,7 +95,7 @@
   
           <!-- Buttons -->
           <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
+            <button type="button" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">
               {{ 'Close' | translate }}
             </button>
             <button type="button" class="custom-btn btn-primary" (click)="addServingPeriod(modal)" [disabled]="AddForm.invalid">
@@ -177,6 +177,9 @@
                     </div>
                 </div>
                 <div class="mb-4">
+                  <label for="duration" class="form-label custom-label mb-2">
+                    {{ 'Duration' | translate }} <span class="error-msg">*</span>
+                  </label>
                   <div class="custom-settings-add-input input-group">
                       <input type="text" class="form-control custom-input" placeholder="Please enter duration"
                           formControlName="UpdateDuration" aria-label="duration" aria-describedby="duration"
@@ -184,6 +187,9 @@
                   </div>
                   <div *ngIf="updateForm.get('UpdateDuration')?.touched && updateForm.get('UpdateDuration')?.invalid" class="error-msg mt-2">
                       <div *ngIf="updateForm.get('UpdateDuration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
+                  </div>
+                  <div *ngIf="updateForm.get('UpdateDuration')?.errors?.['pattern']" class="error-msg mt-2">
+                    {{ 'Only numbers are allowed' | translate }}
                   </div>
               </div>
                 <div class="custom-modal-footer">

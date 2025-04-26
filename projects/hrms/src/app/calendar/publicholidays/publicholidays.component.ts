@@ -4,9 +4,11 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/holiday-tabs.component";
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { Select } from 'primeng/select';
 @Component({
   selector: 'app-publicholidays',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent,Select],
   templateUrl: './publicholidays.component.html',
   styleUrl: './publicholidays.component.scss'
 })

@@ -7,6 +7,7 @@ import { ApprovalStatusCount } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
+import { SignalsService } from '../../../services/signals.service';
 
 interface NavLink {
   label: string;
@@ -70,9 +71,9 @@ export class PendingApprovalsTabsComponent {
     {
       label: 'Desk Request',
       route: '/time-off/pending-approvals/desk-approval',
-      moduleId: environment.deskAllocationModuleId,
+      moduleId: environment.deskAllocationModuleId, permission: { feature: 'Desk Tab', action: 'view' }
     },
-
+    
     {
       label: 'Probation Details',
       route: '/time-off/pending-approvals/probation-request',
@@ -81,14 +82,33 @@ export class PendingApprovalsTabsComponent {
   ];
   constructor(
     public readonly router: Router,
-    private http: HttpService, public rbac: RbacService
+    private http: HttpService, public rbac: RbacService,
+    private signalService:SignalsService
   ) {
     effect(() => {
       if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
         || (this.http.tirggerPendingApprovalCountSignal().nodue)) {
         this.getAllPendingApprovalsCount();
         this.getAllPendingApprovalsNoDue();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, wfh: false, separation: false, nodue: false }));
+        this.http.tirggerPendingApprovalCountSignal.update(status => ({
+          ...status,
+          wfh: status.wfh ? false : status.wfh,
+          separation: status.separation ? false : status.separation,
+          nodue: status.nodue ? false : status.nodue,
+        }));
+      }
+
+      if(this.signalService.wfhSidNavCountTriggerSignal()){
+        this.getAllPendingApprovalsCount();
+        this.signalService.wfhSidNavCountTriggerSignal.set(false);
+      }
+      if(this.signalService.permissionSidNavCountTriggerSignal()){
+        this.getAllPendingApprovalsCount();
+        this.signalService.permissionSidNavCountTriggerSignal.set(false);
+      }
+      if(this.signalService.compOffSidNavCountTriggerSignal()){
+        this.getAllPendingApprovalsCount();
+        this.signalService.compOffSidNavCountTriggerSignal.set(false);
       }
     });
   }

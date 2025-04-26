@@ -38,7 +38,7 @@ export class LoginComponent {
 
   initiallogin() {
     this.loginform = this.fb.group({
-      username: [null, Validators.required,Validators.email],
+      username: [null, [Validators.required,Validators.email]],
       password: [null, Validators.required]
     })
     this.loginform.valueChanges.subscribe(() => {

@@ -3,8 +3,7 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
       <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-      <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
-        aria-describedby="basic-addon1" />
+      <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Search" />
     </div>
 
     <div class="custom-table-content">
@@ -37,45 +36,34 @@
                   </a>
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li>
-                      <a class="dropdown-item" (click)="
-                          openModal(viewDetailsModal);
-                          viewItem(leave.entity.expenses_ID)
-                        " *ngIf="rbac.allowedToAccess('Expenses Tab.view')"><i
-                          class="bi bi-paperclip me-2"></i>View</a>
+                      <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)"
+                        *ngIf="rbac.allowedToAccess('Expenses Tab.view')">
+                        <i class="bi bi-paperclip me-2"></i>View</a>
                     </li>
                   </ul>
                 </div>
               </td>
+              
               <td>
-                <div>
-                  <span *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
-                    <a type="button" placement="top">
-                      <img src="images\info-fill.png" alt="info icon" (click)="
-                          comments(
-                            leave.entity.expenseApproverComments,
-                            commentspopup
-                          )
-                        " class="info-icon" />
-                    </a>
-                  </span>
+                <div *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
+                  <a type="button" (click)="comments(leave.entity.expenseApproverComments,commentspopup)" >
+                    <img src="images\info-fill.png" alt="info icon" class="info-icon" />
+                  </a>
                 </div>
-                <ng-template #NA>
-                  N/A
-                </ng-template>
+                <ng-template #NA>N/A</ng-template>
               </td>
+
               <td class="text-center">
                 <div class="dropdown">
                   <a type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
                   </a>
                   <ul class="dropdown-menu py-0">
-                    @if( leave.approvalHeader.currentapprovalStage !=
-                    leave.approvalHeader.finalapprovalStage){
+                    @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
                     <li (click)="openApproveModal(approval, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
                       <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
                     </li>
-                    } @if( leave.approvalHeader.currentapprovalStage ==
-                    leave.approvalHeader.finalapprovalStage){
+                    } @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
                     <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
                       <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
                     </li>
@@ -89,6 +77,7 @@
               </td>
             </tr>
           </ng-container>
+
           <ng-template #noDataTemplate>
             <tr>
               <td colspan="4">
@@ -104,106 +93,62 @@
 </div>
 
 <ng-template #approval let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="custom-main-popup-content p-5">
-      <div class="d-flex justify-content-center align-items-center">
-        <img src="icons\succes.png" alt="succues" class="succes-icon" />
-      </div>
-      <div class="d-flex justify-content-center align-items-center mt-3">
-        <h4 class="text-center">
-          {{ "Are you sure you want to Approve?" | translate }}
-        </h4>
-      </div>
-      <form [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
-        <div class="row">
-          <div class="col-md-12 mb-3">
-            <label for="comments" class="form-label custom-label mb-2">{{ "Comments" | translate }}
-              <span class="text-danger">*</span></label>
-            <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-              formControlName="comments" maxlength="250"></textarea>
-            <!-- Character counter -->
-            <div class="text-end small text-muted">
-              {{ approveForm.get("comments")?.value?.length || 0 }}/250
-            </div>
-            <div class="error-msg" *ngIf="
-                approveForm.get('comments')?.touched &&
-                approveForm.get('comments')?.invalid
-              ">
-              <div *ngIf="approveForm.get('comments')?.errors?.['required']">
-                Comment is required.
-              </div>
-              <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">
-                Comment cannot exceed 250 characters.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-            {{ "Cancel" | translate }}
-          </button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
-            {{ "Approve" | translate }}
-          </button>
-        </div>
-      </form>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
     </div>
+    <form [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+          formControlName="comments" maxlength="250"></textarea>
+        <!-- Character counter -->
+        <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
+        <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+          <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
+          <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'| translate}}</button>
+      </div>
+    </form>
   </div>
 </ng-template>
 
 <ng-template #rejectmodal let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="custom-main-popup-content p-5">
-      <div class="d-flex justify-content-center align-items-center">
-        <img src="icons\reject.png" alt="succues" class="error-icon" />
-      </div>
-      <div class="d-flex justify-content-center align-items-center mt-3">
-        <h4 class="text-center">
-          {{ "Are you sure you want to Reject?" | translate }}
-        </h4>
-      </div>
-      <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)"
-        *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
-        <div class="row">
-          <div class="col-md-12 mb-3">
-            <label for="comments" class="form-label custom-label mb-2">{{ "Rejected Reason" | translate }}
-              <span class="text-danger">*</span></label>
-            <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection"
-              formControlName="comments" maxlength="250"></textarea>
-            <div class="text-end small text-muted">
-              {{ rejectForm.get("comments")?.value?.length || 0 }}/250
-            </div>
-
-            <div class="error-msg" *ngIf="
-                rejectForm.get('comments')?.touched &&
-                rejectForm.get('comments')?.invalid
-              ">
-              <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
-                Rejected Reason is required.
-              </div>
-              <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">
-                Reason cannot exceed 250 characters.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-            {{ "Cancel" | translate }}
-          </button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">
-            {{ "Reject" | translate }}
-          </button>
-        </div>
-      </form>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
     </div>
+    <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
+          <span class="text-danger">*</span></label>
+        <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection"
+          formControlName="comments" maxlength="250"></textarea>
+        <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
+        <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+          <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected Reason is required.</div>
+          <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' | translate}}</button>
+      </div>
+    </form>
   </div>
 </ng-template>
 
 <!-- commentspopup -->
 <ng-template #commentspopup let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Approver Comments</p>
       </div>
@@ -211,32 +156,23 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-table mt-2">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Comments</th>
-            <th>Commented By</th>
-            <th>Date</th>
-            <th>Commented By ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let comment of approverComments">
-            <td>{{ comment.comments }}</td>
-            <td>{{ comment.addedName }}</td>
-            <td>{{ comment.addedDate | dateformat }}</td>
-            <td>{{ comment.addedByFusionEmpId }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="card p-3">
+      <div *ngFor="let comment of approverComments" >
+        <div class="mb-0">
+          <p> <b>Commented by:</b> {{ comment.addedName }} </p>
+          <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+          <p> <b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+          <p><b>Status:</b> {{ comment.action }}</p>
+          <p> <b>Comments:</b> {{ comment.comments }} </p>
+        </div>
+      </div>
     </div>
   </div>
 </ng-template>
 
 <ng-template #viewDetailsModal let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Expenses Details</p>
       </div>
@@ -244,10 +180,12 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
+
     <div class="d-flex gap-5 p-3">
       <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
       <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
     </div>
+
     <div class="custom-table">
       <table class="w-100">
         <thead>
@@ -278,7 +216,6 @@
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>
-
             </td>
           </tr>
         </tbody>
@@ -290,7 +227,7 @@
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Expenses Details</p>
       </div>
@@ -299,7 +236,7 @@
             src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="modal-body" style="text-align: center">
+    <div class="custom-main-popup-content">
       <p *ngIf="!expenseImageUrl; else imageView">
         <ngx-doc-viewer [url]="expenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
       </p>

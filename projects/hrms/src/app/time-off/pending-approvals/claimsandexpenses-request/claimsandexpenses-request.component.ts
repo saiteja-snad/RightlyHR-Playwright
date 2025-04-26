@@ -3,7 +3,7 @@ import { ClaimsandexpenesPendingApprovalTabsComponent } from "../../../shared/cl
 import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-claimsandexpenses-request',
-  imports: [ClaimsandexpenesPendingApprovalTabsComponent,RouterModule],
+  imports: [ClaimsandexpenesPendingApprovalTabsComponent, RouterModule],
   templateUrl: './claimsandexpenses-request.component.html',
   styleUrl: './claimsandexpenses-request.component.scss'
 })

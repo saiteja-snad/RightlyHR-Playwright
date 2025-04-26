@@ -78,9 +78,7 @@ export class StatusComponent implements OnInit{
     getstatus() {
     this.subscription = this.http.getData ("Status").subscribe({
       next: (data: any) => {
-        console.log(data);
         this.statusdetails = data as [];
-        console.log(this.statusdetails)
       },
       error: (reason: any) => {
         console.log(reason);
@@ -96,7 +94,6 @@ export class StatusComponent implements OnInit{
   
     this.subscription = this.http.postdata('Status', request).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.modalService.dismissAll();
         this.getstatus();
         this.conformationPopup.openSuccessModal('Status added successfully');
@@ -109,7 +106,6 @@ export class StatusComponent implements OnInit{
   }
   
   openupdate(status: any): void {
-    console.log(status);
     this.statusDeletedata = status;
     this.updateForm?.patchValue({
       statusname: status.statusname // assuming this is the field you edit
@@ -123,7 +119,6 @@ export class StatusComponent implements OnInit{
   
  
     opendelete(status:any):void {
-      console.log(status);
       this.statusDeletedata=status;
       this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
     }

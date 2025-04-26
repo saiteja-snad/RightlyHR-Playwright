@@ -1,10 +1,9 @@
 
-.custom-table-content {
-    width: 50%;
-    height: 60dvh;
-    overflow: auto;
-    background-color: #FFFFFF;
-    border: 1px solid #E7E7ED;
-    border-radius: 0.75rem;
+.no-data-wrapper {
+   
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100dvh - 10rem);
     position: relative;
 }

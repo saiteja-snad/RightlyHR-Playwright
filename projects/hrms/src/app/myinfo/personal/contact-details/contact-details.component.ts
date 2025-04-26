@@ -21,6 +21,7 @@ export class ContactDetailsComponent implements OnInit,OnDestroy {
   contactForm!: FormGroup;
 subscription!:Subscription
   empinfo:any
+  employedata:any
   buttons= false;
  
       selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
@@ -82,7 +83,7 @@ disableForm(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-      this.empinfo = data;
+      this.employedata = data;
       this.patchForm(data);
       this.http.selectedworkcoutrycode.set(data.workPhoneCountryCode ?? '')
         this.http.selectedpersonalnumbercode.set(data.mobilePhoneCountryCode ?? '')

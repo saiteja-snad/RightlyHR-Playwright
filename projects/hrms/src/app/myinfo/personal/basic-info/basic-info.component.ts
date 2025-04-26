@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -51,24 +51,43 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
-      employeeId: [null, Validators.required],
-      fusionEmpId: [null, Validators.required],
+   
+      fusionEmpId: [{ value: null, disabled: true }, [Validators.required]],
       salutation: [null, Validators.required],
-      firstName: [null, Validators.required],
-      middleName: [null],
-      lastName: [null, Validators.required],
+      firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      lastName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       gender: [null, Validators.required],
-      dob: [null, Validators.required],
+      dob: [null, [Validators.required, this.validateAge.bind(this)]],
       bloodGroup: [null, Validators.required],
       maritalStatus: [null, Validators.required],
     });
   }
-
+  validateAge(control: AbstractControl): { [key: string]: boolean } | null {
+    const dob = control.value;
+    if (dob) {
+      const currentDate = new Date();
+      const birthDate = new Date(dob);
+      let age = currentDate.getFullYear() - birthDate.getFullYear();
+      const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+      if (age < 18 || age > 75) {
+        return { invalidAge: true }; // Return an error object if age is invalid
+      }
+    }
+    return null; // Return null if validation passes
+  }
+  
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.empinfo = data;
+        this.emsployedata = data;
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
@@ -82,14 +101,14 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       fusionEmpId: data.fusionEmpId,
-       salutation: this.titledetails.find((item: any) => item.titlename === data.title)|| data.title,
+      salutation: this.titledetails.find((item: any) => item.titlename === data.title),
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
       gender: data.gender,
       dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalStatus: data.maritalStatus
+      maritalStatus:this.Maritaldetails.find(((item: any)=>item.maritalstatus1 === data.maritalStatus)) ,
     });
     console.log('datapatch',this.basicInfoForm.value);
 
@@ -100,45 +119,17 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     console.log(formValue);
 
     const updatePayload = {
-      employeeId: formValue.employeeId,
-      title: formValue.salutation.titlename,
+      ...this.emsployedata,
+      employeeId: this.empinfo.employeeId,
+      title: formValue.salutation?.titlename,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
       gender: formValue.gender,
       dob: formValue.dob,
-      bloodGroup: formValue.bloodGroup.name,
-      maritalStatus: formValue.maritalStatus,
-      empStatus: 'Active',
-      emailaddress: this.empinfo.emailaddress,
-      workEmail: this.empinfo.workEmail,
-      contactnumber: this.empinfo.contactnumber,
-      workPhone: this.empinfo.workPhone,
-      emergencyName: this.empinfo.emergencyName,
-      emailId: this.empinfo.emailId,
-      relationShip: this.empinfo.relationShip,
-      mobileNumber: this.empinfo.mobileNumber,
-      emergencyName1: this.empinfo.emergencyName1,
-      emergencyEmail1: this.empinfo.emergencyEmail1,
-      emergencyNumber1: this.empinfo.emergencyNumber1,
-      relationship1: this.empinfo.relationship1,
-      profileUrl: this.empinfo.profileUrl,
-      fusionEmpId: this.empinfo.fusionEmpId,
-      dateOfJoining: this.empinfo.dateOfJoining,
-      branchCode: this.empinfo.branchCode,
-      probationEndDate: this.empinfo.probationEndDate,
-      probationStatus: this.empinfo.probationStatus,
-      noticePeriod: this.empinfo.noticePeriod,
-      backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-      issalaryhold: this.empinfo.issalaryhold,
-      pf: this.empinfo.pf,
-      esic: this.empinfo.esic,
-      pt: this.empinfo.pt,
-      totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
-      allowWFH: this.empinfo.allowWFH,
-      workLocation: this.empinfo.workLocation,
-      wfhManagerId: this.empinfo.wfhManagerId
-
+      bloodGroup: formValue.bloodGroup?.name,
+      maritalStatus: formValue.maritalStatus?.maritalstatus1,
+      empStatus: 'Active', 
     };
     console.log(updatePayload);
 
@@ -149,6 +140,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Basic Information Updated Successfully',);
           this.getEmployeeId();
           this.basicInfoForm.disable();
+          this.buttons = !this.buttons;
           console.log('Data updated successfully:', data);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Basic Info updated successfully')
@@ -156,6 +148,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         error: (reason: any) => {
           console.log(reason);
           this.conformationPopup.openErrorModal('Basic Info update failed')
+         
 
         },
       });
@@ -188,10 +181,14 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
     if (this.buttons) {
       // Enable the form when the user clicks "Edit"
+      this.basicInfoForm.get('fusionEmpId')?.disable();
       this.basicInfoForm.enable();
+    
     } else {
-      // Disable the form when the user clicks "Close"
+      this.basicInfoForm.get('fusionEmpId')?.disable();
       this.basicInfoForm.disable();
+      this.basicInfoForm.reset();
+      this.getEmployeeId();
     }
   }
 

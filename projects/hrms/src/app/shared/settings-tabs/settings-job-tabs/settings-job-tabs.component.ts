@@ -43,7 +43,7 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Overtime Eligibility', route: '/settings/employee-fields/job/overtime', permission: { feature: 'Overtime Eligibility', action: 'view' } },
     { label: 'Bussiness Area', route: '/settings/employee-fields/job/bussinesarea', permission: { feature: 'Business Area', action: 'view' } },
     { label: 'Exit Reason', route: '/settings/employee-fields/job/termination', permission: { feature: 'Termination Reason', action: 'view' } },
-    { label: 'Eligible For Hire', route: '/settings/employee-fields/job/eligible-for-rehire', permission: { feature: 'Eligible For Rehire', action: 'view' } },
+    { label: 'Eligible For Rehire', route: '/settings/employee-fields/job/eligible-for-rehire', permission: { feature: 'Eligible For Rehire', action: 'view' } },
     { label: 'Department', route: '/settings/employee-fields/job/department', permission: { feature: 'Department', action: 'view' } },
     { label: 'Team', route: '/settings/employee-fields/job/team', permission: { feature: 'Team', action: 'view' } },
     { label: 'Grade Details', route: '/settings/employee-fields/job/grade', permission: { feature: 'Grade Details', action: 'view' } },

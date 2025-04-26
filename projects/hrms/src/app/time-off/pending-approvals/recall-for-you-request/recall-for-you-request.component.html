@@ -1,457 +1,341 @@
-
 <div class="custom-main-component-container" *ngIf="this.rbac.allowedToAccess('Recall Tab.view')">
-    <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
-        </div>
-
-        <div class="custom-table-content" >
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th class="text-nowrap">Employee Name</th>
-                        <th class="text-nowrap">Employee ID</th>
-                        <th class="text-nowrap">Department</th>
-                        <th class="text-nowrap">Team</th>
-                        <th class="text-nowrap">Designation</th>
-                        <th class="text-nowrap">Raised Date</th>
-                        <th class="text-nowrap">Last Working Day</th>
-                        <th class="text-nowrap">Early Relieving Day</th>
-                        <th class="text-nowrap">Separation Reason</th>
-                        <th class="text-nowrap">Early Relieving Reason</th>
-                        <th class="text-nowrap">Request Type</th>
-                        <th class="text-nowrap">Approver History</th>
-                        <th class="text-nowrap">Action(s)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  
-                    @if(((recall_For_You_Details | async) ?? []).length > 0) {
-
-                    <tr *ngFor="let item of recall_For_You_Details|async">
-                        @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
-                        ||item.approvalHeader?.status?.toLowerCase() =='approved'){
-
-                        <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
-                        <td> {{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
-                        <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
-                        <td> {{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
-                        <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-                        <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}
-                        </td>
-                        <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}
-                        </td>
-                        <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}
-                        </td>
-                        <td>
-                            @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
-                            <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
-                            </div>
-                            }
-                            @else {
-                            -
-                            }
-                        </td>
-                        <td>
-
-                            @if(item.entity?.spEarlyRelievingReason){
-                            <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{item.entity?.spEarlyRelievingReason}} </p>
-                                        </div>
-                                    </ng-template>
-                                </span>
-                            </div>
-                            }
-                            @else {-}
-                        </td>
-                        <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
-                        <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
-                            <div>
-                                <span>
-                                    <a type="button"
-                                        (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-
-                                </span>
-                            </div>
-                            }
-                            @else{-}
-                        </td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu py-0">
-                                    @if(item.approvalHeader?.currentapprovalStage !=
-                                    item.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModal(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.update')"><a class="dropdown-item"><i
-                                                class="bi bi-check-circle me-2"></i>Approve</a></li>
-                                    }
-
-                                    @if((item.approvalHeader?.currentapprovalStage !=
-                                    item.approvalHeader?.finalapprovalStage)||(item.approvalHeader?.currentapprovalStage
-                                    == item.approvalHeader?.finalapprovalStage)){
-                                    <li (click)="openModal(rejectmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.delete')"><a class="dropdown-item"><i
-                                                class="bi bi-x-circle me-2"></i>Reject</a></li>
-                                    }
-
-                                    @if(item?.approvalHeader?.currentapprovalStage ==
-                                    item?.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModal(processmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.update')"><a
-                                            class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
-                                    </li>
-                                    }
-
-                                </ul>
-                            </div>
-                        </td>
-                        }
-                    </tr>
-                    }
-                    @else{
-                    <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                    }
-                  
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination-content pt-2 w-100">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <!-- Dropdown for Rows per Page -->
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <!-- Bootstrap Select -->
-                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-                </div>
-
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
-        </div>
+  <div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+      <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+        aria-describedby="basic-addon1">
     </div>
+
+    <div class="custom-table-content">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th class="text-nowrap">Employee Name</th>
+            <th class="text-nowrap">Employee ID</th>
+            <th class="text-nowrap">Department</th>
+            <th class="text-nowrap">Team</th>
+            <th class="text-nowrap">Designation</th>
+            <th class="text-nowrap">Raised Date</th>
+            <th class="text-nowrap">Last Working Day</th>
+            <th class="text-nowrap">Early Relieving Day</th>
+            <th class="text-nowrap">Separation Reason</th>
+            <th class="text-nowrap">Early Relieving Reason</th>
+            <th class="text-nowrap">Request Type</th>
+            <th class="text-nowrap">Approver History</th>
+            <th class="text-nowrap">Action(s)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if(((recall_For_You_Details | async) ?? []).length > 0) {
+          <tr *ngFor="let item of recall_For_You_Details|async">
+            @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
+            ||item.approvalHeader?.status?.toLowerCase() =='approved'){
+            <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
+            <td>{{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
+            <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
+            <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
+            <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
+            <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}</td>
+            <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}</td>
+            <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
+            <td>
+              @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
+              <div>
+                <a type="button" placement="top" [ngbPopover]="reason">
+                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
+                </ng-template>
+              </div>
+              }
+              @else {
+              <div>-</div>
+              }
+            </td>
+            <td>
+              @if(item.entity?.spEarlyRelievingReason){
+              <div>
+                <a type="button" placement="top" [ngbPopover]="reason">
+                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
+                </ng-template>
+              </div>
+              }
+              @else {-}
+            </td>
+            <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
+            <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
+              <div>
+                <a type="button"
+                  (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
+                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                </a>
+              </div>
+              }
+              @else{-}
+            </td>
+            <td class="text-center">
+              <div class="dropdown">
+                <a type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu py-0">
+                  @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
+                  <li (click)="openModal(approval);handleRequest(item)"
+                    *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
+                  </li>
+                  }
+                  @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) ||
+                  (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
+                  <li (click)="openModal(rejectmodal);handleRequest(item)"
+                    *ngIf="rbac.allowedToAccess('Recall Tab.delete')">
+                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
+                  </li>
+                  }
+                  @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
+                  <li (click)="openModal(processmodal);handleRequest(item)"
+                    *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
+                  </li>
+                  }
+                </ul>
+              </div>
+            </td>
+            }
+          </tr>
+          }
+          @else{
+          <tr>
+            <td>
+              <app-no-data-found />
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
+
 <ng-template #approverComments let-modal>
-
-    <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Approver History Details</h1>
-        <button type="button" class="btn-close me-2" (click)="modal.dismiss()"></button>
-    </div>
-    <div class="modal-body">
-
-        <div class="custom-table-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="text-nowrap">Approver Role</th>
-                        <th class="text-nowrap">Approved Date</th>
-                        <th class="text-nowrap">Approved by</th>
-                        <th class="text-nowrap">Comments </th>
-                        <th class="text-nowrap">Last Working Date</th>
-                        <th class="text-nowrap">Early Relieving Date</th>
-                        <th class="text-nowrap">Extended Date</th>
-                        <th class="text-nowrap">AcceptEarlyRelieving</th>
-                        <th class="text-nowrap">Status</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let comment of myApproverComments">
-
-                        <td>
-                            <span *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
-                            <ng-template #approverrole>NA</ng-template>
-                        </td>
-                        <td><span *ngIf="comment.addedDate;else addeddate">
-                                {{comment.addedDate |dateformat}}</span>
-                            <ng-template #addeddate>NA</ng-template>
-                        </td>
-
-                        <td><span *ngIf="comment.addedName;else addedname">
-                                {{comment.addedName}} ({{comment.addedByFusionEmpId}})</span>
-                            <ng-template #addedname>NA</ng-template>
-                        </td>
-                        <td>
-                            <div class="text-center" *ngIf="comment?.comments;else popupcomments">
-                                <div>
-                                    <span>
-                                        <a type="button" placement="top" [ngbPopover]="reason">
-                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                        </a>
-                                        <ng-template #reason>
-                                            <div>
-                                                <p class="mb-0">{{comment?.comments}} </p>
-                                            </div>
-                                        </ng-template>
-                                    </span>
-                                </div>
-                            </div>
-                            <ng-template #popupcomments>NA</ng-template>
-
-                        </td>
-                        <td>
-                            <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
-                                {{comment.metadata.splastworkingDate |dateformat}}</span>
-                            <ng-template #lastworkingdate>NA</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="comment?.metadata?.spearlyReliveingDate;else earlydate">
-                                {{comment.metadata.spearlyReliveingDate |dateformat}}</span>
-                            <ng-template #earlydate>NA</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="comment?.metadata?.spExtendedDate;else extenddate">
-                                {{comment.metadata.spExtendedDate |dateformat}}</span>
-                            <ng-template #extenddate>NA</ng-template>
-                        </td>
-                        <td>
-                            <span
-                                *ngIf="comment?.metadata?.isAcceptEarlyRequest;else isaccept">{{comment.metadata.isAcceptEarlyRequest}}</span>
-                            <ng-template #isaccept>NA</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="comment?.metadata?.status;else isaccept">{{comment.metadata.status}}</span>
-                            <ng-template #isaccept>NA</ng-template>
-                        </td>
-
-
-
-                    </tr>
-                </tbody>
-            </table>
-
-
-        </div>
-
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Approver History Details</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
     </div>
 
+    <div class="custom-main-popup-content">
+      <div class="custom-table-content">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th class="text-nowrap">Approver Role</th>
+              <th class="text-nowrap">Approved Date</th>
+              <th class="text-nowrap">Approved by</th>
+              <th class="text-nowrap">Comments </th>
+              <th class="text-nowrap">Last Working Date</th>
+              <th class="text-nowrap">Early Relieving Date</th>
+              <th class="text-nowrap">Extended Date</th>
+              <th class="text-nowrap">AcceptEarlyRelieving</th>
+              <th class="text-nowrap">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let comment of myApproverComments">
+              <td>
+                <span *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
+                <ng-template #approverrole>NA</ng-template>
+              </td>
+              <td><span *ngIf="comment.addedDate;else addeddate">{{comment.addedDate | dateformat}}</span>
+                <ng-template #addeddate>NA</ng-template>
+              </td>
+              <td><span *ngIf="comment.addedName;else addedname">{{comment.addedName}}
+                  ({{comment.addedByFusionEmpId}})</span>
+                <ng-template #addedname>NA</ng-template>
+              </td>
+              <td>
+                <div class="text-center" *ngIf="comment?.comments;else popupcomments">
+                  <a type="button" placement="top" [ngbPopover]="reason">
+                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  </a>
+                  <ng-template #reason>
+                    <p class="mb-0">{{comment?.comments}} </p>
+                  </ng-template>
+                </div>
+                <ng-template #popupcomments>NA</ng-template>
+              </td>
+              <td>
+                <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
+                  {{comment.metadata.splastworkingDate |dateformat}}</span>
+                <ng-template #lastworkingdate>NA</ng-template>
+              </td>
+              <td>
+                <span *ngIf="comment?.metadata?.spearlyReliveingDate;else earlydate">
+                  {{comment.metadata.spearlyReliveingDate |dateformat}}</span>
+                <ng-template #earlydate>NA</ng-template>
+              </td>
+              <td>
+                <span *ngIf="comment?.metadata?.spExtendedDate;else extenddate">
+                  {{comment.metadata.spExtendedDate |dateformat}}</span>
+                <ng-template #extenddate>NA</ng-template>
+              </td>
+              <td>
+                <span
+                  *ngIf="comment?.metadata?.isAcceptEarlyRequest;else isaccept">{{comment.metadata.isAcceptEarlyRequest}}</span>
+                <ng-template #isaccept>NA</ng-template>
+              </td>
+              <td>
+                <span *ngIf="comment?.metadata?.status;else isaccept">{{comment.metadata.status}}</span>
+                <ng-template #isaccept>NA</ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </ng-template>
+
+
 <ng-template #approval let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-
-        <div class="custom-main-popup-content p-5">
-            <div class="d-flex justify-content-center align-items-center">
-                <img src="icons\succes.png" alt="succues" class="succes-icon">
-            </div>
-            <h4 class="text-center ps-3 pe-3 inactive-poptext"> Are you sure you want to Approve? </h4>
-            <form [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()" class="ps-5 mb-3 w-100">
-                <div class="col-11">
-                  <div class="mb-3 mt-2">
-                    <label for="exampleFormControlTextarea1" class="form-label labell">
-                      Comments <span class="error-msg">*</span>
-                    </label>
-                    <textarea
-                      id="exampleFormControlTextarea1"
-                      class="form-control"
-                      formControlName="AcceptReason"
-                      maxlength="250"
-                      placeholder="Please enter comments"
-                      rows="3">
-                    </textarea>
-              
-                    <div>
-                      <span>{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</span>
-                    </div>
-              
-                    <small class="error-msg"
-                      *ngIf="recallAcceptForm.get('AcceptReason')?.touched && recallAcceptForm.get('AcceptReason')?.invalid">
-                      <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['required']">
-                        Comments is required
-                      </ng-container>
-                      <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['maxlength']">
-                        Maximum 250 characters allowed
-                      </ng-container>
-                      <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['pattern']">
-                        Leading spaces are not allowed
-                      </ng-container>
-                    </small>
-                  </div>
-                </div>
-              
-                <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();recallAcceptForm.reset()">
-                    {{ 'Cancel' | translate }}
-                  </button>
-              
-                  <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptForm.invalid || isLoading">
-                    @if (!isLoading) {
-                      {{ 'Approve' | translate }}
-                    } @else {
-                      <div class="d-flex">
-                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                        <div>{{ 'Submitting' | translate }}</div>
-                      </div>
-                    }
-                  </button>
-                </div>
-              </form>
-              
-        </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
     </div>
-
+    <form [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea id="exampleFormControlTextarea1" class="form-control" formControlName="AcceptReason" maxlength="250"
+          placeholder="Please enter comments" rows="3"></textarea>
+        <!-- Character counter -->
+        <div class="textarea-count-text">{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</div>
+        <div class="error-msg"
+          *ngIf="recallAcceptForm.get('AcceptReason')?.touched && recallAcceptForm.get('AcceptReason')?.invalid">
+          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['required']">Comments is
+            required</ng-container>
+          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['maxlength']">Maximum 250 characters
+            allowed</ng-container>
+          <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['pattern']">Leading spaces are not
+            allowed</ng-container>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary"
+          (click)="modal.dismiss();recallAcceptForm.reset()">{{'Close'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptForm.invalid || isLoading">@if
+          (!isLoading) { {{ 'Approve' | translate }} } @else {
+          <div class="d-flex">
+            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+            <div>{{ 'Submitting' | translate }}</div>
+          </div>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
 </ng-template>
+
+
 <ng-template #rejectmodal let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-
-        <div class="custom-main-popup-content p-5">
-            <div class="d-flex justify-content-center align-items-center">
-                <img src="icons\reject.png" alt="succues" class="succes-icon">
-            </div>
-            <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">Are you sure you want to reject this request?</h4>
-            </div>
-            <form [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()" class="ps-5 w-100">
-                <div class="col-11">
-                  <div class="mb-3 mt-2">
-                    <label for="exampleFormControlTextarea1" class="form-label labell">
-                      Enter reason <span class="error-msg">*</span>
-                    </label>
-                    <textarea
-                      class="form-control"
-                      id="exampleFormControlTextarea1"
-                      placeholder="Please enter reason"
-                      formControlName="notes"
-                      rows="3"
-                      maxlength="250">
-                    </textarea>
-              
-                    <div>
-                      <span>{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</span>
-                    </div>
-              
-                    <small class="error-msg"
-                      *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
-                      <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
-                        Reason is required
-                      </ng-container>
-                      <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['maxlength']">
-                        Maximum 250 characters allowed
-                      </ng-container>
-                      <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['pattern']">
-                        Leading spaces are not allowed
-                      </ng-container>
-                    </small>
-                  </div>
-                </div>
-              
-                <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                  <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();rejectSeparationForm.reset()">
-                    {{ 'Cancel' | translate }}
-                  </button>
-              
-                  <button type="submit" class="custom-btn btn-primary" [disabled]="rejectSeparationForm.invalid || isLoading">
-                    @if (!isLoading) {
-                      {{ 'Reject' | translate }}
-                    } @else {
-                      <div class="d-flex">
-                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                        <div>{{ 'Submitting' | translate }}</div>
-                      </div>
-                    }
-                  </button>
-                </div>
-              </form>
-              
-        </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to reject this request?</p>
     </div>
+
+    <form [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">Enter reason
+          <span class="text-danger">*</span></label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please enter reason"
+          formControlName="notes" rows="3" maxlength="250"></textarea>
+        <div class="textarea-count-text">{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</div>
+        <div class="error-msg"
+          *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
+          <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
+            Reason is required
+          </ng-container>
+          <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['maxlength']">
+            Maximum 250 characters allowed
+          </ng-container>
+          <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['pattern']">
+            Leading spaces are not allowed
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary"
+          (click)="modal.dismiss();rejectSeparationForm.reset()">{{'Close' | translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="rejectSeparationForm.invalid || isLoading">
+          @if (!isLoading) {
+          {{ 'Reject' | translate }}
+          } @else {
+          <div class="d-flex">
+            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+            <div>{{ 'Submitting' | translate }}</div>
+          </div>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
 </ng-template>
-<ng-template #processmodal let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
 
-        <div class="custom-main-popup-content p-5">
-            <div class="d-flex justify-content-center align-items-center">
-                <img src="icons\succes.png" alt="succues" class="succes-icon">
-            </div>
-            <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">Are you sure you want to Process this request?</h4>
-            </div>
-            <form [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()" class="ps-5 mb-3 w-100">
-                <div class="col-11">
-                  <div class="mb-3 mt-2">
-                    <label for="exampleFormControlTextarea1" class="form-label labell">
-                      Comments <span class="error-msg">*</span>
-                    </label>
-                    <textarea
-                      class="form-control"
-                      id="recallReason"
-                      placeholder="Please enter comments"
-                      formControlName="recallReason"
-                      rows="3"
-                      maxlength="250">
-                    </textarea>
-              
-                    <div>
-                      <span>
-                        {{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250
-                      </span>
-                    </div>
-              
-                    <small class="error-msg"
-                      *ngIf="recallAcceptFormForProcess.get('recallReason')?.touched && recallAcceptFormForProcess.get('recallReason')?.invalid">
-                      <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['required']">
-                        Comments is required
-                      </ng-container>
-                      <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['maxlength']">
-                        Maximum 250 characters allowed
-                      </ng-container>
-                      <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['pattern']">
-                        Leading spaces are not allowed
-                      </ng-container>
-                    </small>
-                  </div>
-                </div>
-              
-                <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                  <button type="button" class="custom-btn btn-secondary" (click)="recallAcceptFormForProcess.reset();modal.dismiss()">
-                    {{ 'Cancel' | translate }}
-                  </button>
-                  <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptFormForProcess.invalid || isLoading">
-                    @if (!isLoading) {
-                      {{ 'Process' | translate }}
-                    } @else {
-                      <div class="d-flex">
-                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                        <div>{{ 'Submitting' | translate }}</div>
-                      </div>
-                    }
-                  </button>
-                </div>
-              </form>
-              
-        </div>
+
+<ng-template #processmodal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to Process this request?</p>
     </div>
+    <form [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea class="form-control" id="recallReason" placeholder="Please enter comments"
+          formControlName="recallReason" rows="3" maxlength="250"></textarea>
+        <!-- Character counter -->
+        <div class="textarea-count-text">{{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250</div>
+        <div class="error-msg"
+          *ngIf="recallAcceptFormForProcess.get('recallReason')?.touched && recallAcceptFormForProcess.get('recallReason')?.invalid">
+          <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['required']">
+            Comments is required
+          </ng-container>
+          <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['maxlength']">
+            Maximum 250 characters allowed
+          </ng-container>
+          <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['pattern']">
+            Leading spaces are not allowed
+          </ng-container>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary"
+          (click)="modal.dismiss();recallAcceptFormForProcess.reset()">{{'Close'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary"
+          [disabled]="recallAcceptFormForProcess.invalid || isLoading">
+          @if (!isLoading) {
+          {{ 'Process' | translate }}
+          } @else {
+          <div class="d-flex">
+            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+            <div>{{ 'Submitting' | translate }}</div>
+          </div>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
 </ng-template>

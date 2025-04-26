@@ -142,19 +142,15 @@
                 <div class="mb-3 mt-2">
                     <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
                         Entitiled : {{this.leaveEntitlementsList.allowedDays}}</label>
-        
                 </div>
                 <div class="mb-3 mt-2">
                     <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
                         Booked : {{this.leaveEntitlementsList.booked}}</label>
-        
                 </div>
                 <div class="mb-3 mt-2">
                     <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
                         Processed : {{this.leaveEntitlementsList.utilizedDays}}</label>
-        
                 </div>
-        
                 <div class="popup-heading mb-0"
                     *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && this.leaveEntitlementsList.probationLeaves > 0);else  untilizeddays">
                     Available: {{ this.leaveEntitlementsList.probationLeaves -
@@ -165,7 +161,6 @@
                         Available: {{ this.leaveEntitlementsList.allowedDays -
                         this.leaveEntitlementsList.utilizedDays }}
                     </div>
-        
                 </ng-template>
                 <div *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0"
                     class="mb-3 mt-2">
@@ -181,57 +176,29 @@
 
 <!-- approverpopup -->
 <ng-template #approverPopup let-modal>
-    <div class="custom-main-popup-container p-4" ngbAutofocus>
-        <div class="confirmation-text text-center mb-4">Is it a planned leave?</div>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Is it a planned leave?</p>
+        </div>
+        
         <form name="leaveapprovee" class="w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid ">
             <div class="mb-3 d-flex justify-content-center">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" [value]="true" id="Planned" name="isPlannedLeave"
                         [(ngModel)]="selectedLeaveData.isPlannedLeave" #isPlannedLeave="ngModel" required>
-                    <label class="form-check-label me-2" for="Planned">
-                        Yes
-                    </label>
+                    <label class="form-check-label me-2" for="Planned">Yes</label>
                 </div>
+
                 <div class="form-check">
                     <input class="form-check-input ms-2 me-2" type="radio" [value]="false" id="Unplanned"
                         name="isPlannedLeave" [(ngModel)]="selectedLeaveData.isPlannedLeave" #isPlannedLeave="ngModel"
                         required>
-                    <label class="form-check-label" for="Unplanned">
-                        No
-                    </label>
+                    <label class="form-check-label" for="Unplanned">No</label>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span
-                        class="required">*</span></label>
-                <textarea class="form-control" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
-                    (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
-                <span>{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</span>
-                <div class="error-msg" *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
-                    Comments are required
-                </div>
-            </div>
-
-            <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary px-4" (click)="handleAccept(selectedLeaveData)"
-                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable">Approve</button>
-            </div>
-        </form>
-    </div>
-</ng-template>
-
-<!-- rejectpopup -->
-<ng-template #rejectPopup let-modal>
-    <div class="custom-main-popup-container p-4" ngbAutofocus>
-        <div class="confirmation-text text-center mb-4">Are you sure you want to reject?</div>
-        <div class="text-center">
-            <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-        </div>
-        <form name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
-            <div class="my-3">
                 <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span class="required">*</span></label>
                 <textarea class="form-control" id="Reasons" placeholder="Please provide comments" name="Reasons"
                     #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
@@ -241,9 +208,37 @@
                     Comments are required
                 </div>
             </div>
+
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary px-4" (click)="handleReject(selectedLeaveData)"
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
+                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable">Approve</button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<!-- rejectpopup -->
+<ng-template #rejectPopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
+        </div>
+        <form name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span class="text-danger">*</span></label>
+                <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
+                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                    (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
+                <div class="form-label custom-label text-end my-1">{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
+                <div class="error-msg" *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
+                    Comments are required
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable">Reject</button>
             </div>
         </form>

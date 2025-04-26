@@ -38,7 +38,7 @@ export class AddHolidaysComponent {
       location: [null, Validators.required],
       subLocation: [null, Validators.required],
       shift: [null, Validators.required],
-      holidays: this.fb.array([])
+      holidays: this.fb.array([this.addHolidayRow()]),
     });
     this.addHolidayRow();
   }
@@ -48,12 +48,17 @@ export class AddHolidaysComponent {
   }
 
   addHolidayRow() {
-    const holidayGroup = this.fb.group({
-      holidayName: [''],
-      holidayDate: [''],
-      isOptional: [false]
+    return  this.fb.group({
+      holidayName: ['',Validators.required],
+      holidayDate: ['',Validators.required],
+      isOptional: [false,Validators.required]
     });
-    this.holidays.push(holidayGroup);
+  }
+  addMomentRow() {
+    // if (this.policies.length < 4) {
+      this.holidays.push(this.addHolidayRow());
+    // } else {
+    // }
   }
 
   removeHolidayRow(index: number) {
@@ -84,6 +89,7 @@ export class AddHolidaysComponent {
       next: (response: any) => {
         localStorage.setItem('personaldata', JSON.stringify(response))
         this.confirmation.openSuccessModal('Holidays added successfully');
+        this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
       },
       error: (err) => {
         this.confirmation.openErrorModal('Holidays added failed');

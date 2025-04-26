@@ -37,8 +37,8 @@
             </button>
           </div>
         </div>
-        <div>
-            <div class="card custom-background-card p-3 mb-4" formArrayName="holidays" *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
+        <div formArrayName="holidays">
+            <div class="card custom-background-card p-3 mb-4"  *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
               <div class="row mb-2" >
                 <div class="col-md-5">
                   <label class="form-label custom-label">{{'Holiday Name' | translate}}<span class="text-danger">*</span></label>

@@ -167,6 +167,7 @@ export class TraineeApprovalsComponent {
       )
       .subscribe({
         next: (respone: any) => {
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request Accepted Successfully')
         },
         error: (reason: any) => {
@@ -281,6 +282,7 @@ export class TraineeApprovalsComponent {
       )
       .subscribe({
         next: (respone: any) => {
+          this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Request Extend Successfully')
         },
         error: (reason: any) => {

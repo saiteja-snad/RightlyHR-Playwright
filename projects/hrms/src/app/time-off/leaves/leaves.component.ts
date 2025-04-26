@@ -940,10 +940,9 @@ export class LeavesComponent {
     }
         this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
           next: (data: any) => {
-            console.log('Leave submission response:', data);
             if (data) {
               this.conformationPopup.openSuccessModal(
-                'Leave submitted successfully');
+                'Leave Requested successfully');
               setTimeout( () => {
                 this.modalService.dismissAll();
                 this.leaveForm.reset();

@@ -28,14 +28,16 @@
                     <div *ngIf="(item.category.isProbationAllowed &&item.probationLeaves > 0)">Available:
                         {{item.probationLeaves - item.utilizedDays - item.booked}}</div>
                     <div
-                        *ngIf="(!item.category.isProbationAllowed && (item.probationLeaves == null || item.probationLeaves == 0))">
+                        *ngIf="(!item.category.isProbationAllowed)">
                         Processed: {{item.utilizedDays}}</div>
                     <div
-                        *ngIf="(!item.category.isProbationAllowed && (item.probationLeaves == null || item.probationLeaves == 0))">
+                        *ngIf="(!item.category.isProbationAllowed)">
                         Available:
-                        {{item.allowedDays - item.utilizedDays -item.booked}}</div>
+                        {{item.allowedDays - item.utilizedDays -item.booked}}
+                    </div>
                     <div *ngIf="item.category.isProbationAllowed && item.probationLeaves > 0">Probation Leaves: {{
-                        item.probationLeaves }}</div>
+                        item.probationLeaves }}
+                    </div>
                 </div>
             </div>
             }

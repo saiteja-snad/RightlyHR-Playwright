@@ -91,8 +91,8 @@
                             *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
                             Start Date is required
                         </small>
-                        <small class="error-message text-danger" *ngIf="isoptionalnotallowedatWorkingdate">
-                            Selected date is an Optional holiday
+                        <small class="error-message text-danger" *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('startdate')?.value">
+                            Please select optional holiday
                         </small>
                         <small class="error-message text-danger" *ngIf="(isHolidaySelected)">
                             Selected date is a holiday
@@ -136,8 +136,8 @@
                         <small class="error-message text-danger" *ngIf="leaveForm.get('enddate')?.value && !issEndDategreater">
                             End Date is less than Start Date
                         </small>
-                        <small class="error-message text-danger" *ngIf="isoptionalnotallowedatWorkingdate">
-                            Selected date is a optional holiday
+                        <small class="error-message text-danger" *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('enddate')?.value">
+                            Please select optional holiday
                         </small>
                         <small class="error-message text-danger" *ngIf="isHolidaySelectedEndate">
                             Selected date is a holiday
@@ -156,7 +156,7 @@
                                 >
                                     <label class="form-check-label" for="halfday" style="font-size: 14px;">
                                         <input class="form-check-input" type="radio" id="flexRadioDefault0"
-                                            formControlName="availing" name="availing"
+                                            formControlName="availing" name="availing" [disabled]="enableHalfDayOptions"
                                             (change)="toggleHalfDayOptions(true)" required>
                                         {{'Half Day'| translate}}
                                     </label>
@@ -253,7 +253,7 @@
                     <button type="reset" class="custom-btn btn-secondary px-4" (click)="cleardata()">{{'Close'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
                         [disabled]="(leaveForm.invalid 
-                                    || isWeekOffSelected || isHolidaySelectedEndate
+                                    || isWeekOffSelected || isHolidaySelectedEndate || isoptionalnotallowedatWorkingdate
                                      || isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) ) || isLoading">
                         <span *ngIf="!isLoading">
                             {{'Request'| translate}}

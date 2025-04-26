@@ -545,6 +545,10 @@ a {
     color: #A1A1A1;
 }
 
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
 // custom search field
 .custom-search {
     border: 1px solid #CCDAEC;

@@ -1,81 +1,68 @@
 <div class="custom-main-component-container">
+    <!--header-->
+    <div class="mb-3">
+        <div class="component-header">Settings</div>
+    </div>
 
-    <div class="custom-component-left-content">
+    <!--tabs content-->
+    <div class="mb-3">
         <div>
-            <span class="heading">Documents</span>
-        </div>
-        <hr>
-        <div>
-            @for(folder of folders; track $index){
-            <div class="folder" style="cursor: pointer;">
-                <div (click)="onFolderSelectded(folder, folder.name)">
-                    <i class="bi bi-folder-fill" style="font-size: xx-large;
-                        color: #f9b755;"></i>
-                    <span class="folder-name px-2">{{
-                        folder.name | lastValue
-                        }}</span>
-                    <!-- <i class="fas drop" [ngClass]="{
-                          'fa-caret-right': !folder.expanded,
-                          'fa-caret-down': folder.expanded
-                        }"></i> -->
-                </div>
-                <!-- <div *ngIf="folder.expanded" class="subfolders px-5" style="cursor: pointer;">
-                      <div *ngFor="let subfolder of folder.subfolders" class="subfolder">
-                        <i class="bi bi-folder-fill" style="font-size: xx-large;  color: #f9b755;"></i>
-                        <span class="sub-folder-name px-2">{{
-                          subfolder.name | lastValue
-                          }}</span>
-                      </div>
-                    </div> -->
-            </div>
-            }
-
+            <app-settings-employee-fields-module-tabs />
         </div>
     </div>
-    <div class="custom-setting-right-content p-3">
-        <div>
-            <div class="row">
-                <div class="col-md-9">
-                    Folders
-                </div>
+
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
+        <div class="custom-component-left-content p-3">
+            @for(folder of folders; track $index){
+            <div (click)="onFolderSelectded(folder, folder.name)" class="folder-content cursor">
+                <i class="bi bi-folder-fill foldder-icon"></i>
+                <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
+            </div>
+            }
+        </div>
+
+        <div class="custom-setting-right-content p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><span class="component-sub-header">Folders</span></div>
                 @if(isMainfolderTouched){
-                <div class="col-md-3">
-                    <button (click)="openAddSubfoldersModal()">
-                        <i class="bi bi-plus me-2"></i>Add Sub-Folders
-                    </button>
+                <div class="custom-add-btn" (click)="openmodel(addSubDirModal)">
+                    <i class="bi bi-plus plus-icon me-1"></i>Add Sub-Folders
                 </div>
                 }
             </div>
-            <table CLASS="mt-3">
-                <thead>
-                    <th>FILE NAME</th>
-                    <th>CREATED DATE</th>
-                    <th>ACTION</th>
-                </thead>
-                <tbody>
 
-                    @for(subFolder of selectedFolder; track $index){
+            <div class="custom-table-content">
+                <table class="w-100">
 
-                    <tr>
-                        @if(!subFolder.isNotVisible){
-                        <td> <i class="bi bi-folder-fill me-2" style="font-size: xx-large; color: #f9b755; "></i>{{
-                            subFolder.name | lastValue }}</td>
-                        <td>{{ subFolder.createdOn | dateformat }}</td>
-                        <td><button class="delete-button" (click)="openmodel(deletefile);datafile=file">Delete</button>
-                        </td>
+                    <thead>
+                        <th>FILE NAME</th>
+                        <th>CREATED DATE</th>
+                        <th>ACTION</th>
+                    </thead>
+                    <tbody>
+                        @for(subFolder of selectedFolder; track $index){
+                        <tr>
+                            @if(!subFolder.isNotVisible){
+                            <td>
+                                <div class="folder-content">
+                                    <i class="bi bi-folder-fill foldder-icon"></i>
+                                    <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
+                                </div>
+                            </td>
+                            <td>{{ subFolder.createdOn | dateformat }}</td>
+                            <td><button class="custom-btn btn-primary" (click)="openmodel(deletefile);datafile=file">Delete</button>
+                            </td>
+                            }
+                        </tr>
                         }
-
-                    </tr>
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <ng-template #addSubDirModal let-model>
-
-
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
@@ -85,63 +72,34 @@
                 <a (click)="onClose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content">
 
+        <div class="custom-main-popup-content">
             <form name="AddSubDirectory" #AddSubDirectory="ngForm"
                 (ngSubmit)="AddSubDirectory.valid && createSubDirectory(AddSubDirectory)">
-
-
-                <div class="modal-body">
-                    <input type="text" class="form-control custom-input" name="subDirName"
-                        [(ngModel)]="subDir.subDirName" autocomplete="off" placeholder="Enter File Name"
-                        id="subDirName" />
+                <div class="mb-3">
+                    <input type="text" class="form-control custom-input" name="subDirName" [(ngModel)]="subDir.subDirName" 
+                    autocomplete="off" placeholder="Enter File Name" id="subDirName" />
                 </div>
-
-
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="onClose()">{{'Close'|translate}}</button>
-                    <button type="submit" [disabled]="AddSubDirectory.invalid"
-                        class="custom-btn btn-primary">{{'Add'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="onClose()">{{'Close'|translate}}</button>
+                    <button type="submit" [disabled]="AddSubDirectory.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
                 </div>
-
             </form>
-
         </div>
     </div>
-
-
 </ng-template>
 
 
 <ng-template #deletefile let-model>
-    <div class="d-flex flex-column justify-content-cenetr align-items-center">
-        <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">
-            {{"Are you sure you want to delete?" | translate}}
-        </h4>
-        <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
-            <button type="button" class="btn inactive-no" (click)="model.dismiss()">
-                {{"No" | translate}}
-            </button>
-            <button type="submit" class="btn inactive-success" (click)="onSelectDelete(this.datafile);model.dismiss()">
-                {{"Yes" | translate}}
-            </button>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> {{"Are you sure you want to delete?" | translate}}</p>
         </div>
-    </div>
-</ng-template>
-
-
-<ng-template #successhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-        <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-    </div>
-</ng-template>
-
-<ng-template #errorhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-        <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="onClose()">{{"No" | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="onSelectDelete(this.datafile);">
+                {{"Yes" | translate}}</button>
+        </div>
     </div>
 </ng-template>

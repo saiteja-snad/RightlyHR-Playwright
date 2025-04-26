@@ -7,22 +7,16 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { FormsModule, NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-
+import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-documents-creation',
-  imports: [
-    LastValuePipe,
-    DateformatPipe,
-    FormsModule,
-    TranslatePipe
-  ],
+  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent],
   templateUrl: './documents-creation.component.html',
   styleUrl: './documents-creation.component.scss'
 })
+
 export class DocumentsCreationComponent implements OnInit, OnDestroy {
-
-
-
   subscription!: Subscription;
   folders = [] as IFolders[];
   selectedFile = {} as IFolders;
@@ -32,30 +26,22 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
   isMainfolderTouched: boolean = false;
   searchfolder!: string;
   Files = [] as IFolders[]
-  datafile:any
+  datafile: any
   file: any
   imageDirPath!: string
   Status: any
-  @ViewChild('addSubDirModal') private readonly addSubModal!: NgbModal;
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
 
-  
-  constructor(
-    private documentService:DocumentService,
-    private modalService: NgbModal
-  ) { }
-  
+  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService) { }
+
   ngOnInit(): void {
     this.getMainFolders()
   }
 
   getMainFolders(dirPath?: string) {
     dirPath = dirPath ? dirPath : '/FusionDocuments';
-    this.subscription = this.documentService.getMainFolders(dirPath)
-    .subscribe({
-      next: (data:any) => {
-        this.folders = data as IFolders[]; 
+    this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
+      next: (data: any) => {
+        this.folders = data as IFolders[];
         this.folders.forEach((folder: any) => {
           folder.expanded = false;
           this.getFolders(folder.name, folder);
@@ -68,96 +54,69 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
     });
   }
 
-
   onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
-
     if (!folder) {
       return;
     }
-
-    if( folder.subfolders && folder.subfolders?.length>0) {
-      this.selectedFolder = folder.subfolders as IFolders[] ;
-    }else{
+    if (folder.subfolders && folder.subfolders?.length > 0) {
+      this.selectedFolder = folder.subfolders as IFolders[];
+    } else {
       this.selectedFolder = [] as IFolders[];
     }
-    
     if (folder.isDirectory) {
       this.isMainfolderTouched = true;
     }
-    console.log(this.selectedFolder);
     this.subDir.mainDir = mainFolderName;
-
   }
-
 
   getFolders(dirPath: string, folder: IFolders) {
-    this.subscription = this.documentService.getMainFolders(dirPath)
-      .subscribe({
-        next: (data: any) => {
-          folder.subfolders = data as IFolders[];
-          folder.subfolders.forEach((subfolder: any) => {
-            subfolder['isCompanyDir'] =
-              subfolder.name.includes('Company Documents');
-          });
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
-
-  openAddSubfoldersModal() {
-    this.modalService.open(this.addSubModal, { centered: true });
-  }
-  createSubDirectory(f:NgForm){
-    this.subscription = this.documentService.createSubDirectorySubmit(this.subDir)
-    .subscribe({
+    this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
       next: (data: any) => {
-        this.getMainFolders();
-        this.dataSuccessMsg("Folder Created sucessfully")
+        folder.subfolders = data as IFolders[];
+        folder.subfolders.forEach((subfolder: any) => {
+          subfolder['isCompanyDir'] = subfolder.name.includes('Company Documents');
+        });
       },
       error: (reason) => console.log(reason),
-      complete: () => f.resetForm()
     });
-  }
-
-
-  onSelectDelete(data: IFolders) {
-    if (data.isDirectory) {
-      this.subscription = this.documentService.deleteDirectory(data.name)
-        .subscribe({
-          next: (data: any) => {
-            this.dataSuccessMsg('Folder Deleted Sucessfully');
-            this.getMainFolders();
-          },
-          error: (reason) => console.log(reason),
-        });
-
-    }
-  }
-
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-
   }
 
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
 
-  onClose(){
-    this.modalService.dismissAll();
+  createSubDirectory(f: NgForm) {
+    this.subscription = this.documentService.createSubDirectorySubmit(this.subDir).subscribe({
+      next: (data: any) => {
+        this.getMainFolders();
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal("Folder Created sucessfully");
+      },
+      error: (reason) => console.log(reason),
+      complete: () => f.resetForm()
+    });
   }
 
+  onSelectDelete(data: IFolders) {
+    if (data.isDirectory) {
+      this.subscription = this.documentService.deleteDirectory(data.name).subscribe({
+        next: (data: any) => {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal("Folder Deleted Sucessfully");
+          this.getMainFolders();
+        },
+        error: (reason) => console.log(reason),
+      });
+    }
+  }
+
+  onClose() {
+    this.modalService.dismissAll();
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
-
-  
-
 }

@@ -76,6 +76,7 @@ export class NoticeComponent {
   }
   openupdate(noticePeriodList: any) {
     this.selectedId = noticePeriodList.id;
+    this.noticeperiodForm.reset();
     this.updateForm.patchValue({ updatenoticeperiod: noticePeriodList.period });
   
     // Mark control as touched and update validity
@@ -112,6 +113,7 @@ export class NoticeComponent {
 
   openDelete(item: any) {
     this.selectedDeleteDep = item;
+    this.noticeperiodForm.reset();
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
 

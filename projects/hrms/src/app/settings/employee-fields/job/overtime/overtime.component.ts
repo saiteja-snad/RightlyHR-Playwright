@@ -102,12 +102,14 @@ export class OvertimeComponent implements OnInit,OnDestroy {
     }
     openupdate(overtimedetails: any) {
       this.selectedId = overtimedetails.sno;
+      this.OvertimeForm.reset();
       this.updateForm.patchValue({ overtime: overtimedetails.overtimeeligibility1 });
       this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
     }
     // DELETE
       opendelete(overtimedetails: any) {
         this.selectedDeleteovr = overtimedetails;
+        this.OvertimeForm.reset();
         this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
       }
       onDelete(modal: any) {

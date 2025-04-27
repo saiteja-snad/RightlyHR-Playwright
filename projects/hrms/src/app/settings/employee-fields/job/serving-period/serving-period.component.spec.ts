@@ -10,7 +10,7 @@ describe('ServingPeriodComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ServingPeriodComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ServingPeriodComponent);
     component = fixture.componentInstance;

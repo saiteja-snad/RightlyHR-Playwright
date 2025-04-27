@@ -47,6 +47,29 @@ export class CompensationReasonComponent {
     this.getReason();
   }
 
+  allowOnlyLettersAndSpace(event: any): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
+  
+    // Block if the key is not a letter or space
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block space at the beginning
+    if (input.selectionStart === 0 && char === ' ') {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 100
+    if (input.value.length >= 100) {
+      event.preventDefault();
+    }
+  }
+  
   getReason() {
     this.http.getData('CompensationReason').subscribe((data: any) => {
       this.CompensationReason = data;
@@ -99,8 +122,16 @@ export class CompensationReasonComponent {
   }
   openupdate(reasonList: any) {
     this.selectedId = reasonList.sno;
+    this.CompensationForm.reset();
     this.updateForm.patchValue({ UpdateReason : reasonList.reason });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+  }
+
+  enforceMaxLength(event: any) {
+    const maxLength = 100;
+    if (event.target.value.length > maxLength) {
+      event.target.value = event.target.value.slice(0, maxLength); // Truncate to the max length
+    }
   }
   // DELETE
   opendelete(reasonList: any) {

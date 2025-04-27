@@ -58,6 +58,7 @@ export class LeaveAlloctaionComponent {
 
   enableShift = false;
   getShiftDetailsBySubLocationId(policy: ILeavePolicyData) {
+    
     let date = new Date();
     let params = {
       locationId: policy.locationId,
@@ -76,6 +77,7 @@ export class LeaveAlloctaionComponent {
 
   enableCategory = false;
   getLeaves(policy: ILeavePolicyData) {
+    
     let params = {
       locationId: policy.locationId,
       subLocationId: policy.subLocationId,
@@ -121,6 +123,8 @@ export class LeaveAlloctaionComponent {
 
   policyDays: {[field: number]: { allowedDays: number; id: number | null; };} = {};
   getbycategoryid(categoryId: number) {
+    this.accessLevels = {};
+    
     let requestData = {
       year: this.Leavescat.year,
       locationId: this.Leavescat.locationId,
@@ -142,8 +146,9 @@ export class LeaveAlloctaionComponent {
               // this.policyDays[element.entityReferenceId].id = element.id;
               //this.policyDays[element.entityReferenceId].allowedDays =
               //element.allowedDays;
+              
             } else {
-              this.accessLevels[element.allowedDays] = 0;
+              this.accessLevels[element.allowedDays] = 0; 
               // this.policyDays = {
               //   //  element.gradeId
               // }
@@ -151,7 +156,8 @@ export class LeaveAlloctaionComponent {
             }
           });
         } else {
-          this.accessLevels = {};
+          this.accessLevels = [];
+          
         }
       },
     });

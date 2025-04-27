@@ -194,7 +194,9 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     moduleId:environment.attendanceRegularizationModuleId,
   };
   this.spinnerLoader = true;
-  this.http.postdata('RegularizationRequests/create',payLoad).subscribe({
+  this.http.postData('RegularizationRequests/create',payLoad,{
+    responseType: 'text',
+  }).subscribe({
     next: (res:any) => {
      // this.getCompOffRequest();
      this.modalService.dismissAll();

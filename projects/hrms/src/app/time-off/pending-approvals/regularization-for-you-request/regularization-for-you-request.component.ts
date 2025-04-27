@@ -113,6 +113,8 @@ export class RegularizationForYouRequestComponent implements OnInit,OnDestroy {
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
+      this.sharedModalService.openLoaderModal(
+        'Approving Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -165,7 +167,10 @@ export class RegularizationForYouRequestComponent implements OnInit,OnDestroy {
       const requestBody = {
         status: 'Rejected',
         comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
       };
+      this.sharedModalService.openLoaderModal(
+        'Rejecting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();

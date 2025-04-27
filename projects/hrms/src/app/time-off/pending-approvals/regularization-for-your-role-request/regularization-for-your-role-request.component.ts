@@ -111,6 +111,8 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
+      this.sharedModalService.openLoaderModal(
+        'Approving Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -165,7 +167,10 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
       const requestBody = {
         status: 'Rejected',
         comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
       };
+      this.sharedModalService.openLoaderModal(
+        'Rejecting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();

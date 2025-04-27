@@ -1,8 +1,6 @@
 @if(!dataLoad){
 <div class="custom-main-component-container">
-
   <div class="custom-table-content ">
-    
     <table class="w-100">
       <thead>
         <tr>
@@ -26,7 +24,7 @@
             </td>
             <td>
               <div class="mt-2" *ngIf="remoteRequest.reason;else res">
-                <a type="button" placement="top" [ngbPopover]="reason">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
@@ -39,6 +37,7 @@
             <!-- <td>{{ RemoteRequest.status }}</td> -->
           </tr>
         </ng-container>
+
         <ng-template #noDataTemplate>
           <tr>
             <td colspan="4">
@@ -48,7 +47,6 @@
         </ng-template>
       </tbody>
     </table>
-  
   </div>
 </div>
 }@else{<app-data-loader-content />}

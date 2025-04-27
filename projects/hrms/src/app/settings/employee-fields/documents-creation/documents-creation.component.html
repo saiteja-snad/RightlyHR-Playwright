@@ -32,6 +32,7 @@
             </div>
 
             <div class="custom-table-content">
+                @if(!dataLoad){
                 <table class="w-100">
 
                     <thead>
@@ -57,6 +58,9 @@
                         }
                     </tbody>
                 </table>
+            }@else{ 
+                <app-data-loader-content />
+            }
             </div>
         </div>
     </div>

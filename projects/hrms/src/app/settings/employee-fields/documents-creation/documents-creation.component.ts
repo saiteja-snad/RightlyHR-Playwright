@@ -10,9 +10,10 @@ import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/setti
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ICreateSubDir, IFolders } from '../../../Interfaces/document.model';
 import { CommonModule } from '@angular/common';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-documents-creation',
-  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule],
+  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule, DataLoaderContentComponent],
   templateUrl: './documents-creation.component.html',
   styleUrl: './documents-creation.component.scss'
 })
@@ -31,7 +32,9 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
   file: any
   imageDirPath!: string
   Status: any
-  selectedMainFolder ={} as IFolders
+  selectedMainFolder ={} as IFolders;
+  dataLoad= false;
+
 
   constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService) { }
 
@@ -41,6 +44,7 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
 
   getMainFolders(dirPath?: string) {
     dirPath = dirPath ? dirPath : '/FusionDocuments';
+    this.dataLoad = true;
     this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
       next: (data: any) => {
         this.folders = data as IFolders[];
@@ -48,15 +52,24 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
           folder.expanded = false;
           this.getFolders(folder.name, folder);
         });
-        this.selectedFolder = this.folders[0]['subfolders'] as IFolders[];
+
+        setTimeout(() => {
+          if (this.folders.length > 0) {
+            this.dataLoad = false;
+            this.onFolderSelectded(this.folders[0], this.folders[0].name);
+          }
+        }, 100);
       },
       error: (error) => {
+        this.dataLoad = false;
         console.error(error);
-      }
+      },
     });
   }
 
   onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
+    console.log(folder,mainFolderName);
+    
     if (!folder) {
       return;
     }

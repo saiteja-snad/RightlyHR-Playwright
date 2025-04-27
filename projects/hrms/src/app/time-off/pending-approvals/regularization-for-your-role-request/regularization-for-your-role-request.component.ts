@@ -5,7 +5,7 @@ import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IJob } from '../../../Interfaces/letters-model';
 import { PermissionRequestResponse, ICategoryDetails } from '../../../Interfaces/timoff-model';
@@ -15,10 +15,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
 @Component({
   selector: 'app-regularization-for-your-role-request',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,
-     DateformatPipe, ReactiveFormsModule, TranslateModule],
+    DateformatPipe, ReactiveFormsModule, TranslateModule, PermissionsearchPipe],
   templateUrl: './regularization-for-your-role-request.component.html',
   styleUrl: './regularization-for-your-role-request.component.scss'
 })
@@ -43,7 +44,8 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!:FormGroup;
-
+  searchValue: any;
+  leaves = new BehaviorSubject<PermissionRequestResponse[]>([]);
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
     private sharedModalService: OpenModalService, public rbac: RbacService,) {}
 
@@ -69,7 +71,8 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
     let moduleId = environment.attendanceRegularizationModuleId;
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`).subscribe({
       next: (response: any) => {
-        this.regularization = response.data as PermissionRequestResponse[];
+         response.data as PermissionRequestResponse[];
+         this.leaves.next( response.data as PermissionRequestResponse[]);
       },
       error: (reason) => console.log(reason),
     });

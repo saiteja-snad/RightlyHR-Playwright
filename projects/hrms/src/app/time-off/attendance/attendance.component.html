@@ -69,16 +69,16 @@
                                         <td>{{(item.firstLogin|dateformat)??'-'}}</td>
                                         <td>{{(item.lastLogout|dateformat)??'-'}}</td>
                                         <td>{{item.duration?.totalDuration??'-'}}</td>
-                                        <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
+                                         <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
                                             @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
                                                <a  class="ms-2"><u>Leave</u> </a>
-                                            }
-                                            @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
+                                            } 
+                                             @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
                                             (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) && currentMonth == selectedMonth && 
                                             this.rbac.allowedToAccess('Attendance Regularization Button.view')){ 
                                                 <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>
-                                            }
-                                        </td>
+                                            } 
+                                       </td>
                                         <td>
                                             @if((item?.dayLogs??[]).length>0){
                                                 <div>

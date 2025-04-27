@@ -1,1 +1,59 @@
-<p>published-leavecategory works!</p>
+<div class="custom-table-content mt-2">
+    <table class="w-100">
+        <thead>
+            <th>Year</th>
+            <th>Location</th>
+            <th>Sub Location</th>
+            <th>Shift Name</th>
+            <th>Leave Category Type</th>
+            <th>Leave Category Name</th>
+            <th>Leave Category Code</th>
+            <th>Display Color</th>
+            <th>Expires After (Days)</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="(submissiondata).length; else noResults">
+                <tr *ngFor="let details of submissiondata">
+                    <td>{{details.applicableYear}}</td>
+                    <td>{{details.locationName}}</td>
+                    <td>{{details.subLocationName}}</td>
+                    <td>{{details.shiftName}}</td>
+                    <td>{{details.type ? 'General' : 'Flexible'}}</td>
+                    <td>{{details.name}}</td>
+                    <td>{{details.categoryCode}}</td>
+                    <td><input type="color"  readonly disabled></td>
+                    <td>{{details.validity}}</td>
+                    <td>{{details.status}}</td>
+                    <td>
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                              <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                              <li>
+                                <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" data-bs-toggle="modal"
+                                (click)="navigateToViewLeaveCategory()" >
+                                  <i class="bi bi-pencil-fill px-2"></i>{{'View' | translate}}
+                                </a>
+                              </li>
+                              <li>
+                                <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" data-bs-toggle="modal"
+                                (click)="navigateToCloneLeaveCategory()">
+                                  <i class="bi bi-pencil-fill px-2"></i>{{'Clone' | translate}}
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-template #noResults>
+                <tr>
+                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                </tr>
+            </ng-template>
+        </tbody>
+    </table>
+</div>

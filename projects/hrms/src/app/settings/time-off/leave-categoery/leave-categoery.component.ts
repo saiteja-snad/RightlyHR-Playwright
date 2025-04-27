@@ -175,6 +175,14 @@ export class LeaveCategoeryComponent implements OnInit {
     this.router.navigate(['/settings/timeoff-configurations/addleavecategory']);
   }
 
+  navigateToAddLeaveCategoryPending(){
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+  }
+
+  navigateToAddLeaveCategoryPublished(){
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);
+  }
+
   postOrgDataUpdata(f: NgForm) {
     // this.selectDetails.parentId = this.selectDetails.parentId
     this.subscription = this.http.postdata(`OrgLeavesCategories/UPDATER`, this.selectDetails).subscribe({

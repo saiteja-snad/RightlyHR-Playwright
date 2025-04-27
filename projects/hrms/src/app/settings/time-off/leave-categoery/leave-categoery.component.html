@@ -1,7 +1,15 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-end mb-3" *ngIf="rbac.allowedToAccess('Leave Category Tab.create')">
+    <div class="d-flex justify-content-end mb-3" >
         <button type="button" class="custom-btn btn-primary" (click)="navigateToAddLeaveCategory()"
        ><i class="bi bi-plus"></i>Add Leave Category</button>
+    </div>
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="custom-btn btn-primary" (click)="navigateToAddLeaveCategoryPending()"
+       ><i class="bi bi-plus"></i>Pending</button>
+    </div>
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="custom-btn btn-primary" (click)="navigateToAddLeaveCategoryPublished()"
+       ><i class="bi bi-plus"></i>Published</button>
     </div>
 
 
@@ -10,7 +18,7 @@
         <ul class="nav nav-tabs mb-2 border-bottom" id="pills-tab" role="tablist">
             <li class="nav-item today-nav-item" role="presentation">
                 <button class="nav-link today-nav-link active" id="pills-home-tab" data-bs-toggle="pill"
-                    data-bs-target="#submittedCount" type="button" role="tab" aria-controls="pills-home"
+                    data-bs-target="#submittedCount" type="button"  role="tab" aria-controls="pills-home"
                     aria-selected="true">
                     Pending for submission [{{ submissionCount }}]
                 </button>

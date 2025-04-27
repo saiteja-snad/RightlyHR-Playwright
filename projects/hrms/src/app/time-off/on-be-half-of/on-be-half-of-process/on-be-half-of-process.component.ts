@@ -18,7 +18,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 })
 export class OnBeHalfOfProcessComponent {
 loggedinuser = {} as any;
-  empdata = {} as any;
+cadidateEmployeeId!:number;
   subscription!: Subscription;
   processedLeaves: any = [];
   totalRecords = 100
@@ -45,13 +45,16 @@ loggedinuser = {} as any;
   }
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('onbehalfof') || '{}');
-    this.getDataByLPID();
+    this.cadidateEmployeeId =parseInt(localStorage.getItem('onbehalfof') as string) ;
+    if(this.cadidateEmployeeId){
+      this.getDataByLPID();
+
+    }
   }
 
   getDataByLPID() {
-    let empid = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+
+    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
         console.log(response);
         if (Array.isArray(response)) {

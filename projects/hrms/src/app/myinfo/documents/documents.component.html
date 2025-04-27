@@ -34,6 +34,7 @@
                <thead>
                   <th>FILE NAME</th>
                   <th>CREATED DATE</th>
+                  <th>SIZE</th>
                   <th>ACTION</th>
                </thead>
                <tbody>
@@ -44,9 +45,13 @@
                          <td>{{ file.createdOn | dateformat }}</td>
                          <td>{{ file.contentLength }}</td>
                          <td>
-                           <!-- <div>
-                             <button class="download-btn me-3 mb-3" (click)="onSelectDownload(file)">Download</button>
-                           </div> -->
+                  
+                            <div>
+                              <span class="dowload-text" (click)="onSelectDownload(file)" style="cursor: pointer;">
+                                 <i class="bi bi-download clip-icon px-2"></i>Download
+                              </span>
+                             
+                           </div>
                          </td>
                        </tr>
                      </ng-container>

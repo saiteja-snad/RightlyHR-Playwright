@@ -148,4 +148,27 @@ export class DocumentsComponent {
     });
   }
 
+  onSelectDownload(file: IFolders) {
+    this.subscription = this.http
+      .DownloadDataWithQuery('FileSystem/Downloadfile', file.name)
+      .subscribe({
+        next: (res: any) => {
+          let fileName = res.headers
+            .get('content-disposition')
+            ?.split(':')[1]
+            .split('=')[1];
+          let blob: Blob = res.body as Blob;
+          console.log(fileName);
+
+          let a = document.createElement('a');
+          a.href = window.URL.createObjectURL(blob);
+          let filename = file.name.split('/')[file.name.split('/').length - 1];
+          a.download = filename;
+          a.click();
+        },
+        error: (reason) => console.log(reason),
+      });
+  }
+
+
 }

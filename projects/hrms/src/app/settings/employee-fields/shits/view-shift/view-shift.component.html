@@ -191,7 +191,7 @@
 
                     <div class=" d-flex justify-content-end gap-3 p-3">
                         <button type="button" class="custom-btn btn-secondary"
-                            (click)="Cancel()">{{'Cancel'|translate}}</button>
+                            (click)="Cancel()">{{'Close'|translate}}</button>
                         <button type="button" class="custom-btn btn-secondary" *ngIf="!hideBUTTON"
                             (click)="cloneshiftsPolicy1(shiftId)"
                             [disabled]="shiftForm.invalid">{{'Clone'|translate}}</button>
@@ -213,8 +213,8 @@
     <div class="result-popup-content" ngbAutofocus>
 
         <div>
-            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Cancel?'|translate}}</p>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Close?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary "

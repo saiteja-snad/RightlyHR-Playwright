@@ -120,7 +120,14 @@
     
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>
@@ -194,7 +201,14 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Update'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>

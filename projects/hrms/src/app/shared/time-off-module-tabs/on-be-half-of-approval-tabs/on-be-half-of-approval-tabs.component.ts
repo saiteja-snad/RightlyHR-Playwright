@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
@@ -19,6 +19,7 @@ export class OnBeHalfOfApprovalTabsComponent {
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  cadidateEmployeeId!:number
   processedCount: any;
   waitingForApprovalCount: any;
   approvedCount: any;
@@ -30,7 +31,25 @@ export class OnBeHalfOfApprovalTabsComponent {
     { label: 'Rejected', route: 'rejected', }
   ];
 
-  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }
+  constructor(
+    public readonly router: Router, 
+    private http: HttpService, 
+    private authService: AuthService,
+
+  ) { 
+
+    // Signal reaction for employee switch
+    effect(() => {
+      if (this.http.trigger()) {   
+        this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string) ;
+        if (this.cadidateEmployeeId  != null ) {
+          this.getDataByLPID();
+        } 
+        // this.http.resetTriggerSignal();
+      }
+    });
+
+  }
 
   isActive(route: string): boolean {
     return this.router.isActive(route, true);
@@ -39,13 +58,13 @@ export class OnBeHalfOfApprovalTabsComponent {
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.empdata = JSON.parse(localStorage.getItem('onbehalfof') || '{}');
-    this.getDataByLPID();
+   
+   
   }
 
   getDataByLPID() {
-    let empid = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    
+    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
           // Count based on status

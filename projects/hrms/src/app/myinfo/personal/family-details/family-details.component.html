@@ -126,7 +126,14 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="familyDetailsForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>
@@ -206,7 +213,13 @@
                     <button type="reset" class="custom-btn btn-secondary"
                         (click)="modal.dismiss();familyDetailsupdateForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="familyDetailsupdateForm.invalid">Update</button>
+                        [disabled]="familyDetailsupdateForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'UPDATE'| translate}}</span>
+                            }</button>
                 </div>
             </form>
         </div>

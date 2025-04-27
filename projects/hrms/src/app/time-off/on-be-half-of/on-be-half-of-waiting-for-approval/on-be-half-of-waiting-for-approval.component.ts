@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -19,7 +19,7 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
 
 export class OnBeHalfOfWaitingForApprovalComponent {
   loggedinuser = {} as any;
-  empdata = {} as any;
+  cadidateEmployeeId!:number;
   subscription!: Subscription;
   waitingForApprovalLeaves: any = [];
   totalRecords = 100
@@ -43,23 +43,36 @@ export class OnBeHalfOfWaitingForApprovalComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService,) { }
+  constructor(private http: HttpService, private authService: AuthService,) {
+    // Signal reaction for employee switch
+    effect(() => {
+      if (this.http.trigger()) {   
+        this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string) ;
+        if (this.cadidateEmployeeId  != null ) {
+          this.getDataByLPID();
+        } 
+        this.http.resetTriggerSignal();
+      }
+    });
+   }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('onbehalfof') || '{}');
-    this.getDataByLPID();
+    this.cadidateEmployeeId =parseInt(localStorage.getItem('onbehalfof') as string) ;
+    if(this.cadidateEmployeeId){
+      this.getDataByLPID();
+
+    }
   }
 
   getDataByLPID() {
-    let empid = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+   
+    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
         console.log(response);
         if (Array.isArray(response)) {
           this.waitingForApprovalLeaves = response.filter(item => item.status === 'Waiting for Approval');
-          let pendingCount = this.waitingForApprovalLeaves.length;
-          console.log("Pending Records Count:", pendingCount);
+         
         } else {
           console.error("Invalid response format");
         }

@@ -158,7 +158,14 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsForm.invalid">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>
@@ -267,7 +274,15 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsUpdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsUpdateForm.invalid">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Update'| translate}}</span>
+                            }
+
+                    </button>
                 </div>
             </form>
         </div>

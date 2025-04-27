@@ -143,10 +143,7 @@ export class WfhComponent {
           this.sharedModalService.openSuccessModal('Request Approved Successfully');
           this.approveForm.reset();
           this.selectedLeaveData = {} as AttendanceRequest;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            wfh: true,
-          }));
+          this.http.triggerActionSignal();
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -173,10 +170,7 @@ export class WfhComponent {
           this.sharedModalService.openSuccessModal('Request Rejcted Successfully');
           this.rejectForm.reset();
           this.selectedLeaveData = {} as AttendanceRequest;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            wfh: true,
-          }));
+          this.http.triggerActionSignal();
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -199,10 +193,7 @@ export class WfhComponent {
       next: (respone: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          wfh: true,
-        }));
+        this.http.triggerActionSignal();
       },
       error: (reason: any) => {
         this.modalService.dismissAll();

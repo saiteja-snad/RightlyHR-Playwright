@@ -101,9 +101,9 @@
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();AcceptForm.reset()">{{'Close'| translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="AcceptForm.invalid || isLoading"> @if
                     (!isLoading) { {{ 'Approve' | translate }} } @else {
-                    <div class="d-flex">
-                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                        <div>{{ 'Submitting' | translate }}</div>
+                    <div class="button-loader-content">
+                        <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Submitting'|translate}}</div>
                     </div>
                     }
                 </button>
@@ -142,9 +142,9 @@
                     (!isLoading) {
                     {{ 'Reject' | translate }}
                     } @else {
-                    <div class="d-flex">
-                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                        <div>{{ 'Submitting' | translate }}</div>
+                    <div class="button-loader-content">
+                        <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Submitting'|translate}}</div>
                     </div>
                     }
                 </button>

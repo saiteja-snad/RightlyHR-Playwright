@@ -1,86 +1,88 @@
 <div class="custom-main-component-container">
-    <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search" #search="ngModel" [(ngModel)]="searchValue">
-        </div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search"
+            #search="ngModel" [(ngModel)]="searchValue">
+    </div>
 
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th >Employee ID</th>
-                        <th >Employee Name</th>
-                        <th >Requested Date</th>
-                        <th >Permission Date</th>
-                        <th >Duration(InHours)</th>
-                        <th >Permission Type</th>
-                        <th >Reason</th>
-                        <!-- <th >Approver Comments</th> -->
-                        <th >Action(s)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
-                        @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track leave.approvalHeader.id){
-                        <tr>
-                            <td>{{leave.entity.fusionempId}}</td>
-                            <td>{{leave.entity.raisedForName}}</td>
-                            <td>{{leave.entity.createdDate| dateformat}}</td>
-                            <td>{{leave.entity.requestedDate| dateformat}}</td>
-                            <td>{{leave.entity.duration}}</td>
-                            <td>{{leave.entity.type}}</td>
-                            <td>
-                                <div>
-                                    <a type="button"  [ngbPopover]="notes">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #notes>
-                                        <p class="mb-0">{{leave.entity.notes}} </p>
-                                    </ng-template>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <a type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu py-0">
-                                        @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="openApproveModal(approval,leave)"
-                                            *ngIf="rbac.allowedToAccess('Permissions.update')">
-                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
-                                                translate}}</a>
-                                        </li>
-                                        }
-                                        @if( leave.approvalHeader.currentapprovalStage ==
-                                        leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
-                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
-                                                {{'Process' | translate}}</a>
-                                        </li>
-                                        }
-                                        <li (click)="openRejectModal(rejectmodal,leave)"
-                                            *ngIf="rbac.allowedToAccess('Permissions.delete')">
-                                            <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        }
-                        }
-                        @else{
-                        <tr>
-                            <td colospan="8">
-                                <app-no-data-found />
-                            </td>
-                        </tr>
-                        }
-                </tbody>
-            </table>
-        </div>
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Requested Date</th>
+                    <th>Permission Date</th>
+                    <th>Duration(InHours)</th>
+                    <th>Permission Type</th>
+                    <th>Reason</th>
+                    <!-- <th >Approver Comments</th> -->
+                    <th>Action(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
+                @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
+                leave.approvalHeader.id){
+                <tr>
+                    <td>{{leave.entity.fusionempId}}</td>
+                    <td>{{leave.entity.raisedForName}}</td>
+                    <td>{{leave.entity.createdDate| dateformat}}</td>
+                    <td>{{leave.entity.requestedDate| dateformat}}</td>
+                    <td>{{leave.entity.duration}}</td>
+                    <td>{{leave.entity.type}}</td>
+                    <td>
+                        <div>
+                            <a type="button" [ngbPopover]="notes">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #notes>
+                                <p class="mb-0">{{leave.entity.notes}} </p>
+                            </ng-template>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <a type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if( leave.approvalHeader.currentapprovalStage !=
+                                leave.approvalHeader.finalapprovalStage){
+                                <li (click)="openApproveModal(approval,leave)"
+                                    *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                        translate}}</a>
+                                </li>
+                                }
+                                @if( leave.approvalHeader.currentapprovalStage ==
+                                leave.approvalHeader.finalapprovalStage){
+                                <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
+                                        {{'Process' | translate}}</a>
+                                </li>
+                                }
+                                <li (click)="openRejectModal(rejectmodal,leave)"
+                                    *ngIf="rbac.allowedToAccess('Permissions.delete')">
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                        translate}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
+                }
+                @else{
+                <tr>
+                    <td colospan="8">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 

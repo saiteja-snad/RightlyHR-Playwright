@@ -33,7 +33,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Appointment Sent Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="appointmentdate"
-                       
+                       (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
                         placeholder="Please enter appointment sent date" [min]="todayDate" onkeydown="return false;" />
                         <div *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
                             <div class="error-msg" *ngIf="employeeForm.get('appointmentdate')?.errors?.['required']">

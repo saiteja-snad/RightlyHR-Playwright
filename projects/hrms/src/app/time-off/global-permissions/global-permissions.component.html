@@ -4,7 +4,8 @@
       <p class="component-header cursor mb-0">Global Permissions</p>
     </div>
     <div>
-      <button type="button" class="custom-btn btn-primary" (click)="openAdd()"><i class="bi bi-plus me-2"></i>Request Global Permissions</button>
+      <button type="button" class="custom-btn btn-primary" (click)="openAdd()"><i class="bi bi-plus me-2"></i>Request
+        Global Permissions</button>
     </div>
   </div>
 
@@ -48,13 +49,11 @@
           <td>
             <div class="mt-2">
               <span *ngIf="item.employeeIds.length > 0; else emp">
-                <a type="button" placement="top" [ngbPopover]="reason">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
-                  <div>
                     <p class="mb-0">{{getEmployeeNames(item.employeeIds)}}</p>
-                  </div>
                 </ng-template>
               </span>
               <ng-template #emp>-</ng-template>
@@ -65,13 +64,11 @@
           <td>
             <div class="mt-2">
               <span *ngIf="item.meta;else res">
-                <a type="button" placement="top" [ngbPopover]="reason">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
-                  <div>
                     <p class="mb-0">{{item.meta}}</p>
-                  </div>
                 </ng-template>
               </span>
               <ng-template #res>-</ng-template>

@@ -1610,3 +1610,10 @@ input[type="checkbox"] {
     }
 }
 // Action buttons stylings Ends
+
+// component loader
+.custom-compoent-data-loader{
+    position: relative;
+    width: 100%;
+    height: calc(100dvh - 20rem);
+}

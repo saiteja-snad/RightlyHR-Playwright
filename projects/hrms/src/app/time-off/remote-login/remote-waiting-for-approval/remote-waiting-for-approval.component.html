@@ -1,3 +1,4 @@
+@if(!dataLoad){
 <div class="custom-main-component-container">
   <div class="custom-table-content ">
     <table class="w-100">
@@ -13,29 +14,30 @@
 
       <tbody>
         <ng-container *ngIf="approvedRemotes!.length > 0; else noDataTemplate">
-          <tr *ngFor="let RemoteRequest of approvedRemotes; let i = index">
-            <td>{{ RemoteRequest.startTime ? (RemoteRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="RemoteRequest.durationType">
+          <tr *ngFor="let remoteRequest of approvedRemotes; let i = index">
+            <td>{{ remoteRequest.startTime ? (remoteRequest.startTime | dateformat) : ' -' }}</td>
+            <td [ngSwitch]="remoteRequest.durationType">
               <span *ngSwitchCase="1">First Half</span>
               <span *ngSwitchCase="3">Second Half</span>
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
             <td>
-              <div class="mt-2" *ngIf="RemoteRequest.reason;else res">
-                <a type="button" placement="top" [ngbPopover]="reason">
+              <div class="mt-2" *ngIf="remoteRequest.reason;else res">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
-                  <p class="mb-0">{{RemoteRequest.reason}}</p>
+                  <p class="mb-0">{{remoteRequest.reason}}</p>
                 </ng-template>
               </div>
               <ng-template #res>-</ng-template>
             </td>
-            <td>{{ RemoteRequest.requestedDate | dateformat }}</td>
+            <td>{{ remoteRequest.requestedDate | dateformat }}</td>
             <!-- <td>{{ RemoteRequest.status }}</td> -->
           </tr>
         </ng-container>
+
         <ng-template #noDataTemplate>
           <tr>
             <td colspan="4">
@@ -47,3 +49,4 @@
     </table>
   </div>
 </div>
+}@else{<app-data-loader-content />}

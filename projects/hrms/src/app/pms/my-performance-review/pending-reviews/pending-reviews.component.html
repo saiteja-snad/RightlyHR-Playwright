@@ -63,10 +63,10 @@
                     </td>
                 </tr>
                 }
-
             </tbody>
         </table>
     </div>
+
     @if(filteredReviews.length > 0){
     <div class="pagination-content">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
@@ -86,5 +86,9 @@
         </div>
     </div>
     }
-    }@else{<app-data-loader-content />}
+    }@else{
+        <div class="custom-compoent-data-loader">
+            <app-data-loader-content />
+        </div>
+    }
 </div>

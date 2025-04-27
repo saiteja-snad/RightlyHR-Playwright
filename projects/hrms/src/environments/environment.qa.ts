@@ -40,5 +40,6 @@ export const environment = {
   PMSrequestmoduleId:24,
   deskAllocationModuleId:23,
   expensesModuleId:19,
-  globalPermissionsModuleID:18
+  remoteLoginModuleId:11,
+  globalPermissionsModuleID:21
 };

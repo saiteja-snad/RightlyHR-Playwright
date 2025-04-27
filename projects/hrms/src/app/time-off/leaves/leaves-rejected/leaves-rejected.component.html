@@ -27,7 +27,7 @@
                     <td>{{item.enddate| dateformat}}</td>
                     <td>
                         <div>
-                            <a type="button" placement="top" [ngbPopover]="reason1">
+                            <a type="button" [ngbPopover]="reason1">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
                             <ng-template #reason1>
@@ -37,7 +37,7 @@
                     </td>
                     <td>
                         <div>
-                            <a type="button" placement="top" [ngbPopover]="reason2">
+                            <a type="button" [ngbPopover]="reason2">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
                             <ng-template #reason2>

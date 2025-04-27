@@ -61,15 +61,13 @@ export class TraineeAppointmentLetterComponent {
   employeeForm!: FormGroup;
   addressFlag = false;
   address = {} as IAddress;
+  todayDate!: string;
 
   constructor(private http: HttpService, private router: Router, private authService: AuthService, private fb: FormBuilder,
     private conformationPopup: OpenModalService,) {
   }
 
   ngOnInit(): void {
-    this.traineeAppointmentletterData.branchCode = null;
-    this.traineeAppointmentletterData.department = null;
-    this.fusionEmployeeId = null;
     this.traineeAppointmentletterData.make = null;
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.initializeForm();
@@ -80,6 +78,7 @@ export class TraineeAppointmentLetterComponent {
     this.getIssuedEmployeebyId();
     this.getAssertType();
     this.getAuthorityDetails();
+
   }
 
   //function for assert type get
@@ -122,18 +121,47 @@ export class TraineeAppointmentLetterComponent {
   }
 
   Onclick(fusionemployeeId: any) {
-    this.fusionEmployeeId = fusionemployeeId;
-    this.traineeAppointmentletterData = {}
-    this.traineeAppointmentletterData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId.value
-    );
-    this.disablebuttonforemployeeid = true
-    this.traineeAppointmentletterData.dateOfJoining = this.formatDatewithDate(this.traineeAppointmentletterData.dateOfJoining)
-    this.getJobdetails(this.traineeAppointmentletterData);
-    this.getCompensationDetails(this.traineeAppointmentletterData);
-    this.getEmployeeAddress(this.traineeAppointmentletterData.employeeId)
+    if(fusionemployeeId.value){
+      this.fusionEmployeeId = fusionemployeeId.value;
+      this.traineeAppointmentletterData = {}
+      this.traineeAppointmentletterData = this.employeeiddetails.find(
+        (c: any) => c.employeeId == fusionemployeeId.value
+      );
+      this.disablebuttonforemployeeid = true
+      this.employeeForm.patchValue({
+        fusionEmpId: this.traineeAppointmentletterData.employeeId,
+        appointmentdate: this.traineeAppointmentletterData.appointmentdate,
+        dateOfJoining: this.formatDatewithDate(this.traineeAppointmentletterData.dateOfJoining),
+        department: this.traineeAppointmentletterData.department,
+        branchCode: this.traineeAppointmentletterData.branchCode,
+        Documenttype: this.traineeAppointmentletterData.documentType,
+        asserttype: this.traineeAppointmentletterData.assetType,
+        note: this.traineeAppointmentletterData.note,
+        model: this.traineeAppointmentletterData.model,
+        serial: this.traineeAppointmentletterData.serialNumber,
+        signatureAuthority: this.traineeAppointmentletterData.authorityName,
+      });
+      this.getJobdetails(this.traineeAppointmentletterData);
+      this.getCompensationDetails(this.traineeAppointmentletterData);
+      this.getEmployeeAddress(this.traineeAppointmentletterData.employeeId);
+      this.getOfferdetails(this.traineeAppointmentletterData.employeeId);
+    }
+    else{
+      this.employeeForm.reset();
+      this.traineeAppointmentletterData = {};
+    }
+ 
   }
-
+getOfferdetails(Value: any) {
+  this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Value}`).subscribe({
+    next: (data: any) => {
+      this.traineeAppointmentletterData.offerIssueddate = data.offerSentDate;
+      
+    const today = moment(this.traineeAppointmentletterData.offerIssueddate);
+    this.todayDate = today.toISOString().split('T')[0];
+    }
+  })
+}
   initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmpId: ['', Validators.required],
@@ -151,6 +179,7 @@ export class TraineeAppointmentLetterComponent {
       signatureAuthority: ['', Validators.required],
       documentType: ['', Validators.required],
     });
+  
   }
 
   //function to get the address 
@@ -243,8 +272,8 @@ export class TraineeAppointmentLetterComponent {
         let res = data[0];
         this.employeeJobDetails = res;
         Employee.jobRole = res?.jobRole;
-        Employee.workLocation = res.lopcation;
-        Employee.subLocation = res.subLocation;
+        Employee.workLocation = res?.lopcation;
+        Employee.subLocation = res?.subLocation;
       },
       error: (reason: any) => {
         console.log(reason);
@@ -259,153 +288,8 @@ export class TraineeAppointmentLetterComponent {
         let res = data.reverse()[0];
         this.employeeCompensationDetails = res;
         Employee.salary = res.compensationamount;
-        //CTC calculation stated
-        Employee.grossby = 12
-        Employee.grossSalary = Math.round(res.compensationamount / Employee.grossby)
-        //this.grossSalary = Employee.grossSalary
-        if (this.traineeAppointmentletterData.pf == true || this.traineeAppointmentletterData.pf == false) {
-          switch (this.traineeAppointmentletterData.pf) {
-            case true:
-              if (this.traineeAppointmentletterData.esic == false) {
-                Employee.pfContribution = Math.round((Employee.grossSalary * (6.719 / 100)));
-                if (Employee.pfContribution >= 1800) {
-                  Employee.pfContribution = 1800;
-                }
-              }
-              else if (Employee.grossSalary >= 23195) {
-                Employee.pfContribution = Math.round((Employee.grossSalary * (6.717 / 100)));
-                if (Employee.pfContribution >= 1800) {
-                  Employee.pfContribution = 1800;
-                }
-              }
-              else if (Employee.grossSalary <= 23195) {
-                Employee.pfContribution = Math.round((Employee.grossSalary * (6.519 / 100)));
-                if (Employee.pfContribution >= 1800) {
-                  Employee.pfContribution = 1800;
-                }
-              }
-              else {
-                if (Employee.grossSalary <= 15000) {
-                  Employee.pfContribution = Math.round((Employee.grossSalary * (6.519 / 100)));
-                  if (Employee.pfContribution >= 1800) {
-                    Employee.pfContribution = 1800;
-                  }
-                }
-                else if (Employee.grossSalary <= 23195) {
-                  Employee.pfContribution = Math.round((Employee.grossSalary * (6.519 / 100)));
-                  if (Employee.pfContribution >= 1800) {
-                    Employee.pfContribution = 1800;
-                  }
-                }
-                else if (Employee.grossSalary >= 23195) {
-                  Employee.pfContribution = Math.round((Employee.grossSalary * (6.717 / 100)));
-                  if (Employee.pfContribution >= 1800) {
-                    Employee.pfContribution = 1800;
-                  }
-                }
-              }
-              break;
-            case false:
-              Employee.pfContribution = 0;
-              break;
-            default:
-          }
-        }
-        else {
-          Employee.pfContribution = 0;
-        }
-        //=====================================================================================================================
-        //claculation for ESIC Employeer
-        if (this.traineeAppointmentletterData.esic == true) {
-          let condition1 = (Employee.grossSalary >= 23195)
-          if (!condition1) {
-            Employee.esicContribution = Math.round(Employee.grossSalary * (2.94 / 100));
-            this.traineeAppointmentletterData.esic = true;
-          }
-          else {
-            Employee.esicContribution = 0;
-            this.traineeAppointmentletterData.esic = false;
-          }
-        }
-        else {
-          Employee.esicContribution = 0;
-          this.traineeAppointmentletterData.esic = false;
-        }
-        if (Employee.grossSalary < 15000) {
-          Employee.professionalTax = 0;
-          this.traineeAppointmentletterData.pt = false;
-        }
-        else if (Employee.grossSalary > 15000 && Employee.grossSalary < 21000) {
-          Employee.professionalTax = 150;
-          this.traineeAppointmentletterData.pt = true;
-        }
-        else if (Employee.grossSalary >= 21000) {
-          Employee.professionalTax = 200;
-          this.traineeAppointmentletterData.pt = true;
-        }
-        else {
-          Employee.professionalTax = 0;
-          this.traineeAppointmentletterData.pt = false
-        }
-        //calcution for the totalgrosssalary
-        Employee.totalGrossSalary = Math.round(Employee.grossSalary - Employee.pfContribution - Employee.esicContribution)
-        //claculation for ESIC for employee
-        // case true:
-        if (this.traineeAppointmentletterData.esic == true) {
-          if (Employee.totalGrossSalary <= 21000) {
-            Employee.employeeEsi = Math.round(Employee.totalGrossSalary * (0.75 / 100));
-            this.traineeAppointmentletterData.esic = true;
-          }
-          else {
-            Employee.employeeEsi = 0
-            this.traineeAppointmentletterData.esic = false;
-          }
-        }
-        else {
-          Employee.employeeEsi = 0
-          this.traineeAppointmentletterData.esic = false;
-        }
-        //===========================================================================================================
-        // calculation for the basicsalary
-        Employee.basicSalary = Math.round(Employee.totalGrossSalary * (60 / 100))
-        //calculation for the hraSalary
-        Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100))
-        //calculation for the educationAllowances
-        Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
-        //calculation for the conveyance
-        Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
-        //total deductions per month
-        Employee.totalDeduction = Math.round(Employee.pfContribution + Employee.employeeEsi + Employee.professionalTax)
-        //total net salary  per month
-        Employee.netSalary = Math.round(Employee.totalGrossSalary - Employee.totalDeduction);
-        //calculation for the otherallowances
-        Employee.otherAllowances = Math.round(Employee.totalGrossSalary * (10 / 100))
-        //pfcontribution per annum
-        Employee.pfPreAnuum = Math.round(Employee.pfContribution * Employee.grossby);
-        //totalGrossPerAnnum calculation
-        Employee.totalGrossPerAnnum = Math.round(Employee.totalGrossSalary * Employee.grossby);
-        //basicsalaryperannum
-        Employee.basicPerannum = Math.round(Employee.basicSalary * Employee.grossby);
-        //HRA per annum
-        Employee.hraPerAnnum = Math.round(Employee.hraSalary * Employee.grossby);
-        //esiper anuum
-        Employee.esiPerAnnum = Math.round(Employee.esicContribution * Employee.grossby);
-        //esiper anuum for employee
-        Employee.esiPerAnnumemployee = Math.round(Employee.employeeEsi * Employee.grossby);
-        //educationper annum
-        Employee.educationallowancesPerAnnum = Math.round(Employee.educationAllowances * Employee.grossby)
-        //conveyance per annum
-        Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
-        //otherAllowancesper annum
-        Employee.otherAllowancesPerAnnum = Math.round(Employee.otherAllowances * Employee.grossby);
-        //professional per annum
-        Employee.professionalPerAnnum = Math.round(Employee.professionalTax * Employee.grossby);
-        //salary deductions per annum
-        Employee.totalDeductionsPerAnnum = Math.round(Employee.pfPreAnuum + Employee.esiPerAnnumemployee + Employee.professionalPerAnnum);
-        //net salary per annum
-        Employee.netSalaryPerAnnum = Math.round(Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum);
-        //Ctc per annum
-        Employee.ctcperannum = Math.round(Employee.totalGrossPerAnnum + Employee.pfPreAnuum + Employee.esiPerAnnum)
+        Employee.salaryType = res.compensationType;
+        Employee.salaryMode = res.compensationMode;
       },
       error: (reason: any) => {
         console.log(reason);
@@ -442,14 +326,9 @@ export class TraineeAppointmentLetterComponent {
     this.subscription = this.http.getData('TraineeOfferLetter/traineeActiveEmployees').subscribe({
       next: (data: any) => {
         this.employeeiddetails = data as IemployeeDetails[];
-        this.employeeiddetailsauthorityName = data as IemployeeDetails[];
         this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
           ...emp,
           fullName: `${emp.fusionEmpId ?? ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-        }));
-        this.authorityDetails = this.authorityDetails.map((authority: IAuthority) => ({
-          ...authority,
-          fullName: `${authority.firstName ?? ''} ${authority.middleName ?? ''} ${authority.lastName ?? ''}`.trim(), // Concatenate and remove excess spaces
         }));
         //  this.EmployeeName=this.employeeiddetails.firstName+" "+this.employeeiddetails.lastName
       },

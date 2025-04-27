@@ -120,6 +120,7 @@ export class LeavesComponent {
       leaveType: [null, Validators.required],
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
+      halfdayavailing : ['', Validators.required],
       availing: [{value : '',disabled: true}], 
       fulldayavailing: [{value : '',disabled: true}], 
       reason: ['', [Validators.required]]
@@ -134,10 +135,12 @@ export class LeavesComponent {
     const end = this.leaveForm.get('enddate')?.value;
     if (start && end) {
       this.leaveForm.get('halfDay')?.enable();
+      this.leaveForm.get('halfdayavailing')?.enable();
       this.leaveForm.get('availing')?.enable();
       this.leaveForm.get('fulldayavailing')?.enable();
     } else {
       this.leaveForm.get('halfDay')?.disable();
+      this.leaveForm.get('halfdayavailing')?.disable();
       this.leaveForm.get('availing')?.disable();
       this.leaveForm.get('fulldayavailing')?.disable();
     }
@@ -263,6 +266,8 @@ export class LeavesComponent {
   }
   
   onstartdate(action: string) {
+    this.disableSubmitButton = false;
+    this.leaveForm.patchValue({ halfdayavailing: null });
     this.leaveForm.patchValue({ availing: null });
     this.leaveForm.patchValue({ fulldayavailing: null });
     if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
@@ -282,9 +287,9 @@ export class LeavesComponent {
     this.checkWeekends(action);
     this.dateCheckWithHolidayOrWeekend(action);
     this.issEndDategreater = true;
-    if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
-      this.disableSubmitButton = false;
-    }
+    // if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
+    //   this.disableSubmitButton = false;
+    // }
     
   }
   
@@ -516,6 +521,8 @@ export class LeavesComponent {
   }
  
   onEndDate(action: string) {
+    this.disableSubmitButton = false;
+    this.leaveForm.patchValue({ halfdayavailing: null });
     this.leaveForm.patchValue({ availing: null });
     this.leaveForm.patchValue({ fulldayavailing: null });
     if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
@@ -535,9 +542,9 @@ export class LeavesComponent {
     this.updateStartDateValidity1();
     this.checkWeekendsEndate(action);
     this.dateCheckWithHolidayOrWeekendForEndDateChange(action);
-    if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
-      this.disableSubmitButton = false;
-    }
+    // if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
+    //   this.disableSubmitButton = false;
+    // }
   }
 
   updateEndDateValidity(): void {
@@ -836,36 +843,53 @@ export class LeavesComponent {
   chooseDayType(daytype: any) {
     this.isDayTypeselected = true;
     if (daytype === 'half') {
+      this.disableSubmitButton = false;
       this.leaveFormData.isDaytype = true;
-      this.leaveForm.patchValue({ fulldayavailing: null });
+      this.leaveForm.patchValue({ 
+        halfdayavailing: '1',   // Half day selected
+        fulldayavailing: null   // Clear full day selection
+      });
       this.enableButton = true;
+      
       if(this.leaveForm.get('availing')?.value === 'firsthalf'){
         this.selectedValue = '1'
+        this.leaveForm.patchValue({ 
+          halfdayavailing: '1',   // Half day selected
+          fulldayavailing: null   // Clear full day selection
+        });
       }
       if(this.leaveForm.get('availing')?.value === 'secondhalf'){
         this.selectedValue = '3'
+        this.leaveForm.patchValue({ 
+          halfdayavailing: '1',   // Half day selected
+          fulldayavailing: null   // Clear full day selection
+        });
       }
-      if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
-        this.disableSubmitButton = false;
-      }
+      // if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
+      //   this.disableSubmitButton = false;
+      // }
     }
     else if (daytype === 'full') {
+      this.disableSubmitButton = false;
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
       if(this.enableHalfDayOptions === false){
+        this.leaveForm.get('halfdayavailing')?.disable();
         this.leaveForm.get('availing')?.disable();
       }
       this.toggleFullDayOptions(false);
       if(this.dateDifference > 1){
+        this.leaveForm.get('halfdayavailing')?.disable();
         this.leaveForm.get('availing')?.disable();
         this.leaveForm.patchValue({ fulldayavailing: '2' });
+        this.leaveForm.patchValue({ halfdayavailing: null, availing: null });
       }
       // else{
       //   this.leaveForm.get('availing')?.enable();
       // }
-      if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
-        this.disableSubmitButton = false;
-      }
+      // if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
+      //   this.disableSubmitButton = false;
+      // }
       this.selectedValue = '2'
     }
   }
@@ -896,8 +920,9 @@ export class LeavesComponent {
 
   toggleFullDayOptions(isFullDay: boolean) {
     this.enableButton = isFullDay;
+    this.leaveForm.get('halfdayavailing')?.clearValidators();
     this.leaveForm.get('availing')?.clearValidators();
-    this.leaveForm.patchValue({ availing: null });
+    this.leaveForm.patchValue({ halfdayavailing: null, availing: null });
   }
 
  

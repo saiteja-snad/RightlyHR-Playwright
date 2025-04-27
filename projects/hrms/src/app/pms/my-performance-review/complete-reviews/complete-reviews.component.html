@@ -93,25 +93,30 @@
                 </ng-template>
             </tbody>
         </table>
- 
     </div>
+
     @if(filteredReviews.length > 0){
-        <div class="pagination-content">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onPageSizeChange($event)">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">
-                        Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
-                    </span>
-                </div>
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
+    <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onPageSizeChange($event)">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                    </option>
+                </select>
+                <span class="pagination-label text-nowrap">
+                    Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{
+                    collectionSize }}
+                </span>
             </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
         </div>
-        }
-        }@else{<app-data-loader-content />}
+    </div>
+    }
+    }@else{
+        <div class="custom-compoent-data-loader">
+            <app-data-loader-content />
+        </div>
+    }
 </div>

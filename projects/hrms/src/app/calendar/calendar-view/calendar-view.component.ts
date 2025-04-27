@@ -188,10 +188,10 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
       const results = await Promise.all(apiPromises);
       const events: any[] = [];
 
-      for (let index = 0; index < results.length; index++) {
+      for (let index = 0; index < results?.length; index++) {
         const allEventsData: any = results[index];
 
-        for (let j = 0; j < allEventsData.length; j++) {
+        for (let j = 0; j < allEventsData?.length; j++) {
           // Birthdays
           if (index === 0 && this.showBirthdays) {
             const bday = new Date(allEventsData[j].dob);

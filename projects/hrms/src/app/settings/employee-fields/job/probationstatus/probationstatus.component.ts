@@ -107,12 +107,14 @@ export class ProbationstatusComponent {
       }
       openupdate(jobtypelist: any) {
         this.selectedId = jobtypelist.sno;
+        this.probitionForm.reset();
         this.updateForm.patchValue({ probitiontype: jobtypelist.probationstatus1 });
         this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
       }
       // DELETE
       opendelete(jobtypelist: any) {
         this.selectedDeleteDep = jobtypelist;
+        this.probitionForm.reset();
         this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
       }
       onDelete(modal: any) {

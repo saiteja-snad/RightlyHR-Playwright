@@ -105,11 +105,13 @@ export class JobtypeComponent {
     }
     openupdate(jobtypelist: any) {
       this.selectedId = jobtypelist.sno;
+      this.JobtypeForm.reset();
       this.updateForm.patchValue({ jobtype: jobtypelist.jobType1 });
       this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
     }
     // DELETE
     opendelete(jobtypelist: any) {
+      this.JobtypeForm.reset();
       this.selectedDeleteDep = jobtypelist;
       this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
     }

@@ -105,6 +105,7 @@ export class BackgroundcheckComponent {
   // OPEN UPDATE MODAL
   openupdate(backgroundchecklist: any): void {
     this.selectedId = backgroundchecklist.sno;
+    this.BackgroundCheckForm.reset();
     this.updateForm.patchValue({ BackgroundCheck: backgroundchecklist.backgroundcheckstatus1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
@@ -118,6 +119,7 @@ export class BackgroundcheckComponent {
   // OPEN DELETE MODAL
   opendelete(backgroundchecklist: any): void {
     this.selectedDeleteBac = backgroundchecklist;
+    this.BackgroundCheckForm.reset();
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
 

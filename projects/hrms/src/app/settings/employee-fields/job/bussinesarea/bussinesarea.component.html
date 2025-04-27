@@ -7,11 +7,11 @@
                     formControlName="BUSINESS" aria-label="BussinesDetail" aria-describedby="BussinesDetail"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                 <span class="input-group-text" id="BussinesDetail">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="BussinesForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="BussinesForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
             <div *ngIf="BussinesForm.get('BUSINESS')?.touched && BussinesForm.get('BUSINESS')?.invalid"
-                class="error-msg mt-2">
+                class="error-msg">
                 <div *ngIf="BussinesForm.get('BUSINESS')?.errors?.['required']">{{'Business Area is required'|translate}}</div>
             </div>
         </div>
@@ -33,14 +33,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(loc)" *ngIf="rbac.allowedToAccess('Business Area.update')"><img
-                                        src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
+                                <a (click)="openupdate(loc)" *ngIf="rbac.allowedToAccess('Business Area.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(loc)" *ngIf="rbac.allowedToAccess('Business Area.delete')"><img
-                                        src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(loc)" *ngIf="rbac.allowedToAccess('Business Area.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -63,7 +64,8 @@
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div class="custom-main-popup-content ">
+
+            <div class="custom-main-popup-content">
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Business Area'|translate}}
                         <span class="error-msg">*</span></label>
@@ -71,15 +73,14 @@
                         placeholder="Please enter business area"
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                     <div *ngIf="updateForm.get('BUSINESS')?.touched && updateForm.get('BUSINESS')?.invalid"
-                        class="error-msg mt-2">
+                        class="error-msg">
                         <div *ngIf="updateForm.get('BUSINESS')?.errors?.['required']">{{'Business Area is required'|translate}}</div>
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary "
-                        (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary " (click)="updateBusiness(modal)"
-                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateBusiness(modal)" [disabled]="updateForm.invalid">
+                        {{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -89,15 +90,13 @@
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-        
-            <div >
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary "(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-            </div>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
         </div>
-    
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+        </div>
+    </div>
 </ng-template>

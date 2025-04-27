@@ -1,5 +1,5 @@
 export interface NoticeData {
-    id?: number; // optional for POST
-    period: string;
-    isdeleted: string;
-  }
+  id?: number; // optional for POST
+  period: string;
+  isdeleted: string;
+}

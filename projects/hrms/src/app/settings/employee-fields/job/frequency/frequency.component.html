@@ -7,10 +7,10 @@
                     formControlName="frequency" aria-label="frequency" aria-describedby="frequency"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                 <span class="input-group-text" id="frequency">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="FrequencyForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="FrequencyForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-            <div *ngIf="FrequencyForm.get('frequency')?.touched && FrequencyForm.get('frequency')?.invalid" class="error-msg mt-2">
+            <div *ngIf="FrequencyForm.get('frequency')?.touched && FrequencyForm.get('frequency')?.invalid" class="error-msg">
                 <div *ngIf="FrequencyForm.get('frequency')?.errors?.['required']">{{'Frequency is required'|translate}}</div>
             </div>
         </div>
@@ -32,13 +32,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openUpdate(freq)" *ngIf="rbac.allowedToAccess('Frequency.update')"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openUpdate(freq)" *ngIf="rbac.allowedToAccess('Frequency.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="openDelete(freq)" *ngIf="rbac.allowedToAccess('Frequency.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openDelete(freq)" *ngIf="rbac.allowedToAccess('Frequency.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -67,7 +69,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="frequency" placeholder="Please enter frequency"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
-                    <div *ngIf="updateForm.get('frequency')?.touched && updateForm.get('frequency')?.invalid" class="error-msg mt-2">
+                    <div *ngIf="updateForm.get('frequency')?.touched && updateForm.get('frequency')?.invalid" class="error-msg">
                         <div *ngIf="updateForm.get('frequency')?.errors?.['required']">{{'Frequency is required'|translate}}</div>
                     </div>
                 </div>
@@ -83,15 +85,14 @@
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-        
-            <div >
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary "(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-            </div>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
         </div>
-    
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+        </div>
+    </div>
 </ng-template>

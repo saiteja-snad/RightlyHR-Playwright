@@ -59,24 +59,24 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-3">Availing<span class="text-danger">*</span></label>
                     <div class="d-flex gap-3">
-                        <div class="form-check cursor">
+                        <div class="form-check">
                             <input type="radio" class="form-check-input" id="halfDay" value="Half Day" formControlName="availing">
                             <label class="form-check-label custom-label" for="halfDay">Half Day</label>
                             <!-- Half Day Selection -->
-                            <div class="d-flex gap-3 pt-3" *ngIf="addWFHForm.get('availing')?.value === 'Half Day'">
-                                <div class="form-check cursor">
+                            <div *ngIf="addWFHForm.get('availing')?.value === 'Half Day'">
+                                <div class="form-check my-2">
                                     <input type="radio" class="form-check-input" id="firstHalf" [value]="1" formControlName="halfType">
                                     <label class="form-check-label" for="firstHalf">First Half</label>
                                 </div>
                         
-                                <div class="form-check cursor">
+                                <div class="form-check">
                                     <input type="radio" class="form-check-input" id="secondHalf" [value]="3" formControlName="halfType">
                                     <label class="form-check-label" for="secondHalf">Second Half</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-check cursor">
+                        <div class="form-check">
                             <input type="radio" class="form-check-input" id="fullDay" value="Full Day"
                                 formControlName="availing" [value]="2" (change)="updateDuration()">
                             <label class="form-check-label custom-label" for="fullDay">Full Day</label>

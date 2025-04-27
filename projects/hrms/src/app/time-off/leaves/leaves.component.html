@@ -154,7 +154,7 @@
                             </div>
                     
                             <ul class="list-style-none">
-                                <li class="list-content mb-2 pt-3" *ngIf="enableButton">
+                                <li class="list-content my-2" *ngIf="enableButton">
                                     <label class="form-check-label" for="flexRadioDefault1">
                                         <input class="form-check-input" type="radio" id="flexRadioDefault1" formControlName="availing"
                                             value="firsthalf" name="availing" (change)="chooseDayType('half')" required>
@@ -179,10 +179,10 @@
                         </div>
                     </div>
                 </div>
-                    <!-- <div class="text-danger"
-                        *ngIf="leaveForm.get('availing')?.invalid && leaveForm.get('availing')?.touched">
+                    <div class="error-msg"
+                        *ngIf="disableSubmitButton">
                         Please select any of the option
-                    </div> -->
+                    </div>
 
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -214,9 +214,9 @@
                  
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup);model.dismiss()">{{'Cancel'| translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="(leaveForm.invalid || isWeekOffSelected || !isstimeoffValid || isWeekOffSelectedEndate || 
+                        [disabled]="(leaveForm.invalid || isWeekOffSelected || disableSubmitButton || !isstimeoffValid || isWeekOffSelectedEndate || 
                         isHolidaySelectedEndate || isoptionalnotallowedatWorkingdate || !issEndDategreater || !startdatevalid || 
                         isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > 
                         remainingLeaves) ) || isLoading">

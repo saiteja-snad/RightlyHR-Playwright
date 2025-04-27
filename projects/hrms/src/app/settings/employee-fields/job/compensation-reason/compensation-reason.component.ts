@@ -47,7 +47,7 @@ export class CompensationReasonComponent {
     this.getReason();
   }
 
-  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+  allowOnlyLettersAndSpace(event: any): void {
     const input = event.target as HTMLInputElement;
     const char = event.key;
     const pattern = /^[A-Za-z ]$/;
@@ -108,7 +108,7 @@ export class CompensationReasonComponent {
           this.getReason();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Compansation reason updated successfully');
+          this.conformationPopup.openSuccessModal('Compensation reason updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -125,6 +125,13 @@ export class CompensationReasonComponent {
     this.CompensationForm.reset();
     this.updateForm.patchValue({ UpdateReason : reasonList.reason });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+  }
+
+  enforceMaxLength(event: any) {
+    const maxLength = 100;
+    if (event.target.value.length > maxLength) {
+      event.target.value = event.target.value.slice(0, maxLength); // Truncate to the max length
+    }
   }
   // DELETE
   opendelete(reasonList: any) {

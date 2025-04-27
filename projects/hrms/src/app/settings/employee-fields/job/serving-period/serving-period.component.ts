@@ -41,27 +41,20 @@ export class ServingPeriodComponent {
   ngOnInit(): void {
     this.AddForm = this.fb.group({
       addServingPeriod: ['', [
-        Validators.required,
-        Validators.pattern('^[a-zA-Z ]+$'),  // Only letters and spaces
-        Validators.maxLength(100)
+        Validators.required
       ]],
       Duration: ['', [
-        Validators.required,
-        Validators.maxLength(100),
-        Validators.pattern('^[a-zA-Z0-9.,/\\-\\s]+$')  // Letters, numbers, spaces, periods, commas, slashes, and hyphens
+        Validators.required, 
       ]]
     });
 
-    this.updateForm = this.fb.group({
+    this.updateForm = this.fb.group({ 
       UpdateServingPeriod: ['', [
-        Validators.required,
-        Validators.pattern('^[a-zA-Z ]+$'),  // Only letters and spaces
-        Validators.maxLength(100)
+        Validators.required, // Only letters and spaces
+
       ]],
       UpdateDuration: ['', [
-        Validators.required,
-        Validators.maxLength(100),
-        Validators.pattern('^[a-zA-Z0-9.,/\\-\\s]+$')  // Letters, numbers, spaces, periods, commas, slashes, and hyphens
+        Validators.required
       ]]
     });
     this.getServingPeriod();
@@ -86,22 +79,77 @@ export class ServingPeriodComponent {
   allowOnlyLettersAndSpace(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
     const char = event.key;
-
-    // Allow only letters (a-z, A-Z) and space
     const pattern = /^[A-Za-z ]$/;
-
+  
+    // Block if the key is not a letter or space
     if (!pattern.test(char)) {
       event.preventDefault();
       return;
     }
-
-    // Restrict max length to 100
+  
+    // Block space at the beginning
+    if (input.selectionStart === 0 && char === ' ') {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 100
     if (input.value.length >= 100) {
       event.preventDefault();
     }
   }
 
+allowOnlyNumbers(event: any) {
+  let value = event.target.value;
+  
+  // Remove any non-numeric characters and spaces
+  value = value.replace(/[^0-9]/g, '');
 
+  // Limit the length to 4 characters
+  if (value.length > 4) {
+    value = value.substring(0, 4);
+  }
+
+  // Set the sanitized value back to the input field
+  event.target.value = value;
+}
+
+limitLength(event: any) {
+  const inputValue = event.target.value;
+
+  // Prevent input beyond 3 characters
+  if (inputValue.length > 3) {
+    event.preventDefault(); // Prevent the default behavior, which would allow more input
+    event.target.value = inputValue.slice(0, 3); // Ensure the value is limited to 3 characters
+  }
+}
+
+
+
+onDurationInput(event: KeyboardEvent): boolean {
+  const inputElement = event.target as HTMLInputElement;
+  const value = inputElement.value;
+  const char = event.key;
+
+  if (char === '+' || char === '-' || char === '.') {
+    event.preventDefault();
+    return false;
+  }
+
+  if (value.length >= 3 && !this.isBackspaceOrDelete(event)) {
+    event.preventDefault();
+    return false;
+  }
+
+  return true;
+}
+
+private isBackspaceOrDelete(event: KeyboardEvent): boolean {
+  return event.key === 'Backspace' || event.key === 'Delete';
+}
+
+
+  
 
   // // Method to open the add modal dialog
   openDialog() {

@@ -73,10 +73,9 @@ export class TeamComponent implements OnInit, OnDestroy {
   }
 
   getDepartmentName() {
-    this.subscription = this.http.getData('Subdepartments/Getalldept').subscribe({
+    this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
         this.deptdetails = data as [];
-        console.log(this.deptdetails)
       },
       error: (reason: any) => {
         console.log(reason);
@@ -176,15 +175,14 @@ export class TeamComponent implements OnInit, OnDestroy {
     });
   }
   //ADD
-  addTeam(modal: any) {
-    if (this.AddForm.valid) {
-      console.log('Form values:', this.AddForm.value);
-
+  addTeam(form: any) {
+    if (form.valid) {
+      const formData = form.value
       // Create payload according to Swagger API specification
       const request = {
-        subdepartmentName: this.AddForm.get('teamName')?.value.trim(),
-        departmentId: this.AddForm.get('departmentId')?.value, // This should be the sno value
-        reportingmanagerId: Number(this.AddForm.get('teamManager')?.value) || null,
+        subdepartmentName: formData.teamName,
+        departmentId: formData.departmentId, // This should be the sno value
+        reportingmanagerId: formData.teamManager,
         isdeleted: false
       };
 
@@ -192,41 +190,25 @@ export class TeamComponent implements OnInit, OnDestroy {
 
       this.subscription = this.http.postdata('Subdepartments', request).subscribe({
         next: (response) => {
-          console.log('Team added successfully, response:', response);
-          modal.close();
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Team added successfully');
-
-          // Refresh both data sorces
           this.getDepartmentName();
           this.getTable();
         },
         error: (error: any) => {
-          console.error('Error adding team:', error);
           this.conformationPopup.openErrorModal('Failed to add team: ' + (error.error?.message || 'Unknown error'));
         }
       });
-    } else {
-      console.warn('Add form is invalid:', this.AddForm.errors);
-      // Mark all fields as touched to trigger validation errors
-      Object.keys(this.AddForm.controls).forEach(key => {
-        const control = this.AddForm.get(key);
-        control?.markAsTouched();
-      });
-    }
+    } 
   }
 
   openupdateDialog(team: any) {
     this.updateDepartmentDetails = team;
-
-    // Store original values for comparison
-    this.originalTeamValues = {
-      departmentId: team.departmentId,
-      teamName: team.subdepartmentName,
-      managerId: team.reportingmanagerId
-    };
-
+    console.log(team);
+    console.log(this.deptdetails);
+    
     this.updateForm.patchValue({
-      updateddepartmentId: team.departmentId,       // Should match dept.departmentId
+      updateddepartmentId:  team.departmentId,       // Should match dept.departmentId
       UpdatedTeamName: team.subdepartmentName,      // Text input
       updatedteamManager: team.reportingmanagerId   // Should match manager.employeeId
     });
@@ -271,10 +253,10 @@ export class TeamComponent implements OnInit, OnDestroy {
 
       this.subscription = this.http.postdata('Subdepartments/Update', request).subscribe({
         next: (response) => {
-          console.log('Team updated successfully, response:', response);
-          modal.close();
+         
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Team updated successfully');
-         this.updateForm.reset();
+          this.updateForm.reset();
           this.getTable();
         },
         error: (error: any) => {

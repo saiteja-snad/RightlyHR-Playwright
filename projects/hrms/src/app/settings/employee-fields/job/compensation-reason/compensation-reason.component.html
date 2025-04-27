@@ -4,16 +4,16 @@
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter compansation reason"
-                    formControlName="Reason" aria-label="reason" aria-describedby="reason" max="100"
-                    (keypress)="allowOnlyLettersAndSpace($event)">
+                <input type="text" class="form-control custom-input" placeholder="Please enter compensation reason"
+                    formControlName="Reason" aria-label="reason" aria-describedby="reason" maxlength="100" 
+                    (input)="allowOnlyLettersAndSpace($event)"  (input)="enforceMaxLength($event)">
                 <span class="input-group-text" id="reason">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="CompensationForm.invalid">{{'Add'|translate}}</button></span>
             </div>
             <div *ngIf="CompensationForm.get('Reason')?.touched && CompensationForm.get('Reason')?.invalid"
                 class="error-msg mt-2">
-                <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">{{'Compansation Reason  Required'|translate}}</div>
+                <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">{{'Compensation Reason  Required'|translate}}</div>
             </div>
             <div *ngIf="CompensationForm.controls['Reason'].touched">
                 <span class="error-msg" *ngIf="CompensationForm.controls['Reason'].errors?.['maxlength']">
@@ -80,10 +80,10 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Compensation Reason'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateReason"
-                        placeholder="Please enter compansation reason" (keypress)="allowOnlyLettersAndSpace($event)">
+                        placeholder="Please enter compensation reason" (input)="allowOnlyLettersAndSpace($event)" maxlength="100"   (input)="enforceMaxLength($event)">
                     <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid"
                         class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">{{'Compansation Reason Required'|translate}}</div>
+                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">{{'Compensation Reason Required'|translate}}</div>
                     </div>
 
                 </div>

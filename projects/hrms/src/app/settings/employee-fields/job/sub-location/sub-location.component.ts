@@ -9,10 +9,11 @@ import { Subscription } from 'rxjs';
 import { subLocationData } from './sub-location-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-sub-location',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule,SelectModule],
   templateUrl: './sub-location.component.html',
   styleUrl: './sub-location.component.scss'
 })
@@ -47,7 +48,7 @@ export class SubLocationComponent {
 
     this.updateForm = this.fb.group({
       UpdateSubLocation: ['', [Validators.required]],
-      updateLocation: ['', [Validators.required]],
+      updateLocation: [null, [Validators.required]],
     });
     this.getSubLocation();
     this.getLocation();
@@ -136,13 +137,21 @@ export class SubLocationComponent {
   // Method to open the update modal dialog
   openupdateDialog(jobroletypelist: any) {
     this.selectedId = jobroletypelist.id;
-    this.updateForm.patchValue({ UpdateSubLocation: jobroletypelist.jobSubLocationName });
-    this.updateForm.patchValue({ updateLocation: jobroletypelist.jobLocationId });
+    console.log(jobroletypelist.jobLocationId);
+    console.log(this.locationDetail);
+    console.log(this.locationDetail.find((loc: { id: number; }) => loc.id == jobroletypelist.jobLocationId));
+    
+    this.updateForm.patchValue({ 
+      updateLocation: jobroletypelist.jobLocationId,
+      UpdateSubLocation: jobroletypelist.jobSubLocationName
+    });
+  
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
       centered: true
     });
   }
+  
   //  UPDATE
   updateSublocation(modal: any) {
     if (this.updateForm.valid && this.selectedId) {

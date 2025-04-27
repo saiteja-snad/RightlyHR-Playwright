@@ -114,8 +114,13 @@ export class LocationComponent implements OnInit, OnDestroy {
           this.resetForm();
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
-          this.resetForm();
+          console.log(error);
+          
+          const errorMessage = error.error?.Message || 'Insertion of data failed'; // Default message if Message is not available
+
+          // Open error modal with just the message
+          this.conformationPopup.openErrorModal(errorMessage);
+          // this.resetForm();
         },
       });
   }

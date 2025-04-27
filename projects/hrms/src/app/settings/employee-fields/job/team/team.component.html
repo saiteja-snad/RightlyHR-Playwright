@@ -22,9 +22,9 @@
           <label for="departmentId" class="form-label custom-label mb-2">
             {{ 'Department Name' | translate }} <span class="error-msg">*</span>
           </label>
-          <p-select formControlName="departmentId" optionValue="departmentId" [options]="deptdetails" id="departmentId"
-            optionLabel="departmentName" placeholder="Search department" class="w-100 p-select custom-dropdown"
-            [filter]="true" filterBy="departmentId" [styleClass]="'white-dropdown'">
+          <p-select formControlName="departmentId" optionValue="sno" [options]="deptdetails" id="departmentId"
+            optionLabel="departmentName" placeholder="Select department" class="w-100 p-select custom-dropdown"
+            [filter]="true" filterBy="departmentName" [styleClass]="'white-dropdown'">
           </p-select>
           <div *ngIf="AddForm.get('departmentId')?.touched && AddForm.get('departmentId')?.invalid">
             <small class="error-msg">
@@ -39,9 +39,9 @@
             {{ 'Team Name' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <input type="text" class="form-control custom-input" formControlName="teamName"
+            <input type="text" class="custom-input" formControlName="teamName"
               placeholder="Please enter team name" maxlength="100"
-              (input)="allowOnlyHyphenAndAlphanumeric($event, AddForm.get('teamName'))" (input)="formValidations.validateInput(AddForm.get('reason'))"  />
+              (input)="allowOnlyHyphenAndAlphanumeric($event, AddForm.get('teamName'))" (input)="formValidations.validateInput(AddForm.get('teamName'))"  />
           </div>
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg mt-2">
             <div *ngIf="AddForm.get('teamName')?.errors?.['required']">{{ 'Team Name is required' | translate }}</div>
@@ -53,13 +53,25 @@
           <label for="teammangar" class="form-label custom-label mb-2">
             {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
           </label>
-          <div class="custom-p-select-content">
-            <select title="text" class="form-select custom-input" formControlName="teamManager" id="teamManager">
-              <option [value]="null" disabled selected>Please select team manager</option>
-              <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
-                {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
-              </option>
-            </select>
+          <div class="custom-select-dropdown">
+
+            <p-select formControlName="teamManager" optionValue="employeeId" [options]="teamdetails" placeholder="Select team manager"
+              class="w-100 p-select custom-dropdown" [filter]="true" filterBy="firstName,middleName,lastName"
+              [styleClass]="'white-dropdown'">
+              <!-- Template to show selected value -->
+              <ng-template pTemplate="selectedItem" let-manager>
+                <span *ngIf="manager">
+                  {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                </span>
+              </ng-template>
+            
+              <!-- Template to show items in dropdown -->
+              <ng-template pTemplate="item" let-manager>
+                <div>
+                  {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                </div>
+              </ng-template>
+            </p-select>
           </div>
           <div *ngIf="AddForm.get('teamManager')?.touched && AddForm.get('teamManager')?.invalid">
             <small class="error-msg">
@@ -73,7 +85,7 @@
           <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="modal.dismiss();AddForm.reset()">
             {{ 'Close' | translate }}
           </button>
-          <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addTeam(modal)"
+          <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addTeam(AddForm)"
             [disabled]="!AddForm.valid">
             {{ 'Add' | translate }}
           </button>
@@ -151,12 +163,10 @@
             {{ 'Department Name' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select class="form-control custom-input" formControlName="updateddepartmentId" id="departmentId">
-              <option value="" disabled selected>Please select department name</option>
-              <option *ngFor="let dept of deptdetails" [value]="dept.departmentId">
-                {{ dept.departmentName }}
-              </option>
-            </select>
+            <p-select formControlName="updateddepartmentId" optionValue="sno" [options]="deptdetails" id="departmentId"
+            optionLabel="departmentName" placeholder="Select department" class="w-100 p-select custom-dropdown"
+            [filter]="true" filterBy="departmentName" [styleClass]="'white-dropdown'">
+          </p-select>
           </div>
           <div *ngIf="updateForm.get('updateddepartmentId')?.touched && updateForm.get('updateddepartmentId')?.invalid">
             <small class="error-msg">
@@ -189,12 +199,24 @@
             {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select class="form-select custom-input" formControlName="updatedteamManager" id="updateTeamManager">
-              <option value="" disabled selected>Please select team manager</option>
-              <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
-                {{manager.firstName}} {{manager.middleName ? manager.middleName : ''}} {{manager.lastName}}
-              </option>
-            </select>
+        
+            <p-select formControlName="updatedteamManager" optionValue="employeeId" [options]="teamdetails"
+              placeholder="Select team manager" class="w-100 p-select custom-dropdown" [filter]="true"
+              filterBy="firstName,middleName,lastName" [styleClass]="'white-dropdown'">
+              <!-- Template to show selected value -->
+              <ng-template pTemplate="selectedItem" let-manager>
+                <span *ngIf="manager">
+                  {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                </span>
+              </ng-template>
+            
+              <!-- Template to show items in dropdown -->
+              <ng-template pTemplate="item" let-manager>
+                <div>
+                  {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                </div>
+              </ng-template>
+            </p-select>
           </div>
           <div *ngIf="updateForm.get('updatedteamManager')?.touched && updateForm.get('updatedteamManager')?.invalid">
             <small class="error-msg">
@@ -233,3 +255,4 @@
         (click)="onDelete(modal)">{{'Yes'|translate}}</button>
     </div>
   </div>
+  </ng-template>

@@ -9,7 +9,7 @@
                     <p class="popup-heading mb-0">{{'Pre Onboarding Document' | translate}}</p>
                 </div>
                 <div>
-                    <a (click)="close(modal)">
+                    <a (click)="modal.dismiss();AddForm.reset()">
                         <img src="icons/close.png" alt="Close Icon" class="close-icon">
                     </a>
                 </div>
@@ -79,7 +79,7 @@
 
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
                         {{ 'Close' | translate }}
                     </button>
                     <button type="button" class="custom-btn btn-primary" (click)="addPreonboarding(modal)"
@@ -165,7 +165,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <p class="popup-heading mb-0">{{'Update Document' | translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Pre Onboarding Document' | translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)">
@@ -197,7 +197,7 @@
                         translate}}</button>
                     <button type="button" class="custom-btn btn-primary " (click)="updatePreOnboarding(modal)"
                         [disabled]="updateForm.invalid">
-                        {{'update' | translate}}
+                        {{'Update' | translate}}
                     </button>
                 </div>
             </div>

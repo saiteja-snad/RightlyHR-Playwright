@@ -123,7 +123,7 @@ export class DepartmentComponent {
             modal.close();
             this.updateForm.reset();
             this.conformationPopup.openSuccessModal(
-              'Department deleted successfully'
+              'Department updated successfully'
             );
           },
           error: (err: any) => {
@@ -140,6 +140,7 @@ export class DepartmentComponent {
   }
   openupdate(departmentlist: any) {
     this.selectedId = departmentlist.sno;
+    this.DepartmentForm.reset();
     this.updateForm.patchValue({ Department: departmentlist.departmentName });
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
@@ -149,6 +150,7 @@ export class DepartmentComponent {
   // DELETE
   opendelete(bussinessdetails: any) {
     this.selectedDeleteDep = bussinessdetails;
+    this.DepartmentForm.reset();
     this.modalService.open(this.deletepopup, {
       backdrop: 'static',
       centered: true,

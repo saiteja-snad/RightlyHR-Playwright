@@ -6,7 +6,7 @@
 <ng-template #addpopup let-modal>
   <form [formGroup]="AddForm">
     <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="custom-poup-header-content popup-header-border">
+      <div class="custom-popup-header-content popup-header-border">
         <div>
           <p class="popup-heading mb-0">{{ 'Serving Period' | translate }}</p>
         </div>
@@ -16,7 +16,7 @@
           </a>
         </div>
       </div>
-
+  
       <div class="custom-main-popup-content">
         <!-- Serving Period Type Field -->
         <div class="mb-4">
@@ -24,42 +24,23 @@
             {{ 'Serving Period Type' | translate }} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="addServingPeriod"
-            placeholder="Please enter serving period type" (keydown)="allowOnlyLettersAndSpace($event)"
+            placeholder="Please enter serving period type" (keypress)="allowOnlyLettersAndSpace($event)"
             maxlength="100" />
           <div *ngIf="AddForm.get('addServingPeriod')?.touched && AddForm.get('addServingPeriod')?.invalid"
             class="error-msg">
-            {{ 'Serving Period is required' | translate }}.
+            {{ 'Serving Period Type is required' | translate }}
           </div>
         </div>
-
-        <div *ngIf="AddForm.controls['addServingPeriod'].touched">
-
-          <div *ngIf="AddForm.controls['addServingPeriod'].touched || AddForm.controls['addServingPeriod'].dirty">
-            <span class="error-msg" *ngIf="updateForm.controls['addServingPeriod'].errors?.['required']">
-              Degree is required
-            </span>
-
-            <span class="error-msg" *ngIf="AddForm.controls['addServingPeriod'].errors?.['maxlength']">
-              Maximum 50 characters are allowed.
-            </span>
-
-            <span class="error-msg" *ngIf="AddForm.controls['addServingPeriod'].errors?.['pattern']">
-              Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
-            </span>
-          </div>
-
-        </div>
-
-
+  
         <!-- Duration Field -->
         <div class="mb-4">
           <label for="duration" class="form-label custom-label mb-2">
             {{ 'Duration' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-settings-add-input input-group">
-            <input type="text" class="form-control custom-input" placeholder="Please enter Duration"
-              formControlName="Duration" aria-label="duration" aria-describedby="duration" maxlength="100"
-              (keydown)="allowOnlyLettersAndSpace1($event)">
+            <input type="number" class="form-control custom-input" placeholder="Please enter duration"
+              formControlName="Duration" aria-label="duration" aria-describedby="duration" min="1" max="999"  (keydown)="onDurationInput($event)"
+              >
           </div>
           <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg mt-2">
             <div *ngIf="AddForm.get('Duration')?.errors?.['required']">
@@ -73,7 +54,7 @@
             </div>
           </div>
         </div>
-
+  
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
@@ -87,6 +68,7 @@
       </div>
     </div>
   </form>
+  
 </ng-template>
 
 <div class="custom-main-component-container">
@@ -140,7 +122,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
       <div class="custom-poup-header-content popup-header-border">
         <div>
-          <p class="popup-heading mb-0">{{'Update serivice Period' | translate}}</p>
+          <p class="popup-heading mb-0">{{'Update Serving Period' | translate}}</p>
         </div>
         <div>
           <a (click)="close(modal)">
@@ -154,10 +136,11 @@
             {{'Serving Period Type' | translate}} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="UpdateServingPeriod"
-            placeholder="Please Enter Serving Period" (keydown)="allowOnlyLettersAndSpace($event)" maxlength="100">
+            placeholder="Please enter serving period" (keypress)="allowOnlyLettersAndSpace($event)"
+            maxlength="100" >
           <div *ngIf="updateForm.get('UpdateServingPeriod')?.invalid && updateForm.get('UpdateServingPeriod')?.touched"
             class="error-msg">
-            {{'Serving Period is required'|translate}}.
+            {{'Serving Period Type is required'|translate}}
           </div>
         </div>
         <div class="mb-4">
@@ -165,9 +148,9 @@
             {{ 'Duration' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-settings-add-input input-group">
-            <input type="text" class="form-control custom-input" placeholder="Please enter duration"
+            <input type="number" class="form-control custom-input" placeholder="Please enter duration"
               formControlName="UpdateDuration" aria-label="duration" aria-describedby="duration"
-              (keydown)="allowOnlyLettersAndSpace1($event)" maxlength="100">
+              min="1" max="999"  (keydown)="onDurationInput($event)">
           </div>
           <div *ngIf="updateForm.get('UpdateDuration')?.touched && updateForm.get('UpdateDuration')?.invalid"
             class="error-msg mt-2">

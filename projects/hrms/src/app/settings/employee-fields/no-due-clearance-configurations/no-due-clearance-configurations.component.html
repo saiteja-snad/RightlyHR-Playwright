@@ -229,7 +229,7 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <form [formGroup]="updateDueForm" (ngSubmit)="updateNoDue(updateDueForm)" *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
+      <form [formGroup]="updateDueForm" (ngSubmit)="updateNoDue(updateDueForm)" *ngIf="rbac.allowedToAccess('No Due Clearance.update')">
         
         <!-- Select Type -->
         <div class="form-outline p-2 mb-2">
@@ -366,7 +366,7 @@
   </div>
 </ng-template>
 <!--Delete Confirmation popup-->
-<ng-template #deletepopup let-modal>
+<ng-template #deletepopup let-modal  *ngIf="rbac.allowedToAccess('No Due Clearance.delete')">
   <div class="result-popup-content" ngbAutofocus>
       
           <div >

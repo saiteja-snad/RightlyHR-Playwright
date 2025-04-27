@@ -12,15 +12,18 @@ import { DomSanitizer } from '@angular/platform-browser';
 import {  NgxDocViewerModule } from 'ngx-doc-viewer';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule, Select,NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule, Select,NoDataFoundComponent,TranslateModule],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
 export class CompanypoliciesComponent {
   policiesform!: FormGroup;
+  ExpenseViewURL: any;
+  ExpenseImageUrl: any;
   empinfo: any;
   Policies: any = [];
   subscription!: Subscription;
@@ -41,8 +44,8 @@ export class CompanypoliciesComponent {
 
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location, private sanitizer: DomSanitizer,private cdr: ChangeDetectorRef) { }
-  @ViewChild('viewattamchment') private viewattamchment!: TemplateRef<any>;
-
+  // @ViewChild('viewattamchment') private viewattamchment!: TemplateRef<any>;
+  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   ngOnInit(): void {
     this.selectedYear = this.currentYear;
     this.policiesform = this.fb.group({
@@ -70,7 +73,9 @@ export class CompanypoliciesComponent {
   // openModal(content: any) {
   //   this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   // }
-
+  openupdateModal(content: any) {
+    this.modalService.open(content, { centered: true,size:'lg', backdrop: 'static' });
+  }
   openModal(content: any) {
     this.modalService.open(this.viewattamchment, {
       size: 'xl', // optional, helps initially
@@ -118,24 +123,24 @@ export class CompanypoliciesComponent {
   //     console.log(`Unsupported file type: ${attachmentUrl}`);
   //   }
   // }
-  onViewClick(attachmentUrl: string) {
+  onViewClick(policyAttachment: string) {
     console.log('Opening modal');
     this.shouldOpenModal = true;
     this.EduImageUrl = '';
     this.EduViewURL = '';
 
-    const isImage = /\.(jpg|jpeg|png)$/i.test(attachmentUrl);
-    const isPDF = attachmentUrl.toLowerCase().endsWith('.pdf');
+    const isImage = /\.(jpg|jpeg|png)$/i.test(policyAttachment);
+    const isPDF = policyAttachment.toLowerCase().endsWith('.pdf');
 
     console.log('Dismiss all modals');
     this.modalService.dismissAll();
 
     if (isImage) {
-        this.handleImage(attachmentUrl);
+        this.handleImage(policyAttachment);
     } else if (isPDF) {
-        this.handlePDF(attachmentUrl);
+        this.handlePDF(policyAttachment);
     } else {
-        console.log(`Unsupported file type: ${attachmentUrl}`);
+        console.log(`Unsupported file type: ${policyAttachment}`);
         return;
     }
 
@@ -143,7 +148,30 @@ export class CompanypoliciesComponent {
     this.openModal(this.viewattamchment);
 }
 
-
+onViewAttachement(url: any) {
+ 
+  
+  if (url?.endsWith('jpg') || url?.endsWith('png') || url?.endsWith('jpeg')) {
+    this.subscription = this.http
+      .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+      .subscribe({
+        next: (res: any) => {
+          const blob = new Blob([res['body']], { type: 'image/png' });
+          const objectURL = URL.createObjectURL(blob);
+          this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.toggleViewModal();
+        },
+        error: (reason) => console.log(reason),
+      });
+  } else {
+    this.ExpenseViewURL = `${environment.viewUrl}${url}`;
+    this.toggleViewModal();
+  }
+}
+toggleViewModal() {
+  this.modalService.dismissAll();
+  this.openModal(this.viewattamchment)
+}
 
   handleClose(modal: any) {
     this.shouldOpenModal = false; 
@@ -164,12 +192,7 @@ export class CompanypoliciesComponent {
   //   }
   // }
   
-  toggleViewModal() {
-    this.modalService.dismissAll(); // Close all modals immediately
-    if (this.isViewingAttachment && this.viewattamchment) {
-      this.openModal(this.viewattamchment); // Open the modal again
-    }
-}
+  
 
   getjobDetails() {
     let EmployeeId = this.empinfo.employeeId;

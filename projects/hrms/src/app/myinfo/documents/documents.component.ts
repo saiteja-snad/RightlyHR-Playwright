@@ -9,29 +9,35 @@ import { FormsModule } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
+import { HttpService } from '../../services/http.service';
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, FormsModule,TranslatePipe,CommonModule],
+  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, CommonModule],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
 export class DocumentsComponent {
- subscription!: Subscription;
- selectedMainFolder ={} as IFolders
- isMainfolderTouched: boolean = false;
+  subscription!: Subscription;
+  selectedMainFolder = {} as IFolders
+  isMainfolderTouched: boolean = false;
   folders = [] as IFolders[];
-  selectedFile = {} as IFolders;
+  selectedFile !: IFolders;
   selectedFolder = [] as IFolders[];
   mainDir = {} as ICreateSubDir;
-  
+  Files = [] as IFolders[];
+  empdata: any;
+  searchfolder!: string;
+
   subDir = {} as ICreateSubDir;
-  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService) { }
+  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
+    this.empdata = JSON.parse(localStorage.getItem('employeeData') || '{}');
     this.getMainFolders()
+
   }
- getMainFolders(dirPath?: string) {
+  getMainFolders(dirPath?: string) {
     dirPath = dirPath ? dirPath : '/FusionDocuments';
     this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
       next: (data: any) => {
@@ -59,7 +65,7 @@ export class DocumentsComponent {
       error: (reason) => console.log(reason),
     });
   }
-  
+
   onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
     if (!folder) {
       return;
@@ -75,7 +81,71 @@ export class DocumentsComponent {
     this.subDir.mainDir = mainFolderName;
     this.selectedMainFolder = folder;
   }
+  onSubFolderSelected(subFolder: any): void {
+    this.selectedFile = subFolder;
+    console.log('Selected Subfolder:', subFolder);
+    if (subFolder.isDirectory) {
+      this.getAllFiles();
+    } else {
+      this.Files = [] as IFolders[];
+    }
+  }
+  getVisibleFiles() {
+    return this.Files.filter(file => file && !file.isNotVisible);
+  }
 
- 
+  getAllFiles() {
+    if (!this.selectedFile.isEmpDir) {
+      this.subscription = this.http
+        .getDataWithQuery('FileSystem/Files', this.selectedFile.name)
+        .subscribe({
+          next: (data: any) => {
+            console.log(data);
+            this.Files = data as IFolders[];
+          },
+          error: (err: any) => {
+            this.Files = [];
+          },
+        });
+    } else {
+      this.subscription = this.http
+        .getDataWithQuery(
+          'FileSystem/Files',
+          `${this.selectedFile.name}/${this.empdata.employeeId}`
+        )
+        .subscribe({
+          next: (data: any) => {
+            console.log(data);
+            this.Files = data as IFolders[];
+          },
+          error: (err: any) => {
+            console.error(err);
+            this.Files = [];
+
+          },
+        });
+    }
+  }
+
+  filterFolder() {
+    const value: string = this.searchfolder.toLowerCase();
+    const filteredData = this.Files.filter((o) =>
+      Object.entries(o).some((entry) =>
+        String(entry[1]).toLowerCase().includes(value)
+      )
+    );
+    // console.log(this.Files);
+
+    this.Files.forEach((element) => {
+      const found = filteredData.findIndex((item) => item.name == element.name);
+      // console.log(found);
+
+      if (found >= 0) {
+        element.isNotVisible = false;
+      } else {
+        element.isNotVisible = true;
+      }
+    });
+  }
 
 }

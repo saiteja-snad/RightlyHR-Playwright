@@ -20,8 +20,8 @@
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                            filterBy="name" [showClear]="true" placeholder="Please select employee"
-                            (onChange)="onclickcheckempidnull($event)" formControlName="fusionEmpId"
+                            filterBy="fullName" [showClear]="true" placeholder="Select employee"
+                            (onChange)="onClickValidation($event)" formControlName="fusionEmpId"
                             class="custom-select w-100">
                         </p-select>
                     </div>
@@ -34,7 +34,7 @@
                     <label class="form-label custom-label mb-2">{{'Personal Email ID'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="email" class="form-control custom-input" formControlName="personalEmail"
-                        placeholder="Please enter personal email ID" />
+                        placeholder="Personal email ID" />
                     <div *ngIf="employeeForm.get('personalEmail')?.invalid && employeeForm.get('personalEmail')?.touched">
                         <div class="error-msg">Personal Email ID is required</div>
                     </div>
@@ -44,7 +44,7 @@
                     <label class="form-label custom-label mb-2">{{'Salutation'|translate}}<span
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="titleDetails" optionLabel="titlename" placeholder="Please select salutation"
+                        <p-select [options]="titleDetails" optionLabel="titlename" placeholder="Salutation"
                             formControlName="title" class="form-select custom-select"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('title')?.invalid && employeeForm.get('title')?.touched">
@@ -56,7 +56,7 @@
                     <label class="form-label custom-label mb-2">{{'First Name'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="firstName"
-                        placeholder="Please enter first name" />
+                        placeholder="First name" />
                     <div *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched">
                         <div *ngIf="employeeForm.get('firstName')?.errors?.['required']" class="error-msg">
                             First Name is required
@@ -70,7 +70,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Middle Name'|translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="middleName"
-                        placeholder="Please enter middle name" />
+                        placeholder="Middle name" />
                     <div *ngIf="employeeForm.get('middleName')?.invalid && employeeForm.get('middleName')?.touched">
                         <div class="error-msg">Middle Name is required</div>
                     </div>
@@ -80,7 +80,7 @@
                     <label class="form-label custom-label mb-2">{{'Last Name'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="lastName"
-                        placeholder="Please enter last name" />
+                        placeholder="Last name" />
                     <div *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched">
                         <div *ngIf="employeeForm.get('lastName')?.errors?.['required']" class="error-msg">
                             Last Name is required
@@ -94,7 +94,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Gender'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="genderDetails" optionLabel="genderName" placeholder="Please select gender"
+                        <p-select [options]="genderDetails" optionLabel="genderName" placeholder="Gender"
                             formControlName="gender" class="form-select custom-select"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('gender')?.invalid && employeeForm.get('gender')?.touched">
@@ -109,9 +109,6 @@
                         <p-select [options]="addressdata" optionValue="value" optionLabel="name"
                             placeholder="Please select address" formControlName="SelectDropDown"
                             (onChange)="onclickSelectAddress($event)" class="form-select custom-select">
-                            <option di [ngValue]="undefined">Select Address</option>
-                            <option value="c">Current Address</option>
-                            <option value="p">Permanent Address</option>
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
@@ -123,7 +120,7 @@
                     <label class="form-label custom-label mb-2">{{'Address Line 1'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="addressLine1"
-                        placeholder="Please enter address" />
+                        placeholder="Address line 1" />
                     <div *ngIf="employeeForm.get('addressLine1')?.invalid && employeeForm.get('addressLine1')?.touched">
                         <div class="error-msg">Address Line 1 is required</div>
                     </div>
@@ -132,7 +129,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Address Line 2'|translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="addressLine2"
-                        placeholder="Please enter address" />
+                        placeholder="Address line 2" />
                     <div *ngIf="employeeForm.get('addressLine2')?.invalid && employeeForm.get('addressLine2')?.touched">
                         <div class="error-msg">Address Line 2 is required</div>
                     </div>
@@ -141,7 +138,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'City'|translate}}<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="city"
-                        placeholder="Please enter city" />
+                        placeholder="City" />
                     <div *ngIf="employeeForm.get('city')?.invalid && employeeForm.get('city')?.touched">
                         <div class="error-msg">City is required</div>
                     </div>
@@ -150,7 +147,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'State'|translate}}<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="state"
-                        placeholder="Please enter state" />
+                        placeholder="State" />
                     <div *ngIf="employeeForm.get('state')?.invalid && employeeForm.get('state')?.touched">
                         <div class="error-msg">State is required</div>
                     </div>
@@ -159,7 +156,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Country'|translate}}<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="country"
-                        placeholder="Please enter country" />
+                        placeholder="Country" />
                     <div *ngIf="employeeForm.get('country')?.invalid && employeeForm.get('country')?.touched">
                         <div class="error-msg">Country is required</div>
                     </div>
@@ -168,7 +165,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Pincode'|translate}}<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="pinCode"
-                        placeholder="Please enter pincode" />
+                        placeholder="Pincode" />
                     <div *ngIf="employeeForm.get('pincode')?.invalid && employeeForm.get('pincode')?.touched">
                         <div class="error-msg">Pincode is required</div>
                     </div>
@@ -179,16 +176,16 @@
                             class="error-msg">*</span></label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                         @if (!loadingCode) {
-                        <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true"
+                        <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [placeholderText]="countryCode"
                             [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
                             class="country-input"></lib-country-list>
                         }
                         @else{
-                        <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true"
+                        <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [placeholderText]="countryCode"
                             [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
                             class="country-input"></lib-country-list>
                         }
-                        <input type="text" class="form-control custom-input" placeholder="  Please enter mobile number"
+                        <input type="text" class="form-control custom-input" placeholder="Mobile number"
                             formControlName="phoneNumber" />
                     </div>
                 </div>
@@ -196,11 +193,10 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="JobroleDetails" optionLabel="jobRole1" placeholder="Please select designation"
-                            formControlName="jobRoleDetails" class="custom-select w-100" (onChange)="onclickDesignation($event)"></p-select>
-                    </div>
-                    <div *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
-                        <div class="error-msg">Designation is required</div>
+                        <input placeholder="Designation" formControlName="jobRoleDetails" class="form-control custom-input">
+                        <div *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
+                          <div class="error-msg">Designation is required</div>
+                        </div>
                     </div>
                 </div>
 
@@ -281,12 +277,12 @@
 
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">
-                        {{'Internship Period(Months)' | translate}}<span class="error-msg">*</span>
+                        {{'Training Period(Months)' | translate}}<span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="internshipPeriod" optionLabel="name" placeholder="Please select internship period"
+                        <p-select [options]="internshipPeriod" optionValue="value" optionLabel="name" placeholder="Please select training period"
                             formControlName="internshipperiod" class="form-select custom-select"
-                            (click)="calculateEndDate(traineeEmpData.internshipperiod)">
+                            (onChange)="calculateEndDate(traineeEmpData.internshipperiod)">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
@@ -298,7 +294,7 @@
                     <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="getAllEmployeeInfo" optionLabel="fullName" [filter]="true" filterBy="firstName"
+                        <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName" [filter]="true" filterBy="firstName"
                             [showClear]="true" placeholder="Please select reporting manager"
                             formControlName="reportingmanagerId" class="custom-select w-100"
                             (ngModelChange)="selectReportingname($event)">
@@ -356,6 +352,9 @@
                         (click)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">{{buttonValue}}</button>
                     <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading"
                         (click)="emailSendingforApprover()">{{'Request For Approval'|translate}}</button>
+                        @if(loading){
+                            <div class="spinner-border text-primary" role="status"></div>
+                            }
                 </div>
             </form>
         </div>
@@ -487,3 +486,29 @@
         </div>
     </div>
 </div>
+<!-- offerletter generation popup -->
+<ng-template #approveModal let-modal>
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+      <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg??''}} </h4>
+      <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
+          (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
+      </div>
+    </div>
+  </ng-template>
+  
+  <!-- offerletter generation popup 2 -->
+  <ng-template #approveModal1 let-modal>
+    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
+      <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
+      <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
+      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg ?? ''}}</h4>
+      <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();this.loading=false">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary" (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
+      </div>
+    </div>
+  </ng-template>

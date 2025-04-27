@@ -9,10 +9,11 @@ import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-flexible-leave-allocation',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NoDataFoundComponent],
   templateUrl: './flexible-leave-allocation.component.html',
   styleUrl: './flexible-leave-allocation.component.scss'
 })

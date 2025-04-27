@@ -8,14 +8,21 @@
     outline: none !important;
     background-color: #F8FBFF !important;
 }
+
 input[type="checkbox"].custom-check:checked {
     background-color: #305889 !important;
-    border-color: #305889 !important; /* Optional: matches background */
-  }
-input{
-    text-transform: capitalize;
-
+    border-color: #305889 !important;
+    /* Optional: matches background */
 }
-input::placeholder{
+
+input {
+    text-transform: capitalize;
+}
+
+input[type="date"] {
+    text-transform: none !important;
+}
+
+input::placeholder {
     text-transform: none !important;
 }

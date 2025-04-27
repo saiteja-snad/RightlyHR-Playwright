@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
           <p class="component-header mb-0">
-            <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Active Interns'|translate}}
+            <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Active Trainees'|translate}}
           </p>
         </div>
     </div>
@@ -30,17 +30,24 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let act of TraineeActive | activeEmployee : searchValue">
-          
                       <td>
                         <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span> 
                         <ng-template #fusionid>
                           -
                         </ng-template></td>
-                      <td> <span *ngIf="act.firstName;else fistname"> </span><a class="select-item cursor" (click)="select(act)">
+                        <td>
+                          <span *ngIf="act.firstName ; else firstname">
+                            <a class="select-item cursor" (click)="select(act)">{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
+                          </span>
+                          <ng-template #firstname>
+                            <div>-</div>
+                          </ng-template>
+                        </td>
+                      <!-- <td> <span *ngIf="act.firstName;else fistname"> </span><a class="select-item cursor" (click)="select(act)">
                         {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
                         <ng-template #fistname>
                           -
-                        </ng-template></td>
+                        </ng-template></td> -->
                       <td><span *ngIf="act.workEmail;else workemail"> {{act.workEmail}}</span>
                         <ng-template #workemail>
                           -
@@ -49,7 +56,6 @@
                         <ng-template #contactnumb>
                           -
                         </ng-template></td>
-                     
                       <td>
                         <ng-container *ngIf="act?.jobDetails ; else noData">
                           <div *ngFor="let jobDetail of act.jobDetails; let first = first">

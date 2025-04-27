@@ -17,6 +17,12 @@
             <app-document-history-intern-offer-letter />
         </ng-template>
     </li>
+    <li [ngbNavItem]="4">
+        <button class="custom-nav-btn" ngbNavLink>Intern Appointment Letter</button>
+        <ng-template ngbNavContent>
+            <app-document-history-intern-appointment />
+        </ng-template>
+    </li>
 </ul>
 
 <div [ngbNavOutlet]="nav" class="pt-3"></div>

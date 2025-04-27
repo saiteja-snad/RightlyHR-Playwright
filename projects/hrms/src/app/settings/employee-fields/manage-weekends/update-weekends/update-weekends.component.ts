@@ -95,14 +95,15 @@ export class UpdateWeekendsComponent {
   }
 
   isAtLeastOneWeekendChecked(): boolean {
-    const weekendsArray = this.weekendForm.get('weekends') as FormArray;
-    if (!weekendsArray) return false;
-  
-    return weekendsArray.controls.some(weekendGroup => {
-      const weekendValue = weekendGroup.value;
-      return weekendValue.week1 || weekendValue.week2 || weekendValue.week3 || weekendValue.week4 || weekendValue.week5;
+    return this.weekends.controls.every(weekendGroup => {
+      return weekendGroup.get('week1')?.value ||
+             weekendGroup.get('week2')?.value ||
+             weekendGroup.get('week3')?.value ||
+             weekendGroup.get('week4')?.value ||
+             weekendGroup.get('week5')?.value;
     });
   }
+  
   onWeekChange(event : any,weekend: any) {
     console.log(event);
     console.log(weekend);

@@ -59,8 +59,9 @@ export class ClonePoliciesComponent {
       this.policies.push(
         this.fb.group({
           policyName : [row.policyName,Validators.required],
-          policyFile : [row.policyAttachment,Validators.required],
-          policyDescription  : [row.policyDescription,Validators.required]
+          policyOldFile : [row.policyAttachment,Validators.required],
+          policyDescription  : [row.policyDescription,Validators.required],
+          policyNewFile: ['']
          
         })
       );
@@ -80,7 +81,8 @@ export class ClonePoliciesComponent {
     const policyGroup = this.fb.group({
       policyName: ['', Validators.required],
       policyFile: ['', Validators.required],
-      policyDescription: ['', Validators.required]
+      policyDescription: ['', Validators.required],
+      policyNewFile: ['']
     });
     this.policies.push(policyGroup);
   }
@@ -110,7 +112,9 @@ export class ClonePoliciesComponent {
       id : this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
         PolicyName: item.policyName,
-        PolicyAttachment: item.policyFile,
+        PolicyAttachment: (item.policyNewFile && item.policyNewFile !== '') 
+        ? item.policyNewFile 
+        : item.policyOldFile,
         PolicyDescription: item.policyDescription,
         Status: 'Published',
         // holidayColor: 'string',

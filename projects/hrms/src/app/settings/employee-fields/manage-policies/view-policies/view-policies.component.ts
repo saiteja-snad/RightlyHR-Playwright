@@ -69,7 +69,7 @@ export class ViewPoliciesComponent {
           policyDescription  : [{value: row.policyDescription, disabled: true}],
          
         })
-          
+
       );
       this.getFileName(row.policyAttachment);
     });

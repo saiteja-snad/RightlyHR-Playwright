@@ -107,7 +107,7 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.getMainFolders();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal("Folder Created sucessfully");
+        this.conformationPopup.openSuccessModal("Sub Folder created sucessfully");
       },
       error: (reason) => console.log(reason),
       complete: () => f.resetForm()
@@ -119,7 +119,7 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
       this.subscription = this.documentService.deleteDirectory(data.name).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal("Folder Deleted Sucessfully");
+          this.conformationPopup.openSuccessModal("Sub Folder deleted sucessfully");
           this.getMainFolders();
         },
         error: (reason) => console.log(reason),

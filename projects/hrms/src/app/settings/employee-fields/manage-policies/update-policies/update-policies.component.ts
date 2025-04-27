@@ -60,8 +60,9 @@ export class UpdatePoliciesComponent {
       this.policies.push(
         this.fb.group({
           policyName : [row.policyName, Validators.required],
-          policyFile :[row.policyAttachment, Validators.required],
+          policyOldFile :[row.policyAttachment, Validators.required],
           policyDescription  : [row.policyDescription, Validators.required],
+          policyNewFile: [''] 
          
         })
       );
@@ -80,8 +81,9 @@ export class UpdatePoliciesComponent {
   addPolicyRow() {
     const policyGroup = this.fb.group({
       policyName: ['', Validators.required],
-      policyFile: ['', Validators.required],
-      policyDescription: ['', Validators.required]
+      policyOldFile: ['', Validators.required],
+      policyDescription: ['', Validators.required],
+      policyNewFile: [''] 
     });
     this.policies.push(policyGroup);
   }
@@ -110,7 +112,9 @@ export class UpdatePoliciesComponent {
       id : this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
         PolicyName: item.policyName,
-        PolicyAttachment: item.policyFile,
+        PolicyAttachment: (item.policyNewFile && item.policyNewFile !== '') 
+        ? item.policyNewFile 
+        : item.policyOldFile,
         PolicyDescription: item.policyDescription ,
         Status: 'Published',
         // holidayColor: 'string',
@@ -176,12 +180,14 @@ export class UpdatePoliciesComponent {
       shiftID: formValue.shift.id ?? this.updatePoliciesData.shiftID,
       id : this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
-        policyName: item.policyName,
-        policyAttachment: item.policyAttachment,
-        policyDescription: item.policyDescription,
-        status: 'Published',
-        holidayColor: 'string',
-        headerID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
+        PolicyName: item.policyName,
+        PolicyAttachment: (item.policyNewFile && item.policyNewFile !== '') 
+        ? item.policyNewFile 
+        : item.policyOldFile,
+        PolicyDescription: item.policyDescription,
+        Status: 'Published',
+        // holidayColor: 'string',
+        HeaderID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
       }))
     };
     this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({

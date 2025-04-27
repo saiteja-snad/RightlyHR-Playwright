@@ -201,26 +201,17 @@
                         class="close-icon"></a>
             </div>
         </div>
+        
         <div class="custom-main-popup-content">
-            <div class="custom-table-content">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{{'Comments' | translate}}</th>
-                            <th>{{'Commented By'|translate}}</th>
-                            <th>{{"Approved Date" | translate}}</th>
-                            <th>{{'Commented By ID' | translate}}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let comment of approverComments">
-                            <td>{{ comment.comments }}</td>
-                            <td>{{ comment.addedName }}</td>
-                            <td>{{ comment.addedDate | dateformat }}</td>
-                            <td>{{ comment.addedByFusionEmpId }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card p-3">
+                <div *ngFor="let comment of approverComments">
+                    <div class="mb-0">
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

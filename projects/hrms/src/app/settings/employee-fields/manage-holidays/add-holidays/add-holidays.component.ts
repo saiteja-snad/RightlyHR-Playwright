@@ -20,17 +20,13 @@ export class AddHolidaysComponent {
   jobLocationDropDownData: any = [];
   subLocationsDropdown: any = [];
   empinfo: any;
-  yearDetails = [
-    { name: '2024', value: 2024 },
-    { name: '2025', value: 2025 },
-    { name: '2026', value: 2026 },
-    { name: '2027', value: 2027 },
-    { name: '2028', value: 2028 },
-  ]
-
+  yearDetails: any[] = [];
+  previousTab: string = '';
+selectedYear: any = null;
   constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService) { }
 
   ngOnInit(): void {
+    
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getjobLocationList();
     this.holidayForm = this.fb.group({
@@ -39,10 +35,27 @@ export class AddHolidaysComponent {
       subLocation: [null, Validators.required],
       shift: [null, Validators.required],
       holidays: this.fb.array([this.addHolidayRow()]),
+      
     });
     this.addHolidayRow();
-  }
+    const currentYear = new Date().getFullYear();
+    this.yearDetails = this.generateYears(2000, currentYear);
 
+    // Set default selected year
+    this.holidayForm.patchValue({ year: { name: currentYear, value: currentYear } });
+    if (!this.holidayForm.get('year')?.value) {
+      this.holidayForm.patchValue({ year: { name: currentYear, value: currentYear } });
+    }
+    
+  }
+ 
+  generateYears(startYear: number, endYear: number) {
+    const years = [];
+    for (let year = startYear; year <= endYear; year++) {
+      years.push({ name: year, value: year });
+    }
+    return years;
+  }
   get holidays(): FormArray {
     return this.holidayForm.get('holidays') as FormArray;
   }
@@ -64,7 +77,21 @@ export class AddHolidaysComponent {
   removeHolidayRow(index: number) {
     this.holidays.removeAt(index);
   }
-
+  onTabChange(event: any) {
+    const tabLabel = event.originalEvent.target.innerText.trim();
+  
+    if (tabLabel !== this.previousTab) {
+      if (tabLabel === 'Optional Holidays') {
+        // Keep the year
+      } else if (tabLabel === 'Holidays') {
+        // Keep the year
+      } else {
+        this.selectedYear = new Date().getFullYear();
+      }
+      this.previousTab = tabLabel;
+    }
+  }
+  
   submit() {
     const formValue = this.holidayForm.value;
     const payload = {

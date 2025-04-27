@@ -102,12 +102,14 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
   }
   openupdate(bussinessdetails: any) {
     this.selectedId = bussinessdetails.sno;
+    this.BussinesForm.reset();
     this.updateForm.patchValue({ BUSINESS: bussinessdetails.areaName });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
 // DELETE
   opendelete(bussinessdetails: any) {
     this.selectedDeletebus = bussinessdetails;
+    this.BussinesForm.reset();
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {

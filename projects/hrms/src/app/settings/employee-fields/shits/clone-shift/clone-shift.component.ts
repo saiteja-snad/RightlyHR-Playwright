@@ -42,6 +42,7 @@ export class CloneShiftComponent {
   shiftid: any;
   Status: any;
   hoildaylist: any;
+  sublocatiodis = false;
   // navTabs: any[] = [
   //   { label: 'Clone Shifts', link: '/claimsandexpenses/addexpens' },
   // ];
@@ -313,6 +314,7 @@ export class CloneShiftComponent {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
         this.locations = data;
+        this.sublocatiodis = true;
         this.selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
         console.log(this.selectedLocation);
         console.log("Selected Location:", this.selectedLocation);

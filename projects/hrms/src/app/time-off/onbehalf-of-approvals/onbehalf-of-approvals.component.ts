@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -46,10 +46,25 @@ export class OnbehalfOfApprovalsComponent {
   permissionsCount = 0;
   employeeiddetails = [] as any;
 
-  constructor(private http: HttpService, private authService: AuthService) { }
+  constructor(private http: HttpService, private authService: AuthService) {
+    // Signal reaction for employee switch
+    effect(() => {
+      if (this.http.trigger()) {   
+        const data = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
+        if (data?.employeeId) {
+          this.employeedata = data;
+          this.gettimeoffcount(this.employeedata.employeeId);
+          this.getCompoff(this.employeedata.employeeId);
+          this.getWfhoff(this.employeedata.employeeId);
+          this.getPermissionsoff(this.employeedata.employeeId);
+        } 
+        // this.http.resetTriggerSignal();
+      }
+    });
+   }
 
   ngOnInit(): void {
-    localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
+    localStorage.removeItem("onbehalfofaproverData");
     this.getEmployeeId();
   }
 
@@ -62,8 +77,8 @@ export class OnbehalfOfApprovalsComponent {
           return {
             ...employee,
             fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              }${employee.firstName ? employee.firstName : '' } ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName ? employee.lastName : ''}`,
           };
         });
         this.employeeiddetails = employeedata.filter((element: any) => {
@@ -83,10 +98,10 @@ export class OnbehalfOfApprovalsComponent {
     if ($event.value) {
        this.employeedata = this.employeeiddetails.find((e:any)=>e.employeeId == $event.value);
        localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
-      this.gettimeoffcount($event.value);
-      this.getCompoff($event.value);
-      this.getWfhoff($event.value);
-      this.getPermissionsoff($event.value);
+      // this.gettimeoffcount($event.value);
+      // this.getCompoff($event.value);
+      // this.getWfhoff($event.value);
+      // this.getPermissionsoff($event.value);
       this.http.triggerActionSignal();
     }
     else {

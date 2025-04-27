@@ -134,12 +134,6 @@ export class TraineeApprovalsComponent {
     } else {
       this.isempeffectivevaild = true;
     }
-    // Set minimum selectable date in the calendar
-  if (this.empdata.trainingEndDate) {
-    const trainingEnd = moment(this.empdata.trainingEndDate);
-    this.minExtendDate = trainingEnd.add(1, 'day').format('YYYY-MM-DD');
-    // You can bind [min]="minExtendDate" in your datepicker
-  }
   }
 
   selectedSpRequestDataforheader = {} as any;
@@ -147,6 +141,7 @@ export class TraineeApprovalsComponent {
     this.requesthandler = request;
     this.selectedLeaveData = request.entity;
     this.selectedSpRequestDataforheader = request.approvalHeader;
+    this.minExtendDate = this.empdata.trainingEndDate;
     this.getEmployeedatabyid(this.selectedLeaveData);
   }
 

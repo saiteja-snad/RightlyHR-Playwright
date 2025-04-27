@@ -117,7 +117,7 @@
                     <textarea type="text" name="rejectReason" class="form-control custom-input"
                         placeholder="Please provide reason for rejection" rows="3" maxlength="250"
                         formControlName="comments"></textarea>
-                    <div class="my-1">
+                    <div class="my-1 textarea-count-text">
                         <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }}/250</span>
                     </div>
                     <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"

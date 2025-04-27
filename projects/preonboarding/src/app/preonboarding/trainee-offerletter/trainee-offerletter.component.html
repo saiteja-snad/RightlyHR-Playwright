@@ -116,7 +116,7 @@
                                     </div>
 
                                     <div class="p-3">
-                                        <p class="m-0 family2" style="font-family: Segoe script; font-size: large;">{{traineeEmpData.authorityName}}</p>
+                                        <p class="m-0 authority-signature">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
                                         <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0 paragraph boldsize1">{{authorityDesignation}} </p>
@@ -129,10 +129,10 @@
                                         </p>
                                     </div>
                                     <div class="p-3">
-                                        <p class="Signature mb-3 mt-4">Signature: <span *ngIf="traineeEmpData.firstName; else signaturename1">
-                                            {{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</span>
+                                        <p class=" mb-3 mt-4">Signature: <span *ngIf="traineeEmpData.firstName; else signaturename1">
+                                           <span class="authority-signature">{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</span> </span>
                                             <ng-template #signaturename1>_________________________</ng-template></p>
-                                        <p class="Signature mb-3 mt-4">Date: {{currentDate|dateformat}}</p>
+                                        <p class="mb-3 mt-4">Date: {{currentDate|dateformat}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -168,9 +168,7 @@
                 @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
                 <button class="custom-btn accepted-btn px-5">Accepted</button>
                 }
-                @if(this.updatedOfferLetterDetails.candidateStatus==null||this.updatedOfferLetterDetails.candidateStatus==''){
                 <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
-                }
                 @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
                 <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
                 }

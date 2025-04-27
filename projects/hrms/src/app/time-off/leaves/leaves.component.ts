@@ -261,6 +261,14 @@ export class LeavesComponent {
   }
   
   onstartdate(action: string) {
+    this.isoptionalnotallowedatWorkingdate = false;
+    this.isstimeoffValid = true;
+    this.startdatevalid = true;
+    this.isNonOptionalHolidaySelected = false;
+    this.isHolidaySelected = false;
+    this.isWeekOffSelectedEndate = false;
+    this.isWeekOffSelected = false;
+    this.isHolidaySelectedEndate = false;
     this.updateStartDateValidity1();
     this.vldateofjoin1();
     this.onEndDateChange();
@@ -497,6 +505,15 @@ export class LeavesComponent {
   }
  
   onEndDate(action: string) {
+    this.issEndDategreater = false;
+    this.isoptionalnotallowedatWorkingdate = false;
+    this.isstimeoffValid = true;
+    this.startdatevalid = true;
+    this.isNonOptionalHolidaySelected = false;
+    this.isHolidaySelected = false;
+    this.isWeekOffSelectedEndate = false;
+    this.isWeekOffSelected = false;
+    this.isHolidaySelectedEndate = false;
     this.onEndDateChange();
     this.updateEndDateValidity();
     this.updateStartDateValidity1();
@@ -715,7 +732,7 @@ export class LeavesComponent {
     const end = moment(endDate);
     let diff = days + 1;
     let currentDate = start;
-    while (currentDate <= end) {
+    // while (currentDate <= end) {
       if (this.selectedleave && this.selectedleave.category) {
         if (this.selectedleave.category.excludeWeekends) {
           if (this.orgweekend?.orgWeekendItems?.some((item: any) => item.weekday === currentDate.format('dddd'))) {
@@ -782,7 +799,7 @@ export class LeavesComponent {
         }
       }
       currentDate = currentDate.add(1, 'day');
-    }
+    // }
     if (endDate != null) {
       this.dateDifference = diff;
       console.log(this.dateDifference);

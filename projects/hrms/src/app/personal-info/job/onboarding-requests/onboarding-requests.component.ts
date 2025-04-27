@@ -6,20 +6,19 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Router } from '@angular/router';
-import { FormGroup, NgForm } from '@angular/forms';
-import { Ipersonal } from '../../../Interfaces/members-model';
 import { CommonModule } from '@angular/common';
 import { IJob } from '../../../Interfaces/onboarding-documents';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
-
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-onboarding-requests',
-  imports: [DateformatPipe, CommonModule, NoDataFoundComponent],
+  imports: [DateformatPipe, CommonModule, NoDataFoundComponent, TranslateModule],
   templateUrl: './onboarding-requests.component.html',
   styleUrl: './onboarding-requests.component.scss'
 })
+
 export class OnboardingRequestsComponent {
   empdata = {} as any;
   dynamicData=new BehaviorSubject<any>([]);
@@ -46,12 +45,11 @@ export class OnboardingRequestsComponent {
 
   constructor(private authService: AuthService, private router: Router, private http: HttpService, 
     private conformationPopup: OpenModalService,private modalService: NgbModal,public rbac:RbacService) {
-
   }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
     this.loggedinuser = this.authService.getToken();
-    console.log(this.empinfo);
     this.getEmployeeId();
     this.getOnboardrequest();
   }
@@ -74,21 +72,17 @@ export class OnboardingRequestsComponent {
       const buttonEnabledDate = new Date(trainingEndDate);
       buttonEnabledDate.setDate(trainingEndDate.getDate() - parseInt(this.onboardDuration));
       this.currentdateformate = this.formatDate(buttonEnabledDate);
-      console.log(this.currentdateformate)
-      console.log('Button Enabled Date (after setting date):', buttonEnabledDate);
-
       // Get the current date
       const currentDate = new Date();
       this.currentdateformate = this.formatDate(this.currentDate)
-      console.log(this.currentdateformate)
       const isComplete = currentDate >= buttonEnabledDate && currentDate <= trainingEndDate;
-      console.log('Is training end date complete?', isComplete);
-
       return isComplete;
     }
     else return false;
   }
-  fustiontostorefeedback(data: any) {
+
+  fustiontostorefeedback(data: any,content:any) {
+    this.modalService.open(content, { centered: true});
     this.selecteddata = data;
   }
 
@@ -98,7 +92,6 @@ export class OnboardingRequestsComponent {
     const dateOfJoining = this.empinfo.dateOfJoining;
     const trainingEndDate = this.empinfo.trainingEndDate;
     const currentDate = new Date().toISOString();
-
     // Construct the request body
     const requestBody = {
       employeeid: employeeId,
@@ -113,7 +106,6 @@ export class OnboardingRequestsComponent {
       comments: null,
       feedbackComments: null
     };
-
     // Send the POST request
     this.http.postdata('onboardRequest', requestBody).subscribe({
       next: (response: any) => {
@@ -134,11 +126,9 @@ export class OnboardingRequestsComponent {
     };
     this.subscription = this.http.postdata("TraineeAppointmentLetter/OnBoardingPendingApprovals", trainee).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.conformationPopup.openSuccessModal('Request for onboard successfully')
       },
       error: (reason: any) => {
-        console.log(reason);
         this.conformationPopup.openErrorModal(reason.error.Message)
       },
     })
@@ -175,8 +165,7 @@ export class OnboardingRequestsComponent {
           return ele.status?.toLowerCase() === 'rejected';
         })
         this.disablebuttonforonboard = filtereddata
-        this.buttonviewwhenExtended = data.some((ele: any) => ele.status?.toLowerCase() === 'extended');
-        console.log(this.buttonviewwhenExtended)
+        this.extendCondition(data);
         // this.isTrainingEndDateComplete();
         this.getonboardPeriodData();
         this.isStatusAllowed();
@@ -187,29 +176,41 @@ export class OnboardingRequestsComponent {
       }
     });
   }
-
+extendCondition(data:any){
+  if (data && data.length) {
+    const latestRecord = data[data.length - 1]; // Get the last (latest) record
+  
+    const isLatestExtended = latestRecord.status?.toLowerCase() === 'extended';
+  
+    const allExtended = data.every((ele: any) => ele.status?.toLowerCase() === 'extended');
+  
+    this.buttonviewwhenExtended = isLatestExtended || allExtended;
+  } else {
+    this.buttonviewwhenExtended = false;
+  }
+}
   getonboardPeriodData() {
     this.subscription = this.http.getData(`ServingPeriods`).subscribe({
       next: (res: any) => {
         console.log(res);
         this.Readyforonboardbutton = JSON.parse(localStorage.getItem("ReadyforOnboard") || '{}');
         let durationValue = res.find((ele: any) => {
-          return ele.servingPeriodType?.toLocaleLowerCase() == 'button before onboard'
+          return ele.servingPeriodType?.toLowerCase() == 'button before onboard'
         })
         let probationdurationValue = res.find((ele: any) => {
-          return ele.servingPeriodType?.toLocaleLowerCase() == 'button before probation'
+          return ele.servingPeriodType?.toLowerCase() == 'button before probation'
         })
         let noduevalue = res.find((ele: any) => {
-          return ele.servingPeriodType?.toLocaleLowerCase() == 'button before no due'
+          return ele.servingPeriodType?.toLowerCase() == 'button before no due'
         })
         let ProbationDays = res.find((ele: any) => {
-          return ele.servingPeriodType?.toLocaleLowerCase() == 'probation noticeperiod'
+          return ele.servingPeriodType?.toLowerCase() == 'probation noticeperiod'
         })
         console.log(durationValue);
-        this.onboardDuration = durationValue.duration;
-        this.probationDays = ProbationDays.duration;
-        this.probationduration = probationdurationValue.duration;
-        this.nodueDuration = noduevalue.duration
+        this.onboardDuration = durationValue?.duration;
+        this.probationDays = ProbationDays?.duration;
+        this.probationduration = probationdurationValue?.duration;
+        this.nodueDuration = noduevalue?.duration
       }
     })
   }
@@ -315,7 +316,7 @@ export class OnboardingRequestsComponent {
   }
 
   closeonBoard() {
-    window.location.reload();
+    this.modalService.dismissAll();
   }
 
   updateOnboardingStatustoOnboard(Value: any) {

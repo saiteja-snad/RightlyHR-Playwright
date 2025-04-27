@@ -17,6 +17,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { RbacService } from '../../../services/rbac.service';
 import { TraineeApprovalsTabsComponent } from "../../../shared/time-off-module-tabs/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import moment from 'moment';
 
 @Component({
   selector: 'app-trainee-approvals',
@@ -37,7 +38,6 @@ export class TraineeApprovalsComponent {
     trcomments: '',
     rejectedReason: '',
   };
-  acceptForm!: FormGroup;
   subscription!: Subscription;
   requesthandler = {} as any;
   empdata = {} as Ipersonal;
@@ -71,13 +71,6 @@ export class TraineeApprovalsComponent {
   ngOnInit(): void {
     this.getAllPendingApprovals();
   }
-
-  iniializationForm() {
-    this.acceptForm = this.fb.group({
-      trcomments: [this.selectedLeaveData.trcomments || '', Validators.required, noWhitespaceValidator]
-    });
-  }
-
   initaializeextendForm() {
     this.rejectForm = this.fb.group({
       extenddate: ['', Validators.required],
@@ -97,9 +90,11 @@ export class TraineeApprovalsComponent {
     }
     return null;
   }
-
-  reload(): void {
-    this.acceptForm.reset();
+  reload(acceptForm:NgForm): void {
+    acceptForm.resetForm();
+    this.discontinue = false;
+    this.extend = false;
+    this.selectedLeaveData = {};
     this.modalService.dismissAll();
   }
 
@@ -132,13 +127,19 @@ export class TraineeApprovalsComponent {
     this.selectedLeaveData.reasonForExtend = '';
     this.selectedLeaveData.trcomments = '';
   }
-
+  minExtendDate:any;
   updateExtendDateValidity(): void {
     if (this.empdata.trainingEndDate > this.selectedLeaveData.extenddate) {
       this.isempeffectivevaild = false;
     } else {
       this.isempeffectivevaild = true;
     }
+    // Set minimum selectable date in the calendar
+  if (this.empdata.trainingEndDate) {
+    const trainingEnd = moment(this.empdata.trainingEndDate);
+    this.minExtendDate = trainingEnd.add(1, 'day').format('YYYY-MM-DD');
+    // You can bind [min]="minExtendDate" in your datepicker
+  }
   }
 
   selectedSpRequestDataforheader = {} as any;

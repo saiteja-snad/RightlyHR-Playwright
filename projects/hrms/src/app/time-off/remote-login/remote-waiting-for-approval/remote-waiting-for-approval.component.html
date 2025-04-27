@@ -23,7 +23,7 @@
             </td>
             <td>
               <div class="mt-2" *ngIf="RemoteRequest.reason;else res">
-                <a type="button" placement="top" [ngbPopover]="reason">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>

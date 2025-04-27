@@ -205,10 +205,10 @@
           {{'Submit'|translate}}
           }
           @else {
-          <div class="d-flex">
-            <div *ngIf="isLoader" class="spinner-border spinner-border text-light" role="status"></div>
-            <div> {{'Submitting'|translate}}</div>
-          </div>
+            <div class="button-loader-content">
+              <div class="spinner-border button-spinner text-light" role="status"></div>
+              <div>{{'Submitting'|translate}}</div>
+            </div>
           }
         </button>
       </div>
@@ -245,10 +245,10 @@
         {{'Yes'|translate}}
         }
         @else {
-        <div class="d-flex">
-          <div *ngIf="isLoader" class="spinner-border spinner-border text-light" role="status"></div>
-          <div> {{'Submitting'|translate}}</div>
-        </div>
+          <div class="button-loader-content">
+            <div *ngIf="isLoader" class="spinner-border button-spinner text-light" role="status"></div>
+            <div>{{'Submitting'|translate}}</div>
+          </div>
         }
       </button>
     </div>

@@ -42,7 +42,7 @@
             <td>
               @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
               <div>
-                <a type="button" placement="top" [ngbPopover]="reason">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
@@ -57,7 +57,7 @@
             <td>
               @if(item.entity?.spEarlyRelievingReason){
               <div>
-                <a type="button" placement="top" [ngbPopover]="reason">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
@@ -164,7 +164,7 @@
               </td>
               <td>
                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
-                  <a type="button" placement="top" [ngbPopover]="reason">
+                  <a type="button" [ngbPopover]="reason">
                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                   </a>
                   <ng-template #reason>

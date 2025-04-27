@@ -35,7 +35,7 @@
                     <td>
                         <div>
                             <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button" [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -49,7 +49,7 @@
                     <td>
                         <div>
                             <span>
-                                <a type="button" placement="top">
+                                <a type="button">
                                     <img src="images\info-fill.png" alt="info icon"
                                         (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)"
                                         class="info-icon">

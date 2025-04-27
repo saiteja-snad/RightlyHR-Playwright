@@ -101,12 +101,14 @@ export class EligibleForRehireComponent {
   }
   openupdate(rehirelist: any) {
     this.selectedId = rehirelist.sno;
+    this.EligibilityForm.reset();
     this.updateForm.patchValue({ Rehire: rehirelist.eligibleforrehire1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
   opendelete(rehirelist: any) {
     this.selectedDeleteeligibility = rehirelist;
+    this.EligibilityForm.reset();
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {

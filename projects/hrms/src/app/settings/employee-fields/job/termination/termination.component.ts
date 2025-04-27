@@ -102,11 +102,13 @@ export class TerminationComponent {
   }
   openupdate(terminationDATA: any) {
     this.selectedId = terminationDATA.sno;
+    this.ExistForm.reset();
     this.updateForm.patchValue({ TERMINATION: terminationDATA.reason });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   opendelete(termination: any) {
     this.selectedDeleteTermination = termination;
+    this.ExistForm.reset();
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   // DELETE

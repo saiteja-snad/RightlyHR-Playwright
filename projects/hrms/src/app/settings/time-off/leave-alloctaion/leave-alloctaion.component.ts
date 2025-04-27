@@ -102,6 +102,16 @@ export class LeaveAlloctaionComponent {
     });
   }
 
+  isFormValid() {
+    return (
+      this.Leavescat.year &&
+      this.Leavescat.locationId &&
+      this.Leavescat.subLocationId &&
+      this.Leavescat.shiftId &&
+      this.Leavescat.categoryId &&
+      Object.keys(this.accessLevels).length > 0
+    );
+  }
   onCategoryName(categoryId: number) {
     console.log(categoryId);
     this.selectedCategory = this.Leaves.find((c) => c.id == categoryId) as Iorgcategoryleaves;

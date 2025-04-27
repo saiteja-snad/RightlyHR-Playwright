@@ -92,7 +92,13 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
-
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
   patchForm(data: any): void {
     console.log('data', data)
     this.basicInfoForm.patchValue({
@@ -103,7 +109,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       middleName: data.middleName,
       lastName: data.lastName,
       gender: data.gender,
-      dob: data.dob ? new Date(data.dob).toISOString().split('T')[0] : '',
+      dob: this.formatDateToLocal(data.dob),
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
       maritalStatus: this.Maritaldetails.find(((item: any) => item.maritalstatus1 === data.maritalStatus)) || data.maritalStatus,
     });

@@ -68,12 +68,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   status: any
   substatus: any
   isLoading = false;
+  joiningDate: any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
      private http: HttpService, public formValidations: FormValidationsService,) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.joiningDate = this.formatDateToLocal(this.empinfo.dateOfJoining)
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -447,7 +449,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
   openModalupdate(content: any, data: any): void {
     const locationId = data?.locationId; // Get the location ID from the selected job details
     const subLocationId = data?.subLocationId; // Get the sub-location ID from the selected job details
@@ -455,7 +463,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.selectedData = data; // Store the selected job details data for updating
     console.log('Selected Job Details ID:', data);
     this.teamManagerName = data?.firstName + ' ' + data?.middleName + ' ' + data?.lastName
-    const effectiveDate = data?.effectiveDate ? new Date(data.effectiveDate).toISOString().split('T')[0] : null;
+    const effectiveDate = this.formatDateToLocal(data.effectiveDate); // Format the effective date
     this.selectedJobRoleObj = this.JobroleDesignation.find(role => role.designationName === data.jobRole);
     this.subscription = this.http.getData(`Subdepartments/Getnames/${data.departmentId}`).subscribe({
       next: (teamData: any) => {

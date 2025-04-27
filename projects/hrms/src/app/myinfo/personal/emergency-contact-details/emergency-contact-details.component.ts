@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -16,7 +16,8 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
   selector: 'app-emergency-contact-details',
   imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule],
   templateUrl: './emergency-contact-details.component.html',
-  styleUrl: './emergency-contact-details.component.scss'
+  styleUrl: './emergency-contact-details.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 
@@ -53,7 +54,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
  
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeId();
     this.getFamilyRelations();
     this.initializeForm();
@@ -136,14 +137,14 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 
   saveForm(): void {
     const formValue = this.emergencyContactForm.value;
-    // Clean and format phone numbers
+    
     const cleanPhoneNumber = (phone: any): string => {
-      if (!phone) return ''; // Return an empty string if phone is null or undefined
-      return String(phone).replace(/\s+/g, '').replace(/-/g, ''); // Convert to string and remove spaces and dashes
+      if (!phone) return '';
+      return String(phone).replace(/\s+/g, '').replace(/-/g, '');
     };
 
-    const contact1Phone = cleanPhoneNumber(formValue.contact1Phone || this.employedata.mobileNumber || '');
-    const contact2Phone = cleanPhoneNumber(formValue.contact2Phone || this.employedata.emergencyNumber1 || '');
+    const contact1Phone = cleanPhoneNumber(formValue.contact1Phone || this.employedata?.mobileNumber || '');
+    const contact2Phone = cleanPhoneNumber(formValue.contact2Phone || this.employedata?.emergencyNumber1 || '');
     const updatePayload = {
       ...this.employedata,
       emailId: formValue.contact1Email || this.employedata.emailId,

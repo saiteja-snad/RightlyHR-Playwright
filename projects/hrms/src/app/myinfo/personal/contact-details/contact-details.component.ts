@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -14,7 +14,8 @@ import { RbacService } from '../../../services/rbac.service';
   selector: 'app-contact-details',
   imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule],
   templateUrl: './contact-details.component.html',
-  styleUrl: './contact-details.component.scss'
+  styleUrl: './contact-details.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class ContactDetailsComponent implements OnInit, OnDestroy {
 

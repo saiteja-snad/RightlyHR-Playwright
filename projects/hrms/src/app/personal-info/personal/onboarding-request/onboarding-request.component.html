@@ -142,12 +142,13 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <h4 class="text-center ps-3 pe-3 inactive-poptext">Are you sure you want to Approve Document? </h4>
+            <p  class="confirmation-icon mb-4">Are you sure you want to Approve Document? </p>
+        </div>
             <div class="d-flex justify-content-center gap-3 mt-4">
                 <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
                 <button type="button" class="custom-btn btn-primary" (click)="approvedocuments()">{{'Yes'|translate}}</button>
             </div>
-        </div>
+        
     </div>
 </ng-template>
 

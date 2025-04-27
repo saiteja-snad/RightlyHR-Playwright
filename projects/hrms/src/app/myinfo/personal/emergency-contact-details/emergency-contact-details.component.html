@@ -13,7 +13,7 @@
       
       <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
         <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid"
+        <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid "
           (click)="saveForm()">Save</button>
       </div>
     </div>
@@ -50,7 +50,7 @@
                 <div *ngIf="!loading; else loadingTemplate">
                   <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                     [selectedCountryCode]="selectedemergencycoutrycode()" [countryListConfig]="countryListConfig"
-                    class="country-input" (onCountryChange)="onCountryChange($event)">
+                    class="country-input"  [ngClass]="{ 'disabled-country-code': !buttons }" (onCountryChange)="onCountryChange($event)">
                   </lib-country-list>
                 </div>
                 <ng-template #loadingTemplate>
@@ -128,7 +128,7 @@
                 <div *ngIf="!loading; else loadingTemplate">
                   <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                     [selectedCountryCode]="selectedemergency1coutrycode()" [countryListConfig]="countryListConfig"
-                    class="country-input" (onCountryChange)="onCountryChange1($event)">
+                    class="country-input"  [ngClass]="{ 'disabled-country-code': !buttons }" (onCountryChange)="onCountryChange1($event)">
                   </lib-country-list>
                 </div>
                 <ng-template #loadingTemplate>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -16,7 +16,8 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
   selector: 'app-emergency-contact-details',
   imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule],
   templateUrl: './emergency-contact-details.component.html',
-  styleUrl: './emergency-contact-details.component.scss'
+  styleUrl: './emergency-contact-details.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 

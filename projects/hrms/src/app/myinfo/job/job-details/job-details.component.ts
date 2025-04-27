@@ -76,6 +76,7 @@ export class JobDetailsComponent {
   status: any;
   substatus: any;
   isLoading = false;
+  joiningDate: any;
   constructor(
     private modalService: NgbModal,
     private authService: AuthService,
@@ -87,6 +88,7 @@ export class JobDetailsComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.joiningDate =this.formatDateToLocal(this.empinfo.dateOfJoining)
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -209,6 +211,13 @@ export class JobDetailsComponent {
     });
   }
 
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
   onDepartmentChange(selectedDepartment: any): void {
     const selectedDepartmentId = selectedDepartment.sno; // Get the sno of the selected department
     console.log('Selected Department ID:', selectedDepartmentId);

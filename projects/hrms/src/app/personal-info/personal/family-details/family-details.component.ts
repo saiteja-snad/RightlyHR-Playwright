@@ -141,6 +141,14 @@ export class FamilyDetailsComponent implements OnInit {
     console.log(this.familyDetailsForm.value); 
   }
   
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  
   openModalupdate(content: any, familyDetail: any): void {
     console.log(familyDetail)
     this.selectedFamilyMembername = familyDetail.relationShipName
@@ -148,9 +156,8 @@ export class FamilyDetailsComponent implements OnInit {
     const selectedRelationship = this.familyRelations.find(
       (relation) => relation.sno === familyDetail.relationShipId
     );
-    const formattedDateOfBirth = familyDetail.dateOfBirth
-      ? new Date(familyDetail.dateOfBirth).toISOString().split('T')[0]
-      : null;
+    const formattedDateOfBirth =this.formatDateToLocal(familyDetail.dateOfBirth)
+   
     this.familyDetailsupdateForm.patchValue({
       memberNameupdate: familyDetail.memberName,
       dateOfBirthupdate: formattedDateOfBirth,

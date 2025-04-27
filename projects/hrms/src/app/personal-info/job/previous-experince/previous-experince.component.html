@@ -130,7 +130,7 @@
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"
                                 formControlName="fromDate" [min]="'1940-01-01'"  onkeypress="return false" [max]="currentDate | date: 'yyyy-MM-dd'"
-                                (change)="currentDateValidation()" />
+                              />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
                                 class="error-msg">
                                 From Date is required
@@ -144,7 +144,7 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
-                                (change)="toDateValidation()"  onkeypress="return false" [max]="currentDate | date: 'yyyy-MM-dd'"
+                                 onkeypress="return false"  [min]="getMinEndDate()"
                                 [min]="employeeExperienceForm.get('fromDate')?.value" />
                             <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
                                 class="error-msg">
@@ -318,8 +318,7 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate"  onkeypress="return false"
-                                formControlName="toDateupdate" (change)="toDateValidation()"
-                                [max]="currentDate | date: 'yyyy-MM-dd'"
+                                formControlName="toDateupdate" [min]="getupdateMinEndDate()"
                                  />
 
                             <div *ngIf=" employeeExperienceupdateForm.get('toDateupdate')?.invalid &&
@@ -415,7 +414,14 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss();resetFrom()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="employeeExperienceupdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="employeeExperienceupdateForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Update'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>

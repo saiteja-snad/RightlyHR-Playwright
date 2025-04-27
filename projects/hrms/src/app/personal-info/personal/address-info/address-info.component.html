@@ -78,6 +78,7 @@
               <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['required']">Zip Code is required</div>
               <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['pattern']">Zip Code must be a valid 5-6
                 digit number</div>
+                <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['invalidZipCode']">Zip Code cannot be all zeros</div>
             </div>
           </div>
         </ng-container>
@@ -153,6 +154,7 @@
               <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['required']">Zip Code is required</div>
               <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['pattern']">Zip Code must be a valid 5-6
                 digit number</div>
+                <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['invalidZipCode']">Zip Code cannot be all zeros</div>
             </div>
           </div>
         </div>

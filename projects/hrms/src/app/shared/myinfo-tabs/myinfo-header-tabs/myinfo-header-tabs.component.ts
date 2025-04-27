@@ -15,6 +15,7 @@ export class MyinfoHeaderTabsComponent {
   navTabs: any[] = [
     { label: 'Personal', link: '/myinfo/personal'},
     { label: 'Job', link: '/myinfo/job'},
+    { label: 'Documents', link: '/myinfo/documents'},
     { label: 'Team Members', link: '/myinfo/team-members',permission: { feature: 'Team Members', action: 'view' } },
     { label: 'Onboard Request', link: '/myinfo/onboarding-request',permission: { feature: 'Onboard Request', action: 'view' } }
   ];

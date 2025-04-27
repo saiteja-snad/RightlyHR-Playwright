@@ -3,30 +3,26 @@
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter degree"
-                    formControlName="degree" aria-label="degree" aria-describedby="degree" 
-                    (keydown)="allowOnlyLettersAndSpace($event)" maxlength="50">
-                <span class="input-group-text" id="gender">   
+                <input type="text" class="form-control custom-input" placeholder="Please enter degree" formControlName="degree"
+                    aria-label="degree" aria-describedby="degree" (keydown)="allowOnlyLettersAndSpace($event)" maxlength="50">
+                <span class="input-group-text" id="gender">
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="degreeFrom.invalid">{{'Add'|translate}}</button></span>
+                        [disabled]="degreeFrom.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-            <div *ngIf="degreeFrom.controls['degree'].touched">
-            
+            <div *ngIf="degreeFrom.controls['degree'].touched" class="error-msg">
                 <div *ngIf="degreeFrom.controls['degree'].touched || degreeFrom.controls['degree'].dirty">
-                    <span class="error-msg" *ngIf="degreeFrom.controls['degree'].errors?.['required']">
+                    <span *ngIf="degreeFrom.controls['degree'].errors?.['required']">
                         Degree is required
                     </span>
-                  
-                    <span class="error-msg" *ngIf="degreeFrom.controls['degree'].errors?.['maxlength']">
-                      Maximum 50 characters are allowed.
+                    <span *ngIf="degreeFrom.controls['degree'].errors?.['maxlength']">
+                        Maximum 50 characters are allowed.
                     </span>
-                  
-                    <span class="error-msg" *ngIf="degreeFrom.controls['degree'].errors?.['pattern']">
-                      Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                    <span *ngIf="degreeFrom.controls['degree'].errors?.['pattern']">
+                        Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
                     </span>
-                  </div>
-                  
-        </div>
+                </div>
+            </div>
         </div>
     </form>
 
@@ -46,13 +42,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(degree)" *ngIf="rbac.allowedToAccess('Degree.update')"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openupdate(degree)" *ngIf="rbac.allowedToAccess('Degree.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(degree)" *ngIf="rbac.allowedToAccess('Degree.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(degree)" *ngIf="rbac.allowedToAccess('Degree.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -68,36 +66,31 @@
     <form [formGroup]="updateForm" (ngSubmit)="updateDegree()">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
-                <div >
+                <div>
                     <p class="popup-heading mb-0">{{'Update Degree'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div class="custom-main-popup-content ">
+            <div class="custom-main-popup-content">
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Degree Name'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="degreeName"
-                        placeholder="Please enter degree name"
-                        (keydown)="allowOnlyLettersAndSpace($event)" maxlength="50">
-                        <div *ngIf="updateForm.controls['degreeName'].touched">
-            
-                            <div *ngIf="updateForm.controls['degreeName'].touched || updateForm.controls['degreeName'].dirty">
-                                <span class="error-msg" *ngIf="updateForm.controls['degreeName'].errors?.['required']">
-                                    Degree is required
-                                </span>
-                              
-                                <span class="error-msg" *ngIf="updateForm.controls['degreeName'].errors?.['maxlength']">
-                                  Maximum 50 characters are allowed.
-                                </span>
-                              
-                                <span class="error-msg" *ngIf="updateForm.controls['degreeName'].errors?.['pattern']">
-                                  Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
-                                </span>
-                              </div>
-                              
+                        placeholder="Please enter degree name" (keydown)="allowOnlyLettersAndSpace($event)" maxlength="50">
+                    <div *ngIf="updateForm.controls['degreeName'].touched" class="error-msg">
+                        <div *ngIf="updateForm.controls['degreeName'].touched || updateForm.controls['degreeName'].dirty">
+                            <span *ngIf="updateForm.controls['degreeName'].errors?.['required']">
+                                Degree is required
+                            </span>
+                            <span *ngIf="updateForm.controls['degreeName'].errors?.['maxlength']">
+                                Maximum 50 characters are allowed.
+                            </span>
+                            <span *ngIf="updateForm.controls['degreeName'].errors?.['pattern']">
+                                Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="custom-modal-footer">
@@ -111,14 +104,14 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="result-popup-content"  ngbAutofocus> 
-            <div>
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary"(click)="modal.close()">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary" (click)="deleteDegree(updateDegreeDetails)">{{'Yes'|translate}}</button>
-            </div>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="deleteDegree(updateDegreeDetails)">{{'Yes'|translate}}</button>
+        </div>
     </div>
 </ng-template>

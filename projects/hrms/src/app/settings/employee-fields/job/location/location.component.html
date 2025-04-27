@@ -4,26 +4,18 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter location"
-                    formControlName="jobLocationName" aria-label="location" aria-describedby="location"
-                    (keypress)="allowOnlyLettersAndSpace($event)">
+                    formControlName="jobLocationName" aria-label="location" (keypress)="allowOnlyLettersAndSpace($event)">
                 <span class="input-group-text" id="location">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="locationForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="locationForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-
-           <div *ngIf="locationForm.get('jobLocationName')?.touched && locationForm.get('jobLocationName')?.invalid"
-            class="error-msg mt-2">
-            <div *ngIf="locationForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div>
+            <div *ngIf="locationForm.get('jobLocationName')?.touched && locationForm.get('jobLocationName')?.invalid" class="error-msg">
+                <div *ngIf="locationForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div>
+            </div>
+            <div *ngIf="locationForm.controls['jobLocationName'].touched" class="error-msg">
+                <span *ngIf="locationForm.controls['jobLocationName'].errors?.['maxlength']">Maximum 100 characters are allowed.</span>
+            </div>
         </div>
-               <div *ngIf="locationForm.controls['jobLocationName'].touched">
-            <span class="error-msg" *ngIf="locationForm.controls['jobLocationName'].errors?.['maxlength']">
-                      Maximum 100 characters are allowed.
-                    </span>
-
-                  </div>
-                  </div>
-
-
     </form>
 
     <!--Data Content-->
@@ -42,14 +34,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(loc)" *ngIf="rbac.allowedToAccess('Location.update')"><img
-                                        src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
+                                <a (click)="openupdate(loc)" *ngIf="rbac.allowedToAccess('Location.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(loc)" *ngIf="rbac.allowedToAccess('Location.delete')"><img
-                                        src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(loc)" *ngIf="rbac.allowedToAccess('Location.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -72,62 +65,46 @@
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
+
             <div class="custom-main-popup-content">
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Location'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="jobLocationName"
-                        placeholder="Please enter location"
-                        (keypress)="allowOnlyLettersAndSpace($event)">
+                        placeholder="Please enter location" (keypress)="allowOnlyLettersAndSpace($event)">
                     <div *ngIf="updateForm.get('jobLocationName')?.touched && updateForm.get('jobLocationName')?.invalid"
                         class="error-msg mt-2">
                         <div *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div>
                     </div>
-
-    <!-- <div *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div> -->
-
-<div *ngIf="updateForm.controls['jobLocationName'].touched">
-<span class="error-msg" *ngIf="updateForm.controls['jobLocationName'].errors?.['maxlength']">
-      Maximum 100 characters are allowed.
-    </span>
-
-
-
-  </div>
-  </div>
-  <div>
-</div>
-<div class="custom-modal-footer">
-    <button type="button" class="custom-btn btn-secondary"
-        (click)="close(modal)">{{'Close'|translate}}</button>
-    <!-- <button type="button" class="custom-btn btn-secondary" (click)="updateLocation(modal)"
-        [disabled]="updateForm.invalid">{{'Update'|translate}}</button> -->
-        <button type="button" class="custom-btn btn-primary " (click)="updateLocation(modal)"
-        [disabled]="updateForm.invalid">
-        {{'Update' | translate}}</button>
-    </div>
-</div>
-</div>
-
-
-
-</form>
+                    <!-- <div *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div> -->
+                    <div *ngIf="updateForm.controls['jobLocationName'].touched" class="error-msg">
+                        <span *ngIf="updateForm.controls['jobLocationName'].errors?.['maxlength']">
+                            Maximum 100 characters are allowed.
+                        </span>
+                    </div>
+                </div>
+                <div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateLocation(modal)" [disabled]="updateForm.invalid">
+                    {{'Update' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </ng-template>
 
 <!--Delete Confirmation popup-->
-
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary "
-                (click)="closeDelete(modal)">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>
-
 </ng-template>

@@ -4,31 +4,25 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter gender"
-                    formControlName="Gender" aria-label="Gender" aria-describedby="Gender"  (keypress)="allowOnlyLettersAndSpace($event)">
-                <span class="input-group-text" id="Gender">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="GenderForm.invalid">{{'Add'|translate}}</button></span>
+                    formControlName="Gender" aria-label="Gender" (keypress)="allowOnlyLettersAndSpace($event)">
+                <span class="input-group-text" id="Gender"><button type="submit" class="custom-btn btn-primary"
+                        [disabled]="GenderForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-            <div *ngIf="GenderForm.controls['Gender'].touched">
-            
-                    <div *ngIf="GenderForm.controls['Gender'].touched || GenderForm.controls['Gender'].dirty">
-                        <span class="error-msg" *ngIf="GenderForm.controls['Gender'].errors?.['required']">
-                          Gender is required
-                        </span>
-                      
-                        <span class="error-msg" *ngIf="GenderForm.controls['Gender'].errors?.['maxlength']">
-                          Maximum 50 characters are allowed
-                        </span>
-                      
-                        <span class="error-msg" *ngIf="GenderForm.controls['Gender'].errors?.['pattern']">
-                          Only letters, spaces, and periods are allowed. Field cannot start with a space or period
-                        </span>
-                      </div>
-                      
+            <div *ngIf="GenderForm.controls['Gender'].touched" class="error-msg">
+                <div *ngIf="GenderForm.controls['Gender'].touched || GenderForm.controls['Gender'].dirty">
+                    <span *ngIf="GenderForm.controls['Gender'].errors?.['required']">
+                        Gender is required
+                    </span>
+                    <span *ngIf="GenderForm.controls['Gender'].errors?.['maxlength']">
+                        Maximum 50 characters are allowed
+                    </span>
+                    <span *ngIf="GenderForm.controls['Gender'].errors?.['pattern']">
+                        Only letters, spaces, and periods are allowed. Field cannot start with a space or period
+                    </span>
+                </div>
             </div>
         </div>
-
-
     </form>
 
     <!--Data Content-->
@@ -47,13 +41,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(gender)" *ngIf="rbac.allowedToAccess('Gender.update')"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openupdate(gender)" *ngIf="rbac.allowedToAccess('Gender.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(gender)" *ngIf="rbac.allowedToAccess('Gender.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(gender)" *ngIf="rbac.allowedToAccess('Gender.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -62,7 +58,7 @@
             </tbody>
         </table>
     </div>
-
+</div>
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
@@ -76,34 +72,34 @@
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
+
             <div class="custom-main-popup-content ">
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Gender'|translate}}
                         <span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="Gender"  (keypress)="allowOnlyLettersAndSpace($event)" placeholder="Please enter gender" 
-                    >
-                    <div *ngIf="updateForm.controls['Gender'].touched">
-            
+                    <input type="text" class="form-control custom-input" formControlName="Gender"
+                        (keypress)="allowOnlyLettersAndSpace($event)" placeholder="Please enter gender">
+                    <div *ngIf="updateForm.controls['Gender'].touched" class="error-msg">
                         <div *ngIf="GenderForm.controls['Gender'].touched || updateForm.controls['Gender'].dirty">
-                            <span class="error-msg" *ngIf="updateForm.controls['Gender'].errors?.['required']">
+                            <span *ngIf="updateForm.controls['Gender'].errors?.['required']">
                                 Gender is required
                             </span>
-                          
-                            <span class="error-msg" *ngIf="updateForm.controls['Gender'].errors?.['maxlength']">
-                              Maximum 50 characters are allowed
+                            <span *ngIf="updateForm.controls['Gender'].errors?.['maxlength']">
+                                Maximum 50 characters are allowed
                             </span>
-                          
-                            <span class="error-msg" *ngIf="updateForm.controls['Gender'].errors?.['pattern']">
-                              Only letters, spaces, and periods are allowed. Field cannot start with a space or period
+                            <span *ngIf="updateForm.controls['Gender'].errors?.['pattern']">
+                                Only letters, spaces, and periods are allowed. Field cannot start with a space or
+                                period
                             </span>
-                          </div>
-                          
-            
+                        </div>
                     </div>
                 </div>
+
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary " (click)="updateGender(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateGender(modal)"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -113,15 +109,13 @@
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-     
-            <div>
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-            </div>
-        
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+        </div>
     </div>
 </ng-template>

@@ -1,6 +1,5 @@
 <div class="custom-main-component-container">
     <form [formGroup]="interviewForm" (ngSubmit)="onSubmit()"  *ngIf="rbac.allowedToAccess('interview round.create')">
-        <!-- <form [formGroup]="bankForm" (ngSubmit)="onSubmit()"> -->
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -8,10 +7,10 @@
                     formControlName="interview" aria-label="interview" aria-describedby="interview"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="gender">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="interviewForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="interviewForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-            <div *ngIf="interviewForm.get('interview')?.touched && interviewForm.get('interview')?.invalid" class="error-msg mt-2">
+            <div *ngIf="interviewForm.get('interview')?.touched && interviewForm.get('interview')?.invalid" class="error-msg">
                 <div *ngIf="interviewForm.get('interview')?.errors?.['required']">{{'interview round is required'|translate}}</div>
             </div>
         </div>
@@ -29,19 +28,20 @@
                 @if (rbac.allowedToAccess('interview.view')) {
                 @for (interview of interviewdetails; track $index) {
                 <tr>
-                    
                     <td class="w-75">{{ interview.roundname}}</td>
                     <td class="w-25">
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(interview)"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openupdate(interview)">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(interview)"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(interview)">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -57,7 +57,7 @@
 <ng-template #updatepopup let-modal>
     <form [formGroup]="updateForm" >
         <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="custom-poup-header-content popup-header-border">
                 <div class="pt-2">
                     <p class="popup-heading mb-0">{{'Edit interview '|translate}}</p>
                 </div>
@@ -65,7 +65,7 @@
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div class="custom-main-popup-content p-4">
+            <div class="custom-main-popup-content">
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'interview'|translate}}
                         <span class="error-msg">*</span></label>
@@ -76,9 +76,10 @@
                         <div *ngIf="updateForm.get('roundname1')?.errors?.['required']">{{'Round  name is required'|translate}}</div>
                     </div>
                 </div>
-                <div class="d-flex gap-5 w-100 pt-3">
-                    <button type="button" class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary w-50 py-2" (click)="updateinterview(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" (click)="updateinterview(modal)" [disabled]="updateForm.invalid">
+                        {{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -87,16 +88,16 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-content text-center p-4">
-            <div class="py-4">
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-4">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary w-50 py-2"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary w-50 py-2" (click)="onDeleteinterview(modal)">{{'Yes'|translate}}</button>
-            </div>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">
+                {{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="onDeleteinterview(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

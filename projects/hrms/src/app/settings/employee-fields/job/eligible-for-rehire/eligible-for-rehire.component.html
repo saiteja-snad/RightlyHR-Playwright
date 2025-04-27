@@ -7,10 +7,10 @@
                     formControlName="Rehire" aria-label="rehire" aria-describedby="rehire"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                 <span class="input-group-text" id="rehire">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="EligibilityForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="EligibilityForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-            <div *ngIf="EligibilityForm.get('Rehire')?.touched && EligibilityForm.get('Rehire')?.invalid" class="error-msg mt-2">
+            <div *ngIf="EligibilityForm.get('Rehire')?.touched && EligibilityForm.get('Rehire')?.invalid" class="error-msg">
                 <div *ngIf="EligibilityForm.get('Rehire')?.errors?.['required']">{{'Eligible For Rehire is required'|translate}}</div>
             </div>
         </div>
@@ -32,13 +32,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(e)" *ngIf="rbac.allowedToAccess('Eligible For Rehire.update')"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openupdate(e)" *ngIf="rbac.allowedToAccess('Eligible For Rehire.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(e)" *ngIf="rbac.allowedToAccess('Eligible For Rehire.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(e)" *ngIf="rbac.allowedToAccess('Eligible For Rehire.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -54,14 +56,14 @@
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
-                <div >
+                <div>
                     <p class="popup-heading mb-0">{{'Update Eligible For Rehire'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
-            <div class="custom-main-popup-content ">
+            <div class="custom-main-popup-content">
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Eligible For Rehire'|translate}}
                         <span class="error-msg">*</span></label>
@@ -72,8 +74,9 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary " (click)="updateEligibility(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateEligibility(modal)" 
+                    [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -83,15 +86,13 @@
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-       
-            <div >
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="d-flex gap-5 pt-2 w-100">
-                <button type="button" class="custom-btn btn-secondary "(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-            </div>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
         </div>
-   
-  </ng-template>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>

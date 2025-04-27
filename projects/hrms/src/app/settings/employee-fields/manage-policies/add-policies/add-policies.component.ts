@@ -83,6 +83,7 @@ export class AddPoliciesComponent {
     submit() {
       
       const formValue = this.policiesForm.value;
+      console.log(formValue);
   
       const payload = {
         locationId: formValue.location?.id,
@@ -97,7 +98,7 @@ export class AddPoliciesComponent {
         orgPolicyItems: formValue.policies.map((item: any) => ({
           policyName: item.policyName,
           policyDescription: item.policyDescription,
-          policyAttachment: item.policyAttachment,
+          policyAttachment: item.policyFile,
           status: "Pending for submission",
         }))
       };

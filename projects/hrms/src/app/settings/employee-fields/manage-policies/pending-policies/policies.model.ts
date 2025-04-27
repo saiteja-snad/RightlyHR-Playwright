@@ -22,6 +22,7 @@ export interface IOrgPolicyItem {
     id: number;
     headerId: number;
     policyName: string;
+    policyAttachment: string;
     policyDescription : string;
     status  : string;
 }

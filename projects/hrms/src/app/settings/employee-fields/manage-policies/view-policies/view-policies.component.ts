@@ -6,12 +6,12 @@ import { HttpService } from '../../../../services/http.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-policies',
-  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule, NgbPopoverModule],
   templateUrl: './view-policies.component.html',
   styleUrl: './view-policies.component.scss'
 })
@@ -65,11 +65,11 @@ export class ViewPoliciesComponent {
       this.policies.push(
         this.fb.group({
           policyName : [{value: row.policyName, disabled: true}],
-          policyFile : [{value: row.policyAttachment, disabled: true}],
+          policyFile : [row.policyAttachment],
           policyDescription  : [{value: row.policyDescription, disabled: true}],
          
         })
-        
+          
       );
       this.getFileName(row.policyAttachment);
     });
@@ -86,6 +86,7 @@ export class ViewPoliciesComponent {
         
       }
       this.policyFileName = fileName;
+      console.log('File Name:', fileName);
       return fileName;
       
     }
@@ -323,6 +324,11 @@ export class ViewPoliciesComponent {
     } else {
       this.shiftDropdown = []; // Reset if no sub-location is selected
     }
+  }
+
+  getPolicyAttachmentName(fullPath: string): string {
+    if (!fullPath) return 'No file attached';
+    return fullPath.split('\\').pop() || fullPath;
   }
 
   navigation(){

@@ -63,11 +63,26 @@
                     </div>
                   </div>
                   <div class="col-md-3">
-                    <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span
-                        class="text-danger">*</span></label>
-                    <input title="text" type="file" formControlName="policyFile" class="form-control custom-input" />
+                    <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span class="text-danger">*</span></label>
+                    
+                    <!-- File input for choosing the file -->
+                    <div class="d-flex align-items-center gap-2">
+                      <input title="text" type="file" formControlName="policyFile" class="form-control custom-input" />
+                      
+                      <!-- Popover Trigger next to file input (show file name) -->
+                      <div [ngbPopover]="popContent" triggers="click" placement="top">
+                        <i class="bi bi-info-circle-fill cursor"></i> 
+                      </div>
+                    </div>
+                  
+                    <!-- Popover Content (display file name) -->
+                    <ng-template #popContent>
+                      <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
+                    </ng-template>
+                    
+                    <!-- Error Message (if invalid) -->
                     <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.invalid" class="error-msg">
-                      {{'Policy File is required'|translate}}.
+                      {{'Policy File is required' | translate}}.
                     </div>
                   </div>
                 <div class="col-md-2 d-flex align-items-end">
@@ -107,7 +122,7 @@
                 }
                 <button type ="submit" class="custom-btn btn-primary" id="submitButton"
                     [disabled]="this.policies.invalid">
-                    {{'Update' | translate}}
+                    {{'Submit' | translate}}
                 </button>
         </div>
         

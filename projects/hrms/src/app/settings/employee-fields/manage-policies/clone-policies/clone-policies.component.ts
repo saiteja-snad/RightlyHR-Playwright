@@ -6,12 +6,12 @@ import { HttpService } from '../../../../services/http.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clone-policies',
-  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule, NgbPopoverModule],
   templateUrl: './clone-policies.component.html',
   styleUrl: './clone-policies.component.scss'
 })
@@ -78,9 +78,9 @@ export class ClonePoliciesComponent {
   
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: [''],
-      policyFile: [''],
-      policyDescription: ['']
+      policyName: ['', Validators.required],
+      policyFile: ['', Validators.required],
+      policyDescription: ['', Validators.required]
     });
     this.policies.push(policyGroup);
   }
@@ -109,12 +109,12 @@ export class ClonePoliciesComponent {
       shiftID: formValue.shift.id ?? this.updatePoliciesData.shiftID,
       id : this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
-        policyName: item.policyName,
-        policyAttachment: item.policyAttachment,
-        policyDescription: item.policyDescription,
-        status: 'Published',
-        holidayColor: 'string',
-        headerID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
+        PolicyName: item.policyName,
+        PolicyAttachment: item.policyFile,
+        PolicyDescription: item.policyDescription,
+        Status: 'Published',
+        // holidayColor: 'string',
+        HeaderID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
       }))
     };
     this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
@@ -289,6 +289,12 @@ export class ClonePoliciesComponent {
     } else {
       this.shiftDropdown = []; // Reset if no sub-location is selected
     }
+  }
+
+  getPolicyAttachmentName(fullPath: string): string {
+    if (!fullPath) return 'No file attached';
+    // Extract the file name from path (like "C:\\fakepath\\file.pdf")
+    return fullPath.split('\\').pop() || fullPath;
   }
 
   navigation(){

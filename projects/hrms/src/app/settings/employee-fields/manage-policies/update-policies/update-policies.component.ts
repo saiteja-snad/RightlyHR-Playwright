@@ -6,12 +6,12 @@ import { HttpService } from '../../../../services/http.service';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update-policies',
-  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule, NgbPopoverModule],
   templateUrl: './update-policies.component.html',
   styleUrl: './update-policies.component.scss'
 })
@@ -55,6 +55,7 @@ export class UpdatePoliciesComponent {
     this.policyForm.patchValue({
       year: this.yearDetails.find((x:any) => x.value === this.updatePoliciesData.applicableyear),
     });
+    console.log(this.updatePoliciesData);
     this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
       this.policies.push(
         this.fb.group({
@@ -94,9 +95,8 @@ export class UpdatePoliciesComponent {
 
   hidePublishCloneButtons : boolean = false
   submit() {
-    
     const formValue = this.policyForm.value;
-
+    console.log(formValue);
     const payload = {
       locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
       subLocationId: formValue.subLocation.id ?? this.updatePoliciesData.subLocationId,
@@ -109,12 +109,12 @@ export class UpdatePoliciesComponent {
       shiftID: formValue.shift.id ?? this.updatePoliciesData.shiftID,
       id : this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
-        policyName: item.policyName,
-        policyAttachment: item.policyAttachment,
-        policyDescription: item.policyDescription,
-        status: 'Published',
-        holidayColor: 'string',
-        headerID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
+        PolicyName: item.policyName,
+        PolicyAttachment: item.policyFile,
+        PolicyDescription: item.policyDescription ,
+        Status: 'Published',
+        // holidayColor: 'string',
+        HeaderID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
       }))
     };
     this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
@@ -132,10 +132,6 @@ export class UpdatePoliciesComponent {
     console.log(payload);
     
   }
-  
-  // cancel(){
-  //   this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
-  // }
 
   onDelete(modal: any) {
     modal.dismiss();
@@ -220,7 +216,10 @@ export class UpdatePoliciesComponent {
 
   }
 
-  
+  getPolicyAttachmentName(fullPath: string): string {
+    if (!fullPath) return 'No file attached';
+    return fullPath.split('\\').pop() || fullPath;
+  }
 
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation) {

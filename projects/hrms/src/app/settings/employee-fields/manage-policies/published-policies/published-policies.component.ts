@@ -56,7 +56,7 @@ export class PublishedPoliciesComponent {
   }
 
   viewPublishedPolicy(holiday: any) {
-    debugger
+    console.log(holiday);
     localStorage.setItem('viewpolicies', JSON.stringify(holiday));
     this.router.navigate(['/settings/employee-fields/viewpolices']);
     

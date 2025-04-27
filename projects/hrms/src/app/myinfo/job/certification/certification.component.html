@@ -122,7 +122,7 @@
                             Issued Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="issuedDate"
-                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'"  onkeypress="return false" />
+                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" (change)="changesstartdate()"  onkeypress="return false" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('issuedDate')?.invalid && certificationForm.get('issuedDate')?.touched">
                             Issued Date is required
@@ -135,7 +135,7 @@
                             Expiry Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="expiryDate"
-                            formControlName="expiryDate"  onkeypress="return false" [min]="certificationForm.get('issuedDate')?.value" />
+                            formControlName="expiryDate"  onkeypress="return false" [min]="getMinEndDate()" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('expiryDate')?.invalid && certificationForm.get('expiryDate')?.touched">
                             Expiry Date is required
@@ -171,7 +171,13 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="onReset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="certificationForm.invalid">Add
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="certificationForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
                     </button>
                 </div>
             </form>
@@ -231,7 +237,7 @@
                             Issued Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="issuedDate"  onkeypress="return false"
-                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" />
+                            formControlName="issuedDate" [max]="currentDate | date: 'yyyy-MM-dd'" (change)="changesstartdateupdate()" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('issuedDate')?.invalid && updateCertificationForm.get('issuedDate')?.touched">
                             Issued Date is required
@@ -244,7 +250,7 @@
                             Expiry Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="expiryDate"  onkeypress="return false"
-                            formControlName="expiryDate" [min]="updateCertificationForm.get('issuedDate')?.value" />
+                            formControlName="expiryDate" [min]="getupdateMinEndDate()" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('expiryDate')?.invalid && updateCertificationForm.get('expiryDate')?.touched">
                             Expiry Date is required
@@ -282,7 +288,13 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="onReset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateCertificationForm.invalid">update
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateCertificationForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Update'| translate}}</span>
+                            }
                     </button>
                 </div>
             </form>

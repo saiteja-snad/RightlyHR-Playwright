@@ -114,7 +114,8 @@
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
                         <input type="file" class="form-control custom-input" formControlName="identityAttachment"
-                            (change)="onIdentityAttachmentSelected($event)" accept="image/*, application/pdf" />
+                            (change)="onIdentityAttachmentSelected($event)"  accept="image/*, .jpg, .pdf"
+                            />
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityAttachment')?.invalid && identityForm.get('identityAttachment')?.touched">
                             Attachment is required
@@ -188,7 +189,8 @@
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
                         <input type="file" class="form-control custom-input" formControlName="identityupdateAttachment"
-                            (change)="onIdentityAttachmentSelected($event)" accept="image/*, application/pdf" />
+                            (change)="onIdentityAttachmentSelected($event)"  accept="image/*, .jpg, .pdf"
+                            />
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateAttachment')?.invalid && identityupdateForm.get('identityupdateAttachment')?.touched">
                             Attachment is required

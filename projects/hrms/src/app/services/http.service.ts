@@ -59,10 +59,7 @@ export class HttpService {
     this.communicationService = new BehaviorSubject(null);
   }
 
-  selectedCountryCodeSignal = signal<any>('');
-  selectedCountryCode2Signal = signal<any>('');
-  selectedworkcoutrycode = signal<any>('');
-  selectedpersonalnumbercode = signal<any>('');
+ 
 
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);

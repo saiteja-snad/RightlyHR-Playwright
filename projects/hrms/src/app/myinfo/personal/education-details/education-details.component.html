@@ -69,7 +69,7 @@
         <p class="popup-heading mb-0">Add Education Details</p>
       </div>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="modal.dismiss();educationForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content p-4">
@@ -124,21 +124,28 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeStartDate"  onkeypress="return false" [max]="currentDate" class="form-control custom-input"
-              id="degreeStartDate">
-            <div class="error-msg"
-              *ngIf="educationForm.get('degreeStartDate')?.invalid && educationForm.get('degreeStartDate')?.touched">
-              From Date is required
-            </div>
+                <input type="date" formControlName="degreeStartDate"  onkeypress="return false" [max]="currentDate" class="form-control custom-input"
+                id="degreeStartDate">
+              <div class="error-msg"
+                *ngIf="educationForm.get('degreeStartDate')?.invalid && educationForm.get('degreeStartDate')?.touched">
+                From Date is required
+              </div>
+              <div class="error-msg" *ngIf="educationForm.get('degreeStartDate')?.hasError('startDateInvalid')">
+                From Date cannot be after the current date.
+              </div>
+
           </div>
           }@if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDate" [min]="educationForm.get('degreeStartDate')?.value"  onkeypress="return false" class="form-control custom-input" id="degreeEndDate">
+            <input type="date" formControlName="degreeEndDate" [min]="getMinEndDate()"  onkeypress="return false" class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationForm.get('degreeEndDate')?.invalid && educationForm.get('degreeEndDate')?.touched">
               To Date is required
+            </div>
+            <div class="error-msg" *ngIf="educationForm.get('degreeEndDate')?.hasError('endDateInvalid')">
+              To Date must be after From Date.
             </div>
           </div>}
           @if(this.rbac.allowedToAccess('Education.view')){
@@ -161,7 +168,15 @@
         <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="educationForm.invalid">Add</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="educationForm.invalid || spinnerLoader ">
+            @if (spinnerLoader) {
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading' | translate}}...</span>
+              } @else {
+              <span>{{'Add'| translate}}</span>
+              }
+
+          </button>
         </div>
       </form>
     </div>
@@ -254,7 +269,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDateupdate" [min]="educationupdateForm.get('degreeStartDateupdate')?.value"  onkeypress="return false" class="form-control custom-input"
+            <input type="date" formControlName="degreeEndDateupdate" [min]="getupdateMinEndDate()"  onkeypress="return false" class="form-control custom-input"
               id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeEndDateupdate')?.invalid && educationupdateForm.get('degreeEndDateupdate')?.touched">
@@ -286,7 +301,14 @@
         <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid">Update</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid || spinnerLoader ">
+            @if (spinnerLoader) {
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading' | translate}}...</span>
+              } @else {
+              <span>{{'Update'| translate}}</span>
+              }
+          </button>
         </div>
       </form>
     </div>

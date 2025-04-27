@@ -9,10 +9,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-certification',
-  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
   templateUrl: './certification.component.html',
   styleUrl: './certification.component.scss'
 })
@@ -21,6 +22,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
   selectedCertification: any;
   empcertsdata = new BehaviorSubject<any>([]);
   empinfo:any
+  spinnerLoader=false;
   certificationForm!: FormGroup;
   updateCertificationForm!: FormGroup;
   certificationDocument: any;
@@ -38,6 +40,8 @@ export class CertificationComponent  implements OnInit, OnDestroy{
     this.getEmpcertdata();
     this.initializeForm();
     this.initializeupdateForm();
+  
+
   }
 
   initializeForm(): void {
@@ -89,6 +93,17 @@ export class CertificationComponent  implements OnInit, OnDestroy{
       }
       expiryDateControl?.updateValueAndValidity();
     });
+  }
+
+  changesstartdate(){
+   if (this.certificationForm.get('issuedDate')?.value) {
+    this.certificationForm.get('expiryDate')?.reset();
+  }
+}
+  changesstartdateupdate(){
+    if (this.updateCertificationForm.get('issuedDate')?.value) {
+      this.updateCertificationForm.get('expiryDate')?.reset();
+    }
   }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -146,8 +161,29 @@ export class CertificationComponent  implements OnInit, OnDestroy{
     });
   }
 
+  getMinEndDate(): string | null {
+    const startDateValue = this.certificationForm.get('issuedDate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; // Return null if no start date is selected
+  }
+
+  getupdateMinEndDate(): string | null {
+    const startDateValue = this.updateCertificationForm.get('issuedDate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; // Return null if no start date is selected
+  }
+
   postCertificationDetails(): void {
     if (this.certificationForm.valid) {
+      this.spinnerLoader=true
       const payload = this.createCertificationPayload();
 
       if (this.certificationDocument) {
@@ -184,6 +220,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
   saveCertificationData(payload: any): void {
     this.subscription = this.http.postdata('Certification', payload).subscribe({
       next: () => {
+        this.spinnerLoader=false
         this.certificationForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Certification details added successfully');
@@ -191,6 +228,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
         this.getEmpcertdata(); // Refresh the certification data
       },
       error: (err: any) => {
+        this.spinnerLoader=false
         console.error('Error saving certification data:', err);
         if (err.status === 400) {
           this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save certification details.');
@@ -234,16 +272,20 @@ export class CertificationComponent  implements OnInit, OnDestroy{
     this.certificationForm.reset();
   }
 
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
 
   openModalupdate(content: any, data: any) {
     this.selectedid= data.id; // Store the selected identityId
-    const startDate = data.issuedDate
-    ? new Date(data.issuedDate).toISOString().split('T')[0]
-    : null;
-
-  const EndDate = data.expirationDate
-    ? new Date(data.expirationDate).toISOString().split('T')[0]
-    : null;
+    const startDate = this.formatDateToLocal(data.issuedDate) || null;
+  
+  const EndDate = this.formatDateToLocal(data.expirationDate) || null;
 
     this.updateCertificationForm.patchValue({
       certificationName: data.certificationName,
@@ -255,8 +297,8 @@ export class CertificationComponent  implements OnInit, OnDestroy{
     this.certificationDocument=data.attachment; 
 
           
-    this.displaycertification=data.attachment
-    ? this.displaycertification.attachment.split('/').pop()
+    this.displaycertification=data?.attachment
+    ? this.displaycertification?.attachment?.split('/')?.pop()
     : null;
      // Reset the document for the update form
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -265,6 +307,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
 
   updateCertificationDetails(): void {
     if (this.updateCertificationForm.valid) {
+      this.spinnerLoader=true
       const payload = this.createUpdateCertificationPayload();
 
       if (this.certificationDocument) {
@@ -301,6 +344,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
   saveUpdatedCertificationData(payload: any): void {
     this.subscription = this.http.postdata('Certification/Update', payload).subscribe({
       next: () => {
+        this.spinnerLoader=false
         this.updateCertificationForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Certification details updated successfully');
@@ -308,6 +352,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
         this.getEmpcertdata(); // Refresh the certification data
       },
       error: (err: any) => {
+        this.spinnerLoader=false
         console.error('Error updating certification data:', err);
         if (err.status === 400) {
           this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update certification details.');

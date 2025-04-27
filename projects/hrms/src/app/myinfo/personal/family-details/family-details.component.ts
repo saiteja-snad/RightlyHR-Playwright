@@ -11,9 +11,10 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-family-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
   templateUrl: './family-details.component.html',
   styleUrl: './family-details.component.scss'
 })
@@ -28,6 +29,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   familyDetailsupdateForm!: FormGroup
   selectedFamilyMemberid:any
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
+  spinnerLoader=false;
   educationtypes = [
     { label: 'Select', value: null },]
 
@@ -119,6 +121,14 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
       });
   }
 
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   openModalupdate(content: any, familyDetail: any): void {
     console.log(familyDetail)
     this.selectedFamilyMembername = familyDetail.relationShipName
@@ -126,9 +136,8 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
     const selectedRelationship = this.familyRelations.find(
       (relation) => relation.sno === familyDetail.relationShipId
     );
-    const formattedDateOfBirth = familyDetail.dateOfBirth
-      ? new Date(familyDetail.dateOfBirth).toISOString().split('T')[0]
-      : null;
+    const formattedDateOfBirth = this.formatDateToLocal(familyDetail.dateOfBirth);
+      
     this.familyDetailsupdateForm.patchValue({
       memberNameupdate: familyDetail.memberName,
       dateOfBirthupdate: formattedDateOfBirth,
@@ -141,6 +150,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   }
   updatefamilyDetails(): void {
     if (this.familyDetailsupdateForm.valid) {
+      this.spinnerLoader=true
       const EmpId = parseInt(this.empinfo.employeeId);
       const selectedRelationship = this.familyDetailsupdateForm.get('relationShipIdupdate')?.value;
       console.log('Selected Relationship:', selectedRelationship);
@@ -160,10 +170,12 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
         next: (data: any) => {
           this.getfamilyDetailsByEmployeid();
           this.modalService.dismissAll();
+          this.spinnerLoader=false
           this.conformationPopup.openSuccessModal('Family details updated successfully')
 
         },
         error: (err: any) => {
+          this.spinnerLoader=false
           console.error('Error updating family details:', err);
           this.conformationPopup.openErrorModal('Failed to update family details');
         }

@@ -1,89 +1,90 @@
 <div class="custom-main-component-container">
-    <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1">
-                <i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search">
-        </div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search">
+    </div>
 
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Employee Name</th>
-                        <th>Desk ID</th>
-                        <th>Desk Type </th>
-                        <th>Location </th>
-                        <th>Sub Location</th>
-                        <th>Shift </th>
-                        <th>Allocated Date</th>
-                        <th class="text-center">View Desk</th>
-                        <th>Desk Status</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (deskheaderpending.length > 0) {
-                    <tr *ngFor="let exp of deskheaderpending">
-                        <td>{{exp.entity?.deskallocatedtoname}}</td>
-                        <td>{{exp.entity?.deskname}}</td>
-                        <td>{{exp.entity?.deskType}}</td>
-                        <td>{{exp.entity?.locationName}}</td>
-                        <td>{{exp.entity?.sublocationName}}</td>
-                        <td>{{exp.entity?.shiftName}}</td>
-                        <td>{{exp.entity?.allocatedDate | dateformat}}</td>
-                        <td class="text-center">
-                            <div *ngIf="exp.entity?.deskAllocationItemId">
-                                <div class="dropdown">
-                                    <div class="dots bot-m" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="bi bi-info-circle-fill ms-2"></i>
-                                    </div>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" type="button"
-                                                (click)="viewdeskitem(exp.entity?.deskAllocationItemId);openmodal(mydsek)">
-                                                <i class="bi bi-paperclip me-2"></i>View Details
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{exp.entity?.approvalStatus}}</td>
-                        <td class="text-center">
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Desk ID</th>
+                    <th>Desk Type </th>
+                    <th>Location </th>
+                    <th>Sub Location</th>
+                    <th>Shift </th>
+                    <th>Allocated Date</th>
+                    <th class="text-center">View Desk</th>
+                    <th>Desk Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (deskheaderpending.length > 0) {
+                <tr *ngFor="let exp of deskheaderpending">
+                    <td>{{exp.entity?.deskallocatedtoname}}</td>
+                    <td>{{exp.entity?.deskname}}</td>
+                    <td>{{exp.entity?.deskType}}</td>
+                    <td>{{exp.entity?.locationName}}</td>
+                    <td>{{exp.entity?.sublocationName}}</td>
+                    <td>{{exp.entity?.shiftName}}</td>
+                    <td>{{exp.entity?.allocatedDate | dateformat}}</td>
+                    <td class="text-center">
+                        <div *ngIf="exp.entity?.deskAllocationItemId">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li *ngIf="exp.approvalHeader.currentapprovalStage !== exp.approvalHeader.finalapprovalStage">
-                                        <a class="dropdown-item" type="button">Approve</a>
-                                    </li>
-                                    <li *ngIf="exp.approvalHeader.currentapprovalStage === exp.approvalHeader.finalapprovalStage">
-                                        <a class="dropdown-item" (click)="process(exp.approvalHeader.id,exp);viewdeskitem(exp.entity?.deskAllocationItemId)">
-                                            Process
-                                        </a>
-                                    </li>
                                     <li>
-                                        <a class="dropdown-item" type="button" (click)="selectedexpenesid=exp.approvalHeader.id;openModal(rejectmodal)">
-                                            Reject
+                                        <a class="dropdown-item" type="button"
+                                            (click)="viewdeskitem(exp.entity?.deskAllocationItemId);openmodal(mydsek)">
+                                            <i class="bi bi-paperclip me-2"></i>View Details
                                         </a>
                                     </li>
                                 </ul>
                             </div>
-                        </td>
-                    </tr>
-                    }
-                    @else {
-                    <tr>
-                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </td>
+                    <td>{{exp.entity?.approvalStatus}}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li
+                                    *ngIf="exp.approvalHeader.currentapprovalStage !== exp.approvalHeader.finalapprovalStage">
+                                    <a class="dropdown-item" type="button">Approve</a>
+                                </li>
+                                <li
+                                    *ngIf="exp.approvalHeader.currentapprovalStage === exp.approvalHeader.finalapprovalStage">
+                                    <a class="dropdown-item"
+                                        (click)="process(exp.approvalHeader.id,exp);viewdeskitem(exp.entity?.deskAllocationItemId)">
+                                        Process
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" type="button"
+                                        (click)="selectedexpenesid=exp.approvalHeader.id;openModal(rejectmodal)">
+                                        Reject
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
+                @else {
+                <tr>
+                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 

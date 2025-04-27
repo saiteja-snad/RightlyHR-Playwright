@@ -1,4 +1,3 @@
-
 <div class="custom-main-component-container">
     <div class="custom-table-content">
         @if(!dataload){
@@ -21,10 +20,10 @@
                         <td>{{permissionRequest.createdDate | dateformat}}</td>
                         <td>{{permissionRequest.requestedDate | dateformat}}</td>
                         <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-                        
+
                         <td>
                             <div>
-                                <a type="button"  [ngbPopover]="reason">
+                                <a type="button" [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -35,16 +34,17 @@
                         @if(permissionRequest.status !== 'Processed'){
                         <td>
                             <div>
-                                <a type="button"  [ngbPopover]="reason">
+                                <a type="button" [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
-                                    <p class="mb-0">{{permissionRequest.regularizationApproverComments[0].comments}} </p>
+                                    <p class="mb-0">{{permissionRequest.regularizationApproverComments[0].comments}}
+                                    </p>
                                 </ng-template>
                             </div>
                         </td>
                         }@else {
-                           <td>-</td>
+                        <td>-</td>
                         }
                         <td>{{permissionRequest.type}}</td>
                         <td>{{permissionRequest.status}}</td>
@@ -61,6 +61,8 @@
                 }
             </tbody>
         </table>
-        }@else{<app-data-loader-content />}
+        }@else{
+        <app-data-loader-content />
+        }
     </div>
 </div>

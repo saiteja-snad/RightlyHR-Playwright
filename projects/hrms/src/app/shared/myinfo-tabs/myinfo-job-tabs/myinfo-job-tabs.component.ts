@@ -17,7 +17,7 @@ export class MyinfoJobTabsComponent implements OnInit {
     { label: ' Pre-Onboarding', link: '/myinfo/job/pre-onboarding-details',permission: { feature: 'Pre Onboarding Details', action: 'view' } },
     { label: 'Onboarding', link: '/myinfo/job/onboarding-details',permission: { feature: 'Onboarding Details', action: 'view' } },
     { label: 'Offboarding', link: '/myinfo/job/employmentType' ,permission: { feature: 'Offboarding Details', action: 'view' }},
-    { label: 'Job', link: '/myinfo/job/job-details',permission: { feature: 'Job Details', action: 'view' } },
+    { label: 'Job Details', link: '/myinfo/job/job-details',permission: { feature: 'Job Details', action: 'view' } },
     { label: 'Separation', link: '/myinfo/job/separation-details',permission: { feature: 'Separation Request', action: 'view' } },
     { label: 'No Due Clearance', link: '/myinfo/job/no-due-clearance-details',permission: { feature: 'No Due Clearance', action: 'view' } },
     { label: 'Probation', link: '/myinfo/job/probation-details' ,permission: { feature: 'Probation Details', action: 'view' }},

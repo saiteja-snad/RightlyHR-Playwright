@@ -9,7 +9,7 @@
       </div>
       <div class="d-flex gap-3" *ngIf="buttons">
         <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="basicInfoForm.invalid" (click)="updateBasicInfo()"
+        <button type="submit" class="custom-btn btn-primary" [disabled]="basicInfoForm.invalid || salutationValidationcheck" (click)="updateBasicInfo()"
         >Save</button>
       </div>
     </div>
@@ -42,6 +42,7 @@
             class="error-msg">
             Salutation is required
           </div>
+          <div *ngIf="salutationValidationcheck" class="error-msg">Please select a valid value</div>
         </div>
         }
         @if(this.rbac.allowedToAccess('Basic Information.view')){

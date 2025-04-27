@@ -52,8 +52,7 @@ export class TimeOffComponent {
   constructor(private http: HttpService,private modalService: NgbModal,private conformationPopup: OpenModalService,public rbac: RbacService) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.trigger()) {
-        debugger
+      if (this.http.trigger()) {   
         const data = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
         if (data && Object.keys(data).length > 0) {
           this.LOGIN = data;

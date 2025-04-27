@@ -255,7 +255,7 @@
                     <button type="button" class="custom-btn btn-secondary px-4" (click)="openModal(confirmationpopup);model.dismiss()">{{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
                         [disabled]="(leaveForm.invalid 
-                                    || isWeekOffSelected || isHolidaySelectedEndate || isoptionalnotallowedatWorkingdate || !issEndDategreater || !startdatevalid
+                                    || isWeekOffSelected || !isstimeoffValid || isWeekOffSelectedEndate || isHolidaySelectedEndate || isoptionalnotallowedatWorkingdate || !issEndDategreater || !startdatevalid
                                      || isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) ) || isLoading">
                         <span *ngIf="!isLoading">
                             {{'Submit'| translate}}

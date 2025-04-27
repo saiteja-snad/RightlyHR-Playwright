@@ -98,7 +98,7 @@ export class TraineeApprovalsComponent {
     this.modalService.dismissAll();
   }
 
-  comment = {} as any;
+  comment = [] as any;
   commentsFunction(Value: any,content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.comment = Value;

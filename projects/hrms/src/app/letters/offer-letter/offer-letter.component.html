@@ -18,10 +18,10 @@
       <div class="card letter-fields-content p-4">
         <form [formGroup]="employeeForm" (ngSubmit)="onOfferLetterFormSubmitForGenerateDoc(employeeForm)">
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                filterBy="fullName" [showClear]="true" placeholder="Select employee" (onChange)="onClickValidation($event)"
+                filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
                 formControlName="fusionEmpId" class="custom-select w-100">
               </p-select>
             </div>
@@ -396,7 +396,7 @@
                       </ul>
                     </div>
                     <div class="col-md-4 letter-sub-header">
-                      <p class="text-end p-0">{{prospectiveEmpData.offerIssuedDate | dateformat}}</p>
+                      <p class="text-end p-0">Date: {{prospectiveEmpData.offerIssuedDate | dateformat}}</p>
                     </div>
                   </div>
                 </div>

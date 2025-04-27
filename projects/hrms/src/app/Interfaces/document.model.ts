@@ -8,6 +8,7 @@ export interface IFolders {
   contentLength: number;
   owner: string;
   group: string;
+  isEmpDir?:boolean;
   permissions: string;
   createdOn: string;
   expiresOn: string | null;

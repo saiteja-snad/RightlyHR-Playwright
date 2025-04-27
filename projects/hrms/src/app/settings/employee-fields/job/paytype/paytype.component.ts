@@ -101,12 +101,14 @@ export class PaytypeComponent {
   }
   openupdate(paytypelist: any) {
     this.selectedId = paytypelist.sno;
+    this.PaytypeForm.reset();
     this.updateForm.patchValue({ Paytype: paytypelist.paytype1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
   opendelete(paytypelist: any) {
     this.selectedDeletetype = paytypelist;
+    this.PaytypeForm.reset();
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {

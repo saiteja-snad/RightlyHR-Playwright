@@ -35,28 +35,62 @@ export class DegreeComponent implements OnInit {
 
   degreeFrom!: FormGroup;
   updateForm!: FormGroup;
+  
+ngOnInit(): void {
+this.degreeFrom = this.fb.group({
+     degree: [null,  [
+      
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^(?![ .])[A-Za-z0-9. ]*(?<=\S)$/)
 
-  ngOnInit(): void {
-    this.degreeFrom = this.fb.group({
-      degree: [null, [Validators.required]],
-    });
-    this.updateForm = this.fb.group({
-      degreeName: ['', Validators.required],
-    });
-    this.getdegree();
-  }
+      ]]
+      });
+      this.updateForm = this.fb.group({
+        degreeName: ["",  
+          [
+            Validators.required,
+            Validators.maxLength(50),
+            Validators.pattern(/^(?![ .])[A-Za-z0-9. ]*(?<=\S)$/)
+
+          ]]
+      });
+      this.getdegree();
+    }
 
   getdegree() {
-    this.subscription = this.http.getData('Degree').subscribe({
-      next: (data: any) => {
-        this.degreedetails = data as any[];
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
-  }
+    this.subscription = this.http.getData("Degree").subscribe({
+       next:(data: any) => {
+         console.log(data);
+         this.degreedetails = data as any[];
+         console.log(this.degreedetails)
+       },
+       error: (reason: any) => {
+         console.log(reason);
+       }
+     })
+   }
+   
+   
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
 
+    // Regex to allow letters (A-Z, a-z), spaces, periods (dots), and numbers (0-9)
+    const pattern = /^[A-Za-z0-9. ]*$/;
+
+    // Block if the key is not a letter, space, period, or number
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+
+    // Block if length is already 50 characters
+    if (input.value.length >= 50) {
+      event.preventDefault();
+    }
+  }
+  
   onSubmit() {
     const request = {
       degreeName: this.degreeFrom.get('degree')?.value,

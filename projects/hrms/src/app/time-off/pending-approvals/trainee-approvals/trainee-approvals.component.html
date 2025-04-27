@@ -19,7 +19,7 @@
                     <th class="text-nowrap">{{'Employee Name'|translate}}</th>
                     <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
                     <th class="text-nowrap">{{'Training End Date'|translate}}</th>
-                    <th class="text-nowrap">{{'Approved Comments'|translate}}</th>
+                    <th class="text-nowrap">{{'Approver Comments'|translate}}</th>
                     <th class="text-nowrap"></th>
                 </tr>
             </thead>
@@ -49,14 +49,9 @@
                     <td>
                         @if(trn.entity?.comments != null && trn.entity?.comments != '') {
                         <div>
-                            <a type="button" [ngbPopover]="reason">
+                            <a type="button" (click)="commentsFunction(trn.entity?.comments,commentspopup)">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
-                            <ng-template #reason>
-                                <div 
-                                    (click)="commentsFunction(trn.entity?.comments,commentspopup)"><i style="position:relative;z-index: -1;"
-                                        class="bi bi-info-circle-fill "></i></div>
-                            </ng-template>
                         </div>
                         }@else {
                         <div>
@@ -155,9 +150,9 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
-        <form name="acceptForm" class="ps-5 w-100" #acceptForm="ngForm">
+        <form name="acceptForm"  #acceptForm="ngForm">
             <div class="custom-main-popup-content">
-                <div class="form-outline gap-3 mb-3">
+                <div class="form-outline d-flex justify-content-center  gap-3 mb-3 ">
                     <div class="form-check form-check-inline">
                         <label class="form-check-label" for="flexRadioDefault1">
                             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"

@@ -27,8 +27,7 @@ export class TeamNumbersComponent implements OnInit{
   managers: any[] = [];
   subscription!: Subscription;
   TeamMemberArray: Iteammembers[] = [];
-  // rmData=[
-  //   {name:'Rajesh',designation:'Software Engineer',team:'Development',location:'Bangalore'}]
+ 
     totalRecords = 100
     first: any = 0;
     rows: any = 10;

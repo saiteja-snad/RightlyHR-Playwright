@@ -82,14 +82,3 @@
     <button type="submit" [disabled]="!isFormValid()" (click)="policySubmit()" class="custom-btn btn-primary">Save</button>
   </div>
 </div>
-
-<!-- success message popup -->
-<div class="modal fade bgfade " id="successhide" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center pb-5">
-      <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
-    </div>
-  </div>
-</div>

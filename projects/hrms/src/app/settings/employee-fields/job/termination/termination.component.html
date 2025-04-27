@@ -7,10 +7,10 @@
                     formControlName="TERMINATION" aria-label="termination" aria-describedby="termination"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
                 <span class="input-group-text" id="termination">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="ExistForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="ExistForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-            <div *ngIf="ExistForm.get('TERMINATION')?.touched && ExistForm.get('TERMINATION')?.invalid" class="error-msg mt-2">
+            <div *ngIf="ExistForm.get('TERMINATION')?.touched && ExistForm.get('TERMINATION')?.invalid" class="error-msg">
                 <div *ngIf="ExistForm.get('TERMINATION')?.errors?.['required']">{{'Exit Reason is required'|translate}}</div>
             </div>
         </div>
@@ -32,13 +32,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(termination)" *ngIf="rbac.allowedToAccess('Termination Reason.update')"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openupdate(termination)" *ngIf="rbac.allowedToAccess('Termination Reason.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(termination)" *ngIf="rbac.allowedToAccess('Termination Reason.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(termination)" *ngIf="rbac.allowedToAccess('Termination Reason.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -61,19 +63,20 @@
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
+
             <div class="custom-main-popup-content">
                 <div class="mb-4">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Exit Reason'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="TERMINATION" placeholder="Please enter exit reason"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
-                    <div *ngIf="updateForm.get('TERMINATION')?.touched && updateForm.get('TERMINATION')?.invalid" class="error-msg mt-2">
+                    <div *ngIf="updateForm.get('TERMINATION')?.touched && updateForm.get('TERMINATION')?.invalid" class="error-msg">
                         <div *ngIf="updateForm.get('TERMINATION')?.errors?.['required']">{{'Exit Reason is required'|translate}}</div>
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary " (click)="updateTermination(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateTermination(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>

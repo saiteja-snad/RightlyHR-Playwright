@@ -353,13 +353,17 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.markAllAsTouched();
       return;
     }
-    
+    const probationEndDate = this.onboardingForm.get('probationEndDate')?.value 
+  ? this.formatDateToLocal(this.onboardingForm.get('probationEndDate')?.value)
+  : this.empdata.probationEndDate 
+  ? this.formatDateToLocal(this.empdata.probationEndDate)
+  : null;
     const payload = {
      ...this.empdata,
       empstatus: this.onboardingForm.get('status')?.value?.statusname ?? this.empdata.empstatus,
       dateOfJoining: this.onboardingForm.get('dateOfJoining')?.value ?? this.empdata.dateOfJoining,
-      branchCode: this.onboardingForm.get('dateOfJoining')?.value ?? this.empdata.branchCode,
-      probationEndDate: this.onboardingForm.get('probationEndDate')?.value ?? this.empdata.probationEndDate,
+      branchCode: this.onboardingForm.get('branchLocation')?.value ?? this.empdata.branchCode,
+      probationEndDate: probationEndDate,
       probationStatus: this.empdata.probationStatus ?? this.onboardingForm.get('probationStatus')?.value?.probationstatus1,
       noticePeriod: this.onboardingForm.get('noticePeriodStatus')?.value?.name ?? this.empdata.noticePeriod,
       backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value?.backgroundcheckstatus1 ?? this.empdata.backgroundCheckStatus,

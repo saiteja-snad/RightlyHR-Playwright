@@ -86,7 +86,7 @@ export class WfhComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=EMP`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=2`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.leaves.next(response.data);
       },

@@ -53,6 +53,7 @@ export class TimeOffComponent {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.trigger()) {
+        debugger
         const data = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
         if (data && Object.keys(data).length > 0) {
           this.LOGIN = data;
@@ -77,7 +78,7 @@ export class TimeOffComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=EMP`).subscribe({
+    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1`).subscribe({
       next: (response: any) => {
         this.leaves = response.data as LeaveApproval[];
       },

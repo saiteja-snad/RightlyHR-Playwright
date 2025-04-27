@@ -84,7 +84,7 @@ export class CompOffEntitlementComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=3&approvedType=EMP`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=3`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.leaves = response.data as AttendanceRequest[];
       },

@@ -13,7 +13,7 @@
             <form [formGroup]="employeeForm" (ngSubmit)="postPromotionLetterFormSubmit(employeeForm)">
                 <div class="row">
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Search Employee'|
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Select Employee'|
                             translate }}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
@@ -80,7 +80,7 @@
                             <span class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
-                                placeholder="Please select sub location" class="form-select custom-select"
+                                placeholder="Please select signature authority name" class="form-select custom-select"
                                 [(ngModel)]="promotiondata.authorityid" formControlName="authorityid"
                                 (onChange)="onclickDesignation()" />
                         </div>

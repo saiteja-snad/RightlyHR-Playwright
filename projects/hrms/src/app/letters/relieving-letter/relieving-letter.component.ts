@@ -250,6 +250,9 @@ export class RelievingLetterComponent {
           this.spinnerLoader= false;
           this.conformationPopup.openErrorModal('File upload  is failed');
         },
+        complete:()=>{
+          this.spinnerLoader= false;
+        }
       });
   }
 

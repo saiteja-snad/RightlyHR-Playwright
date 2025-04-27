@@ -12,6 +12,8 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { IEmployee } from './probation.modal';
+import { IEmployeeSignatures } from '../letters.modal';
 @Component({
   selector: 'app-probation-confirmation-letter',
   imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
@@ -21,20 +23,20 @@ import { TranslateModule } from '@ngx-translate/core';
 
 export class ProbationConfirmationLetterComponent {
   subscription!: Subscription;
-  employeeiddetails = [] as any;
-  probationemp = [] as any;
+  probationemp : IEmployee[]=[];
   probationLetterData = {} as any;
-  authorityDetails = [] as any;
-  Employeeinfo = {} as any;
+  authorityDetails: IEmployeeSignatures[]=[];
   probationFile!: File;
   disableFieldsForApproval: boolean = false;
   loading: boolean = false;
   Status: any;
   probationConfirmationForm!: FormGroup;
+  
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
+
   todayDate!: string;
   isdateofprobation: boolean = true;
   enableBtn= false;
@@ -63,6 +65,10 @@ export class ProbationConfirmationLetterComponent {
     }
   }
 
+  preventTyping(event: KeyboardEvent) {
+    event.preventDefault();
+  } 
+
   naviagte(){
     this.router.navigate(['/admin/probation-employees']);
   }
@@ -85,12 +91,17 @@ export class ProbationConfirmationLetterComponent {
           ...employee,
           fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
-        this.pathValuesFuction();
       },
       error: (reason: any) => {
         console.log(reason);
       },
     })
+  }
+
+  onClickEmployee(event: any){
+    const empId= event.value.employeeId;
+    this.getProbationRequest(empId);
+    this.pathValuesFuction();
   }
 
   //get offer letter Authority list 
@@ -121,21 +132,17 @@ export class ProbationConfirmationLetterComponent {
     const data = await this.probationLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);
-    console.log(data);
     const pdfContent = document.getElementById('pdfContent1');
     if (pdfContent) {
       html2canvas(pdfContent, { scale: 3 }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgWidth = pdf.internal.pageSize.getWidth();
-        console.log(imgWidth);
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        console.log(imgHeight)
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
         const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_ProbationConfirmationLetter.pdf`;
         pdf.save(fileName);
         const blob = pdf.output('blob');
-        console.log(blob);
         //creating form file to upload into AZure
         let d: Date = new Date()
         this.probationFile = new File( [blob], fileName, { type: 'application/pdf', });
@@ -149,7 +156,7 @@ export class ProbationConfirmationLetterComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
         if (data) {
-          this.enableBtn= true;
+          debugger
           this.postProbationDetails(data.path);
         }
       },
@@ -157,6 +164,9 @@ export class ProbationConfirmationLetterComponent {
         this.spinnerLoader= false;
         this.openModalService.openErrorModal('file upload  is failed');
       },
+      complete: () =>{
+        this.spinnerLoader= false;
+      }
     });
   }
 
@@ -165,7 +175,6 @@ export class ProbationConfirmationLetterComponent {
   getProbationRequest(EmployeeId: number) {
     this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${EmployeeId}`).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status === 'Processed');
         });
@@ -175,6 +184,7 @@ export class ProbationConfirmationLetterComponent {
 
   Documenturlresult: any;
   postProbationDetails(path:any) {
+    debugger
     let payload = {
       probationId : this.getProbationDetails.probationId,
       formId : this.getProbationDetails.formId,
@@ -200,8 +210,9 @@ export class ProbationConfirmationLetterComponent {
         this.Documenturlresult = data.documentURL;
         this.disableFieldsForApproval = true;
         this.loading = false;
+        this.enableBtn= true;
         this.openModalService.openSuccessModal("Probation Extension Letter Generated Successfully");
-        this.probationConfirmationemail();
+        // this.probationConfirmationemail();
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -215,13 +226,12 @@ export class ProbationConfirmationLetterComponent {
   //function to patch the values in the form to the template
   pathValuesFuction() {
     const formValues = this.probationConfirmationForm.value;
-    console.log(formValues)
     this.probationLetterData.firstName = formValues.employeeId?.firstName,
     this.probationLetterData.middleName = formValues.employeeId?.middleName,
     this.probationLetterData.lastName = formValues.employeeId?.lastName,
     this.probationLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
     this.probationLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
-    this.probationLetterData.department = formValues.employeeId?.firstName,
+    this.probationLetterData.department = formValues.employeeId?.departmentName,
     this.probationLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation+ ', '+formValues.employeeId?.jobDetails?.lopcation,
     this.probationLetterData.issuedDate = formValues.issuedDate,
     this.probationLetterData.effectiveDate = formValues.effectiveDate,
@@ -240,16 +250,13 @@ export class ProbationConfirmationLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/ConfirmationofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.openModalService.openSuccessModal("Probation Confirmation Letter Sent Successfully");
         setTimeout(() =>{
           this.naviagte();
         }, 2000)
-        // this.router.navigate(['/admin/probation-employees']);
       },
       error: (err: any) => {
         this.releaseLoader= false;
-        console.log(err);
       },
       complete: () =>{
         this.enableBtn= false;

@@ -60,6 +60,11 @@ export class PromotionLetterComponent {
     { name: 'No', value: false },
   ];
 
+  documentType: { name: string, value: boolean }[] = [
+    { name: 'Soft Copy', value: true },
+    { name: 'Hard Copy', value: false },
+  ];
+
   spinnerLoader= false;
   jobErrorMessage!: string;
 

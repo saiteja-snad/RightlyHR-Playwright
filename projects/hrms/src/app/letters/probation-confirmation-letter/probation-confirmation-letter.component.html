@@ -12,12 +12,13 @@
         <!-- letter content-->
         <div class="card letter-fields-content p-4">
             <form [formGroup]="probationConfirmationForm" (ngSubmit)="postProbationLetterFormSubmit()">
+                <!-- Employee Name -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="true" placeholder="Please select employee" formControlName="employeeId"
-                            (onChange)="getProbationEmployees()" class="custom-select w-100">
+                            (onChange)="onClickEmployee($event)" class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="probationConfirmationForm.get('employeeId')?.invalid && probationConfirmationForm.get('employeeId')?.touched"
@@ -26,10 +27,11 @@
                     </div>
                 </div>
         
+                <!-- Issued Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="issuedDate"
-                        placeholder="Please enter Date" [min]="todayDate" (change)="pathValuesFuction();DateValidation()" />
+                        placeholder="Please enter Date" [min]="todayDate" (change)="pathValuesFuction();DateValidation()"  (keydown)="preventTyping($event)"/>
                     <div class="error-msg">
                         <div
                             *ngIf="probationConfirmationForm.get('issuedDate')?.invalid && probationConfirmationForm.get('issuedDate')?.touched">
@@ -41,6 +43,7 @@
                     </div>
                 </div>
         
+                <!-- Effective Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Effective Date <span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveDate"
@@ -54,6 +57,7 @@
                     </div>
                 </div>
         
+                <!-- Document Type -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
@@ -68,6 +72,7 @@
                     </div>
                 </div>
         
+                <!-- Signature Authority name -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">

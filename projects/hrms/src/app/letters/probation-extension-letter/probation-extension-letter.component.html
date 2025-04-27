@@ -11,10 +11,11 @@
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
             <form [formGroup]="probationExtensionForm" (ngSubmit)="postProbationExtensionLetterFormSubmit()">
+                <!-- Employee Name -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeedetails" optionLabel="fullName" [filter]="true" filterBy="fullName" (onChange)="pathValuesFuction()"
+                        <p-select [options]="employeedetails" optionLabel="fullName" [filter]="true" filterBy="fullName" (onChange)="onClickEmployee($event)"
                             [showClear]="true" placeholder="Please select employee" formControlName="employeeId" class="custom-select w-100">
                         </p-select>
                     </div>
@@ -23,14 +24,17 @@
                     </div>
                 </div>
             
+                <!-- Issued Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date" (change)="pathValuesFuction()" />
+                    <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date" 
+                        (change)="pathValuesFuction()"  (keydown)="preventTyping($event)"/>
                     <div *ngIf="probationExtensionForm.get('issuedDate')?.invalid && probationExtensionForm.get('issuedDate')?.touched">
                         <div class="error-msg">Issued Date is required</div>
                     </div>
                 </div>
             
+                <!-- Document Type -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
@@ -43,6 +47,7 @@
                     </div>
                 </div>
             
+                <!-- Signature Authority Name -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
@@ -59,8 +64,26 @@
                         Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
                 </div>
                 <div class="d-flex flex-wrap gap-3 pt-3">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationExtensionForm.invalid">Generate Document</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="probationExtendeEmail()">Release Letter</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationExtensionForm.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+                    </button>
+
+                    <button type="button" class="custom-btn btn-primary" (click)="probationExtendeEmail()"
+                        [disabled]="!enableBtn || releaseLoader">
+                        <ng-container *ngIf="releaseLoader; else releaseText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #releaseText>
+                            <span>{{'Release Letter' | translate}}</span>
+                        </ng-template>
+                    </button>
                 </div>
             </form>
         </div>

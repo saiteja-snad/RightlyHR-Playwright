@@ -408,7 +408,7 @@
                 <p>Congratulations and Welcome to RightlyHR!!!</p>
     
                 <p>Further to your application for employment with us, and the subsequent selection process, we are
-                  delighted to offer you the role of <b>{{jobDesignation}}</b> in our organization and your
+                  delighted to offer you the role of <b>{{prospectiveEmpData?.jobRole}}</b> in our organization and your
                   <b>CTC</b> will be <b>INR {{(+prospectiveEmpData.amount || 0) + (+prospectiveEmpData.variablePayAmount || 0)}}</b> per annum.
                 </p>
     
@@ -689,7 +689,7 @@
                     <div class="p-2">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
                       {{prospectiveEmpData.lastName}}</div>
                     <div class="p-2">Designation</div>
-                    <div class="p-2">{{jobDesignation}}</div>
+                    <div class="p-2">{{prospectiveEmpData?.jobRole}}</div>
                   </div>
                   <p class="text-center letter-sub-header my-3">Compensation Details <span class="boldnone">(All figures in
                       Rs.)</span></p>

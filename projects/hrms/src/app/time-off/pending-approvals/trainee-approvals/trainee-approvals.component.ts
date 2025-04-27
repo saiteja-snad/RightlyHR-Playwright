@@ -156,7 +156,7 @@ export class TraineeApprovalsComponent {
       status: 'Approved',
       comments: this.selectedLeaveData.trcomments,
     };
-    f.reset();
+
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -168,8 +168,13 @@ export class TraineeApprovalsComponent {
       },
       complete: () => {
         this.isLoading = false;
+        f.reset();
         this.getAllPendingApprovals();
         this.selectedLeaveData.trcomments = '';
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
       },
     });
   }
@@ -194,6 +199,10 @@ export class TraineeApprovalsComponent {
         this.isLoading = false;
         this.getAllPendingApprovals();
         this.selectedLeaveData = {};
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
       },
     });
   }
@@ -212,6 +221,11 @@ export class TraineeApprovalsComponent {
         this.conformationPopup.openErrorModal(reason.error.message)
       },
       complete: () => {
+        this.getAllPendingApprovals();
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
       },
     });
   }
@@ -258,6 +272,12 @@ export class TraineeApprovalsComponent {
         this.conformationPopup.openErrorModal(reason.error.message)
       },
       complete: () => {
+        this.getAllPendingApprovals();
+        this.selectedLeaveData = {};
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
       },
     });
   }

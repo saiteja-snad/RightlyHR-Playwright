@@ -27,6 +27,8 @@ export class AttendanceEligibilityCriteriaTabsComponent {
     { label: 'WFH Entitlement Criteria',route: '/settings/timeoff-configurations/eligibility-criterias/wfh',permission: { feature: 'WFH Tab', action: 'view' } },
     { label: 'Permissions',route: '/settings/timeoff-configurations/eligibility-criterias/permissions',permission: { feature: 'Attndance Eligibility Permissions Tab', action: 'view' } },
     { label: 'Permissions Eligibility Criteria',route: '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria',permission: { feature: 'Permission Elgibility Tab', action: 'view' } },
-    { label: 'Global Permissions',route: '/settings/timeoff-configurations/eligibility-criterias/global-permissions',permission: { feature: 'Eligibility Global Permissions Tab', action: 'view' } }
+    { label: 'Global Permissions',route: '/settings/timeoff-configurations/eligibility-criterias/global-permissions',permission: { feature: 'Eligibility Global Permissions Tab', action: 'view' } },
+    { label: 'Attendance Regularization Types',route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types',permission: { feature: 'Comp Off Tab', action: 'view' } },
+    { label: 'Attendance Regularization Eligibility Criteria',route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria',permission: { feature: 'Comp Off Tab', action: 'view' } }
   ];
 }

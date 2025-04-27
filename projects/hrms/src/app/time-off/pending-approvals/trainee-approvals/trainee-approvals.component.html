@@ -48,7 +48,7 @@
                         <td>
                             @if(trn.entity?.comments != null && trn.entity?.comments != '') {
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button" [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -123,7 +123,7 @@
                     <span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                     placeholder="Please provide feedback" name="Feedback" #Feedback="ngModel" maxlength="250"
-                    [(ngModel)]="selectedLeaveData.trcomments" rows="3" required></textarea>
+                    [(ngModel)]="selectedLeaveData.trcomments" pattern="^(?!\s).*" rows="3" required></textarea>
                 <div class="textarea-count-text">{{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                 <div class="error-msg" *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
                     Feedback is required</div>
@@ -175,7 +175,7 @@
                         <span class="error-msg">*</span>
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
-                        id="extenddate" name="extenddate" #extenddate="ngModel" (change)="updateExtendDateValidity()"
+                        id="extenddate" name="extenddate" [min]="minExtendDate" #extenddate="ngModel" (change)="updateExtendDateValidity()"
                         [(ngModel)]="selectedLeaveData.extenddate">
                     <div class="error-msg"
                         *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && acceptForm.submitted)">
@@ -212,58 +212,13 @@
 
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary"
-                    (click)="selectedLeaveData = {};reload();modal.dismiss()">{{'Close'|translate}}</button>
+                    (click)="reload(acceptForm)">{{'Close'|translate}}</button>
                 <button *ngIf="!discontinue" type="submit" class="custom-btn btn-primary"
                     [disabled]="!selectedLeaveData.trcomments || !selectedLeaveData.extenddate"
                     (click)="handleExtend(acceptForm)">{{'Reject' | translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" *ngIf="discontinue && !extend"
                     [disabled]="!selectedLeaveData.rejectedReason" (click)="handleReject(acceptForm)">{{'Reject' |
                     translate}}</button>
-            </div>
-        </form>
-    </div>
-</ng-template>
-
-<!-- popup for Extend start -->
-<ng-template #sprequestReject let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to Extend?</p>
-        </div>
-        <form name="rejectSeparations" #rejectSeparations="ngForm"
-            (ngSubmit)="rejectSeparations.valid && handleExtend(rejectSeparations)">
-            <div class="custom-main-popup-content">
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label">Extend Date
-                        <span class="error-msg">*</span></label>
-                    <input class="form-control custom-input" type="date" aria-label="Default select example"
-                        id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
-                        (change)="updateExtendDateValidity()" [(ngModel)]="selectedLeaveData.extenddate" required
-                        [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
-                    <div class="error-msg"
-                        *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && rejectSeparations.submitted)">
-                        Extend date is required
-                    </div>
-                    <div class="error-msg" *ngIf="!isempeffectivevaild">
-                        Extend Date cannot be less than Training End date</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason for Extend
-                        <span class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please provide Extend reason" name="notes" #notes="ngModel"
-                        [(ngModel)]="selectedLeaveData.trcomments" required rows="3"></textarea>
-                    <div class="error-msg"
-                        *ngIf="(notes.touched && notes.invalid) || (notes.invalid && rejectSeparations.submitted) || (notes.errors?.['pattern']) ">
-                    </div>
-                </div>
-            </div>
-
-            <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="reload()">{{'Close'|translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectSeparations.invalid || !isempeffectivevaild">{{'Submit'|translate}}</button>
             </div>
         </form>
     </div>

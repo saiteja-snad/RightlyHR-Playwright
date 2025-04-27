@@ -1,24 +1,25 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Onboarding Request</span></div>
-        @if(this.rbac.allowedToAccess('Employee Onboarding Request.view') && empdata.empstatus.toLowerCase() ==
-        'trainee active' && dynamicData.value.length<=0){
-        <div class="custom-add-btn" (click)="requestForOnboard()"><i class="bi bi-plus plus-icon me-1"></i>Request For
-            Onboard</div>
+        @if((this.rbac.allowedToAccess('Employee Onboarding Request.view') &&
+        empdata.empstatus?.toLowerCase() == 'trainee active' && dynamicData.value.length <= 0)||buttonviewwhenExtended){ 
+        <div class="custom-add-btn" (click)="requestForOnboard()">
+            <i class="bi bi-plus plus-icon me-1"></i>Request For Onboard
+        </div>
         }
     </div>
 
-    <div class="custom-table-content mt-2">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
                     <th>REQUEST DATE</th>
-                    <th>TRAINEE START DATE</th>
-                    <th>TRAINEE END DATE</th>
-                    <th >TRAINEE EXTENDED DATE</th>
-                    <th >STATUS</th>
-                    <th >TRAINEE FEEDBACK</th>
-                    <th ></th>
+                    <th>TRAINING START DATE</th>
+                    <th>TRAINING END DATE</th>
+                    <th>TRAINING EXTENDED DATE</th>
+                    <th>STATUS</th>
+                    <th>TRAINING FEEDBACK</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -27,29 +28,33 @@
                         <td>{{ item.requestedDate | dateformat }}</td>
                         <td>{{ item.trainingStartDate | dateformat }}</td>
                         <td>{{ item.trainingEndDate | dateformat }}</td>
-                        <td >{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}
-                        </td>
-                        <td >{{ item.status }}</td>
+                        <td>{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}</td>
+                        <td>{{ item.status }}</td>
                         <td class="text-center">
                             <span *ngIf="item.feedbackComments;else feedbackComment">
-                                <div  data-bs-toggle="modal" data-bs-target="#CommentsPopup"
-                                    (click)="fustiontostorefeedback(item.feedbackComments)">
+                                <div 
+                                    (click)="fustiontostorefeedback(item.feedbackComments,EmployeeComments)">
                                     <i class="bi bi-info-circle-fill "></i>
                                 </div>
                             </span>
                             <ng-template #feedbackComment>-</ng-template>
                         </td>
-
-                        <td *ngIf=" item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' "
-                            [ngClass]="{ 'disabled-button': isEditing }">
-
-                            <a class="nav-link" data-bs-toggle="dropdown"><i
-                                    class="bi bi-three-dots-vertical change"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications menu-card">
-                                <a 
-                                    (click)="onboardstatuschange();openmodel(readyforonboard) ">Ready for Onboard</a>
-                            </div>
+                        <td class="text-center" [ngClass]="{ 'disabled-button': isEditing }">
+                            @if((item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' )){
+                                <div class="dropdown" >
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li *ngIf="item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' ">
+                                            <a class="dropdown-item" (click)="onboardstatuschange();openmodel(readyforonboard)">
+                                                Ready for Onboard
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
+                          
                         </td>
                     </tr>
                 </ng-container>
@@ -65,61 +70,47 @@
     </div>
 </div>
 
-<div class="modal fade" id="CommentsPopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="min-width: 40vw;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">View Comments</h1>
-                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+<ng-template #EmployeeComments let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">View Comments</p>
             </div>
-            <div class="modal-body ">
-                <p class="m-0 p-2  rounded popupcomments border">{{selecteddata}}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            <div>
+                <a><img src="icons/close.png" alt="Close Icon" class="close-icon" (click)="closeonBoard()"></a>
             </div>
         </div>
+        <div class="custom-main-popup-content">
+            <p>{{selecteddata}}</p>
+        </div>
     </div>
-</div>
+</ng-template>
 
-<div class="modal fade" id="CommentsPopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="min-width: 40vw;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">View Comments</h1>
-                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+<ng-template #ApproverComments let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">View Comments</p>
             </div>
-            <div class="modal-body">
-                <div class="card mb-3">
-                    <div class="cardd">
-                        <div class=" row w-100 m-0 p-0">
-                            <div class="p-0">
-                                <p class="m-0 popupcomments">Comments: {{myApproverCommentss}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            <div>
+                <a><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
+        <div class="custom-main-popup-content">
+            <p>{{myApproverCommentss}}</p>
+        </div>
     </div>
-</div>
+</ng-template>
 
 <ng-template #readyforonboard let-modal>
-    <div class="custom-main-popup-container p-5" ngbAutofocus>
-        <div class="custom-main-popup-content text-center">
-            <div class="mb-5">
-                <img src="images\conformation.png" alt="Confirmation icon" class="confirmation-icon mb-3">
-                <p class="confirmation-text">Are you sure you want to Onboard?</p>
-            </div>
-            <div class="d-flex gap-5 w-100">
-                <button class="custom-btn btn-secondary w-50" (click)="closeonBoard()">Close</button>
-                <button class="custom-btn btn-primary w-50" (click)="jobtab()">Yes</button>
-            </div>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Onboard?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'No'| translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="readyforonboardRequest()" >{{ 'Yes' | translate }}</button>
         </div>
     </div>
 </ng-template>

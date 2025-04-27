@@ -6,14 +6,21 @@
 
     <div class="d-flex gap-3 align-items-center">
       <label class="employee-label" for="teamManager">Select Employee</label>
-      <div class="custom-p-select-content">
+      <!-- <div class="custom-p-select-content">
         <select class="form-control custom-input" id="teamManager" (change)="Onclick(getParsedEmployee($event))">
           <option value="" disabled selected>Select Employee</option>
           <option *ngFor="let employee of employeeiddetails" [value]="employee | json">
             {{ employee.fullName }}
           </option>
         </select>
-      </div>
+      </div> -->
+
+      <div class="custom-p-select-content">
+        <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+            filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="Onclick($event)"
+             class="custom-select w-100">
+        </p-select>
+    </div>
     </div>
   </div>
 

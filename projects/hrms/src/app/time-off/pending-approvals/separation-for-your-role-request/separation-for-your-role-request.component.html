@@ -41,7 +41,7 @@
                         <td>
                             @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button" [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -56,7 +56,7 @@
                         <td>
                             @if(item.entity?.spEarlyRelievingReason){
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button" [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -517,14 +517,12 @@
     </div>
 </ng-template>
 
-
 <ng-template #approverComments let-modal>
     <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">{{"Approver History Details" | translate}}</h1>
         <button type="button" class="btn-close me-2" (click)="modal.dismiss()"></button>
     </div>
     <div class="modal-body">
-
         <div class="custom-table-content">
             <table>
                 <thead>
@@ -538,12 +536,10 @@
                         <th>{{'Extended Date' | translate}}</th>
                         <th>{{'Accept Early Relieving' | translate}}</th>
                         <th>{{'Status' | translate}}</th>
-
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let comment of myApproverComments">
-
                         <td>
                             <span *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
                             <ng-template #approverrole>{{'NA' | translate}}</ng-template>
@@ -561,7 +557,7 @@
                             <div class="text-center" *ngIf="comment?.comments;else popupcomments">
                                 <div>
                                     <span>
-                                        <a type="button" placement="top" [ngbPopover]="reason">
+                                        <a type="button" [ngbPopover]="reason">
                                             <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                         </a>
                                         <ng-template #reason>
@@ -573,7 +569,6 @@
                                 </div>
                             </div>
                             <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
-
                         </td>
                         <td>
                             <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">

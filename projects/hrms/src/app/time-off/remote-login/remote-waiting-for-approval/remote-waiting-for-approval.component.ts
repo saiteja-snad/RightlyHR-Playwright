@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule, FormBuilder } from '@angular/forms';
-import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule,  } from '@angular/forms';
+import { NgbPopoverModule,  } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, takeUntil } from 'rxjs';
@@ -11,6 +11,8 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ICompOff } from '../../comp-off/compoff.modal';
+import { SignalsService } from '../../../services/signals.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-remote-waiting-for-approval',
@@ -20,7 +22,7 @@ import { ICompOff } from '../../comp-off/compoff.modal';
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
-    NoDataFoundComponent],
+    NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './remote-waiting-for-approval.component.html',
   styleUrl: './remote-waiting-for-approval.component.scss'
 })
@@ -32,6 +34,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
   remoteLogin = [] as any;
   approvedRemotesCount = 0;
   empinfo = {} as IJob;
+  dataLoad = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   options = [
@@ -42,19 +45,14 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
   ];
 
   constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
     private http: HttpService,
     public rbac: RbacService,
+    private signalService:SignalsService
   ) {
-     // Signal reaction for employee switch
      effect(() =>{
-      if (this.http.tirggerCountSignal().remote) {
+      if (this.signalService.remoteLoginRequestTriggerSignal()) {
         this.getRemoteRequests();
-        this.http.tirggerCountSignal.update((status) => ({
-          ...status,
-          remote: false,
-        }));
+        this.signalService.remoteLoginRequestTriggerSignal.set(false);
       }
 
   })
@@ -76,20 +74,21 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
 
   getRemoteRequests() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
+    this.dataLoad = true;
     this.http
       .getData(`AttendanceRequests/getbyempid/${empId}?requestedCategory=11`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.remoteLogin = response;
-          this.approvedRemotes = this.remoteLogin.filter(
-            (element: { status: string }) => element.status === 'Waiting for Approval'
+          this.dataLoad = false;
+          this.approvedRemotes = this.remoteLogin?.filter(
+            (element: { status: string }) => element.status === 'Processed'
           );
-          this.approvedRemotesCount = this.approvedRemotes.length;
+          
         },
         error: (error) => {
+          this.dataLoad = false;
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
         },

@@ -31,6 +31,7 @@ export class AddShitsComponent {
   subscription!: Subscription;
   Employeeinfo = {} as any;
   currentYear: number = new Date().getFullYear();
+  sublocatiodis = false;
   // navTabs: any[] = [
   //   { label: 'Create Shifts', link: '/claimsandexpenses/addexpens' },
 
@@ -169,6 +170,7 @@ deleteShift(index: number) {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
         this.locations = data;
+        this.sublocatiodis = true;
       },
       error: (reason: any) => console.log(reason)
     });

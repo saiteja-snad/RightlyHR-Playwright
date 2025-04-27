@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -42,7 +42,7 @@ export class ViewDstComponent implements OnInit, OnDestroy {
   durations: number[] = [1, 1.5, 2, 2.5, 3];
   publishedDST: ManageDST | null = null;
   hidePublishCloneButtons: boolean = false;
-
+  @ViewChild('confirmation') confirmation!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -203,7 +203,13 @@ export class ViewDstComponent implements OnInit, OnDestroy {
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   }
-
+  openConfirmation(){
+    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
+  }
+  closeCloneDST(){
+    this.modalService.dismissAll();
+    this.navigate();
+   }
   navigate(): void {
     this.router.navigate(['/settings/employee-fields/manage-dsts']);
   }

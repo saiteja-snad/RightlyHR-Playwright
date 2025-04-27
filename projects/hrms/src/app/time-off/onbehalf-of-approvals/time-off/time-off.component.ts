@@ -182,9 +182,12 @@ export class TimeOffComponent {
         next: (response: any) => {
           this.selectedLeaveData = response
           this.selectedLeaveData.request = leaveRequest
+          
         },
         error: (err) => { },
-        complete: () => { }
+        complete: () => { 
+          this.http.triggerActionSignal()
+        }
       })
     }
   }
@@ -209,7 +212,9 @@ export class TimeOffComponent {
       error: (reason: any) => {
         this.sharedModalService.openErrorModal('Request Accepted Failed');
       },
-      complete: () => { },
+      complete: () => {
+        this.http.triggerActionSignal();
+       },
     })
   }
 
@@ -233,7 +238,9 @@ export class TimeOffComponent {
       error: (reason: any) => {
         this.sharedModalService.openErrorModal('Request Rejected Failed');
       },
-      complete: () => { },
+      complete: () => { 
+        this.http.triggerActionSignal();
+      },
     })
   }
 
@@ -256,7 +263,9 @@ export class TimeOffComponent {
       error: (reason: any) => {
         this.sharedModalService.openSuccessModal('Request Processed Failed');
       },
-      complete: () => { },
+      complete: () => { 
+        this.http.triggerActionSignal();
+      },
     })
   }
 }

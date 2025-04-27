@@ -13,7 +13,7 @@
                             <img src="/icons/mail.png" alt="profile icon" class="form-icon">
                         </span>
                         <input type="text" formControlName="username" class="form-control custom-input ps-0"
-                            placeholder="Please enter username" (keypress)="blockLeadingSpace($event)" id="name" aria-describedby="Name" autocomplete="off">
+                            placeholder="Please enter username" (keypress)="formvalidationService.blockLeadingSpace($event)" id="name" aria-describedby="Name" autocomplete="off">
                     </div>
                     <div class="error-msg my-1" *ngIf="loginform.get('username')?.touched && loginform.get('username')?.invalid">
                         <div *ngIf="loginform.get('username')?.errors?.['required']">Username is required</div>
@@ -25,7 +25,7 @@
                         [ngClass]="{'error-border': loginform.get('password')?.touched && loginform.get('password')?.invalid }">
                         <span class="input-group-text custom-input-group-text"><img src="/icons/lock.png" alt="profile icon" class="form-icon"></span>
                         <input [type]="showPassword ? 'text':'password'" formControlName="password" class="form-control custom-input ps-0" 
-                           placeholder="Please enter password" id="password" aria-describedby="password" (keypress)="blockLeadingSpace($event)" autocomplete="off">
+                           placeholder="Please enter password" id="password" aria-describedby="password" (keypress)="formvalidationService.blockLeadingSpace($event)" autocomplete="off">
                         <span class="input-group-text custom-input-group-text" (click)="togglePassword()">
                             <i [ngClass]=" showPassword ?'bi bi-eye':'bi bi-eye-slash'" class="custom-eye-icon"></i>
                         </span>

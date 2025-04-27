@@ -12,9 +12,15 @@
         </ng-template>
     </li>
     <li [ngbNavItem]="3">
-        <button class="custom-nav-btn" ngbNavLink>Intern Offer Letter</button>
+        <button class="custom-nav-btn" ngbNavLink>Trainee Offer Letter</button>
         <ng-template ngbNavContent>
             <app-document-history-intern-offer-letter />
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="4">
+        <button class="custom-nav-btn" ngbNavLink>Intern Appointment Letter</button>
+        <ng-template ngbNavContent>
+            <app-document-history-intern-appointment />
         </ng-template>
     </li>
 </ul>

@@ -48,11 +48,8 @@
                             <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required.
                             </div>
                         </div>
-                        <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date
-                            must be after your date of joining.</div>
-                        
-                        <small class="error-msg" *ngIf="!(isHolidaySelected  || isWeekOffSelected) "> Selected date is not eligible for compoff 
-                        </small>    
+                        <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
+                        <div class="error-msg" *ngIf="!(isHolidaySelected || isWeekOffSelected)">Selected date is not eligible for compoff</div>    
                     </div>
                 </div>
 
@@ -65,7 +62,6 @@
                                 <input type="radio" class="form-check-input" id="halfDay" value="Half Day"
                                     formControlName="availing">
                                 <label class="form-check-label custom-label" for="halfDay">Half Day</label>
-
                                 <!-- Half Day Selection -->
                                 <div class="row" *ngIf="addCompOffForm.get('availing')?.value === 'Half Day'">
                                     <div class="col-md-12 mb-3">
@@ -77,6 +73,7 @@
                                                     formControlName="halfType">
                                                 <label class="form-check-label" for="firstHalf">First Half</label>
                                             </div>
+
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" id="secondHalf" value="3"
                                                     formControlName="halfType">
@@ -86,6 +83,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="form-check">
                                 <input type="radio" class="form-check-input" id="fullDay" value="Full Day"
                                     formControlName="availing" value="2" (change)="updateDuration()">
@@ -98,21 +96,13 @@
                 <!-- Reason -->
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="reason" class="form-label custom-label mb-2">Reason<span
-                                class="text-danger">*</span></label>
+                        <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
-                            placeholder="Type here" maxlength="250" (input)="formsValidation.validateInput(addCompOffForm.get('reason'))"></textarea>
-                        <div class="text-end small text-muted">
-                            {{ addCompOffForm.get('reason')?.value?.length || 0 }}/250
-                        </div>
-                        <div class="error-msg"
-                            *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid">
-                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">
-                                Reason is required.
-                            </div>
-                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">
-                                Reason cannot exceed 250 characters.
-                            </div>
+                            placeholder="Reason for comp off" maxlength="250" (input)="formsValidation.validateInput(addCompOffForm.get('reason'))"></textarea>
+                        <div class="textarea-count-text">{{ addCompOffForm.get('reason')?.value?.length || 0 }}/250</div>
+                        <div class="error-msg" *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid">
+                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">Reason is required.</div>
+                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>
                         </div>
                     </div>
                 </div>
@@ -123,8 +113,10 @@
                         (click)="modal.dismiss();this.addCompOffForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addCompOffForm.invalid || spinnerLoader || !(isHolidaySelected  || isWeekOffSelected)">
                         @if(spinnerLoader){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}...</span>
+                        <div class="button-loader-content">
+                            <div class="spinner-border button-spinner text-light" role="status"></div>
+                            <div>{{'Loading..'}}...</div>
+                        </div>
                         }@else {
                         <span>{{'Request'}}</span>
                         }

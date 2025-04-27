@@ -258,7 +258,7 @@
                                     <p class="mb-3">Yours Sincerely,</p>
                                     <p class="mb-5"> For RightlyHR </p>
                                     <div class="stamp"></div>
-                                    <p class="mb-3">{{offerLetterData.authorityName}} </p>
+                                    <p class="mb-3 authority-signature">{{offerLetterData.authorityName}} </p>
                                     <p class="mb-3"> Authorized Signatory, </p>
                                     <p class="mb-3">{{offerLetterData.authorityName}} </p>
                                     <p class="mb-3">{{authorityDesignation}} </p>
@@ -748,7 +748,15 @@
             </div>
             <div class="d-flex gap-5 w-100">
                 <button class="custom-btn btn-secondary w-50" (click)="closeModal()">Close</button>
-                <button class="custom-btn btn-primary w-50" (click)="acceptoffer()">Yes</button>
+                <button class="custom-btn btn-primary w-50" (click)="acceptoffer()" [disabled]="loadingcircle">
+                    @if(!loadingcircle){ Yes }
+                    @else {
+                    <div class="button-loader-content">
+                      <div *ngIf="loadingcircle" class="spinner-border button-spinner text-light" role="status"></div>
+                      <div> Submitting</div>
+                    </div>
+                    }
+                  </button>
             </div>
         </div>
     </div>

@@ -57,15 +57,15 @@ export class AddExperienceDetailtsComponent {
   initializeExperienceForm() {
     this.experienceForm = this.fb.group({
       isPresent: [false],
-      companyName: ['', Validators.required],
-      employmentType: ['', Validators.required],
-      fromDate: ['', Validators.required],
-      toDate: [''],
-      jobTitle: ['', Validators.required],
-      description: [''],
-      previousContactName: [''],
-      previousContactNumber: ['', [this.phoneNumberValidator()]],
-      previousContactEmail: ['', [Validators.email]],
+      companyName: [null, Validators.required],
+      employmentType: [null, Validators.required],
+      fromDate: [null, Validators.required],
+      toDate: [null],
+      jobTitle: [null, Validators.required],
+      description: [null],
+      previousContactName: [null],
+      previousContactNumber: [null, [this.phoneNumberValidator()]],
+      previousContactEmail: [null, [Validators.email]],
       attachment: [null, Validators.required]
     });
     this.experienceForm.get('isPresent')?.valueChanges.subscribe((isPresent) => {

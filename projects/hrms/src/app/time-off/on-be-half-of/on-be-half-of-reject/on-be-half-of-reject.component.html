@@ -27,25 +27,21 @@
                     <td>{{lev.enddate | dateformat}}</td>
                     <td>
                         <div>
-                            <a type="button" placement="top" [ngbPopover]="reason">
+                            <a type="button" [ngbPopover]="reason">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
                             <ng-template #reason>
-                                <div>
-                                    <p class="mb-0">{{lev.notes}}</p>
-                                </div>
+                                <p class="mb-0">{{lev.notes}}</p>
                             </ng-template>
                         </div>
                     </td>
                     <td>
                         <div>
-                            <a type="button" placement="top" [ngbPopover]="reason">
+                            <a type="button" [ngbPopover]="reason">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
                             <ng-template #reason>
-                                <div>
-                                    <p class="mb-0">{{lev.rejectedReason}}</p>
-                                </div>
+                                <p class="mb-0">{{lev.rejectedReason}}</p>
                             </ng-template>
                         </div>
                     </td>

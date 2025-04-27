@@ -42,7 +42,7 @@
                         <td>
                             <div>
                                 <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
+                                    <a type="button" [ngbPopover]="reason">
                                         <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                     </a>
                                     <ng-template #reason>
@@ -55,9 +55,8 @@
                         </td>
                         <td>
                             <div>
-                                <ng-container
-                                    *ngIf="item.entity.leaveApproverComments?.comments?.trim(); else noComments">
-                                    <a type="button" placement="top">
+                                <ng-container *ngIf="item.entity.leaveApproverComments?.comments?.trim(); else noComments">
+                                    <a type="button">
                                         <img src="images/info-fill.png" alt="info icon"
                                             (click)="comments(item.entity.leaveApproverComments, commentspopup)"
                                             class="info-icon">

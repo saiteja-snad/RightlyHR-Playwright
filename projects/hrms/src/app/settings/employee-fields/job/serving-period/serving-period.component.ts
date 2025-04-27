@@ -40,13 +40,13 @@ export class ServingPeriodComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      addServingPeriod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      Duration: ['', Validators.required],
+      addServingPeriod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]],
+      Duration: ['',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[0-9]*$')]],
     });
 
     this.updateForm = this.fb.group({
-      UpdateServingPeriod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      UpdateDuration: ['', Validators.required],
+      UpdateServingPeriod: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]],
+      UpdateDuration: ['',[ Validators.required,Validators.maxLength(50), Validators.pattern('^[0-9]*$')]],
     });
     this.getServingPeriod();
    
@@ -80,12 +80,12 @@ export class ServingPeriodComponent {
 
         this.getServingPeriod();
         modal.close();
-        this.conformationPopup.openSuccessModal('Serving period added successfully');
-        
-         this.resetForm();
+        this.conformationPopup.openSuccessModal('Serving Period added successfully');
+        this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.message;
+        this.conformationPopup.openErrorModal(errorMessage);
          this.resetForm();
       }
     });
@@ -119,11 +119,12 @@ export class ServingPeriodComponent {
 
           this.getServingPeriod();
           modal.close();
-          this.conformationPopup.openSuccessModal('Serving period updated successfully');
+          this.conformationPopup.openSuccessModal('Serving Period updated successfully');
            this.resetForm();
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
+          const errorMessage = error.error?.message;
+          this.conformationPopup.openErrorModal(errorMessage);
           this.resetForm();
         }
       });
@@ -148,10 +149,11 @@ export class ServingPeriodComponent {
         next: () => {
          this.getServingPeriod();
           modal.close();
-          this.conformationPopup.openSuccessModal('Serving period deleted successfully');
+          this.conformationPopup.openSuccessModal('Serving Period deleted successfully');
         },
-        error: () => {
-          this.conformationPopup.openErrorModal('Failed to delete the frequency');
+        error: ( err : any) => {
+          const errorMessage = err.error?.message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }

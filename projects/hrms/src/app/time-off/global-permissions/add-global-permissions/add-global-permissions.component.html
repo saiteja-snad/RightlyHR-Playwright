@@ -186,7 +186,7 @@
           <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason<span
                 class="error-msg">*</span></label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" formControlName="notes"
+            <textarea class="form-control"  (keypress)="formValidation.restrictInputallowspicalcharters($event)" id="exampleFormControlTextarea1" formControlName="notes"
               (input)="onReasonInput()" placeholder="Reason for Permission" maxlength="250"></textarea>
             <div class="my-1 text-end">{{requestForm.get('notes')?.value?.length || 0}}/250</div>
             <div class="error-msg" *ngIf="requestForm.get('notes')?.touched && requestForm.get('notes')?.invalid">
@@ -205,10 +205,10 @@
           {{'Submit'|translate}}
           }
           @else {
-          <div class="d-flex">
-            <div *ngIf="isLoader" class="spinner-border spinner-border text-light" role="status"></div>
-            <div> {{'Submitting'|translate}}</div>
-          </div>
+            <div class="button-loader-content">
+              <div class="spinner-border button-spinner text-light" role="status"></div>
+              <div>{{'Submitting'|translate}}</div>
+            </div>
           }
         </button>
       </div>
@@ -245,10 +245,10 @@
         {{'Yes'|translate}}
         }
         @else {
-        <div class="d-flex">
-          <div *ngIf="isLoader" class="spinner-border spinner-border text-light" role="status"></div>
-          <div> {{'Submitting'|translate}}</div>
-        </div>
+          <div class="button-loader-content">
+            <div *ngIf="isLoader" class="spinner-border button-spinner text-light" role="status"></div>
+            <div>{{'Submitting'|translate}}</div>
+          </div>
         }
       </button>
     </div>

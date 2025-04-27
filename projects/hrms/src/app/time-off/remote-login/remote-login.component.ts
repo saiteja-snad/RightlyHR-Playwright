@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Signal } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,13 +10,15 @@ import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
+import { environment } from '../../../environments/environment';
+import { SignalsService } from '../../services/signals.service';
+import { FormValidationsService } from '../../services/form-validations.service';
 @Component({
   selector: 'app-remote-login',
   imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './remote-login.component.html',
-  styleUrl: './remote-login.component.scss'
+  styleUrl: './remote-login.component.scss',
 })
-
 export class RemoteLoginComponent {
   empinfo = {} as IJob;
   halfDayValue = {} as any;
@@ -33,11 +35,18 @@ export class RemoteLoginComponent {
   hours!: any;
   duration!: any;
   spinnerLoader = false;
-  availablebalance!: number
+  availablebalance!: number;
   totalbalance: any;
-
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
-    private sharedModalService: OpenModalService, public rbac: RbacService,) { }
+  todayDate: string = new Date().toISOString().split('T')[0];
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
+    private signalsService: SignalsService,
+    public formsValidation:FormValidationsService
+  ) {}
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -48,7 +57,7 @@ export class RemoteLoginComponent {
     this.fullDayValue = JSON.parse(
       localStorage.getItem('filterFullDayData') || '{}'
     );
-    this.handleAvailingChange()
+    this.handleAvailingChange();
   }
 
   openModal(content: any) {
@@ -57,9 +66,7 @@ export class RemoteLoginComponent {
 
   intializewfhForm() {
     this.addremoteForm = this.fb.group({
-      workedDate: ['',
-        [Validators.required,]
-      ],
+      workedDate: ['', [Validators.required]],
       availing: ['', Validators.required],
       halfType: [''],
       reason: ['', Validators.required],
@@ -67,7 +74,7 @@ export class RemoteLoginComponent {
   }
 
   handleAvailingChange() {
-    this.addremoteForm.get('availing')?.valueChanges.subscribe(value => {
+    this.addremoteForm.get('availing')?.valueChanges.subscribe((value) => {
       const halfTypeControl = this.addremoteForm.get('halfType');
       if (value === 'Half Day') {
         halfTypeControl?.setValidators([Validators.required]);
@@ -83,8 +90,12 @@ export class RemoteLoginComponent {
 
   updateDuration() {
     if (this.remotedata.startTimeProp && this.remotedata.endTimeProp) {
-      const formattedStartTime = moment(this.remotedata.startTimeProp).format('HH:mm');
-      const formattedEndTime = moment(this.remotedata.endTimeProp).format('HH:mm');
+      const formattedStartTime = moment(this.remotedata.startTimeProp).format(
+        'HH:mm'
+      );
+      const formattedEndTime = moment(this.remotedata.endTimeProp).format(
+        'HH:mm'
+      );
       const startTime = moment(formattedStartTime, 'hh:mm A');
       const endTime = moment(formattedEndTime, 'hh:mm A');
       // Calculate the duration in minutes
@@ -130,10 +141,16 @@ export class RemoteLoginComponent {
   }
 
   dateTimeValidations() {
-    const formattedStartTime = moment(this.remotedata.startTimeProp).format('HH:mm');
-    const formattedEndTime = moment(this.remotedata.endTimeProp).format('HH:mm');
+    const formattedStartTime = moment(this.remotedata.startTimeProp).format(
+      'HH:mm'
+    );
+    const formattedEndTime = moment(this.remotedata.endTimeProp).format(
+      'HH:mm'
+    );
     // Split start and end time strings into hours and minutes
-    const [startHours, startMinutes] = formattedStartTime.split(':').map(Number);
+    const [startHours, startMinutes] = formattedStartTime
+      .split(':')
+      .map(Number);
     const [endHours, endMinutes] = formattedEndTime.split(':').map(Number);
     let startDate = moment(this.remotedata.startTimeProp).format('YYYY-MM-DD');
     let endDate = moment(this.remotedata.endTimeProp).format('YYYY-MM-DD');
@@ -165,37 +182,34 @@ export class RemoteLoginComponent {
         requestedComments: this.remotedata.requestedComments,
         durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
         duration: isFullDay ? 1 : 0.5,
-        status: 'Waiting for Approval',
+        status: 'Processed',
         reason: formData.reason,
-        requestedCategory: 11,
+        requestedCategory: environment.remoteLoginModuleId,
         requestedBy: this.empinfo.employeeId,
         requestedDate: new Date(),
       };
       this.spinnerLoader = true;
-      this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          // this.getCompOffRequest();
-          this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request submitted successfully');
-          setTimeout(() => {
+      this.http
+        .postdata('AttendanceRequests', payload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openSuccessModal(
+              'Request submitted successfully'
+            );
             this.addremoteForm.reset();
-          }
-            , 2000);
-          this.http.tirggerCountSignal.update((status) => ({
-            ...status,
-            remote: true,
-          }));
-          //write a signal to trigger the get all count in the side bar
-        },
-        error: (err: any) => {
-          this.spinnerLoader = false;
-          this.sharedModalService.openErrorModal(err.error.message)
-        },
-        complete: () => {
-          this.addremoteForm.reset();
-          this.spinnerLoader = false;
-        },
-      });
+            this.signalsService.remoteLoginRequestTriggerSignal.set(true);
+          },
+          error: (err: any) => {
+            this.spinnerLoader = false;
+            this.sharedModalService.openErrorModal(err.error.message);
+          },
+          complete: () => {
+            this.addremoteForm.reset();
+            this.spinnerLoader = false;
+          },
+        });
     }
   }
 

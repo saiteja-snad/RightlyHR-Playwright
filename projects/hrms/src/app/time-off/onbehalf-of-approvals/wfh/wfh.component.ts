@@ -15,6 +15,8 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { environment } from '../../../../environments/environment';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-wfh',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,
@@ -45,8 +47,14 @@ export class WfhComponent {
   rejectForm!: FormGroup;
   searchValue: any;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private sharedModalService: OpenModalService, public rbac: RbacService,) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService,
+    private sharedModalService: OpenModalService, 
+    public rbac: RbacService,
+    public formValidation:FormValidationService
+  ) {
     // React to trigger signal from shared service
     effect(() => {
       if (this.http.trigger()) {
@@ -63,6 +71,7 @@ export class WfhComponent {
   }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const storedEmployee = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
     if (storedEmployee && Object.keys(storedEmployee).length > 0) {
       this.LOGIN = storedEmployee;
@@ -86,7 +95,7 @@ export class WfhComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=EMP`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.wfhModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.leaves.next(response.data);
       },

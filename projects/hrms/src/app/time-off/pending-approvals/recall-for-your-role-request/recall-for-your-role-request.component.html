@@ -42,7 +42,7 @@
             <td>
               @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
               <div>
-                <a type="button" placement="top" [ngbPopover]="reason">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
@@ -57,7 +57,7 @@
             <td>
               @if(item.entity?.spEarlyRelievingReason){
               <div>
-                <a type="button" placement="top" [ngbPopover]="reason">
+                <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
@@ -161,7 +161,7 @@
               </td>
               <td>
                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
-                  <a type="button" placement="top" [ngbPopover]="reason">
+                  <a type="button" [ngbPopover]="reason">
                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                   </a>
                   <ng-template #reason>
@@ -210,13 +210,13 @@
       <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
     </div>
     <form [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()">
-      <div>
+      <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
         <textarea id="exampleFormControlTextarea1" class="form-control" formControlName="AcceptReason" maxlength="250"
           placeholder="Please enter comments" rows="3"></textarea>
         <!-- Character counter -->
-        <div class="text-end my-1">{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</div>
+        <div class="textarea-count-text">{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
           *ngIf="recallAcceptForm.get('AcceptReason')?.touched && recallAcceptForm.get('AcceptReason')?.invalid">
           <ng-container *ngIf="recallAcceptForm.get('AcceptReason')?.errors?.['required']">Comments is
@@ -251,12 +251,12 @@
     </div>
 
     <form [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
-      <div class="mb-3">
+      <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">Enter reason
           <span class="text-danger">*</span></label>
         <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please enter reason"
           formControlName="notes" rows="3" maxlength="250"></textarea>
-        <div class="text-end my-1">{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</div>
+        <div class="textarea-count-text">{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</div>
         <div class="error-msg"
           *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
@@ -297,13 +297,13 @@
       <p class="confirmation-text">Are you sure you want to Process this request?</p>
     </div>
     <form [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()">
-      <div>
+      <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
         <textarea class="form-control" id="recallReason" placeholder="Please enter comments"
           formControlName="recallReason" rows="3" maxlength="250"></textarea>
         <!-- Character counter -->
-        <div class="text-end my-1">{{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250</div>
+        <div class="textarea-count-text">{{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250</div>
         <div class="error-msg"
           *ngIf="recallAcceptFormForProcess.get('recallReason')?.touched && recallAcceptFormForProcess.get('recallReason')?.invalid">
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['required']">

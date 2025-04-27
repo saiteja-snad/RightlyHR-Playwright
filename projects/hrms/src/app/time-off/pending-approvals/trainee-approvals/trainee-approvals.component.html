@@ -1,112 +1,113 @@
 <div class="custom-main-component-container">
-    <div>
-        <div class="mb-3">
-            <app-trainee-approvals-tabs />
-        </div>
+    <div class="mb-3">
+        <app-trainee-approvals-tabs />
+    </div>
 
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1">
-                <i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here"
-                aria-label="Username" aria-describedby="basic-addon1">
-        </div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
 
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th class="text-nowrap">{{'Trainee Employee ID'|translate}}</th>
-                        <th class="text-nowrap">{{'Employee Name'|translate}}</th>
-                        <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
-                        <th class="text-nowrap">{{'Training End Date'|translate}}</th>
-                        <th class="text-nowrap">{{'Approved Comments'|translate}}</th>
-                        <th class="text-nowrap"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (rbac.allowedToAccess('Trainee Tab.view')) {
-                    @if(((Trainees | async) ?? []).length > 0) {
-                    <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
-                        <td>
-                            <span *ngIf="trn.entity?.fusionEmpId;else employeeid">{{trn.entity?.fusionEmpId}}</span>
-                            <ng-template #employeeid>-</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="trn.entity?.empName;else RequesterName">{{trn.entity?.empName}}</span>
-                            <ng-template #RequesterName>-</ng-template>
-                        </td>
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">{{'Trainee Employee ID'|translate}}</th>
+                    <th class="text-nowrap">{{'Employee Name'|translate}}</th>
+                    <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
+                    <th class="text-nowrap">{{'Training End Date'|translate}}</th>
+                    <th class="text-nowrap">{{'Approved Comments'|translate}}</th>
+                    <th class="text-nowrap"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (rbac.allowedToAccess('Trainee Tab.view')) {
+                @if(((Trainees | async) ?? []).length > 0) {
+                <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
+                    <td>
+                        <span *ngIf="trn.entity?.fusionEmpId;else employeeid">{{trn.entity?.fusionEmpId}}</span>
+                        <ng-template #employeeid>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="trn.entity?.empName;else RequesterName">{{trn.entity?.empName}}</span>
+                        <ng-template #RequesterName>-</ng-template>
+                    </td>
 
-                        <td>
-                            <span *ngIf="trn.entity?.traineeStartDate;else workeddate">{{trn.entity?.traineeStartDate | dateformat }}</span>
-                            <ng-template #workeddate>-</ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="trn.entity?.traineeEndDate;else starttime">{{trn.entity?.traineeEndDate | dateformat }}</span>
-                            <ng-template #starttime>-</ng-template>
-                        </td>
-                        <td>
-                            @if(trn.entity?.comments != null && trn.entity?.comments != '') {
-                            <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <p class="mb-0">{{trn.entity?.comments}}</p>
-                                </ng-template>
-                            </div>
-                            }@else {
-                            <div>
-                                <span>-</span>
-                            </div>
-                            }
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                    <li>
-                                        <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)"
-                                            *ngIf="rbac.allowedToAccess('Trainee Tab.update')">Approve</a>
-                                    </li>
-                                    }
-                                    @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                    <li>
-                                        <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
-                                            *ngIf="rbac.allowedToAccess('Trainee Tab.delete')">Reject</a>
-                                    </li>
-                                    }
-                                    @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
-                                    <li>
-                                        <a class="dropdown-item" (click)="handleProcess(trn)" *ngIf="rbac.allowedToAccess('Trainee Tab.update')">
-                                            Process</a>
-                                    </li>
-                                    }
-                                    @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
-                                    <li>
-                                        <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
-                                            *ngIf="rbac.allowedToAccess('Trainee Tab.delete')">Reject</a>
-                                    </li>
-                                    }
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                    @else{
-                    <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                    }
-                    }
-                </tbody>
-            </table>
-        </div>
+                    <td>
+                        <span *ngIf="trn.entity?.traineeStartDate;else workeddate">{{trn.entity?.traineeStartDate |
+                            dateformat }}</span>
+                        <ng-template #workeddate>-</ng-template>
+                    </td>
+                    <td>
+                        <span *ngIf="trn.entity?.traineeEndDate;else starttime">{{trn.entity?.traineeEndDate |
+                            dateformat }}</span>
+                        <ng-template #starttime>-</ng-template>
+                    </td>
+                    <td>
+                        @if(trn.entity?.comments != null && trn.entity?.comments != '') {
+                        <div>
+                            <a type="button" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{trn.entity?.comments}}</p>
+                            </ng-template>
+                        </div>
+                        }@else {
+                        <div>
+                            <span>-</span>
+                        </div>
+                        }
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
+                                <li>
+                                    <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)"
+                                        *ngIf="rbac.allowedToAccess('Trainee Tab.update')">Approve</a>
+                                </li>
+                                }
+                                @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
+                                <li>
+                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
+                                        *ngIf="rbac.allowedToAccess('Trainee Tab.delete')">Reject</a>
+                                </li>
+                                }
+                                @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
+                                <li>
+                                    <a class="dropdown-item" (click)="handleProcess(trn)"
+                                        *ngIf="rbac.allowedToAccess('Trainee Tab.update')">
+                                        Process</a>
+                                </li>
+                                }
+                                @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
+                                <li>
+                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
+                                        *ngIf="rbac.allowedToAccess('Trainee Tab.delete')">Reject</a>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
+                @else{
+                <tr>
+                    <td>
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                }
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -123,7 +124,7 @@
                     <span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                     placeholder="Please provide feedback" name="Feedback" #Feedback="ngModel" maxlength="250"
-                    [(ngModel)]="selectedLeaveData.trcomments" rows="3" required></textarea>
+                    [(ngModel)]="selectedLeaveData.trcomments" pattern="^(?!\s).*" rows="3" required></textarea>
                 <div class="textarea-count-text">{{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                 <div class="error-msg" *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
                     Feedback is required</div>

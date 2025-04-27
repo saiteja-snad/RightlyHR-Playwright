@@ -153,6 +153,14 @@ export class OnboardingDetailsComponent {
       }
     });
   }
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   
   patchForm(data: any): void {
     // Patching values for onboardingForm
@@ -160,9 +168,9 @@ export class OnboardingDetailsComponent {
     console.log(workLocation);
     this.onboardingForm.patchValue({
       status: this.Statusdetails?.find((item: any) => item?.statusname === data?.empstatus),
-      dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
+      dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
       branchLocation: this.branchLocations.find((item: any) => item.branchCode === data?.branchCode),
-      probationEndDate: data.probationEndDate ? moment(data.probationEndDate).format('yyyy-MM-DD') : null,
+      probationEndDate: this.formatDateToLocal(data.probationEndDate),
       probationStatus: this.probation.find((item: any) => item.probationstatus1 === data?.probationStatus),
       noticePeriodStatus: this.noticePeriod.find((item: any) => item.name === data.noticePeriod),
       backgroundCheckStatus: this.backgroundDetails.find((item: any) => item.backgroundcheckstatus1 === data?.backgroundCheckStatus),

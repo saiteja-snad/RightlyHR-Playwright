@@ -38,7 +38,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
-                            formControlName="workedDate">
+                            formControlName="workedDate" [max]="todayDate">
                         <div *ngIf="addremoteForm.get('workedDate')?.touched && addremoteForm.get('workedDate')?.invalid" class="error-msg">
                             Worked Date is required.</div>
                         <div class="error-msg" *ngIf="addremoteForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after
@@ -54,8 +54,7 @@
                                 <label class="form-check-label custom-label" for="halfDay">Half Day</label>
                                 <!-- Half Day Selection -->
                                 <div class="row" *ngIf="addremoteForm.get('availing')?.value === 'Half Day'">
-                                    <div class="col-md-12 mb-3">
-                                        <label class="form-label custom-label mb-2">Select Half<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 mb-3">    
                                         <div class="d-flex gap-3">
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" id="firstHalf" [value]="1"
@@ -85,7 +84,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3" maxlength="250"
-                            placeholder="Type here"></textarea>
+                            placeholder="Reason for remote login" (input)="formsValidation.validateInput(addremoteForm.get('reason'))"></textarea>
                         <!-- Character counter -->
                         <div class="form-label custom-label text-end my-1">{{ addremoteForm.get('reason')?.value?.length || 0 }}/250</div>
                         <div class="error-msg" *ngIf="addremoteForm.get('reason')?.touched && addremoteForm.get('reason')?.invalid" >

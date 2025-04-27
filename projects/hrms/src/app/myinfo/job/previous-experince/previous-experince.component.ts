@@ -10,10 +10,11 @@ import { IJobtype } from '../../../Interfaces/job-model';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent,TranslateModule],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
@@ -33,6 +34,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   isInvalidToDate = false;
   showError = false;
   showErrorr = false;
+  spinnerLoader=false;
   empinfo: any
   previousexperincedocument: any
   displaypreviousexperincedocument:any
@@ -47,6 +49,12 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     this.getJobtypes()
     this.getexperiencedetailsbyemployeid()
     this.initializeupdateForm()
+    this.employeeExperienceForm.get('fromDate')?.valueChanges.subscribe(() => {
+      this.employeeExperienceForm.get('toDate')?.reset();
+    });
+    this.employeeExperienceupdateForm.get('fromDateupdate')?.valueChanges.subscribe(() => {
+      this.employeeExperienceupdateForm.get('toDateupdate')?.reset();
+    });
   }
 
 
@@ -105,7 +113,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         '',
         [Validators.required, Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
-      attachmentupdate: [null],
+      attachmentupdate: [null, Validators.required],
     });
 
     // Disable "toDate" field if "isPresent" is checked
@@ -144,6 +152,25 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     }
   }
 
+  getMinEndDate(): string | null {
+    const startDateValue = this.employeeExperienceForm.get('fromDate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; // Return null if no start date is selected
+  }
+
+  getupdateMinEndDate(): string | null {
+    const startDateValue = this.employeeExperienceupdateForm.get('fromDateupdate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; // Return null if no start date is selected
+  }
   onChangeExperience(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -179,6 +206,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   postExperienceDetails(): void {
     if (this.employeeExperienceForm.valid) {
+      this.spinnerLoader=true
       const payload = this.createExperiencePayload();
 
       if (this.previousexperincedocument) {
@@ -215,6 +243,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   saveExperienceData(payload: any): void {
     this.subscription = this.http.postdata('ExperienceDetail', payload).subscribe({
       next: () => {
+        this.spinnerLoader=false
         this.employeeExperienceForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Experience details added successfully');
@@ -222,6 +251,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         this.getexperiencedetailsbyemployeid()
       },
       error: (err: any) => {
+        this.spinnerLoader=false
         console.error('Error saving experience data:', err);
         this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save experience details.');
       }
@@ -341,6 +371,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     }
   }
 
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
 
   openModalupdate(content: any, experienceDetail: any): void {
@@ -349,13 +386,9 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     this.getJobtype().subscribe(() => {
       console.log('Experience Detail:', experienceDetail);
   
-      const startDate = experienceDetail.fromDate
-        ? new Date(experienceDetail.fromDate).toISOString().split('T')[0]
-        : null;
-  
-      const endDate = experienceDetail.toDate
-        ? new Date(experienceDetail.toDate).toISOString().split('T')[0]
-        : null;
+      const startDate = this.formatDateToLocal(experienceDetail.fromDate) || null;
+        
+      const endDate = this.formatDateToLocal(experienceDetail.toDate) || null;
   
       const selectedJobType = this.JobtypeDetails.find(
         (jobType) => jobType.jobType1 === experienceDetail.employmentType
@@ -402,6 +435,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     const currentDate = new Date().toISOString().split('T')[0];
     if (this.employeeExperienceupdateForm.valid) {
       const formData = this.employeeExperienceupdateForm.value;
+      this.spinnerLoader=true
       // Prepare the payload
       const payload = {
         id: this.selectedid,
@@ -454,6 +488,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   saveupdateExperienceData(payload: any): void {
     this.subscription = this.http.postdata('ExperienceDetail/Update', payload).subscribe({
       next: (data: any) => {
+        this.spinnerLoader=false
         console.log('Experience details updated successfully:', data);
         this.employeeExperienceupdateForm.reset();
         this.modalService.dismissAll();
@@ -461,6 +496,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         this.getexperiencedetailsbyemployeid(); // Refresh the experience details list
       },
       error: (reason: any) => {
+        this.spinnerLoader=false
         console.error('Error updating experience details:', reason);
         this.conformationPopup.openErrorModal('Failed to update experience details. Please check all fields.');
       }

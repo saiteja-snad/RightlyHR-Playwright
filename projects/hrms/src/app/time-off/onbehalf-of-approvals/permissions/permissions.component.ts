@@ -13,6 +13,8 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { environment } from '../../../../environments/environment';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-permissions',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, 
@@ -42,8 +44,15 @@ export class PermissionsComponent {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
-    private sharedModalService: OpenModalService, public rbac: RbacService,) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private sharedModalService: OpenModalService, 
+    public rbac: RbacService,
+    public formValidation:FormValidationService
+    
+  ) {
     effect(() => {
       if (this.http.trigger()) {
         const data = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
@@ -83,8 +92,8 @@ export class PermissionsComponent {
   }
 
   getAllPendingApprovals() {
-    let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=18&approvedType=EMP`).pipe(takeUntil(this.destroy$)).subscribe({
+    let EmployeeId = parseInt(this.LOGIN.employeeId);
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.permissionsModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.leaves = response.data as PermissionRequestResponse[];
         console.log(this.leaves);
@@ -126,16 +135,15 @@ export class PermissionsComponent {
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
+      this.sharedModalService.openLoaderModal('Accepting Request, Please wait...');
+
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal('Request Approved Successfully');
           this.approveForm.reset();
           this.selectedLeaveData = {} as PermissionRequestResponse;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            permission: true,
-          }));
+          this.http.triggerActionSignal();
         },
         error: (reason: any) => {
           this.sharedModalService.openErrorModal(reason.error.Message);
@@ -157,10 +165,7 @@ export class PermissionsComponent {
       next: (respone: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          permission: true,
-        }));
+        this.http.triggerActionSignal();
       },
       error: (reason: any) => {
         this.modalService.dismissAll();
@@ -181,6 +186,7 @@ export class PermissionsComponent {
         status: 'Rejected',
         comments: formData.comments,
       };
+      this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -189,10 +195,7 @@ export class PermissionsComponent {
           );
           this.rejectForm.reset();
           this.selectedLeaveData = {} as PermissionRequestResponse;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            permission: true,
-          }));
+          this.http.triggerActionSignal();
         },
         error: (reason: any) => {
           this.sharedModalService.openErrorModal(reason.error.Message);

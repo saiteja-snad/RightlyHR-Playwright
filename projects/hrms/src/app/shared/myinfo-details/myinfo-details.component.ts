@@ -3,10 +3,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-myinfo-details',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './myinfo-details.component.html',
   styleUrl: './myinfo-details.component.scss'
 })

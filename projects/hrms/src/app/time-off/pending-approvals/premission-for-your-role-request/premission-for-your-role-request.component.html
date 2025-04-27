@@ -1,84 +1,92 @@
 <div class="custom-main-component-container">
-    <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search"
-                #search="ngModel" [(ngModel)]="searchValue" autocomplete="off">
-        </div>
-        @if(!dataload){
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>{{'Employee ID' | translate}} </th>
-                        <th>{{'Employee Name' | translate}}</th>
-                        <th>{{'Requested Date' | translate}}</th>
-                        <th>{{'Permission Date' | translate}}</th>
-                        <th>{{'Duration(InHours)' | translate}}</th>
-                        <th>{{'Permission Type' | translate}}</th>
-                        <th>{{'Reason' | translate}}</th>
-                        <th>{{'Action(s)' | translate}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (rbac.allowedToAccess('Permissions.view')) {
-                    @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
-                    @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track leave.approvalHeader.id){
-                    <tr>
-                        <td>{{leave.entity.fusionempId}}</td>
-                        <td>{{leave.entity.raisedForName}}</td>
-                        <td>{{leave.entity.createdDate| dateformat}}</td>
-                        <td>{{leave.entity.requestedDate| dateformat}}</td>
-                        <td>{{leave.entity.duration}}</td>
-                        <td>{{leave.entity.type}}</td>
-                        <td>
-                            <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <p class="mb-0">{{leave.entity.notes}} </p>
-                                </ng-template>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu py-0">
-                                    @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="openApproveModal(approval,leave)"  *ngIf="rbac.allowedToAccess('Permissions.update')">
-                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
-                                    </li>
-                                    }
-                                    @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
-                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
-                                    </li>
-                                    }
-                                    <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Permissions.delete')">
-                                        <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                    }
-                    @else{
-                    <tr>
-                        <td colospan="8">
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                    }
-                    }
-            </table>
-        </div>
-        }@else{<app-data-loader-content />}
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search"
+            #search="ngModel" [(ngModel)]="searchValue" autocomplete="off">
     </div>
+   
+    <div class="custom-table-content">
+        @if(!dataload){
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'Employee ID' | translate}} </th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th>{{'Requested Date' | translate}}</th>
+                    <th>{{'Permission Date' | translate}}</th>
+                    <th>{{'Duration(InHours)' | translate}}</th>
+                    <th>{{'Permission Type' | translate}}</th>
+                    <th>{{'Reason' | translate}}</th>
+                    <th>{{'Action(s)' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (rbac.allowedToAccess('Permissions.view')) {
+                @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
+                @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
+                leave.approvalHeader.id){
+                <tr>
+                    <td>{{leave.entity.fusionempId}}</td>
+                    <td>{{leave.entity.raisedForName}}</td>
+                    <td>{{leave.entity.createdDate| dateformat}}</td>
+                    <td>{{leave.entity.requestedDate| dateformat}}</td>
+                    <td>{{leave.entity.duration}}</td>
+                    <td>{{leave.entity.type}}</td>
+                    <td>
+                        <div>
+                            <a type="button" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{leave.entity.notes}} </p>
+                            </ng-template>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <a type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if( leave.approvalHeader.currentapprovalStage !=
+                                leave.approvalHeader.finalapprovalStage){
+                                <li (click)="openApproveModal(approval,leave)"
+                                    *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                        translate}}</a>
+                                </li>
+                                }
+                                @if( leave.approvalHeader.currentapprovalStage ==
+                                leave.approvalHeader.finalapprovalStage){
+                                <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
+                                        translate}}</a>
+                                </li>
+                                }
+                                <li (click)="openRejectModal(rejectmodal,leave)"
+                                    *ngIf="rbac.allowedToAccess('Permissions.delete')">
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                        translate}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
+                }
+                @else{
+                <tr>
+                    <td colospan="8">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                }
+                }
+        </table>
+    }@else{<app-data-loader-content />}
+    </div>
+    
 </div>
 
 <ng-template #approval let-modal>
@@ -103,8 +111,10 @@
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'| translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
                     @if(spinnerLoader){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}...</span>
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..'}}...</span>
+                        </div>
                         }@else {
                         <span>{{'Approve' | translate}}</span>
                         }
@@ -135,8 +145,10 @@
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' | translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid"> @if(spinnerLoader){
-                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    <span>{{'Loading..'}}...</span>
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..'}}...</span>
+                    </div>
                     }@else {
                     <span>{{'Reject' | translate}}</span>
                     }

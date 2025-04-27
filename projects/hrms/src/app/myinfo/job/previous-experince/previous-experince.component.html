@@ -124,7 +124,7 @@
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate" formControlName="fromDate"  onkeypress="return false"
                                 [min]="'1940-01-01'" [max]="currentDate | date: 'yyyy-MM-dd'"
-                                (change)="currentDateValidation()" />
+                                />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
                                 class="error-msg">
                                 From Date is required
@@ -138,8 +138,8 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"  onkeypress="return false"
-                                (change)="toDateValidation()" [max]="currentDate | date: 'yyyy-MM-dd'"
-                                [min]="employeeExperienceForm.get('fromDate')?.value" />
+                             [min]="getMinEndDate()"
+                               />
                             <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
                                 class="error-msg">
                                 To Date is required
@@ -231,7 +231,14 @@
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();resetFrom()">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="employeeExperienceForm.invalid">Add</button>
+                        [disabled]="employeeExperienceForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>
@@ -305,8 +312,8 @@
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"  onkeypress="return false"
-                                formControlName="fromDateupdate" [min]="'1940-01-01'"
-                                (change)="currentDateValidation()" />
+                                formControlName="fromDateupdate"  [min]="'1940-01-01'" [max]="currentDate | date: 'yyyy-MM-dd'"
+                               />
                             <div *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
                                 class="error-msg">
                                 From Date is required
@@ -320,8 +327,8 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate"
-                                formControlName="toDateupdate" (change)="toDateValidation()"  onkeypress="return false"
-                                [max]="currentDate | date: 'yyyy-MM-dd'" />
+                                formControlName="toDateupdate" [min]="getupdateMinEndDate()"  onkeypress="return false"
+                                [min]="" />
 
                             <div *ngIf=" employeeExperienceupdateForm.get('toDateupdate')?.invalid &&
                                 employeeExperienceupdateForm.get('toDateupdate')?.touched" class="error-msg">
@@ -412,7 +419,7 @@
                             <div *ngIf="showError" class="error-msg">Only Pdf and image files are allowed</div>
                             <div *ngIf="showErrorr" class="error-msg">The file size should be less than 25MB</div>
 
-                            <div *ngIf="displaypreviousexperincedocument" class="mb-2 mt-2">
+                            <div *ngIf="displaypreviousexperincedocument" class="mb-2 mt-2 text-wrap">
                                 {{ displaypreviousexperincedocument?.name || displaypreviousexperincedocument }}
                             </div>
 
@@ -426,7 +433,14 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();resetFrom()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeExperienceupdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeExperienceupdateForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Update'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>

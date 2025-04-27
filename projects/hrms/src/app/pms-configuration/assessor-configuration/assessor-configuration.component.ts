@@ -34,7 +34,6 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-
   page = 1;
   pageSize = 10;
   rows = 10;
@@ -43,7 +42,6 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
   first = 0;
   totalRecords = 0;
   searchText = '';
-  
   assessorDetailsget: any[] = [];
 
   constructor(private http: HttpService, private modalService: NgbModal, 

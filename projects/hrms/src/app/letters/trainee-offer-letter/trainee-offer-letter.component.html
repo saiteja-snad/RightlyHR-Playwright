@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header mb-0">
-                <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Dashboard'|translate}}
+                <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Trainee Offer Letter'|translate}}
             </p>
         </div>
     </div>
@@ -243,7 +243,7 @@
                     <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="offerSentDate"
-                        placeholder="Please enter offer issued date" (change)="isDataPopulated()" />
+                        placeholder="Please enter offer issued date" onkeydown="return false;" (change)="isDataPopulated()" />
                     <div *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                         <div class="error-msg">Offer Issued Date is required</div>
                     </div>
@@ -253,7 +253,7 @@
                     <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                        placeholder="Please enter expected start date" (change)="onDateOfJoiningChange()"
+                        placeholder="Please enter expected start date" onkeydown="return false;" (change)="onDateOfJoiningChange()"
                         (change)="updateEndDateValidityupdate()" (change)="updateEndDateValidityForExpectedStartDate()" />
                     <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                         <div class="error-msg">Expected Start Date is required</div>
@@ -267,7 +267,7 @@
                     <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                        placeholder="Please enter offer expiry date" min="traineeEmpData.offerIssuedDate" />
+                        placeholder="Please enter offer expiry date" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
                     <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                         <div class="error-msg">Offer Expiry Date is required</div>
                     </div>
@@ -294,7 +294,7 @@
                     <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName" [filter]="true" filterBy="firstName"
+                        <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="true" placeholder="Please select reporting manager"
                             formControlName="reportingmanagerId" class="custom-select w-100"
                             (ngModelChange)="selectReportingname($event)">

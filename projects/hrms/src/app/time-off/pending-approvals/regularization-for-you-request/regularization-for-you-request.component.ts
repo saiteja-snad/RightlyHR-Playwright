@@ -5,7 +5,7 @@ import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { PermissionRequestResponse, ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -15,10 +15,11 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { PermissionsearchPipe } from '../../../Pipes/permissionsearch.pipe';
 @Component({
   selector: 'app-regularization-for-you-request',
-  imports: [  CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,
-     DateformatPipe, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,
+    DateformatPipe, ReactiveFormsModule, TranslateModule,  PermissionsearchPipe, ],
   templateUrl: './regularization-for-you-request.component.html',
   styleUrl: './regularization-for-you-request.component.scss'
 })
@@ -43,7 +44,8 @@ export class RegularizationForYouRequestComponent implements OnInit,OnDestroy {
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!:FormGroup;
-
+  leaves = new BehaviorSubject<PermissionRequestResponse[]>([]);
+  searchValue: any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
     private sharedModalService: OpenModalService, public rbac: RbacService,) {}
 
@@ -69,7 +71,10 @@ export class RegularizationForYouRequestComponent implements OnInit,OnDestroy {
     let moduleId = environment.attendanceRegularizationModuleId;
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`).subscribe({
       next: (response: any) => {
-        this.regularization = response.data as PermissionRequestResponse[];
+        response.data as PermissionRequestResponse[];
+        this.leaves.next(response.data);
+        console.log(this.leaves.value);
+         
       },
       error: (reason) => console.log(reason),
     });

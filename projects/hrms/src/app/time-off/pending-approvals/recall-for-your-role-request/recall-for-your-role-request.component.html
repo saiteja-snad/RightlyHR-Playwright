@@ -1,118 +1,119 @@
 <div class="custom-main-component-container" *ngIf="this.rbac.allowedToAccess('Recall Tab.view')">
-  <div>
-    <!--Input search-->
-    <div class="input-group custom-search mb-3">
-      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-      <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
-        aria-describedby="basic-addon1">
-    </div>
+  <!--Input search-->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+      aria-describedby="basic-addon1">
+  </div>
 
-    <div class="custom-table-content">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th class="text-nowrap">Employee Name</th>
-            <th class="text-nowrap">Employee ID</th>
-            <th class="text-nowrap">Department</th>
-            <th class="text-nowrap">Team</th>
-            <th class="text-nowrap">Designation</th>
-            <th class="text-nowrap">Raised Date</th>
-            <th class="text-nowrap">Last Working Day</th>
-            <th class="text-nowrap">Early Relieving Day</th>
-            <th class="text-nowrap">Separation Reason</th>
-            <th class="text-nowrap">Early Relieving Reason</th>
-            <th class="text-nowrap">Request Type</th>
-            <th class="text-nowrap">Approver History</th>
-            <th class="text-nowrap">Action(s)</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if(((recall_For_Your_role_Details | async) ?? []).length > 0) {
-          <tr *ngFor="let item of recall_For_Your_role_Details|async">
-            @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
-            ||item.approvalHeader?.status?.toLowerCase() =='approved'){
-            <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
-            <td> {{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
-            <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
-            <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
-            <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-            <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}</td>
-            <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}</td>
-            <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
-            <td>
-              @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
-              <div>
-                <a type="button" placement="top" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                </a>
-                <ng-template #reason>
-                    <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
-                </ng-template>
-              </div>
-              }
-              @else {
-                <div>-</div>
-              }
-            </td>
-            <td>
-              @if(item.entity?.spEarlyRelievingReason){
-              <div>
-                <a type="button" placement="top" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                </a>
-                <ng-template #reason>
-                  <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
-                </ng-template>
-              </div>
-              }
-              @else {-}
-            </td>
-            <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
-            <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
-              <div>
-                <a type="button" (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                </a>
-              </div>
-              }
-              @else{-}
-            </td>
-            <td class="text-center">
-              <div class="dropdown">
-                <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
-                <ul class="dropdown-menu py-0">
-                  @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
-                  <li (click)="openModal(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.update')">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
-                  </li>
-                  }
-                  @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) || 
-                  (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
-                  <li (click)="openModal(rejectmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.delete')">
-                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
-                  </li>
-                  }
-                  @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
-                  <li (click)="openModal(processmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.update')">
-                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
-                  </li>
-                  }
-                </ul>
-              </div>
-            </td>
+  <div class="custom-table-content">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th class="text-nowrap">Employee Name</th>
+          <th class="text-nowrap">Employee ID</th>
+          <th class="text-nowrap">Department</th>
+          <th class="text-nowrap">Team</th>
+          <th class="text-nowrap">Designation</th>
+          <th class="text-nowrap">Raised Date</th>
+          <th class="text-nowrap">Last Working Day</th>
+          <th class="text-nowrap">Early Relieving Day</th>
+          <th class="text-nowrap">Separation Reason</th>
+          <th class="text-nowrap">Early Relieving Reason</th>
+          <th class="text-nowrap">Request Type</th>
+          <th class="text-nowrap">Approver History</th>
+          <th class="text-nowrap">Action(s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if(((recall_For_Your_role_Details | async) ?? []).length > 0) {
+        <tr *ngFor="let item of recall_For_Your_role_Details|async">
+          @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
+          ||item.approvalHeader?.status?.toLowerCase() =='approved'){
+          <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
+          <td> {{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
+          <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
+          <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
+          <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
+          <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}</td>
+          <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}</td>
+          <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
+          <td>
+            @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
+            <div>
+              <a type="button" [ngbPopover]="reason">
+                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+              </a>
+              <ng-template #reason>
+                <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
+              </ng-template>
+            </div>
             }
-          </tr>
+            @else {
+            <div>-</div>
+            }
+          </td>
+          <td>
+            @if(item.entity?.spEarlyRelievingReason){
+            <div>
+              <a type="button" [ngbPopover]="reason">
+                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+              </a>
+              <ng-template #reason>
+                <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
+              </ng-template>
+            </div>
+            }
+            @else {-}
+          </td>
+          <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
+          <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
+            <div>
+              <a type="button"
+                (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
+                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+              </a>
+            </div>
+            }
+            @else{-}
+          </td>
+          <td class="text-center">
+            <div class="dropdown">
+              <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
+                <li (click)="openModal(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
+                </li>
+                }
+                @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) ||
+                (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
+                <li (click)="openModal(rejectmodal);handleRequest(item)"
+                  *ngIf="rbac.allowedToAccess('Recall Tab.delete')">
+                  <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
+                </li>
+                }
+                @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
+                <li (click)="openModal(processmodal);handleRequest(item)"
+                  *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
+                </li>
+                }
+              </ul>
+            </div>
+          </td>
           }
-          @else{
-          <tr>
-            <td>
-              <app-no-data-found />
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+        </tr>
+        }
+        @else{
+        <tr>
+          <td>
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -161,7 +162,7 @@
               </td>
               <td>
                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
-                  <a type="button" placement="top" [ngbPopover]="reason">
+                  <a type="button" [ngbPopover]="reason">
                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                   </a>
                   <ng-template #reason>
@@ -228,12 +229,13 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();recallAcceptForm.reset()">{{'Close'| translate}}</button>
+        <button type="reset" class="custom-btn btn-secondary"
+          (click)="modal.dismiss();recallAcceptForm.reset()">{{'Close'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Approve' | translate }} } @else {
-          <div class="d-flex">
-            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-            <div>{{ 'Submitting' | translate }}</div>
+          <div class="button-loader-content">
+            <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+            <div>{{'Submitting'|translate}}</div>
           </div>
           }
         </button>
@@ -278,9 +280,9 @@
           @if (!isLoading) {
           {{ 'Reject' | translate }}
           } @else {
-          <div class="d-flex">
-            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-            <div>{{ 'Submitting' | translate }}</div>
+          <div class="button-loader-content">
+            <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+            <div>{{'Submitting'|translate}}</div>
           </div>
           }
         </button>
@@ -303,7 +305,8 @@
         <textarea class="form-control" id="recallReason" placeholder="Please enter comments"
           formControlName="recallReason" rows="3" maxlength="250"></textarea>
         <!-- Character counter -->
-        <div class="textarea-count-text">{{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250</div>
+        <div class="textarea-count-text">{{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250
+        </div>
         <div class="error-msg"
           *ngIf="recallAcceptFormForProcess.get('recallReason')?.touched && recallAcceptFormForProcess.get('recallReason')?.invalid">
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['required']">
@@ -325,9 +328,9 @@
           @if (!isLoading) {
           {{ 'Process' | translate }}
           } @else {
-          <div class="d-flex">
-            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-            <div>{{ 'Submitting' | translate }}</div>
+          <div class="button-loader-content">
+            <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+            <div>{{'Submitting'|translate}}</div>
           </div>
           }
         </button>

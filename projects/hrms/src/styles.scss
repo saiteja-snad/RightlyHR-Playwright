@@ -449,7 +449,7 @@ a {
     font-size: var(--fontsize14);
     vertical-align: middle;
     text-align: end;
-    margin: 0.5rem 0rem;
+    margin: 0.25rem 0rem;
 }
 
 .select-item {
@@ -1610,3 +1610,10 @@ input[type="checkbox"] {
     }
 }
 // Action buttons stylings Ends
+
+// component loader
+.custom-compoent-data-loader{
+    position: relative;
+    width: 100%;
+    height: calc(100dvh - 20rem);
+}

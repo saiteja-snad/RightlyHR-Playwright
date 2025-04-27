@@ -20,6 +20,8 @@ export class MyInfoPersonalTabsComponent implements OnInit {
     { label: 'Education', link: '/myinfo/personal/education-details',permission: { feature: 'Education', action: 'view' } },
     { label: 'Identity', link: '/myinfo/personal/identity-details',permission: { feature: 'Identity', action: 'view' } },
     { label: 'Family', link: '/myinfo/personal/family-details',permission: { feature: 'Family Details', action: 'view' } },
+    { label: 'Emergency Contact', link: '/myinfo/personal/emergency-contact-details',permission: { feature: 'Emergency Contact Details', action: 'view' } },
+  
     { label: 'Bank', link: '/myinfo/personal/bank-details',permission: { feature: 'Bank Details', action: 'view' } }
   ];
 

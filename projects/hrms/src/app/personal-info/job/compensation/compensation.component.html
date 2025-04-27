@@ -70,7 +70,7 @@
                 <p class="popup-heading mb-0">Add Compensation Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();compForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-3">
@@ -80,16 +80,14 @@
                         <div class="mb-3">
                             <label class="form-label custom-label mb-2">Effective Date<span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="compeffectivedate"
-                                (change)="updateCompEffectiveDateValidations()"
-                                [ngClass]="{ 'is-invalid': compForm.get('compeffectivedate')?.invalid && COMPDETAILS.submitted }" />
-                            <div class="error-msg"
-                                *ngIf="compForm.get('compeffectivedate')?.invalid && COMPDETAILS.submitted">
+                            <input type="date" class="form-control custom-input" [min]="joiningDate" formControlName="compeffectivedate"
+                            onkeypress="return false" />
+                               <div class="error-msg" *ngIf="compForm.get('compeffectivedate')?.hasError('required') && compForm.get('compeffectivedate')?.touched ">
                                 Effective Date is required
-                            </div>
-                            <div class="error-msg" *ngIf="!COMPDETAILS.isempeffectivevaild && COMPDETAILS.submitted">
+                              </div>
+                            <div class="error-msg" *ngIf="compForm.get('compeffectivedate')?.hasError('dateInvalid') ">
                                 Effective Date cannot be less than Joining date
-                            </div>
+                              </div>
                         </div>
 
                         <div class="mb-3">
@@ -99,7 +97,7 @@
                                 <p-select [options]="compensationReason" optionLabel="reason" formControlName="reason"
                                     placeholder="Please select reason" class="form-select custom-select"></p-select>
                             </div>
-                            <div class="error-msg" *ngIf="compForm.get('reason')?.invalid && COMPDETAILS.submitted">
+                            <div class="error-msg" *ngIf="compForm.get('reason')?.invalid && compForm.get('reason')?.touched ">
                                 Reason is required
                             </div>
                         </div>
@@ -111,8 +109,8 @@
                                 <p-select [options]="paytypeDetails" optionLabel="paytype1" formControlName="paytype"
                                     placeholder="Please select pay type" class="form-select custom-select"></p-select>
                             </div>
-                            <div class="error-msg" *ngIf="compForm.get('paytype')?.invalid && COMPDETAILS.submitted">
-                                Pay Type is required
+                            <div class="error-msg" *ngIf="compForm.get('paytype')?.invalid && compForm.get('paytype')?.touched ">
+                                Reason is required
                             </div>
                         </div>
                     </div>
@@ -128,7 +126,7 @@
                                     class="form-select custom-select"></p-select>
                             </div>
                             <div class="error-msg"
-                                *ngIf="compForm.get('overtimeeligibility')?.invalid && COMPDETAILS.submitted">
+                                *ngIf="compForm.get('overtimeeligibility')?.invalid && compForm.get('overtimeeligibility')?.touched ">
                                 Overtime Eligibility is required
                             </div>
                         </div>
@@ -141,7 +139,7 @@
                                     formControlName="frequency" placeholder="Please select frequency"
                                     class="form-select custom-select"></p-select>
                             </div>
-                            <div class="error-msg" *ngIf="compForm.get('frequency')?.invalid && COMPDETAILS.submitted">
+                            <div class="error-msg" *ngIf="compForm.get('frequency')?.invalid && compForm.get('frequency')?.touched ">
                                 Frequency is required
                             </div>
                         </div>
@@ -149,10 +147,10 @@
                         <div class="mb-3">
                             <label class="form-label custom-label mb-2">Amount (Yearly CTC)<span
                                     class="text-danger">*</span></label>
-                            <input type="text" class="form-control custom-input" formControlName="compensationamount"
+                            <input type="text" class="form-control custom-input" formControlName="compensationamount" placeholder="Please enter amount"
                                 maxlength="10" />
                             <div class="error-msg"
-                                *ngIf="compForm.get('compensationamount')?.invalid && COMPDETAILS.submitted">
+                                *ngIf="compForm.get('compensationamount')?.invalid && compForm.get('compensationamount')?.touched ">
                                 Valid amount is required
                             </div>
                         </div>
@@ -187,16 +185,14 @@
                         <div class="mb-3">
                             <label class="form-label custom-label mb-2">Effective Date<span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" formControlName="compeffectivedate"
-                                (change)="updateCompEffectiveDateValidations()"
-                                [ngClass]="{ 'is-invalid': compupdateForm.get('compeffectivedate')?.invalid && COMPDETAILS.submitted }" />
+                            <input type="date" class="form-control custom-input" formControlName="compeffectivedate" [min]="joiningDate"  onkeypress="return false"/>
                             <div class="error-msg"
-                                *ngIf="compupdateForm.get('compeffectivedate')?.invalid && COMPDETAILS.submitted">
+                                *ngIf="compupdateForm.get('compeffectivedate')?.invalid && compupdateForm.get('compeffectivedate')?.touched ">
                                 Effective Date is required
                             </div>
-                            <div class="error-msg" *ngIf="!COMPDETAILS.isempeffectivevaild && COMPDETAILS.submitted">
+                            <div class="error-msg" *ngIf="compupdateForm.get('compeffectivedate')?.hasError('dateInvalid') ">
                                 Effective Date cannot be less than Joining date
-                            </div>
+                              </div>
                         </div>
 
                         <div class="mb-3">
@@ -208,7 +204,7 @@
                                     class="form-select custom-select"></p-select>
                             </div>
                             <div class="error-msg"
-                                *ngIf="compupdateForm.get('reason')?.invalid && COMPDETAILS.submitted">
+                                *ngIf="compupdateForm.get('reason')?.invalid    && compupdateForm.get('reason')?.touched ">
                                 Reason is required
                             </div>
                         </div>
@@ -222,7 +218,7 @@
                                     class="form-select custom-select"></p-select>
                             </div>
                             <div class="error-msg"
-                                *ngIf="compupdateForm.get('paytype')?.invalid && COMPDETAILS.submitted">
+                                *ngIf="compupdateForm.get('paytype')?.invalid && compupdateForm.get('paytype')?.touched ">
                                 Pay Type is required
                             </div>
                         </div>
@@ -239,7 +235,7 @@
                                     class="form-select custom-select"></p-select>
                             </div>
                             <div class="error-msg"
-                                *ngIf="compupdateForm.get('overtimeeligibility')?.invalid && COMPDETAILS.submitted">
+                                *ngIf="compupdateForm.get('overtimeeligibility')?.invalid   && compupdateForm.get('overtimeeligibility')?.touched ">
                                 Overtime Eligibility is required
                             </div>
                         </div>
@@ -253,7 +249,7 @@
                                     class="form-select custom-select"></p-select>
                             </div>
                             <div class="error-msg"
-                                *ngIf="compupdateForm.get('frequency')?.invalid && COMPDETAILS.submitted">
+                                *ngIf="compupdateForm.get('frequency')?.invalid && compupdateForm.get('frequency')?.touched ">
                                 Frequency is required
                             </div>
                         </div>
@@ -261,10 +257,10 @@
                         <div class="mb-3">
                             <label class="form-label custom-label mb-2">Amount (Yearly CTC)<span
                                     class="text-danger">*</span></label>
-                            <input type="text" class="form-control custom-input" formControlName="compensationamount"
+                            <input type="text" class="form-control custom-input" formControlName="compensationamount" placeholder="Please enter amount"
                                 maxlength="10" />
                             <div class="error-msg"
-                                *ngIf="compupdateForm.get('compensationamount')?.invalid && COMPDETAILS.submitted">
+                                *ngIf="compupdateForm.get('compensationamount')?.invalid    && compupdateForm.get('compensationamount')?.touched ">
                                 Valid amount is required
                             </div>
                         </div>

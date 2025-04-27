@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -59,7 +59,7 @@ export class AddressInfoComponent {
         city: ['', [Validators.required, Validators.maxLength(50)]],
         state: ['', [Validators.required, Validators.maxLength(50)]],
         country: ['', [Validators.required, Validators.maxLength(50)]],
-        zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
+        zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$'), this.invalidZipCodeValidator()]],
       }),
       permanentAddress: this.fb.group({
         addressLine1: ['', [Validators.required, Validators.maxLength(150)]],
@@ -67,7 +67,7 @@ export class AddressInfoComponent {
         city: ['', [Validators.required, Validators.maxLength(50)]],
         state: ['', [Validators.required, Validators.maxLength(50)]],
         country: ['', [Validators.required, Validators.maxLength(50)]],
-        zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
+        zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$'), this.invalidZipCodeValidator()]],
       }),
     });
   }
@@ -92,6 +92,15 @@ export class AddressInfoComponent {
     this.addressForm.reset(); 
     this.getEmployeeId(); 
 
+  }
+  invalidZipCodeValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value && /^0+$/.test(value)) {
+        return { invalidZipCode: true }; // Return error if zip code is all zeros
+      }
+      return null; // Valid zip code
+    };
   }
 
   getEmployeeId(): void {

@@ -31,7 +31,7 @@
                     <td>
                         <div>
                             <span>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button" [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -45,7 +45,7 @@
                     <td>
                         <div>
                             <span>
-                                <a type="button" placement="top">
+                                <a type="button">
                                     <img src="images\info-fill.png" alt="info icon"
                                         (click)="comments(item.entity.leaveApproverComments,commentspopup)"
                                         class="info-icon">
@@ -60,19 +60,17 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu py-0">
-                                <li><a class="dropdown-item"
-                                        *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"
-                                        (click)="checkLeaveBalance(item,checkbalancepopup)"><i
-                                            class="bi bi-calendar-check me-2"></i>Check Balance</a></li>
+                                <li><a class="dropdown-item" (click)="checkLeaveBalance(item,checkbalancepopup)"><i
+                                            class="bi bi-calendar-check me-2"></i>{{"Check Balance" | translate}}</a>
+                                </li>
                                 <li><a class="dropdown-item" (click)="approveleave(approverPopup,item)"
-                                        *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')"><i
-                                            class="bi bi-check-circle me-2"></i>Approve</a></li>
-                                <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
-                                        *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')"><i
-                                            class="bi bi-x-circle me-2"></i>Reject</a></li>
+                                        *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"><i
+                                            class="bi bi-check-circle me-2"></i>{{"Approve" | translate}}</a></li>
                                 <li><a class="dropdown-item" (click)="processleave(item)"
-                                        *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')"><i
-                                            class="bi bi-check-circle me-2"></i>Process</a></li>
+                                        *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage "><i
+                                            class="bi bi-check-circle me-2"></i>{{"Process" | translate}}</a></li>
+                                <li><a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"><i
+                                            class="bi bi-x-circle me-2"></i>{{"Reject" | translate}}</a></li>
                             </ul>
                         </div>
                     </td>
@@ -98,7 +96,8 @@
                 <p class="popup-heading mb-0">Comments</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
 
@@ -133,10 +132,11 @@
                 <p class="popup-heading mb-0">Comments</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-12">
                 <div class="mb-3 mt-2">
@@ -181,7 +181,7 @@
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">Is it a planned leave?</p>
         </div>
-        
+
         <form name="leaveapprovee" class="w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid ">
             <div class="mb-3 d-flex justify-content-center">
                 <div class="form-check">
@@ -199,12 +199,16 @@
             </div>
 
             <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span class="required">*</span></label>
+                <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span
+                        class="required">*</span></label>
                 <textarea class="form-control" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
-                    (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
+                    #Reasons="ngModel" maxlength="250"
+                    (keypress)="formValidation.restrictInputallowspicalcharters($event)"
+                    [(ngModel)]="selectedLeaveData.comments" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)"
+                    rows="3" required></textarea>
                 <span>{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</span>
-                <div class="error-msg" *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
+                <div class="error-msg"
+                    *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
                     Comments are required
                 </div>
             </div>
@@ -227,12 +231,16 @@
         </div>
         <form name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
             <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span class="text-danger">*</span></label>
-                <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
+                        class="text-danger">*</span></label>
+                <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
+                    name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                    (keypress)="formValidation.restrictInputallowspicalcharters($event)"
                     (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
-                <div class="form-label custom-label text-end my-1">{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
-                <div class="error-msg" *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
+                <div class="form-label custom-label text-end my-1">
+                    {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
+                <div class="error-msg"
+                    *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
                     Comments are required
                 </div>
             </div>

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { AuthService } from '../../../services/auth.service';
 import { ICompensation, Icompensation, IFrequency, IOvertime, IPayType } from '../../../Interfaces/job-model';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, delay, map, of, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -23,11 +23,12 @@ export class CompensationComponent {
   compForm!: FormGroup;
   compupdateForm!: FormGroup
   overtimeDetails = [] as IOvertime[];
+  joiningDate: any;
   paytypeDetails = [] as IPayType[];
   frequencyDetails = [] as IFrequency[];
   compensationdetails = new BehaviorSubject<any>([])
   compensationReason = [] as ICompensation[]
-  COMPDETAILS = { submitted: false, isempeffectivevaild: true };
+
   empinfo: any
   selectedid: any;
   constructor(
@@ -40,9 +41,11 @@ export class CompensationComponent {
   ) { }
 
   ngOnInit() {
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.joiningDate =this.formatDateToLocal(this.empinfo.dateOfJoining)
     this.intizationFrom()
     this.intizationupdateFrom()
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+  
     this.getCompensationempid()
     this.getFrequency()
     this.getpaytype()
@@ -131,12 +134,18 @@ export class CompensationComponent {
       })
   }
 
-  updateCompEffectiveDateValidations(): void {
-    const effectiveDate = new Date(this.compForm.value.compeffectivedate);
-    const joiningDate = new Date(this.empinfo.dateOfJoining);
-
-    this.COMPDETAILS.isempeffectivevaild = effectiveDate >= joiningDate;
-  }
+  // dateAfterJoiningAsyncValidator(joiningDate: Date): AsyncValidatorFn {
+  //   return (control: AbstractControl) => {
+  //     const selectedDate = new Date(control.value);
+  //     if (!control.value) {
+  //       return of(null); // No validation error if the field is empty
+  //     }
+  //     return of(selectedDate > joiningDate).pipe(
+  //       delay(500), // Simulate async delay
+  //       map((isValid: any) => (isValid ? null : { dateInvalid: true })) // Return validation error if invalid
+  //     );
+  //   };
+  // }
 
   postcompensation(formdata: FormGroup) {
     const formattedEffectiveDate = formdata.value.compeffectivedate
@@ -158,6 +167,8 @@ export class CompensationComponent {
     this.subscription = this.http.postdata("Compensationdata", playload).subscribe({
       next: (data: any) => {
         console.log(data)
+        this.compForm.reset()
+    
         this.modalService.dismissAll()
         this.getCompensationempid()
         this.conformationPopup.openSuccessModal("Compensation added successfully")
@@ -172,12 +183,18 @@ export class CompensationComponent {
     });
 
   }
-
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
   openModalupdate(content: any, data: any) {
+    console.log(data)
     this.selectedid = data.id
-    const effectiveDate = data.compeffectivedate
-      ? new Date(data.compeffectivedate).toISOString().split('T')[0]
-      : '';
+    const effectiveDate = this.formatDateToLocal(data.compeffectivedate);
+      
     this.compupdateForm.patchValue({
       compeffectivedate: effectiveDate,
       reason: data.reason || '',

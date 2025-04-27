@@ -217,6 +217,6 @@ export class ViewShiftComponent {
     modal.dismiss();
   }
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/manage-shifts/pending-for-submit']);
+    this.router.navigate(['/settings/employee-fields/manage-shifts/published-shifts']);
   }
 }

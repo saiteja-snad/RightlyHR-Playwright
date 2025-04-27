@@ -15,6 +15,9 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
+import { IemployeeDetails } from '../../../Interfaces/job-model';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-time-off',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, 
@@ -31,6 +34,7 @@ export class TimeOffComponent {
   subscription!: Subscription;
   searchValue: any;
   leaves = [] as LeaveApproval[];
+  empinfo = {} as IemployeeDetails
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList = {} as ICategoryDetails;
   selectedLeaveData = {} as any;
@@ -49,10 +53,17 @@ export class TimeOffComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService,private modalService: NgbModal,private conformationPopup: OpenModalService,public rbac: RbacService) {
+  constructor(
+    private http: HttpService,
+    private modalService: NgbModal,
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
+    public formValidation:FormValidationService
+    
+  ) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.trigger()) {
+      if (this.http.trigger()) {   
         const data = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
         if (data && Object.keys(data).length > 0) {
           this.LOGIN = data;
@@ -66,6 +77,7 @@ export class TimeOffComponent {
   }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const storedEmployee = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
     if (storedEmployee && Object.keys(storedEmployee).length > 0) {
       this.LOGIN = storedEmployee;
@@ -77,7 +89,7 @@ export class TimeOffComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=EMP`).subscribe({
+    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.leavesModuleId}`).subscribe({
       next: (response: any) => {
         this.leaves = response.data as LeaveApproval[];
       },
@@ -170,9 +182,12 @@ export class TimeOffComponent {
         next: (response: any) => {
           this.selectedLeaveData = response
           this.selectedLeaveData.request = leaveRequest
+          
         },
         error: (err) => { },
-        complete: () => { }
+        complete: () => { 
+          this.http.triggerActionSignal()
+        }
       })
     }
   }
@@ -181,20 +196,25 @@ export class TimeOffComponent {
     let requestBody = {
       status: "Approved",
       comments: this.selectedLeaveData.comments,
-      approvedBy: this.LOGIN.employeeId.toString()
+      approvedBy: this.empinfo.employeeId.toString()
     }
+    this.sharedModalService.openLoaderModal('Accepting Request, Please wait...');
+
     this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
-        this.conformationPopup.openSuccessModal('Request Accepted Successfully');
+        this.modalService.dismissAll();
+        this.sharedModalService.openSuccessModal('Request Accepted Successfully');
         setTimeout(() => {
           this.modalService.dismissAll();
-          window.location.reload();
+          this.getAllPendingApprovals();
         }, 2000);
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Request Accepted Failed');
+        this.sharedModalService.openErrorModal('Request Accepted Failed');
       },
-      complete: () => { },
+      complete: () => {
+        this.http.triggerActionSignal();
+       },
     })
   }
 
@@ -202,40 +222,50 @@ export class TimeOffComponent {
     let requestBody = {
       status: "Rejected",
       comments: this.selectedLeaveData.comments,
-      approvedBy: this.LOGIN.employeeId.toString()
+      approvedBy: this.empinfo.employeeId.toString()
     }
+    this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
+
     this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
-        this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+        this.modalService.dismissAll();
+        this.sharedModalService.openSuccessModal('Request Rejected Successfully');
         setTimeout(() => {
           this.modalService.dismissAll();
-          window.location.reload();
+          this.getAllPendingApprovals();
         }, 2000);
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Request Rejected Failed');
+        this.sharedModalService.openErrorModal('Request Rejected Failed');
       },
-      complete: () => { },
+      complete: () => { 
+        this.http.triggerActionSignal();
+      },
     })
   }
 
   handleProcess(data: LeaveApproval) {
     let requestBody = {
       status: "Processed",
-      approvedBy: this.LOGIN.employeeId.toString()
+      approvedBy: this.empinfo.employeeId.toString()
     }
+    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.subscription = this.http.putData(`PendingApproval/process/${data.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
-        this.conformationPopup.openSuccessModal('Request Processed Successfully');
+        this.modalService.dismissAll();
+        this.sharedModalService.openSuccessModal('Request Processed Successfully');
         setTimeout(() => {
           this.modalService.dismissAll();
-          window.location.reload();
+          this.getAllPendingApprovals();
+
         }, 2000);
       },
       error: (reason: any) => {
-        this.conformationPopup.openSuccessModal('Request Processed Failed');
+        this.sharedModalService.openSuccessModal('Request Processed Failed');
       },
-      complete: () => { },
+      complete: () => { 
+        this.http.triggerActionSignal();
+      },
     })
   }
 }

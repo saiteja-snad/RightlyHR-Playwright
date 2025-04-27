@@ -5,7 +5,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { ICreateSubDir, IFolders } from '../../Interfaces/document.model';
 import { Subscription } from 'rxjs';
 import { LastValuePipe } from '../../Pipes/last-value/last-value.pipe';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
@@ -28,15 +28,23 @@ export class DocumentsComponent {
   Files = [] as IFolders[];
   empdata: any;
   searchfolder!: string;
+  uploadfrom!: FormGroup;
 
   subDir = {} as ICreateSubDir;
-  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empdata = JSON.parse(localStorage.getItem('employeeData') || '{}');
     this.getMainFolders()
+    
 
   }
+  initializejobForm(): void {
+    this.uploadfrom = this.fb.group({
+     
+    });
+  }
+
   getMainFolders(dirPath?: string) {
     dirPath = dirPath ? dirPath : '/FusionDocuments';
     this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
@@ -170,5 +178,11 @@ export class DocumentsComponent {
       });
   }
 
+  openModal(content: any) {
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
 
 }

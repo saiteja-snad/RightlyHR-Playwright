@@ -1,5 +1,5 @@
-.country-input.disabled {
-    pointer-events: none;
-    opacity: 0.6;
-    background-color: #e9ecef;
-}
+.disabled-country-code .ipv_dropdown {
+    pointer-events: none !important;
+    background-color: var(--bs-secondary-bg) !important;
+  
+  }

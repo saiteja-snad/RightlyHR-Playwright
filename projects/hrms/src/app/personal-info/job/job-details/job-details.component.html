@@ -119,7 +119,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date
                             <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="effectiveDate"
+                        <input type="date" class="form-control custom-input" id="effectiveDate" [min]="joiningDate"
                             onkeypress="return false" formControlName="effectiveDate">
                         <div class="error-msg" *ngIf="jobDetailsForm.get('effectiveDate')?.invalid && jobDetailsForm.get('effectiveDate')?.touched">
                             Effective Date is required
@@ -293,7 +293,7 @@
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" id="effectiveDate"
-                            onkeypress="return false" formControlName="effectiveDate">
+                            onkeypress="return false" formControlName="effectiveDate" [min]="joiningDate">
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('effectiveDate')?.invalid && jobDetailsupdateForm.get('effectiveDate')?.touched">
                             Effective Date is required
@@ -348,7 +348,7 @@
                             <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName"
                                 formControlName="team" placeholder="Please select team"
                                 class="form-select custom-select"
-                                (onChange)="onSubDepartmentNameChange($event.value)"></p-select>
+                                (onChange)="onSubDepartmentNameChangeupdate($event.value)"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('team')?.invalid && jobDetailsupdateForm.get('team')?.touched">
@@ -419,7 +419,7 @@
                         <label for="shift" class="form-label custom-label mb-2">Shift<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id"
+                            <p-select [options]="shiftDropdown" optionLabel="shiftName" 
                                 formControlName="shiftName" placeholder="Please select shift"
                                 class="form-select custom-select"></p-select>
                         </div>

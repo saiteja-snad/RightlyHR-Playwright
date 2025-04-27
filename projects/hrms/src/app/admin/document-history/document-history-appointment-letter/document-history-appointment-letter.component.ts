@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,7 +14,7 @@ import { AppointmentletterpipePipe } from '../../../Pipes/appointmentletterpipe.
   styleUrl: './document-history-appointment-letter.component.scss'
 })
 
-export class DocumentHistoryAppointmentLetterComponent {
+export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
@@ -48,7 +48,7 @@ export class DocumentHistoryAppointmentLetterComponent {
     });
   }
 
-  ngDestroy() {
+  ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

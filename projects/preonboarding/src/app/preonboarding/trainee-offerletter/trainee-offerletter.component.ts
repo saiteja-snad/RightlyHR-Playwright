@@ -75,7 +75,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   openReject() {
-    this.modalService.open(this.rejectpopup, { centered: true });
+    this.modalService.open(this.rejectpopup, { centered: true});
   }
 
   //function to navigate to the previous page

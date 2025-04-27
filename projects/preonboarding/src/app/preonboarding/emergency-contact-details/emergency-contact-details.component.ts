@@ -99,18 +99,18 @@ export class EmergencyContactDetailsComponent {
   initializeForm() {
     this.contactForm = this.fb.group({
       contact1: this.fb.group({
-        name: ['', Validators.required],
+        name: ['', [Validators.required,Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         email: ['', [Validators.email]],
         mobile: ['', Validators.required],
         relationship: ['', Validators.required],
-        countyCode1:[null, [Validators.required]],
+        // countyCode1:[null, [Validators.required]],
       }),
       contact2: this.fb.group({
-        name: ['', Validators.required],
+        name: ['', [Validators.required,Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         email: ['', [Validators.email]],
         mobile: ['', Validators.required],
         relationship: ['', Validators.required],
-        countyCode1:[null, [Validators.required]],
+        // countyCode2:[null, [Validators.required]],
       })
     });
   }

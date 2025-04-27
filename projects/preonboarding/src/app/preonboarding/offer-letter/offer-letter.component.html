@@ -258,7 +258,7 @@
                                     <p class="mb-3">Yours Sincerely,</p>
                                     <p class="mb-5"> For RightlyHR </p>
                                     <div class="stamp"></div>
-                                    <p class="mb-3">{{offerLetterData.authorityName}} </p>
+                                    <p class="mb-3 authority-signature">{{offerLetterData.authorityName}} </p>
                                     <p class="mb-3"> Authorized Signatory, </p>
                                     <p class="mb-3">{{offerLetterData.authorityName}} </p>
                                     <p class="mb-3">{{authorityDesignation}} </p>
@@ -751,8 +751,8 @@
                 <button class="custom-btn btn-primary w-50" (click)="acceptoffer()" [disabled]="loadingcircle">
                     @if(!loadingcircle){ Yes }
                     @else {
-                    <div class="d-flex">
-                      <div *ngIf="loadingcircle" class="spinner-border spinner-border text-light" role="status"></div>
+                    <div class="button-loader-content">
+                      <div *ngIf="loadingcircle" class="spinner-border button-spinner text-light" role="status"></div>
                       <div> Submitting</div>
                     </div>
                     }

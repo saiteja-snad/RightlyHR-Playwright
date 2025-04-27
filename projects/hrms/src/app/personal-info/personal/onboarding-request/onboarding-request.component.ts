@@ -217,6 +217,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
       next: (updatedData: any) => {
         this.conformationPopup.openSuccessModal('Document Rejected Successfully');
         setTimeout(() => {
+          this.rejectDocument.reset();
           this.modalService.dismissAll();
           this.getdocumentdeatilsbyempid();
           this.getEmployeeId();

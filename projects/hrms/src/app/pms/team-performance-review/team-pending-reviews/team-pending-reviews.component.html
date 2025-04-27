@@ -56,10 +56,9 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu text-center">
-                                    <li class="dropdown-item"
-                                        (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                        <a class="dropdown-custom-btn">{{item.assessorType}}
-                                            Assessment</a>
+                                    <li class="dropdown-item" (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType, 
+                                    item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                        <a class="dropdown-custom-btn">{{item.assessorType}} Assessment</a>
                                     </li>
                                 </ul>
                             </div>
@@ -76,20 +75,6 @@
                 </ng-template>
             </tbody>
         </table>
-
-        <!-- <div class="pagination-footer" *ngIf="filteredReviews.length > 0">
-            <div class="d-flex justify-content-between p-3 footer mt-auto">
-                <select class="form-select pagination-select" [(ngModel)]="pageSize"
-                    (ngModelChange)="fetchReviewCycles()">
-                    <option [ngValue]="10">10</option>
-                    <option [ngValue]="20">20 </option>
-                    <option [ngValue]="25">25</option>
-                </select>
-                <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [maxSize]="4" [pageSize]="pageSize"
-                    (pageChange)="fetchReviewCycles()" aria-label="Default pagination">
-                </ngb-pagination>
-            </div>
-        </div> -->
     </div>
     @if(filteredReviews.length > 0){
     <div class="pagination-content">
@@ -110,5 +95,9 @@
         </div>
     </div>
     }
-    }@else{<app-data-loader-content />}
+    }@else{
+        <div class="custom-compoent-data-loader">
+            <app-data-loader-content />
+        </div>
+    }
 </div>

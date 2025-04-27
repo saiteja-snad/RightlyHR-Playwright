@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { environment } from '../../../../environments/environment';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-add-global-permissions',
@@ -56,8 +57,16 @@ export class AddGlobalPermissionsComponent implements OnInit,OnDestroy {
   teamWiseEmployeesDetails=[] as any;
   requestcount!:number;
   isLoader=false;
-  constructor(private router: Router, private authService: AuthService, private conformationPopup: OpenModalService, 
-    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,public rbac: RbacService) { }
+  constructor(
+    private router: Router, 
+    private authService: AuthService, 
+    private conformationPopup: OpenModalService, 
+    private http: HttpService, 
+    private fb: FormBuilder, 
+    private modalService: NgbModal,
+    public rbac: RbacService, 
+    public formValidation:FormValidationService
+  ) { }
   ngOnInit(): void {
     this.initalizingForm();
     this.getAllEmployees();
@@ -387,6 +396,11 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
             //console.log(err)
            this.conformationPopup.openErrorModal(err.error.message);
            this.isLoader=false;
+          //  setTimeout(() => {
+          //   this.close()
+            
+          //  }, 2500);
+          
             
           },
           // eslint-disable-next-line @typescript-eslint/no-empty-function

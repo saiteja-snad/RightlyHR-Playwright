@@ -43,7 +43,7 @@
                                     </tr>
                                     <tr>
                                         <td>Mobile Number Witd Country</td>
-                                        <td>{{empDetails?.mobilePhoneCountryCode}}
+                                        <td>{{empDetails?.mobilePhoneCountryCode?? ''}} {{empDetails?.contactnumber ??''}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -110,7 +110,6 @@
                                                     <button class="view-btn"
                                                         (click)="onSelectDownload(ed.attachment)">Download</button>
                                                 </ng-template>
-        
                                             </td>
                                         </tr>
                                     </tbody>

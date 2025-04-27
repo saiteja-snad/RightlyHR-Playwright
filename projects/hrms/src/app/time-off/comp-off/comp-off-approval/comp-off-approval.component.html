@@ -1,4 +1,3 @@
-
 <div class="custom-main-component-container">
   <div class="custom-table-content">
     @if(!dataload){
@@ -29,15 +28,12 @@
             <td>
               <div>
                 <span>
-                  <a *ngIf="compOffRequest.requestedComments; else noRequestedComments"
-                     type="button"
-                     [ngbPopover]="requestedComments">
+                  <a *ngIf="compOffRequest.requestedComments; else noRequestedComments" type="button"
+                    [ngbPopover]="requestedComments">
                     <img src="images/info-fill.png" alt="info icon" class="info-icon">
                   </a>
                   <ng-template #requestedComments>
-                    <div>
-                      <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
-                    </div>
+                    <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
                   </ng-template>
                   <ng-template #noRequestedComments>
                     <span>-</span>
@@ -45,31 +41,22 @@
                 </span>
               </div>
             </td>
-            
             <td>
               <div>
-                <span>
-                  <a *ngIf="compOffRequest.reason; else noReason"
-                     type="button"
-                     [ngbPopover]="reason">
-                    <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                  </a>
-                  <ng-template #reason>
-                    <div>
-                      <p class="mb-0">{{ compOffRequest.reason }}</p>
-                    </div>
-                  </ng-template>
-                  <ng-template #noReason>
-                    <span>-</span>
-                  </ng-template>
-                </span>
+                <a *ngIf="compOffRequest.reason; else noReason" type="button" [ngbPopover]="reason">
+                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{ compOffRequest.reason }}</p>
+                </ng-template>
+                <ng-template #noReason>
+                  <span>-</span>
+                </ng-template>
               </div>
             </td>
-            
             <td>{{ compOffRequest.status }}</td>
           </tr>
         </ng-container>
-
         <ng-template #noDataTemplate>
           <tr>
             <td colspan="4">
@@ -80,6 +67,8 @@
         }
       </tbody>
     </table>
-  }@else{<app-data-loader-content />} 
+    }@else{
+    <app-data-loader-content />
+    }
   </div>
 </div>

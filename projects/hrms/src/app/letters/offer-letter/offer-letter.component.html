@@ -117,7 +117,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Address Line 1<span class="error-msg">*</span></label>
             <input type="text" class="form-control custom-input" formControlName="addressLine1"
-              placeholder="Address Line 2" />
+              placeholder="Address Line 1" />
             <div *ngIf="employeeForm.get('addressLine1')?.invalid && employeeForm.get('addressLine1')?.touched">
               <div class="error-msg">Address Line 1 is required</div>
             </div>
@@ -275,7 +275,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Offer Issued Date <span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
-              placeholder="Please enter offer issued date" (click)="pathValuesFuction()" />
+              placeholder="Please enter offer issued date" (click)="pathValuesFuction()" onkeydown="return false;" />
             <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
               <div class="error-msg">Offer Issued Date is required</div>
               <div *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerIssuedDate')?.touched"
@@ -287,7 +287,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Expected Start Date <span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="dateOfJoining" (click)="pathValuesFuction()"
-              placeholder="Please enter expected start date" />
+              placeholder="Please enter expected start date" onkeydown="return false;" />
             <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
               <div class="error-msg">Expected Start Date is required</div>
             </div>
@@ -304,7 +304,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Offer Expiry Date <span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-              (click)="pathValuesFuction()" placeholder="Please enter offer expiry date" />
+              (click)="pathValuesFuction()" onkeydown="return false;" placeholder="Please enter offer expiry date" />
             <div class="error-msg">
               <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                 Offer Expiry Date is required

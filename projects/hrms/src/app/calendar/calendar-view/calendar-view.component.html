@@ -7,7 +7,6 @@
 
   <!--Content-->
   <div class="d-flex gap-3 w-100">
-
     <!--sub tabs Content-->
     <div class="custom-component-left-content p-3">
       <div class="d-flex align-items-center mb-2">
@@ -54,8 +53,7 @@
         <ng-template #eventContent let-arg>
           <!-- <b *ngIf="arg.timeText" >{{ arg.timeText }}</b> -->
           <div>
-            <span class="event-title m-0">{{ arg.event.title }}<img [src]="arg.event.display" alt="arg"
-                class="ms-2"></span>
+            <span class="event-title m-0">{{ arg.event.title }}<img [src]="arg.event.display" alt="arg" class="ms-2"></span>
           </div>
         </ng-template>
       </full-calendar>

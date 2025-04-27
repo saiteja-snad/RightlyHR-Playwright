@@ -13,6 +13,8 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { environment } from '../../../../environments/environment';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-comp-off-entitlement',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, 
@@ -43,8 +45,14 @@ export class CompOffEntitlementComponent {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
-    private sharedModalService: OpenModalService, public rbac: RbacService,) {
+  constructor(
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private sharedModalService: OpenModalService, 
+    public rbac: RbacService,
+    public formValidation:FormValidationService
+  ) {
     effect(() => {
       if (this.http.trigger()) {
         const data = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
@@ -60,6 +68,7 @@ export class CompOffEntitlementComponent {
   }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const storedEmployee = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
     if (storedEmployee && Object.keys(storedEmployee).length > 0) {
       this.LOGIN = storedEmployee;
@@ -84,7 +93,7 @@ export class CompOffEntitlementComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=3&approvedType=EMP`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.compoffModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.leaves = response.data as AttendanceRequest[];
       },
@@ -121,8 +130,11 @@ export class CompOffEntitlementComponent {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
+    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+
     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
+        this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
       },
       error: (reason: any) => {
@@ -140,8 +152,9 @@ export class CompOffEntitlementComponent {
       const requestBody = {
         status: 'Approved',
         comments: formData.comments,
-        approvedBy: this.empinfo.employeeId.toString(),
+        approvedBy: this.empinfo.employeeId?.toString(),
       };
+      this.sharedModalService.openLoaderModal('Accepting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -168,6 +181,8 @@ export class CompOffEntitlementComponent {
         status: 'Rejected',
         comments: formData.comments,
       };
+      this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
+
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();

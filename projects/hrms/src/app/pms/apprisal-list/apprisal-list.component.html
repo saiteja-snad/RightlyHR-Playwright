@@ -117,7 +117,9 @@
     <!-- Data Loader -->
     <ng-container *ngIf="dataload; else maincontent">
         <ng-template #loadingSpinner>
-            <app-data-loader-content />
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
         </ng-template>
         <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
     </ng-container>

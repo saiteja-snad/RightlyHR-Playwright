@@ -180,6 +180,7 @@ body {
         border-radius: 50%;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -384,7 +385,7 @@ body {
 
 // Component stylings
 .custom-main-component-container {
-   position: relative;
+    position: relative;
 }
 
 .component-header {
@@ -448,7 +449,14 @@ a {
     font-size: var(--fontsize14);
     vertical-align: middle;
     text-align: end;
-    margin: 0.5rem 0rem;
+    margin: 0.25rem 0rem;
+}
+
+.select-item {
+    color: #444444 !important;
+    text-decoration: none !important;
+    border-bottom: 2px solid var(--primary-color);
+    line-height: 1.5rem !important;
 }
 
 // button stylings
@@ -538,6 +546,10 @@ a {
     color: #A1A1A1;
 }
 
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
 // custom search field
 .custom-search {
     border: 1px solid #CCDAEC;
@@ -654,7 +666,7 @@ a {
         color: #000 !important;
     }
 
-    a{
+    a {
         color: #000 !important;
     }
 }
@@ -676,6 +688,7 @@ a {
         background-color: #F0F4F8;
     }
 }
+
 // Select Styling 
 
 // table stylings
@@ -769,7 +782,7 @@ a {
 
     .sub-text {
         font-weight: 500;
-        font-size: 0.5rem;
+        font-size: 0.75rem;
         vertical-align: middle;
         text-transform: capitalize;
         color: #757575;
@@ -881,13 +894,17 @@ a {
 
 // salary details table
 .salary-details-table {
-    table, th, td {
+
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th, td {
+    th,
+    td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -897,7 +914,8 @@ a {
         font-weight: bold;
     }
 
-    tr:nth-child(4), tr:nth-child(9) {
+    tr:nth-child(4),
+    tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -948,6 +966,7 @@ a {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // note text stylings
@@ -961,6 +980,7 @@ a {
         font-weight: 700;
     }
 }
+
 // note text stylings
 
 // events component stylings
@@ -1097,7 +1117,10 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,.p-paginator-prev,.p-paginator-next,.p-paginator-last {
+        .p-paginator-first,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-last {
             border-radius: 50%;
             width: 1.25rem;
             height: 1.25rem;
@@ -1106,14 +1129,17 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,
+        .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,
+        .p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
+
 //pagenation stylings
 
 // login components stylings
@@ -1135,6 +1161,7 @@ input[type="file"] {
         font-weight: 500;
     }
 }
+
 // login components stylings
 
 // custom phone number input with country code stylings
@@ -1189,6 +1216,7 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
+
 // custom phone number input with country code stylings
 
 //ERROR MESSAGE
@@ -1319,6 +1347,7 @@ input:focus {
     outline: none !important;
     box-shadow: none !important;
 }
+
 // popup stylings
 
 // download text
@@ -1483,6 +1512,7 @@ input:focus {
         }
     }
 }
+
 // Settings Stylings Ends
 
 // red trash icon
@@ -1560,6 +1590,7 @@ input[type="checkbox"] {
         }
     }
 }
+
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1579,3 +1610,10 @@ input[type="checkbox"] {
     }
 }
 // Action buttons stylings Ends
+
+// component loader
+.custom-compoent-data-loader{
+    position: relative;
+    width: 100%;
+    height: calc(100dvh - 20rem);
+}

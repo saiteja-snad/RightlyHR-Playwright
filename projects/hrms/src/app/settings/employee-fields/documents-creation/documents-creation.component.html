@@ -1,1 +1,108 @@
-<p>documents-creation works!</p>
+<div class="custom-main-component-container">
+    <!--header-->
+    <div class="mb-3">
+        <div class="component-header">Settings</div>
+    </div>
+
+    <!--tabs content-->
+    <div class="mb-3">
+        <div>
+            <app-settings-employee-fields-module-tabs />
+        </div>
+    </div>
+
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
+        <div class="custom-component-left-content p-3">
+            @for(folder of folders; track $index){
+            <div (click)="onFolderSelectded(folder, folder.name)" class="folder-content cursor px-2" [ngClass]="{'active': selectedMainFolder === folder}">
+                <i class="bi bi-folder-fill foldder-icon"></i>
+                <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
+            </div>
+            }
+        </div>
+
+        <div class="custom-setting-right-content p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><span class="component-sub-header">Folders</span></div>
+                @if(isMainfolderTouched){
+                <div class="custom-add-btn" (click)="openmodel(addSubDirModal)">
+                    <i class="bi bi-plus plus-icon me-1"></i>Add Sub-Folders
+                </div>
+                }
+            </div>
+
+            <div class="custom-table-content">
+                <table class="w-100">
+
+                    <thead>
+                        <th>FILE NAME</th>
+                        <th>CREATED DATE</th>
+                        <th>ACTION</th>
+                    </thead>
+                    <tbody>
+                        @for(subFolder of selectedFolder; track $index){
+                        <tr>
+                            @if(!subFolder.isNotVisible){
+                            <td>
+                                <div class="folder-content">
+                                    <i class="bi bi-folder-fill foldder-icon"></i>
+                                    <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
+                                </div>
+                            </td>
+                            <td>{{ subFolder.createdOn | dateformat }}</td>
+                            <td><button class="custom-btn btn-primary" (click)="openmodel(deletefile);datafile=subFolder">Delete</button>
+                            </td>
+                            }
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #addSubDirModal let-model>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Add Folder'| translate}}</p>
+            </div>
+            <div>
+                <a (click)="onClose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <form name="AddSubDirectory" #AddSubDirectory="ngForm"
+                (ngSubmit)="AddSubDirectory.valid && createSubDirectory(AddSubDirectory)">
+                <div class="mb-3">
+                    <input type="text" class="form-control custom-input" name="subDirName" [(ngModel)]="subDir.subDirName" 
+                    autocomplete="off" placeholder="Enter File Name" id="subDirName"  #subDirName="ngModel" required/>
+                    <div *ngIf="subDirName.touched && subDirName.invalid" class="error-msg">
+                        {{'File name is required' | translate}}
+                      </div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="onClose()">{{'Close'|translate}}</button>
+                    <button type="submit" [disabled]="AddSubDirectory.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #deletefile let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> {{"Are you sure you want to delete?" | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="onClose()">{{"No" | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="onSelectDelete(this.datafile);">
+                {{"Yes" | translate}}</button>
+        </div>
+    </div>
+</ng-template>

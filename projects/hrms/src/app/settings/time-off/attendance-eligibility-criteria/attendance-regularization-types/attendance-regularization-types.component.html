@@ -1,0 +1,106 @@
+<div class="custom-main-component-container">
+    <div >
+        <form [formGroup]="permissionsForm" (ngSubmit)="addPermission(permissionsForm)">
+            <!-- Add Input-->
+            <div class="mb-4">
+                <div class="custom-settings-add-input input-group">
+                    <input type="text" class="form-control custom-input" placeholder="Please enter attendance regularization" formControlName="name" 
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    <span class="input-group-text" id="saluation">
+                        <button type="submit" class="custom-btn btn-primary" [disabled]="permissionsForm.invalid">{{'Add'}}</button>
+                    </span>
+                </div>
+                <div *ngIf="permissionsForm.get('name')?.touched && permissionsForm.get('name')?.invalid" class="error-msg mt-2">
+                    <div *ngIf="permissionsForm.get('name')?.errors?.['required']">{{'Attendance regularization is required'}}</div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="custom-table-content w-50">
+        <ng-container *ngIf="permissionsType!.length > 0; else noDataTemplate">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="text-center" >Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let permission of permissionsType">
+                        <td>{{permission.name}}</td>
+                        <td class="text-center" >
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" (click)="openModal(updatePermissionModal,permission)">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" (click)="openDeleteModal(deletePermissionModal,permission)">
+                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #noDataTemplate>
+    <tr>
+        <td colspan="2">
+            <app-no-data-found></app-no-data-found>
+        </td>
+    </tr>
+</ng-template>
+
+<!--Add Work Form Home-->
+<ng-template #updatePermissionModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
+                <p class="popup-heading mb-0">Edit Permission</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form [formGroup]="permissionUpdateForm"  (ngSubmit)="updatePermission(permissionUpdateForm)">
+                <div class="mb-4">
+                    <label for="name" class="form-label custom-label mb-2"
+                        style="font-weight: bolder;">Permission</label>
+                    <input type="text" name="name" formControlName="name" class="form-control" autocomplete="off"
+                        id="backgroundcheckstatus1" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                        <div *ngIf="permissionUpdateForm.get('name')?.touched && permissionUpdateForm.get('name')?.invalid" class="error-msg mt-2">
+                            <div *ngIf="permissionUpdateForm.get('name')?.errors?.['required']">{{'Permission is required'}}</div>
+                        </div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary " [disabled]="permissionUpdateForm.invalid">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #deletePermissionModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
+            <p class="confirmation-text mb-4">Are you sure you want to delete?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deletePermission();">Yes</button>
+        </div>
+    </div>
+</ng-template>

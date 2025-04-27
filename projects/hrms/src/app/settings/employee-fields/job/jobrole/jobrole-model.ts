@@ -1,6 +1,5 @@
-
 export interface jobRoleDATA {
-    id?: number;
-    "designationName": "string",
-    "gradeId": number,
-  }
+  id?: number;
+  "designationName": "string",
+  "gradeId": number,
+}

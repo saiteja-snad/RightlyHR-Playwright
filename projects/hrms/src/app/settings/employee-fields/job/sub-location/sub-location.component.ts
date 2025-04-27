@@ -1,4 +1,3 @@
-
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,10 +9,11 @@ import { Subscription } from 'rxjs';
 import { subLocationData } from './sub-location-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-sub-location',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule,SelectModule],
   templateUrl: './sub-location.component.html',
   styleUrl: './sub-location.component.scss'
 })
@@ -24,16 +24,16 @@ export class SubLocationComponent {
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
-  locationDetail:any;
+  locationDetail: any;
   @ViewChild('addpopup') addpopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   @ViewChild('deletepopup') deletepopup: any;
   AddForm!: FormGroup;
   updateForm!: FormGroup;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
@@ -48,7 +48,7 @@ export class SubLocationComponent {
 
     this.updateForm = this.fb.group({
       UpdateSubLocation: ['', [Validators.required]],
-      updateLocation: ['', [Validators.required]],
+      updateLocation: [null, [Validators.required]],
     });
     this.getSubLocation();
     this.getLocation();
@@ -67,11 +67,43 @@ export class SubLocationComponent {
       centered: true
     });
   }
+
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
+  
+    // Block if the key is not a letter or space
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block space at the beginning
+    if (input.selectionStart === 0 && char === ' ') {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 100
+    if (input.value.length >= 100) {
+      event.preventDefault();
+    }
+  }
+  
   getSubLocation() {
     this.subscription = this.http.getData('SubLocation/GetLocationNames').subscribe({
       next: (data: any) => {
         console.log(data);
-        this.SubLocationdetails = data;
+        this.SubLocationdetails = data.sort((a: any, b: any) => {
+          // First sort by location name
+          const locationComparison = a.jobLocationName.localeCompare(b.jobLocationName);
+          // If location names are the same, sort by sub-location name
+          if (locationComparison === 0) {
+            return a.jobSubLocationName.localeCompare(b.jobSubLocationName);
+          }
+          return locationComparison;
+        });
       },
     });
   }
@@ -90,11 +122,11 @@ export class SubLocationComponent {
         modal.close();
         this.conformationPopup.openSuccessModal('Sub location added successfully');
 
-          this.resetForm();
+        this.resetForm();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal('Insertion of data failed');
-          this.resetForm();
+        this.resetForm();
       }
     });
   }
@@ -105,13 +137,21 @@ export class SubLocationComponent {
   // Method to open the update modal dialog
   openupdateDialog(jobroletypelist: any) {
     this.selectedId = jobroletypelist.id;
-    this.updateForm.patchValue({ UpdateSubLocation: jobroletypelist.jobSubLocationName });
-    this.updateForm.patchValue({ updateLocation: jobroletypelist.jobLocationId });
+    console.log(jobroletypelist.jobLocationId);
+    console.log(this.locationDetail);
+    console.log(this.locationDetail.find((loc: { id: number; }) => loc.id == jobroletypelist.jobLocationId));
+    
+    this.updateForm.patchValue({ 
+      updateLocation: jobroletypelist.jobLocationId,
+      UpdateSubLocation: jobroletypelist.jobSubLocationName
+    });
+  
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
       centered: true
     });
   }
+  
   //  UPDATE
   updateSublocation(modal: any) {
     if (this.updateForm.valid && this.selectedId) {

@@ -14,7 +14,7 @@
                       <!-- Year -->
                       <div class="mb-3">
                         <label for="year" class="form-label custom-label mb-2">
-                            {{ "Year" | translate}}
+                            {{ "Year" | translate}}<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
@@ -29,7 +29,7 @@
                     <!-- Location -->
                     <div class="mb-3">
                         <label for="location" class="form-label custom-label mb-2">
-                            {{ "Location" | translate}}
+                            {{ "Location" | translate}}<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
@@ -46,7 +46,7 @@
                     <!-- Sub Location -->
                     <div class="mb-3">
                         <label for="subLocation" class="form-label custom-label mb-2">
-                            {{ "Sub Location" | translate}}
+                            {{ "Sub Location" | translate}}<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
@@ -63,7 +63,7 @@
                     <!-- Shifts -->
                     <div class="mb-3">
                         <label for="shift" class="form-label custom-label mb-2">
-                            {{ "Shift" | translate}}
+                            {{ "Shift" | translate}}<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true"

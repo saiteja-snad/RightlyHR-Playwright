@@ -41,7 +41,7 @@
           <div class="custom-p-select-content">
             <input type="text" class="form-control custom-input" formControlName="teamName"
               placeholder="Please enter team name" maxlength="100"
-              (keydown)="formValidations.restrictInputallowspicalcharters($event)" />
+              (keydown)="formValidations.restrictSpecialCharacters($event)" />
           </div>
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg mt-2">
             <div *ngIf="AddForm.get('teamName')?.errors?.['required']">{{ 'Team Name is required' | translate }}</div>
@@ -173,7 +173,7 @@
           <div class="custom-p-select-content">
             <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
               placeholder="Please enter team name" maxlength="100"
-              (keydown)="formValidations.restrictInputallowspicalcharters($event)" />
+              (keydown)="formValidations.restrictSpecialCharacters($event)" />
           </div>
           <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid"
             class="error-msg mt-2">

@@ -1,5 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpService } from '../../../../services/http.service';
@@ -14,7 +19,7 @@ import { RbacService } from '../../../../services/rbac.service';
   selector: 'app-grade',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './grade.component.html',
-  styleUrl: './grade.component.scss'
+  styleUrl: './grade.component.scss',
 })
 export class GradeComponent {
   subscription!: Subscription;
@@ -29,34 +34,45 @@ export class GradeComponent {
   AddForm!: FormGroup;
   updateForm!: FormGroup;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
-    public rbac: RbacService,
-  ) {
-
-  }
+    public rbac: RbacService
+  ) {}
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      Addgrade: ['', [Validators.required,  Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      jobgrade: ['', Validators.required],
+      Addgrade: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+          Validators.maxLength(100),
+        ],
+      ],
+      jobgrade: ['', [Validators.required, Validators.maxLength(100)]],
     });
 
     this.updateForm = this.fb.group({
-      Updatejobrole: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      updategraderole: ['', Validators.required],
+      Updatejobrole: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+          Validators.maxLength(100),
+        ],
+      ],
+      updategraderole: ['', [Validators.required, Validators.maxLength(100)]],
     });
     this.getgradeid();
-   
   }
 
   // // Method to open the add modal dialog
   openDialog() {
     this.modalService.open(this.addpopup, {
       backdrop: 'static',
-      centered: true
+      centered: true,
     });
   }
   getgradeid() {
@@ -72,36 +88,37 @@ export class GradeComponent {
     const request: gradeDATA = {
       gradeName: this.AddForm.value.Addgrade.trim(),
       jobGrade: this.AddForm.value.jobgrade,
-      isdeleted:"Active"
+      isdeleted: 'Active',
     };
 
     this.subscription = this.http.postdata('GradeTable', request).subscribe({
       next: () => {
-
         this.getgradeid();
         modal.close();
-        this.conformationPopup.openSuccessModal('Greade details  added successfully');
-        
-         this.resetForm();
+        this.conformationPopup.openSuccessModal(
+          'Greade details  added successfully'
+        );
+
+        this.resetForm();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal('Insertion of data failed');
-         this.resetForm();
-      }
+        this.resetForm();
+      },
     });
   }
 
   close(modal: any) {
     modal.close();
   }
-// Method to open the update modal dialog
+  // Method to open the update modal dialog
   openupdateDialog(jobroletypelist: any) {
     this.selectedId = jobroletypelist.gradeId;
     this.updateForm.patchValue({ Updatejobrole: jobroletypelist.gradeName });
     this.updateForm.patchValue({ updategraderole: jobroletypelist.jobGrade });
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
-      centered: true
+      centered: true,
     });
   }
   //  UPDATE
@@ -111,55 +128,62 @@ export class GradeComponent {
         gradeId: this.selectedId,
         gradeName: this.updateForm.value.Updatejobrole.trim(),
         jobGrade: this.updateForm.value.updategraderole,
-        isdeleted:"Active"
+        isdeleted: 'Active',
       };
 
-      this.subscription = this.http.postdata('GradeTable/UPDATER', request).subscribe({
-        next: () => {
-
-          this.getgradeid();
-          modal.close();
-          this.conformationPopup.openSuccessModal(' Grade Details delected Successfully');
-           this.resetForm();
-        },
-        error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
-          this.resetForm();
-        }
-      });
+      this.subscription = this.http
+        .postdata('GradeTable/UPDATER', request)
+        .subscribe({
+          next: () => {
+            this.getgradeid();
+            modal.close();
+            this.conformationPopup.openSuccessModal(
+              ' Grade Details delected Successfully'
+            );
+            this.resetForm();
+          },
+          error: (error: any) => {
+            this.conformationPopup.openErrorModal('Insertion of data failed');
+            this.resetForm();
+          },
+        });
     }
   }
   // Method to open the delete modal dialog
   // DELETE
   opendelete(jobroletypelist: any) {
     this.selectedDeleteRole = jobroletypelist;
-    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+    this.modalService.open(this.deletepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
   }
-   onDelete(modal: any) {
-      if (!this.selectedDeleteRole) return;
-      const deleteRequest: gradeDATA = {
-          gradeId: this.selectedDeleteRole.gradeId,
-          gradeName: this.selectedDeleteRole.gradeName.trim(),
-          jobGrade: this.selectedDeleteRole.jobGrade,
-          isdeleted:"void"
-      };
-  
-      this.http.postdata('GradeTable/UPDATER', deleteRequest).subscribe({
-        next: () => {
-         this.getgradeid();
-          modal.close();
-          this.conformationPopup.openSuccessModal('Greade details deleted successfully');
-        },
-        error: () => {
-          this.conformationPopup.openErrorModal('Failed to delete the frequency');
-        }
-      });
-    }
-  
+  onDelete(modal: any) {
+    if (!this.selectedDeleteRole) return;
+    const deleteRequest: gradeDATA = {
+      gradeId: this.selectedDeleteRole.gradeId,
+      gradeName: this.selectedDeleteRole.gradeName.trim(),
+      jobGrade: this.selectedDeleteRole.jobGrade,
+      isdeleted: 'void',
+    };
+
+    this.http.postdata('GradeTable/UPDATER', deleteRequest).subscribe({
+      next: () => {
+        this.getgradeid();
+        modal.close();
+        this.conformationPopup.openSuccessModal(
+          'Grade Details delected Successfully '
+        );
+      },
+      error: () => {
+        this.conformationPopup.openErrorModal('Failed to delete the frequency');
+      },
+    });
+  }
+
   closeDelete(modal: any) {
     modal.dismiss();
-  };
-
+  }
 
   resetForm() {
     this.AddForm.reset();

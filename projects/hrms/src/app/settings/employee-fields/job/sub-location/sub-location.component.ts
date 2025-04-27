@@ -1,4 +1,3 @@
-
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -24,16 +23,16 @@ export class SubLocationComponent {
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
-  locationDetail:any;
+  locationDetail: any;
   @ViewChild('addpopup') addpopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   @ViewChild('deletepopup') deletepopup: any;
   AddForm!: FormGroup;
   updateForm!: FormGroup;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
@@ -67,18 +66,18 @@ export class SubLocationComponent {
       centered: true
     });
   }
-  
+
   allowOnlyLettersAndSpace(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
     const char = event.key;
     const pattern = /^[A-Za-z ]$/;
-  
+
     // Block if the key is not a letter or space
     if (!pattern.test(char)) {
       event.preventDefault();
       return;
     }
-  
+
     // Block if length is already 100
     if (input.value.length >= 100) {
       event.preventDefault();
@@ -88,7 +87,15 @@ export class SubLocationComponent {
     this.subscription = this.http.getData('SubLocation/GetLocationNames').subscribe({
       next: (data: any) => {
         console.log(data);
-        this.SubLocationdetails = data;
+        this.SubLocationdetails = data.sort((a: any, b: any) => {
+          // First sort by location name
+          const locationComparison = a.jobLocationName.localeCompare(b.jobLocationName);
+          // If location names are the same, sort by sub-location name
+          if (locationComparison === 0) {
+            return a.jobSubLocationName.localeCompare(b.jobSubLocationName);
+          }
+          return locationComparison;
+        });
       },
     });
   }
@@ -107,11 +114,11 @@ export class SubLocationComponent {
         modal.close();
         this.conformationPopup.openSuccessModal('Sub location added successfully');
 
-          this.resetForm();
+        this.resetForm();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal('Insertion of data failed');
-          this.resetForm();
+        this.resetForm();
       }
     });
   }

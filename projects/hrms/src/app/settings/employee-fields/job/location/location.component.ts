@@ -1,6 +1,11 @@
 import { CommonModule, NgFor } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
@@ -12,11 +17,11 @@ import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-location',
-  imports: [CommonModule,ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './location.component.html',
-  styleUrl: './location.component.scss'
+  styleUrl: './location.component.scss',
 })
-export class LocationComponent implements OnInit,OnDestroy {
+export class LocationComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   locationForm!: FormGroup;
@@ -32,32 +37,44 @@ export class LocationComponent implements OnInit,OnDestroy {
     private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
-    public rbac: RbacService,
-  ) {
-   
-   }
+    public rbac: RbacService
+  ) {}
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.locationForm = this.fb.group({
-      jobLocationName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      jobLocationName: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+          Validators.maxLength(100),
+        ],
+      ],
     });
     this.updateForm = this.fb.group({
-      jobLocationName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      jobLocationName: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+          Validators.maxLength(100),
+        ],
+      ],
     });
-    
+
     this.getLocation();
   }
   allowOnlyLettersAndSpace(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
     const char = event.key;
     const pattern = /^[A-Za-z ]$/;
-  
+
     // Block if the key is not a letter or space
     if (!pattern.test(char)) {
       event.preventDefault();
       return;
     }
-  
+
     // Block if length is already 50
     if (input.value.length >= 100) {
       event.preventDefault();
@@ -69,45 +86,59 @@ export class LocationComponent implements OnInit,OnDestroy {
     });
   }
   //ADD
-  addLocation(){
-    const request : JobLocation = {
+  addLocation() {
+    if (!this.locationForm.valid) {
+      return;
+    }
+
+    const request: JobLocation = {
       jobLocationName: this.locationForm.value.jobLocationName.trim(),
-      isDeleted: false
+      isDeleted: false,
     };
 
-   this.subscription = this.http.postdata('JobLocation/PostJobLocation', request).subscribe({
-      next: () => {
-        this.getLocation();
-        this.conformationPopup.openSuccessModal('Location added successfully');
-        this.resetForm();
-      },
-      error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
-      }
-    });
-  }
- 
-// UPDATE
-  updateLocation(modal: any) {
-    if (this.updateForm.valid && this.selectedId) {
-      const request : JobLocation = {
-        jobLocationName: this.updateForm.value.jobLocationName.trim(),
-        isDeleted: false,
-        id: this.selectedId
-      };
-   
-      this.subscription = this.http.postdata('JobLocation/UPDATER', request).subscribe({
+    this.subscription = this.http
+      .postdata('JobLocation/PostJobLocation', request)
+      .subscribe({
         next: () => {
           this.getLocation();
-          modal.close();
-          this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Location updated successfully');
+          this.conformationPopup.openSuccessModal(
+            'Location added successfully'
+          );
+          this.resetForm();
         },
-        error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
-        }
+        error: (error: any) => {
+          this.conformationPopup.openErrorModal('Insertion of data failed');
+          this.resetForm();
+        },
       });
+  }
+
+  // UPDATE
+  updateLocation(modal: any) {
+    if (this.updateForm.valid && this.selectedId) {
+      const request: JobLocation = {
+        jobLocationName: this.updateForm.value.jobLocationName.trim(),
+        isDeleted: false,
+        id: this.selectedId,
+      };
+
+      this.subscription = this.http
+        .postdata('JobLocation/UPDATER', request)
+        .subscribe({
+          next: () => {
+            this.getLocation();
+            modal.close();
+            this.updateForm.reset();
+            this.conformationPopup.openSuccessModal(
+              'Location updated successfully'
+            );
+          },
+          error: (err: any) => {
+            this.conformationPopup.openErrorModal(
+              'Update failed. Please try again.'
+            );
+          },
+        });
     }
   }
   close(modal: any) {
@@ -117,32 +148,40 @@ export class LocationComponent implements OnInit,OnDestroy {
   openupdate(loc: any) {
     this.selectedId = loc.id;
     this.updateForm.patchValue({ jobLocationName: loc.jobLocationName });
-    this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+    this.modalService.open(this.updatepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
   }
 
   opendelete(loc: any) {
     this.selectedDeleteLoc = loc;
-    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+    this.modalService.open(this.deletepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
   }
-// DELETE
+  // DELETE
   onDelete(modal: any) {
     if (!this.selectedDeleteLoc) return;
 
-    const deleteRequest : JobLocation = {
+    const deleteRequest: JobLocation = {
       jobLocationName: this.selectedDeleteLoc.jobLocationName,
       isDeleted: true,
-      id: this.selectedDeleteLoc.id
+      id: this.selectedDeleteLoc.id,
     };
 
     this.http.postdata('JobLocation/UPDATER', deleteRequest).subscribe({
       next: () => {
         this.getLocation();
         modal.close();
-        this.conformationPopup.openSuccessModal('Location deleted successfully');
+        this.conformationPopup.openSuccessModal(
+          'Location deleted successfully'
+        );
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');
-      }
+      },
     });
   }
 
@@ -157,10 +196,9 @@ export class LocationComponent implements OnInit,OnDestroy {
     this.selectedId = null;
   }
 
-    ngOnDestroy(): void {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
-  
 }

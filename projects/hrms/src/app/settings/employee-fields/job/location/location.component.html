@@ -10,7 +10,7 @@
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="locationForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            
+
            <div *ngIf="locationForm.get('jobLocationName')?.touched && locationForm.get('jobLocationName')?.invalid"
             class="error-msg mt-2">
             <div *ngIf="locationForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div>
@@ -19,11 +19,11 @@
             <span class="error-msg" *ngIf="locationForm.controls['jobLocationName'].errors?.['maxlength']">
                       Maximum 100 characters are allowed.
                     </span>
-                   
+
                   </div>
                   </div>
-            
-        
+
+
     </form>
 
     <!--Data Content-->
@@ -66,7 +66,7 @@
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div>
-                    <p class="popup-heading mb-0">{{'Updated Location'|translate}}</p>
+                    <p class="popup-heading mb-0">{{'Update Location'|translate}}</p>
                 </div>
                 <div>
                     <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -83,16 +83,16 @@
                         class="error-msg mt-2">
                         <div *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div>
                     </div>
-                           
+
     <!-- <div *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div> -->
-    
+
 <div *ngIf="updateForm.controls['jobLocationName'].touched">
 <span class="error-msg" *ngIf="updateForm.controls['jobLocationName'].errors?.['maxlength']">
       Maximum 100 characters are allowed.
     </span>
-   
-  
-    
+
+
+
   </div>
   </div>
   <div>
@@ -104,13 +104,13 @@
         [disabled]="updateForm.invalid">{{'Update'|translate}}</button> -->
         <button type="button" class="custom-btn btn-primary " (click)="updateLocation(modal)"
         [disabled]="updateForm.invalid">
-        {{'Update' | translate}}</button> 
+        {{'Update' | translate}}</button>
     </div>
 </div>
 </div>
-  
-               
-        
+
+
+
 </form>
 </ng-template>
 

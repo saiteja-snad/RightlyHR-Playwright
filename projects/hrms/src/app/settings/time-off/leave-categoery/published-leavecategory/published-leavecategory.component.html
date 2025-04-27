@@ -34,13 +34,13 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                               <li>
                                 <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" data-bs-toggle="modal"
-                                (click)="navigateToViewLeaveCategory()" >
+                                (click)="navigateToViewLeaveCategory(details)" >
                                   <i class="bi bi-pencil-fill px-2"></i>{{'View' | translate}}
                                 </a>
                               </li>
                               <li>
                                 <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" data-bs-toggle="modal"
-                                (click)="navigateToCloneLeaveCategory()">
+                                (click)="navigateToCloneLeaveCategory(details)">
                                   <i class="bi bi-pencil-fill px-2"></i>{{'Clone' | translate}}
                                 </a>
                               </li>

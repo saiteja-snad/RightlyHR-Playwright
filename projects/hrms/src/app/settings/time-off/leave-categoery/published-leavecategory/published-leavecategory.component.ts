@@ -45,11 +45,13 @@ export class PublishedLeavecategoryComponent {
     });
   }
 
-  navigateToViewLeaveCategory(){
+  navigateToViewLeaveCategory(details : any){
+    localStorage.setItem('viewleavecategory', JSON.stringify(details));
     this.router.navigate(['/settings/timeoff-configurations/viewleavecategory']);
   }
 
-  navigateToCloneLeaveCategory(){
+  navigateToCloneLeaveCategory(details : any){
+    localStorage.setItem('cloneleavecategory', JSON.stringify(details));
     this.router.navigate(['/settings/timeoff-configurations/cloneleavecategory']);
   }
 }

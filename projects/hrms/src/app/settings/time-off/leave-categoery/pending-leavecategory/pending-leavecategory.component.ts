@@ -49,4 +49,6 @@ navigateToUpdateLeaveCategory(leave:any){
   localStorage.setItem('updateleavecategory', JSON.stringify(leave));
   this.router.navigate(['/settings/timeoff-configurations/updateleavecategory']);
 }
+
+
 }

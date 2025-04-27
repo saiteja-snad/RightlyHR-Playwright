@@ -95,10 +95,12 @@ export class UpdateLeavecategoryComponent {
 
   ngOnInit(): void {
     this.updateLeaveCategoryData = JSON.parse(localStorage.getItem('updateleavecategory') ?? '{}');
+    this.jobLocationList();
     this.patchFormValues(this.updateLeaveCategoryData);
     console.log(this.updateLeaveCategoryData);
+    
     this.setupDependentFieldListeners();
-    this.jobLocationList();
+    
     this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
     for (let year = currentYear; year >= currentYear - 10; year--) {
@@ -115,21 +117,32 @@ export class UpdateLeavecategoryComponent {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {
         this.jobLocationDropDownData = data.jobLocations;
+        console.log(this.jobLocationDropDownData);
         this.leavePolicyForm.patchValue({
           locationID : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updateLeaveCategoryData.locationName),
         });
+        console.log(this.leavePolicyForm.value);
+        this.getSubLocationByid(this.updateLeaveCategoryData.locationID)
       }
     })
   } 
  
   getSubLocationByid(locationID: any) {
-    this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${locationID}`).subscribe({
+    let sublocid = locationID ?? this.updateLeaveCategoryData.locationID 
+    this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${sublocid}`).subscribe({
       next: (data: any) => {
         this.subLocationsDropdown = data.jobSubLocations;
         this.leavePolicyForm.patchValue({
           subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updateLeaveCategoryData.subLocationName),
         });
+        console.log(this.leavePolicyForm.value);
         this.subloactionid();
+        let locsublocid = {
+          jobLocationId : this.updateLeaveCategoryData.locationID,
+          id : this.updateLeaveCategoryData.subLocation
+
+        }
+        this.getShiftBYid(locsublocid)
       }
     })
   }
@@ -152,6 +165,12 @@ export class UpdateLeavecategoryComponent {
             label: shift.shiftName,
             value: shift.id
           }));
+
+          this.leavePolicyForm.patchValue({
+            shiftId : this.shiftsArray.find((x:any) => x.label === this.updateLeaveCategoryData.shiftName).value,
+          });
+          console.log(this.leavePolicyForm.value);
+          
         }
       })
     } else {
@@ -281,9 +300,11 @@ export class UpdateLeavecategoryComponent {
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
+    console.log(data);
+    
     this.leavePolicyForm.patchValue({
       applicableYear: data.applicableYear,
-      //locationID: this.jobLocationDropDownData.find((x:any) => x.id === data.locationID),
+      locationID: data.locationID,
       subLocation: data.subLocationName,
       shiftId: data.shiftId,
       type: data.type,
@@ -327,46 +348,102 @@ export class UpdateLeavecategoryComponent {
     const formData = this.leavePolicyForm.value;
     console.log('Form Data:', formData);
     let payload = {
-      applicableYear: this.leavePolicyForm.value.applicableYear,
-      locationID: this.leavePolicyForm.value.locationID,
-      subLocation: this.leavePolicyForm.value.subLocation,
-      shiftId: this.leavePolicyForm.value.shiftId,
-      type: this.leavePolicyForm.value.type,
-      name: this.leavePolicyForm.value.name,
-      categoryCode: this.leavePolicyForm.value.categoryCode,
-      validity: this.leavePolicyForm.value.validity,
-      categoryColor: this.leavePolicyForm.value.categoryColor,
-      parentId: this.leavePolicyForm.value.parentId,
-      allowedGender: this.leavePolicyForm.value.allowedGender,
-      allowedMaritalStatus: this.leavePolicyForm.value.allowedMaritalStatus,
-      excludeWeekends: this.leavePolicyForm.value.excludeWeekends,
-      excludeHolidays: this.leavePolicyForm.value.excludeHolidays,
-      isOptionalHoliday: this.leavePolicyForm.value.isOptionalHoliday,
-      allowedHalfDay: this.leavePolicyForm.value.allowedHalfDay,
-      isApplicableProRataLeave: this.leavePolicyForm.value.isApplicableProRataLeave,
-      futureDatesAllowed: this.leavePolicyForm.value.futureDatesAllowed,
+      applicableYear: this.leavePolicyForm.value.applicableYear ?? this.updateLeaveCategoryData.applicableYear,
+      locationID: this.leavePolicyForm.value.locationID.id ?? this.updateLeaveCategoryData.locationID,
+      subLocation: this.leavePolicyForm.value.subLocation.id?? this.updateLeaveCategoryData.subLocation,
+      shiftId: this.leavePolicyForm.value.shiftId ?? this.updateLeaveCategoryData.shiftId,
+      type: this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
+      name: this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
+      categoryCode: this.leavePolicyForm.value.categoryCode ?? this.updateLeaveCategoryData.categoryCode,
+      validity: this.leavePolicyForm.value.validity ?? this.updateLeaveCategoryData.validity,
+      categoryColor: this.leavePolicyForm.value.categoryColor ?? this.updateLeaveCategoryData.parentId,
+      parentId: this.leavePolicyForm.value.parentId ?? this.updateLeaveCategoryData.applicableYear,
+      allowedGender: this.leavePolicyForm.value.allowedGender ?? this.updateLeaveCategoryData.allowedGender,
+      allowedMaritalStatus: this.leavePolicyForm.value.allowedMaritalStatus ?? this.updateLeaveCategoryData.allowedMaritalStatus,
+      excludeWeekends: this.leavePolicyForm.value.excludeWeekends ?? this.updateLeaveCategoryData.excludeWeekends,
+      excludeHolidays: this.leavePolicyForm.value.excludeHolidays ?? this.updateLeaveCategoryData.excludeHolidays,
+      isOptionalHoliday: this.leavePolicyForm.value.isOptionalHoliday ?? this.updateLeaveCategoryData.isOptionalHoliday,
+      allowedHalfDay: this.leavePolicyForm.value.allowedHalfDay ?? this.updateLeaveCategoryData.allowedHalfDay,
+      isApplicableProRataLeave: this.leavePolicyForm.value.isApplicableProRataLeave ?? this.updateLeaveCategoryData.isApplicableProRataLeave,
+      futureDatesAllowed: this.leavePolicyForm.value.futureDatesAllowed ?? this.updateLeaveCategoryData.futureDatesAllowed,
       futureDatesAllowedDays: this.leavePolicyForm.value.futureDatesAllowedDays ?? 0,
-      pastDateAllowed: this.leavePolicyForm.value.pastDateAllowed,
+      pastDateAllowed: this.leavePolicyForm.value.pastDateAllowed ?? this.updateLeaveCategoryData.pastDateAllowed,
       pastDatesAllowedDays: this.leavePolicyForm.value.pastDatesAllowedDays ?? 0,
-      carryForwardAllowed: this.leavePolicyForm.value.carryForwardAllowed,
+      carryForwardAllowed: this.leavePolicyForm.value.carryForwardAllowed ?? this.updateLeaveCategoryData.carryForwardAllowed,
       carryForwardAllowedValue: this.leavePolicyForm.value.carryForwardAllowedValue ?? 0,
-      encashAllowedType: this.leavePolicyForm.value.encashAllowedType,
+      encashAllowedType: this.leavePolicyForm.value.encashAllowedType ?? this.updateLeaveCategoryData.encashAllowedType,
       encashAllowedValue: this.leavePolicyForm.value.encashAllowedValue ?? 0,
-      noticeperiodAllowedType: this.leavePolicyForm.value.noticeperiodAllowedType,
+      noticeperiodAllowedType: this.leavePolicyForm.value.noticeperiodAllowedType ?? this.updateLeaveCategoryData.noticeperiodAllowedType,
       noticePeriodAllowedValue: this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
-      isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed,
+      isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed ?? this.updateLeaveCategoryData.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
       addedBy: 3356,
       lastModifiedBy: 3356,
-      status :"Pending for submission",
-      addedDate : new Date(),
+      status :this.updateLeaveCategoryData.status,
+      addedDate : this.updateLeaveCategoryData.addedDate,
+      lastModifiedDate : new Date()
+    };
+
+    this.subscription = this.http.postdata('OrgLeavesCategories/UPDATER', payload).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        
+        this.confirmation.openSuccessModal('Leave Category updated successfully');
+        this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+        this.resetForm();
+      },
+      error: (err: any) => {
+        this.confirmation.openErrorModal(err.error.message);
+      }
+    });
+  }
+
+
+  onPublished() {
+    const formData = this.leavePolicyForm.value;
+    console.log('Form Data:', formData);
+    let payload = {
+      id : this.updateLeaveCategoryData.id,
+      applicableYear: this.leavePolicyForm.value.applicableYear ?? this.updateLeaveCategoryData.applicableYear,
+      locationID: this.leavePolicyForm.value.locationID ?? this.updateLeaveCategoryData.locationID,
+      subLocation: this.leavePolicyForm.value.subLocation?? this.updateLeaveCategoryData.subLocation,
+      shiftId: this.leavePolicyForm.value.shiftId ?? this.updateLeaveCategoryData.shiftId,
+      type: this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
+      name: this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
+      categoryCode: this.leavePolicyForm.value.categoryCode ?? this.updateLeaveCategoryData.categoryCode,
+      validity: this.leavePolicyForm.value.validity ?? this.updateLeaveCategoryData.validity,
+      categoryColor: this.leavePolicyForm.value.categoryColor ?? this.updateLeaveCategoryData.parentId,
+      parentId: this.leavePolicyForm.value.parentId ?? this.updateLeaveCategoryData.applicableYear,
+      allowedGender: this.leavePolicyForm.value.allowedGender ?? this.updateLeaveCategoryData.allowedGender,
+      allowedMaritalStatus: this.leavePolicyForm.value.allowedMaritalStatus ?? this.updateLeaveCategoryData.allowedMaritalStatus,
+      excludeWeekends: this.leavePolicyForm.value.excludeWeekends ?? this.updateLeaveCategoryData.excludeWeekends,
+      excludeHolidays: this.leavePolicyForm.value.excludeHolidays ?? this.updateLeaveCategoryData.excludeHolidays,
+      isOptionalHoliday: this.leavePolicyForm.value.isOptionalHoliday ?? this.updateLeaveCategoryData.isOptionalHoliday,
+      allowedHalfDay: this.leavePolicyForm.value.allowedHalfDay ?? this.updateLeaveCategoryData.allowedHalfDay,
+      isApplicableProRataLeave: this.leavePolicyForm.value.isApplicableProRataLeave ?? this.updateLeaveCategoryData.isApplicableProRataLeave,
+      futureDatesAllowed: this.leavePolicyForm.value.futureDatesAllowed ?? this.updateLeaveCategoryData.futureDatesAllowed,
+      futureDatesAllowedDays: this.leavePolicyForm.value.futureDatesAllowedDays ?? 0,
+      pastDateAllowed: this.leavePolicyForm.value.pastDateAllowed ?? this.updateLeaveCategoryData.pastDateAllowed,
+      pastDatesAllowedDays: this.leavePolicyForm.value.pastDatesAllowedDays ?? 0,
+      carryForwardAllowed: this.leavePolicyForm.value.carryForwardAllowed ?? this.updateLeaveCategoryData.carryForwardAllowed,
+      carryForwardAllowedValue: this.leavePolicyForm.value.carryForwardAllowedValue ?? 0,
+      encashAllowedType: this.leavePolicyForm.value.encashAllowedType ?? this.updateLeaveCategoryData.encashAllowedType,
+      encashAllowedValue: this.leavePolicyForm.value.encashAllowedValue ?? 0,
+      noticeperiodAllowedType: this.leavePolicyForm.value.noticeperiodAllowedType ?? this.updateLeaveCategoryData.noticeperiodAllowedType,
+      noticePeriodAllowedValue: this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
+      isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed ?? this.updateLeaveCategoryData.isProbationAllowed,
+      probationDays: this.leavePolicyForm.value.probationDays ?? 0,
+      addedBy: 3356,
+      lastModifiedBy: 3356,
+      status : 'Published',
+      addedDate : this.updateLeaveCategoryData.addedDate,
       lastModifiedDate : new Date()
     };
 
     this.http.postdata('OrgLeavesCategories', payload).subscribe({
       next: (data: any) => {
-        this.confirmation.openSuccessModal('Leave Category added successfully');
-        this.router.navigate(['/settings/employee-fields/manage-leave-categories/pending-for-submit']);
+        this.confirmation.openSuccessModal('Leave Category published successfully');
+        this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);
         this.resetForm();
       },
       error: (err: any) => {
@@ -375,7 +452,7 @@ export class UpdateLeavecategoryComponent {
     });
   }
   navigateToCloneLeaveCategory(){
-    localStorage.setItem('updatetocloneleavecategory', JSON.stringify(this.updateLeaveCategoryData));
+    localStorage.setItem('cloneleavecategory', JSON.stringify(this.updateLeaveCategoryData));
     this.router.navigate(['/settings/timeoff-configurations/cloneleavecategory']);
   }
   resetForm() {

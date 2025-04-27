@@ -95,7 +95,7 @@ export class CloneLeavecategoryComponent {
   }
 
   ngOnInit(): void {
-    this.updatecloneLeaveCategoryData = JSON.parse(localStorage.getItem('updateleavecategory') ?? '{}');
+    this.updatecloneLeaveCategoryData = JSON.parse(localStorage.getItem('cloneleavecategory') ?? '{}');
     this.patchFormValues(this.updatecloneLeaveCategoryData);
     console.log(this.updatecloneLeaveCategoryData);
     this.setupDependentFieldListeners();

@@ -1,4 +1,3 @@
-
 <div class="custom-main-component-container">
     <div class="custom-table-content">
         @if(!dataload){
@@ -35,7 +34,7 @@
                         <td>{{permissionRequest.status}}</td>
                     </tr>
                 </ng-container>
-                
+
                 <ng-template #noDataTemplate>
                     <tr>
                         <td colspan="6">
@@ -46,6 +45,8 @@
                 }
             </tbody>
         </table>
-    }@else{<app-data-loader-content />}
+        }@else{
+        <app-data-loader-content />
+        }
     </div>
 </div>
